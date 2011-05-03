@@ -21,66 +21,6 @@ awuiForm::~awuiForm() {
 	awClose(this->w);
 }
 
-void awuiForm::SetTop(int y) {
-	this->SetLocation(this->x, y);
-}
-
-void awuiForm::SetLeft(int x) {
-	this->SetLocation(x, this->y);
-}
-
-void awuiForm::SetLocation(int x, int y) {
-	this->SetBounds(x, y, this->width, this->height);
-}
-
-void awuiForm::SetWidth(int width) {
-	this->SetSize(width, this->height);
-}
-
-void awuiForm::SetHeight(int height) {
-	this->SetSize(this->width, height);
-}
-
-void awuiForm::SetSize(int width, int height) {
-	this->SetBounds(this->x, this->y, width, height);
-}
-
-void awuiForm::SetBounds(int x, int y, int width, int height) {
-	if ((this->x == x) && (this->y == y) && (this->width == width) && (this->height == height))
-		return;
-}
-
-int awuiForm::GetTop() {
-	return this->y;
-}
-
-int awuiForm::GetLeft() {
-	return this->x;
-}
-
-void awuiForm::GetLocation(int &x, int &y) {
-	x = this->GetLeft();
-	y = this->GetTop();
-}
-
-int awuiForm::GetWidth() {
-	return this->width;
-}
-
-int awuiForm::GetHeight() {
-	return this->height;
-}
-
-void awuiForm::GetSize(int &width, int &height) {
-	width = this->GetWidth();
-	height = this->GetHeight();
-}
-
-void awuiForm::GetBounds(int &x, int &y, int &width, int &height) {
-	this->GetLocation(x, y);
-	this->GetSize(width, height);
-}
-
 void awuiForm::Show() {
 	this->w = awOpen(this->x, this->y, this->width, this->height);
 }

@@ -7,6 +7,13 @@ extern "C" {
 	#include <aw/sysgl.h>
 }
 
+Form1::Form1() {
+	this->InitializeComponent();
+}
+
+void Form1::InitializeComponent() {
+}
+
 void Form1::OnPaint() {
 	static int sube = 1;
 	static float py = (float) this->GetHeight();

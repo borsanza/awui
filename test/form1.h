@@ -4,5 +4,10 @@
 #include <awui/awuiForm.h>
 
 class Form1 : public awuiForm {
+public:
+	Form1();
+
+private:
+	void InitializeComponent();
 	void OnPaint();
 };

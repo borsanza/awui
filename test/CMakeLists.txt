@@ -8,15 +8,18 @@ INCLUDE_DIRECTORIES(
 	../../libaw/debug/nt/include/
 )
 
-FILE(GLOB AWUIDEMO_FILES *.cpp)
+FILE(GLOB AWUIDEMO_SOURCES *.cpp)
+FILE(GLOB AWUIDEMO_HEADERS *.h)
 
-ADD_EXECUTABLE(awuiDemo	${AWUIDEMO_FILES})
+SOURCE_GROUP("Source" FILES ${AWUIDEMO_SOURCES})
+SOURCE_GROUP("Headers" FILES ${AWUIDEMO_HEADERS})
+
+ADD_EXECUTABLE(awuiDemo	${AWUIDEMO_SOURCES}	${AWUIDEMO_HEADERS})
 
 TARGET_LINK_LIBRARIES(
 	awuiDemo
 	${OPENGL_LIBRARIES}
-#	/home/borsanza/opengl/libaw/release/x11/libaw.a
+#	../../libaw/release/x11/libaw.a
 	../../libaw/debug/nt/aw
-#	/home/borsanza/opengl/awui/src/libawui.so
-	../src/Debug/awui
+	awui
 )
