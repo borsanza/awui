@@ -18,6 +18,6 @@ ADD_EXECUTABLE(awuiDemo	${AWUIDEMO_SOURCES}	${AWUIDEMO_HEADERS})
 TARGET_LINK_LIBRARIES(
 	awuiDemo
 	${OPENGL_LIBRARIES}
-	libaw
-	libawui
+	aw
+	awui
 )
