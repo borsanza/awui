@@ -15,6 +15,7 @@ void Form1::InitializeComponent() {
 }
 
 void Form1::OnPaint() {
+/*
 	static int sube = 1;
 	static float py = (float) this->GetHeight();
 
@@ -42,4 +43,5 @@ void Form1::OnPaint() {
 	glVertex3f(0, this->GetHeight() - py, 0);
 	glVertex3f((float)this->GetWidth(), this->GetHeight() - py, 0);
 	glEnd();
+*/
 }
