@@ -42,5 +42,5 @@ void awuiGraphics::DrawLine(int r, int g, int b, int a, int x1, int y1, int x2, 
 	cairo_set_line_width(this->cr, 1.0);
 	cairo_move_to(this->cr, x1, y1);
 	cairo_line_to(this->cr, x2, y2);
-	cairo_stroke (this->cr);
+	cairo_stroke(this->cr);
 }
