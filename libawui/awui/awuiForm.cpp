@@ -3,6 +3,9 @@
 
 #include "awuiForm.h"
 
+#include "awuiBitmap.h"
+#include "awuiGraphics.h"
+
 extern "C" {
 	#include <aw/sysgl.h>
 	#include <aw/aw.h>
@@ -10,15 +13,13 @@ extern "C" {
 
 #include <cairo.h>
 
-#include <cairomm/context.h>
-#include <cairomm/surface.h>
-
 awuiForm::awuiForm() {
 	this->x = 10;
 	this->y = 10;
 	this->width = 300;
 	this->height = 300;
 	this->SetBackColor(226, 226, 226);
+	this->OnResizePre();
 }
 
 awuiForm::~awuiForm() {
@@ -30,6 +31,13 @@ void awuiForm::Show() {
 	this->w = awOpen(this->x, this->y, this->width, this->height);
 }
 
+#ifndef GL_BGRA
+	#define GL_BGRA 0x80E1
+#endif //GL_BGRA
+
+void awuiForm::OnResizePre() {
+}
+
 void awuiForm::OnPaintPre() {
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
 
@@ -39,64 +47,28 @@ void awuiForm::OnPaintPre() {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-/*
-	glClearColor(this->red / 255.0, this->green / 255.0, this->blue / 255.0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-*/
-
 	glDisable(GL_DEPTH_TEST);					// Enable Depth Testing
 
 
-	static int sube = 1;
-	static float py = (float) this->GetHeight();
-
-	if (sube)
-		py--;
-	else
-		py++;
-
-	if (py < 0) {
-		py = 0;
-		sube = 0;
-	}
-
-	if (py > this->GetHeight()) {
-		sube = 1;
-		py = (float) this->GetHeight();
-	}
-
-
-	GLuint tex;
-  glGenTextures(1, &tex);
-
-	Cairo::RefPtr<Cairo::ImageSurface> surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, this->GetWidth(), this->GetHeight());
-
-	Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
-
-	cr->set_source_rgb(1.0, 0.0, 0.0);
-	cr->paint(); // fill image with the color
-
-	cr->set_source_rgb(0.0, 1.0, 0.0);
-	cr->move_to (0, py);
-	cr->line_to (this->GetWidth(), py);
-	cr->stroke();
-	cr->move_to (0, this->GetHeight() - py);
-	cr->line_to (this->GetWidth(), this->GetHeight() - py);
-	cr->stroke();
+	awuiBitmap * bitmap = new awuiBitmap(this->GetWidth(), this->GetHeight());
+	awuiGraphics * g = awuiGraphics::FromImage(bitmap);
+	this->OnPaint(g);
+	delete g;
 
 	glEnable(GL_TEXTURE_2D);
 
-	glBindTexture(GL_TEXTURE_2D, tex);
+	GLuint texture;
+  glGenTextures(1, &texture);
 
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->GetWidth(), this->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, bitmap->image);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->get_width(), surface->get_height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->get_data());
-
+	delete bitmap;
 
 	glBegin(GL_QUADS);						// Begin Drawing Quads
-	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);		// Set The Alpha Value (Starts At 0.2)
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);		// Set The Alpha Value (Starts At 0.2)
 	glTexCoord2f(0,1);			// Texture Coordinate	(   0,   1 )
 	glVertex2f(0,0);				// First Vertex		(   0,   0 )
 
@@ -110,14 +82,9 @@ void awuiForm::OnPaintPre() {
 	glVertex2f(this->GetWidth(),0);				// Fourth Vertex	( 640,   0 )
 	glEnd();							// Done Drawing Quads
 
+	glDeleteTextures(1, &texture);
 
-	glEnable(GL_DEPTH_TEST);					// Enable Depth Testing
 	glDisable(GL_TEXTURE_2D);					// Disable 2D Texture Mapping
-	glDisable(GL_BLEND);						// Disable Blending
-	glBindTexture(GL_TEXTURE_2D,0);					// Unbind The Blur Texture
-
-
-	this->OnPaint();
 }
 
 void awuiForm::SetBackColor(int red, int green, int blue) {
@@ -140,6 +107,7 @@ void awuiForm::ProcessEvents(ac * c) {
 			case AW_EVENT_RESIZE:
 				this->width = awe->u.resize.w;
 				this->height = awe->u.resize.h;
+				this->OnResizePre();
 				this->OnResize();
 				break;
 /*

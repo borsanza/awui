@@ -2,6 +2,7 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "form1.h"
+#include <awui/awuiGraphics.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -14,8 +15,7 @@ Form1::Form1() {
 void Form1::InitializeComponent() {
 }
 
-void Form1::OnPaint() {
-/*
+void Form1::OnPaint(awuiGraphics * g) {
 	static int sube = 1;
 	static float py = (float) this->GetHeight();
 
@@ -34,14 +34,8 @@ void Form1::OnPaint() {
 		py = (float) this->GetHeight();
 	}
 
-	glColor3i(0, 0, 0);
-	glBegin(GL_LINES);
-	glVertex3f(0.0, py, 0.0);
-	glVertex3f((float)this->GetWidth(), py, 0);
-	glEnd();
-	glBegin(GL_LINES);
-	glVertex3f(0, this->GetHeight() - py, 0);
-	glVertex3f((float)this->GetWidth(), this->GetHeight() - py, 0);
-	glEnd();
-*/
+	g->FillRectangle(0, (py * 255) / this->GetHeight(), 0, 255, 0, 0, this->GetWidth(), this->GetHeight());
+	g->FillRectangle((py * 255) / this->GetHeight(), 0, 0, 255, py, 100, this->GetWidth() - 100, this->GetHeight() - 100);
+
+	g->DrawLine(255, 255, 255, 255, 0, py, this->GetWidth(), this->GetHeight() - py);
 }

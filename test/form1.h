@@ -9,5 +9,5 @@ public:
 
 private:
 	void InitializeComponent();
-	void OnPaint();
+	void OnPaint(awuiGraphics * g);
 };
