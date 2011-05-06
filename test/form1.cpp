@@ -3,6 +3,7 @@
 
 #include "form1.h"
 #include <awui/awuiGraphics.h>
+#include <awui/awuiColor.h>
 
 extern "C" {
 	#include <aw/sysgl.h>

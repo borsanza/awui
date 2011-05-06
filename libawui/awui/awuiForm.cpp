@@ -5,6 +5,7 @@
 
 #include "awuiBitmap.h"
 #include "awuiGraphics.h"
+#include "awuiColor.h"
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -18,13 +19,17 @@ awuiForm::awuiForm() {
 	this->y = 10;
 	this->width = 300;
 	this->height = 300;
-	this->SetBackColor(226, 226, 226);
+	this->backColor = awuiColor::FromArgb(226, 226, 226);
+	this->bitmap = 0;
 	this->OnResizePre();
 }
 
 awuiForm::~awuiForm() {
 	awMakeCurrent(this->w, 0);
 	awClose(this->w);
+
+	if (this->backColor != 0)
+		delete this->backColor;
 }
 
 void awuiForm::Show() {
@@ -36,6 +41,10 @@ void awuiForm::Show() {
 #endif //GL_BGRA
 
 void awuiForm::OnResizePre() {
+	if (this->bitmap != 0)
+		delete this->bitmap;
+
+	this->bitmap = new awuiBitmap(this->GetWidth(), this->GetHeight());
 }
 
 void awuiForm::OnPaintPre() {
@@ -50,8 +59,7 @@ void awuiForm::OnPaintPre() {
 	glDisable(GL_DEPTH_TEST);					// Enable Depth Testing
 
 
-	awuiBitmap * bitmap = new awuiBitmap(this->GetWidth(), this->GetHeight());
-	awuiGraphics * g = awuiGraphics::FromImage(bitmap);
+	awuiGraphics * g = awuiGraphics::FromImage(this->bitmap);
 	this->OnPaint(g);
 	delete g;
 
@@ -63,9 +71,7 @@ void awuiForm::OnPaintPre() {
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->GetWidth(), this->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, bitmap->image);
-
-	delete bitmap;
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->GetWidth(), this->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, this->bitmap->image);
 
 	glBegin(GL_QUADS);						// Begin Drawing Quads
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);		// Set The Alpha Value (Starts At 0.2)
@@ -87,16 +93,15 @@ void awuiForm::OnPaintPre() {
 	glDisable(GL_TEXTURE_2D);					// Disable 2D Texture Mapping
 }
 
-void awuiForm::SetBackColor(int red, int green, int blue) {
-	this->red = (red > 255?255:(red < 0?0:red));
-	this->green = (green > 255?255:(green < 0?0:green));
-	this->blue = (blue > 255?255:(blue < 0?0:blue));
+void awuiForm::SetBackColor(awuiColor * color) {
+	if (this->backColor != 0)
+		delete this->backColor;
+
+	this->backColor = awuiColor::FromArgb(color->ToArgb());
 }
 
-void awuiForm::GetBackColor(int &red, int &green, int &blue) {
-	red = this->red;
-	green = this->green;
-	blue = this->blue;
+awuiColor * awuiForm::GetBackColor() {
+	return awuiColor::FromArgb(this->backColor->ToArgb());
 }
 
 void awuiForm::ProcessEvents(ac * c) {
