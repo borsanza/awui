@@ -2,6 +2,9 @@
 // feedback: borsanza AT gmail DOT com
 
 class awuiImage;
+class awuiColor;
+class awuiPen;
+
 typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
 
@@ -15,7 +18,7 @@ public:
 
 	static awuiGraphics * FromImage(awuiImage *image);
 
-	void FillRectangle(int r, int g, int b, int a, int x, int y, int width, int height);
+	void FillRectangle(awuiColor * color, int x, int y, int width, int height);
 
-	void DrawLine(int r, int g, int b, int a, int x, int y, int x2, int y2);
+	void DrawLine(awuiPen * pen, float x1, float y1, float x2, float y2);
 };
