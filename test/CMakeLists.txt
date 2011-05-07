@@ -20,4 +20,5 @@ TARGET_LINK_LIBRARIES(
 	${OPENGL_LIBRARIES}
 	aw
 	awui
+	Imm32
 )

@@ -6,6 +6,7 @@
 #include "awuiBitmap.h"
 #include "awuiGraphics.h"
 #include "awuiColor.h"
+#include "awuiApplication.h"
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -26,14 +27,16 @@ awuiForm::awuiForm() {
 
 awuiForm::~awuiForm() {
 	awMakeCurrent(this->w, 0);
-	awClose(this->w);
+	awDel(this->w);
 
 	if (this->backColor != 0)
 		delete this->backColor;
 }
 
 void awuiForm::Show() {
-	this->w = awOpen(this->x, this->y, this->width, this->height);
+	this->w = awNew(awuiApplication::g);
+	awGeometry(this->w, this->x, this->y, this->width, this->height);
+	awShow(this->w);
 }
 
 #ifndef GL_BGRA
@@ -105,13 +108,14 @@ awuiColor * awuiForm::GetBackColor() {
 }
 
 void awuiForm::ProcessEvents(ac * c) {
-	const awEvent * awe;
+	const ae * e;
 	aw * w = this->w;
-	while ((awe = awNextEvent(w))) {
-		switch (awe->type) {
+
+	while ((e = awNextEvent(w))) {
+		switch (aeType(e)) {
 			case AW_EVENT_RESIZE:
-				this->width = awe->u.resize.w;
-				this->height = awe->u.resize.h;
+				this->width = aeWidth(e);
+				this->height = aeHeight(e);
 				this->OnResizePre();
 				this->OnResize();
 				break;

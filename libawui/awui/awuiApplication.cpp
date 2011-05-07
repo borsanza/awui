@@ -9,13 +9,14 @@ extern "C" {
 	#include <aw/aw.h>
 }
 
+struct _ag * awuiApplication::g = 0;
+
 void awuiApplication::Run(awuiForm * form = 0) {
-	if (!awInit())
-		return;
+	awuiApplication::g = agNew("prueba");
+	ac * c = acNew(awuiApplication::g, 0);
+	aw * w = awNew(awuiApplication::g);
 
-	ac * c = acNew(0);
-
-	acSetInterval(c, 1);
+	awSetInterval(w, 1);
 
 	form->Show();
 
@@ -33,5 +34,6 @@ void awuiApplication::Run(awuiForm * form = 0) {
 	awMakeCurrent(form->w, 0);
 
 	acDel(c);
-	awEnd();
+	awDel(w);
+	agDel(awuiApplication::g);
 }
