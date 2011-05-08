@@ -3,10 +3,10 @@
 
 #include "awuiForm.h"
 
+#include "awuiApplication.h"
+#include "awuiArrayList.h"
 #include "awuiBitmap.h"
 #include "awuiGraphics.h"
-#include "awuiColor.h"
-#include "awuiApplication.h"
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -14,23 +14,22 @@ extern "C" {
 }
 
 #include <cairo.h>
+#include <stdlib.h>
+
+#ifndef GL_BGRA
+	#define GL_BGRA 0x80E1
+#endif
 
 awuiForm::awuiForm() {
 	this->x = 10;
 	this->y = 10;
 	this->width = 300;
 	this->height = 300;
-	this->backColor = awuiColor::FromArgb(226, 226, 226);
-	this->bitmap = 0;
-	this->OnResizePre();
 }
 
 awuiForm::~awuiForm() {
-	awMakeCurrent(this->w, 0);
+	awMakeCurrent(this->w, NULL);
 	awDel(this->w);
-
-	if (this->backColor != 0)
-		delete this->backColor;
 }
 
 void awuiForm::Show() {
@@ -39,31 +38,31 @@ void awuiForm::Show() {
 	awShow(this->w);
 }
 
-#ifndef GL_BGRA
-	#define GL_BGRA 0x80E1
-#endif //GL_BGRA
-
-void awuiForm::OnResizePre() {
-	if (this->bitmap != 0)
-		delete this->bitmap;
-
-	this->bitmap = new awuiBitmap(this->GetWidth(), this->GetHeight());
-}
-
 void awuiForm::OnPaintPre() {
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();	
-	glOrtho(0.0f, this->GetWidth(),this->GetHeight(), 0.0f,-1.0f,1.0f);
+//	glOrtho(0.0f, this->GetWidth(), this->GetHeight(), 0.0f, -1.0f, 1.0f);
+	glOrtho(0.0f, this->GetWidth(), 0.0f, this->GetHeight(), -1.0f, 1.0f);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glDisable(GL_DEPTH_TEST);					// Enable Depth Testing
-
+	glDisable(GL_DEPTH_TEST);
 
 	awuiGraphics * g = awuiGraphics::FromImage(this->bitmap);
+	g->FillRectangle(this->backColor, 0.0f, 0.0f, (float)this->GetWidth(), (float)this->GetHeight());
 	this->OnPaint(g);
+	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
+		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+
+		awuiGraphics * g2 = awuiGraphics::FromImage(control->bitmap);
+		g2->FillRectangle(control->backColor, 0.0f, 0.0f, (float)control->GetWidth(), (float)control->GetHeight());
+		control->OnPaint(g2);
+		g->DrawImage(control->bitmap, (float)control->GetLeft(), (float)control->GetTop());
+		delete g2;
+	}
+
 	delete g;
 
 	glEnable(GL_TEXTURE_2D);
@@ -76,35 +75,25 @@ void awuiForm::OnPaintPre() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->GetWidth(), this->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, this->bitmap->image);
 
-	glBegin(GL_QUADS);						// Begin Drawing Quads
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);		// Set The Alpha Value (Starts At 0.2)
-	glTexCoord2f(0,1);			// Texture Coordinate	(   0,   1 )
-	glVertex2f(0,0);				// First Vertex		(   0,   0 )
+	glBegin(GL_QUADS);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	glTexCoord2f(0,0);			// Texture Coordinate	(   0,   0 )
-	glVertex2f(0,this->GetHeight());				// Second Vertex	(   0, 480 )
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(0.0f, 0.0f);
 
-	glTexCoord2f(1,0);			// Texture Coordinate	(   1,   0 )
-	glVertex2f(this->GetWidth(),this->GetHeight());				// Third Vertex		( 640, 480 )
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(0.0f, (float)this->GetHeight());
 
-	glTexCoord2f(1,1);			// Texture Coordinate	(   1,   1 )
-	glVertex2f(this->GetWidth(),0);				// Fourth Vertex	( 640,   0 )
-	glEnd();							// Done Drawing Quads
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((float)this->GetWidth(), (float)this->GetHeight());
+
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((float)this->GetWidth(), 0.0f);
+	glEnd();
 
 	glDeleteTextures(1, &texture);
 
-	glDisable(GL_TEXTURE_2D);					// Disable 2D Texture Mapping
-}
-
-void awuiForm::SetBackColor(awuiColor * color) {
-	if (this->backColor != 0)
-		delete this->backColor;
-
-	this->backColor = awuiColor::FromArgb(color->ToArgb());
-}
-
-awuiColor * awuiForm::GetBackColor() {
-	return awuiColor::FromArgb(this->backColor->ToArgb());
+	glDisable(GL_TEXTURE_2D);
 }
 
 void awuiForm::ProcessEvents(ac * c) {

@@ -3,9 +3,10 @@
 
 #include "awuiPen.h"
 #include "awuiColor.h"
+#include <stdlib.h>
 
 awuiPen::awuiPen(awuiColor * color) {
-	this->color = 0;
+	this->color = NULL;
 	this->SetColor(color);
 	this->SetWidth(1);
 	this->SetCap(awuiCap::Butt);
@@ -13,7 +14,7 @@ awuiPen::awuiPen(awuiColor * color) {
 }
 
 awuiPen::awuiPen(awuiColor * color, float width) {
-	this->color = 0;
+	this->color = NULL;
 	this->SetColor(color);
 	this->SetWidth(width);
 	this->SetCap(awuiCap::Butt);
@@ -29,7 +30,7 @@ awuiColor * awuiPen::GetColor() {
 }
 
 void awuiPen::SetColor(awuiColor * color) {
-	if (this->color != 0)
+	if (this->color != NULL)
 		delete this->color;
 
 	this->color = awuiColor::FromArgb(color->ToArgb());

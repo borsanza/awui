@@ -6,7 +6,7 @@
 
 awuiImage::awuiImage()
 {
-	this->image = 0;
+	this->image = NULL;
 	this->width = 0;
 	this->height = 0;
 	this->btpp = 4;
@@ -14,10 +14,8 @@ awuiImage::awuiImage()
 
 awuiImage::~awuiImage()
 {
-	if (this->image != 0) {
+	if (this->image != NULL)
 		free(this->image);
-		this->image = 0;
-	}
 }
 
 int awuiImage::GetWidth() {

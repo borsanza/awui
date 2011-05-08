@@ -1,14 +1,29 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
+#ifndef __AWUICONTROL_H__
+#define __AWUICONTROL_H__
+
 #include "awuiComponent.h"
 
+class awuiArrayList;
+class awuiBitmap;
+class awuiColor;
+class awuiGraphics;
+
 class awuiControl :	public awuiComponent {
+	friend class awuiForm;
+
 protected:
 	int x;
 	int y;
 	int width;
 	int height;
+	awuiArrayList * controls;
+	awuiBitmap * bitmap;
+	awuiColor * backColor;
+
+	void OnResizePre();
 
 public:
 	awuiControl();
@@ -33,4 +48,13 @@ public:
 	void GetSize(int &width, int &height);
 
 	void GetBounds(int &x, int &y, int &width, int &height);
+
+	awuiArrayList * GetControls();
+
+	void SetBackColor(awuiColor * color);
+	awuiColor * GetBackColor();
+
+	virtual void OnPaint(awuiGraphics * g) {}
 };
+
+#endif

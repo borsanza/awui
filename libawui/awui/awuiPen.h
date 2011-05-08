@@ -9,9 +9,9 @@ class awuiColor;
 class awuiCap {
 public:
 	enum Cap {
-    Butt,
-    Round,
-    Square
+		Butt,
+		Round,
+		Square
 	};
 };
 

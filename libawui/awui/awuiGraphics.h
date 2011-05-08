@@ -12,13 +12,18 @@ class awuiGraphics {
 private:
 	cairo_surface_t *cairo_surface;
 	cairo_t *cr;
+
+	void SetPen(awuiPen * pen);
+
 public:
 	awuiGraphics(void);
 	~awuiGraphics(void);
 
 	static awuiGraphics * FromImage(awuiImage *image);
 
-	void FillRectangle(awuiColor * color, int x, int y, int width, int height);
-
+	void DrawRectangle(awuiPen * pen, float x, float y, float width, float height);
+	void FillRectangle(awuiColor * color, float x, float y, float width, float height);
+	void DrawImage(awuiImage * image, float x, float y);
+	void DrawImage(awuiImage * image, float x, float y, float width, float height);
 	void DrawLine(awuiPen * pen, float x1, float y1, float x2, float y2);
 };

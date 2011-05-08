@@ -36,7 +36,8 @@ int awuiColor::ToArgb() {
 float awuiColor::GetBrightness() {
 	int M = awuiMath::Max(awuiMath::Max(this->r, this->g), this->b);
 	int m = awuiMath::Min(awuiMath::Min(this->r, this->g), this->b);
-	return ((M + m) / 2.0) / 255.0;
+
+	return ((M + m) / 2.0f) / 255.0f;
 }
 
 float awuiColor::GetHue() {
@@ -60,7 +61,7 @@ float awuiColor::GetHue() {
 	while (H < 0.0)
 		H += 360.0;
 
-	return H;
+	return (float)H;
 }
 
 float awuiColor::GetSaturation() {
@@ -75,7 +76,7 @@ float awuiColor::GetSaturation() {
 
 	value /= 255.0;
 
-	return value;
+	return (float)value;
 }
 
 awuiColor * awuiColor::FromArgb(int argb) {

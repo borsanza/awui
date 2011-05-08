@@ -2,12 +2,14 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiButton.h"
+#include "awuiColor.h"
 
-awuiButton::awuiButton()
-{
+awuiButton::awuiButton() {
 	this->SetSize(75,23);
+	awuiColor * color = awuiColor::FromArgb(255, 0, 0);
+	this->SetBackColor(color);
+	delete color;
 }
 
-awuiButton::~awuiButton()
-{
+awuiButton::~awuiButton() {
 }

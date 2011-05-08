@@ -9,11 +9,11 @@ extern "C" {
 	#include <aw/aw.h>
 }
 
-struct _ag * awuiApplication::g = 0;
+struct _ag * awuiApplication::g = NULL;
 
-void awuiApplication::Run(awuiForm * form = 0) {
+void awuiApplication::Run(awuiForm * form = NULL) {
 	awuiApplication::g = agNew("prueba");
-	ac * c = acNew(awuiApplication::g, 0);
+	ac * c = acNew(awuiApplication::g, NULL);
 	aw * w = awNew(awuiApplication::g);
 
 	awSetInterval(w, 1);
@@ -31,7 +31,7 @@ void awuiApplication::Run(awuiForm * form = 0) {
 		}
 	}
 
-	awMakeCurrent(form->w, 0);
+	awMakeCurrent(form->w, NULL);
 
 	acDel(c);
 	awDel(w);
