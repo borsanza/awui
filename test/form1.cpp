@@ -33,7 +33,7 @@ void Form1::InitializeComponent() {
 
 float Form1::GetAnimationValue() {
 	static int sube = 1;
-	static float py = (float) this->GetHeight();
+	static float py = (float) 100.0f;
 
 	if (sube)
 		py--;
@@ -45,9 +45,9 @@ float Form1::GetAnimationValue() {
 		sube = 0;
 	}
 
-	if (py > this->GetHeight()) {
+	if (py > 100.0f) {
 		sube = 1;
-		py = (float) this->GetHeight();
+		py = (float) 100.0f;
 	}
 
 	return py;
@@ -56,11 +56,11 @@ float Form1::GetAnimationValue() {
 void Form1::OnPaint(awuiGraphics * g) {
 	float py = this->GetAnimationValue();
 
-	g->DrawLine(this->pen1, 50.0f, py, this->GetWidth() - 50.0f, this->GetHeight() - py);
+	g->DrawLine(this->pen1, 50.0f, py * this->GetHeight() / 100.0f, this->GetWidth() - 50.0f, this->GetHeight() - (py * this->GetHeight() / 100.0f));
 
-	awuiColor * color2 = awuiColor::FromArgb((int)((py * 255) / this->GetHeight()), (int)255 - ((py * 255) / this->GetHeight()), 0);
-	g->FillRectangle(color2, py, 100.0f, this->GetWidth() - (py + 50.0f), this->GetHeight() - 150.0f);
-	g->DrawRectangle(this->pen1, py, 100.0f, this->GetWidth() - (py + 50.0f), this->GetHeight() - 150.0f);
+	awuiColor * color2 = awuiColor::FromArgb((int)((py * 255) / 100.0f), (int)255 - ((py * 255) / 100.0f), 0);
+	g->FillRectangle(color2, py * this->GetWidth() / 100.0f, 100.0f, this->GetWidth() - (py * this->GetWidth() / 100.0f + 50.0f), this->GetHeight() - 150.0f);
+	g->DrawRectangle(this->pen1, py * this->GetWidth() / 100.0f, 100.0f, this->GetWidth() - (py * this->GetWidth() / 100.0f + 50.0f), this->GetHeight() - 150.0f);
 
 	delete color2;
 }

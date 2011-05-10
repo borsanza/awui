@@ -5,6 +5,7 @@
 
 #include "awuiMath.h"
 #include <math.h>
+#include <stdlib.h>
 
 awuiColor::awuiColor() {
 	this->a = 0;

@@ -20,7 +20,7 @@ awuiControl::awuiControl() {
 
 awuiControl::~awuiControl() {
 	for (int i = 0; i < this->controls->GetCount(); i++)
-		delete this->controls->Get(i);
+		delete ((awuiControl *)this->controls->Get(i));
 
 	this->controls->Clear();
 	delete this->controls;
