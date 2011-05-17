@@ -5,6 +5,8 @@
 #include <awui/awuiGraphics.h>
 #include <awui/awuiColor.h>
 #include <awui/awuiButton.h>
+#include <awui/awuiSplitContainer.h>
+#include <awui/awuiControl.h>
 #include <awui/awuiPen.h>
 #include <awui/awuiArrayList.h>
 
@@ -21,16 +23,23 @@ Form1::~Form1() {
 }
 
 void Form1::InitializeComponent() {
+/*
 	awuiColor * color3 = awuiColor::FromArgb(0, 0, 0);
 	this->pen1 = new awuiPen(color3, 5);
 	this->pen1->SetCap(awuiCap::Round);
 	delete color3;
-
+*/
 	awuiButton * button = new awuiButton();
-	button->SetLocation(50, 8);
-	this->GetControls()->Add(button);
+	awuiButton * button2 = new awuiButton();
+	awuiSplitContainer * splitter = new awuiSplitContainer();
+	splitter->GetControls()->Add(button);
+	splitter->GetControls()->Add(button2);
+	
+	
+	this->GetControls()->Add(splitter);
+	splitter->SetDock(awuiControl::Fill);
 }
-
+/*
 float Form1::GetAnimationValue() {
 	static int sube = 1;
 	static float py = (float) 100.0f;
@@ -64,3 +73,4 @@ void Form1::OnPaint(awuiGraphics * g) {
 
 	delete color2;
 }
+*/

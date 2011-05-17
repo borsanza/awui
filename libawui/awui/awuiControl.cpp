@@ -1,10 +1,11 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja SÃ¡nchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiArrayList.h"
 #include "awuiBitmap.h"
 #include "awuiColor.h"
 #include "awuiControl.h"
+#include "awuiGraphics.h"
 #include <stdlib.h>
 
 awuiControl::awuiControl() {
@@ -14,6 +15,7 @@ awuiControl::awuiControl() {
 	this->width = 100;
 	this->height = 100;
 	this->bitmap = NULL;
+	this->dock = awuiControl::None;
 	this->backColor = awuiColor::FromArgb(226, 226, 226);
 	this->OnResizePre();
 }
@@ -108,6 +110,9 @@ void awuiControl::OnResizePre() {
 		delete this->bitmap;
 
 	this->bitmap = new awuiBitmap(this->GetWidth(), this->GetHeight());
+	
+	this->OnResize();
+	this->Layout();
 }
 
 void awuiControl::SetBackColor(awuiColor * color) {
@@ -119,4 +124,42 @@ void awuiControl::SetBackColor(awuiColor * color) {
 
 awuiColor * awuiControl::GetBackColor() {
 	return awuiColor::FromArgb(this->backColor->ToArgb());
+}
+
+void awuiControl::SetDock(awuiControl::DockStyle dock) {
+	if (this->dock != dock) {
+		this->dock = dock;
+		this->Layout();
+	}
+}
+
+awuiControl::DockStyle awuiControl::getDock() {
+	return this->dock;
+}
+
+void awuiControl::Layout() {
+	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
+		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+		switch (control->getDock()) {
+			case awuiControl::Fill:
+				control->SetBounds(0, 0, this->GetWidth(), this->GetHeight());
+				break;
+		}
+	}
+}
+
+void awuiControl::OnPaintPre(awuiGraphics * g) {
+	g->FillRectangle(this->backColor, 0.0f, 0.0f, (float)this->GetWidth(), (float)this->GetHeight());
+
+	this->OnPaint(g);
+
+	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
+		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+
+		awuiGraphics * g2 = awuiGraphics::FromImage(control->bitmap);
+		g2->FillRectangle(control->backColor, 0.0f, 0.0f, (float)control->GetWidth(), (float)control->GetHeight());
+		control->OnPaintPre(g2);
+		g->DrawImage(control->bitmap, (float)control->GetLeft(), (float)control->GetTop());
+		delete g2;
+	}
 }

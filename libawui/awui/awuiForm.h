@@ -13,7 +13,7 @@ class awuiForm : public awuiControl {
 
 private:
 	aw * w;
-	void OnPaintPre();
+	void OnPaintForm();
 
 	void ProcessEvents(ac * c);
 
@@ -22,5 +22,4 @@ public:
 	~awuiForm();
 
 	void Show();
-	virtual void OnResize() {}
 };

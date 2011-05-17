@@ -25,7 +25,7 @@ void awuiApplication::Run(awuiForm * form = NULL) {
 		awMakeCurrent(form->w, c);
 		form->ProcessEvents(c);
 		if (!g_exit) {
-			form->OnPaintPre();
+			form->OnPaintForm();
 			glFlush();
 			awSwapBuffers(form->w);
 		}

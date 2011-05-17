@@ -1,4 +1,4 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sï¿½nchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiArrayList.h"
@@ -137,7 +137,7 @@ void awuiArrayList::SetChildIndex(void * item, int index) {
 		itemListAux = itemListAux->next;
 	}
 
-	// Sino encontramos el item, descartamos su inserción
+	// Sino encontramos el item, descartamos su inserciï¿½n
 	if (itemListAux == NULL)
 		return;
 
@@ -160,7 +160,7 @@ void awuiArrayList::SetChildIndex(void * item, int index) {
 		itemListAux2 = itemListAux2->next;
 	}
 
-	// Si estamos en esta situación es que no se ha podido insertar,
+	// Si estamos en esta situaciï¿½n es que no se ha podido insertar,
 	// lo insertamos el ultimo
 	if (itemListAux2 == NULL) {
 		last->next = itemListAux;
