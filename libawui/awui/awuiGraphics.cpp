@@ -49,11 +49,13 @@ void awuiGraphics::DrawImage(awuiImage * image, float x, float y) {
 void awuiGraphics::DrawImage(awuiImage * image, float x, float y, float width, float height) {
 	cairo_surface_t *surfaceAux = cairo_image_surface_create_for_data(image->image, CAIRO_FORMAT_ARGB32, image->GetWidth(), image->GetHeight(), image->btpp * image->width);
 
+	cairo_save(this->cr);
 	cairo_translate(this->cr, x, y);
 	cairo_scale(this->cr, image->GetWidth() / width, image->GetHeight() / height);
 
 	cairo_set_source_surface(this->cr, surfaceAux, 0, 0);
 	cairo_paint(this->cr);
+	cairo_restore(this->cr);
 
 	cairo_surface_destroy(surfaceAux);
 }
@@ -80,7 +82,9 @@ void awuiGraphics::SetPen(awuiPen * pen) {
 
 void awuiGraphics::DrawLine(awuiPen * pen, float x1, float y1, float x2, float y2) {
 	this->SetPen(pen);
+	cairo_save(this->cr);
 	cairo_move_to(this->cr, x1, y1);
 	cairo_line_to(this->cr, x2, y2);
 	cairo_stroke(this->cr);
+	cairo_restore(this->cr);
 }

@@ -3,6 +3,7 @@
 
 #include "awuiApplication.h"
 #include "awuiForm.h"
+#include <unistd.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -28,6 +29,7 @@ void awuiApplication::Run(awuiForm * form = NULL) {
 			form->OnPaintForm();
 			glFlush();
 			awSwapBuffers(form->w);
+			usleep(16000);
 		}
 	}
 

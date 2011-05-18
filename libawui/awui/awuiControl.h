@@ -67,7 +67,7 @@ public:
 	awuiColor * GetBackColor();
 
 	void SetDock(awuiControl::DockStyle dock);
-	awuiControl::DockStyle getDock();
+	awuiControl::DockStyle GetDock();
 	
 	virtual void OnPaint(awuiGraphics * g) {}
 	virtual void OnResize() {}

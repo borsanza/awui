@@ -133,16 +133,37 @@ void awuiControl::SetDock(awuiControl::DockStyle dock) {
 	}
 }
 
-awuiControl::DockStyle awuiControl::getDock() {
+awuiControl::DockStyle awuiControl::GetDock() {
 	return this->dock;
 }
 
 void awuiControl::Layout() {
+	int x1 = 0;
+	int y1 = 0;
+	int x2 = this->GetWidth();
+	int y2 = this->GetHeight();
+	
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
-		switch (control->getDock()) {
+		switch (control->GetDock()) {
 			case awuiControl::Fill:
-				control->SetBounds(0, 0, this->GetWidth(), this->GetHeight());
+				control->SetBounds(x1, y1, x2 - x1, y2 - y1);
+				break;
+			case awuiControl::Left:
+				control->SetBounds(x1, y1, control->GetWidth(), y2 - y1);
+				x1 += control->GetWidth();
+				break;
+			case awuiControl::Right:
+				control->SetBounds(x2 - control->GetWidth(), y1, control->GetWidth(), y2 - y1);
+				x2 -= control->GetWidth();
+				break;
+			case awuiControl::Top:
+				control->SetBounds(x1, y1, x2 - x1, control->GetHeight());
+				y1 += control->GetHeight();
+				break;
+			case awuiControl::Bottom:
+				control->SetBounds(x1, y2 - control->GetHeight(), x2 - x1, control->GetHeight());
+				y2 -= control->GetHeight();
 				break;
 		}
 	}
@@ -150,8 +171,6 @@ void awuiControl::Layout() {
 
 void awuiControl::OnPaintPre(awuiGraphics * g) {
 	g->FillRectangle(this->backColor, 0.0f, 0.0f, (float)this->GetWidth(), (float)this->GetHeight());
-
-	this->OnPaint(g);
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
@@ -162,4 +181,6 @@ void awuiControl::OnPaintPre(awuiGraphics * g) {
 		g->DrawImage(control->bitmap, (float)control->GetLeft(), (float)control->GetTop());
 		delete g2;
 	}
+
+	this->OnPaint(g);
 }

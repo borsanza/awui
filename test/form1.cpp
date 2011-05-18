@@ -23,23 +23,58 @@ Form1::~Form1() {
 }
 
 void Form1::InitializeComponent() {
-/*
 	awuiColor * color3 = awuiColor::FromArgb(0, 0, 0);
 	this->pen1 = new awuiPen(color3, 5);
 	this->pen1->SetCap(awuiCap::Round);
 	delete color3;
-*/
-	awuiButton * button = new awuiButton();
+
+	awuiColor * color;
+	awuiButton * button;
+	
+	button = new awuiButton();
+	color = awuiColor::FromArgb(64, 64, 64);
+	button->SetDock(awuiControl::Top);
+	button->SetBackColor(color);
+	delete color;
+	this->GetControls()->Add(button);
+
+	button = new awuiButton();
+	color = awuiColor::FromArgb(128, 128, 128);
+	button->SetDock(awuiControl::Bottom);
+	button->SetBackColor(color);
+	delete color;
+	this->GetControls()->Add(button);
+
+	button = new awuiButton();
+	color = awuiColor::FromArgb(192, 192, 192);
+	button->SetDock(awuiControl::Left);
+	button->SetBackColor(color);
+	delete color;
+	this->GetControls()->Add(button);
+
+	button = new awuiButton();
+	color = awuiColor::FromArgb(255, 255, 255);
+	button->SetDock(awuiControl::Right);
+	button->SetBackColor(color);
+	delete color;
+	this->GetControls()->Add(button);
+
+	color = awuiColor::FromArgb(255, 0, 0);
+	this->SetBackColor(color);
+	delete color;
+
+	button = new awuiButton();
 	awuiButton * button2 = new awuiButton();
 	awuiSplitContainer * splitter = new awuiSplitContainer();
 	splitter->GetControls()->Add(button);
 	splitter->GetControls()->Add(button2);
 	
-	
 	this->GetControls()->Add(splitter);
 	splitter->SetDock(awuiControl::Fill);
 }
-/*
+
+
+
 float Form1::GetAnimationValue() {
 	static int sube = 1;
 	static float py = (float) 100.0f;
@@ -73,4 +108,3 @@ void Form1::OnPaint(awuiGraphics * g) {
 
 	delete color2;
 }
-*/

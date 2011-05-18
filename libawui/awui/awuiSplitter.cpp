@@ -8,6 +8,8 @@ awuiSplitter::awuiSplitter() {
   awuiColor * color = awuiColor::FromArgb(0, 255, 0);
   this->SetBackColor(color);
   delete color;
+	
+	this->SetSize(20, 200);
 }
 
 awuiSplitter::~awuiSplitter() {

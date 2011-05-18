@@ -14,7 +14,7 @@ public:
 	~Form1();
 
 private:
-//	float GetAnimationValue();
+	float GetAnimationValue();
 	void InitializeComponent();
-//	void OnPaint(awuiGraphics * g);
+	void OnPaint(awuiGraphics * g);
 };

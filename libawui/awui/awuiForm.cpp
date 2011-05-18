@@ -46,7 +46,7 @@ void awuiForm::OnPaintForm() {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//	glOrtho(0.0f, this->GetWidth(), this->GetHeight(), 0.0f, -1.0f, 1.0f);
+//	glOrtho(0.0f, this->GetWidth(), this->GetHeight(), 0.0f, -1.0f, 1.0f);
 	glOrtho(0.0f, this->GetWidth(), 0.0f, this->GetHeight(), -1.0f, 1.0f);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -92,12 +92,14 @@ void awuiForm::ProcessEvents(ac * c) {
 	const ae * e;
 	aw * w = this->w;
 
+	int resizex = -1;
+	int resizey = -1;
+	
 	while ((e = awNextEvent(w))) {
 		switch (aeType(e)) {
 			case AW_EVENT_RESIZE:
-				this->width = aeWidth(e);
-				this->height = aeHeight(e);
-				this->OnResizePre();
+				resizex = aeWidth(e);
+				resizey = aeHeight(e);
 				break;
 /*
 			case AW_EVENT_CLOSE:
@@ -147,5 +149,10 @@ void awuiForm::ProcessEvents(ac * c) {
 				break;
 		}
 	}
-}
 
+	if ((resizex != -1) && (resizey != -1)) {
+		this->width = resizex;
+		this->height = resizey;
+		this->OnResizePre();
+	}
+}
