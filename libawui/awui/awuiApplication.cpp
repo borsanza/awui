@@ -27,7 +27,6 @@ void awuiApplication::Run(awuiForm * form = NULL) {
 		form->ProcessEvents(c);
 		if (!g_exit) {
 			form->OnPaintForm();
-			glFlush();
 			awSwapBuffers(form->w);
 //			usleep(16000);
 		}

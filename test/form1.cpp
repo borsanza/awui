@@ -73,8 +73,6 @@ void Form1::InitializeComponent() {
 	splitter->SetDock(awuiControl::Fill);
 }
 
-
-
 float Form1::GetAnimationValue() {
 	static int sube = 1;
 	static float py = (float) 100.0f;

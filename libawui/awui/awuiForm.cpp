@@ -27,9 +27,19 @@ awuiForm::awuiForm() {
 	this->y = 10;
 	this->width = 300;
 	this->height = 300;
+
+	glGenTextures(0, &this->texture1);
+	glGenTextures(1, &this->texture2);
+	this->old1w = -1;
+	this->old1h = -1;
+	this->old2w = -1;
+	this->old2h = -1;
 }
 
 awuiForm::~awuiForm() {
+	glDeleteTextures(1, &this->texture2);
+	glDeleteTextures(0, &this->texture1);
+
 	awMakeCurrent(this->w, NULL);
 	awDel(this->w);
 }
@@ -41,50 +51,65 @@ void awuiForm::Show() {
 }
 
 void awuiForm::OnPaintForm() {
+	static int pos = 0;
+	static int first = 1;
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-//	glOrtho(0.0f, this->GetWidth(), this->GetHeight(), 0.0f, -1.0f, 1.0f);
-	glOrtho(0.0f, this->GetWidth(), 0.0f, this->GetHeight(), -1.0f, 1.0f);
-
+	glOrtho(0.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glDisable(GL_DEPTH_TEST);
 
 	awuiGraphics * g = awuiGraphics::FromImage(this->bitmap);
 	this->OnPaintPre(g);
 	delete g;
 
 	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_LIGHTING);
 
-	GLuint texture;
-	glGenTextures(1, &texture);
-
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, pos? this->texture2 : this->texture1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->GetWidth(), this->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, this->bitmap->image);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
+	if (((this->old1w == this->GetWidth()) && (this->old1h == this->GetHeight()) && !pos)  ||
+		((this->old2w == this->GetWidth()) && (this->old2h == this->GetHeight()) && pos))
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, this->GetWidth(), this->GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, this->bitmap->image);
+	else
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, this->GetWidth(), this->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, this->bitmap->image);
 
-	glBegin(GL_QUADS);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	if (pos) {
+		this->old2w = this->GetWidth();
+		this->old2h = this->GetHeight();
+	} else {
+		this->old1w = this->GetWidth();
+		this->old1h = this->GetHeight();
+	}
 
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(0.0f, 0.0f);
+	if (!first) {
+		glBindTexture(GL_TEXTURE_2D, pos? this->texture1 : this->texture2);
 
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(0.0f, (float)this->GetHeight());
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((float)this->GetWidth(), (float)this->GetHeight());
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(0.0f, 1.0f, 0.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(1.0f, 1.0f, 0.0f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(1.0f, 0.0f, 0.0f);
+		glEnd();
+	}
 
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((float)this->GetWidth(), 0.0f);
-	glEnd();
-
-	glDeleteTextures(1, &texture);
-
-	glDisable(GL_TEXTURE_2D);
+	first = 0;
+	pos = !pos;
 }
 
 void awuiForm::ProcessEvents(ac * c) {
