@@ -102,7 +102,7 @@ void Form1::OnPaint(awuiGraphics * g) {
 
 	g->DrawLine(this->pen1, 50.0f, py * this->GetHeight() / 100.0f, this->GetWidth() - 50.0f, this->GetHeight() - (py * this->GetHeight() / 100.0f));
 
-	awuiColor * color2 = awuiColor::FromArgb((int)((py * 255) / 100.0f), (int)255 - ((py * 255) / 100.0f), 0);
+	awuiColor * color2 = awuiColor::FromArgb((int)((py * 255.0f) / 100.0f), (int)(255.0f - ((py * 255.0f) / 100.0f)), 0);
 	g->FillRectangle(color2, py * this->GetWidth() / 100.0f, 100.0f, this->GetWidth() - (py * this->GetWidth() / 100.0f + 50.0f), this->GetHeight() - 150.0f);
 	g->DrawRectangle(this->pen1, py * this->GetWidth() / 100.0f, 100.0f, this->GetWidth() - (py * this->GetWidth() / 100.0f + 50.0f), this->GetHeight() - 150.0f);
 

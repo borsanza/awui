@@ -16,7 +16,6 @@ extern "C" {
 	#include <aw/aw.h>
 }
 
-#include <cairo.h>
 #include <stdlib.h>
 
 #ifndef GL_BGRA

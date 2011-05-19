@@ -4,8 +4,8 @@ PROJECT( libawui )
 
 INCLUDE_DIRECTORIES(
 	../libaw/
-	/usr/include/cairo/
-#	"C:\\Archivos de programa\\Archivos comunes\\GTK\\2.0\\include\\cairo\\"
+#	/usr/include/cairo/
+	"C:\\awui-project\\cairo\\include\\cairo\\"
 )
 
 FILE(GLOB LIBAWUI_SOURCES awui/*.cpp)
@@ -19,6 +19,6 @@ ADD_LIBRARY(awui STATIC ${LIBAWUI_SOURCES} ${LIBAWUI_HEADERS})
 TARGET_LINK_LIBRARIES(
 	awui
 	aw
-	cairo
-#	"C:\\Archivos de programa\\Archivos comunes\\GTK\\2.0\\lib\\libcairo.dll.a"
+#	cairo
+	"C:\\awui-project\\cairo\\lib\\libcairo.dll.a"
 )
