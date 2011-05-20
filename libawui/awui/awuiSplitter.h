@@ -2,9 +2,16 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiControl.h"
+#include "awuiSplitContainer.h"
 
 class awuiSplitter : public awuiControl {
+private:
+		awuiSplitContainer::Orientation orientation;
+
 public:
   awuiSplitter();
   ~awuiSplitter();
+	
+	awuiSplitContainer::Orientation GetOrientation();
+	void SetOrientation(awuiSplitContainer::Orientation orientation);
 };

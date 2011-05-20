@@ -2,7 +2,6 @@
 // feedback: borsanza AT gmail DOT com
 
 #include <stdarg.h>
-#include <stdio.h>
 
 #include "awuiForm.h"
 
@@ -15,8 +14,6 @@ extern "C" {
 	#include <aw/sysgl.h>
 	#include <aw/aw.h>
 }
-
-#include <stdlib.h>
 
 #ifndef GL_BGRA
 	#define GL_BGRA 0x80E1
@@ -167,7 +164,7 @@ void awuiForm::ProcessEvents(ac * c) {
 				break;
 */
 			case AW_EVENT_MOTION:
-				printf("Motion: %dx%d\n", aeX(e), aeY(e));
+				this->OnMouseMovePre(aeX(e), aeY(e));
 				break;
 			default:
 				break;

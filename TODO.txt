@@ -1,0 +1,1 @@
++ Hacer que se produzca un layout cuando se agrega un componente.

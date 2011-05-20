@@ -1,15 +1,19 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiArrayList.h"
+#include "awuiControlCollection.h"
 #include "awuiBitmap.h"
 #include "awuiColor.h"
 #include "awuiControl.h"
 #include "awuiGraphics.h"
+
 #include <stdlib.h>
+#include <string>
+#include <stdio.h>
+#include <iostream>
 
 awuiControl::awuiControl() {
-	this->controls = new awuiArrayList();
+	this->controls = new awuiControlCollection(this);
 	this->x = 0;
 	this->y = 0;
 	this->width = 100;
@@ -76,6 +80,14 @@ int awuiControl::GetTop() {
 
 int awuiControl::GetLeft() {
 	return this->x;
+}
+
+int awuiControl::GetRight() {
+	return this->x + this->width - 1;
+}
+
+int awuiControl::GetBottom() {
+	return this->y + this->height - 1;
 }
 
 void awuiControl::GetLocation(int &x, int &y) {
@@ -183,4 +195,25 @@ void awuiControl::OnPaintPre(awuiGraphics * g) {
 	}
 
 	this->OnPaint(g);
+}
+
+void awuiControl::OnMouseMovePre(int x, int y) {
+	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
+		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+
+		if ((control->GetLeft() <= x) && (x <= control->GetRight()) && (control->GetTop() <= y) && (y <= control->GetBottom())) {
+			control->OnMouseMovePre(x - control->GetLeft(), y - control->GetTop());
+			return;
+		}
+	}
+
+	std::cout << "Motion: " << x << "x" << y << "    " << this->GetName() << std::endl;
+}
+
+void awuiControl::SetName(const std::string& str) {
+	this->name.assign(str);
+}
+
+const std::string& awuiControl::GetName() {
+	return this->name;
 }

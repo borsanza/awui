@@ -15,7 +15,7 @@ public:
 	awuiArrayList();
 	~awuiArrayList();
 
-	void Add(void * item);
+	virtual void Add(void * item);
 	int GetCount();
 
 	void Clear();

@@ -5,11 +5,13 @@
 #define __AWUICONTROL_H__
 
 #include "awuiComponent.h"
+#include <string>
 
 class awuiArrayList;
 class awuiBitmap;
 class awuiColor;
 class awuiGraphics;
+class awuiControlCollection;
 
 class awuiControl : public awuiComponent {
 	friend class awuiForm;
@@ -30,9 +32,10 @@ protected:
 	int width;
 	int height;
 	awuiControl::DockStyle dock;
-	awuiArrayList * controls;
+	awuiControlCollection * controls;
 	awuiBitmap * bitmap;
 	awuiColor * backColor;
+	std::string name;
 
 	void OnResizePre();
 	void OnPaintPre(awuiGraphics * g);
@@ -40,6 +43,9 @@ protected:
 public:
 	awuiControl();
 	~awuiControl();
+	
+	void SetName(const std::string& str);
+	const std::string& GetName();
 
 	void SetLeft(int x);
 	void SetTop(int y);
@@ -53,6 +59,8 @@ public:
 
 	int GetTop();
 	int GetLeft();
+	int GetRight();
+	int GetBottom();	
 	void GetLocation(int &x, int &y);
 
 	int GetWidth();
@@ -71,8 +79,10 @@ public:
 	
 	virtual void OnPaint(awuiGraphics * g) {}
 	virtual void OnResize() {}
+	
+	void OnMouseMovePre(int x, int y);
 
-	void Layout();
+	virtual void Layout();
 };
 
 #endif
