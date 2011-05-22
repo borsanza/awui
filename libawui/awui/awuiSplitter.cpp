@@ -19,6 +19,13 @@ awuiSplitter::awuiSplitter() {
 awuiSplitter::~awuiSplitter() {
 }
 
+int awuiSplitter::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Splitter)
+		return 1;
+
+	return awuiControl::IsClass(objectClass);
+}
+
 awuiSplitContainer::Orientation awuiSplitter::GetOrientation() {
 	return this->orientation;
 }

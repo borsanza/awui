@@ -12,7 +12,9 @@ private:
 public:
   awuiControlCollection(awuiControl *);
   ~awuiControlCollection();
-	
+
+	virtual int IsClass(awuiClasses objectClass);
+
 	awuiControl * GetOwner();
 	virtual void Add(void * item);
 };

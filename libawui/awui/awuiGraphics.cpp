@@ -1,4 +1,4 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiGraphics.h"
@@ -20,6 +20,13 @@ awuiGraphics::~awuiGraphics(void)
 
 	if (this->cairo_surface != NULL)
 		cairo_surface_destroy(this->cairo_surface);
+}
+
+int awuiGraphics::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Graphics)
+		return 1;
+
+	return awuiObject::IsClass(objectClass);
 }
 
 awuiGraphics * awuiGraphics::FromImage(awuiImage *image) {

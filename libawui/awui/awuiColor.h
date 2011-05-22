@@ -1,12 +1,16 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-class awuiColor {
+#include "awuiObject.h"
+
+class awuiColor : public awuiObject {
 private:
 	unsigned char a, r, g, b;
 	awuiColor();
 
 public:
+	virtual int IsClass(awuiClasses objectClass);
+	
 	unsigned char GetA();
 	unsigned char GetR();
 	unsigned char GetG();

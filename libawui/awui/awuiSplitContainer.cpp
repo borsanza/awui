@@ -37,6 +37,13 @@ awuiSplitContainer::~awuiSplitContainer() {
   delete this->panel2;
 }
 
+int awuiSplitContainer::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::SplitContainer)
+		return 1;
+
+	return awuiControl::IsClass(objectClass);
+}
+
 awuiPanel * awuiSplitContainer::GetPanel1() {
 	return this->panel1;
 }

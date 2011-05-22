@@ -41,6 +41,13 @@ awuiForm::~awuiForm() {
 	awDel(this->w);
 }
 
+int awuiForm::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Form)
+		return 1;
+
+	return awuiControl::IsClass(objectClass);
+}
+
 void awuiForm::Show() {
 	this->w = awNew(awuiApplication::g);
 	awGeometry(this->w, this->x, this->y, this->width, this->height);

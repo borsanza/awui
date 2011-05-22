@@ -144,7 +144,7 @@ void awuiArrayList::SetChildIndex(void * item, int index) {
 		itemListAux = itemListAux->next;
 	}
 
-	// Sino encontramos el item, descartamos su inserci�n
+	// Sino encontramos el item, descartamos su inserción
 	if (itemListAux == NULL)
 		return;
 
@@ -167,7 +167,7 @@ void awuiArrayList::SetChildIndex(void * item, int index) {
 		itemListAux2 = itemListAux2->next;
 	}
 
-	// Si estamos en esta situaci�n es que no se ha podido insertar,
+	// Si estamos en esta situación es que no se ha podido insertar,
 	// lo insertamos el ultimo
 	if (itemListAux2 == NULL) {
 		last->next = itemListAux;

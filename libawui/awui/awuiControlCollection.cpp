@@ -11,6 +11,13 @@ awuiControlCollection::awuiControlCollection(awuiControl * owner) {
 awuiControlCollection::~awuiControlCollection() {
 }
 
+int awuiControlCollection::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::ControlCollection)
+		return 1;
+
+	return awuiArrayList::IsClass(objectClass);
+}
+
 awuiControl * awuiControlCollection::GetOwner() {
 	return this->owner;
 }

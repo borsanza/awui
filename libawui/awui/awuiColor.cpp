@@ -1,4 +1,4 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiColor.h"
@@ -12,6 +12,13 @@ awuiColor::awuiColor() {
 	this->r = 0;
 	this->g = 0;
 	this->b = 0;
+}
+
+int awuiColor::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Color)
+		return 1;
+
+	return awuiObject::IsClass(objectClass);
 }
 
 unsigned char awuiColor::GetA() {

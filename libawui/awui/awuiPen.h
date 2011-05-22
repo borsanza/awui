@@ -1,8 +1,10 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #ifndef __AWUIPEN_H__
 #define __AWUIPEN_H__
+
+#include "awuiObject.h"
 
 class awuiColor;
 
@@ -24,7 +26,7 @@ public:
 	};
 };
 
-class awuiPen {
+class awuiPen : public awuiObject {
 private:
 	awuiColor * color;
 	float width;
@@ -35,6 +37,8 @@ public:
 	awuiPen(awuiColor * color);
 	awuiPen(awuiColor * color, float width);
 	~awuiPen();
+	
+	virtual int IsClass(awuiClasses objectClass);
 
 	awuiColor * GetColor();
 	void SetColor(awuiColor * color);

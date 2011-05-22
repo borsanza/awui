@@ -25,6 +25,8 @@ private:
 public:
 	awuiForm();
 	~awuiForm();
+	
+	virtual int IsClass(awuiClasses objectClass);
 
 	void Show();
 };

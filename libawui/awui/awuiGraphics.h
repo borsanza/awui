@@ -1,5 +1,7 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
+
+#include "awuiObject.h"
 
 class awuiImage;
 class awuiColor;
@@ -8,7 +10,7 @@ class awuiPen;
 typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
 
-class awuiGraphics {
+class awuiGraphics : public awuiObject {
 private:
 	cairo_surface_t *cairo_surface;
 	cairo_t *cr;
@@ -18,6 +20,8 @@ private:
 public:
 	awuiGraphics(void);
 	~awuiGraphics(void);
+	
+	virtual int IsClass(awuiClasses objectClass);
 
 	static awuiGraphics * FromImage(awuiImage *image);
 

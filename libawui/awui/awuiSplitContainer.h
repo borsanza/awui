@@ -32,6 +32,8 @@ public:
   awuiSplitContainer();
   ~awuiSplitContainer();
 
+	virtual int IsClass(awuiClasses objectClass);
+	
   awuiPanel * GetPanel1();
   awuiPanel * GetPanel2();
 

@@ -12,3 +12,10 @@ awuiPanel::awuiPanel() {
 
 awuiPanel::~awuiPanel() {
 }
+
+int awuiPanel::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Panel)
+		return 1;
+
+	return awuiControl::IsClass(objectClass);
+}

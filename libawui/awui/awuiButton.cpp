@@ -1,4 +1,4 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiButton.h"
@@ -12,4 +12,11 @@ awuiButton::awuiButton() {
 }
 
 awuiButton::~awuiButton() {
+}
+
+int awuiButton::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Button)
+		return 1;
+
+	return awuiControl::IsClass(objectClass);
 }

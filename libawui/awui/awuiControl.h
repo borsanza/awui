@@ -1,4 +1,4 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #ifndef __AWUICONTROL_H__
@@ -47,6 +47,8 @@ protected:
 public:
 	awuiControl();
 	~awuiControl();
+	
+	virtual int IsClass(awuiClasses objectClass);
 	
 	void SetName(const std::string& str);
 	const std::string& GetName();

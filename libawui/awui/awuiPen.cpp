@@ -1,4 +1,4 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiPen.h"
@@ -23,6 +23,13 @@ awuiPen::awuiPen(awuiColor * color, float width) {
 
 awuiPen::~awuiPen() {
 	delete this->color;
+}
+
+int awuiPen::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Pen)
+		return 1;
+
+	return awuiObject::IsClass(objectClass);
 }
 
 awuiColor * awuiPen::GetColor() {

@@ -39,6 +39,13 @@ awuiControl::~awuiControl() {
 		delete this->backColor;
 }
 
+int awuiControl::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Control)
+		return 1;
+
+	return awuiComponent::IsClass(objectClass);
+}
+
 void awuiControl::SetTop(int y) {
 	this->SetLocation(this->x, y);
 }

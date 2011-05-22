@@ -18,5 +18,5 @@ int awuiBitmap::IsClass(awuiObject::awuiClasses objectClass) {
 	if (objectClass == awuiObject::Bitmap)
 		return 1;
 
-	return awuiObject::IsClass(objectClass);
+	return awuiImage::IsClass(objectClass);
 }
