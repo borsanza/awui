@@ -1,20 +1,18 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiControlCollection.h"
+#include "awuiControl.h"
+
 #include "awuiBitmap.h"
 #include "awuiColor.h"
-#include "awuiPen.h"
-#include "awuiControl.h"
+#include "awuiControlCollection.h"
 #include "awuiGraphics.h"
-
-#include <stdlib.h>
-#include <string>
-#include <stdio.h>
-#include <iostream>
+#include "awuiMouseEventArgs.h"
+#include "awuiPen.h"
 
 awuiControl::awuiControl() {
 	this->controls = new awuiControlCollection(this);
+	this->mouseEventArgs = new awuiMouseEventArgs();
 	this->x = 0;
 	this->y = 0;
 	this->width = 100;
@@ -26,6 +24,8 @@ awuiControl::awuiControl() {
 }
 
 awuiControl::~awuiControl() {
+	delete this->mouseEventArgs;
+
 	for (int i = 0; i < this->controls->GetCount(); i++)
 		delete ((awuiControl *)this->controls->Get(i));
 
@@ -210,8 +210,8 @@ void awuiControl::OnPaintPre(awuiGraphics * g) {
 		g2->FillRectangle(control->backColor, 0.0f, 0.0f, (float)control->GetWidth(), (float)control->GetHeight());
 		control->OnPaintPre(g2);
 		g->DrawImage(control->bitmap, (float)control->GetLeft(), (float)control->GetTop());
-		g->DrawLine(pen, this->mouseX - 5, this->mouseY, this->mouseX + 5, this->mouseY);
-		g->DrawLine(pen, this->mouseX, this->mouseY - 5, this->mouseX, this->mouseY + 5);
+		g->DrawLine(pen, this->mouseEventArgs->GetX() - 5, this->mouseEventArgs->GetY(), this->mouseEventArgs->GetX() + 5, this->mouseEventArgs->GetY());
+		g->DrawLine(pen, this->mouseEventArgs->GetX(), this->mouseEventArgs->GetY() - 5, this->mouseEventArgs->GetX(), this->mouseEventArgs->GetY() + 5);
 		delete g2;
 	}
 
@@ -226,12 +226,13 @@ void awuiControl::OnMouseMovePre(int x, int y) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 
 		if ((control->GetLeft() <= x) && (x <= control->GetRight()) && (control->GetTop() <= y) && (y <= control->GetBottom())) {
-			this->mouseX = x;
-			this->mouseY = y;
 			control->OnMouseMovePre(x - control->GetLeft(), y - control->GetTop());
 			return;
 		}
 	}
+	
+	this->mouseEventArgs->SetLocation(x, y);
+	this->OnMouseMove(this->mouseEventArgs);
 
 //	std::cout << "Motion: " << x << "x" << y << "    " << this->GetName() << std::endl;
 }

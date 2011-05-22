@@ -12,6 +12,7 @@ class awuiBitmap;
 class awuiColor;
 class awuiGraphics;
 class awuiControlCollection;
+class awuiMouseEventArgs;
 
 class awuiControl : public awuiComponent {
 	friend class awuiForm;
@@ -36,10 +37,8 @@ protected:
 	awuiBitmap * bitmap;
 	awuiColor * backColor;
 	awuiControl * parent;
+	awuiMouseEventArgs * mouseEventArgs;
 	std::string name;
-
-	int mouseX;
-	int mouseY;
 
 	void OnResizePre();
 	void OnPaintPre(awuiGraphics * g);
@@ -86,11 +85,11 @@ public:
 	awuiControl * GetParent();
 	void SetParent(awuiControl * parent);
 	
-	virtual void OnPaint(awuiGraphics * g) {}
-	virtual void OnResize() {}
-	
 	void OnMouseMovePre(int x, int y);
 
+	virtual void OnPaint(awuiGraphics * g) {}
+	virtual void OnResize() {}
+	virtual void OnMouseMove(awuiMouseEventArgs * e) {}
 	virtual void Layout();
 };
 

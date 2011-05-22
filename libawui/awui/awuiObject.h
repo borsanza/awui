@@ -19,6 +19,7 @@ public:
 		Form,
 		Graphics,
 		Image,
+		MouseEventArgs,
 		Panel,
 		Pen,
 		SplitContainer,

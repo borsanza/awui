@@ -67,6 +67,7 @@ float awuiSplitContainer::GetSplitterDistance() {
 
 void awuiSplitContainer::SetSplitterDistance(int distance) {
 	this->splitterDistance = distance;
+	this->RecalculatePositions();
 }
 
 int awuiSplitContainer::GetSplitterIncrement() {

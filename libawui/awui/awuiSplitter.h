@@ -4,6 +4,8 @@
 #include "awuiControl.h"
 #include "awuiSplitContainer.h"
 
+class awuiMouseEventArgs;
+
 class awuiSplitter : public awuiControl {
 private:
 		awuiSplitContainer::Orientation orientation;
@@ -16,4 +18,6 @@ public:
 	
 	awuiSplitContainer::Orientation GetOrientation();
 	void SetOrientation(awuiSplitContainer::Orientation orientation);
+	
+	virtual void OnMouseMove(awuiMouseEventArgs * e);
 };
