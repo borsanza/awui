@@ -35,7 +35,11 @@ protected:
 	awuiControlCollection * controls;
 	awuiBitmap * bitmap;
 	awuiColor * backColor;
+	awuiControl * parent;
 	std::string name;
+
+	int mouseX;
+	int mouseY;
 
 	void OnResizePre();
 	void OnPaintPre(awuiGraphics * g);
@@ -71,11 +75,14 @@ public:
 
 	awuiArrayList * GetControls();
 
-	void SetBackColor(awuiColor * color);
 	awuiColor * GetBackColor();
+	void SetBackColor(awuiColor * color);
 
-	void SetDock(awuiControl::DockStyle dock);
 	awuiControl::DockStyle GetDock();
+	void SetDock(awuiControl::DockStyle dock);
+
+	awuiControl * GetParent();
+	void SetParent(awuiControl * parent);
 	
 	virtual void OnPaint(awuiGraphics * g) {}
 	virtual void OnResize() {}

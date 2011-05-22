@@ -1,4 +1,4 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiArrayList.h"
@@ -11,6 +11,13 @@ awuiArrayList::awuiArrayList() {
 
 awuiArrayList::~awuiArrayList() {
 	this->Clear();
+}
+
+int awuiArrayList::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::ArrayList)
+		return 1;
+
+	return awuiObject::IsClass(objectClass);
 }
 
 void awuiArrayList::Add(void * item) {

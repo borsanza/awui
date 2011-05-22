@@ -1,7 +1,9 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-class awuiImage {
+#include "awuiObject.h"
+
+class awuiImage : public awuiObject {
 	friend class awuiGraphics;
 	friend class awuiForm;
 
@@ -14,6 +16,8 @@ protected:
 public:
 	awuiImage();
 	~awuiImage();
+
+	virtual int IsClass(awuiClasses objectClass);
 
 	int GetWidth();
 	int GetHeight();

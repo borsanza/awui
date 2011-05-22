@@ -4,18 +4,23 @@
 #include "awuiImage.h"
 #include <stdlib.h>
 
-awuiImage::awuiImage()
-{
+awuiImage::awuiImage() {
 	this->image = NULL;
 	this->width = 0;
 	this->height = 0;
 	this->btpp = 4;
 }
 
-awuiImage::~awuiImage()
-{
+awuiImage::~awuiImage() {
 	if (this->image != NULL)
 		free(this->image);
+}
+
+int awuiImage::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Image)
+		return 1;
+
+	return awuiObject::IsClass(objectClass);
 }
 
 int awuiImage::GetWidth() {

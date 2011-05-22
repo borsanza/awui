@@ -4,7 +4,9 @@
 #ifndef __AWUICOMPONENT_H__
 #define __AWUICOMPONENT_H__
 
-class awuiComponent {
+#include "awuiObject.h"
+
+class awuiComponent : public awuiObject {
 public:
 	awuiComponent();
 	~awuiComponent();

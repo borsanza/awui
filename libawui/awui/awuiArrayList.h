@@ -1,7 +1,9 @@
-// (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-class awuiArrayList {
+#include "awuiObject.h"
+
+class awuiArrayList : public awuiObject {
 private:
 	struct awuiArraListItem {
 		void * object;
@@ -14,6 +16,8 @@ private:
 public:
 	awuiArrayList();
 	~awuiArrayList();
+
+	virtual int IsClass(awuiClasses objectClass);
 
 	virtual void Add(void * item);
 	int GetCount();

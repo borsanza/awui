@@ -17,13 +17,13 @@ Cairo:
 
 2.- Download and decompress in c:\awui-project\cairo the next packages:
 
-	cairo_xx_win32.zip
-	cairo-dev_xx_win32.zip
-	expat_xx_win32.zip
-	fontconfig_xx_win32.zip
-	freetype_xx_win32.zip
-	libpng_xx_win32.zip
-	zlib_xx_win32.zip
+	cairo_xx_win32.zip (Run-time)
+	cairo-dev_xx_win32.zip (Dev)
+	expat_xx_win32.zip (Run-time)
+	fontconfig_xx_win32.zip (Run-time)
+	freetype_xx_win32.zip (Run-time)
+	libpng_xx_win32.zip (Run-time)
+	zlib_xx_win32.zip (Run-time)
 
 3.- Copy the dll files to the executable path.
 
@@ -41,3 +41,5 @@ Finish:
 1.- Run the script C:\awui-project\awui\clean.bat
 
 2.- Open the Project.sln with Visual Studio
+
+3.- Set the default project to awuiDemo

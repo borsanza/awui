@@ -3,10 +3,8 @@
 
 #include "awuiComponent.h"
 
-awuiComponent::awuiComponent()
-{
+awuiComponent::awuiComponent() {
 }
 
-awuiComponent::~awuiComponent()
-{
+awuiComponent::~awuiComponent() {
 }

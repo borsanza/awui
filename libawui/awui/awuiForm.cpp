@@ -20,8 +20,8 @@ extern "C" {
 #endif
 
 awuiForm::awuiForm() {
-	this->x = 10;
-	this->y = 10;
+	this->x = 100;
+	this->y = 100;
 	this->width = 300;
 	this->height = 300;
 

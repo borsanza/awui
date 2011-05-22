@@ -17,5 +17,6 @@ awuiControl * awuiControlCollection::GetOwner() {
 
 void awuiControlCollection::Add(void * item) {
 	awuiArrayList::Add(item);
+	((awuiControl *)item)->SetParent(this->owner);
 	this->owner->Layout();
 }

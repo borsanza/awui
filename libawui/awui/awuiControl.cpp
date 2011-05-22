@@ -4,6 +4,7 @@
 #include "awuiControlCollection.h"
 #include "awuiBitmap.h"
 #include "awuiColor.h"
+#include "awuiPen.h"
 #include "awuiControl.h"
 #include "awuiGraphics.h"
 
@@ -149,6 +150,14 @@ awuiControl::DockStyle awuiControl::GetDock() {
 	return this->dock;
 }
 
+awuiControl * awuiControl::GetParent() {
+	return this->parent;
+}
+
+void awuiControl::SetParent(awuiControl * parent) {
+	this->parent = parent;
+}
+
 void awuiControl::Layout() {
 	int x1 = 0;
 	int y1 = 0;
@@ -182,6 +191,9 @@ void awuiControl::Layout() {
 }
 
 void awuiControl::OnPaintPre(awuiGraphics * g) {
+	awuiColor * color = awuiColor::FromArgb(0, 0, 0);
+	awuiPen * pen = new awuiPen(color);
+
 	g->FillRectangle(this->backColor, 0.0f, 0.0f, (float)this->GetWidth(), (float)this->GetHeight());
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
@@ -191,8 +203,13 @@ void awuiControl::OnPaintPre(awuiGraphics * g) {
 		g2->FillRectangle(control->backColor, 0.0f, 0.0f, (float)control->GetWidth(), (float)control->GetHeight());
 		control->OnPaintPre(g2);
 		g->DrawImage(control->bitmap, (float)control->GetLeft(), (float)control->GetTop());
+		g->DrawLine(pen, this->mouseX - 5, this->mouseY, this->mouseX + 5, this->mouseY);
+		g->DrawLine(pen, this->mouseX, this->mouseY - 5, this->mouseX, this->mouseY + 5);
 		delete g2;
 	}
+
+	delete pen;
+	delete color;
 
 	this->OnPaint(g);
 }
@@ -202,12 +219,14 @@ void awuiControl::OnMouseMovePre(int x, int y) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 
 		if ((control->GetLeft() <= x) && (x <= control->GetRight()) && (control->GetTop() <= y) && (y <= control->GetBottom())) {
+			this->mouseX = x;
+			this->mouseY = y;
 			control->OnMouseMovePre(x - control->GetLeft(), y - control->GetTop());
 			return;
 		}
 	}
 
-	std::cout << "Motion: " << x << "x" << y << "    " << this->GetName() << std::endl;
+//	std::cout << "Motion: " << x << "x" << y << "    " << this->GetName() << std::endl;
 }
 
 void awuiControl::SetName(const std::string& str) {

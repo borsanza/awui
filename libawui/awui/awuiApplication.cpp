@@ -3,6 +3,7 @@
 
 #include "awuiApplication.h"
 #include "awuiForm.h"
+#include "awuiObject.h"
 //#include <unistd.h>
 
 extern "C" {
@@ -11,6 +12,13 @@ extern "C" {
 }
 
 struct _ag * awuiApplication::g = NULL;
+
+int awuiApplication::IsClass(awuiObject::awuiClasses objectClass) {
+	if (objectClass == awuiObject::Application)
+		return 1;
+
+	return awuiObject::IsClass(objectClass);
+}
 
 void awuiApplication::Run(awuiForm * form = NULL) {
 	awuiApplication::g = agNew("prueba");
