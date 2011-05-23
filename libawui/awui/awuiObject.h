@@ -13,7 +13,6 @@ public:
 		Bitmap,
 		Button,
 		Color,
-		Component,
 		Control,
 		ControlCollection,
 		Form,
@@ -23,12 +22,12 @@ public:
 		Panel,
 		Pen,
 		SplitContainer,
-		Splitter
+		Splitter,
 	};
-	
+
 	awuiObject();
 	~awuiObject();
-	
+
 	virtual int IsClass(awuiClasses objectClass);
 };
 

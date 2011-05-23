@@ -1,0 +1,17 @@
+digraph awui {
+	awuiApplication -> awuiObject;
+	awuiArrayList -> awuiObject;
+	awuiBitmap -> awuiImage;
+	awuiButton -> awuiControl;
+	awuiColor -> awuiObject;
+	awuiControlCollection -> awuiArrayList;
+	awuiControl -> awuiObject;
+	awuiForm -> awuiControl;
+	awuiGraphics -> awuiObject;
+	awuiImage -> awuiObject;
+	awuiMouseEventArgs -> awuiObject;
+	awuiPanel -> awuiControl;
+	awuiPen -> awuiObject;
+	awuiSplitContainer -> awuiControl;
+	awuiSplitter -> awuiControl;
+}

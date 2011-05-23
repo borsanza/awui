@@ -74,14 +74,14 @@ void awuiGraphics::SetPen(awuiPen * pen) {
 
 	cairo_set_line_width(this->cr, pen->GetWidth());
 
-	switch (pen->GetCap()) {
-		case awuiCap::Butt:
+	switch (pen->GetLineCap()) {
+		case awuiLineCap::Butt:
 			cairo_set_line_cap(this->cr, CAIRO_LINE_CAP_BUTT);
 			break;
-		case awuiCap::Round:
+		case awuiLineCap::Round:
 			cairo_set_line_cap(this->cr, CAIRO_LINE_CAP_ROUND);
 			break;
-		case awuiCap::Square:
+		case awuiLineCap::Square:
 			cairo_set_line_cap(this->cr, CAIRO_LINE_CAP_SQUARE);
 			break;
 	}

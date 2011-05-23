@@ -13,7 +13,7 @@ class awuiSplitContainer : public awuiControl {
 public:
 	enum Orientation {
 		Vertical,
-		Horizontal
+		Horizontal,
 	};
 
 private:

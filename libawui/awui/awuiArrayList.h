@@ -8,7 +8,7 @@ private:
 	struct awuiArraListItem {
 		void * object;
 		awuiArraListItem * next;
-	} _item;
+	};
 
 	awuiArraListItem * first;
 	int count;

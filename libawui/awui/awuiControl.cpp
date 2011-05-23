@@ -43,7 +43,7 @@ int awuiControl::IsClass(awuiObject::awuiClasses objectClass) {
 	if (objectClass == awuiObject::Control)
 		return 1;
 
-	return awuiComponent::IsClass(objectClass);
+	return awuiObject::IsClass(objectClass);
 }
 
 void awuiControl::SetTop(int y) {
@@ -224,6 +224,8 @@ void awuiControl::OnPaintPre(awuiGraphics * g) {
 #include <iostream>
 
 void awuiControl::OnMouseMovePre(int x, int y) {
+	this->mouseEventArgs->SetLocation(x, y);
+
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 
@@ -233,7 +235,6 @@ void awuiControl::OnMouseMovePre(int x, int y) {
 		}
 	}
 	
-	this->mouseEventArgs->SetLocation(x, y);
 	this->OnMouseMove(this->mouseEventArgs);
 
 	std::cout << "Motion: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "    " << this->GetName() << std::endl;

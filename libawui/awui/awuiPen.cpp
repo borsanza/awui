@@ -9,7 +9,7 @@ awuiPen::awuiPen(awuiColor * color) {
 	this->color = NULL;
 	this->SetColor(color);
 	this->SetWidth(1);
-	this->SetCap(awuiCap::Butt);
+	this->SetLineCap(awuiLineCap::Butt);
 	this->SetLineJoin(awuiLineJoin::Miter);
 }
 
@@ -17,7 +17,7 @@ awuiPen::awuiPen(awuiColor * color, float width) {
 	this->color = NULL;
 	this->SetColor(color);
 	this->SetWidth(width);
-	this->SetCap(awuiCap::Butt);
+	this->SetLineCap(awuiLineCap::Butt);
 	this->SetLineJoin(awuiLineJoin::Miter);
 }
 
@@ -59,10 +59,10 @@ awuiLineJoin::LineJoin awuiPen::GetLineJoin() {
 	return this->lineJoin;
 }
 
-void awuiPen::SetCap(awuiCap::Cap cap) {
-	this->cap = cap;
+void awuiPen::SetLineCap(awuiLineCap::LineCap lineCap) {
+	this->lineCap = lineCap;
 }
 
-awuiCap::Cap awuiPen::GetCap() {
-	return this->cap;
+awuiLineCap::LineCap awuiPen::GetLineCap() {
+	return this->lineCap;
 }

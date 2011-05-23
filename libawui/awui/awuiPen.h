@@ -8,21 +8,21 @@
 
 class awuiColor;
 
-class awuiCap {
+class awuiLineCap {
 public:
-	enum Cap {
-		Butt,
-		Round,
-		Square
+	enum LineCap {
+		Butt = 0,
+		Square = 1,
+		Round = 2,
 	};
 };
 
 class awuiLineJoin {
 public:
 	enum LineJoin {
-		Miter,
-		Round,
-		Bevel
+		Miter = 0,
+		Bevel = 1,
+		Round = 2,
 	};
 };
 
@@ -30,7 +30,7 @@ class awuiPen : public awuiObject {
 private:
 	awuiColor * color;
 	float width;
-	awuiCap::Cap cap;
+	awuiLineCap::LineCap lineCap;
 	awuiLineJoin::LineJoin lineJoin;
 
 public:
@@ -49,8 +49,8 @@ public:
 	void SetLineJoin(awuiLineJoin::LineJoin lineJoin);
 	awuiLineJoin::LineJoin GetLineJoin();
 
-	void SetCap(awuiCap::Cap lineCap);
-	awuiCap::Cap GetCap();
+	void SetLineCap(awuiLineCap::LineCap lineCap);
+	awuiLineCap::LineCap GetLineCap();
 };
 
 #endif

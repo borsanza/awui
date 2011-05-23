@@ -129,45 +129,32 @@ void awuiForm::ProcessEvents(ac * c) {
 				resizex = aeWidth(e);
 				resizey = aeHeight(e);
 				break;
+			case AW_EVENT_DOWN:
+				switch (aeWhich(e)) {
+					case AW_KEY_MOUSEWHEELUP:
+					case AW_KEY_MOUSEWHEELDOWN:
+					case AW_KEY_MOUSELEFT:
+					case AW_KEY_MOUSERIGHT:
+					case AW_KEY_MOUSEMIDDLE:
+						break;
+				}
+				break;
+			case AW_EVENT_UP:
+				switch (aeWhich(e)) {
+					case AW_KEY_MOUSEWHEELUP:
+					case AW_KEY_MOUSEWHEELDOWN:
+					case AW_KEY_MOUSELEFT:
+					case AW_KEY_MOUSERIGHT:
+					case AW_KEY_MOUSEMIDDLE:
+						break;
+				}
+				break;
 /*
 			case AW_EVENT_CLOSE:
 				g_exit = 1;
 				break;
-
-/*
 			case AW_EVENT_UNICODE:
 				Log("Unicode: %s", awKeyName(awe->u.unicode.which));
-				break;
-			case AW_EVENT_DOWN:
-				if (awe->u.down.which == 'f') {
-					awClose(w);
-					w = awOpenFullscreen();
-					awMakeCurrent(w, c);
-				}
-				if (awe->u.down.which == 'b') {
-					awClose(w);
-					w = awOpenBorderless(100, 100, 300, 400);
-					awMakeCurrent(w, c);
-				}
-				if (awe->u.down.which == 'w') {
-					awClose(w);
-					w = awOpen(100, 100, 300, 400);
-					awMakeCurrent(w, c);
-				}
-				if (awe->u.down.which == 'm') {
-					awClose(w);
-					w = awOpenMaximized();
-					awMakeCurrent(w, c);
-				}
-				if (awe->u.down.which == 'q')
-					g_exit = 1;
-				Log("Down: %s", awKeyName(awe->u.down.which));
-				break;
-			case AW_EVENT_UP:
-				Log("Up: %s", awKeyName(awe->u.up.which));
-				break;
-			case AW_EVENT_MOTION:
-				Log("Motion: %d,%d", awe->u.motion.x, awe->u.motion.y);
 				break;
 */
 			case AW_EVENT_MOTION:

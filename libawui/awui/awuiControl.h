@@ -4,7 +4,7 @@
 #ifndef __AWUICONTROL_H__
 #define __AWUICONTROL_H__
 
-#include "awuiComponent.h"
+#include "awuiObject.h"
 #include <string>
 
 class awuiArrayList;
@@ -14,7 +14,7 @@ class awuiGraphics;
 class awuiControlCollection;
 class awuiMouseEventArgs;
 
-class awuiControl : public awuiComponent {
+class awuiControl : public awuiObject {
 	friend class awuiForm;
 
 public:
@@ -24,7 +24,7 @@ public:
 		Bottom,
 		Left,
 		Right,
-		Fill
+		Fill,
 	};
 
 protected:
