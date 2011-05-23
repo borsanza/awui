@@ -42,4 +42,4 @@ Finish:
 
 2.- Open the Project.sln with Visual Studio
 
-3.- Set the default project to awuiDemo
+3.- Set the at startup project to awuiDemo

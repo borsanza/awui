@@ -210,16 +210,18 @@ void awuiControl::OnPaintPre(awuiGraphics * g) {
 		g2->FillRectangle(control->backColor, 0.0f, 0.0f, (float)control->GetWidth(), (float)control->GetHeight());
 		control->OnPaintPre(g2);
 		g->DrawImage(control->bitmap, (float)control->GetLeft(), (float)control->GetTop());
-		g->DrawLine(pen, this->mouseEventArgs->GetX() - 5, this->mouseEventArgs->GetY(), this->mouseEventArgs->GetX() + 5, this->mouseEventArgs->GetY());
-		g->DrawLine(pen, this->mouseEventArgs->GetX(), this->mouseEventArgs->GetY() - 5, this->mouseEventArgs->GetX(), this->mouseEventArgs->GetY() + 5);
 		delete g2;
 	}
 
+	this->OnPaint(g);
+	g->DrawLine(pen, (float)this->mouseEventArgs->GetX() - 5.0f, (float)this->mouseEventArgs->GetY(), (float)this->mouseEventArgs->GetX() + 5.0f, (float)this->mouseEventArgs->GetY());
+	g->DrawLine(pen, (float)this->mouseEventArgs->GetX(), (float)this->mouseEventArgs->GetY() - 5.0f, (float)this->mouseEventArgs->GetX(), (float)this->mouseEventArgs->GetY() + 5.0f);
+
 	delete pen;
 	delete color;
-
-	this->OnPaint(g);
 }
+
+#include <iostream>
 
 void awuiControl::OnMouseMovePre(int x, int y) {
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
@@ -234,7 +236,7 @@ void awuiControl::OnMouseMovePre(int x, int y) {
 	this->mouseEventArgs->SetLocation(x, y);
 	this->OnMouseMove(this->mouseEventArgs);
 
-//	std::cout << "Motion: " << x << "x" << y << "    " << this->GetName() << std::endl;
+	std::cout << "Motion: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "    " << this->GetName() << std::endl;
 }
 
 void awuiControl::SetName(const std::string& str) {
