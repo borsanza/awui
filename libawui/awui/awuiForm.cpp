@@ -25,6 +25,9 @@ awuiForm::awuiForm() {
 	this->width = 300;
 	this->height = 300;
 
+	this->mouseButtons = 0;
+	this->mouseControl = NULL;
+
 	glGenTextures(0, &this->texture1);
 	glGenTextures(1, &this->texture2);
 	this->old1w = -1;
@@ -129,24 +132,56 @@ void awuiForm::ProcessEvents(ac * c) {
 				resizex = aeWidth(e);
 				resizey = aeHeight(e);
 				break;
-			case AW_EVENT_DOWN:
-				switch (aeWhich(e)) {
-					case AW_KEY_MOUSEWHEELUP:
-					case AW_KEY_MOUSEWHEELDOWN:
-					case AW_KEY_MOUSELEFT:
-					case AW_KEY_MOUSERIGHT:
-					case AW_KEY_MOUSEMIDDLE:
-						break;
+			case AW_EVENT_DOWN: {
+					MouseButtons::Buttons button = MouseButtons::None;
+					switch (aeWhich(e)) {
+						case AW_KEY_MOUSEWHEELUP:
+							button = MouseButtons::XButton1;
+							break;
+						case AW_KEY_MOUSEWHEELDOWN:
+							button = MouseButtons::XButton2;
+							break;
+						case AW_KEY_MOUSELEFT:
+							button = MouseButtons::Left;
+							break;
+						case AW_KEY_MOUSERIGHT:
+							button = MouseButtons::Right;
+							break;
+						case AW_KEY_MOUSEMIDDLE:
+							button = MouseButtons::Middle;
+							break;
+					}
+
+					if (button) {
+						this->mouseButtons |= button;
+						this->OnMouseDownPre(button, this->mouseButtons);
+					}
 				}
 				break;
-			case AW_EVENT_UP:
-				switch (aeWhich(e)) {
-					case AW_KEY_MOUSEWHEELUP:
-					case AW_KEY_MOUSEWHEELDOWN:
-					case AW_KEY_MOUSELEFT:
-					case AW_KEY_MOUSERIGHT:
-					case AW_KEY_MOUSEMIDDLE:
-						break;
+			case AW_EVENT_UP: {
+					MouseButtons::Buttons button = MouseButtons::None;
+					switch (aeWhich(e)) {
+						case AW_KEY_MOUSEWHEELUP:
+							button = MouseButtons::XButton1;
+							break;
+						case AW_KEY_MOUSEWHEELDOWN:
+							button = MouseButtons::XButton2;
+							break;
+						case AW_KEY_MOUSELEFT:
+							button = MouseButtons::Left;
+							break;
+						case AW_KEY_MOUSERIGHT:
+							button = MouseButtons::Right;
+							break;
+						case AW_KEY_MOUSEMIDDLE:
+							button = MouseButtons::Middle;
+							break;
+					}
+
+					if (button) {
+						this->mouseButtons &= ~button;
+						this->OnMouseUpPre(button, this->mouseButtons);
+					}
 				}
 				break;
 /*
@@ -158,7 +193,7 @@ void awuiForm::ProcessEvents(ac * c) {
 				break;
 */
 			case AW_EVENT_MOTION:
-				this->OnMouseMovePre(aeX(e), aeY(e));
+				this->OnMouseMovePre(aeX(e), aeY(e), this->mouseButtons);
 				break;
 			default:
 				break;

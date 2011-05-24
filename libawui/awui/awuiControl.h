@@ -14,6 +14,18 @@ class awuiGraphics;
 class awuiControlCollection;
 class awuiMouseEventArgs;
 
+class MouseButtons {
+public:
+	enum Buttons {
+		None = 0,
+		Left = 1,
+		Right = 2,
+		Middle = 4,
+		XButton1 = 8,
+		XButton2 = 16,
+	};
+};
+
 class awuiControl : public awuiObject {
 	friend class awuiForm;
 
@@ -38,6 +50,7 @@ protected:
 	awuiColor * backColor;
 	awuiControl * parent;
 	awuiMouseEventArgs * mouseEventArgs;
+	awuiControl * mouseControl;
 	std::string name;
 
 	void OnResizePre();
@@ -85,12 +98,16 @@ public:
 	awuiControl * GetParent();
 	void SetParent(awuiControl * parent);
 	
-	void OnMouseMovePre(int x, int y);
-
+	void OnMouseMovePre(int x, int y, int buttons);
+	void OnMouseUpPre(MouseButtons::Buttons button, int buttons);
+	void OnMouseDownPre(MouseButtons::Buttons button, int buttons);
+	
 	virtual void OnPaint(awuiGraphics * g) {}
 	virtual void OnResize() {}
-	virtual void OnMouseMove(awuiMouseEventArgs * e) {}
+	virtual void OnMouseMove(awuiMouseEventArgs* e) {}
 	virtual void Layout();
+	virtual void OnMouseDown(awuiMouseEventArgs* e) {}
+	virtual void OnMouseUp(awuiMouseEventArgs* e) {}
 };
 
 #endif

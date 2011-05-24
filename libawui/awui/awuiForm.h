@@ -12,18 +12,11 @@ class awuiApplication;
 class awuiForm : public awuiControl {
 	friend class awuiApplication;
 
-public:
-	enum MouseButtons {
-		None = 0,
-		Left = 1,
-		Right = 2,
-		Middle = 4,
-		XButton1 = 8,
-		XButton2 = 16,
-	};
-
 private:
 	aw * w;
+	
+	int mouseButtons;
+	
 	GLuint texture1;
 	int old1w, old1h;
 	GLuint texture2;
