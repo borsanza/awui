@@ -57,77 +57,20 @@ void awuiForm::Show() {
 }
 
 void awuiForm::OnPaintForm() {
-	static int frames = 2;
-	static int pos = 0;
-	static int first = 1;
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 1.0f);
+	glOrtho(0.0f, this->GetWidth(), this->GetHeight(), 0.0f, -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	//glClear(GL_COLOR_BUFFER_BIT);
 
-	awuiGraphics * g = awuiGraphics::FromImage(this->bitmap);
-	this->refreshed = 0;
-	this->OnPaintPre(g);
-	delete g;
+	glDisable(GL_SCISSOR_TEST);
+	glClearColor(1, 1, 1, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glEnable(GL_SCISSOR_TEST);
 
-	if (this->refreshed)
-		frames = 2;
-
-	if (frames<=0)
-		return;
-
-	frames--;
-
-	glDisable (GL_DEPTH_TEST);
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//	glEnable (GL_TEXTURE_RECTANGLE_ARB);
-
-	glBindTexture(GL_TEXTURE_2D, pos? this->texture2 : this->texture1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	if (((this->old1w == this->GetWidth()) && (this->old1h == this->GetHeight()) && !pos)  ||
-		((this->old2w == this->GetWidth()) && (this->old2h == this->GetHeight()) && pos))
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, this->GetWidth(), this->GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, this->bitmap->image);
-	else
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->GetWidth(), this->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, this->bitmap->image);
-
-	if (pos) {
-		this->old2w = this->GetWidth();
-		this->old2h = this->GetHeight();
-	} else {
-		this->old1w = this->GetWidth();
-		this->old1h = this->GetHeight();
-	}
-
-	if (!first) {
-		glPushMatrix();
-
-		glBindTexture(GL_TEXTURE_2D, pos? this->texture1 : this->texture2);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);glVertex2f(0.0f, 0.0f);
-		glTexCoord2f(1.0f, 0.0f);glVertex2f(1.0f, 0.0f);
-		glTexCoord2f(1.0f, 1.0f);glVertex2f(1.0f, 1.0f);
-		glTexCoord2f(0.0f, 1.0f);glVertex2f(0.0f, 1.0f);
-		glEnd();
-
-		glPopMatrix();
-	}
-
-	
-
-	first = 0;
-	pos = !pos;
-
-	return;
+	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight());
 }
 
 void awuiForm::ProcessEvents(ac * c) {

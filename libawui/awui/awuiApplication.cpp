@@ -4,7 +4,7 @@
 #include "awuiApplication.h"
 #include "awuiForm.h"
 #include "awuiObject.h"
-//#include <unistd.h>
+#include <unistd.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -42,7 +42,7 @@ void awuiApplication::Run(awuiForm * form = NULL) {
 			glFlush();
 			awSwapBuffers(form->w);
 
-			//usleep(16000);
+//			usleep(16000);
 		}
 	}
 

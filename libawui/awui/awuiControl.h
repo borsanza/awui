@@ -57,7 +57,7 @@ protected:
 	std::string name;
 
 	void OnResizePre();
-	void OnPaintPre(awuiGraphics * g);
+	void OnPaintPre(int x, int y, int width, int height);
 
 public:
 	awuiControl();

@@ -10,6 +10,11 @@
 #include "awuiMouseEventArgs.h"
 #include "awuiPen.h"
 
+extern "C" {
+	#include <aw/sysgl.h>
+	#include <aw/aw.h>
+}
+
 awuiControl::awuiControl() {
 	this->controls = new awuiControlCollection(this);
 	this->mouseEventArgs = new awuiMouseEventArgs();
@@ -131,10 +136,10 @@ awuiArrayList * awuiControl::GetControls() {
 }
 
 void awuiControl::OnResizePre() {
-	if (this->bitmap != NULL)
-		delete this->bitmap;
+//	if (this->bitmap != NULL)
+//		delete this->bitmap;
 
-	this->bitmap = new awuiBitmap(this->GetWidth(), this->GetHeight());
+//	this->bitmap = new awuiBitmap(this->GetWidth(), this->GetHeight());
 	
 	this->OnResize();
 	this->Layout();
@@ -209,31 +214,29 @@ void awuiControl::Refresh() {
 	this->needRefresh = 1;
 }
 
-void awuiControl::OnPaintPre(awuiGraphics * g) {
-	if (this->needRefresh) {
-		this->needRefresh = 0;
-		this->refreshed++;
+void awuiControl::OnPaintPre(int x, int y, int width, int height) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-x, width-x, height-y, -y, -1.0f, 1.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
-		awuiColor * color = awuiColor::FromArgb(0, 0, 0);
-		awuiPen * pen = new awuiPen(color);
+	glScissor(x, y, this->GetWidth(), this->GetHeight());
 
-		g->Clear(this->backColor);
-		this->OnPaint(g);
+	glClearColor(this->backColor->GetR() / 255.0f, this->backColor->GetG() / 255.0f, this->backColor->GetB() / 255.0f, this->backColor->GetA() / 255.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-		g->DrawLine(pen, (float)this->mouseEventArgs->GetX() - 5.0f, (float)this->mouseEventArgs->GetY(), (float)this->mouseEventArgs->GetX() + 5.0f, (float)this->mouseEventArgs->GetY());
-		g->DrawLine(pen, (float)this->mouseEventArgs->GetX(), (float)this->mouseEventArgs->GetY() - 5.0f, (float)this->mouseEventArgs->GetX(), (float)this->mouseEventArgs->GetY() + 5.0f);
+	glBegin(GL_LINES);
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glVertex2f(0.0f, 0.0f);	glVertex2f(this->GetWidth(), this->GetHeight());
+	glEnd();
+	
+//	this->OnPaint(NULL);
 
-		delete pen;
-		delete color;
+	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
+		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 
-		for (int i = 0; i < this->GetControls()->GetCount(); i++) {
-			awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
-
-			awuiGraphics * g2 = awuiGraphics::FromImage(control->bitmap);
-			control->OnPaintPre(g2);
-			g->DrawImage(control->bitmap, (float)control->GetLeft(), (float)control->GetTop());
-			delete g2;
-		}
+		control->OnPaintPre(x + control->GetLeft(), y + control->GetTop(), width, height);
 	}
 }
 
@@ -299,7 +302,7 @@ void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
 	this->OnMouseMove(this->mouseEventArgs);
 	this->Refresh();
 
-//	std::cout << "Move: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "  " << this->mouseEventArgs->GetButton() << "    " << this->GetName() << std::endl;
+	std::cout << "Move: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "  " << this->mouseEventArgs->GetButton() << "    " << this->GetName() << std::endl;
 }
 
 void awuiControl::OnMouseUpPre(MouseButtons::Buttons button, int buttons) {
