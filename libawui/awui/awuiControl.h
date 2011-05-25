@@ -51,6 +51,7 @@ protected:
 	awuiControl * parent;
 	awuiMouseEventArgs * mouseEventArgs;
 	awuiControl * mouseControl;
+	awuiControl * mouseControlOver;
 	std::string name;
 
 	void OnResizePre();
@@ -102,12 +103,14 @@ public:
 	void OnMouseUpPre(MouseButtons::Buttons button, int buttons);
 	void OnMouseDownPre(MouseButtons::Buttons button, int buttons);
 	
-	virtual void OnPaint(awuiGraphics * g) {}
-	virtual void OnResize() {}
-	virtual void OnMouseMove(awuiMouseEventArgs* e) {}
 	virtual void Layout();
 	virtual void OnMouseDown(awuiMouseEventArgs* e) {}
+	virtual void OnMouseMove(awuiMouseEventArgs* e) {}
 	virtual void OnMouseUp(awuiMouseEventArgs* e) {}
+	virtual void OnMouseEnter();
+	virtual void OnMouseLeave();
+	virtual void OnPaint(awuiGraphics * g) {}
+	virtual void OnResize() {}
 };
 
 #endif

@@ -24,9 +24,7 @@ awuiForm::awuiForm() {
 	this->y = 100;
 	this->width = 300;
 	this->height = 300;
-
 	this->mouseButtons = 0;
-	this->mouseControl = NULL;
 
 	glGenTextures(0, &this->texture1);
 	glGenTextures(1, &this->texture2);

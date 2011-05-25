@@ -15,6 +15,8 @@ awuiSplitter::awuiSplitter() {
 	this->SetName("awuiSplitter");
 
 	this->SetSize(20, 200);
+	
+	this->mouseActive = 0;
 }
 
 awuiSplitter::~awuiSplitter() {
@@ -37,12 +39,24 @@ void awuiSplitter::SetOrientation(awuiSplitContainer::Orientation orientation) {
 
 #include <iostream>
 
+void awuiSplitter::OnMouseDown(awuiMouseEventArgs * e) {
+	if (e->GetButton() == MouseButtons::Left)
+		this->mouseActive = 1;
+}
+
 void awuiSplitter::OnMouseMove(awuiMouseEventArgs * e) {
+	if (!this->mouseActive)
+		return;
+
 	if (this->GetParent()->IsClass(awuiObject::SplitContainer)) {
 		((awuiSplitContainer *) this->GetParent())->SetSplitterDistance(
 			((awuiSplitContainer *) this->GetParent())->GetSplitterDistance() + e->GetX()
 		);
 	}
 
-	std::cout << "Motion: " << e->GetX() << "x" << e->GetY() << "    " << this->GetName() << std::endl;
+//	std::cout << "Motion: " << e->GetX() << "x" << e->GetY() << "    " << this->GetName() << std::endl;
+}
+
+void awuiSplitter::OnMouseUp(awuiMouseEventArgs * e) {
+	this->mouseActive = 0;
 }

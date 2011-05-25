@@ -9,6 +9,7 @@ class awuiMouseEventArgs;
 class awuiSplitter : public awuiControl {
 private:
 		awuiSplitContainer::Orientation orientation;
+		int mouseActive;
 
 public:
   awuiSplitter();
@@ -19,5 +20,7 @@ public:
 	awuiSplitContainer::Orientation GetOrientation();
 	void SetOrientation(awuiSplitContainer::Orientation orientation);
 	
+	virtual void OnMouseDown(awuiMouseEventArgs * e);
 	virtual void OnMouseMove(awuiMouseEventArgs * e);
+	virtual void OnMouseUp(awuiMouseEventArgs * e);
 };
