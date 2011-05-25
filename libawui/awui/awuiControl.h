@@ -44,6 +44,8 @@ protected:
 	int y;
 	int width;
 	int height;
+	int needRefresh;
+	int refreshed;
 	awuiControl::DockStyle dock;
 	awuiControlCollection * controls;
 	awuiBitmap * bitmap;
@@ -95,6 +97,8 @@ public:
 
 	awuiControl::DockStyle GetDock();
 	void SetDock(awuiControl::DockStyle dock);
+
+	void Refresh();
 
 	awuiControl * GetParent();
 	void SetParent(awuiControl * parent);

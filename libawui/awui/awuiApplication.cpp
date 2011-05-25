@@ -30,13 +30,19 @@ void awuiApplication::Run(awuiForm * form = NULL) {
 	form->Show();
 
 	int g_exit = 0;
+
+
+
 	while (!g_exit) {
 		awMakeCurrent(form->w, c);
+		glEnable(GL_TEXTURE_2D);
 		form->ProcessEvents(c);
 		if (!g_exit) {
 			form->OnPaintForm();
+			glFlush();
 			awSwapBuffers(form->w);
-//			usleep(16000);
+
+			//usleep(16000);
 		}
 	}
 

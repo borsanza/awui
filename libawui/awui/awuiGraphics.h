@@ -25,6 +25,7 @@ public:
 
 	static awuiGraphics * FromImage(awuiImage *image);
 
+	void Clear(awuiColor * color);
 	void DrawRectangle(awuiPen * pen, float x, float y, float width, float height);
 	void FillRectangle(awuiColor * color, float x, float y, float width, float height);
 	void DrawImage(awuiImage * image, float x, float y);

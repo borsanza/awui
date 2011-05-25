@@ -3,6 +3,9 @@
 
 #include "awuiObject.h"
 
+typedef struct _cairo_surface cairo_surface_t;
+typedef struct _cairo cairo_t;
+
 class awuiImage : public awuiObject {
 	friend class awuiGraphics;
 	friend class awuiForm;
@@ -12,6 +15,8 @@ protected:
 	int width;
 	int height;
 	int btpp;
+	cairo_surface_t *cairo_surface;
+	cairo_t *cr;
 
 public:
 	awuiImage();

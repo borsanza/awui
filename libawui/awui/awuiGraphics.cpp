@@ -9,17 +9,11 @@
 #include <cairo.h>
 #include <stdlib.h>
 
-awuiGraphics::awuiGraphics(void)
-{
+awuiGraphics::awuiGraphics(void) {
 }
 
-awuiGraphics::~awuiGraphics(void)
-{
-	if (this->cr != NULL)
-		cairo_destroy(this->cr);
+awuiGraphics::~awuiGraphics(void) {
 
-	if (this->cairo_surface != NULL)
-		cairo_surface_destroy(this->cairo_surface);
 }
 
 int awuiGraphics::IsClass(awuiObject::awuiClasses objectClass) {
@@ -31,8 +25,8 @@ int awuiGraphics::IsClass(awuiObject::awuiClasses objectClass) {
 
 awuiGraphics * awuiGraphics::FromImage(awuiImage *image) {
 	awuiGraphics * graphics = new awuiGraphics();
-	graphics->cairo_surface = cairo_image_surface_create_for_data(image->image, CAIRO_FORMAT_ARGB32, image->GetWidth(), image->GetHeight(), image->btpp * image->width);
-	graphics->cr = cairo_create(graphics->cairo_surface);
+	graphics->cairo_surface = image->cairo_surface;
+	graphics->cr = image->cr;
 
 	return graphics;
 }
@@ -41,6 +35,11 @@ void awuiGraphics::DrawRectangle(awuiPen * pen, float x, float y, float width, f
 	this->SetPen(pen);
 	cairo_rectangle(this->cr, x, y, width, height);
 	cairo_stroke(this->cr);
+}
+
+void awuiGraphics::Clear(awuiColor * color) {
+	cairo_set_source_rgba(this->cr, color->GetR() / 255.0f, color->GetG() / 255.0f, color->GetB() / 255.0f, color->GetA() / 255.0f);
+	cairo_paint(this->cr);
 }
 
 void awuiGraphics::FillRectangle(awuiColor * color, float x, float y, float width, float height) {
@@ -54,7 +53,7 @@ void awuiGraphics::DrawImage(awuiImage * image, float x, float y) {
 }
 
 void awuiGraphics::DrawImage(awuiImage * image, float x, float y, float width, float height) {
-	cairo_surface_t *surfaceAux = cairo_image_surface_create_for_data(image->image, CAIRO_FORMAT_ARGB32, image->GetWidth(), image->GetHeight(), image->btpp * image->width);
+	cairo_surface_t *surfaceAux = image->cairo_surface;
 
 	cairo_save(this->cr);
 	cairo_translate(this->cr, x, y);
@@ -63,8 +62,6 @@ void awuiGraphics::DrawImage(awuiImage * image, float x, float y, float width, f
 	cairo_set_source_surface(this->cr, surfaceAux, 0, 0);
 	cairo_paint(this->cr);
 	cairo_restore(this->cr);
-
-	cairo_surface_destroy(surfaceAux);
 }
 
 void awuiGraphics::SetPen(awuiPen * pen) {
