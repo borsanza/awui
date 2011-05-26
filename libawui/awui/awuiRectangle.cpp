@@ -6,7 +6,22 @@
 #include "awuiPoint.h"
 #include "awuiSize.h"
 
-int awuiRectangle::GetWidth() {
+awuiRectangle::awuiRectangle() {
+	this->location = awuiPoint(0, 0);
+	this->size = awuiSize(0, 0);
+}
+
+awuiRectangle::awuiRectangle(const awuiPoint location, const awuiSize size) {
+	this->location = location;
+	this->size = size;
+}
+
+awuiRectangle::awuiRectangle(int x, int y, int width, int height) {
+	this->location = awuiPoint(x, y);
+	this->size = awuiSize(width, height);
+}
+
+int awuiRectangle::GetWidth() const {
 	return this->size.GetWidth();
 }
 
@@ -14,7 +29,7 @@ void awuiRectangle::SetWidth(int width) {
 	this->size.SetWidth(width);
 }
 
-int awuiRectangle::GetHeight() {
+int awuiRectangle::GetHeight() const {
 	return this->size.GetHeight();
 }
 
@@ -22,7 +37,7 @@ void awuiRectangle::SetHeight(int height) {
 	this->size.SetHeight(height);
 }
 
-int awuiRectangle::GetX() {
+int awuiRectangle::GetX() const {
 	return this->location.GetX();
 }
 
@@ -30,7 +45,7 @@ void awuiRectangle::SetX(int x) {
 	this->location.SetX(x);
 }
 
-int awuiRectangle::GetY() {
+int awuiRectangle::GetY() const {
 	return this->location.GetY();
 }
 
@@ -38,28 +53,28 @@ void awuiRectangle::SetY(int y) {
 	this->location.SetY(y);
 }
 
-int awuiRectangle::GetBottom() {
+int awuiRectangle::GetBottom() const {
 	return this->GetY() + this->GetHeight() - 1;
 }
 
-int awuiRectangle::GetLeft() {
+int awuiRectangle::GetLeft() const {
 	return this->GetX();
 }
 
-int awuiRectangle::GetRight() {
+int awuiRectangle::GetRight() const {
 	return this->GetX() + this->GetWidth() - 1;
 }
 
-int awuiRectangle::GetTop() {
+int awuiRectangle::GetTop() const {
 	return this->GetY();
 }
 
-awuiPoint awuiRectangle::GetLocation() {
-	return this->location;
+awuiPoint* awuiRectangle::GetLocation() {
+	return &this->location;
 }
 
-awuiSize awuiRectangle::GetSize() {
-	return this->size;
+awuiSize* awuiRectangle::GetSize() {
+	return &this->size;
 }
 
 void awuiRectangle::SetLocation(awuiPoint location) {
@@ -70,6 +85,24 @@ void awuiRectangle::SetSize(awuiSize size) {
 	this->size = size;
 }
 
+void awuiRectangle::Inflate(awuiSize size) {
+	this->Inflate(size.GetWidth(), size.GetHeight());
+}
+
+void awuiRectangle::Inflate(int width, int height) {
+	this->SetWidth(this->GetWidth() + width);
+	this->SetHeight(this->GetHeight() + height);
+}
+
+void awuiRectangle::Offset(const awuiPoint pos) {
+	this->Offset(pos.GetX(), pos.GetY());
+}
+
+void awuiRectangle::Offset(int x, int y) {
+	this->SetX(this->GetX() + x);
+	this->SetY(this->GetY() + y);
+}
+
 awuiRectangle & awuiRectangle::operator= (const awuiRectangle & other) {
 	size = other.size;
 	location = other.location;
@@ -77,24 +110,19 @@ awuiRectangle & awuiRectangle::operator= (const awuiRectangle & other) {
 	return *this;
 }
 
-void awuiRectangle::Intersect(awuiRectangle rectangle) {
-	int rect1x1 = this->GetLeft();
-	int rect2x1 = rectangle.GetLeft();
-	int rect1x2 = this->GetRight();
-	int rect2x2 = rectangle.GetRight();
+awuiRectangle awuiRectangle::FromLTRB(int left, int top, int right, int bottom) {
+ 	return awuiRectangle(left, top, right - left + 1, bottom - top + 1);
+}
+
+awuiRectangle awuiRectangle::Intersect(const awuiRectangle rectangle1, const awuiRectangle rectangle2) {
+	int left   = rectangle1.GetLeft() > rectangle2.GetLeft()?  rectangle1.GetLeft() : rectangle2.GetLeft();
+	int top    = rectangle1.GetTop() > rectangle2.GetTop()? rectangle1.GetTop() : rectangle2.GetTop();
+	int right  = rectangle1.GetRight() < rectangle2.GetRight()? rectangle1.GetRight() : rectangle2.GetRight();
+	int bottom = rectangle1.GetBottom() < rectangle2.GetBottom()? rectangle1.GetBottom(): rectangle2.GetBottom();
 	
-	int rect1y1 = this->GetTop();
-	int rect2y1 = rectangle.GetTop();
-	int rect1y2 = this->GetBottom();
-	int rect2y2 = rectangle.GetBottom();
+	return awuiRectangle::FromLTRB(left, top, right, bottom);
+}
 
-	int x1 = rect1x1 > rect2x1? rect1x1: rect2x1;
-	int y1 = rect1y1 > rect2y1? rect1y1: rect2y1;
-	int x2 = rect1x2 < rect2x2? rect1x2: rect2x2;
-	int y2 = rect1y2 < rect2y2? rect1y2: rect2y2;
-
-	this->SetX(x1);
-	this->SetY(y1);
-	this->SetWidth(x2 - x1 + 1);
-	this->SetHeight(y2 - y1 + 1);
+void awuiRectangle::Intersect(const awuiRectangle rectangle) {
+	*this = awuiRectangle::Intersect(*this, rectangle);
 }

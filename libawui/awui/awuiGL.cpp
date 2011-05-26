@@ -28,11 +28,7 @@ awuiRectangle awuiGL::GetClipping() {
 }
 
 awuiRectangle awuiGL::GetClippingResult() {
-	awuiRectangle rect = this->rectangle1;
-
-	rect.Intersect(this->rectangle2);
-	
-	return rect; 
+	return awuiRectangle::Intersect(this->rectangle1, this->rectangle2);
 }
 
 void awuiGL::SetClipping() {

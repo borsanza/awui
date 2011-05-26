@@ -102,7 +102,7 @@ float Form1::GetAnimationValue() {
 	return py;
 }
 
-void Form1::OnPaint(awuiGraphics * g) {
+void Form1::OnPaint(awuiGL * gl) {
 	float py = this->GetAnimationValue();
 
 	g->DrawLine(this->pen1, 50.0f, py * this->GetHeight() / 100.0f, this->GetWidth() - 50.0f, this->GetHeight() - (py * this->GetHeight() / 100.0f));

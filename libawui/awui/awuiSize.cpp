@@ -1,9 +1,26 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja Sï¿½nchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiSize.h"
 
-int awuiSize::GetWidth() {
+#include "awuiPoint.h"
+
+awuiSize::awuiSize() {
+	this->SetWidth(0);
+	this->SetHeight(0);
+}
+
+awuiSize::awuiSize(const awuiPoint pt) {
+	this->SetWidth(pt.GetX());
+	this->SetHeight(pt.GetY());
+}
+
+awuiSize::awuiSize(int width, int height) {
+	this->SetWidth(width);
+	this->SetHeight(height);
+}
+
+int awuiSize::GetWidth() const {
 	return this->width;
 }
 
@@ -14,7 +31,7 @@ void awuiSize::SetWidth(int width) {
 	this->width = width;
 }
 
-int awuiSize::GetHeight() {
+int awuiSize::GetHeight() const {
 	return this->height;
 }
 

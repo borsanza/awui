@@ -7,6 +7,9 @@ class awuiButton : public awuiControl {
 public:
 	awuiButton();
 	~awuiButton();
-	
+
 	virtual int IsClass(awuiClasses objectClass);
+
+	float GetAnimationValue();
+	virtual void OnPaint(awuiGL * gl);
 };

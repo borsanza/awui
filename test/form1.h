@@ -17,5 +17,5 @@ private:
 	void InitializeComponent();
 
 //	float GetAnimationValue();
-//	void OnPaint(awuiGraphics * g);
+//	void OnPaint(awuiGL * gl);
 };

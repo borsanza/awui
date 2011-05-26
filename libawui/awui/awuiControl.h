@@ -114,7 +114,7 @@ public:
 	virtual void OnMouseUp(awuiMouseEventArgs* e) {}
 	virtual void OnMouseEnter();
 	virtual void OnMouseLeave();
-	virtual void OnPaint(awuiGraphics * g) {}
+	virtual void OnPaint(awuiGL * gl) {}
 	virtual void OnResize() {}
 };
 

@@ -4,8 +4,8 @@
 #ifndef __AWUIRECTANGLE_H__
 #define __AWUIRECTANGLE_H__
 
-#include "awuiPoint.h";
-#include "awuiSize.h";
+#include "awuiPoint.h"
+#include "awuiSize.h"
 
 class awuiRectangle {
 private:
@@ -13,28 +13,40 @@ private:
 	awuiSize size;
 
 public:
-	int GetWidth();
+	awuiRectangle();
+	awuiRectangle(const awuiPoint location, const awuiSize size);
+	awuiRectangle(int x, int y, int width, int height);
+	
+	int GetWidth() const;
 	void SetWidth(int width);
 
-	int GetHeight();
+	int GetHeight() const;
 	void SetHeight(int height);
 
-	int GetX();
+	int GetX() const;
 	void SetX(int x);
 
-	int GetY();
+	int GetY() const;
 	void SetY(int y);
 
-	int GetBottom();
-	int GetLeft();
-	int GetRight();
-	int GetTop();
-	awuiPoint GetLocation();
-	awuiSize GetSize();
-	void SetLocation(awuiPoint location);
-	void SetSize(awuiSize size);
+	int GetBottom() const;
+	int GetLeft() const;
+	int GetRight() const;
+	int GetTop() const;
+	awuiPoint * GetLocation();
+	awuiSize * GetSize();
+	void SetLocation(const awuiPoint location);
+	void SetSize(const awuiSize size);
 
-	void Intersect(awuiRectangle rectangle);
+	void Inflate(const awuiSize size);
+	void Inflate(int width, int height);
+
+	void Offset(const awuiPoint pos);
+	void Offset(int x, int y);
+
+	static awuiRectangle FromLTRB(int left, int top, int right, int bottom);
+	static awuiRectangle Intersect(const awuiRectangle rectangle1, const awuiRectangle rectangle2);
+	void Intersect(const awuiRectangle rectangle);
 
 	awuiRectangle & operator= (const awuiRectangle & other);
 };

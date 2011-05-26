@@ -4,16 +4,22 @@
 #ifndef __AWUIPOINT_H__
 #define __AWUIPOINT_H__
 
+class awuiSize;
+
 class awuiPoint {
 private:
 	int x;
 	int y;
 
 public:
-	int GetX();
+	awuiPoint();
+	awuiPoint(const awuiSize sz);
+	awuiPoint(int x, int y);
+
+	int GetX() const;
 	void SetX(int x);
 
-	int GetY();
+	int GetY() const;
 	void SetY(int y);
 
 	awuiPoint & operator= (const awuiPoint & other);
