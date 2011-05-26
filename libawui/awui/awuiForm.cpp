@@ -9,6 +9,9 @@
 #include "awuiArrayList.h"
 #include "awuiBitmap.h"
 #include "awuiGraphics.h"
+#include "awuiColor.h"
+#include "awuiGL.h"
+#include "awuiRectangle.h"
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -20,6 +23,10 @@ extern "C" {
 #endif
 
 awuiForm::awuiForm() {
+	awuiColor *color = awuiColor::FromArgb(192, 192, 192);
+	this->SetBackColor(color);
+	delete color;
+
 	this->x = 100;
 	this->y = 100;
 	this->width = 300;
@@ -58,19 +65,16 @@ void awuiForm::Show() {
 
 void awuiForm::OnPaintForm() {
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0.0f, this->GetWidth(), this->GetHeight(), 0.0f, -1.0f, 1.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glDisable(GL_SCISSOR_TEST);
-	glClearColor(1, 1, 1, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_SCISSOR_TEST);
 
-	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight());
+	awuiGL gl;
+	awuiRectangle rectangle;
+	rectangle.SetX(0);
+	rectangle.SetY(0);
+	rectangle.SetWidth(this->GetWidth());
+	rectangle.SetHeight(this->GetHeight());
+	gl.SetClippingBase(rectangle);
+	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
 }
 
 void awuiForm::ProcessEvents(ac * c) {

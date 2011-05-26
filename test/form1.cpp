@@ -32,42 +32,26 @@ void Form1::InitializeComponent() {
 */
 	awuiColor * color;
 	awuiButton * button;
-	
+
 	button = new awuiButton();
-	color = awuiColor::FromArgb(64, 64, 64);
 	button->SetDock(awuiControl::Top);
 	button->SetName("Button Top");
-	button->SetBackColor(color);
-	delete color;
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
-	color = awuiColor::FromArgb(128, 128, 128);
 	button->SetDock(awuiControl::Bottom);
 	button->SetName("Button Bottom");
-	button->SetBackColor(color);
-	delete color;
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
-	color = awuiColor::FromArgb(192, 192, 192);
 	button->SetDock(awuiControl::Left);
 	button->SetName("Button Left");
-	button->SetBackColor(color);
-	delete color;
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
-	color = awuiColor::FromArgb(255, 255, 255);
 	button->SetDock(awuiControl::Right);
 	button->SetName("Button Right");
-	button->SetBackColor(color);
-	delete color;
 	this->GetControls()->Add(button);
-
-	color = awuiColor::FromArgb(255, 0, 0);
-	this->SetBackColor(color);
-	delete color;
 
 	button = new awuiButton();
 	awuiButton * button2 = new awuiButton();
@@ -80,8 +64,7 @@ void Form1::InitializeComponent() {
 	awuiSplitContainer * splitter = new awuiSplitContainer();
 	splitter->SetName("SplitContainer");
 	splitter->GetPanel1()->GetControls()->Add(button);
-	
-	
+
 	button = new awuiButton();
 	color = awuiColor::FromArgb(255, 0, 255);
 	button->SetDock(awuiControl::None);

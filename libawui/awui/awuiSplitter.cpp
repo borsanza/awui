@@ -8,7 +8,7 @@
 #include "awuiSplitContainer.h"
 
 awuiSplitter::awuiSplitter() {
-  awuiColor * color = awuiColor::FromArgb(0, 255, 0);
+  awuiColor * color = awuiColor::FromArgb(192, 192, 192);
   this->SetBackColor(color);
   delete color;
 	
@@ -59,4 +59,12 @@ void awuiSplitter::OnMouseMove(awuiMouseEventArgs * e) {
 
 void awuiSplitter::OnMouseUp(awuiMouseEventArgs * e) {
 	this->mouseActive = 0;
+}
+
+void awuiSplitter::OnMouseEnter() {
+//	std::cout << "OnMouseEnter" << std::endl;
+}
+
+void awuiSplitter::OnMouseLeave() {
+//	std::cout << "OnMouseLeave" << std::endl;
 }

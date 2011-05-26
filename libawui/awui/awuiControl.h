@@ -13,6 +13,7 @@ class awuiColor;
 class awuiGraphics;
 class awuiControlCollection;
 class awuiMouseEventArgs;
+class awuiGL;
 
 class MouseButtons {
 public:
@@ -57,7 +58,7 @@ protected:
 	std::string name;
 
 	void OnResizePre();
-	void OnPaintPre(int x, int y, int width, int height);
+	void OnPaintPre(int x, int y, int width, int height, awuiGL * gl);
 
 public:
 	awuiControl();

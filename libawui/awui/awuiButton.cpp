@@ -6,7 +6,7 @@
 
 awuiButton::awuiButton() {
 	this->SetSize(75,23);
-	awuiColor * color = awuiColor::FromArgb(255, 0, 0);
+	awuiColor * color = awuiColor::FromArgb(255, 255, 255);
 	this->SetBackColor(color);
 	delete color;
 }

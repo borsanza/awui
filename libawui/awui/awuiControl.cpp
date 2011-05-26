@@ -9,6 +9,8 @@
 #include "awuiGraphics.h"
 #include "awuiMouseEventArgs.h"
 #include "awuiPen.h"
+#include "awuiRectangle.h"
+#include "awuiGL.h"
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -180,6 +182,7 @@ void awuiControl::Layout() {
 	int y1 = 0;
 	int x2 = this->GetWidth();
 	int y2 = this->GetHeight();
+	int margin = 1;
 	
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
@@ -189,19 +192,19 @@ void awuiControl::Layout() {
 				break;
 			case awuiControl::Left:
 				control->SetBounds(x1, y1, control->GetWidth(), y2 - y1);
-				x1 += control->GetWidth();
+				x1 += (control->GetWidth() + margin);
 				break;
 			case awuiControl::Right:
 				control->SetBounds(x2 - control->GetWidth(), y1, control->GetWidth(), y2 - y1);
-				x2 -= control->GetWidth();
+				x2 -= (control->GetWidth() + margin);
 				break;
 			case awuiControl::Top:
 				control->SetBounds(x1, y1, x2 - x1, control->GetHeight());
-				y1 += control->GetHeight();
+				y1 += (control->GetHeight() + margin);
 				break;
 			case awuiControl::Bottom:
 				control->SetBounds(x1, y2 - control->GetHeight(), x2 - x1, control->GetHeight());
-				y2 -= control->GetHeight();
+				y2 -= (control->GetHeight() + margin);
 				break;
 		}
 	}
@@ -214,29 +217,44 @@ void awuiControl::Refresh() {
 	this->needRefresh = 1;
 }
 
-void awuiControl::OnPaintPre(int x, int y, int width, int height) {
+void awuiControl::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
+	awuiRectangle rect2;
+	rect2.SetX(x);
+	rect2.SetY(height - y - this->GetHeight());
+	rect2.SetWidth(this->GetWidth());
+	rect2.SetHeight(this->GetHeight());
+
+	gl->SetClipping(rect2);
+	gl->SetClipping();
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-x, width-x, height-y, -y, -1.0f, 1.0f);
+	glOrtho(-x, width-x, height - y - 1, -y, -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	glScissor(x, y, this->GetWidth(), this->GetHeight());
 
 	glClearColor(this->backColor->GetR() / 255.0f, this->backColor->GetG() / 255.0f, this->backColor->GetB() / 255.0f, this->backColor->GetA() / 255.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glBegin(GL_LINES);
-	glColor3f(0.0f, 0.0f, 0.0f);
-	glVertex2f(0.0f, 0.0f);	glVertex2f(this->GetWidth(), this->GetHeight());
+/*
+	glColor3f(1.0f, 0.0f, 0.0f);
+	//glBegin(GL_POLYGON);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(0.0f, 0.0f);
+	glVertex2f(this->GetWidth() - 1, 0.0f);
+	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
+	glVertex2f(0.0f, this->GetHeight() - 1);
 	glEnd();
-	
-//	this->OnPaint(NULL);
+*/
+
+	this->OnPaint(NULL);
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 
-		control->OnPaintPre(x + control->GetLeft(), y + control->GetTop(), width, height);
+		awuiGL gl2;
+		gl2.SetClippingBase(gl->GetClippingResult());
+		control->OnPaintPre(x + control->GetLeft(), y + control->GetTop(), width, height, &gl2);
 	}
 }
 
@@ -302,7 +320,7 @@ void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
 	this->OnMouseMove(this->mouseEventArgs);
 	this->Refresh();
 
-	std::cout << "Move: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "  " << this->mouseEventArgs->GetButton() << "    " << this->GetName() << std::endl;
+//	std::cout << "Move: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "  " << this->mouseEventArgs->GetButton() << "    " << this->GetName() << std::endl;
 }
 
 void awuiControl::OnMouseUpPre(MouseButtons::Buttons button, int buttons) {
