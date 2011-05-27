@@ -180,30 +180,30 @@ void awuiControl::SetParent(awuiControl * parent) {
 void awuiControl::Layout() {
 	int x1 = 0;
 	int y1 = 0;
-	int x2 = this->GetWidth();
-	int y2 = this->GetHeight();
+	int x2 = this->GetWidth() - 1;
+	int y2 = this->GetHeight() - 1;
 	int margin = 1;
 	
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
 			case awuiControl::Fill:
-				control->SetBounds(x1, y1, x2 - x1, y2 - y1);
+				control->SetBounds(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 				break;
 			case awuiControl::Left:
-				control->SetBounds(x1, y1, control->GetWidth(), y2 - y1);
+				control->SetBounds(x1, y1, control->GetWidth(), y2 - y1 + 1);
 				x1 += (control->GetWidth() + margin);
 				break;
 			case awuiControl::Right:
-				control->SetBounds(x2 - control->GetWidth(), y1, control->GetWidth(), y2 - y1);
+				control->SetBounds(x2 - control->GetWidth() + 1, y1, control->GetWidth(), y2 - y1 + 1);
 				x2 -= (control->GetWidth() + margin);
 				break;
 			case awuiControl::Top:
-				control->SetBounds(x1, y1, x2 - x1, control->GetHeight());
+				control->SetBounds(x1, y1, x2 - x1 + 1, control->GetHeight());
 				y1 += (control->GetHeight() + margin);
 				break;
 			case awuiControl::Bottom:
-				control->SetBounds(x1, y2 - control->GetHeight(), x2 - x1, control->GetHeight());
+				control->SetBounds(x1, y2 - control->GetHeight() + 1, x2 - x1 + 1, control->GetHeight());
 				y2 -= (control->GetHeight() + margin);
 				break;
 		}
