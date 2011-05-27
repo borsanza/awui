@@ -28,25 +28,28 @@ private:
 
 	void RecalculatePositions();
 
+	void SetLocationW(awuiControl * control, int pos);
+	void SetSizeW(awuiControl* control, int size, int substract);
+
 public:
   awuiSplitContainer();
   ~awuiSplitContainer();
 
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 	
   awuiPanel * GetPanel1();
   awuiPanel * GetPanel2();
 
-	float GetSplitterDistance();
+	float GetSplitterDistance() const;
 	void SetSplitterDistance(int distance);
 
-	int GetSplitterIncrement();
+	int GetSplitterIncrement() const;
 	void SetSplitterIncrement(int increment);
 
-	int GetSplitterWidth();
+	int GetSplitterWidth() const;
 	void SetSplitterWidth(int width);
 
-	Orientation GetOrientation();
+	Orientation GetOrientation() const;
 	void SetOrientation(Orientation orientation);
 	
 	virtual void Layout();

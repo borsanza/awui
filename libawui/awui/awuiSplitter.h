@@ -15,7 +15,7 @@ public:
   awuiSplitter();
   ~awuiSplitter();
 	
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 	
 	awuiSplitContainer::Orientation GetOrientation();
 	void SetOrientation(awuiSplitContainer::Orientation orientation);

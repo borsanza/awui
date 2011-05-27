@@ -25,7 +25,7 @@ awuiPen::~awuiPen() {
 	delete this->color;
 }
 
-int awuiPen::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiPen::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Pen)
 		return 1;
 

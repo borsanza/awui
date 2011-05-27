@@ -8,5 +8,5 @@ public:
 	awuiBitmap(int width, int height);
 	~awuiBitmap();
 
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 };

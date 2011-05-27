@@ -69,12 +69,12 @@ int awuiRectangle::GetTop() const {
 	return this->GetY();
 }
 
-awuiPoint* awuiRectangle::GetLocation() {
-	return &this->location;
+awuiPoint awuiRectangle::GetLocation() const {
+	return this->location;
 }
 
-awuiSize* awuiRectangle::GetSize() {
-	return &this->size;
+awuiSize awuiRectangle::GetSize() const {
+	return this->size;
 }
 
 void awuiRectangle::SetLocation(awuiPoint location) {

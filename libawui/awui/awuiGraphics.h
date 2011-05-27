@@ -21,7 +21,7 @@ public:
 	awuiGraphics(void);
 	~awuiGraphics(void);
 	
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 
 	static awuiGraphics * FromImage(awuiImage *image);
 

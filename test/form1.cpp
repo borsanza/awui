@@ -6,10 +6,10 @@
 #include <awui/awuiColor.h>
 #include <awui/awuiButton.h>
 #include <awui/awuiSplitContainer.h>
+#include <awui/awuiControlCollection.h>
 #include <awui/awuiControl.h>
 #include <awui/awuiPen.h>
 #include <awui/awuiPanel.h>
-#include <awui/awuiArrayList.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -36,21 +36,25 @@ void Form1::InitializeComponent() {
 	button = new awuiButton();
 	button->SetDock(awuiControl::Top);
 	button->SetName("Button Top");
+	button->SetMinimumSize(awuiSize(75, 123));
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
 	button->SetDock(awuiControl::Bottom);
 	button->SetName("Button Bottom");
+	button->SetMinimumSize(awuiSize(75, 23));
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
 	button->SetDock(awuiControl::Left);
 	button->SetName("Button Left");
+	button->SetMinimumSize(awuiSize(75, 23));
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
 	button->SetDock(awuiControl::Right);
 	button->SetName("Button Right");
+	button->SetMinimumSize(awuiSize(75, 23));
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
@@ -58,12 +62,14 @@ void Form1::InitializeComponent() {
 
 	button->SetDock(awuiControl::Fill);
 	button->SetName("Button Splitter Left");
+	button->SetMinimumSize(awuiSize(75, 23));
 	button2->SetDock(awuiControl::Fill);
 	button2->SetName("Button Splitter Right");
+	button2->SetMinimumSize(awuiSize(75, 23));
 	
-	awuiSplitContainer * splitter = new awuiSplitContainer();
-	splitter->SetName("SplitContainer");
-	splitter->GetPanel1()->GetControls()->Add(button);
+	this->splitter = new awuiSplitContainer();
+	this->splitter->SetName("SplitContainer");
+	this->splitter->GetPanel1()->GetControls()->Add(button);
 
 	button = new awuiButton();
 	color = awuiColor::FromArgb(255, 0, 255);
@@ -72,14 +78,14 @@ void Form1::InitializeComponent() {
 	button->SetName("Button Right2");
 	button->SetBackColor(color);
 	delete color;
-	splitter->GetPanel2()->GetControls()->Add(button2);
-	splitter->GetPanel2()->GetControls()->Add(button);
+	this->splitter->GetPanel2()->GetControls()->Add(button2);
+	this->splitter->GetPanel2()->GetControls()->Add(button);
+	this->splitter->SetDock(awuiControl::Fill);
+	this->splitter->SetOrientation(awuiSplitContainer::Horizontal);
 
-	this->GetControls()->Add(splitter);
-	splitter->SetDock(awuiControl::Fill);
+	this->GetControls()->Add(this->splitter);
 }
 
-/*
 float Form1::GetAnimationValue() {
 	static int sube = 1;
 	static float py = (float) 100.0f;
@@ -102,15 +108,8 @@ float Form1::GetAnimationValue() {
 	return py;
 }
 
-void Form1::OnPaint(awuiGL * gl) {
+void Form1::OnTick() {
 	float py = this->GetAnimationValue();
 
-	g->DrawLine(this->pen1, 50.0f, py * this->GetHeight() / 100.0f, this->GetWidth() - 50.0f, this->GetHeight() - (py * this->GetHeight() / 100.0f));
-
-	awuiColor * color2 = awuiColor::FromArgb((int)((py * 255.0f) / 100.0f), (int)(255.0f - ((py * 255.0f) / 100.0f)), 0);
-	g->FillRectangle(color2, py * this->GetWidth() / 100.0f, 100.0f, this->GetWidth() - (py * this->GetWidth() / 100.0f + 50.0f), this->GetHeight() - 150.0f);
-	g->DrawRectangle(this->pen1, py * this->GetWidth() / 100.0f, 100.0f, this->GetWidth() - (py * this->GetWidth() / 100.0f + 50.0f), this->GetHeight() - 150.0f);
-
-	delete color2;
+	this->splitter->SetSplitterDistance(this->splitter->GetWidth() * py / 100.0f);
 }
-*/

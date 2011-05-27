@@ -17,7 +17,7 @@ awuiBitmap::awuiBitmap(int width, int height) {
 awuiBitmap::~awuiBitmap() {
 }
 
-int awuiBitmap::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiBitmap::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Bitmap)
 		return 1;
 

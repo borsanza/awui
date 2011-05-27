@@ -14,7 +14,7 @@ awuiColor::awuiColor() {
 	this->b = 0;
 }
 
-int awuiColor::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiColor::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Color)
 		return 1;
 

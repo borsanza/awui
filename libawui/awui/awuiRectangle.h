@@ -33,8 +33,8 @@ public:
 	int GetLeft() const;
 	int GetRight() const;
 	int GetTop() const;
-	awuiPoint * GetLocation();
-	awuiSize * GetSize();
+	awuiPoint GetLocation() const;
+	awuiSize GetSize() const;
 	void SetLocation(const awuiPoint location);
 	void SetSize(const awuiSize size);
 

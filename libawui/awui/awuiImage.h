@@ -22,7 +22,7 @@ public:
 	awuiImage();
 	~awuiImage();
 
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 
 	int GetWidth();
 	int GetHeight();

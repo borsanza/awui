@@ -161,7 +161,7 @@ static void setCursor1(aw * w) {
         awPointer(w, g_p);
 }
 
-int awuiApplication::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiApplication::IsClass(awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Application)
 		return 1;
 
@@ -185,6 +185,7 @@ void awuiApplication::Run(awuiForm * form = NULL) {
 		glEnable(GL_TEXTURE_2D);
 		form->ProcessEvents(c);
 		if (!g_exit) {
+			form->OnTickPre();
 			form->OnPaintForm();
 			glFlush();
 			awSwapBuffers(form->w);

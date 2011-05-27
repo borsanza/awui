@@ -27,11 +27,9 @@ awuiForm::awuiForm() {
 	this->SetBackColor(color);
 	delete color;
 
-	this->x = 100;
-	this->y = 100;
-	this->width = 300;
-	this->height = 300;
+	this->SetBounds(100, 100, 300, 300);
 	this->mouseButtons = 0;
+	this->mouseControlOver = NULL;
 
 	glGenTextures(0, &this->texture1);
 	glGenTextures(1, &this->texture2);
@@ -50,7 +48,7 @@ awuiForm::~awuiForm() {
 	awDel(this->w);
 }
 
-int awuiForm::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiForm::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Form)
 		return 1;
 
@@ -59,7 +57,7 @@ int awuiForm::IsClass(awuiObject::awuiClasses objectClass) {
 
 void awuiForm::Show() {
 	this->w = awNew(awuiApplication::g);
-	awGeometry(this->w, this->x, this->y, this->width, this->height);
+	awGeometry(this->w, this->GetLeft(), this->GetTop(), this->GetWidth(), this->GetHeight());
 	awShow(this->w);
 }
 
@@ -112,7 +110,7 @@ void awuiForm::ProcessEvents(ac * c) {
 
 					if (button) {
 						this->mouseButtons |= button;
-						this->OnMouseDownPre(button, this->mouseButtons);
+						this->OnMouseDownPre(this->mouseX, this->mouseY, button, this->mouseButtons);
 					}
 				}
 				break;
@@ -151,7 +149,9 @@ void awuiForm::ProcessEvents(ac * c) {
 				break;
 */
 			case AW_EVENT_MOTION:
-				this->OnMouseMovePre(aeX(e), aeY(e), this->mouseButtons);
+				this->mouseX = aeX(e);
+				this->mouseY = aeY(e);
+				this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
 				break;
 			default:
 				break;
@@ -159,8 +159,7 @@ void awuiForm::ProcessEvents(ac * c) {
 	}
 
 	if ((resizex != -1) && (resizey != -1)) {
-		this->width = resizex;
-		this->height = resizey;
-		this->OnResizePre();
+		this->SetSize(resizex, resizey);
+//		this->OnResizePre();
 	}
 }

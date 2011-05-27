@@ -25,7 +25,7 @@ awuiImage::~awuiImage() {
 		cairo_surface_destroy(this->cairo_surface);
 }
 
-int awuiImage::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiImage::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Image)
 		return 1;
 

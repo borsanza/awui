@@ -5,6 +5,8 @@
 #define __AWUICONTROL_H__
 
 #include "awuiObject.h"
+
+#include "awuiRectangle.h"
 #include <string>
 
 class awuiArrayList;
@@ -41,10 +43,9 @@ public:
 	};
 
 protected:
-	int x;
-	int y;
-	int width;
-	int height;
+	awuiRectangle bounds;
+	awuiSize minimumSize;
+
 	int needRefresh;
 	int refreshed;
 	awuiControl::DockStyle dock;
@@ -54,59 +55,66 @@ protected:
 	awuiControl * parent;
 	awuiMouseEventArgs * mouseEventArgs;
 	awuiControl * mouseControl;
-	awuiControl * mouseControlOver;
 	std::string name;
 
+	void OnTickPre();
 	void OnResizePre();
 	void OnPaintPre(int x, int y, int width, int height, awuiGL * gl);
+	void ChangeControlOnMouseOver(awuiControl * control);
 
 public:
 	awuiControl();
 	~awuiControl();
-	
-	virtual int IsClass(awuiClasses objectClass);
-	
-	void SetName(const std::string& str);
-	const std::string& GetName();
 
+	virtual int IsClass(awuiClasses objectClass) const;
+
+	virtual const awuiSize GetMinimumSize() const;
+	void SetMinimumSize(awuiSize size);
+
+	awuiControl::DockStyle GetDock() const;
+	void SetDock(awuiControl::DockStyle dock);
+	
+	const std::string& GetName();
+	void SetName(const std::string& str);
+
+	int GetLeft() const;
 	void SetLeft(int x);
+
+	int GetTop() const;
 	void SetTop(int y);
+
+	const awuiPoint GetLocation() const;
 	void SetLocation(int x, int y);
 
+	int GetWidth() const;
 	void SetWidth(int width);
-	void SetHeight(int height);
-	void SetSize(int width, int height);
 
+	int GetHeight() const;
+	void SetHeight(int height);
+
+	const awuiSize GetSize() const;
+	void SetSize(int width, int height);
+	void SetSize(const awuiSize size);
+
+	const awuiRectangle GetBounds() const;
 	void SetBounds(int x, int y, int width, int height);
 
-	int GetTop();
-	int GetLeft();
-	int GetRight();
-	int GetBottom();	
-	void GetLocation(int &x, int &y);
+	int GetRight() const;
+	int GetBottom() const;	
 
-	int GetWidth();
-	int GetHeight();
-	void GetSize(int &width, int &height);
-
-	void GetBounds(int &x, int &y, int &width, int &height);
-
-	awuiArrayList * GetControls();
+	awuiControlCollection * GetControls();
 
 	awuiColor * GetBackColor();
 	void SetBackColor(awuiColor * color);
 
-	awuiControl::DockStyle GetDock();
-	void SetDock(awuiControl::DockStyle dock);
-
 	void Refresh();
 
-	awuiControl * GetParent();
+	awuiControl * GetParent() const;
 	void SetParent(awuiControl * parent);
 	
 	void OnMouseMovePre(int x, int y, int buttons);
 	void OnMouseUpPre(MouseButtons::Buttons button, int buttons);
-	void OnMouseDownPre(MouseButtons::Buttons button, int buttons);
+	void OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int buttons);
 	
 	virtual void Layout();
 	virtual void OnMouseDown(awuiMouseEventArgs* e) {}
@@ -116,6 +124,7 @@ public:
 	virtual void OnMouseLeave();
 	virtual void OnPaint(awuiGL * gl) {}
 	virtual void OnResize() {}
+	virtual void OnTick() {}
 };
 
 #endif

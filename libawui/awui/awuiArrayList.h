@@ -17,7 +17,7 @@ public:
 	awuiArrayList();
 	~awuiArrayList();
 
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 
 	virtual void Add(void * item);
 	int GetCount();

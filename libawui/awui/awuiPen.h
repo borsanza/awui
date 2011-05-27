@@ -38,7 +38,7 @@ public:
 	awuiPen(awuiColor * color, float width);
 	~awuiPen();
 	
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 
 	awuiColor * GetColor();
 	void SetColor(awuiColor * color);

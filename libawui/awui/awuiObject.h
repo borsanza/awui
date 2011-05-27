@@ -28,7 +28,7 @@ public:
 	awuiObject();
 	~awuiObject();
 
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 };
 
 #endif

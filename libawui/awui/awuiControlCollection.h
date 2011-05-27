@@ -13,7 +13,7 @@ public:
   awuiControlCollection(awuiControl *);
   ~awuiControlCollection();
 
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 
 	awuiControl * GetOwner();
 	virtual void Add(void * item);

@@ -7,6 +7,7 @@
 extern "C" {
 	#include <aw/sysgl.h>
 	#include <aw/aw.h>
+#include "awuiMouseEventArgs.h"
 }
 
 awuiButton::awuiButton() {
@@ -14,18 +15,22 @@ awuiButton::awuiButton() {
 	awuiColor * color = awuiColor::FromArgb(255, 255, 255);
 	this->SetBackColor(color);
 	delete color;
+
+	this->testx = 0;
+	this->testy = 0;
+	this->show = 0;
 }
 
 awuiButton::~awuiButton() {
 }
 
-int awuiButton::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiButton::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Button)
 		return 1;
 
 	return awuiControl::IsClass(objectClass);
 }
-
+/*
 float awuiButton::GetAnimationValue() {
 	static int sube = 1;
 	static float py = (float) 100.0f;
@@ -47,14 +52,51 @@ float awuiButton::GetAnimationValue() {
 
 	return py;
 }
+*/
+
+void awuiButton::OnMouseLeave() {
+	this->testx = -1;
+	this->testy = -1;
+	this->show = 0;
+}
+
+void awuiButton::OnMouseDown(awuiMouseEventArgs* e) {
+	this->show = 1;
+	this->testx = e->GetX();
+	this->testy = e->GetY();
+}
+
+void awuiButton::OnMouseMove(awuiMouseEventArgs* e) {
+	this->show = 1;
+	this->testx = e->GetX();
+	this->testy = e->GetY();
+}
 
 void awuiButton::OnPaint(awuiGL* gl) {
-	float py = this->GetAnimationValue();
+	if (!this->show)
+		return;
+
+//	float py = this->GetAnimationValue();
 
 	glColor3f(0.0f, 0.0f, 0.0f);
-	//glBegin(GL_POLYGON);
-	glBegin(GL_LINE_LOOP);
-	glVertex2f(0, py * this->GetHeight() / 600.0f);
-	glVertex2f(this->GetWidth(), this->GetHeight() - (py * this->GetHeight() / 600.0f));
-	glEnd();	
+//	glBegin(GL_POLYGON);
+//	glBegin(GL_LINE_LOOP);
+	glBegin(GL_LINES);
+	glVertex2f(0, 0);
+	glVertex2f(testx, this->testy);
+	glVertex2f(this->GetWidth() - 1, 0);
+	glVertex2f(testx, this->testy);
+	glVertex2f(0, this->GetHeight() - 1);
+	glVertex2f(testx, this->testy);
+	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
+	glVertex2f(testx, this->testy);
+	glEnd();
+}
+
+void awuiButton::SetText(const std::string& str) {
+	this->text.assign(str);
+}
+
+const std::string& awuiButton::GetName() {
+	return this->text;
 }

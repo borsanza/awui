@@ -9,7 +9,7 @@ private:
 	awuiColor();
 
 public:
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 	
 	unsigned char GetA();
 	unsigned char GetR();

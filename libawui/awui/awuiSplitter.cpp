@@ -22,7 +22,7 @@ awuiSplitter::awuiSplitter() {
 awuiSplitter::~awuiSplitter() {
 }
 
-int awuiSplitter::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiSplitter::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Splitter)
 		return 1;
 

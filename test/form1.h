@@ -3,11 +3,11 @@
 
 #include <awui/awuiForm.h>
 
-class awuiPen;
+class awuiSplitContainer;
 
 class Form1 : public awuiForm {
 private:
-//	awuiPen * pen1;
+	awuiSplitContainer * splitter;
 
 public:
 	Form1();
@@ -16,6 +16,6 @@ public:
 private:
 	void InitializeComponent();
 
-//	float GetAnimationValue();
-//	void OnPaint(awuiGL * gl);
+	float GetAnimationValue();
+	virtual void OnTick();
 };

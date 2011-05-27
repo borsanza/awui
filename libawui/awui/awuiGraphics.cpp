@@ -16,7 +16,7 @@ awuiGraphics::~awuiGraphics(void) {
 
 }
 
-int awuiGraphics::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiGraphics::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Graphics)
 		return 1;
 

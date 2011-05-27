@@ -11,7 +11,7 @@ awuiControlCollection::awuiControlCollection(awuiControl * owner) {
 awuiControlCollection::~awuiControlCollection() {
 }
 
-int awuiControlCollection::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiControlCollection::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::ControlCollection)
 		return 1;
 
