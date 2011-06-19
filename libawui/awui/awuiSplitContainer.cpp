@@ -16,9 +16,7 @@ awuiSplitContainer::awuiSplitContainer() {
 	
 	this->SetName("awuiSplitContainer");
 	
-  awuiColor * color = awuiColor::FromArgb(255, 255, 0);
-  this->SetBackColor(color);
-  delete color;
+  this->SetBackColor(awuiColor::FromArgb(255, 255, 0));
 	
 	this->panel1 = new awuiPanel();
   this->splitter = new awuiSplitter();
@@ -92,6 +90,16 @@ float awuiSplitContainer::GetSplitterDistance() const {
 }
 
 void awuiSplitContainer::SetSplitterDistance(int distance) {
+	int x2 = this->splitterWidth >> 1;
+	int x1 = this->splitterWidth - x2;
+	if (distance < (25 + x1))
+		distance = 25 + x1;
+
+	int size = (this->orientation == awuiSplitContainer::Vertical)? this->GetWidth() : this->GetHeight();
+	
+	if (distance > (size - 25 - x2))
+		distance = (size - 25 - x2);
+
 	this->splitterDistance = distance;
 	this->RecalculatePositions();
 }
@@ -118,6 +126,7 @@ awuiSplitContainer::Orientation awuiSplitContainer::GetOrientation() const {
 
 void awuiSplitContainer::SetOrientation(Orientation orientation) {
 	this->orientation = orientation;
+	this->splitter->SetOrientation(orientation);
 	this->RecalculatePositions();
 }
 

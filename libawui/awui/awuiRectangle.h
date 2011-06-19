@@ -48,7 +48,7 @@ public:
 	static awuiRectangle Intersect(const awuiRectangle rectangle1, const awuiRectangle rectangle2);
 	void Intersect(const awuiRectangle rectangle);
 
-	awuiRectangle & operator= (const awuiRectangle & other);
+	awuiRectangle & operator=(const awuiRectangle & other);
 };
 
 #endif

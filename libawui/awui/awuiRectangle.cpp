@@ -103,9 +103,9 @@ void awuiRectangle::Offset(int x, int y) {
 	this->SetY(this->GetY() + y);
 }
 
-awuiRectangle & awuiRectangle::operator= (const awuiRectangle & other) {
-	size = other.size;
-	location = other.location;
+awuiRectangle & awuiRectangle::operator=(const awuiRectangle & other) {
+	this->size = other.size;
+	this->location = other.location;
 
 	return *this;
 }

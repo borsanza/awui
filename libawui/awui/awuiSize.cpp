@@ -43,8 +43,8 @@ void awuiSize::SetHeight(int height) {
 }
 
 awuiSize & awuiSize::operator= (const awuiSize & other) {
-	width = other.width;
-	height = other.height;
+	this->width = other.width;
+	this->height = other.height;
 
 	return *this;
 }

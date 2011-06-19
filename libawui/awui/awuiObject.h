@@ -10,7 +10,6 @@ public:
 		Object,
 		Application,
 		ArrayList,
-		Bitmap,
 		Button,
 		Color,
 		Control,

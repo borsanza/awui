@@ -20,5 +20,6 @@ TARGET_LINK_LIBRARIES(
 	awui
 	aw
 	cairo
+	freetype
 #	"C:\\awui-project\\cairo\\lib\\libcairo.dll.a"
 )

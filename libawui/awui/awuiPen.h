@@ -5,8 +5,7 @@
 #define __AWUIPEN_H__
 
 #include "awuiObject.h"
-
-class awuiColor;
+#include "awuiColor.h"
 
 class awuiLineCap {
 public:
@@ -28,20 +27,20 @@ public:
 
 class awuiPen : public awuiObject {
 private:
-	awuiColor * color;
+	awuiColor color;
 	float width;
 	awuiLineCap::LineCap lineCap;
 	awuiLineJoin::LineJoin lineJoin;
 
 public:
-	awuiPen(awuiColor * color);
-	awuiPen(awuiColor * color, float width);
+	awuiPen(awuiColor color);
+	awuiPen(awuiColor color, float width);
 	~awuiPen();
 	
 	virtual int IsClass(awuiClasses objectClass) const;
 
-	awuiColor * GetColor();
-	void SetColor(awuiColor * color);
+	awuiColor GetColor();
+	void SetColor(awuiColor color);
 
 	float GetWidth();
 	void SetWidth(float width);

@@ -3,19 +3,23 @@
 
 #include "awuiButton.h"
 #include "awuiColor.h"
+#include "awuiMouseEventArgs.h"
+#include "awuiTextRenderer.h"
+#include "awuiFont.h"
+#include "awuiImage.h"
+#include "awuiGL.h"
+#include "awuiGraphics.h"
+
+#include <iostream>
 
 extern "C" {
 	#include <aw/sysgl.h>
 	#include <aw/aw.h>
-#include "awuiMouseEventArgs.h"
 }
 
 awuiButton::awuiButton() {
 	this->SetSize(75,23);
-	awuiColor * color = awuiColor::FromArgb(255, 255, 255);
-	this->SetBackColor(color);
-	delete color;
-
+	this->SetBackColor(awuiColor::FromArgb(255, 255, 255));
 	this->testx = 0;
 	this->testy = 0;
 	this->show = 0;
@@ -30,29 +34,6 @@ int awuiButton::IsClass(awuiObject::awuiClasses objectClass) const {
 
 	return awuiControl::IsClass(objectClass);
 }
-/*
-float awuiButton::GetAnimationValue() {
-	static int sube = 1;
-	static float py = (float) 100.0f;
-
-	if (sube)
-		py--;
-	else
-		py++;
-
-	if (py < 0) {
-		py = 0;
-		sube = 0;
-	}
-
-	if (py > 600.0f) {
-		sube = 1;
-		py = (float) 600.0f;
-	}
-
-	return py;
-}
-*/
 
 void awuiButton::OnMouseLeave() {
 	this->testx = -1;
@@ -73,14 +54,25 @@ void awuiButton::OnMouseMove(awuiMouseEventArgs* e) {
 }
 
 void awuiButton::OnPaint(awuiGL* gl) {
+	awuiFont font = awuiFont("Sans", 10);
+
+	awuiSize size = awuiTextRenderer::GetMeasureText(this->text, &font);
+	
+	awuiImage * image = new awuiImage(size.GetWidth(), size.GetHeight());
+	awuiGraphics * g = awuiGraphics::FromImage(image);
+	g->DrawString(this->text, &font, 0, size.GetHeight());
+	
+	awuiGL::DrawImageGL(image, (this->GetWidth() - size.GetWidth()) >> 1, (this->GetHeight() - size.GetHeight()) >> 1);
+
+	delete g;
+	delete image;
+
+//	std::cout << size.GetWidth() << "x" << size.GetHeight() << ": " << this->text << std::endl;
+
 	if (!this->show)
 		return;
 
-//	float py = this->GetAnimationValue();
-
 	glColor3f(0.0f, 0.0f, 0.0f);
-//	glBegin(GL_POLYGON);
-//	glBegin(GL_LINE_LOOP);
 	glBegin(GL_LINES);
 	glVertex2f(0, 0);
 	glVertex2f(testx, this->testy);
@@ -90,6 +82,19 @@ void awuiButton::OnPaint(awuiGL* gl) {
 	glVertex2f(testx, this->testy);
 	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
 	glVertex2f(testx, this->testy);
+
+	glVertex2f(0, this->GetHeight() - 1);
+	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
+
+	glVertex2f(this->GetWidth() - 1, 0);
+	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
+
+	glVertex2f(0, 0);
+	glVertex2f(this->GetWidth() - 1, 0);
+
+	glVertex2f(0, 0);
+	glVertex2f(0, this->GetHeight() - 1);
+	
 	glEnd();
 }
 

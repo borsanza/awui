@@ -36,8 +36,8 @@ void awuiPoint::SetY(int y) {
 }
 
 awuiPoint & awuiPoint::operator= (const awuiPoint & other) {
-	x = other.x;
-	y = other.y;
+	this->x = other.x;
+	this->y = other.y;
 
 	return *this;
 }

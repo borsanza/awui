@@ -7,11 +7,11 @@
 #include "awuiObject.h"
 
 #include "awuiRectangle.h"
+#include "awuiColor.h"
 #include <string>
 
 class awuiArrayList;
 class awuiBitmap;
-class awuiColor;
 class awuiGraphics;
 class awuiControlCollection;
 class awuiMouseEventArgs;
@@ -50,8 +50,7 @@ protected:
 	int refreshed;
 	awuiControl::DockStyle dock;
 	awuiControlCollection * controls;
-	awuiBitmap * bitmap;
-	awuiColor * backColor;
+	awuiColor backColor;
 	awuiControl * parent;
 	awuiMouseEventArgs * mouseEventArgs;
 	awuiControl * mouseControl;
@@ -104,8 +103,8 @@ public:
 
 	awuiControlCollection * GetControls();
 
-	awuiColor * GetBackColor();
-	void SetBackColor(awuiColor * color);
+	awuiColor GetBackColor();
+	void SetBackColor(const awuiColor color);
 
 	void Refresh();
 

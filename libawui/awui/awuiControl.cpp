@@ -3,7 +3,6 @@
 
 #include "awuiControl.h"
 
-#include "awuiBitmap.h"
 #include "awuiColor.h"
 #include "awuiControlCollection.h"
 #include "awuiForm.h"
@@ -25,7 +24,6 @@ awuiControl::awuiControl() {
 	this->mouseControl = NULL;
 	this->parent = NULL;
 	this->needRefresh = 1;
-	this->bitmap = NULL;
 	this->dock = awuiControl::None;
 	this->backColor = awuiColor::FromArgb(226, 226, 226);
 	this->OnResizePre();
@@ -39,12 +37,6 @@ awuiControl::~awuiControl() {
 
 	this->controls->Clear();
 	delete this->controls;
-
-	if (this->bitmap != NULL)
-		delete this->bitmap;
-
-	if (this->backColor != NULL)
-		delete this->backColor;
 }
 
 int awuiControl::IsClass(awuiObject::awuiClasses objectClass) const {
@@ -142,15 +134,12 @@ void awuiControl::OnResizePre() {
 	this->Layout();
 }
 
-void awuiControl::SetBackColor(awuiColor * color) {
-	if (this->backColor != NULL)
-		delete this->backColor;
-
-	this->backColor = awuiColor::FromArgb(color->ToArgb());
+void awuiControl::SetBackColor(const awuiColor color) {
+	this->backColor = color;
 }
 
-awuiColor * awuiControl::GetBackColor() {
-	return awuiColor::FromArgb(this->backColor->ToArgb());
+awuiColor awuiControl::GetBackColor() {
+	return this->backColor;
 }
 
 void awuiControl::SetDock(awuiControl::DockStyle dock) {
@@ -234,11 +223,11 @@ void awuiControl::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-x, width-x, height - y - 1, -y, -1.0f, 1.0f);
+	glOrtho(-x - 1, width - x, height - y, -y, -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glClearColor(this->backColor->GetR() / 255.0f, this->backColor->GetG() / 255.0f, this->backColor->GetB() / 255.0f, this->backColor->GetA() / 255.0f);
+	glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	this->OnPaint(NULL);

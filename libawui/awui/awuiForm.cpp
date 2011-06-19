@@ -7,7 +7,6 @@
 
 #include "awuiApplication.h"
 #include "awuiArrayList.h"
-#include "awuiBitmap.h"
 #include "awuiGraphics.h"
 #include "awuiColor.h"
 #include "awuiGL.h"
@@ -23,9 +22,7 @@ extern "C" {
 #endif
 
 awuiForm::awuiForm() {
-	awuiColor *color = awuiColor::FromArgb(192, 192, 192);
-	this->SetBackColor(color);
-	delete color;
+	this->SetBackColor(awuiColor::FromArgb(192, 192, 192));
 
 	this->SetBounds(100, 100, 300, 300);
 	this->mouseButtons = 0;

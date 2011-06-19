@@ -20,40 +20,32 @@ Form1::Form1() {
 }
 
 Form1::~Form1() {
-//	delete this->pen1;
 }
 
 void Form1::InitializeComponent() {
-/*
-	awuiColor * color3 = awuiColor::FromArgb(0, 0, 0);
-	this->pen1 = new awuiPen(color3, 5);
-	this->pen1->SetCap(awuiCap::Round);
-	delete color3;
-*/
-	awuiColor * color;
 	awuiButton * button;
 
 	button = new awuiButton();
 	button->SetDock(awuiControl::Top);
-	button->SetName("Button Top");
-	button->SetMinimumSize(awuiSize(75, 123));
+	button->SetText("Button Top");
+	button->SetMinimumSize(awuiSize(75, 23));
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
 	button->SetDock(awuiControl::Bottom);
-	button->SetName("Button Bottom");
+	button->SetText("Button Bottom");
 	button->SetMinimumSize(awuiSize(75, 23));
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
 	button->SetDock(awuiControl::Left);
-	button->SetName("Button Left");
+	button->SetText("Button Left");
 	button->SetMinimumSize(awuiSize(75, 23));
 	this->GetControls()->Add(button);
 
 	button = new awuiButton();
 	button->SetDock(awuiControl::Right);
-	button->SetName("Button Right");
+	button->SetText("Button Right");
 	button->SetMinimumSize(awuiSize(75, 23));
 	this->GetControls()->Add(button);
 
@@ -61,10 +53,10 @@ void Form1::InitializeComponent() {
 	awuiButton * button2 = new awuiButton();
 
 	button->SetDock(awuiControl::Fill);
-	button->SetName("Button Splitter Left");
+	button->SetText("Button Splitter Left");
 	button->SetMinimumSize(awuiSize(75, 23));
 	button2->SetDock(awuiControl::Fill);
-	button2->SetName("Button Splitter Right");
+	button2->SetText("Button Splitter Right");
 	button2->SetMinimumSize(awuiSize(75, 23));
 	
 	this->splitter = new awuiSplitContainer();
@@ -72,12 +64,10 @@ void Form1::InitializeComponent() {
 	this->splitter->GetPanel1()->GetControls()->Add(button);
 
 	button = new awuiButton();
-	color = awuiColor::FromArgb(255, 0, 255);
 	button->SetDock(awuiControl::None);
 	button->SetBounds(10, 10, 20, 20);
-	button->SetName("Button Right2");
-	button->SetBackColor(color);
-	delete color;
+	button->SetText("Button Right2");
+	button->SetBackColor(awuiColor::FromArgb(255, 0, 255));
 	this->splitter->GetPanel2()->GetControls()->Add(button2);
 	this->splitter->GetPanel2()->GetControls()->Add(button);
 	this->splitter->SetDock(awuiControl::Fill);
@@ -111,5 +101,5 @@ float Form1::GetAnimationValue() {
 void Form1::OnTick() {
 	float py = this->GetAnimationValue();
 
-	this->splitter->SetSplitterDistance(this->splitter->GetWidth() * py / 100.0f);
+//	this->splitter->SetSplitterDistance(this->splitter->GetWidth() * py / 100.0f);
 }

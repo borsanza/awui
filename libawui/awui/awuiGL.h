@@ -3,6 +3,8 @@
 
 #include "awuiRectangle.h"
 
+class awuiImage;
+
 class awuiGL {
 	friend class awuiForm;
 	friend class awuiControl;
@@ -22,4 +24,6 @@ public:
 	awuiRectangle GetClippingResult();
 
 	void SetClipping();
+	
+	static void DrawImageGL(awuiImage * image, float x, float y);
 };

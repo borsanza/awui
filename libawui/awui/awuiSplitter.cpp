@@ -8,9 +8,7 @@
 #include "awuiSplitContainer.h"
 
 awuiSplitter::awuiSplitter() {
-  awuiColor * color = awuiColor::FromArgb(192, 192, 192);
-  this->SetBackColor(color);
-  delete color;
+  this->SetBackColor(awuiColor::FromArgb(192, 192, 192));
 	
 	this->SetName("awuiSplitter");
 
@@ -50,7 +48,7 @@ void awuiSplitter::OnMouseMove(awuiMouseEventArgs * e) {
 
 	if (this->GetParent()->IsClass(awuiObject::SplitContainer)) {
 		((awuiSplitContainer *) this->GetParent())->SetSplitterDistance(
-			((awuiSplitContainer *) this->GetParent())->GetSplitterDistance() + e->GetX()
+			((awuiSplitContainer *) this->GetParent())->GetSplitterDistance() + (this->orientation == awuiSplitContainer::Vertical?e->GetX():e->GetY())
 		);
 	}
 
