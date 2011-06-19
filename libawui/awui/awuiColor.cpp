@@ -14,41 +14,41 @@ awuiColor::awuiColor() {
 	this->b = 0;
 }
 
-int awuiColor::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiColor::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Color)
 		return 1;
 
 	return awuiObject::IsClass(objectClass);
 }
 
-unsigned char awuiColor::GetA() {
+unsigned char awuiColor::GetA() const {
 	return this->a;
 }
 
-unsigned char awuiColor::GetR() {
+unsigned char awuiColor::GetR() const {
 	return this->r;
 }
 
-unsigned char awuiColor::GetG() {
+unsigned char awuiColor::GetG() const {
 	return this->g;
 }
 
-unsigned char awuiColor::GetB() {
+unsigned char awuiColor::GetB() const {
 	return this->b;
 }
 
-int awuiColor::ToArgb() {
-	return (((((a << 8) + r) << 8) + g) << 8) + b;
+int awuiColor::ToArgb() const {
+	return (((((this->a << 8) + this->r) << 8) + this->g) << 8) + this->b;
 }
 
-float awuiColor::GetBrightness() {
+float awuiColor::GetBrightness() const {
 	int M = awuiMath::Max(awuiMath::Max(this->r, this->g), this->b);
 	int m = awuiMath::Min(awuiMath::Min(this->r, this->g), this->b);
 
 	return ((M + m) / 2.0f) / 255.0f;
 }
 
-float awuiColor::GetHue() {
+float awuiColor::GetHue() const {
 	int M = awuiMath::Max(awuiMath::Max(this->r, this->g), this->b);
 	int m = awuiMath::Min(awuiMath::Min(this->r, this->g), this->b);
 
@@ -72,7 +72,7 @@ float awuiColor::GetHue() {
 	return (float)H;
 }
 
-float awuiColor::GetSaturation() {
+float awuiColor::GetSaturation() const {
 	int M = awuiMath::Max(awuiMath::Max(this->r, this->g), this->b);
 	int m = awuiMath::Min(awuiMath::Min(this->r, this->g), this->b);
 
@@ -87,7 +87,7 @@ float awuiColor::GetSaturation() {
 	return (float)value;
 }
 
-awuiColor * awuiColor::FromArgb(int argb) {
+awuiColor awuiColor::FromArgb(int argb) {
 	unsigned char a;
 	unsigned char r;
 	unsigned char g;
@@ -104,21 +104,30 @@ awuiColor * awuiColor::FromArgb(int argb) {
 	return awuiColor::FromArgb(a, r, g, b);
 }
 
-awuiColor * awuiColor::FromArgb(int alpha, awuiColor * baseColor) {
-	return awuiColor::FromArgb(alpha, baseColor->r, baseColor->g, baseColor->b);
+awuiColor awuiColor::FromArgb(int alpha, const awuiColor baseColor) {
+	return awuiColor::FromArgb(alpha, baseColor.r, baseColor.g, baseColor.b);
 }
 
-awuiColor * awuiColor::FromArgb(int red, int green, int blue) {
+awuiColor awuiColor::FromArgb(int red, int green, int blue) {
 	return awuiColor::FromArgb(255, red, green, blue);
 }
 
-awuiColor * awuiColor::FromArgb(int alpha, int red, int green, int blue) {
-	awuiColor * color = new awuiColor();
+awuiColor awuiColor::FromArgb(int alpha, int red, int green, int blue) {
+	awuiColor color;
 
-	color->a = (alpha > 255)? 255 : (alpha < 0) ? 0 : alpha;
-	color->r = (red > 255)? 255 : (red < 0) ? 0 : red;
-	color->g = (green > 255)? 255 : (green < 0) ? 0 : green;
-	color->b = (blue > 255)? 255 : (blue < 0) ? 0 : blue;
+	color.a = (alpha > 255)? 255 : (alpha < 0) ? 0 : alpha;
+	color.r = (red > 255)? 255 : (red < 0) ? 0 : red;
+	color.g = (green > 255)? 255 : (green < 0) ? 0 : green;
+	color.b = (blue > 255)? 255 : (blue < 0) ? 0 : blue;
 
 	return color;
+}
+
+awuiColor & awuiColor::operator=(const awuiColor & other) {
+	this->r = other.r;
+	this->g = other.g;
+	this->b = other.b;
+	this->a = other.a;
+
+	return *this;
 }

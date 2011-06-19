@@ -13,7 +13,7 @@ awuiArrayList::~awuiArrayList() {
 	this->Clear();
 }
 
-int awuiArrayList::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiArrayList::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::ArrayList)
 		return 1;
 

@@ -9,7 +9,7 @@ awuiObject::awuiObject() {
 awuiObject::~awuiObject() {
 }
 
-int awuiObject::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiObject::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Object)
 		return 1;
 

@@ -15,7 +15,7 @@ public:
   awuiSplitter();
   ~awuiSplitter();
 	
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 	
 	awuiSplitContainer::Orientation GetOrientation();
 	void SetOrientation(awuiSplitContainer::Orientation orientation);
@@ -23,4 +23,6 @@ public:
 	virtual void OnMouseDown(awuiMouseEventArgs * e);
 	virtual void OnMouseMove(awuiMouseEventArgs * e);
 	virtual void OnMouseUp(awuiMouseEventArgs * e);
+	virtual void OnMouseEnter();
+	virtual void OnMouseLeave();
 };

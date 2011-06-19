@@ -9,6 +9,8 @@ typedef struct _cairo cairo_t;
 class awuiImage : public awuiObject {
 	friend class awuiGraphics;
 	friend class awuiForm;
+	friend class awuiButton;
+	friend class awuiGL;
 
 protected:
 	unsigned char *image;
@@ -19,10 +21,10 @@ protected:
 	cairo_t *cr;
 
 public:
-	awuiImage();
+	awuiImage(int width, int height);
 	~awuiImage();
 
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 
 	int GetWidth();
 	int GetHeight();

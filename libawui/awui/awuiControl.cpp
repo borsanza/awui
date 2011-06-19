@@ -3,25 +3,27 @@
 
 #include "awuiControl.h"
 
-#include "awuiBitmap.h"
 #include "awuiColor.h"
 #include "awuiControlCollection.h"
+#include "awuiForm.h"
 #include "awuiGraphics.h"
 #include "awuiMouseEventArgs.h"
 #include "awuiPen.h"
+#include "awuiRectangle.h"
+#include "awuiGL.h"
+
+extern "C" {
+	#include <aw/sysgl.h>
+	#include <aw/aw.h>
+}
 
 awuiControl::awuiControl() {
+	this->bounds = awuiRectangle(0, 0, 100, 100);
 	this->controls = new awuiControlCollection(this);
 	this->mouseEventArgs = new awuiMouseEventArgs();
 	this->mouseControl = NULL;
-	this->mouseControlOver = NULL;
 	this->parent = NULL;
 	this->needRefresh = 1;
-	this->x = 0;
-	this->y = 0;
-	this->width = 100;
-	this->height = 100;
-	this->bitmap = NULL;
 	this->dock = awuiControl::None;
 	this->backColor = awuiColor::FromArgb(226, 226, 226);
 	this->OnResizePre();
@@ -35,15 +37,9 @@ awuiControl::~awuiControl() {
 
 	this->controls->Clear();
 	delete this->controls;
-
-	if (this->bitmap != NULL)
-		delete this->bitmap;
-
-	if (this->backColor != NULL)
-		delete this->backColor;
 }
 
-int awuiControl::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiControl::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Control)
 		return 1;
 
@@ -51,104 +47,99 @@ int awuiControl::IsClass(awuiObject::awuiClasses objectClass) {
 }
 
 void awuiControl::SetTop(int y) {
-	this->SetLocation(this->x, y);
+	this->SetLocation(this->bounds.GetX(), y);
 }
 
 void awuiControl::SetLeft(int x) {
-	this->SetLocation(x, this->y);
+	this->SetLocation(x, this->bounds.GetY());
 }
 
 void awuiControl::SetLocation(int x, int y) {
-	this->SetBounds(x, y, this->width, this->height);
+	this->SetBounds(x, y, this->bounds.GetWidth(), this->bounds.GetHeight());
 }
 
 void awuiControl::SetWidth(int width) {
-	this->SetSize(width, this->height);
+	this->SetSize(width, this->bounds.GetHeight());
 }
 
 void awuiControl::SetHeight(int height) {
-	this->SetSize(this->width, height);
+	this->SetSize(this->bounds.GetWidth(), height);
 }
 
 void awuiControl::SetSize(int width, int height) {
-	this->SetBounds(this->x, this->y, width, height);
+	this->SetBounds(this->bounds.GetX(), this->bounds.GetY(), width, height);
+}
+
+void awuiControl::SetSize(const awuiSize size) {
+	this->SetSize(size.GetWidth(), size.GetHeight());
 }
 
 void awuiControl::SetBounds(int x, int y, int width, int height) {
-	if ((this->x == x) && (this->y == y) && (this->width == width) && (this->height == height))
+	if (width < this->minimumSize.GetWidth())
+		width = this->minimumSize.GetWidth();
+
+	if (height < this->minimumSize.GetHeight())
+		height = this->minimumSize.GetHeight();
+	
+	if ((this->bounds.GetX() == x) && (this->bounds.GetY() == y) && (this->bounds.GetWidth() == width) && (this->bounds.GetHeight() == height))
 		return;
 
-	this->x = x;
-	this->y = y;
-	this->width = width;
-	this->height = height;
+	this->bounds = awuiRectangle(x, y, width, height);
 	this->Refresh();
-
 	this->OnResizePre();
 }
 
-int awuiControl::GetTop() {
-	return this->y;
+int awuiControl::GetTop() const {
+	return this->bounds.GetTop();
 }
 
-int awuiControl::GetLeft() {
-	return this->x;
+int awuiControl::GetLeft() const {
+	return this->bounds.GetLeft();
 }
 
-int awuiControl::GetRight() {
-	return this->x + this->width - 1;
+int awuiControl::GetRight() const {
+	return this->bounds.GetRight();
 }
 
-int awuiControl::GetBottom() {
-	return this->y + this->height - 1;
+int awuiControl::GetBottom() const {
+	return this->bounds.GetBottom();
 }
 
-void awuiControl::GetLocation(int &x, int &y) {
-	x = this->GetLeft();
-	y = this->GetTop();
+const awuiPoint awuiControl::GetLocation() const {
+	return this->bounds.GetLocation();
 }
 
-int awuiControl::GetWidth() {
-	return this->width;
+int awuiControl::GetWidth() const {
+	return this->bounds.GetWidth();
 }
 
-int awuiControl::GetHeight() {
-	return this->height;
+int awuiControl::GetHeight() const {
+	return this->bounds.GetHeight();
 }
 
-void awuiControl::GetSize(int &width, int &height) {
-	width = this->GetWidth();
-	height = this->GetHeight();
+const awuiSize awuiControl::GetSize() const {
+	return this->bounds.GetSize();
 }
 
-void awuiControl::GetBounds(int &x, int &y, int &width, int &height) {
-	this->GetLocation(x, y);
-	this->GetSize(width, height);
+const awuiRectangle awuiControl::GetBounds() const {
+	return this->bounds;
 }
 
-awuiArrayList * awuiControl::GetControls() {
+awuiControlCollection* awuiControl::GetControls() {
 	return this->controls;
 }
 
 void awuiControl::OnResizePre() {
-	if (this->bitmap != NULL)
-		delete this->bitmap;
-
-	this->bitmap = new awuiBitmap(this->GetWidth(), this->GetHeight());
-	
 	this->OnResize();
 	this->Layout();
 }
 
-void awuiControl::SetBackColor(awuiColor * color) {
-	if (this->backColor != NULL)
-		delete this->backColor;
-
-	this->backColor = awuiColor::FromArgb(color->ToArgb());
+void awuiControl::SetBackColor(const awuiColor color) {
+	this->backColor = color;
 }
 
-awuiColor * awuiControl::GetBackColor() {
-	return awuiColor::FromArgb(this->backColor->ToArgb());
+awuiColor awuiControl::GetBackColor() {
+	return this->backColor;
 }
 
 void awuiControl::SetDock(awuiControl::DockStyle dock) {
@@ -158,11 +149,21 @@ void awuiControl::SetDock(awuiControl::DockStyle dock) {
 	}
 }
 
-awuiControl::DockStyle awuiControl::GetDock() {
+awuiControl::DockStyle awuiControl::GetDock() const {
 	return this->dock;
 }
 
-awuiControl * awuiControl::GetParent() {
+
+const awuiSize awuiControl::GetMinimumSize() const {
+	return this->minimumSize;
+}
+
+void awuiControl::SetMinimumSize(awuiSize size) {
+	this->minimumSize = size;
+	this->SetSize(this->GetSize());
+}
+
+awuiControl * awuiControl::GetParent() const {
 	return this->parent;
 }
 
@@ -173,30 +174,31 @@ void awuiControl::SetParent(awuiControl * parent) {
 void awuiControl::Layout() {
 	int x1 = 0;
 	int y1 = 0;
-	int x2 = this->GetWidth();
-	int y2 = this->GetHeight();
+	int x2 = this->GetWidth() - 1;
+	int y2 = this->GetHeight() - 1;
+	int margin = 1;
 	
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
 			case awuiControl::Fill:
-				control->SetBounds(x1, y1, x2 - x1, y2 - y1);
+				control->SetBounds(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 				break;
 			case awuiControl::Left:
-				control->SetBounds(x1, y1, control->GetWidth(), y2 - y1);
-				x1 += control->GetWidth();
+				control->SetBounds(x1, y1, control->GetWidth(), y2 - y1 + 1);
+				x1 += (control->GetWidth() + margin);
 				break;
 			case awuiControl::Right:
-				control->SetBounds(x2 - control->GetWidth(), y1, control->GetWidth(), y2 - y1);
-				x2 -= control->GetWidth();
+				control->SetBounds(x2 - control->GetWidth() + 1, y1, control->GetWidth(), y2 - y1 + 1);
+				x2 -= (control->GetWidth() + margin);
 				break;
 			case awuiControl::Top:
-				control->SetBounds(x1, y1, x2 - x1, control->GetHeight());
-				y1 += control->GetHeight();
+				control->SetBounds(x1, y1, x2 - x1 + 1, control->GetHeight());
+				y1 += (control->GetHeight() + margin);
 				break;
 			case awuiControl::Bottom:
-				control->SetBounds(x1, y2 - control->GetHeight(), x2 - x1, control->GetHeight());
-				y2 -= control->GetHeight();
+				control->SetBounds(x1, y2 - control->GetHeight() + 1, x2 - x1 + 1, control->GetHeight());
+				y2 -= (control->GetHeight() + margin);
 				break;
 		}
 	}
@@ -209,52 +211,54 @@ void awuiControl::Refresh() {
 	this->needRefresh = 1;
 }
 
-void awuiControl::OnPaintPre(awuiGraphics * g) {
-	if (this->needRefresh) {
-		this->needRefresh = 0;
-		this->refreshed++;
+void awuiControl::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
+	awuiRectangle rect2;
+	rect2.SetX(x);
+	rect2.SetY(height - y - this->GetHeight());
+	rect2.SetWidth(this->GetWidth());
+	rect2.SetHeight(this->GetHeight());
 
-		awuiColor * color = awuiColor::FromArgb(0, 0, 0);
-		awuiPen * pen = new awuiPen(color);
+	gl->SetClipping(rect2);
+	gl->SetClipping();
 
-		g->Clear(this->backColor);
-		this->OnPaint(g);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-x - 1, width - x, height - y, -y, -1.0f, 1.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
-		g->DrawLine(pen, (float)this->mouseEventArgs->GetX() - 5.0f, (float)this->mouseEventArgs->GetY(), (float)this->mouseEventArgs->GetX() + 5.0f, (float)this->mouseEventArgs->GetY());
-		g->DrawLine(pen, (float)this->mouseEventArgs->GetX(), (float)this->mouseEventArgs->GetY() - 5.0f, (float)this->mouseEventArgs->GetX(), (float)this->mouseEventArgs->GetY() + 5.0f);
+	glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-		delete pen;
-		delete color;
+	this->OnPaint(NULL);
 
-		for (int i = 0; i < this->GetControls()->GetCount(); i++) {
-			awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
+		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 
-			awuiGraphics * g2 = awuiGraphics::FromImage(control->bitmap);
-			control->OnPaintPre(g2);
-			g->DrawImage(control->bitmap, (float)control->GetLeft(), (float)control->GetTop());
-			delete g2;
-		}
+		awuiGL gl2;
+		gl2.SetClippingBase(gl->GetClippingResult());
+		control->OnPaintPre(x + control->GetLeft(), y + control->GetTop(), width, height, &gl2);
 	}
 }
 
 #include <iostream>
 
-void awuiControl::OnMouseDownPre(MouseButtons::Buttons button, int buttons) {
-	int x = this->mouseEventArgs->GetX();
-	int y = this->mouseEventArgs->GetY();
+void awuiControl::OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int buttons) {
+	this->mouseEventArgs->SetLocation(x, y);
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 
 		if (this->mouseControl != NULL) {
 			if (this->mouseControl == control) {
-				control->OnMouseDownPre(button, buttons);
+				control->OnMouseDownPre(x - control->GetLeft(), y - control->GetTop(), button, buttons);
 				return;
 			}
 		} else {
 			if ((control->GetLeft() <= x) && (x <= control->GetRight()) && (control->GetTop() <= y) && (y <= control->GetBottom())) {
 				this->mouseControl = control;
-				control->OnMouseDownPre(button, buttons);
+				this->ChangeControlOnMouseOver(control);
+				control->OnMouseDownPre(x - control->GetLeft(), y - control->GetTop(), button, buttons);
 				return;
 			}
 		}
@@ -283,13 +287,8 @@ void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
 		}
 
 		if (find) {
-			if (this->mouseControlOver != control) {
-				if (this->mouseControlOver != NULL)
-					this->mouseControlOver->OnMouseLeave();
+			this->ChangeControlOnMouseOver(control);
 
-				this->mouseControlOver = control;
-				control->OnMouseEnter();
-			}
 			control->OnMouseMovePre(x - control->GetLeft(), y - control->GetTop(), buttons);
 			return;
 		}
@@ -300,6 +299,23 @@ void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
 	this->Refresh();
 
 //	std::cout << "Move: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "  " << this->mouseEventArgs->GetButton() << "    " << this->GetName() << std::endl;
+}
+
+void awuiControl::ChangeControlOnMouseOver(awuiControl * control) {
+	if (this->GetParent()) {
+		this->GetParent()->ChangeControlOnMouseOver(control);
+		return;
+	}
+
+	if (this->IsClass(awuiObject::Form)) {
+		if (((awuiForm *) this)->mouseControlOver != control) {
+			if (((awuiForm *) this)->mouseControlOver != NULL)
+				((awuiForm *) this)->mouseControlOver->OnMouseLeave();
+
+			((awuiForm *) this)->mouseControlOver = control;
+			control->OnMouseEnter();
+		}
+	}
 }
 
 void awuiControl::OnMouseUpPre(MouseButtons::Buttons button, int buttons) {
@@ -344,4 +360,13 @@ void awuiControl::SetName(const std::string& str) {
 
 const std::string& awuiControl::GetName() {
 	return this->name;
+}
+
+void awuiControl::OnTickPre() {
+	this->OnTick();
+
+	for (int i = 0; i<this->GetControls()->GetCount(); i++) {
+		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+		control->OnTickPre();
+	}
 }

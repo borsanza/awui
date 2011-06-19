@@ -11,10 +11,14 @@ class awuiApplication;
 
 class awuiForm : public awuiControl {
 	friend class awuiApplication;
+	friend class awuiControl;
 
 private:
 	aw * w;
+	awuiControl * mouseControlOver;
 	
+	int mouseX;
+	int mouseY;
 	int mouseButtons;
 	
 	GLuint texture1;
@@ -29,7 +33,7 @@ public:
 	awuiForm();
 	~awuiForm();
 	
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 
 	void Show();
 };

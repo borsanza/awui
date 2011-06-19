@@ -5,16 +5,14 @@
 #include "awuiColor.h"
 #include <stdlib.h>
 
-awuiPen::awuiPen(awuiColor * color) {
-	this->color = NULL;
+awuiPen::awuiPen(const awuiColor color) {
 	this->SetColor(color);
 	this->SetWidth(1);
 	this->SetLineCap(awuiLineCap::Butt);
 	this->SetLineJoin(awuiLineJoin::Miter);
 }
 
-awuiPen::awuiPen(awuiColor * color, float width) {
-	this->color = NULL;
+awuiPen::awuiPen(awuiColor color, float width) {
 	this->SetColor(color);
 	this->SetWidth(width);
 	this->SetLineCap(awuiLineCap::Butt);
@@ -22,25 +20,21 @@ awuiPen::awuiPen(awuiColor * color, float width) {
 }
 
 awuiPen::~awuiPen() {
-	delete this->color;
 }
 
-int awuiPen::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiPen::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Pen)
 		return 1;
 
 	return awuiObject::IsClass(objectClass);
 }
 
-awuiColor * awuiPen::GetColor() {
-	return awuiColor::FromArgb(this->color->ToArgb());
+awuiColor awuiPen::GetColor() {
+	return this->color;
 }
 
-void awuiPen::SetColor(awuiColor * color) {
-	if (this->color != NULL)
-		delete this->color;
-
-	this->color = awuiColor::FromArgb(color->ToArgb());
+void awuiPen::SetColor(awuiColor color) {
+	this->color = color;
 }
 
 float awuiPen::GetWidth() {

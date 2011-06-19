@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #include <cairo.h>
 
-awuiImage::awuiImage() {
-	this->image = NULL;
-	this->width = 0;
-	this->height = 0;
+awuiImage::awuiImage(int width, int height) {
+	this->width = width;
+	this->height = height;
 	this->btpp = 4;
-	this->cairo_surface = 0;
-	this->cr = 0;
+	this->image = (unsigned char *) calloc (this->btpp * this->width * this->height, 1);
+	this->cairo_surface = cairo_image_surface_create_for_data(this->image, CAIRO_FORMAT_ARGB32, this->width, this->height, this->btpp * this->width);
+	this->cr = cairo_create(this->cairo_surface);
 }
 
 awuiImage::~awuiImage() {
@@ -25,7 +25,7 @@ awuiImage::~awuiImage() {
 		cairo_surface_destroy(this->cairo_surface);
 }
 
-int awuiImage::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiImage::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Image)
 		return 1;
 

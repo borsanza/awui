@@ -5,15 +5,13 @@
 #include "awuiColor.h"
 
 awuiPanel::awuiPanel() {
-  awuiColor * color = awuiColor::FromArgb(0, 0, 255);
-  this->SetBackColor(color);
-  delete color;
+  this->SetBackColor(awuiColor::FromArgb(0, 0, 255));
 }
 
 awuiPanel::~awuiPanel() {
 }
 
-int awuiPanel::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiPanel::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Panel)
 		return 1;
 

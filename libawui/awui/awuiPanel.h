@@ -8,5 +8,5 @@ public:
   awuiPanel();
   ~awuiPanel();
 
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 };

@@ -8,9 +8,7 @@
 #include "awuiSplitContainer.h"
 
 awuiSplitter::awuiSplitter() {
-  awuiColor * color = awuiColor::FromArgb(0, 255, 0);
-  this->SetBackColor(color);
-  delete color;
+  this->SetBackColor(awuiColor::FromArgb(192, 192, 192));
 	
 	this->SetName("awuiSplitter");
 
@@ -22,7 +20,7 @@ awuiSplitter::awuiSplitter() {
 awuiSplitter::~awuiSplitter() {
 }
 
-int awuiSplitter::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiSplitter::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::Splitter)
 		return 1;
 
@@ -50,7 +48,7 @@ void awuiSplitter::OnMouseMove(awuiMouseEventArgs * e) {
 
 	if (this->GetParent()->IsClass(awuiObject::SplitContainer)) {
 		((awuiSplitContainer *) this->GetParent())->SetSplitterDistance(
-			((awuiSplitContainer *) this->GetParent())->GetSplitterDistance() + e->GetX()
+			((awuiSplitContainer *) this->GetParent())->GetSplitterDistance() + (this->orientation == awuiSplitContainer::Vertical?e->GetX():e->GetY())
 		);
 	}
 
@@ -59,4 +57,12 @@ void awuiSplitter::OnMouseMove(awuiMouseEventArgs * e) {
 
 void awuiSplitter::OnMouseUp(awuiMouseEventArgs * e) {
 	this->mouseActive = 0;
+}
+
+void awuiSplitter::OnMouseEnter() {
+//	std::cout << "OnMouseEnter" << std::endl;
+}
+
+void awuiSplitter::OnMouseLeave() {
+//	std::cout << "OnMouseLeave" << std::endl;
 }

@@ -10,7 +10,6 @@ public:
 		Object,
 		Application,
 		ArrayList,
-		Bitmap,
 		Button,
 		Color,
 		Control,
@@ -28,7 +27,7 @@ public:
 	awuiObject();
 	~awuiObject();
 
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 };
 
 #endif

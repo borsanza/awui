@@ -14,7 +14,7 @@ awuiMouseEventArgs::awuiMouseEventArgs() {
 awuiMouseEventArgs::~awuiMouseEventArgs() {
 }
 
-int awuiMouseEventArgs::IsClass(awuiObject::awuiClasses objectClass) {
+int awuiMouseEventArgs::IsClass(awuiObject::awuiClasses objectClass) const {
 	if (objectClass == awuiObject::MouseEventArgs)
 		return 1;
 

@@ -24,7 +24,7 @@ public:
   awuiMouseEventArgs();
   ~awuiMouseEventArgs();
 	
-	virtual int IsClass(awuiClasses objectClass);
+	virtual int IsClass(awuiClasses objectClass) const;
 
 	int GetX();
 	int GetY();
