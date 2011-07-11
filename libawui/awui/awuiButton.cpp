@@ -82,19 +82,17 @@ void awuiButton::OnPaint(awuiGL* gl) {
 	glVertex2f(testx, this->testy);
 	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
 	glVertex2f(testx, this->testy);
+	glEnd();
 
+	glBegin(GL_LINES);
 	glVertex2f(0, this->GetHeight() - 1);
 	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
-
 	glVertex2f(this->GetWidth() - 1, 0);
 	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
-
 	glVertex2f(0, 0);
 	glVertex2f(this->GetWidth() - 1, 0);
-
 	glVertex2f(0, 0);
 	glVertex2f(0, this->GetHeight() - 1);
-	
 	glEnd();
 }
 
