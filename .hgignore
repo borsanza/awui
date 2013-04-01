@@ -1,0 +1,13 @@
+CMakeFiles/
+Makefile
+cmake_install.cmake
+CMakeCache.txt
+.cbp
+libaw/libaw.a
+libawui/libawui.a
+test/awuiDemo
+
+syntax: glob
+libaw/*.c
+libaw/*.h
+libaw/aw/*.h

@@ -21,5 +21,7 @@ TARGET_LINK_LIBRARIES(
 	aw
 	cairo
 	freetype
+	X11
+	GL
 #	"C:\\awui-project\\cairo\\lib\\libcairo.dll.a"
 )
