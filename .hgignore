@@ -7,6 +7,8 @@ libaw/libaw.a
 libawui/libawui.a
 test/awuiDemo
 
+Project.layout
+
 syntax: glob
 libaw/*.c
 libaw/*.h

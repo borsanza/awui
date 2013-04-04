@@ -80,7 +80,7 @@ void awuiControl::SetBounds(int x, int y, int width, int height) {
 
 	if (height < this->minimumSize.GetHeight())
 		height = this->minimumSize.GetHeight();
-	
+
 	if ((this->bounds.GetX() == x) && (this->bounds.GetY() == y) && (this->bounds.GetWidth() == width) && (this->bounds.GetHeight() == height))
 		return;
 
@@ -125,7 +125,7 @@ const awuiRectangle awuiControl::GetBounds() const {
 	return this->bounds;
 }
 
-awuiControlCollection* awuiControl::GetControls() {
+awuiControlCollection* awuiControl::GetControls() const {
 	return this->controls;
 }
 
@@ -177,7 +177,7 @@ void awuiControl::Layout() {
 	int x2 = this->GetWidth() - 1;
 	int y2 = this->GetHeight() - 1;
 	int margin = 1;
-	
+
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
@@ -263,7 +263,7 @@ void awuiControl::OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int
 			}
 		}
 	}
-	
+
 	this->mouseEventArgs->SetButton(button);
 	this->OnMouseDown(this->mouseEventArgs);
 
@@ -277,7 +277,7 @@ void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 
 		int find = 0;
-		
+
 		if (this->mouseControl != NULL) {
 			if (this->mouseControl == control)
 				find = 1;
@@ -293,7 +293,7 @@ void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
 			return;
 		}
 	}
-	
+
 	this->mouseEventArgs->SetButton(buttons);
 	this->OnMouseMove(this->mouseEventArgs);
 	this->Refresh();
@@ -338,7 +338,7 @@ void awuiControl::OnMouseUpPre(MouseButtons::Buttons button, int buttons) {
 			}
 		}
 	}
-	
+
 	this->mouseEventArgs->SetButton(button);
 	this->OnMouseUp(this->mouseEventArgs);
 

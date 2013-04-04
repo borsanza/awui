@@ -67,12 +67,12 @@ public:
 
 	virtual int IsClass(awuiClasses objectClass) const;
 
-	virtual const awuiSize GetMinimumSize() const;
+	const virtual awuiSize GetMinimumSize() const;
 	void SetMinimumSize(awuiSize size);
 
 	awuiControl::DockStyle GetDock() const;
 	void SetDock(awuiControl::DockStyle dock);
-	
+
 	const std::string& GetName();
 	void SetName(const std::string& str);
 
@@ -99,9 +99,9 @@ public:
 	void SetBounds(int x, int y, int width, int height);
 
 	int GetRight() const;
-	int GetBottom() const;	
+	int GetBottom() const;
 
-	awuiControlCollection * GetControls();
+	awuiControlCollection * GetControls() const;
 
 	awuiColor GetBackColor();
 	void SetBackColor(const awuiColor color);
@@ -110,11 +110,11 @@ public:
 
 	awuiControl * GetParent() const;
 	void SetParent(awuiControl * parent);
-	
+
 	void OnMouseMovePre(int x, int y, int buttons);
 	void OnMouseUpPre(MouseButtons::Buttons button, int buttons);
 	void OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int buttons);
-	
+
 	virtual void Layout();
 	virtual void OnMouseDown(awuiMouseEventArgs* e) {}
 	virtual void OnMouseMove(awuiMouseEventArgs* e) {}

@@ -18,7 +18,7 @@ static ap * g_p = 0;
 static const struct gimp_image {
         unsigned int     width;
         unsigned int     height;
-        unsigned int     bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+        unsigned int     bytes_per_pixel; /* 3:RGB, 4:RGBA */
         unsigned char    pixel_data[32 * 32 * 4 + 1];
 } gimp_image  = {
         32, 32, 4,
@@ -156,7 +156,7 @@ static void deletePointer(aw * w) {
 }
 
 static void setCursor1(aw * w) {
-        deletePointer(w);   
+        deletePointer(w);
         g_p = apNew(gimp_image.pixel_data, 10, 5);
         awPointer(w, g_p);
 }
@@ -190,7 +190,7 @@ void awuiApplication::Run(awuiForm * form = NULL) {
 			glFlush();
 			awSwapBuffers(form->w);
 
-			usleep(16000);
+//			usleep(16000);
 		}
 	}
 

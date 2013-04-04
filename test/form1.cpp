@@ -58,7 +58,7 @@ void Form1::InitializeComponent() {
 	button2->SetDock(awuiControl::Fill);
 	button2->SetText("Button Splitter Right");
 	button2->SetMinimumSize(awuiSize(75, 23));
-	
+
 	this->splitter = new awuiSplitContainer();
 	this->splitter->SetName("SplitContainer");
 	this->splitter->GetPanel1()->GetControls()->Add(button);
@@ -71,7 +71,7 @@ void Form1::InitializeComponent() {
 	this->splitter->GetPanel2()->GetControls()->Add(button2);
 	this->splitter->GetPanel2()->GetControls()->Add(button);
 	this->splitter->SetDock(awuiControl::Fill);
-	this->splitter->SetOrientation(awuiSplitContainer::Horizontal);
+	this->splitter->SetOrientation(awuiSplitContainer::Vertical);
 
 	this->GetControls()->Add(this->splitter);
 }
@@ -101,5 +101,5 @@ float Form1::GetAnimationValue() {
 void Form1::OnTick() {
 	float py = this->GetAnimationValue();
 
-//	this->splitter->SetSplitterDistance(this->splitter->GetWidth() * py / 100.0f);
+	this->splitter->SetSplitterDistance(this->splitter->GetWidth() * py / 100.0f);
 }

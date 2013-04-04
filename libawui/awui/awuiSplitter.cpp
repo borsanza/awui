@@ -8,13 +8,13 @@
 #include "awuiSplitContainer.h"
 
 awuiSplitter::awuiSplitter() {
-  this->SetBackColor(awuiColor::FromArgb(192, 192, 192));
-	
-	this->SetName("awuiSplitter");
+    this->SetBackColor(awuiColor::FromArgb(192, 192, 192));
 
-	this->SetSize(20, 200);
-	
-	this->mouseActive = 0;
+    this->SetName("awuiSplitter");
+
+    this->SetSize(20, 200);
+
+    this->mouseActive = 0;
 }
 
 awuiSplitter::~awuiSplitter() {
@@ -47,9 +47,10 @@ void awuiSplitter::OnMouseMove(awuiMouseEventArgs * e) {
 		return;
 
 	if (this->GetParent()->IsClass(awuiObject::SplitContainer)) {
-		((awuiSplitContainer *) this->GetParent())->SetSplitterDistance(
-			((awuiSplitContainer *) this->GetParent())->GetSplitterDistance() + (this->orientation == awuiSplitContainer::Vertical?e->GetX():e->GetY())
-		);
+	    if (this->orientation == awuiSplitContainer::Vertical)
+            ((awuiSplitContainer *) this->GetParent())->SetSplitterDistance(this->GetLeft() + e->GetX());
+        else
+            ((awuiSplitContainer *) this->GetParent())->SetSplitterDistance(this->GetTop() + e->GetY());
 	}
 
 //	std::cout << "Motion: " << e->GetX() << "x" << e->GetY() << "    " << this->GetName() << std::endl;

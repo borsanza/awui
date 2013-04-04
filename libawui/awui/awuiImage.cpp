@@ -14,6 +14,15 @@ awuiImage::awuiImage(int width, int height) {
 	this->cr = cairo_create(this->cairo_surface);
 }
 
+awuiImage::awuiImage(const char * filename) {
+	this->image = NULL;
+	this->btpp = 4;
+	this->cairo_surface = cairo_image_surface_create_from_png(filename);
+	this->width = cairo_image_surface_get_width(this->cairo_surface);
+	this->height = cairo_image_surface_get_height(this->cairo_surface);
+	this->cr = cairo_create(this->cairo_surface);
+}
+
 awuiImage::~awuiImage() {
 	if (this->image != NULL)
 		free(this->image);

@@ -22,6 +22,7 @@ protected:
 
 public:
 	awuiImage(int width, int height);
+	awuiImage(const char * name);
 	~awuiImage();
 
 	virtual int IsClass(awuiClasses objectClass) const;

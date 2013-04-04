@@ -59,6 +59,7 @@ void awuiForm::Show() {
 }
 
 void awuiForm::OnPaintForm() {
+	this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
 	glEnable(GL_SCISSOR_TEST);
 
@@ -78,7 +79,7 @@ void awuiForm::ProcessEvents(ac * c) {
 
 	int resizex = -1;
 	int resizey = -1;
-	
+
 	while ((e = awNextEvent(w))) {
 		switch (aeType(e)) {
 			case AW_EVENT_RESIZE:
