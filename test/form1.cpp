@@ -10,6 +10,7 @@
 #include <awui/awuiControl.h>
 #include <awui/awuiPen.h>
 #include <awui/awuiPanel.h>
+#include <awui/animation/effects.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -48,7 +49,7 @@ void Form1::InitializeComponent() {
 	button->SetText("Button Right");
 	button->SetMinimumSize(awuiSize(75, 23));
 	this->GetControls()->Add(button);
-
+/*
 	button = new awuiButton();
 	awuiButton * button2 = new awuiButton();
 
@@ -74,32 +75,164 @@ void Form1::InitializeComponent() {
 	this->splitter->SetOrientation(awuiSplitContainer::Vertical);
 
 	this->GetControls()->Add(this->splitter);
+*/
+    this->panel = new awuiPanel();
+   	this->panel->SetDock(awuiControl::Fill);
+    this->panel->SetBackColor(awuiColor::FromArgb(0, 0, 0));
+
+	this->GetControls()->Add(panel);
+
+	this->buttonLinear = new awuiButton();
+	this->buttonLinear->SetDock(awuiControl::None);
+	this->buttonLinear->SetText("Linear");
+	this->buttonLinear->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonLinear);
+
+	this->buttonSwing = new awuiButton();
+	this->buttonSwing->SetDock(awuiControl::None);
+	this->buttonSwing->SetText("Swing");
+	this->buttonSwing->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonSwing);
+
+	this->buttonQuad = new awuiButton();
+	this->buttonQuad->SetDock(awuiControl::None);
+	this->buttonQuad->SetText("Quad");
+	this->buttonQuad->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonQuad);
+
+	this->buttonCubic = new awuiButton();
+	this->buttonCubic->SetDock(awuiControl::None);
+	this->buttonCubic->SetText("Cubic");
+	this->buttonCubic->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonCubic);
+
+	this->buttonQuart = new awuiButton();
+	this->buttonQuart->SetDock(awuiControl::None);
+	this->buttonQuart->SetText("Quart");
+	this->buttonQuart->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonQuart);
+
+	this->buttonQuint = new awuiButton();
+	this->buttonQuint->SetDock(awuiControl::None);
+	this->buttonQuint->SetText("Quint");
+	this->buttonQuint->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonQuint);
+
+	this->buttonExpo = new awuiButton();
+	this->buttonExpo->SetDock(awuiControl::None);
+	this->buttonExpo->SetText("Expo");
+	this->buttonExpo->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonExpo);
+
+	this->buttonSine = new awuiButton();
+	this->buttonSine->SetDock(awuiControl::None);
+	this->buttonSine->SetText("Sine");
+	this->buttonSine->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonSine);
+
+	this->buttonCirc = new awuiButton();
+	this->buttonCirc->SetDock(awuiControl::None);
+	this->buttonCirc->SetText("Circ");
+	this->buttonCirc->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonCirc);
+
+	this->buttonElastic = new awuiButton();
+	this->buttonElastic->SetDock(awuiControl::None);
+	this->buttonElastic->SetText("Elastic");
+	this->buttonElastic->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonElastic);
+
+	this->buttonBack = new awuiButton();
+	this->buttonBack->SetDock(awuiControl::None);
+	this->buttonBack->SetText("Back");
+	this->buttonBack->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonBack);
+
+	this->buttonBounce = new awuiButton();
+	this->buttonBounce->SetDock(awuiControl::None);
+	this->buttonBounce->SetText("Bounce");
+	this->buttonBounce->SetWidth(75);
+	this->panel->GetControls()->Add(this->buttonBounce);
 }
 
-float Form1::GetAnimationValue() {
-	static int sube = 1;
-	static float py = (float) 100.0f;
+float Form1::recalc(float value, int sube, Effect * effect) {
+/*
+    EffectIn in;
+    value = in.calculate(value, effect);
+*/
+/*
+    EffectOut out;
+    value = 1.0f - out.calculate(value, effect);
+*/
 
-	if (sube)
-		py--;
-	else
-		py++;
+    EffectInOut inout;
+    value = inout.calculate(value, effect);
 
-	if (py < 0) {
-		py = 0;
-		sube = 0;
-	}
+    if (!sube)
+        value = 1.0f - value;
 
-	if (py > 100.0f) {
-		sube = 1;
-		py = (float) 100.0f;
-	}
-
-	return py;
+    return value;
 }
 
 void Form1::OnTick() {
-	float py = this->GetAnimationValue();
+    static float py = 0.0f;
+    static int sube = 1;
+    py++;
+    if (py > 500.0f) {
+        py = 0.0f;
+        sube = !sube;
+    }
 
-	this->splitter->SetSplitterDistance(this->splitter->GetWidth() * py / 100.0f);
+	float value = py / 500.0f;
+
+    int width = this->panel->GetWidth() - 75;
+
+	EffectLinear linearEffect;
+	float value2;
+	value2 = this->recalc(value, sube, &linearEffect);
+	this->buttonLinear->SetLocation(width * value2, 10);
+
+	EffectSwing swingEffect;
+	value2 = this->recalc(value, sube, &swingEffect);
+	this->buttonSwing->SetLocation(width * value2, 40);
+
+	EffectQuad quadEffect;
+	value2 = this->recalc(value, sube, &quadEffect);
+	this->buttonQuad->SetLocation(width * value2, 70);
+
+	EffectCubic cubicEffect;
+	value2 = this->recalc(value, sube, &cubicEffect);
+	this->buttonCubic->SetLocation(width * value2, 100);
+
+	EffectQuart quartEffect;
+	value2 = this->recalc(value, sube, &quartEffect);
+	this->buttonQuart->SetLocation(width * value2, 130);
+
+	EffectQuint quintEffect;
+	value2 = this->recalc(value, sube, &quintEffect);
+	this->buttonQuint->SetLocation(width * value2, 160);
+
+	EffectExpo expoEffect;
+	value2 = this->recalc(value, sube, &expoEffect);
+	this->buttonExpo->SetLocation(width * value2, 190);
+
+	EffectSine sineEffect;
+	value2 = this->recalc(value, sube, &sineEffect);
+	this->buttonSine->SetLocation(width * value2, 220);
+
+	EffectCirc circEffect;
+	value2 = this->recalc(value, sube, &circEffect);
+	this->buttonCirc->SetLocation(width * value2, 250);
+
+	EffectElastic elasticEffect;
+	value2 = this->recalc(value, sube, &elasticEffect);
+	this->buttonElastic->SetLocation(width * value2, 280);
+
+	EffectBack backEffect;
+	value2 = this->recalc(value, sube, &backEffect);
+	this->buttonBack->SetLocation(width * value2, 310);
+
+	EffectBounce bounceEffect;
+	value2 = this->recalc(value, sube, &bounceEffect);
+	this->buttonBounce->SetLocation(width * value2, 340);
 }

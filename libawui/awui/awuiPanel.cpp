@@ -7,7 +7,6 @@
 #include "awuiControlCollection.h"
 
 awuiPanel::awuiPanel() {
-  this->SetBackColor(awuiColor::FromArgb(0, 0, 255));
 }
 
 awuiPanel::~awuiPanel() {
