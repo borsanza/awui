@@ -3,27 +3,19 @@
 
 #include <awui/awuiForm.h>
 
-class awuiSplitContainer;
 class awuiButton;
 class awuiPanel;
+class awuiSplitContainer;
+class awuiArrayList;
 class Effect;
 
 class Form1 : public awuiForm {
 private:
-	awuiSplitContainer * splitter;
-	awuiButton * buttonLinear;
-	awuiButton * buttonSwing;
-	awuiButton * buttonQuad;
-	awuiButton * buttonCubic;
-	awuiButton * buttonQuart;
-	awuiButton * buttonQuint;
-	awuiButton * buttonExpo;
-	awuiButton * buttonSine;
-	awuiButton * buttonCirc;
-	awuiButton * buttonElastic;
-	awuiButton * buttonBack;
-	awuiButton * buttonBounce;
-	awuiPanel * panel;
+	awuiSplitContainer * _splitter;
+	awuiPanel * _panel;
+
+	awuiArrayList * _buttons;
+	awuiArrayList * _effects;
 
 public:
 	Form1();
@@ -31,7 +23,7 @@ public:
 
 private:
 	void InitializeComponent();
+	void AddButtonEffect(Effect * effect);
 
-	float recalc(float value, int sube, Effect *effect);
 	virtual void OnTick();
 };
