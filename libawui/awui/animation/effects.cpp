@@ -2,7 +2,8 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "effects.h"
-#include <math.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 Effect::Effect(const char * name1) {
     this->name = name1;

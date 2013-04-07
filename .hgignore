@@ -10,6 +10,12 @@ test/awuiDemo
 Project.layout
 
 syntax: glob
+*/Debug/*
+*.vcproj
+*.sln
+*.ncb
+*.suo
+*.vcproj.*user
 libaw/*.c
 libaw/*.h
 libaw/aw/*.h

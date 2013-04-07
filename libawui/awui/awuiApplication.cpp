@@ -4,7 +4,6 @@
 #include "awuiApplication.h"
 #include "awuiForm.h"
 #include "awuiObject.h"
-#include <unistd.h>
 
 extern "C" {
 	#include <aw/sysgl.h>

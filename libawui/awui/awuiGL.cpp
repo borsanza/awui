@@ -39,6 +39,10 @@ void awuiGL::SetClipping() {
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
 }
 
+#ifndef GL_BGRA
+#define GL_BGRA 0x80E1
+#endif
+
 void awuiGL::DrawImageGL(awuiImage * image, float x, float y) {
 	static GLuint texture1;
 	glDisable (GL_DEPTH_TEST);
