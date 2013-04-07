@@ -4,8 +4,8 @@ PROJECT( libawui )
 
 INCLUDE_DIRECTORIES(
 	../libaw/
-#	/usr/include/cairo/
-	"C:\\awui-project\\cairo\\include\\cairo\\"
+	/usr/include/cairo/
+#	"C:\\awui-project\\cairo\\include\\cairo\\"
 )
 
 FILE(GLOB LIBAWUI_SOURCES awui/*.cpp awui/animation/*.cpp)
@@ -19,9 +19,9 @@ ADD_LIBRARY(awui STATIC ${LIBAWUI_SOURCES} ${LIBAWUI_HEADERS})
 TARGET_LINK_LIBRARIES(
 	awui
 	aw
-#	cairo
-#	freetype
-#	X11
-#	GL
-	"C:\\awui-project\\cairo\\lib\\libcairo.dll.a"
+	cairo
+# Valores para linux
+	X11
+	GL
+#	"C:\\awui-project\\cairo\\lib\\libcairo.dll.a"
 )
