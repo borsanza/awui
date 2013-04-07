@@ -50,37 +50,39 @@ void Form1::InitializeComponent() {
 	button->SetText("Button Right");
 	button->SetMinimumSize(awuiSize(75, 23));
 	this->GetControls()->Add(button);
-/*
+
 	button = new awuiButton();
 	awuiButton * button2 = new awuiButton();
 
 	button->SetDock(awuiControl::Fill);
 	button->SetText("Button Splitter Left");
 	button->SetMinimumSize(awuiSize(75, 23));
+	button->SetBackColor(awuiColor::FromArgb(0, 0, 255));
 	button2->SetDock(awuiControl::Fill);
-	button2->SetText("Button Splitter Right");
+	button2->SetText("Button Top");
 	button2->SetMinimumSize(awuiSize(75, 23));
 
-	this->splitter = new awuiSplitContainer();
-	this->splitter->SetName("SplitContainer");
-	this->splitter->GetPanel1()->GetControls()->Add(button);
+	this->_splitter = new awuiSplitContainer();
+	this->_splitter->SetName("SplitContainer");
+	this->_splitter->GetPanel1()->GetControls()->Add(button);
 
 	button = new awuiButton();
 	button->SetDock(awuiControl::None);
 	button->SetBounds(10, 10, 20, 20);
 	button->SetText("Button Right2");
 	button->SetBackColor(awuiColor::FromArgb(255, 0, 255));
-	this->splitter->GetPanel2()->GetControls()->Add(button2);
-	this->splitter->GetPanel2()->GetControls()->Add(button);
-	this->splitter->SetDock(awuiControl::Fill);
-	this->splitter->SetOrientation(awuiSplitContainer::Vertical);
+	this->_splitter->GetPanel2()->GetControls()->Add(button2);
+	this->_splitter->GetPanel2()->GetControls()->Add(button);
+	this->_splitter->SetDock(awuiControl::Fill);
+	this->_splitter->SetOrientation(awuiSplitContainer::Vertical);
 
-	this->GetControls()->Add(this->splitter);
+	this->GetControls()->Add(this->_splitter);
+
+    this->_panel = this->_splitter->GetPanel1();
 */
     this->_panel = new awuiPanel();
-   	this->_panel->SetDock(awuiControl::Fill);
+    this->_panel->SetDock(awuiControl::Fill);
     this->_panel->SetBackColor(awuiColor::FromArgb(0, 0, 0));
-
 	this->GetControls()->Add(this->_panel);
 
     this->_buttons = new awuiArrayList();
@@ -123,13 +125,16 @@ void Form1::AddButtonEffect(Effect * effect) {
 void Form1::OnTick() {
     static float py = 0.0f;
     static int sube = 1;
+
+    int time = this->_panel->GetWidth() / 3;
+
     py++;
-    if (py > 200.0f) {
+    if (py > time) {
         py = 0.0f;
         sube = !sube;
     }
 
-	float value = py / 200.0f;
+	float value = py / time;
 
     for (int i=0; i<this->_buttons->GetCount(); i++) {
         Effect * effect = (Effect *)this->_effects->Get(i);

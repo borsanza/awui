@@ -52,6 +52,8 @@ void awuiGL::DrawImageGL(awuiImage * image, float x, float y) {
 
 	glPushMatrix();
 
+	glColor3f(1.0f, 1.0f, 1.0f);
+
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);glVertex2f(x, y);
 	glTexCoord2f(1.0f, 0.0f);glVertex2f(x + image->GetWidth(), y);
@@ -60,6 +62,6 @@ void awuiGL::DrawImageGL(awuiImage * image, float x, float y) {
 	glEnd();
 
 	glDeleteTextures(1, &texture1);
-	
+
 	glPopMatrix();
 }

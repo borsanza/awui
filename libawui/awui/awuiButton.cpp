@@ -54,14 +54,18 @@ void awuiButton::OnMouseMove(awuiMouseEventArgs* e) {
 }
 
 void awuiButton::OnPaint(awuiGL* gl) {
-	awuiFont font = awuiFont("Sans", 10);
+	awuiFont font = awuiFont("Sans", 12);
 
 	awuiSize size = awuiTextRenderer::GetMeasureText(this->text, &font);
-	
+
 	awuiImage * image = new awuiImage(size.GetWidth(), size.GetHeight());
 	awuiGraphics * g = awuiGraphics::FromImage(image);
+//	g->FillRectangle(awuiColor::FromArgb(250,0,0), 0, 0, size.GetWidth(), size.GetHeight());
+//	g->Clear(awuiColor::FromArgb(255,0,0));
+	// Esto hay que quitarlo, porque lo uso para definir un pen
+	g->FillRectangle(awuiColor::FromArgb(0,0,0), -10, -10, 1, 1);
 	g->DrawString(this->text, &font, 0, size.GetHeight());
-	
+
 	awuiGL::DrawImageGL(image, (this->GetWidth() - size.GetWidth()) >> 1, (this->GetHeight() - size.GetHeight()) >> 1);
 
 	delete g;

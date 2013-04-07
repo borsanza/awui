@@ -5,7 +5,7 @@
 #include "awuiColor.h"
 #include <stdlib.h>
 
-awuiPen::awuiPen(const awuiColor color) {
+awuiPen::awuiPen(awuiColor color) {
 	this->SetColor(color);
 	this->SetWidth(1);
 	this->SetLineCap(awuiLineCap::Butt);
