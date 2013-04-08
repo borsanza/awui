@@ -3,7 +3,7 @@
 
 #include "awuiColor.h"
 
-#include "awuiMath.h"
+#include <awui/Math.h>
 #include <stdlib.h>
 
 using namespace awui;

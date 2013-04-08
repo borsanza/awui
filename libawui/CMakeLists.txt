@@ -5,6 +5,7 @@ PROJECT( libawui )
 INCLUDE_DIRECTORIES(
 	../libaw/
 	/usr/include/cairo/
+	.
 #	"C:\\awui-project\\cairo\\include\\cairo\\"
 )
 

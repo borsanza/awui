@@ -2,7 +2,7 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "effects.h"
-#include "../awuiMath.h"
+#include <awui/Math.h>
 
 using namespace awui;
 
