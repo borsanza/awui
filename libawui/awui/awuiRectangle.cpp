@@ -119,7 +119,7 @@ awuiRectangle awuiRectangle::Intersect(const awuiRectangle rectangle1, const awu
 	int top    = rectangle1.GetTop() > rectangle2.GetTop()? rectangle1.GetTop() : rectangle2.GetTop();
 	int right  = rectangle1.GetRight() < rectangle2.GetRight()? rectangle1.GetRight() : rectangle2.GetRight();
 	int bottom = rectangle1.GetBottom() < rectangle2.GetBottom()? rectangle1.GetBottom(): rectangle2.GetBottom();
-	
+
 	return awuiRectangle::FromLTRB(left, top, right, bottom);
 }
 

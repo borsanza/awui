@@ -56,8 +56,8 @@ void awuiForm::Show() {
 	this->w = awNew(awuiApplication::g);
 	awGeometry(this->w, this->GetLeft(), this->GetTop(), this->GetWidth(), this->GetHeight());
 	awShow(this->w);
-	awHideBorders(this->w);
-	awMaximize(this->w);
+//	awHideBorders(this->w);
+//	awMaximize(this->w);
 }
 
 void awuiForm::OnPaintForm() {

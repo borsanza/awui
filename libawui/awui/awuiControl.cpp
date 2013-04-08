@@ -267,7 +267,7 @@ void awuiControl::OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int
 	this->mouseEventArgs->SetButton(button);
 	this->OnMouseDown(this->mouseEventArgs);
 
-//	std::cout << "Down: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "  " << this->mouseEventArgs->GetButton() << "    " << this->GetName() << std::endl;
+//	std::cout << "Down: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "   " << this->mouseEventArgs->GetButton() << "   " << this->GetName() << std::endl;
 }
 
 void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
@@ -298,7 +298,7 @@ void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
 	this->OnMouseMove(this->mouseEventArgs);
 	this->Refresh();
 
-//	std::cout << "Move: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "  " << this->mouseEventArgs->GetButton() << "    " << this->GetName() << std::endl;
+//	std::cout << "Move: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "   " << this->mouseEventArgs->GetButton() << "   " << this->GetName() << std::endl;
 }
 
 void awuiControl::ChangeControlOnMouseOver(awuiControl * control) {
@@ -342,7 +342,7 @@ void awuiControl::OnMouseUpPre(MouseButtons::Buttons button, int buttons) {
 	this->mouseEventArgs->SetButton(button);
 	this->OnMouseUp(this->mouseEventArgs);
 
-//	std::cout << "Up: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "  " << this->mouseEventArgs->GetButton() << "    " << this->GetName() << std::endl;
+//	std::cout << "Up: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "   " << this->mouseEventArgs->GetButton() << "   " << this->GetName() << std::endl;
 }
 
 void awuiControl::OnMouseLeave() {

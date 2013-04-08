@@ -78,88 +78,88 @@ void Form1::InitializeComponent() {
 
 	this->GetControls()->Add(this->_splitter);
 
-    this->_panel = this->_splitter->GetPanel1();
+	this->_panel = this->_splitter->GetPanel1();
 */
-    this->_panel = new awuiPanel();
-    this->_panel->SetDock(awuiControl::Fill);
-    this->_panel->SetBackColor(awuiColor::FromArgb(0, 0, 0));
+	this->_panel = new awuiPanel();
+	this->_panel->SetDock(awuiControl::Fill);
+	this->_panel->SetBackColor(awuiColor::FromArgb(0, 0, 0));
 	this->GetControls()->Add(this->_panel);
 
-    this->_buttons = new awuiArrayList();
-    this->_effects = new awuiArrayList();
+	this->_buttons = new awuiArrayList();
+	this->_effects = new awuiArrayList();
 
-    this->AddButtonEffect(new EffectLinear());
-    this->AddButtonEffect(new EffectSwing());
-    this->AddButtonEffect(new EffectQuad());
-    this->AddButtonEffect(new EffectCubic());
-    this->AddButtonEffect(new EffectQuart());
-    this->AddButtonEffect(new EffectQuint());
-    this->AddButtonEffect(new EffectExpo());
-    this->AddButtonEffect(new EffectSine());
-    this->AddButtonEffect(new EffectCirc());
-    this->AddButtonEffect(new EffectElastic());
-    this->AddButtonEffect(new EffectBack());
-    this->AddButtonEffect(new EffectBounce());
+	this->AddButtonEffect(new EffectLinear());
+	this->AddButtonEffect(new EffectSwing());
+	this->AddButtonEffect(new EffectQuad());
+	this->AddButtonEffect(new EffectCubic());
+	this->AddButtonEffect(new EffectQuart());
+	this->AddButtonEffect(new EffectQuint());
+	this->AddButtonEffect(new EffectExpo());
+	this->AddButtonEffect(new EffectSine());
+	this->AddButtonEffect(new EffectCirc());
+	this->AddButtonEffect(new EffectElastic());
+	this->AddButtonEffect(new EffectBack());
+	this->AddButtonEffect(new EffectBounce());
 
-    this->SetSize(300, 910);
+	this->SetSize(300, 910);
 }
 
 void Form1::AddButtonEffect(Effect * effect) {
-    static int y = 5;
+	static int y = 5;
 
-    for (int i = 0; i<=2; i++) {
-        awuiButton * button = new awuiButton();
-        button->SetDock(awuiControl::None);
-        button->SetText(effect->GetName());
-        button->SetSize(75, 18);
-        button->SetTop(y);
-        this->_panel->GetControls()->Add(button);
+	for (int i = 0; i<=2; i++) {
+		awuiButton * button = new awuiButton();
+		button->SetDock(awuiControl::None);
+		button->SetText(effect->GetName());
+		button->SetSize(75, 18);
+		button->SetTop(y);
+		this->_panel->GetControls()->Add(button);
 
-        this->_buttons->Add(button);
-        this->_effects->Add(effect);
+		this->_buttons->Add(button);
+		this->_effects->Add(effect);
 
-        y += button->GetHeight() + 5;
-    }
+		y += button->GetHeight() + 5;
+	}
 }
 
 void Form1::OnTick() {
-    static float py = 0.0f;
-    static int sube = 1;
+	static float py = 0.0f;
+	static int sube = 1;
 
-    int time = this->_panel->GetWidth() / 3;
+	int time = this->_panel->GetWidth() / 3;
 
-    py++;
-    if (py > time) {
-        py = 0.0f;
-        sube = !sube;
-    }
+	py++;
+	if (py > time) {
+		py = 0.0f;
+		sube = !sube;
+	}
 
 	float value = py / time;
 
-    for (int i=0; i<this->_buttons->GetCount(); i++) {
-        Effect * effect = (Effect *)this->_effects->Get(i);
-        awuiButton * button = (awuiButton *)this->_buttons->Get(i);
-        float value2;
+	for (int i=0; i<this->_buttons->GetCount(); i++) {
+		Effect * effect = (Effect *)this->_effects->Get(i);
+		awuiButton * button = (awuiButton *)this->_buttons->Get(i);
+		float value2;
 
-        switch (i % 3) {
-            case 0:
-                EffectIn in;
-                value2 = in.Calculate(value, effect);
-                break;
-            case 1:
-                EffectOut out;
-                value2 = out.Calculate(value, effect);
-                break;
-            case 2:
-                EffectInOut inout;
-                value2 = inout.Calculate(value, effect);
-                break;
-        }
+		switch (i % 3) {
+			case 0:
+				EffectIn in;
+				value2 = in.Calculate(value, effect);
+				break;
+			case 1:
+				EffectOut out;
+				value2 = out.Calculate(value, effect);
+				break;
+			case 2:
+				EffectInOut inout;
+				value2 = inout.Calculate(value, effect);
+				break;
+		}
 
-        if (!sube)
-            value2 = 1.0f - value2;
+		if (!sube)
+			value2 = 1.0f - value2;
 
-        int width = this->_panel->GetWidth() - button->GetWidth() - 10;
-        button->SetLeft(width * value2 + 5);
-    }
+		int width = this->_panel->GetWidth() - button->GetWidth() - 10;
+		button->SetLeft(width * value2 + 5);
+	}
 }

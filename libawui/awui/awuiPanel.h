@@ -5,8 +5,8 @@
 
 class awuiPanel : public awuiControl {
 public:
-    awuiPanel();
-    ~awuiPanel();
+	awuiPanel();
+	~awuiPanel();
 
 	virtual int IsClass(awuiClasses objectClass) const;
 

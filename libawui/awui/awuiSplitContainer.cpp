@@ -11,30 +11,30 @@
 #include <iostream>
 
 awuiSplitContainer::awuiSplitContainer() {
-    this->splitterDistance = 100;
-    this->splitterIncrement = 1;
-    this->splitterWidth = 4;
-    this->orientation = Vertical;
+	this->splitterDistance = 100;
+	this->splitterIncrement = 1;
+	this->splitterWidth = 4;
+	this->orientation = Vertical;
 
-    this->SetName("awuiSplitContainer");
+	this->SetName("awuiSplitContainer");
 
-    this->SetBackColor(awuiColor::FromArgb(255, 255, 0));
+	this->SetBackColor(awuiColor::FromArgb(255, 255, 0));
 
-    this->panel1 = new awuiPanel();
-    this->splitter = new awuiSplitter();
-    this->splitter->SetOrientation(this->orientation);
-    this->panel2 = new awuiPanel();
-    this->GetControls()->Add(this->panel1);
-    this->GetControls()->Add(this->splitter);
-    this->GetControls()->Add(this->panel2);
+	this->panel1 = new awuiPanel();
+	this->splitter = new awuiSplitter();
+	this->splitter->SetOrientation(this->orientation);
+	this->panel2 = new awuiPanel();
+	this->GetControls()->Add(this->panel1);
+	this->GetControls()->Add(this->splitter);
+	this->GetControls()->Add(this->panel2);
 
-    this->SetSize(200, 200);
+	this->SetSize(200, 200);
 }
 
 awuiSplitContainer::~awuiSplitContainer() {
-    delete this->panel1;
-    delete this->splitter;
-    delete this->panel2;
+	delete this->panel1;
+	delete this->splitter;
+	delete this->panel2;
 }
 
 int awuiSplitContainer::IsClass(awuiObject::awuiClasses objectClass) const {
@@ -88,19 +88,19 @@ int awuiSplitContainer::GetMinimumSizeW(awuiControl * control) const {
 }
 
 void awuiSplitContainer::RecalculatePositions() {
-    int distance = this->splitterDistance;
+	int distance = this->splitterDistance;
 	int x2 = this->splitterWidth >> 1;
 	int x1 = this->splitterWidth - x2;
 
 	int size = (this->orientation == awuiSplitContainer::Vertical)? this->GetWidth() : this->GetHeight();
 
-    int minSize = this->GetMinimumSizeW(this->panel1);
-    if (distance < (minSize + x1))
-        distance = (minSize + x1);
+	int minSize = this->GetMinimumSizeW(this->panel1);
+	if (distance < (minSize + x1))
+		distance = (minSize + x1);
 
-    minSize = this->GetMinimumSizeW(this->panel2);
-    if (distance > (size - minSize - x1))
-        distance = (size - minSize - x1);
+	minSize = this->GetMinimumSizeW(this->panel2);
+	if (distance > (size - minSize - x1))
+		distance = (size - minSize - x1);
 
 	this->SetLocationW(this->panel1, 0);
 	this->SetSizeW(this->panel1, distance - x1, 0);

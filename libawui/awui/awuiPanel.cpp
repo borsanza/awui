@@ -20,36 +20,36 @@ int awuiPanel::IsClass(awuiObject::awuiClasses objectClass) const {
 }
 
 const awuiSize awuiPanel::GetMinimumSize() const {
-    awuiSize size = awuiControl::GetMinimumSize();
+	awuiSize size = awuiControl::GetMinimumSize();
 
-    awuiSize minSize;
-    minSize.SetWidth(0);
-    minSize.SetHeight(0);
+	awuiSize minSize;
+	minSize.SetWidth(0);
+	minSize.SetHeight(0);
 
-    int count = this->GetControls()->GetCount();
-   	for (int i = 0; i < count; i++) {
+	int count = this->GetControls()->GetCount();
+	for (int i = 0; i < count; i++) {
 		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
-		    case awuiControl::Left:
-		    case awuiControl::Right:
-                minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
-                break;
-		    case awuiControl::Top:
-		    case awuiControl::Bottom:
-                minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
-                break;
-		    case awuiControl::Fill:
-                minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
-                minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
-                break;
+			case awuiControl::Left:
+			case awuiControl::Right:
+				minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
+				break;
+			case awuiControl::Top:
+			case awuiControl::Bottom:
+				minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
+				break;
+			case awuiControl::Fill:
+				minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
+				minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
+				break;
 		}
-   	}
+	}
 
-   	if (minSize.GetWidth() < size.GetWidth())
-        minSize.SetWidth(size.GetWidth());
+	if (minSize.GetWidth() < size.GetWidth())
+		minSize.SetWidth(size.GetWidth());
 
-   	if (minSize.GetHeight() < size.GetHeight())
-        minSize.SetHeight(size.GetHeight());
+	if (minSize.GetHeight() < size.GetHeight())
+		minSize.SetHeight(size.GetHeight());
 
-    return minSize;
+	return minSize;
 }

@@ -17,9 +17,9 @@ public:
 	};
 
 private:
-    awuiSplitter * splitter;
-    awuiPanel * panel1;
-    awuiPanel * panel2;
+	awuiSplitter * splitter;
+	awuiPanel * panel1;
+	awuiPanel * panel2;
 
 	float splitterDistance;
 	int splitterIncrement;
@@ -30,17 +30,17 @@ private:
 
 	void SetLocationW(awuiControl * control, int pos);
 	void SetSizeW(awuiControl* control, int size, int substract);
-    int GetSizeW(awuiControl * control) const;
-    int GetMinimumSizeW(awuiControl * control) const;
+	int GetSizeW(awuiControl * control) const;
+	int GetMinimumSizeW(awuiControl * control) const;
 
 public:
-    awuiSplitContainer();
-    ~awuiSplitContainer();
+	awuiSplitContainer();
+	~awuiSplitContainer();
 
 	virtual int IsClass(awuiClasses objectClass) const;
 
-    awuiPanel * GetPanel1();
-    awuiPanel * GetPanel2();
+	awuiPanel * GetPanel1();
+	awuiPanel * GetPanel2();
 
 	float GetSplitterDistance() const;
 	void SetSplitterDistance(int distance);

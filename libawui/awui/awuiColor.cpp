@@ -4,8 +4,9 @@
 #include "awuiColor.h"
 
 #include "awuiMath.h"
-#include <math.h>
 #include <stdlib.h>
+
+using namespace awui;
 
 awuiColor::awuiColor() {
 	this->a = 0;
@@ -42,15 +43,15 @@ int awuiColor::ToArgb() const {
 }
 
 float awuiColor::GetBrightness() const {
-	int M = awuiMath::Max(awuiMath::Max(this->r, this->g), this->b);
-	int m = awuiMath::Min(awuiMath::Min(this->r, this->g), this->b);
+	int M = Math::Max(Math::Max(this->r, this->g), this->b);
+	int m = Math::Min(Math::Min(this->r, this->g), this->b);
 
 	return ((M + m) / 2.0f) / 255.0f;
 }
 
 float awuiColor::GetHue() const {
-	int M = awuiMath::Max(awuiMath::Max(this->r, this->g), this->b);
-	int m = awuiMath::Min(awuiMath::Min(this->r, this->g), this->b);
+	int M = Math::Max(Math::Max(this->r, this->g), this->b);
+	int m = Math::Min(Math::Min(this->r, this->g), this->b);
 
 	double C = M - m;
 
@@ -58,7 +59,7 @@ float awuiColor::GetHue() const {
 	if (C == 0)
 		H = 0.0;
 	else if (M == this->r)
-		H = fmod((this->g - this->b) / C, 6);
+		H = Math::FMod((this->g - this->b) / C, 6);
 	else if (M == this->g)
 		H = ((this->b - this->r) / C) + 2.0;
 	else
@@ -73,8 +74,8 @@ float awuiColor::GetHue() const {
 }
 
 float awuiColor::GetSaturation() const {
-	int M = awuiMath::Max(awuiMath::Max(this->r, this->g), this->b);
-	int m = awuiMath::Min(awuiMath::Min(this->r, this->g), this->b);
+	int M = Math::Max(Math::Max(this->r, this->g), this->b);
+	int m = Math::Min(Math::Min(this->r, this->g), this->b);
 
 	double C = M - m;
 
