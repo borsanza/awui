@@ -9,8 +9,8 @@ INCLUDE_DIRECTORIES(
 #	"C:\\awui-project\\cairo\\include\\cairo\\"
 )
 
-FILE(GLOB LIBAWUI_SOURCES awui/*.cpp awui/animation/*.cpp)
-FILE(GLOB LIBAWUI_HEADERS awui/*.h awui/animation/*.h)
+FILE(GLOB_RECURSE LIBAWUI_SOURCES awui/*.cpp )
+FILE(GLOB_RECURSE LIBAWUI_HEADERS awui/*.h )
 
 SOURCE_GROUP("Source" FILES ${LIBAWUI_SOURCES})
 SOURCE_GROUP("Headers" FILES ${LIBAWUI_HEADERS})

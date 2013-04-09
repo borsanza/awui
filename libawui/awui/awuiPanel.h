@@ -8,7 +8,7 @@ public:
 	awuiPanel();
 	~awuiPanel();
 
-	virtual int IsClass(awuiClasses objectClass) const;
+	virtual int IsClass(Classes objectClass) const;
 
-	const virtual awuiSize GetMinimumSize() const;
+	const virtual Size GetMinimumSize() const;
 };

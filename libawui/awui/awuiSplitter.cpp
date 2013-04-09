@@ -3,12 +3,12 @@
 
 #include "awuiSplitter.h"
 
-#include "awuiColor.h"
+#include <awui/Drawing/Color.h>
 #include "awuiMouseEventArgs.h"
 #include "awuiSplitContainer.h"
 
 awuiSplitter::awuiSplitter() {
-	this->SetBackColor(awuiColor::FromArgb(192, 192, 192));
+	this->SetBackColor(Color::FromArgb(192, 192, 192));
 
 	this->SetName("awuiSplitter");
 
@@ -20,8 +20,8 @@ awuiSplitter::awuiSplitter() {
 awuiSplitter::~awuiSplitter() {
 }
 
-int awuiSplitter::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::Splitter)
+int awuiSplitter::IsClass(Classes objectClass) const {
+	if (objectClass == awui::Splitter)
 		return 1;
 
 	return awuiControl::IsClass(objectClass);
@@ -46,7 +46,7 @@ void awuiSplitter::OnMouseMove(awuiMouseEventArgs * e) {
 	if (!this->mouseActive)
 		return;
 
-	if (this->GetParent()->IsClass(awuiObject::SplitContainer)) {
+	if (this->GetParent()->IsClass(awui::SplitContainer)) {
 		if (this->orientation == awuiSplitContainer::Vertical)
 			((awuiSplitContainer *) this->GetParent())->SetSplitterDistance(this->GetLeft() + e->GetX());
 		else

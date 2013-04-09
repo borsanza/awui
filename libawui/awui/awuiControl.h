@@ -4,15 +4,14 @@
 #ifndef __AWUICONTROL_H__
 #define __AWUICONTROL_H__
 
-#include "awuiObject.h"
-
-#include "awuiRectangle.h"
-#include "awuiColor.h"
+#include <awui/Object.h>
+#include <awui/Drawing/Color.h>
+#include <awui/Drawing/Rectangle.h>
 #include <string>
 
-class awuiArrayList;
+class ArrayList;
 class awuiBitmap;
-class awuiGraphics;
+class Graphics;
 class awuiControlCollection;
 class awuiMouseEventArgs;
 class awuiGL;
@@ -29,7 +28,10 @@ public:
 	};
 };
 
-class awuiControl : public awuiObject {
+using namespace awui;
+using namespace awui::Drawing;
+
+class awuiControl : public Object {
 	friend class awuiForm;
 
 public:
@@ -43,14 +45,14 @@ public:
 	};
 
 protected:
-	awuiRectangle bounds;
-	awuiSize minimumSize;
+	Rectangle bounds;
+	Size minimumSize;
 
 	int needRefresh;
 	int refreshed;
 	awuiControl::DockStyle dock;
 	awuiControlCollection * controls;
-	awuiColor backColor;
+	awui::Drawing::Color backColor;
 	awuiControl * parent;
 	awuiMouseEventArgs * mouseEventArgs;
 	awuiControl * mouseControl;
@@ -65,10 +67,10 @@ public:
 	awuiControl();
 	~awuiControl();
 
-	virtual int IsClass(awuiClasses objectClass) const;
+	virtual int IsClass(Classes objectClass) const;
 
-	const virtual awuiSize GetMinimumSize() const;
-	void SetMinimumSize(awuiSize size);
+	const virtual Size GetMinimumSize() const;
+	void SetMinimumSize(Size size);
 
 	awuiControl::DockStyle GetDock() const;
 	void SetDock(awuiControl::DockStyle dock);
@@ -82,7 +84,7 @@ public:
 	int GetTop() const;
 	void SetTop(int y);
 
-	const awuiPoint GetLocation() const;
+	const Point GetLocation() const;
 	void SetLocation(int x, int y);
 
 	int GetWidth() const;
@@ -91,11 +93,11 @@ public:
 	int GetHeight() const;
 	void SetHeight(int height);
 
-	const awuiSize GetSize() const;
+	const Size GetSize() const;
 	void SetSize(int width, int height);
-	void SetSize(const awuiSize size);
+	void SetSize(const Size size);
 
-	const awuiRectangle GetBounds() const;
+	const Rectangle GetBounds() const;
 	void SetBounds(int x, int y, int width, int height);
 
 	int GetRight() const;
@@ -103,8 +105,8 @@ public:
 
 	awuiControlCollection * GetControls() const;
 
-	awuiColor GetBackColor();
-	void SetBackColor(const awuiColor color);
+	awui::Drawing::Color GetBackColor();
+	void SetBackColor(const awui::Drawing::Color color);
 
 	void Refresh();
 

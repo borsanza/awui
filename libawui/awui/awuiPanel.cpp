@@ -2,9 +2,10 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiPanel.h"
-#include "awuiColor.h"
-#include "awuiControl.h"
-#include "awuiControlCollection.h"
+
+#include <awui/Drawing/Color.h>
+#include <awui/awuiControl.h>
+#include <awui/awuiControlCollection.h>
 
 awuiPanel::awuiPanel() {
 }
@@ -12,17 +13,17 @@ awuiPanel::awuiPanel() {
 awuiPanel::~awuiPanel() {
 }
 
-int awuiPanel::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::Panel)
+int awuiPanel::IsClass(Classes objectClass) const {
+	if (objectClass == awui::Panel)
 		return 1;
 
 	return awuiControl::IsClass(objectClass);
 }
 
-const awuiSize awuiPanel::GetMinimumSize() const {
-	awuiSize size = awuiControl::GetMinimumSize();
+const Size awuiPanel::GetMinimumSize() const {
+	Size size = awuiControl::GetMinimumSize();
 
-	awuiSize minSize;
+	Size minSize;
 	minSize.SetWidth(0);
 	minSize.SetHeight(0);
 

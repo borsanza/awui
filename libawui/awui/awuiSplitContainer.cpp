@@ -3,10 +3,10 @@
 
 #include "awuiSplitContainer.h"
 
-#include "awuiControlCollection.h"
-#include "awuiColor.h"
-#include "awuiPanel.h"
-#include "awuiSplitter.h"
+#include <awui/awuiControlCollection.h>
+#include <awui/Drawing/Color.h>
+#include <awui/awuiPanel.h>
+#include <awui/awuiSplitter.h>
 
 #include <iostream>
 
@@ -18,7 +18,7 @@ awuiSplitContainer::awuiSplitContainer() {
 
 	this->SetName("awuiSplitContainer");
 
-	this->SetBackColor(awuiColor::FromArgb(255, 255, 0));
+	this->SetBackColor(Color::FromArgb(255, 255, 0));
 
 	this->panel1 = new awuiPanel();
 	this->splitter = new awuiSplitter();
@@ -37,8 +37,8 @@ awuiSplitContainer::~awuiSplitContainer() {
 	delete this->panel2;
 }
 
-int awuiSplitContainer::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::SplitContainer)
+int awuiSplitContainer::IsClass(Classes objectClass) const {
+	if (objectClass == awui::SplitContainer)
 		return 1;
 
 	return awuiControl::IsClass(objectClass);

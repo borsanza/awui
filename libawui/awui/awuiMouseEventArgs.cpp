@@ -14,11 +14,11 @@ awuiMouseEventArgs::awuiMouseEventArgs() {
 awuiMouseEventArgs::~awuiMouseEventArgs() {
 }
 
-int awuiMouseEventArgs::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::MouseEventArgs)
+int awuiMouseEventArgs::IsClass(Classes objectClass) const {
+	if (objectClass == awui::MouseEventArgs)
 		return 1;
 
-	return awuiObject::IsClass(objectClass);
+	return Object::IsClass(objectClass);
 }
 
 int awuiMouseEventArgs::GetX() {

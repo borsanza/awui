@@ -2,13 +2,13 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiButton.h"
-#include "awuiColor.h"
+#include <awui/Drawing/Color.h>
+#include <awui/Drawing/Font.h>
+#include <awui/Drawing/Graphics.h>
+#include <awui/Drawing/Image.h>
 #include "awuiMouseEventArgs.h"
 #include "awuiTextRenderer.h"
-#include "awuiFont.h"
-#include "awuiImage.h"
 #include "awuiGL.h"
-#include "awuiGraphics.h"
 
 #include <iostream>
 
@@ -19,7 +19,7 @@ extern "C" {
 
 awuiButton::awuiButton() {
 	this->SetSize(75,23);
-	this->SetBackColor(awuiColor::FromArgb(255, 255, 255));
+	this->SetBackColor(Color::FromArgb(255, 255, 255));
 	this->testx = 0;
 	this->testy = 0;
 	this->show = 0;
@@ -28,8 +28,8 @@ awuiButton::awuiButton() {
 awuiButton::~awuiButton() {
 }
 
-int awuiButton::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::Button)
+int awuiButton::IsClass(Classes objectClass) const {
+	if (objectClass == awui::Button)
 		return 1;
 
 	return awuiControl::IsClass(objectClass);
@@ -54,16 +54,16 @@ void awuiButton::OnMouseMove(awuiMouseEventArgs* e) {
 }
 
 void awuiButton::OnPaint(awuiGL* gl) {
-	awuiFont font = awuiFont("Sans", 12);
+	Font font = Font("Sans", 12);
 
-	awuiSize size = awuiTextRenderer::GetMeasureText(this->text, &font);
+	Size size = awuiTextRenderer::GetMeasureText(this->text, &font);
 
-	awuiImage * image = new awuiImage(size.GetWidth(), size.GetHeight());
-	awuiGraphics * g = awuiGraphics::FromImage(image);
+	awui::Drawing::Image * image = new awui::Drawing::Image(size.GetWidth(), size.GetHeight());
+	awui::Drawing::Graphics * g = awui::Drawing::Graphics::FromImage(image);
 //	g->FillRectangle(awuiColor::FromArgb(250,0,0), 0, 0, size.GetWidth(), size.GetHeight());
 //	g->Clear(awuiColor::FromArgb(255,0,0));
 	// Esto hay que quitarlo, porque lo uso para definir un pen
-	g->FillRectangle(awuiColor::FromArgb(0,0,0), -10, -10, 1, 1);
+	g->FillRectangle(Color::FromArgb(0,0,0), -10, -10, 1, 1);
 	g->DrawString(this->text, &font, 0, size.GetHeight());
 
 	awuiGL::DrawImageGL(image, (this->GetWidth() - size.GetWidth()) >> 1, (this->GetHeight() - size.GetHeight()) >> 1);

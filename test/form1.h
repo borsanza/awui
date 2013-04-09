@@ -3,19 +3,27 @@
 
 #include <awui/awuiForm.h>
 
+namespace awui {
+	namespace Effects {
+		class Effect;
+	}
+
+	namespace Collections {
+		class ArrayList;
+	}
+}
+
 class awuiButton;
 class awuiPanel;
 class awuiSplitContainer;
-class awuiArrayList;
-class Effect;
 
 class Form1 : public awuiForm {
 private:
 	awuiSplitContainer * _splitter;
 	awuiPanel * _panel;
 
-	awuiArrayList * _buttons;
-	awuiArrayList * _effects;
+	awui::Collections::ArrayList * _buttons;
+	awui::Collections::ArrayList * _effects;
 
 public:
 	Form1();
@@ -23,7 +31,7 @@ public:
 
 private:
 	void InitializeComponent();
-	void AddButtonEffect(Effect * effect);
+	void AddButtonEffect(awui::Effects::Effect * effect);
 
 	virtual void OnTick();
 };

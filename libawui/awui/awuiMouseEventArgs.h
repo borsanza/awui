@@ -1,9 +1,11 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiObject.h"
+#include <awui/Object.h>
 
-class awuiMouseEventArgs : public awuiObject {
+using namespace awui;
+
+class awuiMouseEventArgs : public Object {
 private:
 	friend class awuiControl;
 
@@ -19,12 +21,12 @@ private:
 	void SetDelta(int delta);
 	void SetClicks(int clicks);
 	void SetButton(int button);
-	
+
 public:
   awuiMouseEventArgs();
   ~awuiMouseEventArgs();
-	
-	virtual int IsClass(awuiClasses objectClass) const;
+
+	virtual int IsClass(Classes objectClass) const;
 
 	int GetX();
 	int GetY();

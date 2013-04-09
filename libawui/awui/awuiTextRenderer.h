@@ -3,16 +3,20 @@
 
 #include <string>
 
-class awuiSize;
-class awuiFont;
-class awuiGraphics;
-class awuiImage;
+namespace awui {
+	namespace Drawing {
+		class Font;
+		class Graphics;
+		class Image;
+		class Size;
+	}
+}
 
 class awuiTextRenderer {
 private:
-	static awuiGraphics * graphics;
-	static awuiImage * image;
+	static awui::Drawing::Graphics * graphics;
+	static awui::Drawing::Image * image;
 
 public:
-	static awuiSize GetMeasureText(const std::string& text, awuiFont *font);
+	static awui::Drawing::Size GetMeasureText(const std::string& text, awui::Drawing::Font *font);
 };

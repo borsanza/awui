@@ -1,61 +1,63 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiGraphics.h"
+#include "Graphics.h"
 
-#include "awuiColor.h"
-#include "awuiFont.h"
-#include "awuiImage.h"
-#include "awuiPen.h"
-#include "awuiSize.h"
+#include <awui/Drawing/Color.h>
+#include <awui/Drawing/Font.h>
+#include <awui/Drawing/Image.h>
+#include <awui/Drawing/Pen.h>
+#include <awui/Drawing/Size.h>
 
 #include <cairo.h>
 #include <stdlib.h>
 #include <iostream>
 
-awuiGraphics::awuiGraphics() {
+using namespace awui::Drawing;
+
+Graphics::Graphics() {
 }
 
-awuiGraphics::~awuiGraphics() {
+Graphics::~Graphics() {
 }
 
-int awuiGraphics::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::Graphics)
+int Graphics::IsClass(Classes objectClass) const {
+	if (objectClass == awui::Graphics)
 		return 1;
 
-	return awuiObject::IsClass(objectClass);
+	return Object::IsClass(objectClass);
 }
 
-awuiGraphics * awuiGraphics::FromImage(awuiImage *image) {
-	awuiGraphics * graphics = new awuiGraphics();
+Graphics * Graphics::FromImage(Drawing::Image *image) {
+	Graphics * graphics = new Graphics();
 	graphics->cairo_surface = image->cairo_surface;
 	graphics->cr = image->cr;
 
 	return graphics;
 }
 
-void awuiGraphics::DrawRectangle(awuiPen * pen, float x, float y, float width, float height) {
+void Graphics::DrawRectangle(Drawing::Pen * pen, float x, float y, float width, float height) {
 	this->SetPen(pen);
 	cairo_rectangle(this->cr, x, y, width, height);
 	cairo_stroke(this->cr);
 }
 
-void awuiGraphics::Clear(const awuiColor color) {
+void Graphics::Clear(const Drawing::Color color) {
 	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 	cairo_paint(this->cr);
 }
 
-void awuiGraphics::FillRectangle(const awuiColor color, float x, float y, float width, float height) {
+void Graphics::FillRectangle(const Drawing::Color color, float x, float y, float width, float height) {
 	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 	cairo_rectangle(this->cr, x, y, width, height);
 	cairo_fill(this->cr);
 }
 
-void awuiGraphics::DrawImage(awuiImage * image, float x, float y) {
+void Graphics::DrawImage(Drawing::Image * image, float x, float y) {
 	this->DrawImage(image, x, y, (float)image->GetWidth(), (float)image->GetHeight());
 }
 
-void awuiGraphics::DrawImage(awuiImage * image, float x, float y, float width, float height) {
+void Graphics::DrawImage(Drawing::Image * image, float x, float y, float width, float height) {
 	cairo_surface_t *surfaceAux = image->cairo_surface;
 
 	cairo_save(this->cr);
@@ -67,8 +69,8 @@ void awuiGraphics::DrawImage(awuiImage * image, float x, float y, float width, f
 	cairo_restore(this->cr);
 }
 
-void awuiGraphics::SetPen(awuiPen * pen) {
-	awuiColor color = pen->GetColor();
+void Graphics::SetPen(Drawing::Pen * pen) {
+	Drawing::Color color = pen->GetColor();
 	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 
 	cairo_set_line_width(this->cr, pen->GetWidth());
@@ -86,7 +88,7 @@ void awuiGraphics::SetPen(awuiPen * pen) {
 	}
 }
 
-void awuiGraphics::DrawLine(awuiPen * pen, float x1, float y1, float x2, float y2) {
+void Graphics::DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float y2) {
 	this->SetPen(pen);
 	cairo_save(this->cr);
 	cairo_move_to(this->cr, x1, y1);
@@ -95,7 +97,7 @@ void awuiGraphics::DrawLine(awuiPen * pen, float x1, float y1, float x2, float y
 	cairo_restore(this->cr);
 }
 
-awuiSize awuiGraphics::GetMeasureText(const std::string& text, awuiFont *font) const {
+Size Graphics::GetMeasureText(const std::string& text, Drawing::Font *font) const {
 	cairo_text_extents_t extents;
 
 	cairo_save(this->cr);
@@ -104,10 +106,10 @@ awuiSize awuiGraphics::GetMeasureText(const std::string& text, awuiFont *font) c
 	cairo_text_extents(this->cr, text.c_str(), &extents);
 	cairo_restore(this->cr);
 
-	return awuiSize(extents.width + 4, extents.height + 4);
+	return Size(extents.width + 4, extents.height + 4);
 }
 
-void awuiGraphics::DrawString(const std::string& text, awuiFont * font, float x, float y) {
+void Graphics::DrawString(const std::string& text, Drawing::Font * font, float x, float y) {
 	cairo_text_extents_t extents;
 	cairo_save(this->cr);
 	cairo_select_font_face(this->cr, font->GetFont().c_str(), CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);

@@ -6,11 +6,11 @@
 #include "awuiForm.h"
 
 #include "awuiApplication.h"
-#include "awuiArrayList.h"
-#include "awuiGraphics.h"
-#include "awuiColor.h"
+#include <awui/Collections/ArrayList.h>
+#include <awui/Drawing/Color.h>
+#include <awui/Drawing/Graphics.h>
+#include <awui/Drawing/Rectangle.h>
 #include "awuiGL.h"
-#include "awuiRectangle.h"
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 awuiForm::awuiForm() {
-	this->SetBackColor(awuiColor::FromArgb(192, 192, 192));
+	this->SetBackColor(Color::FromArgb(192, 192, 192));
 
 	this->SetBounds(100, 100, 300, 300);
 	this->mouseButtons = 0;
@@ -45,8 +45,8 @@ awuiForm::~awuiForm() {
 	awDel(this->w);
 }
 
-int awuiForm::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::Form)
+int awuiForm::IsClass(Classes objectClass) const {
+	if (objectClass == awui::Form)
 		return 1;
 
 	return awuiControl::IsClass(objectClass);
@@ -66,7 +66,7 @@ void awuiForm::OnPaintForm() {
 	glEnable(GL_SCISSOR_TEST);
 
 	awuiGL gl;
-	awuiRectangle rectangle;
+	Rectangle rectangle;
 	rectangle.SetX(0);
 	rectangle.SetY(0);
 	rectangle.SetWidth(this->GetWidth());

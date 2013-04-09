@@ -4,9 +4,8 @@
 #ifndef __AWUIOBJECT_H__
 #define __AWUIOBJECT_H__
 
-class awuiObject {
-public:
-	enum awuiClasses {
+namespace awui {
+	enum Classes {
 		Object,
 		Application,
 		ArrayList,
@@ -24,10 +23,13 @@ public:
 		Splitter,
 	};
 
-	awuiObject();
-	~awuiObject();
+	class Object {
+	public:
+		Object();
+		~Object();
 
-	virtual int IsClass(awuiClasses objectClass) const;
-};
+		virtual int IsClass(Classes objectClass) const;
+	};
+}
 
 #endif

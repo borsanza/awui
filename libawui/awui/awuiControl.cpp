@@ -3,13 +3,14 @@
 
 #include "awuiControl.h"
 
-#include "awuiColor.h"
+#include <awui/Drawing/Color.h>
+#include <awui/Drawing/Graphics.h>
+#include <awui/Drawing/Pen.h>
+#include <awui/Drawing/Rectangle.h>
+
 #include "awuiControlCollection.h"
 #include "awuiForm.h"
-#include "awuiGraphics.h"
 #include "awuiMouseEventArgs.h"
-#include "awuiPen.h"
-#include "awuiRectangle.h"
 #include "awuiGL.h"
 
 extern "C" {
@@ -17,15 +18,18 @@ extern "C" {
 	#include <aw/aw.h>
 }
 
+using namespace awui::Drawing;
+using namespace awui;
+
 awuiControl::awuiControl() {
-	this->bounds = awuiRectangle(0, 0, 100, 100);
+	this->bounds = Rectangle(0, 0, 100, 100);
 	this->controls = new awuiControlCollection(this);
 	this->mouseEventArgs = new awuiMouseEventArgs();
 	this->mouseControl = NULL;
 	this->parent = NULL;
 	this->needRefresh = 1;
 	this->dock = awuiControl::None;
-	this->backColor = awuiColor::FromArgb(226, 226, 226);
+	this->backColor = Color::FromArgb(226, 226, 226);
 	this->OnResizePre();
 }
 
@@ -39,11 +43,11 @@ awuiControl::~awuiControl() {
 	delete this->controls;
 }
 
-int awuiControl::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::Control)
+int awuiControl::IsClass(Classes objectClass) const {
+	if (objectClass == awui::Control)
 		return 1;
 
-	return awuiObject::IsClass(objectClass);
+	return Object::IsClass(objectClass);
 }
 
 void awuiControl::SetTop(int y) {
@@ -70,7 +74,7 @@ void awuiControl::SetSize(int width, int height) {
 	this->SetBounds(this->bounds.GetX(), this->bounds.GetY(), width, height);
 }
 
-void awuiControl::SetSize(const awuiSize size) {
+void awuiControl::SetSize(const Size size) {
 	this->SetSize(size.GetWidth(), size.GetHeight());
 }
 
@@ -84,7 +88,7 @@ void awuiControl::SetBounds(int x, int y, int width, int height) {
 	if ((this->bounds.GetX() == x) && (this->bounds.GetY() == y) && (this->bounds.GetWidth() == width) && (this->bounds.GetHeight() == height))
 		return;
 
-	this->bounds = awuiRectangle(x, y, width, height);
+	this->bounds = Rectangle(x, y, width, height);
 	this->Refresh();
 	this->OnResizePre();
 }
@@ -105,7 +109,7 @@ int awuiControl::GetBottom() const {
 	return this->bounds.GetBottom();
 }
 
-const awuiPoint awuiControl::GetLocation() const {
+const Point awuiControl::GetLocation() const {
 	return this->bounds.GetLocation();
 }
 
@@ -117,11 +121,11 @@ int awuiControl::GetHeight() const {
 	return this->bounds.GetHeight();
 }
 
-const awuiSize awuiControl::GetSize() const {
+const Size awuiControl::GetSize() const {
 	return this->bounds.GetSize();
 }
 
-const awuiRectangle awuiControl::GetBounds() const {
+const Rectangle awuiControl::GetBounds() const {
 	return this->bounds;
 }
 
@@ -134,11 +138,11 @@ void awuiControl::OnResizePre() {
 	this->Layout();
 }
 
-void awuiControl::SetBackColor(const awuiColor color) {
+void awuiControl::SetBackColor(const awui::Drawing::Color color) {
 	this->backColor = color;
 }
 
-awuiColor awuiControl::GetBackColor() {
+awui::Drawing::Color awuiControl::GetBackColor() {
 	return this->backColor;
 }
 
@@ -154,11 +158,11 @@ awuiControl::DockStyle awuiControl::GetDock() const {
 }
 
 
-const awuiSize awuiControl::GetMinimumSize() const {
+const Size awuiControl::GetMinimumSize() const {
 	return this->minimumSize;
 }
 
-void awuiControl::SetMinimumSize(awuiSize size) {
+void awuiControl::SetMinimumSize(Size size) {
 	this->minimumSize = size;
 	this->SetSize(this->GetSize());
 }
@@ -212,7 +216,7 @@ void awuiControl::Refresh() {
 }
 
 void awuiControl::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
-	awuiRectangle rect2;
+	Rectangle rect2;
 	rect2.SetX(x);
 	rect2.SetY(height - y - this->GetHeight());
 	rect2.SetWidth(this->GetWidth());
@@ -307,7 +311,7 @@ void awuiControl::ChangeControlOnMouseOver(awuiControl * control) {
 		return;
 	}
 
-	if (this->IsClass(awuiObject::Form)) {
+	if (this->IsClass(awui::Form)) {
 		if (((awuiForm *) this)->mouseControlOver != control) {
 			if (((awuiForm *) this)->mouseControlOver != NULL)
 				((awuiForm *) this)->mouseControlOver->OnMouseLeave();

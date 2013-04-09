@@ -1,10 +1,11 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "effects.h"
+#include "Effect.h"
+
 #include <awui/Math.h>
 
-using namespace awui;
+using namespace awui::Effects;
 
 Effect::Effect(const char * name1) {
 	this->name = name1;

@@ -14,7 +14,7 @@ public:
 	awuiButton();
 	~awuiButton();
 
-	virtual int IsClass(awuiClasses objectClass) const;
+	virtual int IsClass(Classes objectClass) const;
 
 	const std::string& GetName();
 	void SetText(const std::string& str);

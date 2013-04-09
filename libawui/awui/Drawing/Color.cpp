@@ -1,55 +1,55 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiColor.h"
+#include "Color.h"
 
 #include <awui/Math.h>
 #include <stdlib.h>
 
-using namespace awui;
+using namespace awui::Drawing;
 
-awuiColor::awuiColor() {
+Color::Color() {
 	this->a = 0;
 	this->r = 0;
 	this->g = 0;
 	this->b = 0;
 }
 
-int awuiColor::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::Color)
+int Color::IsClass(Classes objectClass) const {
+	if (objectClass == awui::Color)
 		return 1;
 
-	return awuiObject::IsClass(objectClass);
+	return Object::IsClass(objectClass);
 }
 
-unsigned char awuiColor::GetA() const {
+unsigned char Color::GetA() const {
 	return this->a;
 }
 
-unsigned char awuiColor::GetR() const {
+unsigned char Color::GetR() const {
 	return this->r;
 }
 
-unsigned char awuiColor::GetG() const {
+unsigned char Color::GetG() const {
 	return this->g;
 }
 
-unsigned char awuiColor::GetB() const {
+unsigned char Color::GetB() const {
 	return this->b;
 }
 
-int awuiColor::ToArgb() const {
+int Color::ToArgb() const {
 	return (((((this->a << 8) + this->r) << 8) + this->g) << 8) + this->b;
 }
 
-float awuiColor::GetBrightness() const {
+float Color::GetBrightness() const {
 	int M = Math::Max(Math::Max(this->r, this->g), this->b);
 	int m = Math::Min(Math::Min(this->r, this->g), this->b);
 
 	return ((M + m) / 2.0f) / 255.0f;
 }
 
-float awuiColor::GetHue() const {
+float Color::GetHue() const {
 	int M = Math::Max(Math::Max(this->r, this->g), this->b);
 	int m = Math::Min(Math::Min(this->r, this->g), this->b);
 
@@ -73,7 +73,7 @@ float awuiColor::GetHue() const {
 	return (float)H;
 }
 
-float awuiColor::GetSaturation() const {
+float Color::GetSaturation() const {
 	int M = Math::Max(Math::Max(this->r, this->g), this->b);
 	int m = Math::Min(Math::Min(this->r, this->g), this->b);
 
@@ -88,7 +88,7 @@ float awuiColor::GetSaturation() const {
 	return (float)value;
 }
 
-awuiColor awuiColor::FromArgb(int argb) {
+Color Color::FromArgb(int argb) {
 	unsigned char a;
 	unsigned char r;
 	unsigned char g;
@@ -102,19 +102,19 @@ awuiColor awuiColor::FromArgb(int argb) {
 	argb = argb >> 8;
 	a = argb % 256;
 
-	return awuiColor::FromArgb(a, r, g, b);
+	return Color::FromArgb(a, r, g, b);
 }
 
-awuiColor awuiColor::FromArgb(int alpha, const awuiColor baseColor) {
-	return awuiColor::FromArgb(alpha, baseColor.r, baseColor.g, baseColor.b);
+Color Color::FromArgb(int alpha, const Color baseColor) {
+	return Color::FromArgb(alpha, baseColor.r, baseColor.g, baseColor.b);
 }
 
-awuiColor awuiColor::FromArgb(int red, int green, int blue) {
-	return awuiColor::FromArgb(255, red, green, blue);
+Color Color::FromArgb(int red, int green, int blue) {
+	return Color::FromArgb(255, red, green, blue);
 }
 
-awuiColor awuiColor::FromArgb(int alpha, int red, int green, int blue) {
-	awuiColor color;
+Color Color::FromArgb(int alpha, int red, int green, int blue) {
+	Color color;
 
 	color.a = (alpha > 255)? 255 : (alpha < 0) ? 0 : alpha;
 	color.r = (red > 255)? 255 : (red < 0) ? 0 : red;
@@ -124,7 +124,7 @@ awuiColor awuiColor::FromArgb(int alpha, int red, int green, int blue) {
 	return color;
 }
 
-awuiColor & awuiColor::operator=(const awuiColor & other) {
+Color & Color::operator=(const Color & other) {
 	this->r = other.r;
 	this->g = other.g;
 	this->b = other.b;

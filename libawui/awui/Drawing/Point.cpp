@@ -1,41 +1,44 @@
 // (c) Copyright 2011 Borja S�nchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiPoint.h"
-#include "awuiSize.h"
+#include "Point.h"
 
-awuiPoint::awuiPoint() {
+#include <awui/Drawing/Size.h>
+
+using namespace awui::Drawing;
+
+Point::Point() {
 	this->x = 0;
 	this->y = 0;
 }
 
-awuiPoint::awuiPoint(const awuiSize sz) {
+Point::Point(const Size sz) {
 	this->x = sz.GetWidth();
 	this->y = sz.GetHeight();
 }
 
-awuiPoint::awuiPoint(int x, int y) {
+Point::Point(int x, int y) {
 	this->x = x;
 	this->y = y;
 }
 
-int awuiPoint::GetX() const {
+int Point::GetX() const {
 	return this->x;
 }
 
-void awuiPoint::SetX(int x) {
+void Point::SetX(int x) {
 	this->x = x;
 }
 
-int awuiPoint::GetY() const {
+int Point::GetY() const {
 	return this->y;
 }
 
-void awuiPoint::SetY(int y) {
+void Point::SetY(int y) {
 	this->y = y;
 }
 
-awuiPoint & awuiPoint::operator= (const awuiPoint & other) {
+Point & Point::operator= (const Point & other) {
 	this->x = other.x;
 	this->y = other.y;
 

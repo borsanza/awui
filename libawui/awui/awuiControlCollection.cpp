@@ -2,7 +2,10 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "awuiControlCollection.h"
-#include "awuiControl.h"
+
+#include <awui/awuiControl.h>
+
+using namespace awui::Collections;
 
 awuiControlCollection::awuiControlCollection(awuiControl * owner) {
 	this->owner = owner;
@@ -11,11 +14,11 @@ awuiControlCollection::awuiControlCollection(awuiControl * owner) {
 awuiControlCollection::~awuiControlCollection() {
 }
 
-int awuiControlCollection::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::ControlCollection)
+int awuiControlCollection::IsClass(Classes objectClass) const {
+	if (objectClass == awui::ControlCollection)
 		return 1;
 
-	return awuiArrayList::IsClass(objectClass);
+	return ArrayList::IsClass(objectClass);
 }
 
 awuiControl * awuiControlCollection::GetOwner() {
@@ -23,7 +26,7 @@ awuiControl * awuiControlCollection::GetOwner() {
 }
 
 void awuiControlCollection::Add(void * item) {
-	awuiArrayList::Add(item);
+	ArrayList::Add(item);
 	((awuiControl *)item)->SetParent(this->owner);
 	this->owner->Layout();
 }

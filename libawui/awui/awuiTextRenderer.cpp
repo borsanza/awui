@@ -3,17 +3,19 @@
 
 #include "awuiTextRenderer.h"
 
-#include "awuiGraphics.h"
-#include "awuiImage.h"
-#include "awuiSize.h"
+#include <awui/Drawing/Graphics.h>
+#include <awui/Drawing/Image.h>
+#include <awui/Drawing/Size.h>
 
-awuiGraphics * awuiTextRenderer::graphics = NULL;
-awuiImage * awuiTextRenderer::image = NULL;
+using namespace awui::Drawing;
 
-awuiSize awuiTextRenderer::GetMeasureText(const std::string& text, awuiFont* font) {
+Graphics * awuiTextRenderer::graphics = NULL;
+Image * awuiTextRenderer::image = NULL;
+
+Size awuiTextRenderer::GetMeasureText(const std::string& text, Font* font) {
 	if (awuiTextRenderer::graphics == NULL) {
-		awuiTextRenderer::image = new awuiImage(1, 1);
-		awuiTextRenderer::graphics = awuiGraphics::FromImage(awuiTextRenderer::image);
+		awuiTextRenderer::image = new Image(1, 1);
+		awuiTextRenderer::graphics = Graphics::FromImage(awuiTextRenderer::image);
 	}
 
 	return awuiTextRenderer::graphics->GetMeasureText(text, font);

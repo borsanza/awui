@@ -1,27 +1,30 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiArrayList.h"
+#include "ArrayList.h"
+
 #include <stdlib.h>
 
-awuiArrayList::awuiArrayList() {
+using namespace awui::Collections;
+
+ArrayList::ArrayList() {
 	this->first = NULL;
 	this->count = 0;
 }
 
-awuiArrayList::~awuiArrayList() {
+ArrayList::~ArrayList() {
 	this->Clear();
 }
 
-int awuiArrayList::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::ArrayList)
+int ArrayList::IsClass(Classes objectClass) const {
+	if (objectClass == awui::ArrayList)
 		return 1;
 
-	return awuiObject::IsClass(objectClass);
+	return Object::IsClass(objectClass);
 }
 
-void awuiArrayList::Add(void * item) {
-	awuiArraListItem * itemList = (awuiArraListItem *) malloc(sizeof (awuiArraListItem *));
+void ArrayList::Add(void * item) {
+	ArraListItem * itemList = (ArraListItem *) malloc(sizeof (ArraListItem *));
 	itemList->object = item;
 	itemList->next = NULL;
 	this->count++;
@@ -31,7 +34,7 @@ void awuiArrayList::Add(void * item) {
 		return;
 	}
 
-	awuiArraListItem * itemListAux = this->first;
+	ArraListItem * itemListAux = this->first;
 
 	while (itemListAux->next != NULL)
 		itemListAux = itemListAux->next;
@@ -39,19 +42,19 @@ void awuiArrayList::Add(void * item) {
 	itemListAux->next = itemList;
 }
 
-int awuiArrayList::GetCount() {
+int ArrayList::GetCount() {
 	return this->count;
 }
 
-void awuiArrayList::Clear() {
+void ArrayList::Clear() {
 	while (this->GetCount() > 0)
 		this->RemoveAt(0);
 }
 
-int awuiArrayList::IndexOf(void * item) {
+int ArrayList::IndexOf(void * item) {
 	int pos = 0;
 
-	awuiArraListItem * itemListAux = this->first;
+	ArraListItem * itemListAux = this->first;
 
 	while (itemListAux != NULL) {
 		if (itemListAux->object == item)
@@ -64,10 +67,10 @@ int awuiArrayList::IndexOf(void * item) {
 	return -1;
 }
 
-void * awuiArrayList::Get(int index) {
+void * ArrayList::Get(int index) {
 	int pos = 0;
 
-	awuiArraListItem * itemListAux = this->first;
+	ArraListItem * itemListAux = this->first;
 
 	while (itemListAux != NULL) {
 		if (pos == index)
@@ -80,9 +83,9 @@ void * awuiArrayList::Get(int index) {
 	return NULL;
 }
 
-void awuiArrayList::Remove(void * item) {
-	awuiArraListItem * itemListAux = this->first;
-	awuiArraListItem * last = NULL;
+void ArrayList::Remove(void * item) {
+	ArraListItem * itemListAux = this->first;
+	ArraListItem * last = NULL;
 
 	while (itemListAux != NULL) {
 		if (itemListAux->object == item) {
@@ -102,10 +105,10 @@ void awuiArrayList::Remove(void * item) {
 	}
 }
 
-void awuiArrayList::RemoveAt(int index) {
+void ArrayList::RemoveAt(int index) {
 	int pos = 0;
-	awuiArraListItem * itemListAux = this->first;
-	awuiArraListItem * last = NULL;
+	ArraListItem * itemListAux = this->first;
+	ArraListItem * last = NULL;
 
 	while (itemListAux != NULL) {
 		if (pos == index) {
@@ -126,9 +129,9 @@ void awuiArrayList::RemoveAt(int index) {
 	}
 }
 
-void awuiArrayList::SetChildIndex(void * item, int index) {
-	awuiArraListItem * itemListAux = this->first;
-	awuiArraListItem * last = NULL;
+void ArrayList::SetChildIndex(void * item, int index) {
+	ArraListItem * itemListAux = this->first;
+	ArraListItem * last = NULL;
 
 	while (itemListAux != NULL) {
 		if (itemListAux->object == item) {
@@ -150,7 +153,7 @@ void awuiArrayList::SetChildIndex(void * item, int index) {
 
 	int pos = 0;
 
-	awuiArraListItem * itemListAux2 = this->first;
+	ArraListItem * itemListAux2 = this->first;
 
 	while (itemListAux2 != NULL) {
 		if (pos == index) {

@@ -14,12 +14,12 @@ private:
 public:
   awuiSplitter();
   ~awuiSplitter();
-	
-	virtual int IsClass(awuiClasses objectClass) const;
-	
+
+	virtual int IsClass(Classes objectClass) const;
+
 	awuiSplitContainer::Orientation GetOrientation();
 	void SetOrientation(awuiSplitContainer::Orientation orientation);
-	
+
 	virtual void OnMouseDown(awuiMouseEventArgs * e);
 	virtual void OnMouseMove(awuiMouseEventArgs * e);
 	virtual void OnMouseUp(awuiMouseEventArgs * e);

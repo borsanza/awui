@@ -2,19 +2,21 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "form1.h"
-#include <awui/awuiGraphics.h>
-#include <awui/awuiColor.h>
+#include <awui/Drawing/Color.h>
+#include <awui/Drawing/Graphics.h>
+#include <awui/Drawing/Pen.h>
+#include <awui/Effects/Effect.h>
 #include <awui/awuiButton.h>
 #include <awui/awuiSplitContainer.h>
 #include <awui/awuiControlCollection.h>
 #include <awui/awuiControl.h>
-#include <awui/awuiPen.h>
 #include <awui/awuiPanel.h>
-#include <awui/animation/effects.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
 }
+
+using namespace awui::Effects;
 
 Form1::Form1() {
 	this->InitializeComponent();
@@ -82,11 +84,11 @@ void Form1::InitializeComponent() {
 */
 	this->_panel = new awuiPanel();
 	this->_panel->SetDock(awuiControl::Fill);
-	this->_panel->SetBackColor(awuiColor::FromArgb(0, 0, 0));
+	this->_panel->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->GetControls()->Add(this->_panel);
 
-	this->_buttons = new awuiArrayList();
-	this->_effects = new awuiArrayList();
+	this->_buttons = new awui::Collections::ArrayList();
+	this->_effects = new awui::Collections::ArrayList();
 
 	this->AddButtonEffect(new EffectLinear());
 	this->AddButtonEffect(new EffectSwing());

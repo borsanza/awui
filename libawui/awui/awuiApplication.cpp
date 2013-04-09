@@ -3,7 +3,6 @@
 
 #include "awuiApplication.h"
 #include "awuiForm.h"
-#include "awuiObject.h"
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -160,11 +159,11 @@ static void setCursor1(aw * w) {
 		awPointer(w, g_p);
 }
 
-int awuiApplication::IsClass(awuiClasses objectClass) const {
-	if (objectClass == awuiObject::Application)
+int awuiApplication::IsClass(Classes objectClass) const {
+	if (objectClass == awui::Application)
 		return 1;
 
-	return awuiObject::IsClass(objectClass);
+	return Object::IsClass(objectClass);
 }
 
 void awuiApplication::Run(awuiForm * form = NULL) {

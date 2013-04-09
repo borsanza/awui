@@ -1,29 +1,33 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiRectangle.h"
+#include <awui/Drawing/Rectangle.h>
 
-class awuiImage;
+namespace awui {
+	namespace Drawing {
+		class Image;
+	}
+}
 
 class awuiGL {
 	friend class awuiForm;
 	friend class awuiControl;
 
 private:
-	awuiRectangle rectangle1;
-	awuiRectangle rectangle2;
+	awui::Drawing::Rectangle rectangle1;
+	awui::Drawing::Rectangle rectangle2;
 
 	awuiGL();
-	void SetClippingBase(awuiRectangle rectangle);
-	awuiRectangle GetClippingBase();
+	void SetClippingBase(awui::Drawing::Rectangle rectangle);
+	awui::Drawing::Rectangle GetClippingBase();
 
 public:
-	void SetClipping(awuiRectangle rectangle);
-	awuiRectangle GetClipping();
+	void SetClipping(awui::Drawing::Rectangle rectangle);
+	awui::Drawing::Rectangle GetClipping();
 
-	awuiRectangle GetClippingResult();
+	awui::Drawing::Rectangle GetClippingResult();
 
 	void SetClipping();
-	
-	static void DrawImageGL(awuiImage * image, float x, float y);
+
+	static void DrawImageGL(awui::Drawing::Image * image, float x, float y);
 };

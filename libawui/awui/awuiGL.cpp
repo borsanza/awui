@@ -3,38 +3,40 @@
 
 #include "awuiGL.h"
 
-#include "awuiImage.h"
+#include <awui/Drawing/Image.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
 	#include <aw/aw.h>
 }
 
+using namespace awui::Drawing;
+
 awuiGL::awuiGL() {
 }
 
-void awuiGL::SetClippingBase(awuiRectangle rectangle) {
+void awuiGL::SetClippingBase(Rectangle rectangle) {
 	this->rectangle1 = rectangle;
 }
 
-void awuiGL::SetClipping(awuiRectangle rectangle) {
+void awuiGL::SetClipping(Rectangle rectangle) {
 	this->rectangle2 = rectangle;
 }
 
-awuiRectangle awuiGL::GetClippingBase() {
+Rectangle awuiGL::GetClippingBase() {
 	return this->rectangle1;
 }
 
-awuiRectangle awuiGL::GetClipping() {
+Rectangle awuiGL::GetClipping() {
 	return this->rectangle2;
 }
 
-awuiRectangle awuiGL::GetClippingResult() {
-	return awuiRectangle::Intersect(this->rectangle1, this->rectangle2);
+Rectangle awuiGL::GetClippingResult() {
+	return Rectangle::Intersect(this->rectangle1, this->rectangle2);
 }
 
 void awuiGL::SetClipping() {
-	awuiRectangle rect = this->GetClippingResult();
+	Rectangle rect = this->GetClippingResult();
 
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
 }
@@ -43,7 +45,7 @@ void awuiGL::SetClipping() {
 #define GL_BGRA 0x80E1
 #endif
 
-void awuiGL::DrawImageGL(awuiImage * image, float x, float y) {
+void awuiGL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
 	static GLuint texture1;
 	glDisable (GL_DEPTH_TEST);
 	glEnable (GL_BLEND);

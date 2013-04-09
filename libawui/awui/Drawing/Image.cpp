@@ -1,11 +1,14 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiImage.h"
+#include "Image.h"
+
 #include <stdlib.h>
 #include <cairo.h>
 
-awuiImage::awuiImage(int width, int height) {
+using namespace awui::Drawing;
+
+Image::Image(int width, int height) {
 	this->width = width;
 	this->height = height;
 	this->btpp = 4;
@@ -14,7 +17,7 @@ awuiImage::awuiImage(int width, int height) {
 	this->cr = cairo_create(this->cairo_surface);
 }
 
-awuiImage::awuiImage(const char * filename) {
+Image::Image(const char * filename) {
 	this->image = NULL;
 	this->btpp = 4;
 	this->cairo_surface = cairo_image_surface_create_from_png(filename);
@@ -23,7 +26,7 @@ awuiImage::awuiImage(const char * filename) {
 	this->cr = cairo_create(this->cairo_surface);
 }
 
-awuiImage::~awuiImage() {
+Image::~Image() {
 	if (this->image != NULL)
 		free(this->image);
 
@@ -34,17 +37,17 @@ awuiImage::~awuiImage() {
 		cairo_surface_destroy(this->cairo_surface);
 }
 
-int awuiImage::IsClass(awuiObject::awuiClasses objectClass) const {
-	if (objectClass == awuiObject::Image)
+int Image::IsClass(Classes objectClass) const {
+	if (objectClass == awui::Image)
 		return 1;
 
-	return awuiObject::IsClass(objectClass);
+	return Object::IsClass(objectClass);
 }
 
-int awuiImage::GetWidth() {
+int Image::GetWidth() {
 	return this->width;
 }
 
-int awuiImage::GetHeight() {
+int Image::GetHeight() {
 	return this->height;
 }
