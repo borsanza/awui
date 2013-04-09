@@ -2,22 +2,25 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "form1.h"
+
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
 #include <awui/Effects/Effect.h>
-#include <awui/awuiButton.h>
-#include <awui/awuiSplitContainer.h>
-#include <awui/awuiControlCollection.h>
+#include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/Control.h>
-#include <awui/awuiPanel.h>
+#include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Panel.h>
+#include <awui/Windows/Forms/SplitContainer.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
 }
 
+using namespace awui::Collections;
 using namespace awui::Drawing;
 using namespace awui::Effects;
+using namespace awui::Windows::Forms;
 
 Form1::Form1() {
 	this->InitializeComponent();
@@ -28,34 +31,34 @@ Form1::~Form1() {
 
 void Form1::InitializeComponent() {
 /*
-	awuiButton * button;
+	Button * button;
 
-	button = new awuiButton();
+	button = new Button();
 	button->SetDock(Control::Top);
 	button->SetText("Button Top");
 	button->SetMinimumSize(Size(75, 23));
 	this->GetControls()->Add(button);
 
-	button = new awuiButton();
+	button = new Button();
 	button->SetDock(Control::Bottom);
 	button->SetText("Button Bottom");
 	button->SetMinimumSize(Size(75, 23));
 	this->GetControls()->Add(button);
 
-	button = new awuiButton();
+	button = new Button();
 	button->SetDock(Control::Left);
 	button->SetText("Button Left");
 	button->SetMinimumSize(Size(75, 23));
 	this->GetControls()->Add(button);
 
-	button = new awuiButton();
+	button = new Button();
 	button->SetDock(Control::Right);
 	button->SetText("Button Right");
 	button->SetMinimumSize(Size(75, 23));
 	this->GetControls()->Add(button);
 
-	button = new awuiButton();
-	awuiButton * button2 = new awuiButton();
+	button = new Button();
+	Button * button2 = new Button();
 
 	button->SetDock(Control::Fill);
 	button->SetText("Button Splitter Left");
@@ -65,11 +68,11 @@ void Form1::InitializeComponent() {
 	button2->SetText("Button Top");
 	button2->SetMinimumSize(Size(75, 23));
 
-	this->_splitter = new awuiSplitContainer();
+	this->_splitter = new SplitContainer();
 	this->_splitter->SetName("SplitContainer");
 	this->_splitter->GetPanel1()->GetControls()->Add(button);
 
-	button = new awuiButton();
+	button = new Button();
 	button->SetDock(Control::None);
 	button->SetBounds(10, 10, 20, 20);
 	button->SetText("Button Right2");
@@ -77,13 +80,13 @@ void Form1::InitializeComponent() {
 	this->_splitter->GetPanel2()->GetControls()->Add(button2);
 	this->_splitter->GetPanel2()->GetControls()->Add(button);
 	this->_splitter->SetDock(Control::Fill);
-	this->_splitter->SetOrientation(awuiSplitContainer::Vertical);
+	this->_splitter->SetOrientation(SplitContainer::Vertical);
 
 	this->GetControls()->Add(this->_splitter);
 
 	this->_panel = this->_splitter->GetPanel1();
 */
-	this->_panel = new awuiPanel();
+	this->_panel = new Panel();
 	this->_panel->SetDock(Control::Fill);
 	this->_panel->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->GetControls()->Add(this->_panel);
@@ -111,7 +114,7 @@ void Form1::AddButtonEffect(Effect * effect) {
 	static int y = 5;
 
 	for (int i = 0; i<=2; i++) {
-		awuiButton * button = new awuiButton();
+		Button * button = new Button();
 		button->SetDock(Control::None);
 		button->SetText(effect->GetName());
 		button->SetSize(75, 18);
@@ -141,7 +144,7 @@ void Form1::OnTick() {
 
 	for (int i=0; i<this->_buttons->GetCount(); i++) {
 		Effect * effect = (Effect *)this->_effects->Get(i);
-		awuiButton * button = (awuiButton *)this->_buttons->Get(i);
+		Button * button = (Button *)this->_buttons->Get(i);
 		float value2;
 
 		switch (i % 3) {

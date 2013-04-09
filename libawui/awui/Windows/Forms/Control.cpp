@@ -7,10 +7,10 @@
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
 #include <awui/Drawing/Rectangle.h>
+#include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/MouseEventArgs.h>
 
-#include <awui/awuiControlCollection.h>
-#include <awui/awuiForm.h>
-#include <awui/awuiMouseEventArgs.h>
 #include <awui/awuiGL.h>
 
 extern "C" {
@@ -18,14 +18,13 @@ extern "C" {
 	#include <aw/aw.h>
 }
 
-using namespace awui;
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Control::Control() {
 	this->bounds = Rectangle(0, 0, 100, 100);
-	this->controls = new awuiControlCollection(this);
-	this->mouseEventArgs = new awuiMouseEventArgs();
+	this->controls = new ControlCollection(this);
+	this->mouseEventArgs = new MouseEventArgs();
 	this->mouseControl = NULL;
 	this->parent = NULL;
 	this->needRefresh = 1;
@@ -130,7 +129,7 @@ const Rectangle Control::GetBounds() const {
 	return this->bounds;
 }
 
-awuiControlCollection* Control::GetControls() const {
+ControlCollection* Control::GetControls() const {
 	return this->controls;
 }
 
@@ -168,7 +167,7 @@ void Control::SetMinimumSize(Size size) {
 	this->SetSize(this->GetSize());
 }
 
-Windows::Forms::Control * Control::GetParent() const {
+Control * Control::GetParent() const {
 	return this->parent;
 }
 
@@ -313,11 +312,11 @@ void Control::ChangeControlOnMouseOver(Control * control) {
 	}
 
 	if (this->IsClass(awui::Form)) {
-		if (((awuiForm *) this)->mouseControlOver != control) {
-			if (((awuiForm *) this)->mouseControlOver != NULL)
-				((awuiForm *) this)->mouseControlOver->OnMouseLeave();
+		if (((Form *) this)->mouseControlOver != control) {
+			if (((Form *) this)->mouseControlOver != NULL)
+				((Form *) this)->mouseControlOver->OnMouseLeave();
 
-			((awuiForm *) this)->mouseControlOver = control;
+			((Form *) this)->mouseControlOver = control;
 			control->OnMouseEnter();
 		}
 	}

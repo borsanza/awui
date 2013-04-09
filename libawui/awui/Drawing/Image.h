@@ -10,9 +10,6 @@ namespace awui {
 	namespace Drawing {
 		class Image : public Object {
 			friend class Graphics;
-			friend class awuiForm;
-			friend class awuiButton;
-			friend class awuiGL;
 
 		protected:
 			int width;

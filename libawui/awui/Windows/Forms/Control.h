@@ -9,11 +9,6 @@
 #include <awui/Drawing/Rectangle.h>
 #include <string>
 
-class ArrayList;
-class awuiBitmap;
-class Graphics;
-class awuiControlCollection;
-class awuiMouseEventArgs;
 class awuiGL;
 
 class MouseButtons {
@@ -31,9 +26,11 @@ public:
 namespace awui {
 	namespace Windows {
 		namespace Forms {
-			class Control : public Object {
-				friend class awuiForm;
+			class ControlCollection;
+			class MouseEventArgs;
 
+			class Control : public Object {
+				friend class Form;
 			public:
 				enum DockStyle {
 					None,
@@ -51,10 +48,10 @@ namespace awui {
 				int needRefresh;
 				int refreshed;
 				Control::DockStyle dock;
-				awuiControlCollection * controls;
+				ControlCollection * controls;
 				Drawing::Color backColor;
 				Control * parent;
-				awuiMouseEventArgs * mouseEventArgs;
+				MouseEventArgs * mouseEventArgs;
 				Control * mouseControl;
 				std::string name;
 
@@ -103,7 +100,7 @@ namespace awui {
 				int GetRight() const;
 				int GetBottom() const;
 
-				awuiControlCollection * GetControls() const;
+				ControlCollection * GetControls() const;
 
 				Drawing::Color GetBackColor();
 				void SetBackColor(const Drawing::Color color);
@@ -118,9 +115,9 @@ namespace awui {
 				void OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int buttons);
 
 				virtual void Layout();
-				virtual void OnMouseDown(awuiMouseEventArgs* e) {}
-				virtual void OnMouseMove(awuiMouseEventArgs* e) {}
-				virtual void OnMouseUp(awuiMouseEventArgs* e) {}
+				virtual void OnMouseDown(MouseEventArgs* e) {}
+				virtual void OnMouseMove(MouseEventArgs* e) {}
+				virtual void OnMouseUp(MouseEventArgs* e) {}
 				virtual void OnMouseEnter();
 				virtual void OnMouseLeave();
 				virtual void OnPaint(awuiGL * gl) {}

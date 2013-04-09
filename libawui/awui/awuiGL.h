@@ -10,13 +10,14 @@ namespace awui {
 	namespace Windows {
 		namespace Forms {
 			class Control;
+			class Form;
 		}
 	}
 }
 
 class awuiGL {
-	friend class awuiForm;
 	friend class awui::Windows::Forms::Control;
+	friend class awui::Windows::Forms::Form;
 
 private:
 	awui::Drawing::Rectangle rectangle1;

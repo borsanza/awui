@@ -1,29 +1,29 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiPanel.h"
+#include "Panel.h"
 
 #include <awui/Drawing/Color.h>
+#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Control.h>
-#include <awui/awuiControlCollection.h>
 
-using namespace awui;
 using namespace awui::Drawing;
+using namespace awui::Windows::Forms;
 
-awuiPanel::awuiPanel() {
+Panel::Panel() {
 }
 
-awuiPanel::~awuiPanel() {
+Panel::~Panel() {
 }
 
-int awuiPanel::IsClass(Classes objectClass) const {
+int Panel::IsClass(Classes objectClass) const {
 	if (objectClass == awui::Panel)
 		return 1;
 
 	return Control::IsClass(objectClass);
 }
 
-const Size awuiPanel::GetMinimumSize() const {
+const Size Panel::GetMinimumSize() const {
 	Size size = Control::GetMinimumSize();
 
 	Size minSize;

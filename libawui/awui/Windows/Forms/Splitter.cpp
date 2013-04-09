@@ -1,72 +1,73 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiSplitter.h"
+#include "Splitter.h"
 
 #include <awui/Drawing/Color.h>
-#include "awuiMouseEventArgs.h"
-#include "awuiSplitContainer.h"
+#include <awui/Windows/Forms/MouseEventArgs.h>
+#include <awui/Windows/Forms/SplitContainer.h>
 
 #include <iostream>
 
 using namespace awui;
 using namespace awui::Drawing;
+using namespace awui::Windows::Forms;
 
-awuiSplitter::awuiSplitter() {
+Splitter::Splitter() {
 	this->SetBackColor(Color::FromArgb(192, 192, 192));
 
-	this->SetName("awuiSplitter");
+	this->SetName("Splitter");
 
 	this->SetSize(20, 200);
 
 	this->mouseActive = 0;
 }
 
-awuiSplitter::~awuiSplitter() {
+Splitter::~Splitter() {
 }
 
-int awuiSplitter::IsClass(Classes objectClass) const {
+int Splitter::IsClass(Classes objectClass) const {
 	if (objectClass == awui::Splitter)
 		return 1;
 
 	return Control::IsClass(objectClass);
 }
 
-awuiSplitContainer::Orientation awuiSplitter::GetOrientation() {
+SplitContainer::Orientation Splitter::GetOrientation() {
 	return this->orientation;
 }
 
-void awuiSplitter::SetOrientation(awuiSplitContainer::Orientation orientation) {
+void Splitter::SetOrientation(SplitContainer::Orientation orientation) {
 	this->orientation = orientation;
 }
 
-void awuiSplitter::OnMouseDown(awuiMouseEventArgs * e) {
+void Splitter::OnMouseDown(MouseEventArgs * e) {
 	if (e->GetButton() == MouseButtons::Left)
 		this->mouseActive = 1;
 }
 
-void awuiSplitter::OnMouseMove(awuiMouseEventArgs * e) {
+void Splitter::OnMouseMove(MouseEventArgs * e) {
 	if (!this->mouseActive)
 		return;
 
 	if (this->GetParent()->IsClass(awui::SplitContainer)) {
-		if (this->orientation == awuiSplitContainer::Vertical)
-			((awuiSplitContainer *) this->GetParent())->SetSplitterDistance(this->GetLeft() + e->GetX());
+		if (this->orientation == SplitContainer::Vertical)
+			((SplitContainer *) this->GetParent())->SetSplitterDistance(this->GetLeft() + e->GetX());
 		else
-			((awuiSplitContainer *) this->GetParent())->SetSplitterDistance(this->GetTop() + e->GetY());
+			((SplitContainer *) this->GetParent())->SetSplitterDistance(this->GetTop() + e->GetY());
 	}
 
 //	std::cout << "Motion: " << e->GetX() << "x" << e->GetY() << "   " << this->GetName() << std::endl;
 }
 
-void awuiSplitter::OnMouseUp(awuiMouseEventArgs * e) {
+void Splitter::OnMouseUp(MouseEventArgs * e) {
 	this->mouseActive = 0;
 }
 
-void awuiSplitter::OnMouseEnter() {
+void Splitter::OnMouseEnter() {
 //	std::cout << "OnMouseEnter" << std::endl;
 }
 
-void awuiSplitter::OnMouseLeave() {
+void Splitter::OnMouseLeave() {
 //	std::cout << "OnMouseLeave" << std::endl;
 }

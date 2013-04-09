@@ -1,32 +1,32 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiSplitContainer.h"
+#include "SplitContainer.h"
 
-#include <awui/awuiControlCollection.h>
 #include <awui/Drawing/Color.h>
-#include <awui/awuiPanel.h>
-#include <awui/awuiSplitter.h>
+#include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Panel.h>
+#include <awui/Windows/Forms/Splitter.h>
 
 #include <iostream>
 
-using namespace awui;
 using namespace awui::Drawing;
+using namespace awui::Windows::Forms;
 
-awuiSplitContainer::awuiSplitContainer() {
+SplitContainer::SplitContainer() {
 	this->splitterDistance = 100;
 	this->splitterIncrement = 1;
 	this->splitterWidth = 4;
 	this->orientation = Vertical;
 
-	this->SetName("awuiSplitContainer");
+	this->SetName("SplitContainer");
 
 	this->SetBackColor(Color::FromArgb(255, 255, 0));
 
-	this->panel1 = new awuiPanel();
-	this->splitter = new awuiSplitter();
+	this->panel1 = new Panel();
+	this->splitter = new Splitter();
 	this->splitter->SetOrientation(this->orientation);
-	this->panel2 = new awuiPanel();
+	this->panel2 = new Panel();
 	this->GetControls()->Add(this->panel1);
 	this->GetControls()->Add(this->splitter);
 	this->GetControls()->Add(this->panel2);
@@ -34,36 +34,36 @@ awuiSplitContainer::awuiSplitContainer() {
 	this->SetSize(200, 200);
 }
 
-awuiSplitContainer::~awuiSplitContainer() {
+SplitContainer::~SplitContainer() {
 	delete this->panel1;
 	delete this->splitter;
 	delete this->panel2;
 }
 
-int awuiSplitContainer::IsClass(Classes objectClass) const {
+int SplitContainer::IsClass(Classes objectClass) const {
 	if (objectClass == awui::SplitContainer)
 		return 1;
 
 	return Control::IsClass(objectClass);
 }
 
-awuiPanel * awuiSplitContainer::GetPanel1() {
+Panel * SplitContainer::GetPanel1() {
 	return this->panel1;
 }
 
-awuiPanel * awuiSplitContainer::GetPanel2() {
+Panel * SplitContainer::GetPanel2() {
 	return this->panel2;
 }
 
-void awuiSplitContainer::SetLocationW(Control * control, int pos) {
-	if (this->orientation == awuiSplitContainer::Vertical)
+void SplitContainer::SetLocationW(Control * control, int pos) {
+	if (this->orientation == SplitContainer::Vertical)
 		control->SetLocation(pos, 0);
 	else
 		control->SetLocation(0, pos);
 }
 
-void awuiSplitContainer::SetSizeW(Control * control, int size, int substract) {
-	if (this->orientation == awuiSplitContainer::Vertical) {
+void SplitContainer::SetSizeW(Control * control, int size, int substract) {
+	if (this->orientation == SplitContainer::Vertical) {
 		if (substract)
 			size = this->GetWidth() - size;
 
@@ -76,26 +76,26 @@ void awuiSplitContainer::SetSizeW(Control * control, int size, int substract) {
 	}
 }
 
-int awuiSplitContainer::GetSizeW(Control * control) const {
-	if (this->orientation == awuiSplitContainer::Vertical)
+int SplitContainer::GetSizeW(Control * control) const {
+	if (this->orientation == SplitContainer::Vertical)
 		return control->GetWidth();
 	else
 		return control->GetHeight();
 }
 
-int awuiSplitContainer::GetMinimumSizeW(Control * control) const {
-	if (this->orientation == awuiSplitContainer::Vertical)
+int SplitContainer::GetMinimumSizeW(Control * control) const {
+	if (this->orientation == SplitContainer::Vertical)
 		return control->GetMinimumSize().GetWidth();
 	else
 		return control->GetMinimumSize().GetHeight();
 }
 
-void awuiSplitContainer::RecalculatePositions() {
+void SplitContainer::RecalculatePositions() {
 	int distance = this->splitterDistance;
 	int x2 = this->splitterWidth >> 1;
 	int x1 = this->splitterWidth - x2;
 
-	int size = (this->orientation == awuiSplitContainer::Vertical)? this->GetWidth() : this->GetHeight();
+	int size = (this->orientation == SplitContainer::Vertical)? this->GetWidth() : this->GetHeight();
 
 	int minSize = this->GetMinimumSizeW(this->panel1);
 	if (distance < (minSize + x1))
@@ -115,41 +115,41 @@ void awuiSplitContainer::RecalculatePositions() {
 	this->SetSizeW(this->panel2, (distance + x2), 1);
 }
 
-float awuiSplitContainer::GetSplitterDistance() const {
+float SplitContainer::GetSplitterDistance() const {
 	return this->splitterDistance;
 }
 
-void awuiSplitContainer::SetSplitterDistance(int distance) {
+void SplitContainer::SetSplitterDistance(int distance) {
 	this->splitterDistance = distance;
 	this->RecalculatePositions();
 }
 
-int awuiSplitContainer::GetSplitterIncrement() const {
+int SplitContainer::GetSplitterIncrement() const {
 	return this->splitterIncrement;
 }
 
-void awuiSplitContainer::SetSplitterIncrement(int increment) {
+void SplitContainer::SetSplitterIncrement(int increment) {
 	this->splitterIncrement = increment;
 }
 
-int awuiSplitContainer::GetSplitterWidth() const {
+int SplitContainer::GetSplitterWidth() const {
 	return this->splitterWidth;
 }
 
-void awuiSplitContainer::SetSplitterWidth(int width) {
+void SplitContainer::SetSplitterWidth(int width) {
 	this->splitterWidth = width;
 }
 
-awuiSplitContainer::Orientation awuiSplitContainer::GetOrientation() const {
+SplitContainer::Orientation SplitContainer::GetOrientation() const {
 	return this->orientation;
 }
 
-void awuiSplitContainer::SetOrientation(Orientation orientation) {
+void SplitContainer::SetOrientation(Orientation orientation) {
 	this->orientation = orientation;
 	this->splitter->SetOrientation(orientation);
 	this->RecalculatePositions();
 }
 
-void awuiSplitContainer::Layout() {
+void SplitContainer::Layout() {
 	this->RecalculatePositions();
 }

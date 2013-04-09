@@ -3,14 +3,15 @@
 
 #include <stdarg.h>
 
-#include "awuiForm.h"
+#include "Form.h"
 
-#include "awuiApplication.h"
 #include <awui/Collections/ArrayList.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Rectangle.h>
-#include "awuiGL.h"
+#include <awui/Windows/Forms/Application.h>
+
+#include <awui/awuiGL.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -23,8 +24,9 @@ extern "C" {
 
 using namespace awui;
 using namespace awui::Drawing;
+using namespace awui::Windows::Forms;
 
-awuiForm::awuiForm() {
+Form::Form() {
 	this->SetBackColor(Color::FromArgb(192, 192, 192));
 
 	this->SetBounds(100, 100, 300, 300);
@@ -40,7 +42,7 @@ awuiForm::awuiForm() {
 	this->old2h = -1;
 }
 
-awuiForm::~awuiForm() {
+Form::~Form() {
 	glDeleteTextures(1, &this->texture2);
 	glDeleteTextures(0, &this->texture1);
 
@@ -48,22 +50,22 @@ awuiForm::~awuiForm() {
 	awDel(this->w);
 }
 
-int awuiForm::IsClass(Classes objectClass) const {
+int Form::IsClass(Classes objectClass) const {
 	if (objectClass == awui::Form)
 		return 1;
 
 	return Control::IsClass(objectClass);
 }
 
-void awuiForm::Show() {
-	this->w = awNew(awuiApplication::g);
+void Form::Show() {
+	this->w = awNew(Application::g);
 	awGeometry(this->w, this->GetLeft(), this->GetTop(), this->GetWidth(), this->GetHeight());
 	awShow(this->w);
 //	awHideBorders(this->w);
 //	awMaximize(this->w);
 }
 
-void awuiForm::OnPaintForm() {
+void Form::OnPaintForm() {
 	this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
 	glEnable(GL_SCISSOR_TEST);
@@ -78,7 +80,7 @@ void awuiForm::OnPaintForm() {
 	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
 }
 
-void awuiForm::ProcessEvents(ac * c) {
+void Form::ProcessEvents(ac * c) {
 	const ae * e;
 	aw * w = this->w;
 

@@ -1,17 +1,18 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiApplication.h"
-#include "awuiForm.h"
+#include "Application.h"
+
+#include <awui/Windows/Forms/Form.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
 	#include <aw/aw.h>
 }
 
-using namespace awui;
+using namespace awui::Windows::Forms;
 
-struct _ag * awuiApplication::g = NULL;
+struct _ag * Application::g = NULL;
 
 static ap * g_p = 0;
 
@@ -161,17 +162,17 @@ static void setCursor1(aw * w) {
 		awPointer(w, g_p);
 }
 
-int awuiApplication::IsClass(Classes objectClass) const {
+int Application::IsClass(Classes objectClass) const {
 	if (objectClass == awui::Application)
 		return 1;
 
 	return Object::IsClass(objectClass);
 }
 
-void awuiApplication::Run(awuiForm * form = NULL) {
-	awuiApplication::g = agNew("prueba");
-	ac * c = acNew(awuiApplication::g, NULL);
-	aw * w = awNew(awuiApplication::g);
+void Application::Run(Form * form = NULL) {
+	Application::g = agNew("prueba");
+	ac * c = acNew(Application::g, NULL);
+	aw * w = awNew(Application::g);
 
 	form->Show();
 
@@ -198,5 +199,5 @@ void awuiApplication::Run(awuiForm * form = NULL) {
 
 	acDel(c);
 	awDel(w);
-	agDel(awuiApplication::g);
+	agDel(Application::g);
 }
