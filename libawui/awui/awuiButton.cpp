@@ -17,6 +17,10 @@ extern "C" {
 	#include <aw/aw.h>
 }
 
+using namespace awui;
+using namespace awui::Drawing;
+using namespace awui::Windows::Forms;
+
 awuiButton::awuiButton() {
 	this->SetSize(75,23);
 	this->SetBackColor(Color::FromArgb(255, 255, 255));
@@ -32,7 +36,7 @@ int awuiButton::IsClass(Classes objectClass) const {
 	if (objectClass == awui::Button)
 		return 1;
 
-	return awuiControl::IsClass(objectClass);
+	return Control::IsClass(objectClass);
 }
 
 void awuiButton::OnMouseLeave() {
@@ -58,8 +62,8 @@ void awuiButton::OnPaint(awuiGL* gl) {
 
 	Size size = awuiTextRenderer::GetMeasureText(this->text, &font);
 
-	awui::Drawing::Image * image = new awui::Drawing::Image(size.GetWidth(), size.GetHeight());
-	awui::Drawing::Graphics * g = awui::Drawing::Graphics::FromImage(image);
+	Drawing::Image * image = new Drawing::Image(size.GetWidth(), size.GetHeight());
+	Drawing::Graphics * g = Drawing::Graphics::FromImage(image);
 //	g->FillRectangle(awuiColor::FromArgb(250,0,0), 0, 0, size.GetWidth(), size.GetHeight());
 //	g->Clear(awuiColor::FromArgb(255,0,0));
 	// Esto hay que quitarlo, porque lo uso para definir un pen

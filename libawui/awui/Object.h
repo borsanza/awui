@@ -28,7 +28,7 @@ namespace awui {
 		Object();
 		~Object();
 
-		virtual int IsClass(Classes objectClass) const;
+		virtual int IsClass(awui::Classes objectClass) const;
 	};
 }
 

@@ -4,8 +4,11 @@
 #include "awuiPanel.h"
 
 #include <awui/Drawing/Color.h>
-#include <awui/awuiControl.h>
+#include <awui/Windows/Forms/Control.h>
 #include <awui/awuiControlCollection.h>
+
+using namespace awui;
+using namespace awui::Drawing;
 
 awuiPanel::awuiPanel() {
 }
@@ -17,11 +20,11 @@ int awuiPanel::IsClass(Classes objectClass) const {
 	if (objectClass == awui::Panel)
 		return 1;
 
-	return awuiControl::IsClass(objectClass);
+	return Control::IsClass(objectClass);
 }
 
 const Size awuiPanel::GetMinimumSize() const {
-	Size size = awuiControl::GetMinimumSize();
+	Size size = Control::GetMinimumSize();
 
 	Size minSize;
 	minSize.SetWidth(0);
@@ -29,17 +32,17 @@ const Size awuiPanel::GetMinimumSize() const {
 
 	int count = this->GetControls()->GetCount();
 	for (int i = 0; i < count; i++) {
-		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+		Control * control = (Control *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
-			case awuiControl::Left:
-			case awuiControl::Right:
+			case Control::Left:
+			case Control::Right:
 				minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
 				break;
-			case awuiControl::Top:
-			case awuiControl::Bottom:
+			case Control::Top:
+			case Control::Bottom:
 				minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
 				break;
-			case awuiControl::Fill:
+			case Control::Fill:
 				minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
 				minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
 				break;

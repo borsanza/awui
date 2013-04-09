@@ -3,11 +3,17 @@
 
 #include <awui/Object.h>
 
-using namespace awui;
+namespace awui {
+	namespace Windows {
+		namespace Forms {
+			class Control;
+		}
+	}
+}
 
-class awuiMouseEventArgs : public Object {
+class awuiMouseEventArgs : public awui::Object {
 private:
-	friend class awuiControl;
+	friend class awui::Windows::Forms::Control;
 
 	int x, y;
 	int delta;
@@ -26,7 +32,7 @@ public:
   awuiMouseEventArgs();
   ~awuiMouseEventArgs();
 
-	virtual int IsClass(Classes objectClass) const;
+	virtual int IsClass(awui::Classes objectClass) const;
 
 	int GetX();
 	int GetY();

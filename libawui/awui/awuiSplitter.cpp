@@ -7,6 +7,11 @@
 #include "awuiMouseEventArgs.h"
 #include "awuiSplitContainer.h"
 
+#include <iostream>
+
+using namespace awui;
+using namespace awui::Drawing;
+
 awuiSplitter::awuiSplitter() {
 	this->SetBackColor(Color::FromArgb(192, 192, 192));
 
@@ -24,7 +29,7 @@ int awuiSplitter::IsClass(Classes objectClass) const {
 	if (objectClass == awui::Splitter)
 		return 1;
 
-	return awuiControl::IsClass(objectClass);
+	return Control::IsClass(objectClass);
 }
 
 awuiSplitContainer::Orientation awuiSplitter::GetOrientation() {
@@ -34,8 +39,6 @@ awuiSplitContainer::Orientation awuiSplitter::GetOrientation() {
 void awuiSplitter::SetOrientation(awuiSplitContainer::Orientation orientation) {
 	this->orientation = orientation;
 }
-
-#include <iostream>
 
 void awuiSplitter::OnMouseDown(awuiMouseEventArgs * e) {
 	if (e->GetButton() == MouseButtons::Left)

@@ -4,12 +4,12 @@
 #ifndef __AWUISPLITCONTAINER_H__
 #define __AWUISPLITCONTAINER_H__
 
-#include "awuiControl.h"
+#include <awui/Windows/Forms/Control.h>
 
 class awuiSplitter;
 class awuiPanel;
 
-class awuiSplitContainer : public awuiControl {
+class awuiSplitContainer : public awui::Windows::Forms::Control {
 public:
 	enum Orientation {
 		Vertical,
@@ -28,16 +28,16 @@ private:
 
 	void RecalculatePositions();
 
-	void SetLocationW(awuiControl * control, int pos);
-	void SetSizeW(awuiControl* control, int size, int substract);
-	int GetSizeW(awuiControl * control) const;
-	int GetMinimumSizeW(awuiControl * control) const;
+	void SetLocationW(Control * control, int pos);
+	void SetSizeW(Control* control, int size, int substract);
+	int GetSizeW(Control * control) const;
+	int GetMinimumSizeW(Control * control) const;
 
 public:
 	awuiSplitContainer();
 	~awuiSplitContainer();
 
-	virtual int IsClass(Classes objectClass) const;
+	virtual int IsClass(awui::Classes objectClass) const;
 
 	awuiPanel * GetPanel1();
 	awuiPanel * GetPanel2();

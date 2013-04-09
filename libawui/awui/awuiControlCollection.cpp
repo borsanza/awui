@@ -3,11 +3,13 @@
 
 #include "awuiControlCollection.h"
 
-#include <awui/awuiControl.h>
+#include <awui/Windows/Forms/Control.h>
 
+using namespace awui;
 using namespace awui::Collections;
+using namespace awui::Windows;
 
-awuiControlCollection::awuiControlCollection(awuiControl * owner) {
+awuiControlCollection::awuiControlCollection(Forms::Control * owner) {
 	this->owner = owner;
 }
 
@@ -21,12 +23,12 @@ int awuiControlCollection::IsClass(Classes objectClass) const {
 	return ArrayList::IsClass(objectClass);
 }
 
-awuiControl * awuiControlCollection::GetOwner() {
+Forms::Control * awuiControlCollection::GetOwner() {
 	return this->owner;
 }
 
 void awuiControlCollection::Add(void * item) {
 	ArrayList::Add(item);
-	((awuiControl *)item)->SetParent(this->owner);
+	((Forms::Control *)item)->SetParent(this->owner);
 	this->owner->Layout();
 }

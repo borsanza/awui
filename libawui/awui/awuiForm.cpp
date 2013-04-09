@@ -21,6 +21,9 @@ extern "C" {
 	#define GL_BGRA 0x80E1
 #endif
 
+using namespace awui;
+using namespace awui::Drawing;
+
 awuiForm::awuiForm() {
 	this->SetBackColor(Color::FromArgb(192, 192, 192));
 
@@ -49,7 +52,7 @@ int awuiForm::IsClass(Classes objectClass) const {
 	if (objectClass == awui::Form)
 		return 1;
 
-	return awuiControl::IsClass(objectClass);
+	return Control::IsClass(objectClass);
 }
 
 void awuiForm::Show() {

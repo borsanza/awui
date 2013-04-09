@@ -1,9 +1,9 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiControl.h"
+#include <awui/Windows/Forms/Control.h>
 
-class awuiButton : public awuiControl {
+class awuiButton : public awui::Windows::Forms::Control {
 private:
 	std::string text;
 	int testx;
@@ -14,7 +14,7 @@ public:
 	awuiButton();
 	~awuiButton();
 
-	virtual int IsClass(Classes objectClass) const;
+	virtual int IsClass(awui::Classes objectClass) const;
 
 	const std::string& GetName();
 	void SetText(const std::string& str);

@@ -3,6 +3,8 @@
 
 #include "awuiMouseEventArgs.h"
 
+using namespace awui;
+
 awuiMouseEventArgs::awuiMouseEventArgs() {
 	this->x = 0;
 	this->y = 0;

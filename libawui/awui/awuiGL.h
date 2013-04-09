@@ -7,11 +7,16 @@ namespace awui {
 	namespace Drawing {
 		class Image;
 	}
+	namespace Windows {
+		namespace Forms {
+			class Control;
+		}
+	}
 }
 
 class awuiGL {
 	friend class awuiForm;
-	friend class awuiControl;
+	friend class awui::Windows::Forms::Control;
 
 private:
 	awui::Drawing::Rectangle rectangle1;

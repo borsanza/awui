@@ -10,6 +10,9 @@
 
 #include <iostream>
 
+using namespace awui;
+using namespace awui::Drawing;
+
 awuiSplitContainer::awuiSplitContainer() {
 	this->splitterDistance = 100;
 	this->splitterIncrement = 1;
@@ -41,7 +44,7 @@ int awuiSplitContainer::IsClass(Classes objectClass) const {
 	if (objectClass == awui::SplitContainer)
 		return 1;
 
-	return awuiControl::IsClass(objectClass);
+	return Control::IsClass(objectClass);
 }
 
 awuiPanel * awuiSplitContainer::GetPanel1() {
@@ -52,14 +55,14 @@ awuiPanel * awuiSplitContainer::GetPanel2() {
 	return this->panel2;
 }
 
-void awuiSplitContainer::SetLocationW(awuiControl * control, int pos) {
+void awuiSplitContainer::SetLocationW(Control * control, int pos) {
 	if (this->orientation == awuiSplitContainer::Vertical)
 		control->SetLocation(pos, 0);
 	else
 		control->SetLocation(0, pos);
 }
 
-void awuiSplitContainer::SetSizeW(awuiControl * control, int size, int substract) {
+void awuiSplitContainer::SetSizeW(Control * control, int size, int substract) {
 	if (this->orientation == awuiSplitContainer::Vertical) {
 		if (substract)
 			size = this->GetWidth() - size;
@@ -73,14 +76,14 @@ void awuiSplitContainer::SetSizeW(awuiControl * control, int size, int substract
 	}
 }
 
-int awuiSplitContainer::GetSizeW(awuiControl * control) const {
+int awuiSplitContainer::GetSizeW(Control * control) const {
 	if (this->orientation == awuiSplitContainer::Vertical)
 		return control->GetWidth();
 	else
 		return control->GetHeight();
 }
 
-int awuiSplitContainer::GetMinimumSizeW(awuiControl * control) const {
+int awuiSplitContainer::GetMinimumSizeW(Control * control) const {
 	if (this->orientation == awuiSplitContainer::Vertical)
 		return control->GetMinimumSize().GetWidth();
 	else

@@ -39,7 +39,7 @@ namespace awui {
 			Pen(awui::Drawing::Color color, float width);
 			~Pen();
 
-			virtual int IsClass(Classes objectClass) const;
+			virtual int IsClass(awui::Classes objectClass) const;
 
 			awui::Drawing::Color GetColor();
 			void SetColor(awui::Drawing::Color color);

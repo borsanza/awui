@@ -1,7 +1,7 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiControl.h"
+#include <awui/Windows/Forms/Control.h>
 
 typedef struct _aw aw;
 typedef struct _ac ac;
@@ -9,13 +9,13 @@ typedef unsigned int GLuint;
 
 class awuiApplication;
 
-class awuiForm : public awuiControl {
+class awuiForm : public awui::Windows::Forms::Control {
 	friend class awuiApplication;
-	friend class awuiControl;
+	friend class awui::Windows::Forms::Control;
 
 private:
 	aw * w;
-	awuiControl * mouseControlOver;
+	Control * mouseControlOver;
 
 	int mouseX;
 	int mouseY;
@@ -33,7 +33,7 @@ public:
 	awuiForm();
 	~awuiForm();
 
-	virtual int IsClass(Classes objectClass) const;
+	virtual int IsClass(awui::Classes objectClass) const;
 
 	void Show();
 };

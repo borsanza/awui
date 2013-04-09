@@ -15,7 +15,7 @@ namespace awui {
 		public:
 			Color();
 
-			virtual int IsClass(Classes objectClass) const;
+			virtual int IsClass(awui::Classes objectClass) const;
 
 			unsigned char GetA() const;
 			unsigned char GetR() const;

@@ -19,7 +19,7 @@ namespace awui {
 			ArrayList();
 			~ArrayList();
 
-			virtual int IsClass(Classes objectClass) const;
+			virtual int IsClass(awui::Classes objectClass) const;
 
 			virtual void Add(void * item);
 			int GetCount();

@@ -6,9 +6,7 @@
 typedef struct _ag ag;
 class awuiForm;
 
-using namespace awui;
-
-class awuiApplication : public Object {
+class awuiApplication : public awui::Object {
 	friend class awuiForm;
 
 private:
@@ -17,5 +15,5 @@ private:
 public:
 	static void Run(awuiForm * form);
 
-	virtual int IsClass(Classes objectClass) const;
+	virtual int IsClass(awui::Classes objectClass) const;
 };

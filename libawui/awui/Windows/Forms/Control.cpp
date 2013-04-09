@@ -1,84 +1,85 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiControl.h"
+#include "Control.h"
 
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
 #include <awui/Drawing/Rectangle.h>
 
-#include "awuiControlCollection.h"
-#include "awuiForm.h"
-#include "awuiMouseEventArgs.h"
-#include "awuiGL.h"
+#include <awui/awuiControlCollection.h>
+#include <awui/awuiForm.h>
+#include <awui/awuiMouseEventArgs.h>
+#include <awui/awuiGL.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
 	#include <aw/aw.h>
 }
 
-using namespace awui::Drawing;
 using namespace awui;
+using namespace awui::Drawing;
+using namespace awui::Windows::Forms;
 
-awuiControl::awuiControl() {
+Control::Control() {
 	this->bounds = Rectangle(0, 0, 100, 100);
 	this->controls = new awuiControlCollection(this);
 	this->mouseEventArgs = new awuiMouseEventArgs();
 	this->mouseControl = NULL;
 	this->parent = NULL;
 	this->needRefresh = 1;
-	this->dock = awuiControl::None;
+	this->dock = Control::None;
 	this->backColor = Color::FromArgb(226, 226, 226);
 	this->OnResizePre();
 }
 
-awuiControl::~awuiControl() {
+Control::~Control() {
 	delete this->mouseEventArgs;
 
 	for (int i = 0; i < this->controls->GetCount(); i++)
-		delete ((awuiControl *)this->controls->Get(i));
+		delete ((Control *)this->controls->Get(i));
 
 	this->controls->Clear();
 	delete this->controls;
 }
 
-int awuiControl::IsClass(Classes objectClass) const {
+int Control::IsClass(Classes objectClass) const {
 	if (objectClass == awui::Control)
 		return 1;
 
 	return Object::IsClass(objectClass);
 }
 
-void awuiControl::SetTop(int y) {
+void Control::SetTop(int y) {
 	this->SetLocation(this->bounds.GetX(), y);
 }
 
-void awuiControl::SetLeft(int x) {
+void Control::SetLeft(int x) {
 	this->SetLocation(x, this->bounds.GetY());
 }
 
-void awuiControl::SetLocation(int x, int y) {
+void Control::SetLocation(int x, int y) {
 	this->SetBounds(x, y, this->bounds.GetWidth(), this->bounds.GetHeight());
 }
 
-void awuiControl::SetWidth(int width) {
+void Control::SetWidth(int width) {
 	this->SetSize(width, this->bounds.GetHeight());
 }
 
-void awuiControl::SetHeight(int height) {
+void Control::SetHeight(int height) {
 	this->SetSize(this->bounds.GetWidth(), height);
 }
 
-void awuiControl::SetSize(int width, int height) {
+void Control::SetSize(int width, int height) {
 	this->SetBounds(this->bounds.GetX(), this->bounds.GetY(), width, height);
 }
 
-void awuiControl::SetSize(const Size size) {
+void Control::SetSize(const Size size) {
 	this->SetSize(size.GetWidth(), size.GetHeight());
 }
 
-void awuiControl::SetBounds(int x, int y, int width, int height) {
+void Control::SetBounds(int x, int y, int width, int height) {
 	if (width < this->minimumSize.GetWidth())
 		width = this->minimumSize.GetWidth();
 
@@ -93,89 +94,89 @@ void awuiControl::SetBounds(int x, int y, int width, int height) {
 	this->OnResizePre();
 }
 
-int awuiControl::GetTop() const {
+int Control::GetTop() const {
 	return this->bounds.GetTop();
 }
 
-int awuiControl::GetLeft() const {
+int Control::GetLeft() const {
 	return this->bounds.GetLeft();
 }
 
-int awuiControl::GetRight() const {
+int Control::GetRight() const {
 	return this->bounds.GetRight();
 }
 
-int awuiControl::GetBottom() const {
+int Control::GetBottom() const {
 	return this->bounds.GetBottom();
 }
 
-const Point awuiControl::GetLocation() const {
+const Point Control::GetLocation() const {
 	return this->bounds.GetLocation();
 }
 
-int awuiControl::GetWidth() const {
+int Control::GetWidth() const {
 	return this->bounds.GetWidth();
 }
 
-int awuiControl::GetHeight() const {
+int Control::GetHeight() const {
 	return this->bounds.GetHeight();
 }
 
-const Size awuiControl::GetSize() const {
+const Size Control::GetSize() const {
 	return this->bounds.GetSize();
 }
 
-const Rectangle awuiControl::GetBounds() const {
+const Rectangle Control::GetBounds() const {
 	return this->bounds;
 }
 
-awuiControlCollection* awuiControl::GetControls() const {
+awuiControlCollection* Control::GetControls() const {
 	return this->controls;
 }
 
-void awuiControl::OnResizePre() {
+void Control::OnResizePre() {
 	this->OnResize();
 	this->Layout();
 }
 
-void awuiControl::SetBackColor(const awui::Drawing::Color color) {
+void Control::SetBackColor(const awui::Drawing::Color color) {
 	this->backColor = color;
 }
 
-awui::Drawing::Color awuiControl::GetBackColor() {
+awui::Drawing::Color Control::GetBackColor() {
 	return this->backColor;
 }
 
-void awuiControl::SetDock(awuiControl::DockStyle dock) {
+void Control::SetDock(Control::DockStyle dock) {
 	if (this->dock != dock) {
 		this->dock = dock;
 		this->Layout();
 	}
 }
 
-awuiControl::DockStyle awuiControl::GetDock() const {
+Control::DockStyle Control::GetDock() const {
 	return this->dock;
 }
 
 
-const Size awuiControl::GetMinimumSize() const {
+const Size Control::GetMinimumSize() const {
 	return this->minimumSize;
 }
 
-void awuiControl::SetMinimumSize(Size size) {
+void Control::SetMinimumSize(Size size) {
 	this->minimumSize = size;
 	this->SetSize(this->GetSize());
 }
 
-awuiControl * awuiControl::GetParent() const {
+Windows::Forms::Control * Control::GetParent() const {
 	return this->parent;
 }
 
-void awuiControl::SetParent(awuiControl * parent) {
+void Control::SetParent(Control * parent) {
 	this->parent = parent;
 }
 
-void awuiControl::Layout() {
+void Control::Layout() {
 	int x1 = 0;
 	int y1 = 0;
 	int x2 = this->GetWidth() - 1;
@@ -183,24 +184,24 @@ void awuiControl::Layout() {
 	int margin = 1;
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
-		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+		Control * control = (Control *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
-			case awuiControl::Fill:
+			case Control::Fill:
 				control->SetBounds(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 				break;
-			case awuiControl::Left:
+			case Control::Left:
 				control->SetBounds(x1, y1, control->GetWidth(), y2 - y1 + 1);
 				x1 += (control->GetWidth() + margin);
 				break;
-			case awuiControl::Right:
+			case Control::Right:
 				control->SetBounds(x2 - control->GetWidth() + 1, y1, control->GetWidth(), y2 - y1 + 1);
 				x2 -= (control->GetWidth() + margin);
 				break;
-			case awuiControl::Top:
+			case Control::Top:
 				control->SetBounds(x1, y1, x2 - x1 + 1, control->GetHeight());
 				y1 += (control->GetHeight() + margin);
 				break;
-			case awuiControl::Bottom:
+			case Control::Bottom:
 				control->SetBounds(x1, y2 - control->GetHeight() + 1, x2 - x1 + 1, control->GetHeight());
 				y2 -= (control->GetHeight() + margin);
 				break;
@@ -208,14 +209,14 @@ void awuiControl::Layout() {
 	}
 }
 
-void awuiControl::Refresh() {
+void Control::Refresh() {
 	if (this->GetParent())
 		this->GetParent()->Refresh();
 
 	this->needRefresh = 1;
 }
 
-void awuiControl::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
+void Control::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
 	Rectangle rect2;
 	rect2.SetX(x);
 	rect2.SetY(height - y - this->GetHeight());
@@ -237,7 +238,7 @@ void awuiControl::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
 	this->OnPaint(NULL);
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
-		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+		Control * control = (Control *)this->GetControls()->Get(i);
 
 		awuiGL gl2;
 		gl2.SetClippingBase(gl->GetClippingResult());
@@ -247,11 +248,11 @@ void awuiControl::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
 
 #include <iostream>
 
-void awuiControl::OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int buttons) {
+void Control::OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int buttons) {
 	this->mouseEventArgs->SetLocation(x, y);
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
-		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+		Control * control = (Control *)this->GetControls()->Get(i);
 
 		if (this->mouseControl != NULL) {
 			if (this->mouseControl == control) {
@@ -274,11 +275,11 @@ void awuiControl::OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int
 //	std::cout << "Down: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "   " << this->mouseEventArgs->GetButton() << "   " << this->GetName() << std::endl;
 }
 
-void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
+void Control::OnMouseMovePre(int x, int y, int buttons) {
 	this->mouseEventArgs->SetLocation(x, y);
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
-		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+		Control * control = (Control *)this->GetControls()->Get(i);
 
 		int find = 0;
 
@@ -305,7 +306,7 @@ void awuiControl::OnMouseMovePre(int x, int y, int buttons) {
 //	std::cout << "Move: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "   " << this->mouseEventArgs->GetButton() << "   " << this->GetName() << std::endl;
 }
 
-void awuiControl::ChangeControlOnMouseOver(awuiControl * control) {
+void Control::ChangeControlOnMouseOver(Control * control) {
 	if (this->GetParent()) {
 		this->GetParent()->ChangeControlOnMouseOver(control);
 		return;
@@ -322,12 +323,12 @@ void awuiControl::ChangeControlOnMouseOver(awuiControl * control) {
 	}
 }
 
-void awuiControl::OnMouseUpPre(MouseButtons::Buttons button, int buttons) {
+void Control::OnMouseUpPre(MouseButtons::Buttons button, int buttons) {
 	int x = this->mouseEventArgs->GetX();
 	int y = this->mouseEventArgs->GetY();
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
-		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+		Control * control = (Control *)this->GetControls()->Get(i);
 
 		if (this->mouseControl != NULL) {
 			if (this->mouseControl == control) {
@@ -349,28 +350,28 @@ void awuiControl::OnMouseUpPre(MouseButtons::Buttons button, int buttons) {
 //	std::cout << "Up: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "   " << this->mouseEventArgs->GetButton() << "   " << this->GetName() << std::endl;
 }
 
-void awuiControl::OnMouseLeave() {
+void Control::OnMouseLeave() {
 //	std::cout << "OnMouseLeave: " << this->GetName() << std::endl;
 }
 
-void awuiControl::OnMouseEnter() {
+void Control::OnMouseEnter() {
 //	std::cout << "OnMouseEnter: " << this->GetName() << std::endl;
 }
 
 
-void awuiControl::SetName(const std::string& str) {
+void Control::SetName(const std::string& str) {
 	this->name.assign(str);
 }
 
-const std::string& awuiControl::GetName() {
+const std::string& Control::GetName() {
 	return this->name;
 }
 
-void awuiControl::OnTickPre() {
+void Control::OnTickPre() {
 	this->OnTick();
 
 	for (int i = 0; i<this->GetControls()->GetCount(); i++) {
-		awuiControl * control = (awuiControl *)this->GetControls()->Get(i);
+		Control * control = (Control *)this->GetControls()->Get(i);
 		control->OnTickPre();
 	}
 }

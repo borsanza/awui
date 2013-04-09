@@ -30,7 +30,7 @@ namespace awui {
 			Image(const char * name);
 			~Image();
 
-			virtual int IsClass(Classes objectClass) const;
+			virtual int IsClass(awui::Classes objectClass) const;
 
 			int GetWidth();
 			int GetHeight();

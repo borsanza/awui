@@ -1,12 +1,13 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiControl.h"
-#include "awuiSplitContainer.h"
+#include <awui/Windows/Forms/Control.h>
+
+#include <awui/awuiSplitContainer.h>
 
 class awuiMouseEventArgs;
 
-class awuiSplitter : public awuiControl {
+class awuiSplitter : public awui::Windows::Forms::Control {
 private:
 		awuiSplitContainer::Orientation orientation;
 		int mouseActive;
@@ -15,7 +16,7 @@ public:
   awuiSplitter();
   ~awuiSplitter();
 
-	virtual int IsClass(Classes objectClass) const;
+	virtual int IsClass(awui::Classes objectClass) const;
 
 	awuiSplitContainer::Orientation GetOrientation();
 	void SetOrientation(awuiSplitContainer::Orientation orientation);

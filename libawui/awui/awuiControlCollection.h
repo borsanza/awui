@@ -3,19 +3,24 @@
 
 #include <awui/Collections/ArrayList.h>
 
-class awuiControl;
-using namespace awui;
+namespace awui {
+	namespace Windows {
+		namespace Forms {
+			class Control;
+		}
+	}
+}
 
 class awuiControlCollection : public awui::Collections::ArrayList {
 private:
-	awuiControl * owner;
+	awui::Windows::Forms::Control * owner;
 
 public:
-	awuiControlCollection(awuiControl *);
+	awuiControlCollection(awui::Windows::Forms::Control *);
 	~awuiControlCollection();
 
-	virtual int IsClass(Classes objectClass) const;
+	virtual int IsClass(awui::Classes objectClass) const;
 
-	awuiControl * GetOwner();
+	awui::Windows::Forms::Control * GetOwner();
 	virtual void Add(void * item);
 };

@@ -9,6 +9,8 @@ extern "C" {
 	#include <aw/aw.h>
 }
 
+using namespace awui;
+
 struct _ag * awuiApplication::g = NULL;
 
 static ap * g_p = 0;
