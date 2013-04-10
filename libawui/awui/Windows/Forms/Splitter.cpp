@@ -9,7 +9,6 @@
 
 #include <iostream>
 
-using namespace awui;
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 

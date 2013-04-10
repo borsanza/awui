@@ -10,8 +10,6 @@
 #include <awui/Windows/Forms/MouseButtons.h>
 #include <string>
 
-class awuiGL;
-
 namespace awui {
 	namespace OpenGL {
 		class GL;
@@ -115,7 +113,7 @@ namespace awui {
 				virtual void OnMouseUp(MouseEventArgs* e) {}
 				virtual void OnMouseEnter();
 				virtual void OnMouseLeave();
-				virtual void OnPaint(awuiGL * gl) {}
+				virtual void OnPaint(OpenGL::GL * gl) {}
 				virtual void OnResize() {}
 				virtual void OnTick() {}
 			};
