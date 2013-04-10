@@ -16,8 +16,8 @@ ArrayList::~ArrayList() {
 	this->Clear();
 }
 
-int ArrayList::IsClass(Classes objectClass) const {
-	if (objectClass == awui::ArrayList)
+int ArrayList::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::ArrayList)
 		return 1;
 
 	return Object::IsClass(objectClass);

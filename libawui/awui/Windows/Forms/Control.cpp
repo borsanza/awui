@@ -7,11 +7,12 @@
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
 #include <awui/Drawing/Rectangle.h>
+#include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 
-#include <awui/awuiGL.h>
+#include <iostream>
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -19,6 +20,7 @@ extern "C" {
 }
 
 using namespace awui::Drawing;
+using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Control::Control() {
@@ -28,7 +30,7 @@ Control::Control() {
 	this->mouseControl = NULL;
 	this->parent = NULL;
 	this->needRefresh = 1;
-	this->dock = Control::None;
+	this->dock = DockStyle::None;
 	this->backColor = Color::FromArgb(226, 226, 226);
 	this->OnResizePre();
 }
@@ -43,8 +45,8 @@ Control::~Control() {
 	delete this->controls;
 }
 
-int Control::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Control)
+int Control::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Control)
 		return 1;
 
 	return Object::IsClass(objectClass);
@@ -146,17 +148,16 @@ awui::Drawing::Color Control::GetBackColor() {
 	return this->backColor;
 }
 
-void Control::SetDock(Control::DockStyle dock) {
+void Control::SetDock(DockStyle::Enum dock) {
 	if (this->dock != dock) {
 		this->dock = dock;
 		this->Layout();
 	}
 }
 
-Control::DockStyle Control::GetDock() const {
+Control::DockStyle::Enum Control::GetDock() const {
 	return this->dock;
 }
-
 
 const Size Control::GetMinimumSize() const {
 	return this->minimumSize;
@@ -185,22 +186,22 @@ void Control::Layout() {
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
-			case Control::Fill:
+			case DockStyle::Fill:
 				control->SetBounds(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 				break;
-			case Control::Left:
+			case DockStyle::Left:
 				control->SetBounds(x1, y1, control->GetWidth(), y2 - y1 + 1);
 				x1 += (control->GetWidth() + margin);
 				break;
-			case Control::Right:
+			case DockStyle::Right:
 				control->SetBounds(x2 - control->GetWidth() + 1, y1, control->GetWidth(), y2 - y1 + 1);
 				x2 -= (control->GetWidth() + margin);
 				break;
-			case Control::Top:
+			case DockStyle::Top:
 				control->SetBounds(x1, y1, x2 - x1 + 1, control->GetHeight());
 				y1 += (control->GetHeight() + margin);
 				break;
-			case Control::Bottom:
+			case DockStyle::Bottom:
 				control->SetBounds(x1, y2 - control->GetHeight() + 1, x2 - x1 + 1, control->GetHeight());
 				y2 -= (control->GetHeight() + margin);
 				break;
@@ -215,7 +216,7 @@ void Control::Refresh() {
 	this->needRefresh = 1;
 }
 
-void Control::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
+void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 	Rectangle rect2;
 	rect2.SetX(x);
 	rect2.SetY(height - y - this->GetHeight());
@@ -239,15 +240,13 @@ void Control::OnPaintPre(int x, int y, int width, int height, awuiGL * gl) {
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
 
-		awuiGL gl2;
+		GL gl2;
 		gl2.SetClippingBase(gl->GetClippingResult());
 		control->OnPaintPre(x + control->GetLeft(), y + control->GetTop(), width, height, &gl2);
 	}
 }
 
-#include <iostream>
-
-void Control::OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int buttons) {
+void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons) {
 	this->mouseEventArgs->SetLocation(x, y);
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
@@ -311,7 +310,7 @@ void Control::ChangeControlOnMouseOver(Control * control) {
 		return;
 	}
 
-	if (this->IsClass(awui::Form)) {
+	if (this->IsClass(Classes::Form)) {
 		if (((Form *) this)->mouseControlOver != control) {
 			if (((Form *) this)->mouseControlOver != NULL)
 				((Form *) this)->mouseControlOver->OnMouseLeave();
@@ -322,7 +321,7 @@ void Control::ChangeControlOnMouseOver(Control * control) {
 	}
 }
 
-void Control::OnMouseUpPre(MouseButtons::Buttons button, int buttons) {
+void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons) {
 	int x = this->mouseEventArgs->GetX();
 	int y = this->mouseEventArgs->GetY();
 
@@ -356,7 +355,6 @@ void Control::OnMouseLeave() {
 void Control::OnMouseEnter() {
 //	std::cout << "OnMouseEnter: " << this->GetName() << std::endl;
 }
-
 
 void Control::SetName(const std::string& str) {
 	this->name.assign(str);

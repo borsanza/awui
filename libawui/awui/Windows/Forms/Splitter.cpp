@@ -26,18 +26,18 @@ Splitter::Splitter() {
 Splitter::~Splitter() {
 }
 
-int Splitter::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Splitter)
+int Splitter::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Splitter)
 		return 1;
 
 	return Control::IsClass(objectClass);
 }
 
-SplitContainer::Orientation Splitter::GetOrientation() {
+SplitContainer::Orientation::Enum Splitter::GetOrientation() {
 	return this->orientation;
 }
 
-void Splitter::SetOrientation(SplitContainer::Orientation orientation) {
+void Splitter::SetOrientation(SplitContainer::Orientation::Enum orientation) {
 	this->orientation = orientation;
 }
 
@@ -50,8 +50,8 @@ void Splitter::OnMouseMove(MouseEventArgs * e) {
 	if (!this->mouseActive)
 		return;
 
-	if (this->GetParent()->IsClass(awui::SplitContainer)) {
-		if (this->orientation == SplitContainer::Vertical)
+	if (this->GetParent()->IsClass(Classes::SplitContainer)) {
+		if (this->orientation == SplitContainer::Orientation::Vertical)
 			((SplitContainer *) this->GetParent())->SetSplitterDistance(this->GetLeft() + e->GetX());
 		else
 			((SplitContainer *) this->GetParent())->SetSplitterDistance(this->GetTop() + e->GetY());

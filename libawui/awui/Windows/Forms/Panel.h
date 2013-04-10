@@ -11,7 +11,7 @@ namespace awui {
 				Panel();
 				~Panel();
 
-				virtual int IsClass(Classes objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
 				const virtual awui::Drawing::Size GetMinimumSize() const;
 			};

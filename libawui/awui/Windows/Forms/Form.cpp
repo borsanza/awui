@@ -9,9 +9,8 @@
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Rectangle.h>
+#include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Application.h>
-
-#include <awui/awuiGL.h>
 
 extern "C" {
 	#include <aw/sysgl.h>
@@ -22,8 +21,8 @@ extern "C" {
 	#define GL_BGRA 0x80E1
 #endif
 
-using namespace awui;
 using namespace awui::Drawing;
+using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Form::Form() {
@@ -50,8 +49,8 @@ Form::~Form() {
 	awDel(this->w);
 }
 
-int Form::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Form)
+int Form::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Form)
 		return 1;
 
 	return Control::IsClass(objectClass);
@@ -70,7 +69,7 @@ void Form::OnPaintForm() {
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
 	glEnable(GL_SCISSOR_TEST);
 
-	awuiGL gl;
+	GL gl;
 	Rectangle rectangle;
 	rectangle.SetX(0);
 	rectangle.SetY(0);
@@ -94,7 +93,7 @@ void Form::ProcessEvents(ac * c) {
 				resizey = aeHeight(e);
 				break;
 			case AW_EVENT_DOWN: {
-					MouseButtons::Buttons button = MouseButtons::None;
+					MouseButtons::Enum button = MouseButtons::None;
 					switch (aeWhich(e)) {
 						case AW_KEY_MOUSEWHEELUP:
 							button = MouseButtons::XButton1;
@@ -120,7 +119,7 @@ void Form::ProcessEvents(ac * c) {
 				}
 				break;
 			case AW_EVENT_UP: {
-					MouseButtons::Buttons button = MouseButtons::None;
+					MouseButtons::Enum button = MouseButtons::None;
 					switch (aeWhich(e)) {
 						case AW_KEY_MOUSEWHEELUP:
 							button = MouseButtons::XButton1;

@@ -38,7 +38,7 @@ namespace awui {
 				Form();
 				~Form();
 
-				virtual int IsClass(Classes objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
 				void Show();
 			};

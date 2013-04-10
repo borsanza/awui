@@ -7,10 +7,9 @@
 #include <awui/Drawing/Font.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Image.h>
+#include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/TextRenderer.h>
-
-#include <awui/awuiGL.h>
 
 #include <iostream>
 
@@ -20,6 +19,7 @@ extern "C" {
 }
 
 using namespace awui::Drawing;
+using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Button::Button() {
@@ -33,8 +33,8 @@ Button::Button() {
 Button::~Button() {
 }
 
-int Button::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Button)
+int Button::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Button)
 		return 1;
 
 	return Control::IsClass(objectClass);
@@ -58,7 +58,7 @@ void Button::OnMouseMove(MouseEventArgs* e) {
 	this->testy = e->GetY();
 }
 
-void Button::OnPaint(awuiGL* gl) {
+void Button::OnPaint(GL* gl) {
 	Font font = Font("Sans", 12);
 
 	Size size = TextRenderer::GetMeasureText(this->text, &font);
@@ -71,7 +71,7 @@ void Button::OnPaint(awuiGL* gl) {
 	g->FillRectangle(Color::FromArgb(0,0,0), -10, -10, 1, 1);
 	g->DrawString(this->text, &font, 0, size.GetHeight());
 
-	awuiGL::DrawImageGL(image, (this->GetWidth() - size.GetWidth()) >> 1, (this->GetHeight() - size.GetHeight()) >> 1);
+	GL::DrawImageGL(image, (this->GetWidth() - size.GetWidth()) >> 1, (this->GetHeight() - size.GetHeight()) >> 1);
 
 	delete g;
 	delete image;

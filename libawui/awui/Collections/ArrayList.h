@@ -22,7 +22,7 @@ namespace awui {
 			ArrayList();
 			~ArrayList();
 
-			virtual int IsClass(awui::Classes objectClass) const;
+			virtual int IsClass(Classes::Enum objectClass) const;
 
 			virtual void Add(void * item);
 			int GetCount();

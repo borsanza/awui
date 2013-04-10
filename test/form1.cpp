@@ -34,25 +34,25 @@ void Form1::InitializeComponent() {
 	Button * button;
 
 	button = new Button();
-	button->SetDock(Control::Top);
+	button->SetDock(DockStyle::Top);
 	button->SetText("Button Top");
 	button->SetMinimumSize(Size(75, 23));
 	this->GetControls()->Add(button);
 
 	button = new Button();
-	button->SetDock(Control::Bottom);
+	button->SetDock(DockStyle::Bottom);
 	button->SetText("Button Bottom");
 	button->SetMinimumSize(Size(75, 23));
 	this->GetControls()->Add(button);
 
 	button = new Button();
-	button->SetDock(Control::Left);
+	button->SetDock(DockStyle::Left);
 	button->SetText("Button Left");
 	button->SetMinimumSize(Size(75, 23));
 	this->GetControls()->Add(button);
 
 	button = new Button();
-	button->SetDock(Control::Right);
+	button->SetDock(DockStyle::Right);
 	button->SetText("Button Right");
 	button->SetMinimumSize(Size(75, 23));
 	this->GetControls()->Add(button);
@@ -60,11 +60,11 @@ void Form1::InitializeComponent() {
 	button = new Button();
 	Button * button2 = new Button();
 
-	button->SetDock(Control::Fill);
+	button->SetDock(DockStyle::Fill);
 	button->SetText("Button Splitter Left");
 	button->SetMinimumSize(Size(75, 23));
 	button->SetBackColor(Color::FromArgb(0, 0, 255));
-	button2->SetDock(Control::Fill);
+	button2->SetDock(DockStyle::Fill);
 	button2->SetText("Button Top");
 	button2->SetMinimumSize(Size(75, 23));
 
@@ -73,13 +73,13 @@ void Form1::InitializeComponent() {
 	this->_splitter->GetPanel1()->GetControls()->Add(button);
 
 	button = new Button();
-	button->SetDock(Control::None);
+	button->SetDock(DockStyle::None);
 	button->SetBounds(10, 10, 20, 20);
 	button->SetText("Button Right2");
 	button->SetBackColor(Color::FromArgb(255, 0, 255));
 	this->_splitter->GetPanel2()->GetControls()->Add(button2);
 	this->_splitter->GetPanel2()->GetControls()->Add(button);
-	this->_splitter->SetDock(Control::Fill);
+	this->_splitter->SetDock(DockStyle::Fill);
 	this->_splitter->SetOrientation(SplitContainer::Vertical);
 
 	this->GetControls()->Add(this->_splitter);
@@ -87,7 +87,7 @@ void Form1::InitializeComponent() {
 	this->_panel = this->_splitter->GetPanel1();
 */
 	this->_panel = new Panel();
-	this->_panel->SetDock(Control::Fill);
+	this->_panel->SetDock(DockStyle::Fill);
 	this->_panel->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->GetControls()->Add(this->_panel);
 
@@ -115,7 +115,7 @@ void Form1::AddButtonEffect(Effect * effect) {
 
 	for (int i = 0; i<=2; i++) {
 		Button * button = new Button();
-		button->SetDock(Control::None);
+		button->SetDock(DockStyle::None);
 		button->SetText(effect->GetName());
 		button->SetSize(75, 18);
 		button->SetTop(y);

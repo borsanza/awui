@@ -37,8 +37,8 @@ Image::~Image() {
 		cairo_surface_destroy(this->cairo_surface);
 }
 
-int Image::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Image)
+int Image::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Image)
 		return 1;
 
 	return Object::IsClass(objectClass);

@@ -162,8 +162,8 @@ static void setCursor1(aw * w) {
 		awPointer(w, g_p);
 }
 
-int Application::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Application)
+int Application::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Application)
 		return 1;
 
 	return Object::IsClass(objectClass);

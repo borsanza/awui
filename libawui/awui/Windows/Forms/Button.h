@@ -4,6 +4,10 @@
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui {
+	namespace OpenGL {
+		class GL;
+	}
+
 	namespace Windows {
 		namespace Forms {
 			class Button : public Control {
@@ -17,7 +21,7 @@ namespace awui {
 				Button();
 				~Button();
 
-				virtual int IsClass(Classes objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
 				const std::string& GetName();
 				void SetText(const std::string& str);
@@ -25,7 +29,7 @@ namespace awui {
 				virtual void OnMouseLeave();
 				virtual void OnMouseDown(MouseEventArgs* e);
 				virtual void OnMouseMove(MouseEventArgs* e);
-				virtual void OnPaint(awuiGL * gl);
+				virtual void OnPaint(OpenGL::GL * gl);
 			};
 		}
 	}

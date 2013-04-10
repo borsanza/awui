@@ -16,8 +16,8 @@ Panel::Panel() {
 Panel::~Panel() {
 }
 
-int Panel::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Panel)
+int Panel::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Panel)
 		return 1;
 
 	return Control::IsClass(objectClass);
@@ -34,15 +34,15 @@ const Size Panel::GetMinimumSize() const {
 	for (int i = 0; i < count; i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
-			case Control::Left:
-			case Control::Right:
+			case DockStyle::Left:
+			case DockStyle::Right:
 				minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
 				break;
-			case Control::Top:
-			case Control::Bottom:
+			case DockStyle::Top:
+			case DockStyle::Bottom:
 				minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
 				break;
-			case Control::Fill:
+			case DockStyle::Fill:
 				minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
 				minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
 				break;

@@ -7,23 +7,16 @@
 #include <awui/Object.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Rectangle.h>
+#include <awui/Windows/Forms/MouseButtons.h>
 #include <string>
 
 class awuiGL;
 
-class MouseButtons {
-public:
-	enum Buttons {
-		None = 0,
-		Left = 1,
-		Right = 2,
-		Middle = 4,
-		XButton1 = 8,
-		XButton2 = 16,
-	};
-};
-
 namespace awui {
+	namespace OpenGL {
+		class GL;
+	}
+
 	namespace Windows {
 		namespace Forms {
 			class ControlCollection;
@@ -32,13 +25,15 @@ namespace awui {
 			class Control : public Object {
 				friend class Form;
 			public:
-				enum DockStyle {
-					None,
-					Top,
-					Bottom,
-					Left,
-					Right,
-					Fill,
+				struct DockStyle {
+					enum Enum {
+						None,
+						Top,
+						Bottom,
+						Left,
+						Right,
+						Fill,
+					};
 				};
 
 			protected:
@@ -47,7 +42,7 @@ namespace awui {
 
 				int needRefresh;
 				int refreshed;
-				Control::DockStyle dock;
+				DockStyle::Enum dock;
 				ControlCollection * controls;
 				Drawing::Color backColor;
 				Control * parent;
@@ -57,20 +52,20 @@ namespace awui {
 
 				void OnTickPre();
 				void OnResizePre();
-				void OnPaintPre(int x, int y, int width, int height, awuiGL * gl);
+				void OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl);
 				void ChangeControlOnMouseOver(Control * control);
 
 			public:
 				Control();
 				~Control();
 
-				virtual int IsClass(Classes objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
 				const virtual Drawing::Size GetMinimumSize() const;
 				void SetMinimumSize(Drawing::Size size);
 
-				Control::DockStyle GetDock() const;
-				void SetDock(Control::DockStyle dock);
+				DockStyle::Enum GetDock() const;
+				void SetDock(DockStyle::Enum dock);
 
 				const std::string& GetName();
 				void SetName(const std::string& str);
@@ -111,8 +106,8 @@ namespace awui {
 				void SetParent(Control * parent);
 
 				void OnMouseMovePre(int x, int y, int buttons);
-				void OnMouseUpPre(MouseButtons::Buttons button, int buttons);
-				void OnMouseDownPre(int x, int y, MouseButtons::Buttons button, int buttons);
+				void OnMouseUpPre(MouseButtons::Enum button, int buttons);
+				void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
 
 				virtual void Layout();
 				virtual void OnMouseDown(MouseEventArgs* e) {}

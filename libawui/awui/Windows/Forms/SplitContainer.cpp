@@ -17,7 +17,7 @@ SplitContainer::SplitContainer() {
 	this->splitterDistance = 100;
 	this->splitterIncrement = 1;
 	this->splitterWidth = 4;
-	this->orientation = Vertical;
+	this->orientation = Orientation::Vertical;
 
 	this->SetName("SplitContainer");
 
@@ -40,8 +40,8 @@ SplitContainer::~SplitContainer() {
 	delete this->panel2;
 }
 
-int SplitContainer::IsClass(Classes objectClass) const {
-	if (objectClass == awui::SplitContainer)
+int SplitContainer::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::SplitContainer)
 		return 1;
 
 	return Control::IsClass(objectClass);
@@ -56,14 +56,14 @@ Panel * SplitContainer::GetPanel2() {
 }
 
 void SplitContainer::SetLocationW(Control * control, int pos) {
-	if (this->orientation == SplitContainer::Vertical)
+	if (this->orientation == Orientation::Vertical)
 		control->SetLocation(pos, 0);
 	else
 		control->SetLocation(0, pos);
 }
 
 void SplitContainer::SetSizeW(Control * control, int size, int substract) {
-	if (this->orientation == SplitContainer::Vertical) {
+	if (this->orientation == Orientation::Vertical) {
 		if (substract)
 			size = this->GetWidth() - size;
 
@@ -77,14 +77,14 @@ void SplitContainer::SetSizeW(Control * control, int size, int substract) {
 }
 
 int SplitContainer::GetSizeW(Control * control) const {
-	if (this->orientation == SplitContainer::Vertical)
+	if (this->orientation == Orientation::Vertical)
 		return control->GetWidth();
 	else
 		return control->GetHeight();
 }
 
 int SplitContainer::GetMinimumSizeW(Control * control) const {
-	if (this->orientation == SplitContainer::Vertical)
+	if (this->orientation == Orientation::Vertical)
 		return control->GetMinimumSize().GetWidth();
 	else
 		return control->GetMinimumSize().GetHeight();
@@ -95,7 +95,7 @@ void SplitContainer::RecalculatePositions() {
 	int x2 = this->splitterWidth >> 1;
 	int x1 = this->splitterWidth - x2;
 
-	int size = (this->orientation == SplitContainer::Vertical)? this->GetWidth() : this->GetHeight();
+	int size = (this->orientation == Orientation::Vertical)? this->GetWidth() : this->GetHeight();
 
 	int minSize = this->GetMinimumSizeW(this->panel1);
 	if (distance < (minSize + x1))
@@ -140,11 +140,11 @@ void SplitContainer::SetSplitterWidth(int width) {
 	this->splitterWidth = width;
 }
 
-SplitContainer::Orientation SplitContainer::GetOrientation() const {
+SplitContainer::Orientation::Enum SplitContainer::GetOrientation() const {
 	return this->orientation;
 }
 
-void SplitContainer::SetOrientation(Orientation orientation) {
+void SplitContainer::SetOrientation(Orientation::Enum orientation) {
 	this->orientation = orientation;
 	this->splitter->SetOrientation(orientation);
 	this->RecalculatePositions();

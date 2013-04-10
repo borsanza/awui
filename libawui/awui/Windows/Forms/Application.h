@@ -19,7 +19,7 @@ namespace awui {
 			public:
 				static void Run(Form * form);
 
-				virtual int IsClass(awui::Classes objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 			};
 		}
 	}

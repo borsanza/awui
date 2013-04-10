@@ -27,7 +27,7 @@ namespace awui {
 			Image(const char * name);
 			~Image();
 
-			virtual int IsClass(awui::Classes objectClass) const;
+			virtual int IsClass(Classes::Enum objectClass) const;
 
 			int GetWidth();
 			int GetHeight();

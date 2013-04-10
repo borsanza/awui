@@ -1,7 +1,7 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "awuiGL.h"
+#include "GL.h"
 
 #include <awui/Drawing/Image.h>
 
@@ -11,31 +11,32 @@ extern "C" {
 }
 
 using namespace awui::Drawing;
+using namespace awui::OpenGL;
 
-awuiGL::awuiGL() {
+GL::GL() {
 }
 
-void awuiGL::SetClippingBase(Rectangle rectangle) {
+void GL::SetClippingBase(Rectangle rectangle) {
 	this->rectangle1 = rectangle;
 }
 
-void awuiGL::SetClipping(Rectangle rectangle) {
+void GL::SetClipping(Rectangle rectangle) {
 	this->rectangle2 = rectangle;
 }
 
-Rectangle awuiGL::GetClippingBase() {
+Rectangle GL::GetClippingBase() {
 	return this->rectangle1;
 }
 
-Rectangle awuiGL::GetClipping() {
+Rectangle GL::GetClipping() {
 	return this->rectangle2;
 }
 
-Rectangle awuiGL::GetClippingResult() {
+Rectangle GL::GetClippingResult() {
 	return Rectangle::Intersect(this->rectangle1, this->rectangle2);
 }
 
-void awuiGL::SetClipping() {
+void GL::SetClipping() {
 	Rectangle rect = this->GetClippingResult();
 
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
@@ -45,7 +46,7 @@ void awuiGL::SetClipping() {
 #define GL_BGRA 0x80E1
 #endif
 
-void awuiGL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
+void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
 	static GLuint texture1;
 	glDisable (GL_DEPTH_TEST);
 	glEnable (GL_BLEND);

@@ -14,6 +14,7 @@
 #include <iostream>
 
 using namespace awui::Drawing;
+using namespace awui::Drawing::Drawing2D;
 
 Graphics::Graphics() {
 }
@@ -21,8 +22,8 @@ Graphics::Graphics() {
 Graphics::~Graphics() {
 }
 
-int Graphics::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Graphics)
+int Graphics::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Graphics)
 		return 1;
 
 	return Object::IsClass(objectClass);
@@ -76,13 +77,13 @@ void Graphics::SetPen(Drawing::Pen * pen) {
 	cairo_set_line_width(this->cr, pen->GetWidth());
 
 	switch (pen->GetLineCap()) {
-		case awuiLineCap::Butt:
+		case LineCap::Butt:
 			cairo_set_line_cap(this->cr, CAIRO_LINE_CAP_BUTT);
 			break;
-		case awuiLineCap::Round:
+		case LineCap::Round:
 			cairo_set_line_cap(this->cr, CAIRO_LINE_CAP_ROUND);
 			break;
-		case awuiLineCap::Square:
+		case LineCap::Square:
 			cairo_set_line_cap(this->cr, CAIRO_LINE_CAP_SQUARE);
 			break;
 	}

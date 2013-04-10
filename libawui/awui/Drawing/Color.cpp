@@ -15,8 +15,8 @@ Color::Color() {
 	this->b = 0;
 }
 
-int Color::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Color)
+int Color::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Color)
 		return 1;
 
 	return Object::IsClass(objectClass);

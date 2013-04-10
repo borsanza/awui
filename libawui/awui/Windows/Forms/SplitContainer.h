@@ -14,9 +14,11 @@ namespace awui {
 
 			class SplitContainer : public Control {
 			public:
-				enum Orientation {
-					Vertical,
-					Horizontal,
+				struct Orientation {
+					enum Enum {
+						Vertical,
+						Horizontal,
+					};
 				};
 
 			private:
@@ -27,7 +29,7 @@ namespace awui {
 				float splitterDistance;
 				int splitterIncrement;
 				int splitterWidth;
-				Orientation orientation;
+				Orientation::Enum orientation;
 
 				void RecalculatePositions();
 
@@ -40,7 +42,7 @@ namespace awui {
 				SplitContainer();
 				~SplitContainer();
 
-				virtual int IsClass(Classes objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
 				Panel * GetPanel1();
 				Panel * GetPanel2();
@@ -54,8 +56,8 @@ namespace awui {
 				int GetSplitterWidth() const;
 				void SetSplitterWidth(int width);
 
-				Orientation GetOrientation() const;
-				void SetOrientation(Orientation orientation);
+				Orientation::Enum GetOrientation() const;
+				void SetOrientation(Orientation::Enum orientation);
 
 				virtual void Layout();
 			};

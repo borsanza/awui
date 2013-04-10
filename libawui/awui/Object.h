@@ -5,22 +5,24 @@
 #define __AWUIOBJECT_H__
 
 namespace awui {
-	enum Classes {
-		Object,
-		Application,
-		ArrayList,
-		Button,
-		Color,
-		Control,
-		ControlCollection,
-		Form,
-		Graphics,
-		Image,
-		MouseEventArgs,
-		Panel,
-		Pen,
-		SplitContainer,
-		Splitter,
+	struct Classes {
+		enum Enum {
+			Object,
+			Application,
+			ArrayList,
+			Button,
+			Color,
+			Control,
+			ControlCollection,
+			Form,
+			Graphics,
+			Image,
+			MouseEventArgs,
+			Panel,
+			Pen,
+			SplitContainer,
+			Splitter,
+		};
 	};
 
 	class Object {
@@ -28,7 +30,7 @@ namespace awui {
 		Object();
 		~Object();
 
-		virtual int IsClass(awui::Classes objectClass) const;
+		virtual int IsClass(Classes::Enum objectClass) const;
 	};
 }
 

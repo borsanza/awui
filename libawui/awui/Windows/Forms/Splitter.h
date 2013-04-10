@@ -10,17 +10,17 @@ namespace awui {
 		namespace Forms {
 			class Splitter : public Control {
 			private:
-					SplitContainer::Orientation orientation;
+					SplitContainer::Orientation::Enum orientation;
 					int mouseActive;
 
 			public:
 				Splitter();
 				~Splitter();
 
-				virtual int IsClass(awui::Classes objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
-				SplitContainer::Orientation GetOrientation();
-				void SetOrientation(SplitContainer::Orientation orientation);
+				SplitContainer::Orientation::Enum GetOrientation();
+				void SetOrientation(SplitContainer::Orientation::Enum orientation);
 
 				virtual void OnMouseDown(MouseEventArgs * e);
 				virtual void OnMouseMove(MouseEventArgs * e);

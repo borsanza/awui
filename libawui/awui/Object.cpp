@@ -11,8 +11,8 @@ Object::Object() {
 Object::~Object() {
 }
 
-int Object::IsClass(Classes objectClass) const {
-	if (objectClass == awui::Object)
+int Object::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Object)
 		return 1;
 
 	return 0;

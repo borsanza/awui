@@ -27,7 +27,7 @@ namespace awui {
 			  MouseEventArgs();
 			  ~MouseEventArgs();
 
-				virtual int IsClass(Classes objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
 				int GetX();
 				int GetY();
