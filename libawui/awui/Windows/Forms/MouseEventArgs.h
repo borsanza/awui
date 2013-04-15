@@ -24,8 +24,8 @@ namespace awui {
 				void SetButton(int button);
 
 			public:
-			  MouseEventArgs();
-			  ~MouseEventArgs();
+				MouseEventArgs();
+				virtual ~MouseEventArgs();
 
 				virtual int IsClass(Classes::Enum objectClass) const;
 

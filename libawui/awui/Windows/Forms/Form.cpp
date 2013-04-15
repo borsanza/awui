@@ -110,6 +110,8 @@ void Form::ProcessEvents(ac * c) {
 						case AW_KEY_MOUSEMIDDLE:
 							button = MouseButtons::Middle;
 							break;
+						default:
+							break;
 					}
 
 					if (button) {
@@ -135,6 +137,8 @@ void Form::ProcessEvents(ac * c) {
 							break;
 						case AW_KEY_MOUSEMIDDLE:
 							button = MouseButtons::Middle;
+							break;
+						default:
 							break;
 					}
 

@@ -1,6 +1,7 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
+#pragma once
 #ifndef __AWUIFORM_H__
 #define __AWUIFORM_H__
 
@@ -36,7 +37,7 @@ namespace awui {
 
 			public:
 				Form();
-				~Form();
+				virtual ~Form();
 
 				virtual int IsClass(Classes::Enum objectClass) const;
 

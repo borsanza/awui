@@ -1,6 +1,7 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
+#pragma once
 #ifndef __AWUICONTROL_H__
 #define __AWUICONTROL_H__
 
@@ -55,7 +56,7 @@ namespace awui {
 
 			public:
 				Control();
-				~Control();
+				virtual ~Control();
 
 				virtual int IsClass(Classes::Enum objectClass) const;
 

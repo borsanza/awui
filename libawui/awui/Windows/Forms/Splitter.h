@@ -15,7 +15,7 @@ namespace awui {
 
 			public:
 				Splitter();
-				~Splitter();
+				virtual ~Splitter();
 
 				virtual int IsClass(Classes::Enum objectClass) const;
 

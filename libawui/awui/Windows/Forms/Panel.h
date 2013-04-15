@@ -9,7 +9,7 @@ namespace awui {
 			class Panel : public Control {
 			public:
 				Panel();
-				~Panel();
+				virtual ~Panel();
 
 				virtual int IsClass(Classes::Enum objectClass) const;
 

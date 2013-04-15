@@ -25,7 +25,7 @@ namespace awui {
 		public:
 			Image(int width, int height);
 			Image(const char * name);
-			~Image();
+			virtual ~Image();
 
 			virtual int IsClass(Classes::Enum objectClass) const;
 

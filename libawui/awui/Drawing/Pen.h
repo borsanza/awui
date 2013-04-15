@@ -1,6 +1,7 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
+#pragma once
 #ifndef __AWUIPEN_H__
 #define __AWUIPEN_H__
 
@@ -21,7 +22,7 @@ namespace awui {
 		public:
 			Pen(awui::Drawing::Color color);
 			Pen(awui::Drawing::Color color, float width);
-			~Pen();
+			virtual ~Pen();
 
 			virtual int IsClass(Classes::Enum objectClass) const;
 

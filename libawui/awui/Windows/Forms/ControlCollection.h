@@ -14,7 +14,7 @@ namespace awui {
 
 			public:
 				ControlCollection(Control *);
-				~ControlCollection();
+				virtual ~ControlCollection();
 
 				virtual int IsClass(Classes::Enum objectClass) const;
 

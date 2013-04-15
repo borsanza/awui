@@ -24,7 +24,7 @@ namespace awui {
 			Graphics();
 
 		public:
-			~Graphics();
+			virtual ~Graphics();
 
 			virtual int IsClass(Classes::Enum objectClass) const;
 

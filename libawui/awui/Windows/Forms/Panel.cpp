@@ -34,6 +34,8 @@ const Size Panel::GetMinimumSize() const {
 	for (int i = 0; i < count; i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
+			case DockStyle::None:
+				break;
 			case DockStyle::Left:
 			case DockStyle::Right:
 				minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());

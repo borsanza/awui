@@ -30,7 +30,7 @@ private:
 
 public:
 	Form1();
-	~Form1();
+	virtual ~Form1();
 
 private:
 	void InitializeComponent();

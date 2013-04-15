@@ -19,7 +19,7 @@ namespace awui {
 
 			public:
 				Button();
-				~Button();
+				virtual ~Button();
 
 				virtual int IsClass(Classes::Enum objectClass) const;
 

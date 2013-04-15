@@ -186,6 +186,8 @@ void Control::Layout() {
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
 		switch (control->GetDock()) {
+			case DockStyle::None:
+				break;
 			case DockStyle::Fill:
 				control->SetBounds(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 				break;
