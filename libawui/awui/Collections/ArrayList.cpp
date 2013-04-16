@@ -3,6 +3,7 @@
 
 #include "ArrayList.h"
 
+#include <awui/String.h>
 #include <stdlib.h>
 
 using namespace awui::Collections;
@@ -21,6 +22,10 @@ int ArrayList::IsClass(Classes::Enum objectClass) const {
 		return 1;
 
 	return Object::IsClass(objectClass);
+}
+
+awui::String ArrayList::ToString() {
+	return "awui.Collections.ArrayList";
 }
 
 void ArrayList::Add(void * item) {

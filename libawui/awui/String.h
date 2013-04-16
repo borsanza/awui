@@ -8,6 +8,8 @@
 #include <string>
 
 namespace awui {
+	class Object;
+
 	class String final {
 	private:
 		std::string value;
@@ -27,6 +29,8 @@ namespace awui {
 		bool operator==(String value);
 		bool operator!=(String value);
 		String operator+(String strB);
+		void operator+=(String strB);
+		String operator+(Object *value);
 		char operator[](int pos);
 
 		String ToUpper();

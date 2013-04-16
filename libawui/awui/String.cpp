@@ -2,7 +2,9 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "String.h"
+
 #include <algorithm>
+#include <awui/Object.h>
 
 using namespace awui;
 
@@ -42,6 +44,15 @@ bool String::operator!=(String value) {
 
 String String::operator+(String strB) {
 	return String((this->value + strB.value).c_str());
+}
+
+void String::operator+=(String strB) {
+	*this = *this + strB;
+}
+
+String String::operator+(Object *value) {
+	String a = *this + value->ToString();
+	return a;
 }
 
 char String::operator[](int pos) {

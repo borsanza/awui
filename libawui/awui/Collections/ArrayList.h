@@ -25,6 +25,8 @@ namespace awui {
 
 			virtual int IsClass(Classes::Enum objectClass) const;
 
+			virtual String ToString();
+
 			virtual void Add(void * item);
 			int GetCount();
 

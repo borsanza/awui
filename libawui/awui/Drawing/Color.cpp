@@ -3,7 +3,9 @@
 
 #include "Color.h"
 
+#include <awui/Byte.h>
 #include <awui/Math.h>
+#include <awui/String.h>
 #include <stdlib.h>
 
 using namespace awui::Drawing;
@@ -20,6 +22,15 @@ int Color::IsClass(Classes::Enum objectClass) const {
 		return 1;
 
 	return Object::IsClass(objectClass);
+}
+awui::String Color::ToString() {
+	String value;
+	Byte a = this->a;
+	Byte r = this->r;
+	Byte g = this->g;
+	Byte b = this->b;
+	value = String("Color [A=") + &a + ", R=" + &r + ", G=" + &g + ", B=" + &b + "]";
+	return value;
 }
 
 unsigned char Color::GetA() const {

@@ -2,6 +2,7 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "Object.h"
+#include <awui/String.h>
 
 using namespace awui;
 
@@ -16,4 +17,8 @@ int Object::IsClass(Classes::Enum objectClass) const {
 		return 1;
 
 	return 0;
+}
+
+String Object::ToString() {
+	return "awui.Object";
 }

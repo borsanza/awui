@@ -6,6 +6,8 @@
 #define __AWUIOBJECT_H__
 
 namespace awui {
+	class String;
+
 	struct Classes {
 		enum Enum {
 			Object,
@@ -32,6 +34,8 @@ namespace awui {
 		virtual ~Object();
 
 		virtual int IsClass(Classes::Enum objectClass) const;
+
+		virtual String ToString();
 	};
 }
 
