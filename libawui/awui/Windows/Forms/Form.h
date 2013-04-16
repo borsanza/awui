@@ -5,8 +5,9 @@
 #ifndef __AWUIFORM_H__
 #define __AWUIFORM_H__
 
-#include <awui/Windows/Forms/Control.h>
 #include <awui/Collections/ArrayList.h>
+#include <awui/String.h>
+#include <awui/Windows/Forms/Control.h>
 
 typedef struct _aw aw;
 typedef struct _ac ac;
@@ -22,6 +23,7 @@ namespace awui {
 			private:
 				aw * w;
 				Control * mouseControlOver;
+				String text;
 
 				int mouseX;
 				int mouseY;
@@ -42,6 +44,7 @@ namespace awui {
 				virtual int IsClass(Classes::Enum objectClass) const;
 
 				void Show();
+				void SetText(String title);
 			};
 		}
 	}

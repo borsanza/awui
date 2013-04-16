@@ -14,8 +14,10 @@ namespace awui {
 	private:
 		class outClass : public IO::TextWriter {
 		public:
-			virtual void WriteLine();
-			virtual void WriteLine(String value);
+			virtual void Flush();
+			virtual String GetNewLine();
+			virtual void Write(char value);
+			virtual void Write(String value);
 		};
 
 	public:

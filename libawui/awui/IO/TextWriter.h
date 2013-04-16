@@ -11,8 +11,13 @@ namespace awui {
 	namespace IO {
 		class TextWriter {
 		public:
-			virtual void WriteLine() = 0;
-			virtual void WriteLine(String value) = 0;
+			virtual void Flush() = 0;
+			virtual String GetNewLine() = 0;
+			virtual void Write(char value) = 0;
+			virtual void Write(String value) = 0;
+			virtual void WriteLine();
+			virtual void WriteLine(char value);
+			virtual void WriteLine(String value);
 		};
 	}
 }

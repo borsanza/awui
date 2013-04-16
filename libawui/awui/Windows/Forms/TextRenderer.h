@@ -1,7 +1,7 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include <string>
+#include <awui/String.h>
 
 namespace awui {
 	namespace Drawing {
@@ -18,7 +18,7 @@ namespace awui {
 				static awui::Drawing::Image * image;
 
 			public:
-				static awui::Drawing::Size GetMeasureText(const std::string& text, awui::Drawing::Font *font);
+				static awui::Drawing::Size GetMeasureText(const String text, awui::Drawing::Font *font);
 			};
 		}
 	}

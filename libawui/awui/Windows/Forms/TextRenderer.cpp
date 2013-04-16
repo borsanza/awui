@@ -13,7 +13,7 @@ using namespace awui::Windows::Forms;
 Graphics * TextRenderer::graphics = NULL;
 Image * TextRenderer::image = NULL;
 
-Size TextRenderer::GetMeasureText(const std::string& text, Font* font) {
+Size TextRenderer::GetMeasureText(const String text, Font* font) {
 	if (graphics == NULL) {
 		image = new Drawing::Image(1, 1);
 		graphics = Graphics::FromImage(image);

@@ -4,17 +4,26 @@
 #include "Console.h"
 
 #include <awui/String.h>
+#include <awui/Environment.h>
 
 #include <iostream>
 
 using namespace awui;
 
-void awui::Console::outClass::WriteLine() {
-	std::cout << std::endl;
+void awui::Console::outClass::Flush() {
+	std::cout << std::flush;
 }
 
-void awui::Console::outClass::WriteLine(String value) {
-	std::cout << std::endl;
+String awui::Console::outClass::GetNewLine() {
+	return Environment::GetNewLine();
+}
+
+void awui::Console::outClass::Write(String value) {
+	std::cout << value.ToCharArray();
+}
+
+void awui::Console::outClass::Write(char value) {
+	std::cout << value;
 }
 
 IO::TextWriter * awui::Console::GetOut() {

@@ -105,10 +105,10 @@ void Button::OnPaint(GL* gl) {
 	glEnd();
 }
 
-void Button::SetText(const std::string& str) {
-	this->text.assign(str);
+void Button::SetText(const String str) {
+	this->text = str;
 }
 
-const std::string& Button::GetName() {
+const awui::String Button::GetName() {
 	return this->text;
 }

@@ -1,6 +1,7 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
+#include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui {
@@ -12,7 +13,7 @@ namespace awui {
 		namespace Forms {
 			class Button : public Control {
 			private:
-				std::string text;
+				String text;
 				int testx;
 				int testy;
 				int show;
@@ -23,8 +24,8 @@ namespace awui {
 
 				virtual int IsClass(Classes::Enum objectClass) const;
 
-				const std::string& GetName();
-				void SetText(const std::string& str);
+				const String GetName();
+				void SetText(const String str);
 
 				virtual void OnMouseLeave();
 				virtual void OnMouseDown(MouseEventArgs* e);

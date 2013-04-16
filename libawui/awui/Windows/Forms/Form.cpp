@@ -26,6 +26,8 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Form::Form() {
+	this->w = NULL;
+	this->text = "";
 	this->SetBackColor(Color::FromArgb(192, 192, 192));
 
 	this->SetBounds(100, 100, 300, 300);
@@ -60,6 +62,7 @@ void Form::Show() {
 	this->w = awNew(Application::g);
 	awGeometry(this->w, this->GetLeft(), this->GetTop(), this->GetWidth(), this->GetHeight());
 	awShow(this->w);
+	this->SetText(this->text);
 //	awHideBorders(this->w);
 //	awMaximize(this->w);
 }
@@ -170,4 +173,10 @@ void Form::ProcessEvents(ac * c) {
 		this->SetSize(resizex, resizey);
 //		this->OnResizePre();
 	}
+}
+
+void Form::SetText(String title) {
+	this->text = title;
+	if (this->w)
+		awSetTitle(this->w, this->text.ToCharArray());
 }

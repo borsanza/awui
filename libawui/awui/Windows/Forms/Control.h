@@ -6,10 +6,10 @@
 #define __AWUICONTROL_H__
 
 #include <awui/Object.h>
+#include <awui/String.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Rectangle.h>
 #include <awui/Windows/Forms/MouseButtons.h>
-#include <string>
 
 namespace awui {
 	namespace OpenGL {
@@ -47,7 +47,7 @@ namespace awui {
 				Control * parent;
 				MouseEventArgs * mouseEventArgs;
 				Control * mouseControl;
-				std::string name;
+				String name;
 
 				void OnTickPre();
 				void OnResizePre();
@@ -66,8 +66,8 @@ namespace awui {
 				DockStyle::Enum GetDock() const;
 				void SetDock(DockStyle::Enum dock);
 
-				const std::string& GetName();
-				void SetName(const std::string& str);
+				const String GetName();
+				void SetName(const String str);
 
 				int GetLeft() const;
 				void SetLeft(int x);

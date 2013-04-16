@@ -2,7 +2,7 @@
 // feedback: borsanza AT gmail DOT com
 
 #include <awui/Object.h>
-#include <string>
+#include <awui/String.h>
 
 typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
@@ -37,8 +37,8 @@ namespace awui {
 			void DrawImage(Drawing::Image * image, float x, float y, float width, float height);
 			void DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float y2);
 
-			Drawing::Size GetMeasureText(const std::string& text, Drawing::Font *font) const;
-			void DrawString(const std::string& text, Drawing::Font * font, float x, float y);
+			Drawing::Size GetMeasureText(const String text, Drawing::Font *font) const;
+			void DrawString(const String text, Drawing::Font * font, float x, float y);
 		};
 	}
 }

@@ -1,20 +1,20 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include <string>
+#include <awui/String.h>
 
 namespace awui {
 	namespace Drawing {
 		class Font {
 		private:
-			std::string font;
+			String font;
 			bool bold;
 			float size;
 
 		public:
-			Font(const std::string& font, float size);
+			Font(const String font, float size);
 
-			const std::string& GetFont();
+			const String GetFont() const;
 			bool GetBold();
 			float GetSize();
 		};

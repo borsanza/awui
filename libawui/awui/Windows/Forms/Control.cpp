@@ -358,11 +358,11 @@ void Control::OnMouseEnter() {
 //	std::cout << "OnMouseEnter: " << this->GetName() << std::endl;
 }
 
-void Control::SetName(const std::string& str) {
-	this->name.assign(str);
+void Control::SetName(const String str) {
+	this->name = str;
 }
 
-const std::string& Control::GetName() {
+const awui::String Control::GetName() {
 	return this->name;
 }
 

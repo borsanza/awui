@@ -5,8 +5,8 @@
 
 using namespace awui::Drawing;
 
-Font::Font(const std::string& font, float size) {
-	this->font.assign(font);
+Font::Font(const String font, float size) {
+	this->font = font;
 	this->size = size;
 	this->bold = false;
 }
@@ -19,6 +19,6 @@ float Font::GetSize() {
 	return this->size;
 }
 
-const std::string& Font::GetFont() {
+const awui::String Font::GetFont() const {
 	return this->font;
 }

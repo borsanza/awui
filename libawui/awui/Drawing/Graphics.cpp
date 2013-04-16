@@ -98,30 +98,30 @@ void Graphics::DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float 
 	cairo_restore(this->cr);
 }
 
-Size Graphics::GetMeasureText(const std::string& text, Drawing::Font *font) const {
+Size Graphics::GetMeasureText(const String text, Drawing::Font *font) const {
 	cairo_text_extents_t extents;
 
 	cairo_save(this->cr);
-	cairo_select_font_face(this->cr, font->GetFont().c_str(), CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_select_font_face(this->cr, font->GetFont().ToCharArray(), CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size(this->cr, font->GetSize());
-	cairo_text_extents(this->cr, text.c_str(), &extents);
+	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
 	cairo_restore(this->cr);
 
 	return Size(extents.width + 4, extents.height + 4);
 }
 
-void Graphics::DrawString(const std::string& text, Drawing::Font * font, float x, float y) {
+void Graphics::DrawString(const String text, Drawing::Font * font, float x, float y) {
 	cairo_text_extents_t extents;
 	cairo_save(this->cr);
-	cairo_select_font_face(this->cr, font->GetFont().c_str(), CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_select_font_face(this->cr, font->GetFont().ToCharArray(), CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size(this->cr, font->GetSize());
-	cairo_text_extents(this->cr, text.c_str(), &extents);
+	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
 /*
 	std::cout << "Bearing: " << extents.x_bearing << "x" << extents.y_bearing << std::endl;
 	std::cout << "Size: " << extents.width << "x" << extents.height << std::endl;
 	std::cout << "Advance: " << extents.x_advance << "x" << extents.y_advance << std::endl;
 */
 	cairo_move_to(this->cr, x + 2 - extents.x_bearing, y - 2 - (extents.height + extents.y_bearing));
-	cairo_show_text(this->cr, text.c_str());
+	cairo_show_text(this->cr, text.ToCharArray());
 	cairo_restore(this->cr);
 }

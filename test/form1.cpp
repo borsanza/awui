@@ -108,6 +108,7 @@ void Form1::InitializeComponent() {
 	this->AddButtonEffect(new EffectBounce());
 
 	this->SetSize(300, 910);
+	this->SetText("Test Form1");
 }
 
 void Form1::AddButtonEffect(Effect * effect) {

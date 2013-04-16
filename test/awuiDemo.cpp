@@ -5,15 +5,9 @@
 
 #include <awui/Windows/Forms/Application.h>
 
-#include <awui/Console.h>
-#include <awui/String.h>
-
 using namespace awui::Windows::Forms;
 
 int main(int argc, char ** argv) {
-	String a;
-	Console::GetOut()->WriteLine(a);
-
 	Form1 *form = new Form1();
 
 	Application::Run(form);
