@@ -127,10 +127,10 @@ Color Color::FromArgb(int red, int green, int blue) {
 Color Color::FromArgb(int alpha, int red, int green, int blue) {
 	Color color;
 
-	color.a = Math::Between(alpha, 0, 255);
-	color.r = Math::Between(red, 0, 255);
-	color.g = Math::Between(green, 0, 255);
-	color.b = Math::Between(blue, 0, 255);
+	color.a = Math::Clamp(alpha, 0, 255);
+	color.r = Math::Clamp(red, 0, 255);
+	color.g = Math::Clamp(green, 0, 255);
+	color.b = Math::Clamp(blue, 0, 255);
 
 	return color;
 }
