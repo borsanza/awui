@@ -56,6 +56,10 @@ namespace awui {
 		static float Min(float val1, float val2);
 		static int Min(int val1, int val2);
 
+		static double Between(double value, double min, double max);
+		static float Between(float value, float min, float max);
+		static int Between(int value, int min, int max);
+
 		static double Pow(double x, float y);
 		static float Pow(float x, float y);
 

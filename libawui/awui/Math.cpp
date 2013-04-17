@@ -140,6 +140,18 @@ int Math::Min(int val1, int val2) {
 	return val1 < val2 ? val1 : val2;
 }
 
+double Math::Between(double value, double min, double max) {
+	return Math::Max(Math::Min(value, max), min);
+}
+
+float Math::Between(float value, float min, float max) {
+	return Math::Max(Math::Min(value, max), min);
+}
+
+int Math::Between(int value, int min, int max) {
+	return Math::Max(Math::Min(value, max), min);
+}
+
 double Math::Pow(double x, float y) {
 	return pow(x, y);
 }

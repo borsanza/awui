@@ -11,7 +11,7 @@ using namespace awui::Windows::Forms;
 #include <awui/Console.h>
 
 int main(int argc, char ** argv) {
-	awui::Drawing::Color a = Drawing::Color::FromArgb(10,20,30,40);
+	awui::Drawing::Color a = Drawing::Color::FromArgb(-10,220,330,240);
 	Console::GetOut()->WriteLine(&a);
 	Console::GetOut()->WriteLine(a.ToString());
 

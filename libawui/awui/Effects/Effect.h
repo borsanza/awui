@@ -3,16 +3,18 @@
 
 // based on easing equations from Robert Penner (http://www.robertpenner.com/easing)
 
+#include <awui/String.h>
+
 namespace awui {
 	namespace Effects {
 		class Effect {
 		private:
-			const char * name;
+			String name;
 
 		public:
-			Effect(const char * name1);
+			Effect(String name1);
 
-			const char * GetName();
+			String GetName();
 
 			virtual float Calculate(float p) const = 0;
 		};

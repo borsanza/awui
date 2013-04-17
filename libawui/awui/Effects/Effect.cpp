@@ -7,11 +7,11 @@
 
 using namespace awui::Effects;
 
-Effect::Effect(const char * name1) {
+Effect::Effect(String name1) {
 	this->name = name1;
 }
 
-const char * Effect::GetName() {
+awui::String Effect::GetName() {
 	return this->name;
 }
 

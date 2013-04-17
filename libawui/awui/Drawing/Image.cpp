@@ -3,8 +3,9 @@
 
 #include "Image.h"
 
-#include <stdlib.h>
+#include <awui/String.h>
 #include <cairo.h>
+#include <stdlib.h>
 
 using namespace awui::Drawing;
 
@@ -17,10 +18,10 @@ Image::Image(int width, int height) {
 	this->cr = cairo_create(this->cairo_surface);
 }
 
-Image::Image(const char * filename) {
+Image::Image(String filename) {
 	this->image = NULL;
 	this->btpp = 4;
-	this->cairo_surface = cairo_image_surface_create_from_png(filename);
+	this->cairo_surface = cairo_image_surface_create_from_png(filename.ToCharArray());
 	this->width = cairo_image_surface_get_width(this->cairo_surface);
 	this->height = cairo_image_surface_get_height(this->cairo_surface);
 	this->cr = cairo_create(this->cairo_surface);

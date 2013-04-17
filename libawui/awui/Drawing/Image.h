@@ -7,6 +7,8 @@ typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
 
 namespace awui {
+	class String;
+
 	namespace Drawing {
 		class Image : public Object {
 			friend class Graphics;
@@ -24,7 +26,7 @@ namespace awui {
 
 		public:
 			Image(int width, int height);
-			Image(const char * name);
+			Image(String name);
 			virtual ~Image();
 
 			virtual int IsClass(Classes::Enum objectClass) const;

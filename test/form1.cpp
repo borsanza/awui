@@ -3,6 +3,7 @@
 
 #include "form1.h"
 
+#include <awui/Int32.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
@@ -168,5 +169,7 @@ void Form1::OnTick() {
 
 		int width = this->_panel->GetWidth() - button->GetWidth() - 10;
 		button->SetLeft(width * value2 + 5);
+		awui::Int32 v = awui::Int32(width * value2 + 5);
+		button->SetText(effect->GetName() + " " + &v);
 	}
 }
