@@ -2,12 +2,13 @@
 // feedback: borsanza AT gmail DOT com
 
 #include <awui/Object.h>
-#include <awui/String.h>
 
 typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
 
 namespace awui {
+	class String;
+
 	namespace Drawing {
 		class Color;
 		class Font;
@@ -22,6 +23,7 @@ namespace awui {
 
 			void SetPen(Drawing::Pen * pen);
 			Graphics();
+			int GetBorderY(Drawing::Font * font) const;
 
 		public:
 			virtual ~Graphics();
@@ -38,7 +40,7 @@ namespace awui {
 			void DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float y2);
 
 			Drawing::Size GetMeasureText(const String text, Drawing::Font *font) const;
-			void DrawString(const String text, Drawing::Font * font, float x, float y);
+			void DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y);
 		};
 	}
 }

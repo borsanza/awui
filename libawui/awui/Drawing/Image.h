@@ -7,11 +7,16 @@ typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
 
 namespace awui {
+	namespace OpenGL {
+		class GL;
+	}
+
 	class String;
 
 	namespace Drawing {
 		class Image : public Object {
 			friend class Graphics;
+			friend class awui::OpenGL::GL;
 
 		protected:
 			int width;
@@ -19,9 +24,6 @@ namespace awui {
 			int btpp;
 			cairo_surface_t *cairo_surface;
 			cairo_t *cr;
-
-		public:
-			// TODO: Cambiar *image a protegido en cuanto pueda
 			unsigned char *image;
 
 		public:

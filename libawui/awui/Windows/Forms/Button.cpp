@@ -3,6 +3,7 @@
 
 #include "Button.h"
 
+#include <awui/Math.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Drawing/Graphics.h>
@@ -59,19 +60,15 @@ void Button::OnMouseMove(MouseEventArgs* e) {
 }
 
 void Button::OnPaint(GL* gl) {
-	Font font = Font("Sans", 12);
+	Font font = Font("Monospace", 11);
 
 	Size size = TextRenderer::GetMeasureText(this->text, &font);
 
 	Drawing::Image * image = new Drawing::Image(size.GetWidth(), size.GetHeight());
 	Drawing::Graphics * g = Drawing::Graphics::FromImage(image);
-//	g->FillRectangle(Color::FromArgb(250,0,0), 0, 0, size.GetWidth(), size.GetHeight());
-//	g->Clear(Color::FromArgb(255,0,0));
-	// Esto hay que quitarlo, porque lo uso para definir un pen
-	g->FillRectangle(Color::FromArgb(0,0,0), -10, -10, 1, 1);
-	g->DrawString(this->text, &font, 0, size.GetHeight());
+	g->DrawString(this->text, &font, Color::FromArgb(0, 0, 0), 0, 0);
 
-	GL::DrawImageGL(image, (this->GetWidth() - size.GetWidth()) >> 1, (this->GetHeight() - size.GetHeight()) >> 1);
+	GL::DrawImageGL(image, Math::Round((this->GetWidth() - size.GetWidth()) / 2.0f), Math::Round((this->GetHeight() - size.GetHeight()) / 2.0f));
 
 	delete g;
 	delete image;

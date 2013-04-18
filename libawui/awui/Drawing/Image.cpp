@@ -5,7 +5,6 @@
 
 #include <awui/String.h>
 #include <cairo.h>
-#include <stdlib.h>
 
 using namespace awui::Drawing;
 

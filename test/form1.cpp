@@ -81,7 +81,7 @@ void Form1::InitializeComponent() {
 	this->_splitter->GetPanel2()->GetControls()->Add(button2);
 	this->_splitter->GetPanel2()->GetControls()->Add(button);
 	this->_splitter->SetDock(DockStyle::Fill);
-	this->_splitter->SetOrientation(SplitContainer::Vertical);
+	this->_splitter->SetOrientation(SplitContainer::Orientation::Vertical);
 
 	this->GetControls()->Add(this->_splitter);
 

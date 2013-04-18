@@ -8,10 +8,9 @@
 #include <awui/Drawing/Image.h>
 #include <awui/Drawing/Pen.h>
 #include <awui/Drawing/Size.h>
+#include <awui/Math.h>
 
 #include <cairo.h>
-#include <stdlib.h>
-#include <iostream>
 
 using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
@@ -98,30 +97,91 @@ void Graphics::DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float 
 	cairo_restore(this->cr);
 }
 
-Size Graphics::GetMeasureText(const String text, Drawing::Font *font) const {
-	cairo_text_extents_t extents;
+#define BORDERX 2
+#define BORDERY 2
 
-	cairo_save(this->cr);
-	cairo_select_font_face(this->cr, font->GetFont().ToCharArray(), CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-	cairo_set_font_size(this->cr, font->GetSize());
-	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
-	cairo_restore(this->cr);
-
-	return Size(extents.width + 4, extents.height + 4);
+int Graphics::GetBorderY(Drawing::Font * font) const {
+	float size = font->GetSize() * 0.07f;
+	size = Math::Max(Math::Round(size), 1.0f);
+	size *= 3.0f;
+	size += BORDERY;
+	return size;
 }
 
-void Graphics::DrawString(const String text, Drawing::Font * font, float x, float y) {
+Size Graphics::GetMeasureText(const String text, Drawing::Font *font) const {
+	cairo_font_weight_t weight;
+	cairo_font_slant_t slant;
+
+	if (font->GetBold())
+		weight = CAIRO_FONT_WEIGHT_BOLD;
+	else
+		weight = CAIRO_FONT_WEIGHT_NORMAL;
+
+	if (font->GetItalic())
+		slant = CAIRO_FONT_SLANT_ITALIC;
+	else
+		slant = CAIRO_FONT_SLANT_NORMAL;
+
 	cairo_text_extents_t extents;
+
 	cairo_save(this->cr);
-	cairo_select_font_face(this->cr, font->GetFont().ToCharArray(), CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_select_font_face(this->cr, font->GetFont().ToCharArray(), slant, weight);
 	cairo_set_font_size(this->cr, font->GetSize());
 	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
-/*
-	std::cout << "Bearing: " << extents.x_bearing << "x" << extents.y_bearing << std::endl;
-	std::cout << "Size: " << extents.width << "x" << extents.height << std::endl;
-	std::cout << "Advance: " << extents.x_advance << "x" << extents.y_advance << std::endl;
-*/
-	cairo_move_to(this->cr, x + 2 - extents.x_bearing, y - 2 - (extents.height + extents.y_bearing));
+	cairo_restore(this->cr);
+
+	return Size(extents.width + (BORDERX * 2), extents.height + extents.height + extents.y_bearing + (GetBorderY(font) * 2));
+}
+
+void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y) {
+	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
+
+	cairo_font_weight_t weight;
+	cairo_font_slant_t slant;
+
+	if (font->GetBold())
+		weight = CAIRO_FONT_WEIGHT_BOLD;
+	else
+		weight = CAIRO_FONT_WEIGHT_NORMAL;
+
+	if (font->GetItalic())
+		slant = CAIRO_FONT_SLANT_ITALIC;
+	else
+		slant = CAIRO_FONT_SLANT_NORMAL;
+
+	cairo_text_extents_t extents;
+	cairo_save(this->cr);
+	cairo_select_font_face(this->cr, font->GetFont().ToCharArray(), slant, weight);
+	cairo_set_font_size(this->cr, font->GetSize());
+	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
+
+	x += BORDERX;
+	y += GetBorderY(font) + extents.height;
+
+	int posx = Math::Round(x - extents.x_bearing);
+
+	cairo_move_to(this->cr, posx, y);
 	cairo_show_text(this->cr, text.ToCharArray());
 	cairo_restore(this->cr);
+
+	float size = font->GetSize() * 0.07f;
+	size = Math::Max(Math::Round(size), 1.0f);
+	Pen pen = Pen(color, size);
+
+	cairo_antialias_t old = cairo_get_antialias(this->cr);
+	cairo_set_antialias(this->cr, cairo_antialias_t::CAIRO_ANTIALIAS_NONE);
+
+	if (font->GetStrikeout()) {
+		float posy =  y + (extents.y_bearing / 2.0f);
+		posy = Math::Round(posy);
+		this->DrawLine(&pen, BORDERX, posy, extents.width + BORDERX, posy);
+	}
+
+	if (font->GetUnderline()) {
+		float posy =  y + (size * 1.5f);
+		posy = Math::Round(posy);
+		this->DrawLine(&pen, BORDERX, posy, extents.width + BORDERX, posy);
+	}
+
+	cairo_set_antialias(this->cr, old);
 }
