@@ -11,8 +11,8 @@ using namespace awui;
 
 namespace awui {
 	class Environment {
-	public:
-		static String GetNewLine();
+		public:
+			static String GetNewLine();
 	};
 }
 

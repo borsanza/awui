@@ -13,12 +13,12 @@ namespace awui {
 	namespace Windows {
 		namespace Forms {
 			class TextRenderer {
-			private:
-				static awui::Drawing::Graphics * graphics;
-				static awui::Drawing::Image * image;
+				private:
+					static awui::Drawing::Graphics * graphics;
+					static awui::Drawing::Image * image;
 
-			public:
-				static awui::Drawing::Size GetMeasureText(const String text, awui::Drawing::Font *font);
+				public:
+					static awui::Drawing::Size GetMeasureText(const String text, awui::Drawing::Font *font);
 			};
 		}
 	}

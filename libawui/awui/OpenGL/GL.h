@@ -19,23 +19,23 @@ namespace awui {
 			friend class awui::Windows::Forms::Control;
 			friend class awui::Windows::Forms::Form;
 
-		private:
-			awui::Drawing::Rectangle rectangle1;
-			awui::Drawing::Rectangle rectangle2;
+			private:
+				awui::Drawing::Rectangle rectangle1;
+				awui::Drawing::Rectangle rectangle2;
 
-			GL();
-			void SetClippingBase(awui::Drawing::Rectangle rectangle);
-			awui::Drawing::Rectangle GetClippingBase();
+				GL();
+				void SetClippingBase(awui::Drawing::Rectangle rectangle);
+				awui::Drawing::Rectangle GetClippingBase();
 
-		public:
-			void SetClipping(awui::Drawing::Rectangle rectangle);
-			awui::Drawing::Rectangle GetClipping();
+			public:
+				void SetClipping(awui::Drawing::Rectangle rectangle);
+				awui::Drawing::Rectangle GetClipping();
 
-			awui::Drawing::Rectangle GetClippingResult();
+				awui::Drawing::Rectangle GetClippingResult();
 
-			void SetClipping();
+				void SetClipping();
 
-			static void DrawImageGL(awui::Drawing::Image * image, float x, float y);
+				static void DrawImageGL(awui::Drawing::Image * image, float x, float y);
 		};
 	}
 }

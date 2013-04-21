@@ -18,23 +18,23 @@ namespace awui {
 			friend class Graphics;
 			friend class awui::OpenGL::GL;
 
-		protected:
-			int width;
-			int height;
-			int btpp;
-			cairo_surface_t *cairo_surface;
-			cairo_t *cr;
-			unsigned char *image;
+			protected:
+				int width;
+				int height;
+				int btpp;
+				cairo_surface_t *cairo_surface;
+				cairo_t *cr;
+				unsigned char *image;
 
-		public:
-			Image(int width, int height);
-			Image(String name);
-			virtual ~Image();
+			public:
+				Image(int width, int height);
+				Image(String name);
+				virtual ~Image();
 
-			virtual int IsClass(Classes::Enum objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
-			int GetWidth();
-			int GetHeight();
+				int GetWidth();
+				int GetHeight();
 		};
 	}
 }

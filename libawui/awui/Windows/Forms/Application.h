@@ -13,13 +13,13 @@ namespace awui {
 			class Application : public Object {
 				friend class Form;
 
-			private:
-				static ag * g;
+				private:
+					static ag * g;
 
-			public:
-				static void Run(Form * form);
+				public:
+					static void Run(Form * form);
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+					virtual int IsClass(Classes::Enum objectClass) const;
 			};
 		}
 	}

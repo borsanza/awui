@@ -17,22 +17,22 @@ namespace awui {
 		};
 
 		class Font : public Object {
-		private:
-			String font;
-			float size;
-			int style;
+			private:
+				String font;
+				float size;
+				int style;
 
-		public:
-			Font(const String font, float size);
-			Font(const String font, float size, int style);
+			public:
+				Font(const String font, float size);
+				Font(const String font, float size, int style);
 
-			const String GetFont() const;
-			bool GetBold();
-			bool GetItalic();
-			bool GetUnderline();
-			bool GetStrikeout();
-			float GetSize();
-			virtual String ToString();
+				const String GetFont() const;
+				bool GetBold();
+				bool GetItalic();
+				bool GetUnderline();
+				bool GetStrikeout();
+				float GetSize();
+				virtual String ToString();
 		};
 	}
 }

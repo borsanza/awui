@@ -10,22 +10,22 @@ namespace awui {
 		class Point;
 
 		class Size {
-		private:
-			int width;
-			int height;
+			private:
+				int width;
+				int height;
 
-		public:
-			Size();
-			Size(const Point pt);
-			Size(int width, int height);
+			public:
+				Size();
+				Size(const Point pt);
+				Size(int width, int height);
 
-			int GetWidth() const;
-			void SetWidth(int width);
+				int GetWidth() const;
+				void SetWidth(int width);
 
-			int GetHeight() const;
-			void SetHeight(int height);
+				int GetHeight() const;
+				void SetHeight(int height);
 
-			Size & operator= (const Size & other);
+				Size & operator= (const Size & other);
 		};
 	}
 }

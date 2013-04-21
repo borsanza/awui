@@ -13,30 +13,30 @@
 namespace awui {
 	namespace Drawing {
 		class Pen : public Object {
-		private:
-			awui::Drawing::Color color;
-			float width;
-			Drawing2D::LineCap::Enum lineCap;
-			Drawing2D::LineJoin::Enum lineJoin;
+			private:
+				awui::Drawing::Color color;
+				float width;
+				Drawing2D::LineCap::Enum lineCap;
+				Drawing2D::LineJoin::Enum lineJoin;
 
-		public:
-			Pen(awui::Drawing::Color color);
-			Pen(awui::Drawing::Color color, float width);
-			virtual ~Pen();
+			public:
+				Pen(awui::Drawing::Color color);
+				Pen(awui::Drawing::Color color, float width);
+				virtual ~Pen();
 
-			virtual int IsClass(Classes::Enum objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
-			awui::Drawing::Color GetColor();
-			void SetColor(awui::Drawing::Color color);
+				awui::Drawing::Color GetColor();
+				void SetColor(awui::Drawing::Color color);
 
-			float GetWidth();
-			void SetWidth(float width);
+				float GetWidth();
+				void SetWidth(float width);
 
-			void SetLineJoin(Drawing2D::LineJoin::Enum lineJoin);
-			Drawing2D::LineJoin::Enum GetLineJoin();
+				void SetLineJoin(Drawing2D::LineJoin::Enum lineJoin);
+				Drawing2D::LineJoin::Enum GetLineJoin();
 
-			void SetLineCap(Drawing2D::LineCap::Enum lineCap);
-			Drawing2D::LineCap::Enum GetLineCap();
+				void SetLineCap(Drawing2D::LineCap::Enum lineCap);
+				Drawing2D::LineCap::Enum GetLineCap();
 		};
 	}
 }

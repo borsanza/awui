@@ -17,30 +17,30 @@ namespace awui {
 		class Size;
 
 		class Graphics : public Object {
-		private:
-			cairo_surface_t *cairo_surface;
-			cairo_t *cr;
+			private:
+				cairo_surface_t *cairo_surface;
+				cairo_t *cr;
 
-			void SetPen(Drawing::Pen * pen);
-			Graphics();
-			int GetBorderY(Drawing::Font * font) const;
+				void SetPen(Drawing::Pen * pen);
+				Graphics();
+				int GetBorderY(Drawing::Font * font) const;
 
-		public:
-			virtual ~Graphics();
+			public:
+				virtual ~Graphics();
 
-			virtual int IsClass(Classes::Enum objectClass) const;
+				virtual int IsClass(Classes::Enum objectClass) const;
 
-			static Graphics * FromImage(Drawing::Image *image);
+				static Graphics * FromImage(Drawing::Image *image);
 
-			void Clear(const Drawing::Color color);
-			void DrawRectangle(Drawing::Pen * pen, float x, float y, float width, float height);
-			void FillRectangle(const Drawing::Color color, float x, float y, float width, float height);
-			void DrawImage(Drawing::Image * image, float x, float y);
-			void DrawImage(Drawing::Image * image, float x, float y, float width, float height);
-			void DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float y2);
+				void Clear(const Drawing::Color color);
+				void DrawRectangle(Drawing::Pen * pen, float x, float y, float width, float height);
+				void FillRectangle(const Drawing::Color color, float x, float y, float width, float height);
+				void DrawImage(Drawing::Image * image, float x, float y);
+				void DrawImage(Drawing::Image * image, float x, float y, float width, float height);
+				void DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float y2);
 
-			Drawing::Size GetMeasureText(const String text, Drawing::Font *font) const;
-			void DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y);
+				Drawing::Size GetMeasureText(const String text, Drawing::Font *font) const;
+				void DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y);
 		};
 	}
 }

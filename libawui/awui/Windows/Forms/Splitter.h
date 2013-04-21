@@ -9,24 +9,24 @@ namespace awui {
 	namespace Windows {
 		namespace Forms {
 			class Splitter : public Control {
-			private:
-					SplitContainer::Orientation::Enum orientation;
-					int mouseActive;
+				private:
+						SplitContainer::Orientation::Enum orientation;
+						int mouseActive;
 
-			public:
-				Splitter();
-				virtual ~Splitter();
+				public:
+					Splitter();
+					virtual ~Splitter();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+					virtual int IsClass(Classes::Enum objectClass) const;
 
-				SplitContainer::Orientation::Enum GetOrientation();
-				void SetOrientation(SplitContainer::Orientation::Enum orientation);
+					SplitContainer::Orientation::Enum GetOrientation();
+					void SetOrientation(SplitContainer::Orientation::Enum orientation);
 
-				virtual void OnMouseDown(MouseEventArgs * e);
-				virtual void OnMouseMove(MouseEventArgs * e);
-				virtual void OnMouseUp(MouseEventArgs * e);
-				virtual void OnMouseEnter();
-				virtual void OnMouseLeave();
+					virtual void OnMouseDown(MouseEventArgs * e);
+					virtual void OnMouseMove(MouseEventArgs * e);
+					virtual void OnMouseUp(MouseEventArgs * e);
+					virtual void OnMouseEnter();
+					virtual void OnMouseLeave();
 			};
 		}
 	}

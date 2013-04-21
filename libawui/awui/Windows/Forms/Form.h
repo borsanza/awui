@@ -20,31 +20,31 @@ namespace awui {
 				friend class Application;
 				friend class Control;
 
-			private:
-				aw * w;
-				Control * mouseControlOver;
-				String text;
+				private:
+					aw * w;
+					Control * mouseControlOver;
+					String text;
 
-				int mouseX;
-				int mouseY;
-				int mouseButtons;
+					int mouseX;
+					int mouseY;
+					int mouseButtons;
 
-				GLuint texture1;
-				int old1w, old1h;
-				GLuint texture2;
-				int old2w, old2h;
-				void OnPaintForm();
+					GLuint texture1;
+					int old1w, old1h;
+					GLuint texture2;
+					int old2w, old2h;
+					void OnPaintForm();
 
-				void ProcessEvents(ac * c);
+					void ProcessEvents(ac * c);
 
-			public:
-				Form();
-				virtual ~Form();
+				public:
+					Form();
+					virtual ~Form();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+					virtual int IsClass(Classes::Enum objectClass) const;
 
-				void Show();
-				void SetText(String title);
+					void Show();
+					void SetText(String title);
 			};
 		}
 	}

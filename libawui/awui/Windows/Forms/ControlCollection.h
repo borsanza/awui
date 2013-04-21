@@ -9,17 +9,17 @@ namespace awui {
 			class Control;
 
 			class ControlCollection : public Collections::ArrayList {
-			private:
-				Control * owner;
+				private:
+					Control * owner;
 
-			public:
-				ControlCollection(Control *);
-				virtual ~ControlCollection();
+				public:
+					ControlCollection(Control *);
+					virtual ~ControlCollection();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+					virtual int IsClass(Classes::Enum objectClass) const;
 
-				Control * GetOwner();
-				virtual void Add(void * item);
+					Control * GetOwner();
+					virtual void Add(void * item);
 			};
 		}
 	}

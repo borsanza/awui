@@ -9,14 +9,14 @@
 
 namespace awui {
 	class Int32 final : public Object {
-	private:
-		int value;
-	public:
-		Int32();
-		Int32(int value);
-		virtual ~Int32();
+		private:
+			int value;
+		public:
+			Int32();
+			Int32(int value);
+			virtual ~Int32();
 
-		virtual String ToString();
+			virtual String ToString();
 	};
 }
 

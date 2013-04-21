@@ -9,14 +9,14 @@
 
 namespace awui {
 	class Byte final : public Object {
-	private:
-		unsigned char value;
-	public:
-		Byte();
-		Byte(unsigned char value);
-		virtual ~Byte();
+		private:
+			unsigned char value;
+		public:
+			Byte();
+			Byte(unsigned char value);
+			virtual ~Byte();
 
-		virtual String ToString();
+			virtual String ToString();
 	};
 }
 

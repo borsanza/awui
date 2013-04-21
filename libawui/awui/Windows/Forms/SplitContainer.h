@@ -14,53 +14,53 @@ namespace awui {
 			class Splitter;
 
 			class SplitContainer : public Control {
-			public:
-				struct Orientation {
-					enum Enum {
-						Vertical,
-						Horizontal,
+				public:
+					struct Orientation {
+						enum Enum {
+							Vertical,
+							Horizontal,
+						};
 					};
-				};
 
-			private:
-				Splitter * splitter;
-				Panel * panel1;
-				Panel * panel2;
+				private:
+					Splitter * splitter;
+					Panel * panel1;
+					Panel * panel2;
 
-				float splitterDistance;
-				int splitterIncrement;
-				int splitterWidth;
-				Orientation::Enum orientation;
+					float splitterDistance;
+					int splitterIncrement;
+					int splitterWidth;
+					Orientation::Enum orientation;
 
-				void RecalculatePositions();
+					void RecalculatePositions();
 
-				void SetLocationW(Control * control, int pos);
-				void SetSizeW(Control* control, int size, int substract);
-				int GetSizeW(Control * control) const;
-				int GetMinimumSizeW(Control * control) const;
+					void SetLocationW(Control * control, int pos);
+					void SetSizeW(Control* control, int size, int substract);
+					int GetSizeW(Control * control) const;
+					int GetMinimumSizeW(Control * control) const;
 
-			public:
-				SplitContainer();
-				virtual ~SplitContainer();
+				public:
+					SplitContainer();
+					virtual ~SplitContainer();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+					virtual int IsClass(Classes::Enum objectClass) const;
 
-				Panel * GetPanel1();
-				Panel * GetPanel2();
+					Panel * GetPanel1();
+					Panel * GetPanel2();
 
-				float GetSplitterDistance() const;
-				void SetSplitterDistance(int distance);
+					float GetSplitterDistance() const;
+					void SetSplitterDistance(int distance);
 
-				int GetSplitterIncrement() const;
-				void SetSplitterIncrement(int increment);
+					int GetSplitterIncrement() const;
+					void SetSplitterIncrement(int increment);
 
-				int GetSplitterWidth() const;
-				void SetSplitterWidth(int width);
+					int GetSplitterWidth() const;
+					void SetSplitterWidth(int width);
 
-				Orientation::Enum GetOrientation() const;
-				void SetOrientation(Orientation::Enum orientation);
+					Orientation::Enum GetOrientation() const;
+					void SetOrientation(Orientation::Enum orientation);
 
-				virtual void Layout();
+					virtual void Layout();
 			};
 		}
 	}

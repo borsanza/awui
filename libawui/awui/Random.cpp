@@ -29,15 +29,15 @@ int Random::Next() {
 [min, max[
 max es exclusivo
 */
-int Random::Next(int min, int max) {
+int Random::Next(int min, int exclusive_max) {
 	double value = (double) this->Next() / RAND_MAX;
-	return min + Math::Round(value * ((max - 1) - min));
+	return min + Math::Round(value * ((exclusive_max - 1) - min));
 }
 
 /**
 [0, max[
 max es exclusivo
 */
-int Random::Next(int max) {
-	return this->Next(0, max);
+int Random::Next(int exclusive_max) {
+	return this->Next(0, exclusive_max);
 }

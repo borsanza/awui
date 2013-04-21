@@ -11,39 +11,39 @@ namespace awui {
 	class Object;
 
 	class String final {
-	private:
-		std::string value;
-	public:
-		static const String Empty;
-		String();
-		String(const char * value);
-		virtual ~String();
+		private:
+			std::string value;
+		public:
+			static const String Empty;
+			String();
+			String(const char * value);
+			virtual ~String();
 
-		int GetLength();
+			int GetLength();
 
-		const char * ToCharArray() const;
+			const char * ToCharArray() const;
 
-		static int Compare(String strA, String strB);
-		int CompareTo(String strB);
+			static int Compare(String strA, String strB);
+			int CompareTo(String strB);
 
-		bool operator==(String value);
-		bool operator!=(String value);
-		String operator+(String strB);
-		void operator+=(String strB);
-		String operator+(Object *value);
-		char operator[](int pos);
+			bool operator==(String value);
+			bool operator!=(String value);
+			String operator+(String strB);
+			void operator+=(String strB);
+			String operator+(Object *value);
+			char operator[](int pos);
 
-		String ToUpper();
-		String ToLower();
+			String ToUpper();
+			String ToLower();
 
-		static String Concat(String str0, String str1);
-		static String Concat(String str0, String str1, String str2);
-		static String Concat(String str0, String str1, String str2, String str3);
+			static String Concat(String str0, String str1);
+			static String Concat(String str0, String str1, String str2);
+			static String Concat(String str0, String str1, String str2, String str3);
 
-		bool Contains(String strB);
+			bool Contains(String strB);
 
-		String Substring(int startIndex);
-		String Substring(int startIndex, int length);
+			String Substring(int startIndex);
+			String Substring(int startIndex, int length);
 	};
 }
 

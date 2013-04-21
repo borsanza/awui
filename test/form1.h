@@ -21,20 +21,20 @@ namespace awui {
 }
 
 class Form1 : public awui::Windows::Forms::Form {
-private:
-	awui::Windows::Forms::SplitContainer * _splitter;
-	awui::Windows::Forms::Panel * _panel;
+	private:
+		awui::Windows::Forms::SplitContainer * _splitter;
+		awui::Windows::Forms::Panel * _panel;
 
-	awui::Collections::ArrayList * _buttons;
-	awui::Collections::ArrayList * _effects;
+		awui::Collections::ArrayList * _buttons;
+		awui::Collections::ArrayList * _effects;
 
-public:
-	Form1();
-	virtual ~Form1();
+	public:
+		Form1();
+		virtual ~Form1();
 
-private:
-	void InitializeComponent();
-	void AddButtonEffect(awui::Effects::Effect * effect);
+	private:
+		void InitializeComponent();
+		void AddButtonEffect(awui::Effects::Effect * effect);
 
-	virtual void OnTick();
+		virtual void OnTick();
 };

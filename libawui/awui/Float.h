@@ -9,14 +9,14 @@
 
 namespace awui {
 	class Float final : public Object {
-	private:
-		float value;
-	public:
-		Float();
-		Float(float value);
-		virtual ~Float();
+		private:
+			float value;
+		public:
+			Float();
+			Float(float value);
+			virtual ~Float();
 
-		virtual String ToString();
+			virtual String ToString();
 	};
 }
 

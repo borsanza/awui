@@ -29,13 +29,13 @@ namespace awui {
 	};
 
 	class Object {
-	public:
-		Object();
-		virtual ~Object();
+		public:
+			Object();
+			virtual ~Object();
 
-		virtual int IsClass(Classes::Enum objectClass) const;
+			virtual int IsClass(Classes::Enum objectClass) const;
 
-		virtual String ToString();
+			virtual String ToString();
 	};
 }
 
