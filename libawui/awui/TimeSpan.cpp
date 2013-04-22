@@ -3,7 +3,7 @@
 
 #include "TimeSpan.h"
 
-#include <awui/Int32.h>
+#include <awui/Convert.h>
 #include <awui/Math.h>
 #include <awui/String.h>
 
@@ -75,7 +75,7 @@ int TimeSpan::GetDays() const {
 awui::String TimeSpan::ConvertDecimals(int value, int decimals) {
 	String output = "";
 	for (int i=0; i<decimals; i++) {
-		output = Int32(value % 10).ToString() + output;
+		output = Convert::ToString(value % 10) + output;
 		value = Math::Floor((float)value / 10);
 	}
 
@@ -84,21 +84,15 @@ awui::String TimeSpan::ConvertDecimals(int value, int decimals) {
 
 awui::String TimeSpan::ToString() {
 	String output = "";
-	int value;
 
-	value = GetDays();
+	int value = GetDays();
 	if (value > 0) {
-		output += Int32(value).ToString() + ".";
+		output += Convert::ToString(value) + ".";
 	}
 
-	value = GetHours();
-	output += Int32(value).ToString() + ":";
-
-	value = GetMinutes();
-	output += Int32(value).ToString() + ":";
-
-	value = GetSeconds();
-	output += Int32(value).ToString() + ".";
+	output += Convert::ToString(GetHours()) + ":";
+	output += Convert::ToString(GetMinutes()) + ":";
+	output += Convert::ToString(GetSeconds()) + ".";
 
 	value = GetTicks() % 10000000;
 	output += ConvertDecimals(value, 7);

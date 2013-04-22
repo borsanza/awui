@@ -8,8 +8,8 @@
 using namespace awui::Windows::Forms;
 
 //#include <awui/Console.h>
+//#include <awui/Convert.h>
 //#include <awui/Random.h>
-//#include <awui/Float.h>
 //#include <awui/TimeSpan.h>
 
 int main(int argc, char ** argv) {
@@ -17,14 +17,12 @@ int main(int argc, char ** argv) {
 //	awui::TimeSpan a(1);
 
 //	Console::GetOut()->WriteLine(&a);
-
 /*
 	Random a;
 	int f = 2;
 	for (int i=0; i<=20; i++) {
 		f = a.Next(1, 100);
-		Int32 f2(f);
-		Console::GetOut()->WriteLine(&f2);
+		Console::GetOut()->WriteLine(Convert::ToString(f));
 	}
 */
 	Form1 *form = new Form1();

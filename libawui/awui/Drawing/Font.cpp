@@ -3,7 +3,7 @@
 
 #include "Font.h"
 
-#include <awui/Float.h>
+#include <awui/Convert.h>
 
 using namespace awui::Drawing;
 
@@ -45,7 +45,6 @@ const awui::String Font::GetFont() const {
 
 awui::String Font::ToString() {
 	String value;
-	Float s = Float(this->size);
-	value = String("[Font: Name=") + this->font + ", Size=" + &s + "]";
+	value = String("[Font: Name=") + this->font + ", Size=" + Convert::ToString(this->size) + "]";
 	return value;
 }

@@ -3,7 +3,7 @@
 
 #include "Color.h"
 
-#include <awui/Byte.h>
+#include <awui/Convert.h>
 #include <awui/Math.h>
 #include <awui/String.h>
 #include <stdlib.h>
@@ -25,11 +25,10 @@ int Color::IsClass(Classes::Enum objectClass) const {
 }
 awui::String Color::ToString() {
 	String value;
-	Byte a = this->a;
-	Byte r = this->r;
-	Byte g = this->g;
-	Byte b = this->b;
-	value = String("Color [A=") + &a + ", R=" + &r + ", G=" + &g + ", B=" + &b + "]";
+	value = String("Color [A=") + Convert::ToString(this->a) +
+				", R=" + Convert::ToString(this->r) +
+				", G=" + Convert::ToString(this->g) +
+				", B=" + Convert::ToString(this->b) + "]";
 	return value;
 }
 

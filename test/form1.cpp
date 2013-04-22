@@ -3,11 +3,12 @@
 
 #include "form1.h"
 
-#include <awui/Int32.h>
+#include <awui/Convert.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
 #include <awui/Effects/Effect.h>
+#include <awui/Math.h>
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/Control.h>
 #include <awui/Windows/Forms/ControlCollection.h>
@@ -168,8 +169,8 @@ void Form1::OnTick() {
 			value2 = 1.0f - value2;
 
 		int width = this->_panel->GetWidth() - button->GetWidth() - 10;
-		button->SetLeft(width * value2 + 5);
-		awui::Int32 v = awui::Int32(width * value2 + 5);
-		button->SetText(effect->GetName() + " " + &v);
+		int left = awui::Math::Round(width * value2 + 5);
+		button->SetLeft(left);
+		button->SetText(effect->GetName() + " " + awui::Convert::ToString(left));
 	}
 }
