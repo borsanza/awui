@@ -9,9 +9,15 @@ using namespace awui::Windows::Forms;
 
 //#include <awui/Console.h>
 //#include <awui/Random.h>
-//#include <awui/Int32.h>
+//#include <awui/Float.h>
+//#include <awui/TimeSpan.h>
 
 int main(int argc, char ** argv) {
+//	awui::TimeSpan a(10,20,30,40,50);
+//	awui::TimeSpan a(1);
+
+//	Console::GetOut()->WriteLine(&a);
+
 /*
 	Random a;
 	int f = 2;
