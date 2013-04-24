@@ -39,6 +39,7 @@ void Application::Run(Form * form = NULL) {
 		form->OnTickPre();
 		form->OnPaintForm();
 		SDL_GL_SwapBuffers();
+		glFinish();
 	}
 
 	SDL_Quit();

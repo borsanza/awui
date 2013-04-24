@@ -16,13 +16,13 @@
 	#define GL_BGRA 0x80E1
 #endif
 
-using namespace awui::Drawing;
+//using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Form::Form() {
 	this->text = "";
-	this->SetBackColor(Color::FromArgb(192, 192, 192));
+	this->SetBackColor(Drawing::Color::FromArgb(192, 192, 192));
 
 	this->SetBounds(100, 100, 300, 300);
 	this->mouseButtons = 0;
@@ -55,7 +55,7 @@ void Form::OnPaintForm() {
 	glEnable(GL_SCISSOR_TEST);
 
 	GL gl;
-	Rectangle rectangle;
+	Drawing::Rectangle rectangle;
 	rectangle.SetX(0);
 	rectangle.SetY(0);
 	rectangle.SetWidth(this->GetWidth());
@@ -155,16 +155,43 @@ void Form::ProcessEvents() {
 	}
 }
 
+#include <GL/glx.h>
+//#include <GL/glxext.h>
+/*
+bool checkGLXExtension(const char* extName, SDL_Surface * screen)
+{
+	char* list = (char*) glXQueryExtensionsString(32, screen);
+	char* end;
+	int extNameLen;
+
+	extNameLen = strlen(extName);
+	end = list + strlen(list);
+
+	while (list < end)
+	{
+		int n = strcspn(list, " ");
+
+		if ((extNameLen == n) && (strncmp(extName, list, n) == 0))
+			return true;
+
+		list += (n + 1);
+	};
+	return false;
+};
+*/
+
 void Form::RefreshVideo() {
 	if (!initialized)
 		return;
+
+    SDL_Surface * screen;
 
 	int flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
 	int width = 0;
 	int height = 0;
 
 	if (this->fullscreenWidth == -1) {
-		SDL_Surface * screen = SDL_SetVideoMode(0, 0, 32, flags | SDL_FULLSCREEN);
+		screen = SDL_SetVideoMode(0, 0, 32, flags | SDL_FULLSCREEN);
 		this->fullscreenWidth = screen->w;
 		this->fullscreenHeight = screen->h;
 	}
@@ -180,7 +207,15 @@ void Form::RefreshVideo() {
 		this->SetSize(width, height);
 	}
 
-	SDL_SetVideoMode(width, height, 32, flags);
+	screen = SDL_SetVideoMode(width, height, 32, flags);
+
+	void (*swapInterval)(int);
+//	if (checkGLXExtension("GLX_MESA_swap_control", screen))
+//		swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
+//	else if (checkGLXExtension("GLX_SGI_swap_control", screen))
+	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+
+	swapInterval(1);
 }
 
 void Form::SetFullscreen(int mode) {

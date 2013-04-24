@@ -132,7 +132,7 @@ void Form1::OnTick() {
 	static float py = 0.0f;
 	static int sube = 1;
 
-	int time = this->_panel->GetWidth() * 2;
+	int time = this->_panel->GetWidth() / 3;
 
 	py++;
 	if (py > time) {
