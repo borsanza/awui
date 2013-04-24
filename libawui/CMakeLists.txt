@@ -7,11 +7,12 @@ if(UNIX)
 endif()
 
 INCLUDE_DIRECTORIES(
-	../libaw/
 	/usr/include/cairo/
 	.
+	${SDL_INCLUDE_DIR}
 #	"C:\\awui-project\\cairo\\include\\cairo\\"
 )
+
 
 FILE(GLOB_RECURSE LIBAWUI_SOURCES awui/*.cpp )
 FILE(GLOB_RECURSE LIBAWUI_HEADERS awui/*.h )
@@ -23,8 +24,8 @@ ADD_LIBRARY(awui STATIC ${LIBAWUI_SOURCES} ${LIBAWUI_HEADERS})
 
 TARGET_LINK_LIBRARIES(
 	awui
-	aw
 	cairo
+	${SDL_LIBRARY}
 # Valores para linux
 	X11
 	GL

@@ -4,11 +4,7 @@
 #include "GL.h"
 
 #include <awui/Drawing/Image.h>
-
-extern "C" {
-	#include <aw/sysgl.h>
-	#include <aw/aw.h>
-}
+#include <SDL_opengl.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;

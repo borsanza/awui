@@ -9,10 +9,6 @@
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
 
-typedef struct _aw aw;
-typedef struct _ac ac;
-typedef unsigned int GLuint;
-
 namespace awui {
 	namespace Windows {
 		namespace Forms {
@@ -21,21 +17,20 @@ namespace awui {
 				friend class Control;
 
 				private:
-					aw * w;
 					Control * mouseControlOver;
 					String text;
 
 					int mouseX;
 					int mouseY;
 					int mouseButtons;
+					int fullscreen;
+					int fullscreenWidth;
+					int fullscreenHeight;
+					int initialized;
 
-					GLuint texture1;
-					int old1w, old1h;
-					GLuint texture2;
-					int old2w, old2h;
 					void OnPaintForm();
 
-					void ProcessEvents(ac * c);
+					void ProcessEvents();
 
 				public:
 					Form();
@@ -43,8 +38,10 @@ namespace awui {
 
 					virtual int IsClass(Classes::Enum objectClass) const;
 
-					void Show();
+					void Init();
 					void SetText(String title);
+					void RefreshVideo();
+					void SetFullscreen(int mode);
 			};
 		}
 	}

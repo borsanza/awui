@@ -15,10 +15,6 @@
 #include <awui/Windows/Forms/Panel.h>
 #include <awui/Windows/Forms/SplitContainer.h>
 
-extern "C" {
-	#include <aw/sysgl.h>
-}
-
 using namespace awui::Collections;
 using namespace awui::Drawing;
 using namespace awui::Effects;
@@ -111,6 +107,7 @@ void Form1::InitializeComponent() {
 
 	this->SetSize(300, 910);
 	this->SetText("Test Form1");
+	this->SetFullscreen(0);
 }
 
 void Form1::AddButtonEffect(Effect * effect) {
@@ -135,7 +132,7 @@ void Form1::OnTick() {
 	static float py = 0.0f;
 	static int sube = 1;
 
-	int time = this->_panel->GetWidth() / 3;
+	int time = this->_panel->GetWidth() * 2;
 
 	py++;
 	if (py > time) {

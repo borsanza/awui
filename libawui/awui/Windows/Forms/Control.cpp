@@ -11,13 +11,9 @@
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
+#include <SDL_opengl.h>
 
 #include <iostream>
-
-extern "C" {
-	#include <aw/sysgl.h>
-	#include <aw/aw.h>
-}
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;

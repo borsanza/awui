@@ -1,8 +1,6 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include <stdarg.h>
-
 #include "Form.h"
 
 #include <awui/Collections/ArrayList.h>
@@ -11,11 +9,8 @@
 #include <awui/Drawing/Rectangle.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Application.h>
-
-extern "C" {
-	#include <aw/sysgl.h>
-	#include <aw/aw.h>
-}
+#include <SDL.h>
+#include <SDL_opengl.h>
 
 #ifndef GL_BGRA
 	#define GL_BGRA 0x80E1
@@ -26,29 +21,19 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Form::Form() {
-	this->w = NULL;
 	this->text = "";
 	this->SetBackColor(Color::FromArgb(192, 192, 192));
 
 	this->SetBounds(100, 100, 300, 300);
 	this->mouseButtons = 0;
 	this->mouseControlOver = NULL;
-
-	glGenTextures(0, &this->texture1);
-	glGenTextures(1, &this->texture2);
-
-	this->old1w = -1;
-	this->old1h = -1;
-	this->old2w = -1;
-	this->old2h = -1;
+	this->fullscreen = 1;
+	this->initialized = 0;
+	this->fullscreenWidth = -1;
+	this->fullscreenHeight = -1;
 }
 
 Form::~Form() {
-	glDeleteTextures(1, &this->texture2);
-	glDeleteTextures(0, &this->texture1);
-
-	awMakeCurrent(this->w, NULL);
-	awDel(this->w);
 }
 
 int Form::IsClass(Classes::Enum objectClass) const {
@@ -58,13 +43,10 @@ int Form::IsClass(Classes::Enum objectClass) const {
 	return Control::IsClass(objectClass);
 }
 
-void Form::Show() {
-	this->w = awNew(Application::g);
-	awGeometry(this->w, this->GetLeft(), this->GetTop(), this->GetWidth(), this->GetHeight());
-	awShow(this->w);
+void Form::Init() {
+	this->initialized = 1;
+	this->RefreshVideo();
 	this->SetText(this->text);
-//	awHideBorders(this->w);
-//	awMaximize(this->w);
 }
 
 void Form::OnPaintForm() {
@@ -82,63 +64,69 @@ void Form::OnPaintForm() {
 	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
 }
 
-void Form::ProcessEvents(ac * c) {
-	const ae * e;
-	aw * w = this->w;
-
+void Form::ProcessEvents() {
 	int resizex = -1;
 	int resizey = -1;
+	SDL_Event event;
 
-	while ((e = awNextEvent(w))) {
-		switch (aeType(e)) {
-			case AW_EVENT_RESIZE:
-				resizex = aeWidth(e);
-				resizey = aeHeight(e);
+	while (SDL_PollEvent(&event)) {
+		switch(event.type) {
+			case SDL_VIDEORESIZE:
+				resizex = event.resize.w;
+				resizey = event.resize.h;
 				break;
-			case AW_EVENT_DOWN: {
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE)
+					Application::Quit();
+				if (event.key.keysym.sym == SDLK_w)
+					this->SetFullscreen(0);
+				if (event.key.keysym.sym == SDLK_f)
+					this->SetFullscreen(1);
+				break;
+			case SDL_QUIT:
+				Application::Quit();
+				break;
+			case SDL_MOUSEBUTTONDOWN: {
 					MouseButtons::Enum button = MouseButtons::None;
-					switch (aeWhich(e)) {
-						case AW_KEY_MOUSEWHEELUP:
+					switch (event.button.button) {
+						case SDL_BUTTON_WHEELUP:
 							button = MouseButtons::XButton1;
 							break;
-						case AW_KEY_MOUSEWHEELDOWN:
+						case SDL_BUTTON_WHEELDOWN:
 							button = MouseButtons::XButton2;
 							break;
-						case AW_KEY_MOUSELEFT:
+						case SDL_BUTTON_LEFT:
 							button = MouseButtons::Left;
 							break;
-						case AW_KEY_MOUSERIGHT:
+						case SDL_BUTTON_RIGHT:
 							button = MouseButtons::Right;
 							break;
-						case AW_KEY_MOUSEMIDDLE:
+						case SDL_BUTTON_MIDDLE:
 							button = MouseButtons::Middle;
 							break;
-						default:
-							break;
 					}
-
 					if (button) {
 						this->mouseButtons |= button;
 						this->OnMouseDownPre(this->mouseX, this->mouseY, button, this->mouseButtons);
 					}
 				}
 				break;
-			case AW_EVENT_UP: {
+			case SDL_MOUSEBUTTONUP: {
 					MouseButtons::Enum button = MouseButtons::None;
-					switch (aeWhich(e)) {
-						case AW_KEY_MOUSEWHEELUP:
+					switch (event.button.button) {
+						case SDL_BUTTON_WHEELUP:
 							button = MouseButtons::XButton1;
 							break;
-						case AW_KEY_MOUSEWHEELDOWN:
+						case SDL_BUTTON_WHEELDOWN:
 							button = MouseButtons::XButton2;
 							break;
-						case AW_KEY_MOUSELEFT:
+						case SDL_BUTTON_LEFT:
 							button = MouseButtons::Left;
 							break;
-						case AW_KEY_MOUSERIGHT:
+						case SDL_BUTTON_RIGHT:
 							button = MouseButtons::Right;
 							break;
-						case AW_KEY_MOUSEMIDDLE:
+						case SDL_BUTTON_MIDDLE:
 							button = MouseButtons::Middle;
 							break;
 						default:
@@ -151,17 +139,9 @@ void Form::ProcessEvents(ac * c) {
 					}
 				}
 				break;
-/*
-			case AW_EVENT_CLOSE:
-				g_exit = 1;
-				break;
-			case AW_EVENT_UNICODE:
-				Log("Unicode: %s", awKeyName(awe->u.unicode.which));
-				break;
-*/
-			case AW_EVENT_MOTION:
-				this->mouseX = aeX(e);
-				this->mouseY = aeY(e);
+			case SDL_MOUSEMOTION:
+				this->mouseX = event.motion.x;
+				this->mouseY = event.motion.y;
 				this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
 				break;
 			default:
@@ -171,12 +151,49 @@ void Form::ProcessEvents(ac * c) {
 
 	if ((resizex != -1) && (resizey != -1)) {
 		this->SetSize(resizex, resizey);
-//		this->OnResizePre();
+		this->RefreshVideo();
 	}
+}
+
+void Form::RefreshVideo() {
+	if (!initialized)
+		return;
+
+	int flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
+	int width = 0;
+	int height = 0;
+
+	if (this->fullscreenWidth == -1) {
+		SDL_Surface * screen = SDL_SetVideoMode(0, 0, 32, flags | SDL_FULLSCREEN);
+		this->fullscreenWidth = screen->w;
+		this->fullscreenHeight = screen->h;
+	}
+
+	if (!this->fullscreen) {
+		width = this->GetWidth();
+		height = this->GetHeight();
+ 		flags |= SDL_RESIZABLE;
+	} else {
+		width = this->fullscreenWidth;
+		height = this->fullscreenHeight;
+ 		flags |= SDL_FULLSCREEN;
+		this->SetSize(width, height);
+	}
+
+	SDL_SetVideoMode(width, height, 32, flags);
+}
+
+void Form::SetFullscreen(int mode) {
+	if (this->fullscreen == mode)
+		return;
+
+	this->fullscreen = mode;
+	this->RefreshVideo();
 }
 
 void Form::SetText(String title) {
 	this->text = title;
-	if (this->w)
-		awSetTitle(this->w, this->text.ToCharArray());
+
+	if (initialized)
+		SDL_WM_SetCaption(this->text.ToCharArray(), NULL);
 }

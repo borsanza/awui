@@ -7,7 +7,6 @@ if(UNIX)
 endif()
 	
 INCLUDE_DIRECTORIES(
-	../libaw/
 	../libawui/
 )
 
@@ -22,7 +21,6 @@ ADD_EXECUTABLE(awuiDemo	${AWUIDEMO_SOURCES}	${AWUIDEMO_HEADERS})
 TARGET_LINK_LIBRARIES(
 	awuiDemo
 	${OPENGL_LIBRARIES}
-	aw
 	awui
 #	Imm32
 )

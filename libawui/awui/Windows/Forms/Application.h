@@ -3,23 +3,20 @@
 
 #include <awui/Object.h>
 
-typedef struct _ag ag;
-
 namespace awui {
 	namespace Windows {
 		namespace Forms {
 			class Form;
 
 			class Application : public Object {
-				friend class Form;
-
-				private:
-					static ag * g;
+				static int quit;
 
 				public:
 					static void Run(Form * form);
 
 					virtual int IsClass(Classes::Enum objectClass) const;
+
+					static void Quit();
 			};
 		}
 	}

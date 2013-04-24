@@ -11,13 +11,9 @@
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/TextRenderer.h>
+#include <SDL_opengl.h>
 
 #include <iostream>
-
-extern "C" {
-	#include <aw/sysgl.h>
-	#include <aw/aw.h>
-}
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
