@@ -26,7 +26,7 @@ Control * ControlCollection::GetOwner() {
 	return this->owner;
 }
 
-void ControlCollection::Add(void * item) {
+void ControlCollection::Add(Object * item) {
 	ArrayList::Add(item);
 	((Control *)item)->SetParent(this->owner);
 	this->owner->Layout();

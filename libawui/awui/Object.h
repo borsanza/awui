@@ -13,6 +13,7 @@ namespace awui {
 			Object,
 			Application,
 			ArrayList,
+			SortedList,
 			Button,
 			Color,
 			Control,

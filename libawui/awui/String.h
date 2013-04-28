@@ -6,11 +6,12 @@
 #define __AWUISTRING_H__
 
 #include <string>
+#include <awui/Object.h>
 
 namespace awui {
 	class Object;
 
-	class String final {
+	class String final : public Object {
 		private:
 			std::string value;
 		public:
@@ -28,6 +29,8 @@ namespace awui {
 
 			bool operator==(String value);
 			bool operator!=(String value);
+			bool operator>(String value);
+			bool operator<(String value);
 			String operator+(String strB);
 			void operator+=(String strB);
 			String operator+(Object *value);
@@ -44,6 +47,8 @@ namespace awui {
 
 			String Substring(int startIndex);
 			String Substring(int startIndex, int length);
+
+			virtual String ToString();
 	};
 }
 

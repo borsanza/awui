@@ -3,7 +3,9 @@
 
 #include "form1.h"
 
+#include <awui/Console.h>
 #include <awui/Convert.h>
+#include <awui/Diagnostics/Process.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
@@ -21,6 +23,8 @@ using namespace awui::Effects;
 using namespace awui::Windows::Forms;
 
 Form1::Form1() {
+	this->mameProcess = NULL;
+	this->runMame = true;
 	this->InitializeComponent();
 }
 
@@ -91,7 +95,7 @@ void Form1::InitializeComponent() {
 
 	this->_buttons = new awui::Collections::ArrayList();
 	this->_effects = new awui::Collections::ArrayList();
-
+/*
 	this->AddButtonEffect(new EffectLinear());
 	this->AddButtonEffect(new EffectSwing());
 	this->AddButtonEffect(new EffectQuad());
@@ -104,7 +108,7 @@ void Form1::InitializeComponent() {
 	this->AddButtonEffect(new EffectElastic());
 	this->AddButtonEffect(new EffectBack());
 	this->AddButtonEffect(new EffectBounce());
-
+*/
 	this->SetSize(300, 910);
 	this->SetText("Test Form1");
 //	this->SetFullscreen(0);
@@ -169,5 +173,48 @@ void Form1::OnTick() {
 		int left = awui::Math::Round(width * value2 + 5);
 		button->SetLeft(left);
 //		button->SetText(effect->GetName() + " " + awui::Convert::ToString(left));
+	}
+
+	this->CheckMame();
+	this->CheckGames();
+}
+
+void Form1::CheckMame() {
+	if (this->runMame) {
+		this->runMame = false;
+		this->mameProcess = new Diagnostics::Process();
+		this->mameProcess->Start("mame", "-listfull");
+	}
+}
+
+void Form1::CheckGames() {
+	static TimeSpan lastTime;
+	Statistics::Stats * stats = this->GetStats();
+
+	TimeSpan time = stats->GetIdle();
+	DateTime begin = DateTime::GetNow();
+	DateTime end = begin;
+	bool reRun = false;
+
+	do {
+		if (this->mameProcess->GetHasExited()) {
+			reRun = true;
+			break;
+		}
+
+		if (!this->mameProcess->GetHasString())
+			break;
+
+		String line = this->mameProcess->GetLine();
+		end = DateTime::GetNow();
+//		Console::GetOut()->WriteLine(line);
+	} while ((end.GetTicks() - begin.GetTicks()) < ((time.GetTicks() - lastTime.GetTicks()) * 0.25));
+
+	lastTime = end.GetTicks() - begin.GetTicks();
+
+	if (reRun) {
+		delete this->mameProcess;
+		this->mameProcess = NULL;
+		this->runMame = true;
 	}
 }

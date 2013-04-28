@@ -42,6 +42,14 @@ bool String::operator!=(String value) {
 	return (String::Compare(*this, value) != 0);
 }
 
+bool String::operator>(String value) {
+	return (String::Compare(*this, value) > 0);
+}
+
+bool String::operator<(String value) {
+	return (String::Compare(*this, value) < 0);
+}
+
 String String::operator+(String strB) {
 	return String((this->value + strB.value).c_str());
 }
@@ -97,4 +105,8 @@ String String::Substring(int startIndex) {
 
 String String::Substring(int startIndex, int length) {
 	return String(this->value.substr(startIndex, length).c_str());
+}
+
+String String::ToString() {
+	return String(this->value.c_str());
 }

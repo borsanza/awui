@@ -28,7 +28,7 @@ awui::String ArrayList::ToString() {
 	return "awui.Collections.ArrayList";
 }
 
-void ArrayList::Add(void * item) {
+void ArrayList::Add(Object * item) {
 	ArraListItem * itemList = (ArraListItem *) malloc(sizeof (ArraListItem *));
 	itemList->object = item;
 	itemList->next = NULL;
@@ -56,7 +56,7 @@ void ArrayList::Clear() {
 		this->RemoveAt(0);
 }
 
-int ArrayList::IndexOf(void * item) {
+int ArrayList::IndexOf(Object * item) {
 	int pos = 0;
 
 	ArraListItem * itemListAux = this->first;
@@ -72,7 +72,7 @@ int ArrayList::IndexOf(void * item) {
 	return -1;
 }
 
-void * ArrayList::Get(int index) {
+awui::Object * ArrayList::Get(int index) {
 	int pos = 0;
 
 	ArraListItem * itemListAux = this->first;
@@ -88,7 +88,7 @@ void * ArrayList::Get(int index) {
 	return NULL;
 }
 
-void ArrayList::Remove(void * item) {
+void ArrayList::Remove(Object * item) {
 	ArraListItem * itemListAux = this->first;
 	ArraListItem * last = NULL;
 
@@ -134,7 +134,7 @@ void ArrayList::RemoveAt(int index) {
 	}
 }
 
-void ArrayList::SetChildIndex(void * item, int index) {
+void ArrayList::SetChildIndex(Object * item, int index) {
 	ArraListItem * itemListAux = this->first;
 	ArraListItem * last = NULL;
 

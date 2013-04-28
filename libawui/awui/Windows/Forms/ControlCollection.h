@@ -19,7 +19,7 @@ namespace awui {
 					virtual int IsClass(Classes::Enum objectClass) const;
 
 					Control * GetOwner();
-					virtual void Add(void * item);
+					virtual void Add(Object * item);
 			};
 		}
 	}

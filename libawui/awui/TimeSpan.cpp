@@ -9,6 +9,10 @@
 
 using namespace awui;
 
+TimeSpan::TimeSpan() {
+	this->ticks = 0;
+}
+
 TimeSpan::TimeSpan(long long ticks) {
 	this->ticks = ticks;
 }
@@ -98,4 +102,10 @@ awui::String TimeSpan::ToString() {
 	output += ConvertDecimals(value, 7);
 
 	return output;
+}
+
+TimeSpan & TimeSpan::operator= (const TimeSpan & other) {
+	this->ticks = other.ticks;
+
+	return *this;
 }

@@ -20,6 +20,12 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Statistics;
 
 Stats::Stats() {
+	this->used = 0;
+	this->idle = TimeSpan(this->used.TicksPerSecond / 60.0f);
+	this->total = this->idle;
+	this->beforeSync = DateTime::GetNow();
+	this->beforeSync_last = DateTime::GetNow();
+	this->afterSync = DateTime::GetNow();
 }
 
 Stats::~Stats() {
@@ -28,10 +34,17 @@ Stats::~Stats() {
 void Stats::SetTimeBeforeVSync() {
 	this->beforeSync_last = this->beforeSync;
 	this->beforeSync = DateTime::GetNow();
+
+	this->used = TimeSpan(beforeSync.GetTicks() - afterSync.GetTicks());
+	this->idle = TimeSpan(afterSync.GetTicks() - beforeSync_last.GetTicks());
+	this->total = TimeSpan(beforeSync.GetTicks() - beforeSync_last.GetTicks());
+}
+
+awui::TimeSpan Stats::GetIdle() {
+	return this->idle;
 }
 
 void Stats::SetTimeAfterVSync() {
-	this->afterSync_last = this->afterSync;
 	this->afterSync = DateTime::GetNow();
 }
 
@@ -78,17 +91,14 @@ void Stats::Draw(GL* gl, int width, int height) {
 
 	this->DrawString(letra, 5, 15);
 
-	TimeSpan t(beforeSync.GetTicks() - afterSync.GetTicks());
 	this->DrawString("Used:", 5, 35);
-	this->DrawString(t.ToString(), 65, 35);
+	this->DrawString(this->used.ToString(), 65, 35);
 
-	TimeSpan t2(afterSync.GetTicks() - beforeSync_last.GetTicks());
 	this->DrawString("Idle:", 5, 55);
-	this->DrawString(t2.ToString(), 65, 55);
+	this->DrawString(this->idle.ToString(), 65, 55);
 
-	TimeSpan t3(beforeSync.GetTicks() - beforeSync_last.GetTicks());
 	this->DrawString("Total:", 5, 75);
-	this->DrawString(t3.ToString(), 65, 75);
+	this->DrawString(this->total.ToString(), 65, 75);
 
 	pos = (pos + 1) % 4;
 }

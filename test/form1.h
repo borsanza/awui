@@ -4,12 +4,16 @@
 #include <awui/Windows/Forms/Form.h>
 
 namespace awui {
-	namespace Effects {
-		class Effect;
-	}
-
 	namespace Collections {
 		class ArrayList;
+	}
+
+	namespace Diagnostics {
+		class Process;
+	}
+
+	namespace Effects {
+		class Effect;
 	}
 
 	namespace Windows {
@@ -28,6 +32,9 @@ class Form1 : public awui::Windows::Forms::Form {
 		awui::Collections::ArrayList * _buttons;
 		awui::Collections::ArrayList * _effects;
 
+		bool runMame;
+		awui::Diagnostics::Process* mameProcess;
+
 	public:
 		Form1();
 		virtual ~Form1();
@@ -37,4 +44,7 @@ class Form1 : public awui::Windows::Forms::Form {
 		void AddButtonEffect(awui::Effects::Effect * effect);
 
 		virtual void OnTick();
+
+		void CheckMame();
+		void CheckGames();
 };

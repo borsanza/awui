@@ -23,6 +23,7 @@ namespace awui {
 			String ConvertDecimals(int value, int decimals);
 
 		public:
+			TimeSpan();
 			TimeSpan(long long ticks);
 			TimeSpan(int hours, int minutes, int seconds);
 			TimeSpan(int days, int hours, int minutes, int seconds);
@@ -43,6 +44,8 @@ namespace awui {
 			int GetDays() const;
 
 			virtual String ToString();
+
+			TimeSpan & operator= (const TimeSpan & other);
 	};
 }
 

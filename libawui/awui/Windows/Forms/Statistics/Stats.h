@@ -3,6 +3,7 @@
 
 #include <awui/Object.h>
 #include <awui/DateTime.h>
+#include <awui/TimeSpan.h>
 
 namespace awui {
 	class String;
@@ -18,8 +19,11 @@ namespace awui {
 					private:
 						DateTime afterSync;
 						DateTime beforeSync;
-						DateTime afterSync_last;
 						DateTime beforeSync_last;
+
+						TimeSpan idle;
+						TimeSpan total;
+						TimeSpan used;
 
 						void DrawString(String text, int x, int y);
 
@@ -31,6 +35,7 @@ namespace awui {
 						void SetTimeAfterVSync();
 
 						void Draw(OpenGL::GL* gl, int width, int height);
+						TimeSpan GetIdle();
 				};
 			}
 		}

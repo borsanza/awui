@@ -3,11 +3,12 @@
 
 // based on easing equations from Robert Penner (http://www.robertpenner.com/easing)
 
+#include <awui/Object.h>
 #include <awui/String.h>
 
 namespace awui {
 	namespace Effects {
-		class Effect {
+		class Effect : public Object {
 			private:
 				String name;
 

@@ -62,12 +62,16 @@ void Form::OnPaintForm() {
 	rectangle.SetHeight(this->GetHeight());
 	gl.SetClippingBase(rectangle);
 	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
-	stats.SetTimeBeforeVSync();
-	stats.Draw(&gl, this->GetWidth(), this->GetHeight());
+	this->stats.Draw(&gl, this->GetWidth(), this->GetHeight());
+	this->stats.SetTimeBeforeVSync();
+}
+
+Statistics::Stats * Form::GetStats() {
+	return &this->stats;
 }
 
 void Form::ProcessEvents() {
-	stats.SetTimeAfterVSync();
+	this->stats.SetTimeAfterVSync();
 	int resizex = -1;
 	int resizey = -1;
 	SDL_Event event;

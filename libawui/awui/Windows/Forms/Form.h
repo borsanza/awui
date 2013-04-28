@@ -44,6 +44,8 @@ namespace awui {
 					void SetText(String title);
 					void RefreshVideo();
 					void SetFullscreen(int mode);
+
+					Statistics::Stats * GetStats();
 			};
 		}
 	}

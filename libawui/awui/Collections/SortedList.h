@@ -2,17 +2,18 @@
 // feedback: borsanza AT gmail DOT com
 
 #pragma once
-#ifndef __AWUIARRAYLIST_H__
-#define __AWUIARRAYLIST_H__
+#ifndef __AWUISORTEDLIST_H__
+#define __AWUISORTEDLIST_H__
 
 #include <awui/Object.h>
 
 namespace awui {
 	namespace Collections {
-		class ArrayList : public Object {
+		class SortedList : public Object {
 			private:
 				struct ArraListItem {
-					Object * object;
+					Object * key;
+					Object * value;
 					ArraListItem * next;
 				};
 
@@ -20,22 +21,20 @@ namespace awui {
 				int count;
 
 			public:
-				ArrayList();
-				virtual ~ArrayList();
+				SortedList();
+				virtual ~SortedList();
 
 				virtual int IsClass(Classes::Enum objectClass) const;
 
 				virtual String ToString();
 
-				virtual void Add(Object * item);
+				virtual void Add(Object * key, Object * value);
 				int GetCount();
 
 				void Clear();
-				Object * Get(int index);
-				int IndexOf(Object * item);
-				void Remove(Object * item);
+				Object * GetKey(int index);
+				Object * GetByIndex(int index);
 				void RemoveAt(int index);
-				void SetChildIndex(Object * item, int index);
 		};
 	}
 }
