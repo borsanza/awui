@@ -6,6 +6,7 @@
 #include <awui/Math.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
+#include <awui/Drawing/GlyphMetrics.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Image.h>
 #include <awui/OpenGL/GL.h>
@@ -56,20 +57,21 @@ void Button::OnMouseMove(MouseEventArgs* e) {
 }
 
 void Button::OnPaint(GL* gl) {
-	Font font = Font("Monospace", 11);
+	Font font = Font("Monospace", 11); // FontStyle::Strikeout | FontStyle::Underline);
 
-	Size size = TextRenderer::GetMeasureText(this->text, &font);
+	GlyphMetrics metrics = TextRenderer::GetMeasureText(this->text, &font);
 
-	Drawing::Image * image = new Drawing::Image(size.GetWidth(), size.GetHeight());
+	Drawing::Image * image = new Drawing::Image(metrics.GetWidth(), metrics.GetHeight());
 	Drawing::Graphics * g = Drawing::Graphics::FromImage(image);
+//	g->Clear(Color::FromArgb(255,0,0));
 	g->DrawString(this->text, &font, Color::FromArgb(0, 0, 0), 0, 0);
 
-	GL::DrawImageGL(image, Math::Round((this->GetWidth() - size.GetWidth()) / 2.0f), Math::Round((this->GetHeight() - size.GetHeight()) / 2.0f));
+	GL::DrawImageGL(image, Math::Round((this->GetWidth() - metrics.GetWidth()) / 2.0f), Math::Round((this->GetHeight() / 2.0f) + metrics.GetBearingY()));
 
 	delete g;
 	delete image;
 
-//	std::cout << size.GetWidth() << "x" << size.GetHeight() << ": " << this->text << std::endl;
+//	std::cout << metrics.GetWidth() << "x" << metrics.GetHeight() << ": " << this->text << std::endl;
 
 	if (!this->show)
 		return;

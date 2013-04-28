@@ -14,7 +14,7 @@ namespace awui {
 		class Font;
 		class Image;
 		class Pen;
-		class Size;
+		class GlyphMetrics;
 
 		class Graphics : public Object {
 			private:
@@ -23,7 +23,6 @@ namespace awui {
 
 				void SetPen(Drawing::Pen * pen);
 				Graphics();
-				int GetBorderY(Drawing::Font * font) const;
 
 			public:
 				virtual ~Graphics();
@@ -39,7 +38,7 @@ namespace awui {
 				void DrawImage(Drawing::Image * image, float x, float y, float width, float height);
 				void DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float y2);
 
-				Drawing::Size GetMeasureText(const String text, Drawing::Font *font) const;
+				Drawing::GlyphMetrics GetMeasureText(const String text, Drawing::Font *font) const;
 				void DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y);
 		};
 	}

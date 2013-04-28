@@ -8,6 +8,7 @@
 #include <awui/Collections/ArrayList.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/Statistics/Stats.h>
 
 namespace awui {
 	namespace Windows {
@@ -19,6 +20,7 @@ namespace awui {
 				private:
 					Control * mouseControlOver;
 					String text;
+					Statistics::Stats stats;
 
 					int mouseX;
 					int mouseY;

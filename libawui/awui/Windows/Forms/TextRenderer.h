@@ -8,8 +8,9 @@ namespace awui {
 		class Font;
 		class Graphics;
 		class Image;
-		class Size;
+		class GlyphMetrics;
 	}
+
 	namespace Windows {
 		namespace Forms {
 			class TextRenderer {
@@ -18,7 +19,7 @@ namespace awui {
 					static awui::Drawing::Image * image;
 
 				public:
-					static awui::Drawing::Size GetMeasureText(const String text, awui::Drawing::Font *font);
+					static awui::Drawing::GlyphMetrics GetMeasureText(const String text, awui::Drawing::Font *font);
 			};
 		}
 	}

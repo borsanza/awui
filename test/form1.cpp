@@ -107,7 +107,7 @@ void Form1::InitializeComponent() {
 
 	this->SetSize(300, 910);
 	this->SetText("Test Form1");
-	this->SetFullscreen(0);
+//	this->SetFullscreen(0);
 }
 
 void Form1::AddButtonEffect(Effect * effect) {
@@ -117,7 +117,7 @@ void Form1::AddButtonEffect(Effect * effect) {
 		Button * button = new Button();
 		button->SetDock(DockStyle::None);
 		button->SetText(effect->GetName());
-		button->SetSize(75, 18);
+		button->SetSize(90, 18);
 		button->SetTop(y);
 		this->_panel->GetControls()->Add(button);
 

@@ -8,21 +8,15 @@
 using namespace awui::Windows::Forms;
 
 //#include <awui/Console.h>
-//#include <awui/Convert.h>
-//#include <awui/Random.h>
-//#include <awui/TimeSpan.h>
+//#include <awui/Diagnostics/Process.h>
 
 int main(int argc, char ** argv) {
-//	awui::TimeSpan a(10,20,30,40,50);
-//	awui::TimeSpan a(1);
-
-//	Console::GetOut()->WriteLine(&a);
 /*
-	Random a;
-	int f = 2;
-	for (int i=0; i<=20; i++) {
-		f = a.Next(1, 100);
-		Console::GetOut()->WriteLine(Convert::ToString(f));
+	awui::Diagnostics::Process proceso;
+	proceso.Start("mame", "-listfull");
+	while (!proceso.GetHasExited()) {
+		if (proceso.GetHasString())
+			Console::GetOut()->WriteLine(proceso.GetLine());
 	}
 */
 	Form1 *form = new Form1();

@@ -5,6 +5,7 @@
 
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
+#include <awui/Drawing/GlyphMetrics.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Drawing/Pen.h>
 #include <awui/Drawing/Size.h>
@@ -97,18 +98,9 @@ void Graphics::DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float 
 	cairo_restore(this->cr);
 }
 
-#define BORDERX 2
-#define BORDERY 2
+#define BORDER 2
 
-int Graphics::GetBorderY(Drawing::Font * font) const {
-	float size = font->GetSize() * 0.07f;
-	size = Math::Max(Math::Round(size), 1.0f);
-	size *= 3.0f;
-	size += BORDERY;
-	return size;
-}
-
-Size Graphics::GetMeasureText(const String text, Drawing::Font *font) const {
+GlyphMetrics Graphics::GetMeasureText(const String text, Drawing::Font *font) const {
 	cairo_font_weight_t weight;
 	cairo_font_slant_t slant;
 
@@ -130,7 +122,15 @@ Size Graphics::GetMeasureText(const String text, Drawing::Font *font) const {
 	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
 	cairo_restore(this->cr);
 
-	return Size(extents.width + (BORDERX * 2), extents.height + extents.height + extents.y_bearing + (GetBorderY(font) * 2));
+	GlyphMetrics metrics;
+	metrics.SetWidth(extents.width + BORDER*2);
+	metrics.SetHeight(extents.height + BORDER*2);
+	metrics.SetAdvanceX(extents.x_advance);
+	metrics.SetAdvanceY(extents.y_advance);
+	metrics.SetBearingX(extents.x_bearing + BORDER);
+	metrics.SetBearingY(extents.y_bearing + BORDER);
+
+	return metrics;
 }
 
 void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y) {
@@ -155,12 +155,10 @@ void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing
 	cairo_set_font_size(this->cr, font->GetSize());
 	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
 
-	x += BORDERX;
-	y += GetBorderY(font) + extents.height;
+	int posx = x - extents.x_bearing + BORDER;
+	int posy = y - extents.y_bearing + BORDER;
 
-	int posx = Math::Round(x - extents.x_bearing);
-
-	cairo_move_to(this->cr, posx, y);
+	cairo_move_to(this->cr, posx, posy);
 	cairo_show_text(this->cr, text.ToCharArray());
 	cairo_restore(this->cr);
 
@@ -172,15 +170,15 @@ void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing
 	cairo_set_antialias(this->cr, cairo_antialias_t::CAIRO_ANTIALIAS_NONE);
 
 	if (font->GetStrikeout()) {
-		float posy =  y + (extents.y_bearing / 2.0f);
+		float posy =  y - (extents.y_bearing / 2.0f) + BORDER;;
 		posy = Math::Round(posy);
-		this->DrawLine(&pen, BORDERX, posy, extents.width + BORDERX, posy);
+		this->DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
 	}
 
 	if (font->GetUnderline()) {
-		float posy =  y + (size * 1.5f);
+		float posy =  y - extents.y_bearing + BORDER + (size * 1.5f);
 		posy = Math::Round(posy);
-		this->DrawLine(&pen, BORDERX, posy, extents.width + BORDERX, posy);
+		this->DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
 	}
 
 	cairo_set_antialias(this->cr, old);
