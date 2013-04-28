@@ -44,9 +44,11 @@ void GL::SetClipping() {
 
 void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
 	static GLuint texture1;
+
 	glDisable (GL_DEPTH_TEST);
 	glEnable (GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glGenTextures(1,&texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

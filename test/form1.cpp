@@ -168,6 +168,6 @@ void Form1::OnTick() {
 		int width = this->_panel->GetWidth() - button->GetWidth() - 10;
 		int left = awui::Math::Round(width * value2 + 5);
 		button->SetLeft(left);
-		button->SetText(effect->GetName() + " " + awui::Convert::ToString(left));
+//		button->SetText(effect->GetName() + " " + awui::Convert::ToString(left));
 	}
 }

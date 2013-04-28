@@ -2,8 +2,11 @@
 // feedback: borsanza AT gmail DOT com
 
 #include <awui/Object.h>
+#include <awui/DateTime.h>
 
 namespace awui {
+	class String;
+
 	namespace OpenGL {
 		class GL;
 	}
@@ -12,6 +15,14 @@ namespace awui {
 		namespace Forms {
 			namespace Statistics {
 				class Stats {
+					private:
+						DateTime afterSync;
+						DateTime beforeSync;
+						DateTime afterSync_last;
+						DateTime beforeSync_last;
+
+						void DrawString(String text, int x, int y);
+
 					public:
 						Stats();
 						virtual ~Stats();

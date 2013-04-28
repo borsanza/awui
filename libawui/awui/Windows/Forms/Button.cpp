@@ -6,7 +6,6 @@
 #include <awui/Math.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
-#include <awui/Drawing/GlyphMetrics.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Image.h>
 #include <awui/OpenGL/GL.h>
@@ -26,9 +25,16 @@ Button::Button() {
 	this->testx = 0;
 	this->testy = 0;
 	this->show = 0;
+	this->image = NULL;
+	this->g = NULL;
 }
 
 Button::~Button() {
+	if (this->g)
+		delete this->g;
+
+	if (this->image)
+		delete this->image;
 }
 
 int Button::IsClass(Classes::Enum objectClass) const {
@@ -57,21 +63,8 @@ void Button::OnMouseMove(MouseEventArgs* e) {
 }
 
 void Button::OnPaint(GL* gl) {
-	Font font = Font("Monospace", 11); // FontStyle::Strikeout | FontStyle::Underline);
-
-	GlyphMetrics metrics = TextRenderer::GetMeasureText(this->text, &font);
-
-	Drawing::Image * image = new Drawing::Image(metrics.GetWidth(), metrics.GetHeight());
-	Drawing::Graphics * g = Drawing::Graphics::FromImage(image);
-//	g->Clear(Color::FromArgb(255,0,0));
-	g->DrawString(this->text, &font, Color::FromArgb(0, 0, 0), 0, 0);
-
-	GL::DrawImageGL(image, Math::Round((this->GetWidth() - metrics.GetWidth()) / 2.0f), Math::Round((this->GetHeight() / 2.0f) + metrics.GetBearingY()));
-
-	delete g;
-	delete image;
-
-//	std::cout << metrics.GetWidth() << "x" << metrics.GetHeight() << ": " << this->text << std::endl;
+	if (image)
+		GL::DrawImageGL(image, Math::Round((this->GetWidth() - this->metrics.GetWidth()) / 2.0f), Math::Round((this->GetHeight() / 2.0f) + this->metrics.GetBearingY()));
 
 	if (!this->show)
 		return;
@@ -79,13 +72,13 @@ void Button::OnPaint(GL* gl) {
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_LINES);
 	glVertex2f(0, 0);
-	glVertex2f(testx, this->testy);
+	glVertex2f(this->testx, this->testy);
 	glVertex2f(this->GetWidth() - 1, 0);
-	glVertex2f(testx, this->testy);
+	glVertex2f(this->testx, this->testy);
 	glVertex2f(0, this->GetHeight() - 1);
-	glVertex2f(testx, this->testy);
+	glVertex2f(this->testx, this->testy);
 	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
-	glVertex2f(testx, this->testy);
+	glVertex2f(this->testx, this->testy);
 	glEnd();
 
 	glBegin(GL_LINES);
@@ -102,6 +95,19 @@ void Button::OnPaint(GL* gl) {
 
 void Button::SetText(const String str) {
 	this->text = str;
+
+	if (this->g)
+		delete this->g;
+
+	if (this->image)
+		delete this->image;
+
+	Font font = Font("Monospace", 11); // FontStyle::Strikeout | FontStyle::Underline);
+	this->metrics = TextRenderer::GetMeasureText(this->text, &font);
+
+	this->image = new Drawing::Image(this->metrics.GetWidth(), this->metrics.GetHeight());
+	this->g = Drawing::Graphics::FromImage(this->image);
+	this->g->DrawString(this->text, &font, Color::FromArgb(255, 0, 0), 0, 0);
 }
 
 const awui::String Button::GetName() {

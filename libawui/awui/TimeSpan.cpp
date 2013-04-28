@@ -90,9 +90,9 @@ awui::String TimeSpan::ToString() {
 		output += Convert::ToString(value) + ".";
 	}
 
-	output += Convert::ToString(GetHours()) + ":";
-	output += Convert::ToString(GetMinutes()) + ":";
-	output += Convert::ToString(GetSeconds()) + ".";
+	output += ConvertDecimals(GetHours(), 2) + ":";
+	output += ConvertDecimals(GetMinutes(), 2) + ":";
+	output += ConvertDecimals(GetSeconds(), 2) + ".";
 
 	value = GetTicks() % 10000000;
 	output += ConvertDecimals(value, 7);

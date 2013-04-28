@@ -1,10 +1,16 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
+#include <awui/Drawing/GlyphMetrics.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui {
+	namespace Drawing {
+		class Graphics;
+		class Image;
+	}
+
 	namespace OpenGL {
 		class GL;
 	}
@@ -17,6 +23,10 @@ namespace awui {
 					int testx;
 					int testy;
 					int show;
+
+					Drawing::Image * image;
+					Drawing::Graphics *g;
+					Drawing::GlyphMetrics metrics;
 
 				public:
 					Button();
