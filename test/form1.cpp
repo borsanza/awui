@@ -95,7 +95,7 @@ void Form1::InitializeComponent() {
 
 	this->_buttons = new awui::Collections::ArrayList();
 	this->_effects = new awui::Collections::ArrayList();
-/*
+
 	this->AddButtonEffect(new EffectLinear());
 	this->AddButtonEffect(new EffectSwing());
 	this->AddButtonEffect(new EffectQuad());
@@ -108,7 +108,7 @@ void Form1::InitializeComponent() {
 	this->AddButtonEffect(new EffectElastic());
 	this->AddButtonEffect(new EffectBack());
 	this->AddButtonEffect(new EffectBounce());
-*/
+
 	this->SetSize(300, 910);
 	this->SetText("Test Form1");
 //	this->SetFullscreen(0);

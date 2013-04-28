@@ -107,7 +107,7 @@ void Button::SetText(const String str) {
 
 	this->image = new Drawing::Image(this->metrics.GetWidth(), this->metrics.GetHeight());
 	this->g = Drawing::Graphics::FromImage(this->image);
-	this->g->DrawString(this->text, &font, Color::FromArgb(255, 0, 0), 0, 0);
+	this->g->DrawString(this->text, &font, Color::FromArgb(0, 0, 0), 0, 0);
 }
 
 const awui::String Button::GetName() {

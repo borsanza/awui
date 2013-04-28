@@ -5,13 +5,14 @@
 
 #include <awui/Windows/Forms/Application.h>
 
-#include <awui/Collections/SortedList.h>
-#include <awui/String.h>
-#include <awui/Console.h>
+//#include <awui/Collections/SortedList.h>
+//#include <awui/String.h>
+//#include <awui/Console.h>
 
 using namespace awui::Windows::Forms;
 
 int main(int argc, char ** argv) {
+/*
 	awui::Collections::SortedList sort;
 	sort.Add(new awui::String("b"), new awui::String("je"));
 	sort.Add(new awui::String("d"), new awui::String("jo"));
@@ -25,7 +26,7 @@ int main(int argc, char ** argv) {
 		String * value = (String *) sort.GetByIndex(i);
 		Console::GetOut()->WriteLine(*key + " - " + *value);
 	}
-
+*/
 	Form1 *form = new Form1();
 
 	Application::Run(form);
