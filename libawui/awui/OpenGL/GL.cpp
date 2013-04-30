@@ -1,4 +1,4 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
+// (c) Copyright 2011 Borja SÃ¡nchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
 #include "GL.h"
@@ -38,40 +38,13 @@ void GL::SetClipping() {
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
 }
 
-#ifndef GL_BGRA
-#define GL_BGRA 0x80E1
-#endif
-
 void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	static GLuint texture1;
-
-	glGenTextures(1,&texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->GetWidth(), image->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, image->image);
-
-	glPushMatrix();
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);glVertex2f(x, y);
-	glTexCoord2f(1.0f, 0.0f);glVertex2f(x + image->GetWidth(), y);
-	glTexCoord2f(1.0f, 1.0f);glVertex2f(x + image->GetWidth(), y + image->GetHeight());
-	glTexCoord2f(0.0f, 1.0f);glVertex2f(x, y + image->GetHeight()) ;
-	glEnd();
-
-	glDeleteTextures(1, &texture1);
-
-	glPopMatrix();
-/*
-	glRasterPos2f(x, y + image->GetHeight());
+	glPixelZoom(1.0f, -1.0f);
+	glRasterPos2f(x, y);
 	glDrawPixels(image->GetWidth(), image->GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, image->image);
 	glDisable(GL_BLEND);
-*/
 }
