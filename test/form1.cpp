@@ -175,8 +175,8 @@ void Form1::OnTick() {
 //		button->SetText(effect->GetName() + " " + awui::Convert::ToString(left));
 	}
 
-	this->CheckMame();
-	this->CheckGames();
+	//this->CheckMame();
+	//this->CheckGames();
 }
 
 void Form1::CheckMame() {

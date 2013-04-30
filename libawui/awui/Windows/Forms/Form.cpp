@@ -191,7 +191,7 @@ void Form::RefreshVideo() {
 	if (!initialized)
 		return;
 
-    SDL_Surface * screen;
+	SDL_Surface * screen;
 
 	int flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
 	int width = 0;

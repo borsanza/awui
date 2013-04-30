@@ -43,11 +43,11 @@ void GL::SetClipping() {
 #endif
 
 void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
-	static GLuint texture1;
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glDisable (GL_DEPTH_TEST);
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	static GLuint texture1;
 
 	glGenTextures(1,&texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
@@ -69,4 +69,9 @@ void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
 	glDeleteTextures(1, &texture1);
 
 	glPopMatrix();
+/*
+	glRasterPos2f(x, y + image->GetHeight());
+	glDrawPixels(image->GetWidth(), image->GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, image->image);
+	glDisable(GL_BLEND);
+*/
 }
