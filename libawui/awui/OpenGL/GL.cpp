@@ -38,6 +38,10 @@ void GL::SetClipping() {
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
 }
 
+#ifndef GL_BGRA
+#define GL_BGRA 0x80E1
+#endif
+
 void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
