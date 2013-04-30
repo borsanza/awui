@@ -221,7 +221,6 @@ void Form::RefreshVideo() {
 //		swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
 //	else if (checkGLXExtension("GLX_SGI_swap_control", screen))
 	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-
 	swapInterval(1);
 }
 

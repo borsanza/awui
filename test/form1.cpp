@@ -175,8 +175,8 @@ void Form1::OnTick() {
 //		button->SetText(effect->GetName() + " " + awui::Convert::ToString(left));
 	}
 
-	//this->CheckMame();
-	//this->CheckGames();
+//	this->CheckMame();
+//	this->CheckGames();
 }
 
 void Form1::CheckMame() {
@@ -208,7 +208,7 @@ void Form1::CheckGames() {
 		String line = this->mameProcess->GetLine();
 		end = DateTime::GetNow();
 //		Console::GetOut()->WriteLine(line);
-	} while ((end.GetTicks() - begin.GetTicks()) < ((time.GetTicks() - lastTime.GetTicks()) * 0.25));
+	} while ((end.GetTicks() - begin.GetTicks()) < ((time.GetTicks() - lastTime.GetTicks()) * 0.35));
 
 	lastTime = end.GetTicks() - begin.GetTicks();
 
