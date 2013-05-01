@@ -69,7 +69,7 @@ void Button::OnPaint(GL* gl) {
 	if (!this->show)
 		return;
 
-	glColor3f(0.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_LINES);
 	glVertex2f(0, 0);
 	glVertex2f(this->testx, this->testy);
@@ -102,12 +102,12 @@ void Button::SetText(const String str) {
 	if (this->image)
 		delete this->image;
 
-	Font font = Font("Monospace", 11); //, FontStyle::Bold | FontStyle::Strikeout | FontStyle::Underline);
+	Font font = Font("Monospace", 20, FontStyle::Bold); // FontStyle::Strikeout | FontStyle::Underline);
 	this->metrics = TextRenderer::GetMeasureText(this->text, &font);
 
 	this->image = new Drawing::Image(this->metrics.GetWidth(), this->metrics.GetHeight());
 	this->g = Drawing::Graphics::FromImage(this->image);
-	this->g->DrawString(this->text, &font, Color::FromArgb(0, 0, 0), 0, 0);
+	this->g->DrawString(this->text, &font, Color::FromArgb(255, 255, 255), 0, 0);
 }
 
 const awui::String Button::GetName() {

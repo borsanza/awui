@@ -34,6 +34,7 @@ class Form1 : public awui::Windows::Forms::Form {
 		awui::Collections::ArrayList * _effects;
 
 		bool runMame;
+		bool endMame;
 		awui::Diagnostics::Process* mameProcess;
 		awui::Collections::SortedList games;
 

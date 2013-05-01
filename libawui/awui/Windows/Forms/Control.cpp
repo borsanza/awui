@@ -230,8 +230,24 @@ void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	switch (this->backColor.GetA()) {
+		case 255:
+			glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			break;
+		case 0:
+			break;
+		default:
+			glColor4f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
+
+			glBegin(GL_QUADS);
+			glVertex2f(-1, 0);
+			glVertex2f(width, 0);
+			glVertex2f(width, height);
+			glVertex2f(-1, height);
+			glEnd();
+			break;
+	}
 
 	this->OnPaint(NULL);
 

@@ -25,6 +25,7 @@ using namespace awui::Windows::Forms;
 Form1::Form1() {
 	this->mameProcess = NULL;
 	this->runMame = true;
+	this->endMame = false;
 	this->InitializeComponent();
 }
 
@@ -65,7 +66,7 @@ void Form1::InitializeComponent() {
 	button->SetDock(DockStyle::Fill);
 	button->SetText("Button Splitter Left");
 	button->SetMinimumSize(Size(75, 23));
-	button->SetBackColor(Color::FromArgb(0, 0, 255));
+	button->SetBackColor(Color::FromArgb(0, 0, 0));
 	button2->SetDock(DockStyle::Fill);
 	button2->SetText("Button Top");
 	button2->SetMinimumSize(Size(75, 23));
@@ -76,9 +77,9 @@ void Form1::InitializeComponent() {
 
 	button = new Button();
 	button->SetDock(DockStyle::None);
-	button->SetBounds(10, 10, 20, 20);
+	button->SetBounds(10, 10, 200, 30);
 	button->SetText("Button Right2");
-	button->SetBackColor(Color::FromArgb(255, 0, 255));
+	button->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->_splitter->GetPanel2()->GetControls()->Add(button2);
 	this->_splitter->GetPanel2()->GetControls()->Add(button);
 	this->_splitter->SetDock(DockStyle::Fill);
@@ -88,9 +89,10 @@ void Form1::InitializeComponent() {
 
 	this->_panel = this->_splitter->GetPanel1();
 */
+	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->_panel = new Panel();
 	this->_panel->SetDock(DockStyle::Fill);
-	this->_panel->SetBackColor(Color::FromArgb(0, 0, 0));
+	this->_panel->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->GetControls()->Add(this->_panel);
 
 	this->_buttons = new awui::Collections::ArrayList();
@@ -121,14 +123,15 @@ void Form1::AddButtonEffect(Effect * effect) {
 		Button * button = new Button();
 		button->SetDock(DockStyle::None);
 		button->SetText(effect->GetName());
-		button->SetSize(90, 18);
+		button->SetSize(150, 27);
+		button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 		button->SetTop(y);
 		this->_panel->GetControls()->Add(button);
 
 		this->_buttons->Add(button);
 		this->_effects->Add(effect);
 
-		y += button->GetHeight() + 5;
+		y += button->GetHeight();
 	}
 }
 
@@ -175,8 +178,10 @@ void Form1::OnTick() {
 //		button->SetText(effect->GetName() + " " + awui::Convert::ToString(left));
 	}
 
-	this->CheckMame();
-	this->CheckGames();
+	if (!this->endMame) {
+		this->CheckMame();
+		this->CheckGames();
+	}
 }
 
 void Form1::CheckMame() {
@@ -200,6 +205,7 @@ void Form1::CheckGames() {
 
 	do {
 		if (this->mameProcess->GetHasExited()) {
+			this->endMame = true;
 //			reRun = true;
 			break;
 		}
