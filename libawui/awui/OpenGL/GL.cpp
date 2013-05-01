@@ -43,12 +43,47 @@ void GL::SetClipping() {
 #endif
 
 void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
+	// Mas rapido guardandose solo el valor y recuperarlo despues
+	GLboolean oldDepth = glIsEnabled(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
+
+	GLboolean oldBlend = glIsEnabled(GL_BLEND);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glPixelZoom(1.0f, -1.0f);
 	glRasterPos2f(x, y);
-	glDrawPixels(image->GetWidth(), image->GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, image->image);
-	glDisable(GL_BLEND);
+	GLboolean valid;
+	glGetBooleanv(GL_CURRENT_RASTER_POSITION_VALID,&valid);
+	if (valid) {
+		glDrawPixels(image->GetWidth(), image->GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, image->image);
+	} else {
+		static GLuint texture1;
+
+		glGenTextures(1, &texture1);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->GetWidth(), image->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, image->image);
+
+		glPushMatrix();
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);glVertex2f(x, y);
+		glTexCoord2f(1.0f, 0.0f);glVertex2f(x + image->GetWidth(), y);
+		glTexCoord2f(1.0f, 1.0f);glVertex2f(x + image->GetWidth(), y + image->GetHeight());
+		glTexCoord2f(0.0f, 1.0f);glVertex2f(x, y + image->GetHeight()) ;
+		glEnd();
+
+		glDeleteTextures(1, &texture1);
+
+		glPopMatrix();
+	}
+
+	if (!oldBlend)
+		glDisable(GL_BLEND);
+	if (oldDepth)
+		glEnable(GL_BLEND);
 }

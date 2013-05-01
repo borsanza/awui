@@ -2,6 +2,7 @@
 // feedback: borsanza AT gmail DOT com
 
 #include <awui/Windows/Forms/Form.h>
+#include <awui/Collections/SortedList.h>
 
 namespace awui {
 	namespace Collections {
@@ -34,6 +35,7 @@ class Form1 : public awui::Windows::Forms::Form {
 
 		bool runMame;
 		awui::Diagnostics::Process* mameProcess;
+		awui::Collections::SortedList games;
 
 	public:
 		Form1();

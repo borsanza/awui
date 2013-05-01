@@ -110,3 +110,11 @@ String String::Substring(int startIndex, int length) {
 String String::ToString() {
 	return String(this->value.c_str());
 }
+
+int String::IndexOf(String value) {
+	std::string::size_type loc = this->value.find(value.value, 0);
+	if (loc != std::string::npos)
+		return loc;
+
+	return -1;
+}

@@ -175,30 +175,32 @@ void Form1::OnTick() {
 //		button->SetText(effect->GetName() + " " + awui::Convert::ToString(left));
 	}
 
-//	this->CheckMame();
-//	this->CheckGames();
+	this->CheckMame();
+	this->CheckGames();
 }
 
 void Form1::CheckMame() {
 	if (this->runMame) {
 		this->runMame = false;
+		this->games.Clear();
 		this->mameProcess = new Diagnostics::Process();
 		this->mameProcess->Start("mame", "-listfull");
 	}
 }
 
 void Form1::CheckGames() {
+	static int lines = 0;
 	static TimeSpan lastTime;
 	Statistics::Stats * stats = this->GetStats();
 
 	TimeSpan time = stats->GetIdle();
 	DateTime begin = DateTime::GetNow();
 	DateTime end = begin;
-	bool reRun = false;
+//	bool reRun = false;
 
 	do {
 		if (this->mameProcess->GetHasExited()) {
-			reRun = true;
+//			reRun = true;
 			break;
 		}
 
@@ -206,15 +208,36 @@ void Form1::CheckGames() {
 			break;
 
 		String line = this->mameProcess->GetLine();
+		lines++;
+		if (lines == 1)
+			continue;
+
 		end = DateTime::GetNow();
-//		Console::GetOut()->WriteLine(line);
-	} while ((end.GetTicks() - begin.GetTicks()) < ((time.GetTicks() - lastTime.GetTicks()) * 0.35));
+
+		int pos = line.IndexOf(" ");
+		awui::String key = line.Substring(0, pos);
+
+		pos = line.IndexOf("\"");
+		awui::String name = line.Substring(pos + 1);
+		pos = name.IndexOf("\"");
+		name = name.Substring(0, pos);
+
+		if (key.GetLength() > 0) {
+			this->games.Add(&name, &key);
+//			Console::WriteLine(key + ": " + name);
+		}
+	} while ((end.GetTicks() - begin.GetTicks()) < ((time.GetTicks() - lastTime.GetTicks()) * 0.25));
 
 	lastTime = end.GetTicks() - begin.GetTicks();
 
+	Button * button = (Button *)this->_buttons->Get(0);
+	button->SetText(Convert::ToString(this->games.GetCount()) + " games");
+/*
 	if (reRun) {
 		delete this->mameProcess;
+		lines = 0;
 		this->mameProcess = NULL;
 		this->runMame = true;
 	}
+*/
 }

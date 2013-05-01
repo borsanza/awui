@@ -18,6 +18,7 @@ namespace awui {
 				};
 
 				ArraListItem * first;
+				ArraListItem * last;
 				int count;
 
 			public:

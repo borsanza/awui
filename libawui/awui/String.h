@@ -25,6 +25,7 @@ namespace awui {
 			const char * ToCharArray() const;
 
 			static int Compare(String strA, String strB);
+			int IndexOf(String value);
 			int CompareTo(String strB);
 
 			bool operator==(String value);
