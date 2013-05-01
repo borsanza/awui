@@ -13,7 +13,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Splitter::Splitter() {
-	this->SetBackColor(Color::FromArgb(192, 192, 192));
+	this->SetBackColor(Color::FromArgb(255, 255, 255));
 
 	this->SetName("Splitter");
 

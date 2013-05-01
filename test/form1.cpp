@@ -33,7 +33,6 @@ Form1::~Form1() {
 }
 
 void Form1::InitializeComponent() {
-/*
 	Button * button;
 
 	button = new Button();
@@ -79,7 +78,7 @@ void Form1::InitializeComponent() {
 	button->SetDock(DockStyle::None);
 	button->SetBounds(10, 10, 200, 30);
 	button->SetText("Button Right2");
-	button->SetBackColor(Color::FromArgb(0, 0, 0));
+	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->_splitter->GetPanel2()->GetControls()->Add(button2);
 	this->_splitter->GetPanel2()->GetControls()->Add(button);
 	this->_splitter->SetDock(DockStyle::Fill);
@@ -88,13 +87,13 @@ void Form1::InitializeComponent() {
 	this->GetControls()->Add(this->_splitter);
 
 	this->_panel = this->_splitter->GetPanel1();
-*/
+/*
 	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->_panel = new Panel();
 	this->_panel->SetDock(DockStyle::Fill);
 	this->_panel->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->GetControls()->Add(this->_panel);
-
+*/
 	this->_buttons = new awui::Collections::ArrayList();
 	this->_effects = new awui::Collections::ArrayList();
 

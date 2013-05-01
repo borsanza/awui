@@ -21,7 +21,7 @@ using namespace awui::Windows::Forms;
 
 Button::Button() {
 	this->SetSize(75,23);
-	this->SetBackColor(Color::FromArgb(255, 255, 255));
+	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->testx = 0;
 	this->testy = 0;
 	this->show = 0;
@@ -63,34 +63,39 @@ void Button::OnMouseMove(MouseEventArgs* e) {
 }
 
 void Button::OnPaint(GL* gl) {
-	if (image)
-		GL::DrawImageGL(image, Math::Round((this->GetWidth() - this->metrics.GetWidth()) / 2.0f), Math::Round((this->GetHeight() / 2.0f) + this->metrics.GetBearingY()));
+	if (this->show) {
+		glColor3f(0.3f, 0.3f, 1.0f);
+		glBegin(GL_LINES);
+		glVertex2f(0, 0);
+		glVertex2f(this->testx, this->testy);
+		glVertex2f(this->GetWidth() - 1, 0);
+		glVertex2f(this->testx, this->testy);
+		glVertex2f(0, this->GetHeight() - 1);
+		glVertex2f(this->testx, this->testy);
+		glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
+		glVertex2f(this->testx, this->testy);
+		glEnd();
 
-	if (!this->show)
-		return;
+		glBegin(GL_LINES);
+		glVertex2f(0, this->GetHeight() - 1);
+		glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
+		glVertex2f(this->GetWidth() - 1, 0);
+		glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
+		glVertex2f(0, 0);
+		glVertex2f(this->GetWidth() - 1, 0);
+		glVertex2f(0, 0);
+		glVertex2f(0, this->GetHeight() - 1);
+		glEnd();
+	}
 
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glBegin(GL_LINES);
-	glVertex2f(0, 0);
-	glVertex2f(this->testx, this->testy);
-	glVertex2f(this->GetWidth() - 1, 0);
-	glVertex2f(this->testx, this->testy);
-	glVertex2f(0, this->GetHeight() - 1);
-	glVertex2f(this->testx, this->testy);
-	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
-	glVertex2f(this->testx, this->testy);
-	glEnd();
-
-	glBegin(GL_LINES);
-	glVertex2f(0, this->GetHeight() - 1);
-	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
-	glVertex2f(this->GetWidth() - 1, 0);
-	glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
-	glVertex2f(0, 0);
-	glVertex2f(this->GetWidth() - 1, 0);
-	glVertex2f(0, 0);
-	glVertex2f(0, this->GetHeight() - 1);
-	glEnd();
+	if (image) {
+		float posY;
+		posY = this->GetHeight() / 2.0f;
+		posY += this->metrics.GetBearingY();
+		posY += 2;
+//		posY += (this->metrics.GetHeight() + this->metrics.GetBearingY()) / 2.0f;
+		GL::DrawImageGL(image, Math::Round((this->GetWidth() - this->metrics.GetWidth()) / 2.0f), Math::Round(posY));
+	}
 }
 
 void Button::SetText(const String str) {
