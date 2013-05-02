@@ -28,7 +28,6 @@ namespace awui {
 class Form1 : public awui::Windows::Forms::Form {
 	private:
 		awui::Windows::Forms::SplitContainer * _splitter;
-		awui::Windows::Forms::Panel * _panel;
 
 		awui::Collections::ArrayList * _buttons;
 		awui::Collections::ArrayList * _effects;
@@ -44,7 +43,7 @@ class Form1 : public awui::Windows::Forms::Form {
 
 	private:
 		void InitializeComponent();
-		void AddButtonEffect(awui::Effects::Effect * effect);
+		void AddButtonEffect(awui::Effects::Effect * effect, Control * control, int posy = -1);
 
 		virtual void OnTick();
 
