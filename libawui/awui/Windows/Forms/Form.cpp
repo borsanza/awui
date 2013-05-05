@@ -9,6 +9,8 @@
 #include <awui/Drawing/Rectangle.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Application.h>
+#include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 
@@ -16,9 +18,9 @@
 	#define GL_BGRA 0x80E1
 #endif
 
-//using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Statistics;
 
 Form::Form() {
 	this->text = "";
@@ -31,6 +33,10 @@ Form::Form() {
 	this->initialized = 0;
 	this->fullscreenWidth = -1;
 	this->fullscreenHeight = -1;
+
+	Stats * stats = Stats::Instance();
+	stats->SetDock(DockStyle::Bottom);
+	this->GetControls()->Add(stats);
 }
 
 Form::~Form() {
@@ -62,16 +68,14 @@ void Form::OnPaintForm() {
 	rectangle.SetHeight(this->GetHeight());
 	gl.SetClippingBase(rectangle);
 	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
-	this->stats.Draw(&gl, this->GetWidth(), this->GetHeight());
-	this->stats.SetTimeBeforeVSync();
-}
 
-Statistics::Stats * Form::GetStats() {
-	return &this->stats;
+	Stats * stats = Stats::Instance();
+	stats->SetTimeBeforeVSync();
 }
 
 void Form::ProcessEvents() {
-	this->stats.SetTimeAfterVSync();
+	Stats * stats = Stats::Instance();
+	stats->SetTimeAfterVSync();
 	int resizex = -1;
 	int resizey = -1;
 	SDL_Event event;

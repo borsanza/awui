@@ -79,14 +79,14 @@ void Label::OnPaint(GL* gl) {
 			case ContentAlignment::TopCenter:
 			case ContentAlignment::MiddleCenter:
 			case ContentAlignment::BottomCenter:
-				posX = this->GetWidth() - this->metrics.GetAdvanceX();
+				posX = this->GetWidth() - this->metrics.GetAdvanceX() + this->metrics.GetBearingX() - 1;
 				posX += this->metrics.GetBearingX();
 				posX /= 2.0f;
 				break;
 			case ContentAlignment::TopRight:
 			case ContentAlignment::MiddleRight:
 			case ContentAlignment::BottomRight:
-				posX = this->GetWidth() - this->metrics.GetAdvanceX();
+				posX = this->GetWidth() - this->metrics.GetAdvanceX() + this->metrics.GetBearingX() - 1;
 				break;
 		}
 

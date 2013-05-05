@@ -17,6 +17,7 @@
 #include <awui/Windows/Forms/Label.h>
 #include <awui/Windows/Forms/Panel.h>
 #include <awui/Windows/Forms/SplitContainer.h>
+#include <awui/Windows/Forms/Statistics/Stats.h>
 
 using namespace awui::Collections;
 using namespace awui::Drawing;
@@ -213,8 +214,8 @@ void Form1::CheckMame() {
 
 void Form1::CheckGames() {
 	static int lines = 0;
-	static TimeSpan lastTime;
-	Statistics::Stats * stats = this->GetStats();
+	static awui::TimeSpan lastTime;
+	Statistics::Stats * stats = Statistics::Stats::Instance();
 
 	TimeSpan time = stats->GetIdle();
 	DateTime begin = DateTime::GetNow();

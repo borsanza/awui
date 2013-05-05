@@ -12,7 +12,6 @@
 #include <awui/Math.h>
 
 #include <cairo.h>
-//#include <SDL_ttf.h>
 
 using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
@@ -139,22 +138,6 @@ GlyphMetrics Graphics::GetMeasureText(const String text, Drawing::Font *font) co
 }
 
 void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y) {
-/*
-	TTF_Font *font2 =  TTF_OpenFont("./font/arial.ttf", font->GetSize());
-	SDL_Surface *imgTxt;
-	SDL_Rect txtRect;
-	SDL_Color fColor;
-	txtRect.x = x;
-	txtRect.y = y;
-	fColor.r = color.GetR();
-	fColor.g = color.GetG();
-	fColor.b = color.GetB();
-// Set font to white color
-	imgTxt = TTF_RenderText_Solid( font2 , "SDL_ttf Test : Load & Display Font" , fColor );
-	SDL_BlitSurface(imgTxt , NULL , 0 , &txtRect );
-	TTF_CloseFont(font2);
-	SDL_FreeSurface(imgTxt);
-*/
 	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 
 	cairo_font_weight_t weight;

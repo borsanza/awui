@@ -6,7 +6,6 @@
 #include <awui/Windows/Forms/Form.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
-//#include <SDL_ttf.h>
 
 using namespace awui::Windows::Forms;
 
@@ -24,7 +23,6 @@ void Application::Quit() {
 }
 
 void Application::Run(Form * form = NULL) {
-//	TTF_Init();
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0)
 		return;
 

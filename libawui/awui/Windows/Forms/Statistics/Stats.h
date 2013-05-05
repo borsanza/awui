@@ -1,22 +1,19 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include <awui/Object.h>
 #include <awui/DateTime.h>
 #include <awui/TimeSpan.h>
+#include <awui/Windows/Forms/Label.h>
+#include <awui/Windows/Forms/Panel.h>
 
 namespace awui {
-	class String;
-
-	namespace OpenGL {
-		class GL;
-	}
-
 	namespace Windows {
 		namespace Forms {
 			namespace Statistics {
-				class Stats {
+				class Stats : public Panel {
 					private:
+						static Stats* pinstance;
+
 						DateTime afterSync;
 						DateTime beforeSync;
 						DateTime beforeSync_last;
@@ -25,16 +22,21 @@ namespace awui {
 						TimeSpan total;
 						TimeSpan used;
 
-						void DrawString(String text, int x, int y);
+						Label labelidle;
+						Label labelused;
+						Label labeltotal;
+						Label labelPin;
 
-					public:
 						Stats();
 						virtual ~Stats();
+
+					public:
+						static Stats* Instance();
 
 						void SetTimeBeforeVSync();
 						void SetTimeAfterVSync();
 
-						void Draw(OpenGL::GL* gl, int width, int height);
+						void OnTick();
 						TimeSpan GetIdle();
 				};
 			}
