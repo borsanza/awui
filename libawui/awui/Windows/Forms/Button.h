@@ -16,8 +16,6 @@ namespace awui {
 				private:
 					Label label;
 					String text;
-					int testx;
-					int testy;
 					int show;
 
 				public:

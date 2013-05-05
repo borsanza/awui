@@ -12,7 +12,6 @@
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/TextRenderer.h>
 
-#include <iostream>
 #include <SDL_opengl.h>
 
 using namespace awui::Drawing;
