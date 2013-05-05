@@ -4,6 +4,7 @@
 #include "Control.h"
 
 #include <awui/Drawing/Color.h>
+#include <awui/Drawing/Font.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
 #include <awui/Drawing/Rectangle.h>
@@ -28,10 +29,13 @@ Control::Control() {
 	this->needRefresh = 1;
 	this->dock = DockStyle::None;
 	this->backColor = Color::FromArgb(226, 226, 226);
+	this->foreColor = Color::FromArgb(0, 0, 0);
 	this->OnResizePre();
+	this->font = new Font("sans-serif", 12);
 }
 
 Control::~Control() {
+	delete this->font;
 	delete this->mouseEventArgs;
 
 	for (int i = 0; i < this->controls->GetCount(); i++)
@@ -142,6 +146,14 @@ void Control::SetBackColor(const awui::Drawing::Color color) {
 
 awui::Drawing::Color Control::GetBackColor() {
 	return this->backColor;
+}
+
+void Control::SetForeColor(const awui::Drawing::Color color) {
+	this->foreColor = color;
+}
+
+awui::Drawing::Color Control::GetForeColor() {
+	return this->foreColor;
 }
 
 void Control::SetDock(DockStyle::Enum dock) {
@@ -385,4 +397,12 @@ void Control::OnTickPre() {
 		Control * control = (Control *)this->GetControls()->Get(i);
 		control->OnTickPre();
 	}
+}
+
+awui::Drawing::Font * Control::GetFont() {
+	return this->font;
+}
+
+void Control::SetFont(const Drawing::Font * font) {
+	*this->font = *font;
 }

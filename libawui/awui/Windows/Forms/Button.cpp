@@ -20,21 +20,17 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Button::Button() {
+	this->label.SetDock(DockStyle::Fill);
+	this->label.SetTextAlign(ContentAlignment::MiddleCenter);
+
 	this->SetSize(75,23);
 	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->testx = 0;
 	this->testy = 0;
 	this->show = 0;
-	this->image = NULL;
-	this->g = NULL;
 }
 
 Button::~Button() {
-	if (this->g)
-		delete this->g;
-
-	if (this->image)
-		delete this->image;
 }
 
 int Button::IsClass(Classes::Enum objectClass) const {
@@ -65,6 +61,7 @@ void Button::OnMouseMove(MouseEventArgs* e) {
 void Button::OnPaint(GL* gl) {
 	if (this->show) {
 		glColor3f(0.3f, 0.3f, 1.0f);
+/*
 		glBegin(GL_LINES);
 		glVertex2f(0, 0);
 		glVertex2f(this->testx, this->testy);
@@ -75,7 +72,7 @@ void Button::OnPaint(GL* gl) {
 		glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
 		glVertex2f(this->testx, this->testy);
 		glEnd();
-
+*/
 		glBegin(GL_LINES);
 		glVertex2f(0, this->GetHeight() - 1);
 		glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
@@ -88,33 +85,24 @@ void Button::OnPaint(GL* gl) {
 		glEnd();
 	}
 
-	if (image) {
-		float posY;
-		posY = this->GetHeight() / 2.0f;
-		posY += this->metrics.GetBearingY();
-		posY += 2;
-//		posY += (this->metrics.GetHeight() + this->metrics.GetBearingY()) / 2.0f;
-		GL::DrawImageGL(image, Math::Round((this->GetWidth() - this->metrics.GetWidth()) / 2.0f), Math::Round(posY));
-	}
+	this->label.SetSize(this->GetWidth(), this->GetHeight());
+	this->label.OnPaint(gl);
 }
 
 void Button::SetText(const String str) {
-	this->text = str;
-
-	if (this->g)
-		delete this->g;
-
-	if (this->image)
-		delete this->image;
-
-	Font font = Font("Monospace", 20, FontStyle::Bold); // FontStyle::Strikeout | FontStyle::Underline);
-	this->metrics = TextRenderer::GetMeasureText(this->text, &font);
-
-	this->image = new Drawing::Image(this->metrics.GetWidth(), this->metrics.GetHeight());
-	this->g = Drawing::Graphics::FromImage(this->image);
-	this->g->DrawString(this->text, &font, Color::FromArgb(255, 255, 255), 0, 0);
+	this->label.SetText(str);
 }
 
-const awui::String Button::GetName() {
-	return this->text;
+const awui::String Button::GetText() {
+	return this->label.GetText();
+}
+
+void Button::SetForeColor(const Drawing::Color color) {
+	Control::SetForeColor(color);
+	this->label.SetForeColor(this->GetForeColor());
+}
+
+void Button::SetFont(const Drawing::Font * font) {
+	Control::SetFont(font);
+	this->label.SetFont(font);
 }

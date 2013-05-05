@@ -12,6 +12,7 @@
 #include <awui/Math.h>
 
 #include <cairo.h>
+//#include <SDL_ttf.h>
 
 using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
@@ -115,25 +116,45 @@ GlyphMetrics Graphics::GetMeasureText(const String text, Drawing::Font *font) co
 		slant = CAIRO_FONT_SLANT_NORMAL;
 
 	cairo_text_extents_t extents;
+	cairo_font_extents_t fontExtents;
 
 	cairo_save(this->cr);
 	cairo_select_font_face(this->cr, font->GetFont().ToCharArray(), slant, weight);
 	cairo_set_font_size(this->cr, font->GetSize());
 	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
+	cairo_font_extents(this->cr, &fontExtents);
 	cairo_restore(this->cr);
 
 	GlyphMetrics metrics;
-	metrics.SetWidth(extents.width + BORDER*2);
-	metrics.SetHeight(extents.height + BORDER*2);
+	metrics.SetWidth(extents.width + BORDER * 2);
+	metrics.SetHeight(extents.height + BORDER * 2);
 	metrics.SetAdvanceX(extents.x_advance);
 	metrics.SetAdvanceY(extents.y_advance);
-	metrics.SetBearingX(extents.x_bearing + BORDER);
-	metrics.SetBearingY(extents.y_bearing + BORDER);
+	metrics.SetBearingX(extents.x_bearing);
+	metrics.SetBearingY(extents.y_bearing);
 
+	metrics.SetAscent(fontExtents.ascent);
+	metrics.SetDescent(fontExtents.descent);
 	return metrics;
 }
 
 void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y) {
+/*
+	TTF_Font *font2 =  TTF_OpenFont("./font/arial.ttf", font->GetSize());
+	SDL_Surface *imgTxt;
+	SDL_Rect txtRect;
+	SDL_Color fColor;
+	txtRect.x = x;
+	txtRect.y = y;
+	fColor.r = color.GetR();
+	fColor.g = color.GetG();
+	fColor.b = color.GetB();
+// Set font to white color
+	imgTxt = TTF_RenderText_Solid( font2 , "SDL_ttf Test : Load & Display Font" , fColor );
+	SDL_BlitSurface(imgTxt , NULL , 0 , &txtRect );
+	TTF_CloseFont(font2);
+	SDL_FreeSurface(imgTxt);
+*/
 	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 
 	cairo_font_weight_t weight;

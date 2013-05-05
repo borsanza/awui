@@ -1,16 +1,11 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include <awui/Drawing/GlyphMetrics.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/Label.h>
 
 namespace awui {
-	namespace Drawing {
-		class Graphics;
-		class Image;
-	}
-
 	namespace OpenGL {
 		class GL;
 	}
@@ -19,14 +14,11 @@ namespace awui {
 		namespace Forms {
 			class Button : public Control {
 				private:
+					Label label;
 					String text;
 					int testx;
 					int testy;
 					int show;
-
-					Drawing::Image * image;
-					Drawing::Graphics *g;
-					Drawing::GlyphMetrics metrics;
 
 				public:
 					Button();
@@ -34,13 +26,15 @@ namespace awui {
 
 					virtual int IsClass(Classes::Enum objectClass) const;
 
-					const String GetName();
+					const String GetText();
 					void SetText(const String str);
 
 					virtual void OnMouseLeave();
 					virtual void OnMouseDown(MouseEventArgs* e);
 					virtual void OnMouseMove(MouseEventArgs* e);
 					virtual void OnPaint(OpenGL::GL * gl);
+					virtual void SetForeColor(const Drawing::Color color);
+					virtual void SetFont(const Drawing::Font * font);
 			};
 		}
 	}

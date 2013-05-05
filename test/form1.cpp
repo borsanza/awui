@@ -14,6 +14,7 @@
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/Control.h>
 #include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Label.h>
 #include <awui/Windows/Forms/Panel.h>
 #include <awui/Windows/Forms/SplitContainer.h>
 
@@ -33,54 +34,58 @@ Form1::~Form1() {
 }
 
 void Form1::InitializeComponent() {
-	Button * button;
+	this->SetBackColor(Color::FromArgb(255, 255, 255));
+/*
+	Label * label;
 
-	button = new Button();
-	button->SetDock(DockStyle::Top);
-	button->SetText("Button Top");
-	button->SetMinimumSize(Size(75, 23));
-	this->GetControls()->Add(button);
+	label = new Label();
+	label->SetDock(DockStyle::Top);
+	label->SetTextAlign(ContentAlignment::MiddleCenter);
+	label->SetText("Label Top");
+	label->SetMinimumSize(Size(75, 23));
+	label->SetBackColor(Color::FromArgb(0, 0, 0));
+	label->SetForeColor(Color::FromArgb(255, 255, 255));
+	this->GetControls()->Add(label);
 
-	button = new Button();
-	button->SetDock(DockStyle::Bottom);
-	button->SetText("Button Bottom");
-	button->SetMinimumSize(Size(75, 23));
-	this->GetControls()->Add(button);
+	label = new Label();
+	label->SetDock(DockStyle::Bottom);
+	label->SetTextAlign(ContentAlignment::MiddleCenter);
+	label->SetText("Label Bottom");
+	label->SetMinimumSize(Size(75, 23));
+	label->SetBackColor(Color::FromArgb(0, 0, 0));
+	label->SetForeColor(Color::FromArgb(255, 255, 255));
+	this->GetControls()->Add(label);
 
-	button = new Button();
-	button->SetDock(DockStyle::Left);
-	button->SetText("Button Left");
-	button->SetMinimumSize(Size(75, 23));
-	this->GetControls()->Add(button);
+	label = new Label();
+	label->SetDock(DockStyle::Left);
+	label->SetTextAlign(ContentAlignment::MiddleCenter);
+	label->SetText("Label Left");
+	label->SetMinimumSize(Size(75, 23));
+	label->SetBackColor(Color::FromArgb(0, 0, 0));
+	label->SetForeColor(Color::FromArgb(255, 255, 255));
+	this->GetControls()->Add(label);
 
-	button = new Button();
-	button->SetDock(DockStyle::Right);
-	button->SetText("Button Right");
-	button->SetMinimumSize(Size(75, 23));
-	this->GetControls()->Add(button);
-
-	button = new Button();
-	Button * button2 = new Button();
-
-	button->SetDock(DockStyle::Fill);
-	button->SetText("Button Splitter Left");
-	button->SetMinimumSize(Size(75, 23));
-	button->SetBackColor(Color::FromArgb(0, 0, 0));
-	button2->SetDock(DockStyle::Fill);
-	button2->SetText("Button Top");
-	button2->SetMinimumSize(Size(75, 23));
-
+	label = new Label();
+	label->SetDock(DockStyle::Right);
+	label->SetTextAlign(ContentAlignment::MiddleCenter);
+	label->SetText("Label Right");
+	label->SetMinimumSize(Size(75, 23));
+	label->SetBackColor(Color::FromArgb(0, 0, 0));
+	label->SetForeColor(Color::FromArgb(255, 255, 255));
+	this->GetControls()->Add(label);
+*/
 	this->_splitter = new SplitContainer();
 	this->_splitter->SetName("SplitContainer");
-	this->_splitter->GetPanel1()->GetControls()->Add(button);
-	this->_splitter->GetPanel2()->GetControls()->Add(button2);
 	this->_splitter->SetDock(DockStyle::Fill);
 	this->_splitter->SetOrientation(SplitContainer::Orientation::Vertical);
+	this->_splitter->SetSplitterDistance(840);
 
 	this->GetControls()->Add(this->_splitter);
 
 	Control * control1 = this->_splitter->GetPanel1();
 	Control * control2 = this->_splitter->GetPanel2();
+	control1->SetBackColor(Color::FromArgb(0, 0, 0));
+	control2->SetBackColor(Color::FromArgb(0, 0, 0));
 
 	this->_buttons = new awui::Collections::ArrayList();
 	this->_effects = new awui::Collections::ArrayList();
@@ -116,6 +121,8 @@ void Form1::AddButtonEffect(Effect * effect, Control * control, int posy) {
 		button->SetText(effect->GetName());
 		button->SetSize(150, 52);
 		button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+		button->SetForeColor(Color::FromArgb(255, 255, 255));
+		button->SetFont(new Font("Monospace", 20, FontStyle::Bold));
 		button->SetTop(y);
 		control->GetControls()->Add(button);
 

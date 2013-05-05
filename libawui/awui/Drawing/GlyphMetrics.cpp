@@ -61,3 +61,19 @@ void GlyphMetrics::SetBearingX(int bearingx) {
 void GlyphMetrics::SetBearingY(int bearingy) {
 	this->bearingy = bearingy;
 }
+
+int GlyphMetrics::GetAscent() const {
+	return this->ascent;
+}
+
+int GlyphMetrics::GetDescent() const {
+	return this->descent;
+}
+
+void GlyphMetrics::SetAscent(int ascent) {
+	this->ascent = ascent;
+}
+
+void GlyphMetrics::SetDescent(int descent) {
+	this->descent = descent;
+}

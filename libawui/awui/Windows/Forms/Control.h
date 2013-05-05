@@ -8,10 +8,15 @@
 #include <awui/Object.h>
 #include <awui/String.h>
 #include <awui/Drawing/Color.h>
+#include <awui/Drawing/Font.h>
 #include <awui/Drawing/Rectangle.h>
 #include <awui/Windows/Forms/MouseButtons.h>
 
 namespace awui {
+	namespace Drawing {
+		class Font;
+	}
+
 	namespace OpenGL {
 		class GL;
 	}
@@ -42,9 +47,11 @@ namespace awui {
 
 					int needRefresh;
 					int refreshed;
+					Drawing::Font * font;
 					DockStyle::Enum dock;
 					ControlCollection * controls;
 					Drawing::Color backColor;
+					Drawing::Color foreColor;
 					Control * parent;
 					MouseEventArgs * mouseEventArgs;
 					Control * mouseControl;
@@ -99,6 +106,12 @@ namespace awui {
 
 					Drawing::Color GetBackColor();
 					void SetBackColor(const Drawing::Color color);
+
+					Drawing::Color GetForeColor();
+					virtual void SetForeColor(const Drawing::Color color);
+
+					Drawing::Font * GetFont();
+					virtual void SetFont(const Drawing::Font * font);
 
 					void Refresh();
 

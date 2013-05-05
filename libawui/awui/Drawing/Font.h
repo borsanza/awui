@@ -1,6 +1,10 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
+#pragma once
+#ifndef __AWUIFONT_H__
+#define __AWUIFONT_H__
+
 #include <awui/Object.h>
 #include <awui/String.h>
 
@@ -33,6 +37,10 @@ namespace awui {
 				bool GetStrikeout();
 				float GetSize();
 				virtual String ToString();
+
+				Font & operator=(const Font & other);
 		};
 	}
 }
+
+#endif

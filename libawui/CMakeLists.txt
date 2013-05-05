@@ -10,6 +10,7 @@ INCLUDE_DIRECTORIES(
 	/usr/include/cairo/
 	.
 	${SDL_INCLUDE_DIR}
+	${SDLTTF_INCLUDE_DIR}
 #	"C:\\awui-project\\cairo\\include\\cairo\\"
 )
 
@@ -26,6 +27,7 @@ TARGET_LINK_LIBRARIES(
 	awui
 	cairo
 	${SDL_LIBRARY}
+	${SDLTTF_LIBRARY}
 # Valores para linux
 	X11
 	GL
