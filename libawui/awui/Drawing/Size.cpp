@@ -3,7 +3,9 @@
 
 #include "Size.h"
 
+#include <awui/Convert.h>
 #include <awui/Drawing/Point.h>
+#include <awui/String.h>
 
 using namespace awui::Drawing;
 
@@ -49,4 +51,10 @@ Size & Size::operator= (const Size & other) {
 	this->height = other.height;
 
 	return *this;
+}
+
+awui::String Size::ToString() {
+	String value;
+	value = String("{Width=") + Convert::ToString(this->width) + ", Height=" + Convert::ToString(this->height) + "}";
+	return value;
 }

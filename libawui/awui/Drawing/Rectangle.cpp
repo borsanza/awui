@@ -3,8 +3,10 @@
 
 #include "Rectangle.h"
 
+#include <awui/Convert.h>
 #include <awui/Drawing/Point.h>
 #include <awui/Drawing/Size.h>
+#include <awui/String.h>
 
 using namespace awui::Drawing;
 
@@ -127,4 +129,10 @@ Rectangle Rectangle::Intersect(const Rectangle rectangle1, const Rectangle recta
 
 void Rectangle::Intersect(const Rectangle rectangle) {
 	*this = Rectangle::Intersect(*this, rectangle);
+}
+
+awui::String Rectangle::ToString() {
+	String value;
+	value = String("{X=") + Convert::ToString(this->location.GetX()) + ",Y=" + Convert::ToString(this->location.GetY()) + ",Width=" + Convert::ToString(this->size.GetWidth()) + ", Height=" + Convert::ToString(this->size.GetHeight()) + "}";
+	return value;
 }

@@ -80,10 +80,6 @@ void Form::ProcessEvents() {
 
 	while (SDL_PollEvent(&event)) {
 		switch(event.type) {
-			case SDL_VIDEORESIZE:
-				resizex = event.resize.w;
-				resizey = event.resize.h;
-				break;
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_ESCAPE)
 					Application::Quit();
@@ -152,6 +148,10 @@ void Form::ProcessEvents() {
 				this->mouseX = event.motion.x;
 				this->mouseY = event.motion.y;
 				this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
+				break;
+			case SDL_VIDEORESIZE:
+				resizex = event.resize.w;
+				resizey = event.resize.h;
 				break;
 			default:
 				break;

@@ -6,6 +6,8 @@
 #define __AWUISIZE_H__
 
 namespace awui {
+	class String;
+
 	namespace Drawing {
 		class Point;
 
@@ -26,6 +28,8 @@ namespace awui {
 				void SetHeight(int height);
 
 				Size & operator= (const Size & other);
+
+				virtual String ToString();
 		};
 	}
 }

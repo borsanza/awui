@@ -9,6 +9,8 @@
 #include <awui/Drawing/Size.h>
 
 namespace awui {
+	class String;
+
 	namespace Drawing {
 		class Rectangle {
 			private:
@@ -52,6 +54,8 @@ namespace awui {
 				void Intersect(const Rectangle rectangle);
 
 				Rectangle & operator=(const Rectangle & other);
+
+				virtual String ToString();
 		};
 	}
 }

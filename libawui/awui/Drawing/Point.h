@@ -6,6 +6,8 @@
 #define __AWUIPOINT_H__
 
 namespace awui {
+	class String;
+
 	namespace Drawing {
 		class Size;
 
@@ -26,6 +28,8 @@ namespace awui {
 				void SetY(int y);
 
 				Point & operator= (const Point & other);
+
+				virtual String ToString();
 		};
 	}
 }

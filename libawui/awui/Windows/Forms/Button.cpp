@@ -45,6 +45,9 @@ void Button::OnMouseMove(MouseEventArgs* e) {
 
 void Button::OnPaint(GL* gl) {
 	if (this->show) {
+		glColor4f(0.3f, 0.3f, 1.0f, 0.3f);
+		glRectf(0, 0, this->GetWidth(), this->GetHeight());
+
 		glColor3f(0.3f, 0.3f, 1.0f);
 //		glRectf(0,0, this->GetWidth() - 1, this->GetHeight() - 1);
 		glBegin(GL_LINE_LOOP);

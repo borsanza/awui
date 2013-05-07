@@ -23,6 +23,7 @@ int Color::IsClass(Classes::Enum objectClass) const {
 
 	return Object::IsClass(objectClass);
 }
+
 awui::String Color::ToString() {
 	String value;
 	value = String("Color [A=") + Convert::ToString(this->a) +

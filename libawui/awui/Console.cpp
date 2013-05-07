@@ -32,6 +32,10 @@ IO::TextWriter * awui::Console::GetOut() {
 	return out;
 }
 
+void awui::Console::Write(String value) {
+	awui::Console::GetOut()->Write(value);
+}
+
 void awui::Console::WriteLine(String value) {
 	awui::Console::GetOut()->WriteLine(value);
 }

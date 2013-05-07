@@ -36,7 +36,7 @@ Form1::~Form1() {
 
 void Form1::InitializeComponent() {
 	this->SetBackColor(Color::FromArgb(255, 255, 255));
-
+/*
 	Label * label;
 	label = new Label();
 	label->SetDock(DockStyle::Top);
@@ -73,7 +73,7 @@ void Form1::InitializeComponent() {
 	label->SetBackColor(Color::FromArgb(0, 0, 0));
 	label->SetForeColor(Color::FromArgb(255, 255, 255));
 	this->GetControls()->Add(label);
-
+*/
 	this->_splitter = new SplitContainer();
 	this->_splitter->SetName("SplitContainer");
 	this->_splitter->SetDock(DockStyle::Fill);
