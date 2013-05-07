@@ -14,6 +14,7 @@ using namespace awui::Windows::Forms::Statistics;
 Stats* Stats::pinstance = 0;
 
 Stats::Stats() {
+	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->used = 0;
 	this->idle = TimeSpan(this->used.TicksPerSecond / 60.0f);
 	this->total = this->idle;
@@ -47,7 +48,6 @@ Stats::Stats() {
 	this->labelused.SetForeColor(foreColor);
 	this->labeltotal.SetForeColor(foreColor);
 
-	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->GetControls()->Add(&this->labelPin);
 	this->GetControls()->Add(&this->labeltotal);
 	this->GetControls()->Add(&this->labelidle);

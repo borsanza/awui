@@ -32,6 +32,7 @@ Control::Control() {
 	this->foreColor = Color::FromArgb(0, 0, 0);
 	this->OnResizePre();
 	this->font = new Font("sans-serif", 12);
+	this->scissorEnabled = true;
 }
 
 Control::~Control() {
@@ -227,42 +228,46 @@ void Control::Refresh() {
 }
 
 void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-x, width - x, height - y, -y, -1.0f, 1.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glTranslatef(0.375f, 0.375f, 0.0f);
+
 	Rectangle rect2;
 	rect2.SetX(x);
 	rect2.SetY(height - y - this->GetHeight());
 	rect2.SetWidth(this->GetWidth());
 	rect2.SetHeight(this->GetHeight());
-
 	gl->SetClipping(rect2);
-	gl->SetClipping();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-x - 1, width - x, height - y, -y, -1.0f, 1.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	bool disableScissor = false;
+	if (this->scissorEnabled) {
+		disableScissor = true;
+		glEnable(GL_SCISSOR_TEST);
+		gl->SetClipping();
+	}
 
 	switch (this->backColor.GetA()) {
 		case 255:
-			glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+			glColor3f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f);
+			glRectf(0, 0, this->GetWidth(), this->GetHeight());
 			break;
 		case 0:
 			break;
 		default:
 			glColor4f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
-
-			glBegin(GL_QUADS);
-			glVertex2f(-1, 0);
-			glVertex2f(width, 0);
-			glVertex2f(width, height);
-			glVertex2f(-1, height);
-			glEnd();
+			glRectf(0, 0, this->GetWidth(), this->GetHeight());
 			break;
 	}
 
-	glTranslatef(0.375, 0.375, 0);
 	this->OnPaint(NULL);
+
+	if (disableScissor)
+		glDisable(GL_SCISSOR_TEST);
+
 	glTranslatef(-0.375, -0.375, 0);
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
@@ -407,4 +412,12 @@ awui::Drawing::Font * Control::GetFont() {
 
 void Control::SetFont(const Drawing::Font * font) {
 	*this->font = *font;
+}
+
+void Control::SetScissorEnabled(bool mode) {
+	this->scissorEnabled = mode;
+}
+
+bool Control::GetScissorEnabled() {
+	return this->scissorEnabled;
 }

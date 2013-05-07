@@ -47,6 +47,7 @@ namespace awui {
 
 					int needRefresh;
 					int refreshed;
+					bool scissorEnabled;
 					Drawing::Font * font;
 					DockStyle::Enum dock;
 					ControlCollection * controls;
@@ -131,6 +132,8 @@ namespace awui {
 					virtual void OnPaint(OpenGL::GL * gl) {}
 					virtual void OnResize() {}
 					virtual void OnTick() {}
+					void SetScissorEnabled(bool mode);
+					bool GetScissorEnabled();
 			};
 		}
 	}

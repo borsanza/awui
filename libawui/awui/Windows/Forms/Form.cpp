@@ -58,7 +58,6 @@ void Form::Init() {
 void Form::OnPaintForm() {
 	this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
-	glEnable(GL_SCISSOR_TEST);
 	GL gl;
 	Drawing::Rectangle rectangle;
 	rectangle.SetX(0);
