@@ -261,7 +261,9 @@ void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 			break;
 	}
 
+	glTranslatef(0.375, 0.375, 0);
 	this->OnPaint(NULL);
+	glTranslatef(-0.375, -0.375, 0);
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);

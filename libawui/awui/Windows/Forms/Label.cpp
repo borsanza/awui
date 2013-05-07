@@ -101,14 +101,12 @@ void Label::OnPaint(GL* gl) {
 }
 
 void Label::DrawLine(int x, int y, int x2, int y2) {
-	glTranslatef(0.375, 0.375, 0);
 	glBegin(GL_LINES);
 	glVertex2f(x, y);
 	glVertex2f(x2, y2);
 	glVertex2f(x2, y2);
 	glVertex2f(x, y);
 	glEnd();
-	glTranslatef(-0.375, -0.375, 0);
 }
 
 void Label::DrawLines(int x, int y) {
