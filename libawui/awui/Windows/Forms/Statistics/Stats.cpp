@@ -22,33 +22,29 @@ Stats::Stats() {
 	this->beforeSync_last = DateTime::GetNow();
 	this->afterSync = DateTime::GetNow();
 
-	Font font = Font("Monospace", 20);
-	this->labelPin.SetFont(&font);
-
-	font = Font("Monospace", 14);
+	Font font = Font("Monospace", 14);
 	this->labelidle.SetFont(&font);
 	this->labelused.SetFont(&font);
 	this->labeltotal.SetFont(&font);
-	this->labelPin.SetDock(DockStyle::Right);
+	this->spinner.SetDock(DockStyle::Right);
 	this->labelidle.SetDock(DockStyle::Bottom);
 	this->labelused.SetDock(DockStyle::Bottom);
 	this->labeltotal.SetDock(DockStyle::Bottom);
-	this->labelPin.SetTextAlign(ContentAlignment::MiddleCenter);
 	this->labelidle.SetTextAlign(ContentAlignment::MiddleRight);
 	this->labelused.SetTextAlign(ContentAlignment::MiddleRight);
 	this->labeltotal.SetTextAlign(ContentAlignment::MiddleRight);
 	Color backColor = Color::FromArgb(0, 0, 0, 0);
 	Color foreColor = Color::FromArgb(255, 255, 255);
-	this->labelPin.SetBackColor(backColor);
+	this->spinner.SetBackColor(backColor);
 	this->labelidle.SetBackColor(backColor);
 	this->labelused.SetBackColor(backColor);
 	this->labeltotal.SetBackColor(backColor);
-	this->labelPin.SetForeColor(foreColor);
+	this->spinner.SetForeColor(foreColor);
 	this->labelidle.SetForeColor(foreColor);
 	this->labelused.SetForeColor(foreColor);
 	this->labeltotal.SetForeColor(foreColor);
 
-	this->GetControls()->Add(&this->labelPin);
+	this->GetControls()->Add(&this->spinner);
 	this->GetControls()->Add(&this->labeltotal);
 	this->GetControls()->Add(&this->labelidle);
 	this->GetControls()->Add(&this->labelused);
@@ -76,30 +72,9 @@ void Stats::SetTimeAfterVSync() {
 }
 
 void Stats::OnTick() {
-	static int pos = 0;
-
-	String letra;
-	switch (pos) {
-		case 0:
-			letra = "─";
-			break;
-		case 1:
-			letra = "╲";
-			break;
-		case 2:
-			letra = "│";
-			break;
-		case 3:
-			letra = "╱";
-			break;
-	}
-
-	this->labelPin.SetText(letra);
 	this->labelused.SetText(String("Used: ") + this->used.ToString());
 	this->labelidle.SetText(String("Idle: ") + this->idle.ToString());
 	this->labeltotal.SetText(String("Total: ") + this->total.ToString());
-
-	pos = (pos + 1) % 4;
 }
 
 Stats* Stats::Instance() {

@@ -5,6 +5,7 @@
 #include <awui/TimeSpan.h>
 #include <awui/Windows/Forms/Label.h>
 #include <awui/Windows/Forms/Panel.h>
+#include <awui/Windows/Forms/Statistics/Spinner.h>
 
 namespace awui {
 	namespace Windows {
@@ -25,7 +26,7 @@ namespace awui {
 						Label labelidle;
 						Label labelused;
 						Label labeltotal;
-						Label labelPin;
+						Spinner spinner;
 
 						Stats();
 						virtual ~Stats();
@@ -36,7 +37,7 @@ namespace awui {
 						void SetTimeBeforeVSync();
 						void SetTimeAfterVSync();
 
-						void OnTick();
+						virtual void OnTick();
 						TimeSpan GetIdle();
 				};
 			}
