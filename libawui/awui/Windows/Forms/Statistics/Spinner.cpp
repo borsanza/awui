@@ -18,7 +18,7 @@ void Spinner::OnTick() {
 	static int mode = 0;
 
 	mode++;
-	this->position = (mode/40%4);
+	this->position = (mode/4%4);
 }
 
 void Spinner::DrawLine(int x, int y, int x2, int y2) {
