@@ -100,32 +100,23 @@ void Label::OnPaint(GL* gl) {
 	}
 }
 
-void Label::DrawLine(int x, int y, int x2, int y2) {
-	glBegin(GL_LINES);
-	glVertex2f(x, y);
-	glVertex2f(x2, y2);
-	glVertex2f(x2, y2);
-	glVertex2f(x, y);
-	glEnd();
-}
-
 void Label::DrawLines(int x, int y) {
 	int posBaseline = y;
 	int posAscent = posBaseline - this->metrics.GetAscent();
 	int posDescent = posBaseline + this->metrics.GetDescent();
 
 	glColor3f(0.0f, 1.0f, 0.0f);
-	this->DrawLine(0, posBaseline, this->GetWidth(), posBaseline);
+	GL::DrawLine(0, posBaseline, this->GetWidth(), posBaseline);
 
 	glColor3f(1.0f, 0.0f, 1.0f);
-	this->DrawLine(0, posAscent, this->GetWidth(), posAscent);
+	GL::DrawLine(0, posAscent, this->GetWidth(), posAscent);
 
 	glColor3f(1.0f, 0.0f, 1.0f);
-	this->DrawLine(0, posDescent, this->GetWidth(), posDescent);
+	GL::DrawLine(0, posDescent, this->GetWidth(), posDescent);
 
 	glColor3f(1.0f, 0.0f, 0.0f);
-	this->DrawLine(x, 0, x, this->GetHeight());
-	this->DrawLine(0, y, this->GetWidth(), y);
+	GL::DrawLine(x, 0, x, this->GetHeight());
+	GL::DrawLine(0, y, this->GetWidth(), y);
 }
 
 void Label::SetText(const String str) {

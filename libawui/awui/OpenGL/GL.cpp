@@ -4,6 +4,7 @@
 #include "GL.h"
 
 #include <awui/Drawing/Image.h>
+#include <awui/Math.h>
 #include <SDL_opengl.h>
 
 using namespace awui::Drawing;
@@ -36,6 +37,32 @@ void GL::SetClipping() {
 	Rectangle rect = this->GetClippingResult();
 
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
+}
+
+void GL::DrawLine(int x, int y, int x2, int y2) {
+	int xinc = 0;
+	int yinc = 0;
+	int width = Math::Abs(x2 - x);
+	int height = Math::Abs(y2 - y);
+
+	if (width >= height) {
+		if (x2 >= x)
+			xinc = 1;
+		else
+			xinc = -1;
+	}
+
+	if (height >= width) {
+		if (y2 >= y)
+			yinc = 1;
+		else
+			yinc = -1;
+	}
+
+	glBegin(GL_LINES);
+	glVertex2i(x, y);
+	glVertex2i(x2 + xinc, y2 + yinc);
+	glEnd();
 }
 
 #ifndef GL_BGRA

@@ -10,7 +10,6 @@ namespace awui {
 				class Spinner : public Control {
 					private:
 						int position;
-						void DrawLine(int x, int y, int x2, int y2);
 
 					public:
 						Spinner();

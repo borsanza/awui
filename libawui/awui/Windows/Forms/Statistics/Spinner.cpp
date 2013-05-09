@@ -3,9 +3,10 @@
 
 #include "Spinner.h"
 #include <awui/Drawing/Color.h>
-#include <awui/Math.h>
+#include <awui/OpenGL/GL.h>
 #include <SDL_opengl.h>
 
+using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Statistics;
 
 Spinner::Spinner() {
@@ -22,32 +23,6 @@ void Spinner::OnTick() {
 	this->position = (mode/4%4);
 }
 
-void Spinner::DrawLine(int x, int y, int x2, int y2) {
-	int xinc = 0;
-	int yinc = 0;
-	int width = Math::Abs(x2 - x);
-	int height = Math::Abs(y2 - y);
-
-	if (width >= height) {
-		if (x2 >= x)
-			xinc = 1;
-		else
-			xinc = -1;
-	}
-
-	if (height >= width) {
-		if (y2 >= y)
-			yinc = 1;
-		else
-			yinc = -1;
-	}
-
-	glBegin(GL_LINES);
-	glVertex2i(x, y);
-	glVertex2i(x2 + xinc, y2 + yinc);
-	glEnd();
-}
-
 void Spinner::OnPaint(OpenGL::GL * gl) {
 	int size = 15;
 	int left = (this->GetWidth() - size) / 2;
@@ -58,16 +33,16 @@ void Spinner::OnPaint(OpenGL::GL * gl) {
 	glColor4f(color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 	switch (this->position) {
 		case 0:
-			this->DrawLine(left, top, right, top);
+			GL::DrawLine(left, top, right, top);
 			break;
 		case 1:
-			this->DrawLine(left, top, left, bottom);
+			GL::DrawLine(left, top, left, bottom);
 			break;
 		case 2:
-			this->DrawLine(left, bottom, right, bottom);
+			GL::DrawLine(left, bottom, right, bottom);
 			break;
 		case 3:
-			this->DrawLine(right, top, right, bottom);
+			GL::DrawLine(right, top, right, bottom);
 			break;
 	}
 }
