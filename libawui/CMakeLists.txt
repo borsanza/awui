@@ -26,8 +26,8 @@ TARGET_LINK_LIBRARIES(
 	awui
 	cairo
 	${SDL_LIBRARY}
+	${SDLIMAGE_LIBRARY}
 # Valores para linux
-	X11
 	GL
 #	"C:\\awui-project\\cairo\\lib\\libcairo.dll.a"
 )

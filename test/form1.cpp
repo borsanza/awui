@@ -9,8 +9,10 @@
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
+#include <awui/Drawing/Size.h>
 #include <awui/Effects/Effect.h>
 #include <awui/Math.h>
+#include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/Control.h>
 #include <awui/Windows/Forms/ControlCollection.h>
@@ -107,6 +109,13 @@ void Form1::InitializeComponent() {
 	this->SetSize(300, 910);
 	this->SetText("Test Form1");
 //	this->SetFullscreen(0);
+
+	Bitmap * bitmap = new Bitmap("button.png");
+	bitmap->SetDock(DockStyle::None);
+	bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	bitmap->SetLocation(100, 100);
+	bitmap->SetSize(Size(97, 97));
+	this->GetControls()->Add(bitmap);
 }
 
 void Form1::AddButtonEffect(Effect * effect, Control * control, int posy) {

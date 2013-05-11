@@ -15,6 +15,7 @@ namespace awui {
 			ArrayList,
 			SortedList,
 			Button,
+			Bitmap,
 			Label,
 			Color,
 			Control,

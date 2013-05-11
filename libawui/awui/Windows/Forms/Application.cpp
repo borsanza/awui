@@ -23,15 +23,12 @@ void Application::Quit() {
 }
 
 void Application::Run(Form * form = NULL) {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		return;
 
 	form->Init();
 
 	atexit(SDL_Quit);
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_TEXTURE_2D);
 
 	while (!Application::quit) {
 		form->ProcessEvents();

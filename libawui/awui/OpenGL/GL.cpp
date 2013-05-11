@@ -78,11 +78,11 @@ void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glPixelZoom(1.0f, -1.0f);
-	glRasterPos2f(x, y);
 	GLboolean valid;
 	glGetBooleanv(GL_CURRENT_RASTER_POSITION_VALID,&valid);
-	if (valid) {
+	if (valid && 0) {
+		glPixelZoom(1.0f, -1.0f);
+		glRasterPos2f(x, y);
 		glDrawPixels(image->GetWidth(), image->GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, image->image);
 	} else {
 		static GLuint texture1;
@@ -112,5 +112,5 @@ void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
 	if (!oldBlend)
 		glDisable(GL_BLEND);
 	if (oldDepth)
-		glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 }

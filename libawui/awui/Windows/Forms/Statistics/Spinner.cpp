@@ -24,6 +24,8 @@ void Spinner::OnTick() {
 }
 
 void Spinner::OnPaint(OpenGL::GL * gl) {
+	glDisable(GL_TEXTURE_2D);
+
 	int size = 15;
 	int left = (this->GetWidth() - size) / 2;
 	int top = (this->GetHeight() - size) / 2;
@@ -45,4 +47,6 @@ void Spinner::OnPaint(OpenGL::GL * gl) {
 			GL::DrawLine(right, top, right, bottom);
 			break;
 	}
+
+	glEnable(GL_TEXTURE_2D);
 }
