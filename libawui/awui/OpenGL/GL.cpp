@@ -69,8 +69,11 @@ void GL::DrawLine(int x, int y, int x2, int y2) {
 #define GL_BGRA 0x80E1
 #endif
 
-void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
+void GL::DrawImageGL(awui::Drawing::Image * image, int x, int y) {
 	// Mas rapido guardandose solo el valor y recuperarlo despues
+	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
+
 	GLboolean oldDepth = glIsEnabled(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
 
@@ -78,37 +81,40 @@ void GL::DrawImageGL(awui::Drawing::Image * image, float x, float y) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+/*
+	glPixelZoom(1.0f, -1.0f);
+	glRasterPos2f(x, y);
 	GLboolean valid;
-	glGetBooleanv(GL_CURRENT_RASTER_POSITION_VALID,&valid);
-	if (valid && 0) {
-		glPixelZoom(1.0f, -1.0f);
-		glRasterPos2f(x, y);
+	glGetBooleanv(GL_CURRENT_RASTER_POSITION_VALID, &valid);
+	if (valid || 1) {
 		glDrawPixels(image->GetWidth(), image->GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, image->image);
 	} else {
-		static GLuint texture1;
+*/
+	static GLuint texture1;
 
-		glGenTextures(1, &texture1);
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->GetWidth(), image->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, image->image);
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->GetWidth(), image->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, image->image);
 
-		glPushMatrix();
+	glPushMatrix();
 
-		glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);glVertex2f(x, y);
-		glTexCoord2f(1.0f, 0.0f);glVertex2f(x + image->GetWidth(), y);
-		glTexCoord2f(1.0f, 1.0f);glVertex2f(x + image->GetWidth(), y + image->GetHeight());
-		glTexCoord2f(0.0f, 1.0f);glVertex2f(x, y + image->GetHeight()) ;
-		glEnd();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);glVertex2i(x, y);
+	glTexCoord2f(1.0f, 0.0f);glVertex2i(x + image->GetWidth(), y);
+	glTexCoord2f(1.0f, 1.0f);glVertex2i(x + image->GetWidth(), y + image->GetHeight());
+	glTexCoord2f(0.0f, 1.0f);glVertex2i(x, y + image->GetHeight()) ;
+	glEnd();
 
-		glDeleteTextures(1, &texture1);
+	glDeleteTextures(1, &texture1);
 
-		glPopMatrix();
-	}
+	glPopMatrix();
 
+	if (!oldTexture)
+		glDisable(GL_TEXTURE_2D);
 	if (!oldBlend)
 		glDisable(GL_BLEND);
 	if (oldDepth)

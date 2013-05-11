@@ -69,7 +69,7 @@ void Form::OnPaintForm() {
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
 
 	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
 

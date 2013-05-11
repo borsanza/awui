@@ -36,7 +36,7 @@ namespace awui {
 				void SetClipping();
 
 				static void DrawLine(int x, int y, int x2, int y2);
-				static void DrawImageGL(awui::Drawing::Image * image, float x, float y);
+				static void DrawImageGL(awui::Drawing::Image * image, int x, int y);
 		};
 	}
 }

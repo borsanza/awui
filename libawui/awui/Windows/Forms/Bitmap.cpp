@@ -62,6 +62,9 @@ void Bitmap::Load() {
 void Bitmap::OnPaint(GL* gl) {
 	this->Load();
 
+	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
+
 	GLboolean oldDepth = glIsEnabled(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
 
@@ -82,6 +85,8 @@ void Bitmap::OnPaint(GL* gl) {
 	glEnd();
 	glPopMatrix();
 
+	if (!oldTexture)
+		glDisable(GL_TEXTURE_2D);
 	if (!oldBlend)
 		glDisable(GL_BLEND);
 	if (oldDepth)
