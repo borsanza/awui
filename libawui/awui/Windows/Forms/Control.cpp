@@ -28,8 +28,8 @@ Control::Control() {
 	this->parent = NULL;
 	this->needRefresh = 1;
 	this->dock = DockStyle::None;
-	this->backColor = Color::FromArgb(226, 226, 226);
-	this->foreColor = Color::FromArgb(0, 0, 0);
+	this->backColor = Color::FromArgb(0, 0, 0, 0);
+	this->foreColor = Color::FromArgb(255, 255, 255);
 	this->OnResizePre();
 	this->font = new Font("sans-serif", 12);
 	this->scissorEnabled = true;

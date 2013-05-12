@@ -1,12 +1,12 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/Control.h>
 
-class Form1 : public awui::Windows::Forms::Form {
+class Test2: public awui::Windows::Forms::Control {
 	public:
-		Form1();
-		virtual ~Form1();
+		Test2();
+		virtual ~Test2();
 
 	private:
 		void InitializeComponent();

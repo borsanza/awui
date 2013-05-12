@@ -158,5 +158,6 @@ void Label::UpdateBufferText() {
 
 	this->image = new Drawing::Image(this->metrics.GetWidth(), this->metrics.GetHeight());
 	this->g = Drawing::Graphics::FromImage(this->image);
+
 	this->g->DrawString(this->text, &font, this->GetForeColor(), 0, 0);
 }

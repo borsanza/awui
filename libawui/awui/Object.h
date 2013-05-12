@@ -17,6 +17,7 @@ namespace awui {
 			Button,
 			Bitmap,
 			Label,
+			Keyboard,
 			Color,
 			Control,
 			ControlCollection,

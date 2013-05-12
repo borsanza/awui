@@ -161,7 +161,6 @@ void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing
 
 	int posx = x - extents.x_bearing + BORDER;
 	int posy = y - extents.y_bearing + BORDER;
-
 	cairo_move_to(this->cr, posx, posy);
 	cairo_show_text(this->cr, text.ToCharArray());
 	cairo_restore(this->cr);
