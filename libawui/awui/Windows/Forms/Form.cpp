@@ -67,9 +67,9 @@ void Form::OnPaintForm() {
 	gl.SetClippingBase(rectangle);
 
 	glDisable(GL_CULL_FACE);
-	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
 
 	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
 

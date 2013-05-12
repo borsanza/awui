@@ -19,6 +19,8 @@ namespace awui {
 			class Bitmap : public Control {
 				private:
 					GLuint texture;
+					int textureWidth;
+					int textureHeight;
 					int fixX1;
 					int fixX2;
 					int fixY1;

@@ -5,26 +5,24 @@
 
 typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
+typedef unsigned int	GLuint;
 
 namespace awui {
-	namespace OpenGL {
-		class GL;
-	}
-
 	class String;
 
 	namespace Drawing {
 		class Image : public Object {
 			friend class Graphics;
-			friend class awui::OpenGL::GL;
 
-			protected:
+			private:
 				int width;
 				int height;
 				int btpp;
 				cairo_surface_t *cairo_surface;
 				cairo_t *cr;
 				unsigned char *image;
+				bool loaded;
+				GLuint texture;
 
 			public:
 				Image(int width, int height);
@@ -35,6 +33,9 @@ namespace awui {
 
 				int GetWidth();
 				int GetHeight();
+
+				void Load();
+				GLuint GetTexture();
 		};
 	}
 }

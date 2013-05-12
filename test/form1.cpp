@@ -37,7 +37,14 @@ Form1::~Form1() {
 }
 
 void Form1::InitializeComponent() {
-	this->SetBackColor(Color::FromArgb(255, 255, 255));
+	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
+	Bitmap * bitmap = new Bitmap("button.png");
+	bitmap->SetDock(DockStyle::None);
+	bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	bitmap->SetLocation(100, 100);
+	bitmap->SetSize(Size(600, 150));
+	bitmap->SetFixedMargins(22, 25, 22, 24);
+	this->GetControls()->Add(bitmap);
 /*
 	Label * label;
 	label = new Label();
@@ -45,7 +52,7 @@ void Form1::InitializeComponent() {
 	label->SetTextAlign(ContentAlignment::MiddleCenter);
 	label->SetText("Label Top");
 	label->SetMinimumSize(Size(75, 23));
-	label->SetBackColor(Color::FromArgb(0, 0, 0));
+	label->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	label->SetForeColor(Color::FromArgb(255, 255, 255));
 	this->GetControls()->Add(label);
 
@@ -54,7 +61,7 @@ void Form1::InitializeComponent() {
 	label->SetTextAlign(ContentAlignment::MiddleCenter);
 	label->SetText("Label Bottom");
 	label->SetMinimumSize(Size(75, 23));
-	label->SetBackColor(Color::FromArgb(0, 0, 0));
+	label->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	label->SetForeColor(Color::FromArgb(255, 255, 255));
 	this->GetControls()->Add(label);
 
@@ -63,7 +70,7 @@ void Form1::InitializeComponent() {
 	label->SetTextAlign(ContentAlignment::MiddleCenter);
 	label->SetText("Label Left");
 	label->SetMinimumSize(Size(75, 23));
-	label->SetBackColor(Color::FromArgb(0, 0, 0));
+	label->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	label->SetForeColor(Color::FromArgb(255, 255, 255));
 	this->GetControls()->Add(label);
 
@@ -72,7 +79,7 @@ void Form1::InitializeComponent() {
 	label->SetTextAlign(ContentAlignment::MiddleCenter);
 	label->SetText("Label Right");
 	label->SetMinimumSize(Size(75, 23));
-	label->SetBackColor(Color::FromArgb(0, 0, 0));
+	label->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	label->SetForeColor(Color::FromArgb(255, 255, 255));
 	this->GetControls()->Add(label);
 */
@@ -86,8 +93,8 @@ void Form1::InitializeComponent() {
 
 	Control * control1 = this->_splitter->GetPanel1();
 	Control * control2 = this->_splitter->GetPanel2();
-	control1->SetBackColor(Color::FromArgb(0, 0, 0));
-	control2->SetBackColor(Color::FromArgb(0, 0, 0));
+	control1->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	control2->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 
 	this->_buttons = new awui::Collections::ArrayList();
 	this->_effects = new awui::Collections::ArrayList();
@@ -109,13 +116,6 @@ void Form1::InitializeComponent() {
 	this->SetSize(300, 910);
 	this->SetText("Test Form1");
 //	this->SetFullscreen(0);
-
-	Bitmap * bitmap = new Bitmap("button.png");
-	bitmap->SetDock(DockStyle::None);
-	bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	bitmap->SetLocation(100, 100);
-	bitmap->SetSize(Size(97, 97));
-	this->GetControls()->Add(bitmap);
 }
 
 void Form1::AddButtonEffect(Effect * effect, Control * control, int posy) {

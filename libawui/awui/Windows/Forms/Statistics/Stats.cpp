@@ -14,7 +14,7 @@ using namespace awui::Windows::Forms::Statistics;
 Stats* Stats::pinstance = 0;
 
 Stats::Stats() {
-	this->SetBackColor(Color::FromArgb(0, 0, 0));
+	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->used = 0;
 	this->idle = TimeSpan(this->used.TicksPerSecond / 60.0f);
 	this->total = this->idle;

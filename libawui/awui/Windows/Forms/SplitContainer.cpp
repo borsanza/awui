@@ -21,7 +21,7 @@ SplitContainer::SplitContainer() {
 
 	this->SetName("SplitContainer");
 
-	this->SetBackColor(Color::FromArgb(255, 255, 0));
+	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 
 	this->panel1 = new Panel();
 	this->splitter = new Splitter();
