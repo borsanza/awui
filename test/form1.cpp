@@ -23,17 +23,18 @@ void Form1::InitializeComponent() {
 	this->SetText("Test Form1");
 	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
-/*
 	Bitmap * bitmap = new Bitmap("images/button.png");
 	bitmap->SetDock(DockStyle::None);
 	bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	bitmap->SetLocation(100, 100);
-	bitmap->SetSize(Size(600, 150));
+	bitmap->SetLocation(46, 31);
+	bitmap->SetSize(Size(97, 97));
 	bitmap->SetFixedMargins(22, 25, 22, 24);
 	this->GetControls()->Add(bitmap);
-*/
+
 	Test2 *test2 = new Test2();
 	this->GetControls()->Add(test2);
+	Test1 *test1 = new Test1();
+	this->GetControls()->Add(test1);
 
 //	this->SetSize(300, 910);
 //	this->SetFullscreen(0);

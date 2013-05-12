@@ -43,7 +43,7 @@ void Test1::InitializeComponent() {
 	this->_splitter->SetName("SplitContainer");
 	this->_splitter->SetDock(DockStyle::Fill);
 	this->_splitter->SetOrientation(SplitContainer::Orientation::Vertical);
-	this->_splitter->SetSplitterDistance(840);
+	this->_splitter->SetSplitterDistance(665);
 
 	this->GetControls()->Add(this->_splitter);
 
