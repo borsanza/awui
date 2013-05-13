@@ -37,7 +37,6 @@ void Form1::InitializeComponent() {
 	bitmap->SetLocation(46, 141);
 	bitmap->SetSize(Size(97, 97));
 	bitmap->SetFixedMargins(22, 25, 22, 24);
-	bitmap->SetScissorEnabled(false);
 	this->GetControls()->Add(bitmap);
 
 	bitmap = new Bitmap("images/button.png");
