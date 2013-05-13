@@ -167,12 +167,7 @@ void Bitmap::OnPaint(GL* gl) {
 	glTexCoord2f(tx2, ty1); glVertex2i(x2, y1); // Right Top
 	glTexCoord2f(tx2, ty2); glVertex2i(x2, y2); // Right Bottom
 	glTexCoord2f(tx1, ty2); glVertex2i(x1, y2); // Left Bottom
-/*
-	glTexCoord2f(0, 0); glVertex2i(0, 0); // Left Top
-	glTexCoord2f(1, 0); glVertex2i(97, 0); // Right Top
-	glTexCoord2f(1, 1); glVertex2i(97, 97); // Right Bottom
-	glTexCoord2f(0, 1); glVertex2i(0, 97); // Left Bottom
-*/
+
 	glEnd();
 	glPopMatrix();
 

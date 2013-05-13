@@ -31,7 +31,7 @@ void Form1::InitializeComponent() {
 	bitmap->SetFixedMargins(22, 25, 22, 24);
 	this->GetControls()->Add(bitmap);
 
-	bitmap = new Bitmap("images/button4.png");
+	bitmap = new Bitmap("images/button2.png");
 	bitmap->SetDock(DockStyle::None);
 	bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	bitmap->SetLocation(46, 141);
@@ -47,7 +47,7 @@ void Form1::InitializeComponent() {
 	bitmap->SetFixedMargins(22, 25, 22, 24);
 	this->GetControls()->Add(bitmap);
 
-	bitmap = new Bitmap("images/button4.png");
+	bitmap = new Bitmap("images/button2.png");
 	bitmap->SetDock(DockStyle::None);
 	bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	bitmap->SetLocation(100, 650);

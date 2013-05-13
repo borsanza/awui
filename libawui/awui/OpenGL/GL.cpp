@@ -39,28 +39,28 @@ void GL::SetClipping() {
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
 }
 
-void GL::DrawLine(int x, int y, int x2, int y2) {
+void GL::DrawLine(int x1, int y1, int x2, int y2) {
 	int xinc = 0;
 	int yinc = 0;
-	int width = Math::Abs(x2 - x);
-	int height = Math::Abs(y2 - y);
+	int width = Math::Abs(x2 - x1);
+	int height = Math::Abs(y2 - y1);
 
 	if (width >= height) {
-		if (x2 >= x)
+		if (x2 >= x1)
 			xinc = 1;
 		else
 			xinc = -1;
 	}
 
 	if (height >= width) {
-		if (y2 >= y)
+		if (y2 >= y1)
 			yinc = 1;
 		else
 			yinc = -1;
 	}
 
 	glBegin(GL_LINES);
-	glVertex2f(x + 0.375, y + 0.375);
+	glVertex2f(x1 + 0.375, y1 + 0.375);
 	glVertex2f(x2 + xinc + 0.375, y2 + yinc + 0.375);
 	glEnd();
 }
@@ -72,6 +72,10 @@ void GL::DrawRectangle(int x1, int y1, int x2, int y2) {
 	glVertex2f(x2 + 0.375, y2 + 0.375);
 	glVertex2f(x1 + 0.375, y2 + 0.375);
 	glEnd();
+}
+
+void GL::FillRectangle(int x1, int y1, int x2, int y2) {
+	glRectf(x1 + 0.375, y1 + 0.375, x2 + 0.375, y2 + 0.375);
 }
 
 #ifndef GL_BGRA

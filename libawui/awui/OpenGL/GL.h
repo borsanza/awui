@@ -37,6 +37,7 @@ namespace awui {
 
 				static void DrawLine(int x, int y, int x2, int y2);
 				static void DrawRectangle(int x1, int y1, int x2, int y2);
+				static void FillRectangle(int x1, int y1, int x2, int y2);
 				static void DrawImageGL(awui::Drawing::Image * image, int x, int y);
 		};
 	}
