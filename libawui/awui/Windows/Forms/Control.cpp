@@ -255,14 +255,14 @@ void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 				glClear(GL_COLOR_BUFFER_BIT);
 			} else {
 				glColor3f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f);
-				glRectf(0, 0, this->GetWidth(), this->GetHeight());
+				GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
 			}
 			break;
 		case 0:
 			break;
 		default:
 			glColor4f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
-			glRectf(0, 0, this->GetWidth(), this->GetHeight());
+			GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
 			break;
 	}
 

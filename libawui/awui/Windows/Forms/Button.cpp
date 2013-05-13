@@ -47,7 +47,7 @@ void Button::OnMouseMove(MouseEventArgs* e) {
 void Button::OnPaint(GL* gl) {
 	if (this->show) {
 		glColor4f(0.3f, 0.3f, 1.0f, 0.3f);
-		glRectf(1, 1, this->GetWidth() - 2, this->GetHeight() - 2);
+		GL::FillRectangle(1, 1, this->GetWidth() - 2, this->GetHeight() - 2);
 
 		glColor3f(0.3f, 0.3f, 1.0f);
 		GL::DrawRectangle(0, 0, this->GetWidth() - 1, this->GetHeight() - 1);

@@ -60,22 +60,27 @@ void GL::DrawLine(int x1, int y1, int x2, int y2) {
 	}
 
 	glBegin(GL_LINES);
-	glVertex2f(x1 + 0.375, y1 + 0.375);
-	glVertex2f(x2 + xinc + 0.375, y2 + yinc + 0.375);
+	glVertex2f(x1 + 0.375f, y1 + 0.375f);
+	glVertex2f(x2 + xinc + 0.375f, y2 + yinc + 0.375f);
 	glEnd();
 }
 
 void GL::DrawRectangle(int x1, int y1, int x2, int y2) {
 	glBegin(GL_LINE_LOOP);
-	glVertex2f(x1 + 0.375, y1 + 0.375);
-	glVertex2f(x2 + 0.375, y1 + 0.375);
-	glVertex2f(x2 + 0.375, y2 + 0.375);
-	glVertex2f(x1 + 0.375, y2 + 0.375);
+	glVertex2f(x1 + 0.375f, y1 + 0.375f);
+	glVertex2f(x2 + 0.375f, y1 + 0.375f);
+	glVertex2f(x2 + 0.375f, y2 + 0.375f);
+	glVertex2f(x1 + 0.375f, y2 + 0.375f);
 	glEnd();
 }
 
 void GL::FillRectangle(int x1, int y1, int x2, int y2) {
-	glRectf(x1 + 0.375, y1 + 0.375, x2 + 0.375, y2 + 0.375);
+	glBegin(GL_QUADS);
+	glVertex2f(x1 + 0.375f, y1 + 0.375f);
+	glVertex2f(x2 + 1.375f, y1 + 0.375f);
+	glVertex2f(x2 + 1.375f, y2 + 1.375f);
+	glVertex2f(x1 + 0.375f, y2 + 1.375f);
+	glEnd();
 }
 
 #ifndef GL_BGRA
