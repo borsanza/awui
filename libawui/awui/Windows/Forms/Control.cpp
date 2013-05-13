@@ -234,8 +234,6 @@ void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glTranslatef(0.375f, 0.375f, 0.0f);
-
 	Rectangle rect2;
 	rect2.SetX(x);
 	rect2.SetY(height - y - this->GetHeight());
@@ -272,8 +270,6 @@ void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 
 	if (disableScissor)
 		glDisable(GL_SCISSOR_TEST);
-
-	glTranslatef(-0.375, -0.375, 0);
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);

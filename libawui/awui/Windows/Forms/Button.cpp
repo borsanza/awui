@@ -5,6 +5,7 @@
 
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
+#include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <SDL_opengl.h>
 
@@ -50,12 +51,7 @@ void Button::OnPaint(GL* gl) {
 
 		glColor3f(0.3f, 0.3f, 1.0f);
 //		glRectf(0,0, this->GetWidth() - 1, this->GetHeight() - 1);
-		glBegin(GL_LINE_LOOP);
-		glVertex2f(0, 0);
-		glVertex2f(0, this->GetHeight() - 1);
-		glVertex2f(this->GetWidth() - 1, this->GetHeight() - 1);
-		glVertex2f(this->GetWidth() - 1, 0);
-		glEnd();
+		GL::DrawRectangle(0, 0, this->GetWidth() - 1, this->GetHeight() - 1);
 	}
 
 	this->label.SetSize(this->GetWidth(), this->GetHeight());

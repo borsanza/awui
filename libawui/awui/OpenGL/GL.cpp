@@ -60,8 +60,17 @@ void GL::DrawLine(int x, int y, int x2, int y2) {
 	}
 
 	glBegin(GL_LINES);
-	glVertex2i(x, y);
-	glVertex2i(x2 + xinc, y2 + yinc);
+	glVertex2f(x + 0.375, y + 0.375);
+	glVertex2f(x2 + xinc + 0.375, y2 + yinc + 0.375);
+	glEnd();
+}
+
+void GL::DrawRectangle(int x1, int y1, int x2, int y2) {
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(x1 + 0.375, y1 + 0.375);
+	glVertex2f(x2 + 0.375, y1 + 0.375);
+	glVertex2f(x2 + 0.375, y2 + 0.375);
+	glVertex2f(x1 + 0.375, y2 + 0.375);
 	glEnd();
 }
 

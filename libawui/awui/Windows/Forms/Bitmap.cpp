@@ -54,6 +54,8 @@ void Bitmap::Load() {
 		glBindTexture(GL_TEXTURE_2D, this->texture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // GL_NEAREST or GL_LINEAR
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // GL_NEAREST or GL_LINEAR
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 		glTexImage2D(GL_TEXTURE_2D, 0, 4, textureImage->w, textureImage->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureImage->pixels);
 		this->textureWidth = textureImage->w;
 		this->textureHeight = textureImage->h;
@@ -165,7 +167,12 @@ void Bitmap::OnPaint(GL* gl) {
 	glTexCoord2f(tx2, ty1); glVertex2i(x2, y1); // Right Top
 	glTexCoord2f(tx2, ty2); glVertex2i(x2, y2); // Right Bottom
 	glTexCoord2f(tx1, ty2); glVertex2i(x1, y2); // Left Bottom
-
+/*
+	glTexCoord2f(0, 0); glVertex2i(0, 0); // Left Top
+	glTexCoord2f(1, 0); glVertex2i(97, 0); // Right Top
+	glTexCoord2f(1, 1); glVertex2i(97, 97); // Right Bottom
+	glTexCoord2f(0, 1); glVertex2i(0, 97); // Left Bottom
+*/
 	glEnd();
 	glPopMatrix();
 
@@ -176,3 +183,5 @@ void Bitmap::OnPaint(GL* gl) {
 	if (!oldTexture)
 		glDisable(GL_TEXTURE_2D);
 }
+
+// StretchMode - NoResize, Tile, Stretch

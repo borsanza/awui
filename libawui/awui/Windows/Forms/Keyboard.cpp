@@ -22,7 +22,7 @@ Keyboard::Keyboard() {
 			button->SetDock(DockStyle::None);
 			button->SetLocation(j * 70, i * 55);
 			button->SetSize(50, 50);
-			button->SetFont(new Font("Monospace", 34, FontStyle::Bold));
+			button->SetFont(new Font("sans-serif", 34, FontStyle::Bold));
 			button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 			button->SetForeColor(Color::FromArgb(255, 255, 255));
 			char frase[2];
