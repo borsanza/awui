@@ -16,6 +16,13 @@ namespace awui {
 
 	namespace Windows {
 		namespace Forms {
+			struct StretchMode {
+				enum Enum {
+					NoResize = 0,
+					Tile = 1,
+					Stretch = 2,
+				};
+			};
 			class Bitmap : public Control {
 				private:
 					GLuint texture;
@@ -25,11 +32,16 @@ namespace awui {
 					int fixX2;
 					int fixY1;
 					int fixY2;
+					StretchMode::Enum stretchMode;
 
 					String file;
 					bool loaded;
 
 					void Load();
+
+					void PaintNoResized();
+					void PaintTiled();
+					void PaintStretched();
 
 				public:
 					Bitmap(const String file);
@@ -40,6 +52,9 @@ namespace awui {
 					void SetFixedMargins(int x1, int y1, int x2, int y2);
 
 					virtual void OnPaint(OpenGL::GL* gl);
+
+					void SetStretchMode(StretchMode::Enum stretchMode);
+					StretchMode::Enum GetStretchMode();
 			};
 		}
 	}
