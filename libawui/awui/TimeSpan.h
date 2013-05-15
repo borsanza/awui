@@ -12,8 +12,8 @@ namespace awui {
 
 	class TimeSpan : public Object {
 		public:
-			const long TicksPerDay = 864000000000;
-			const long TicksPerHour = 36000000000;
+			const long long TicksPerDay = 864000000000;
+			const long long TicksPerHour = 36000000000;
 			const long TicksPerMillisecond = 10000;
 			const long TicksPerMinute = 600000000;
 			const long TicksPerSecond = 10000000;
