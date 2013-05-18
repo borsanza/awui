@@ -162,20 +162,13 @@ void Bitmap::PaintTiled() {
 			xn1 = xn2;
 			xn2 = xn1 + (this->textureWidth - this->fixX1 - this->fixX2);
 		}
-	}
 
-	// 7
-	if (this->fixY2 > 0) {
-		int xn1 = this->fixX1;
-		int xn2 = xn1 + (this->textureWidth - this->fixX1 - this->fixX2);
-		while (xn2 < (this->GetWidth() - this->fixX2)) {
-			glTexCoord2f(tx1, ty2); glVertex2i(xn1, y2); // Left Top
-			glTexCoord2f(tx2, ty2); glVertex2i(xn2, y2); // Right Top
-			glTexCoord2f(tx2, ty3); glVertex2i(xn2, y3); // Right Bottom
-			glTexCoord2f(tx1, ty3); glVertex2i(xn1, y3); // Left Bottom
-			xn1 = xn2;
-			xn2 = xn1 + (this->textureWidth - this->fixX1 - this->fixX2);
-		}
+		// Recalcular tx2
+		xn2 = this->GetWidth() - this->fixX2;
+		glTexCoord2f(tx1, ty0); glVertex2i(xn1, y0); // Left Top
+		glTexCoord2f(tx2, ty0); glVertex2i(xn2, y0); // Right Top
+		glTexCoord2f(tx2, ty1); glVertex2i(xn2, y1); // Right Bottom
+		glTexCoord2f(tx1, ty1); glVertex2i(xn1, y1); // Left Bottom
 	}
 
 	// 3
@@ -190,6 +183,13 @@ void Bitmap::PaintTiled() {
 			yn1 = yn2;
 			yn2 = yn1 + (this->textureHeight - this->fixY1 - this->fixY2);
 		}
+
+		// Recalcular ty2
+		yn2 = this->GetHeight() - this->fixY2;
+		glTexCoord2f(tx0, ty1); glVertex2i(x0, yn1); // Left Top
+		glTexCoord2f(tx1, ty1); glVertex2i(x1, yn1); // Right Top
+		glTexCoord2f(tx1, ty2); glVertex2i(x1, yn2); // Right Bottom
+		glTexCoord2f(tx0, ty2); glVertex2i(x0, yn2); // Left Bottom
 	}
 
 	// 5
@@ -204,14 +204,43 @@ void Bitmap::PaintTiled() {
 			yn1 = yn2;
 			yn2 = yn1 + (this->textureHeight - this->fixY1 - this->fixY2);
 		}
+
+		// Recalcular la ty2
+		yn2 = this->GetHeight() - this->fixY2;
+		glTexCoord2f(tx2, ty1); glVertex2i(x2, yn1); // Left Top
+		glTexCoord2f(tx3, ty1); glVertex2i(x3, yn1); // Right Top
+		glTexCoord2f(tx3, ty2); glVertex2i(x3, yn2); // Right Bottom
+		glTexCoord2f(tx2, ty2); glVertex2i(x2, yn2); // Left Bottom
+	}
+
+	// 7
+	if (this->fixY2 > 0) {
+		int xn1 = this->fixX1;
+		int xn2 = xn1 + (this->textureWidth - this->fixX1 - this->fixX2);
+		while (xn2 < (this->GetWidth() - this->fixX2)) {
+			glTexCoord2f(tx1, ty2); glVertex2i(xn1, y2); // Left Top
+			glTexCoord2f(tx2, ty2); glVertex2i(xn2, y2); // Right Top
+			glTexCoord2f(tx2, ty3); glVertex2i(xn2, y3); // Right Bottom
+			glTexCoord2f(tx1, ty3); glVertex2i(xn1, y3); // Left Bottom
+			xn1 = xn2;
+			xn2 = xn1 + (this->textureWidth - this->fixX1 - this->fixX2);
+		}
+
+		// Recalcular la tx2;
+		xn2 = this->GetWidth() - this->fixX2;
+		glTexCoord2f(tx1, ty2); glVertex2i(xn1, y2); // Left Top
+		glTexCoord2f(tx2, ty2); glVertex2i(xn2, y2); // Right Top
+		glTexCoord2f(tx2, ty3); glVertex2i(xn2, y3); // Right Bottom
+		glTexCoord2f(tx1, ty3); glVertex2i(xn1, y3); // Left Bottom
 	}
 
 	// 4
+	int xn1, xn2;
 	int yn1 = this->fixY1;
 	int yn2 = yn1 + (this->textureHeight - this->fixY1 - this->fixY2);
 	while (yn2 < (this->GetHeight() - this->fixY2)) {
-		int xn1 = this->fixX1;
-		int xn2 = xn1 + (this->textureWidth - this->fixX1 - this->fixX2);
+		xn1 = this->fixX1;
+		xn2 = xn1 + (this->textureWidth - this->fixX1 - this->fixX2);
 		while (xn2 < (this->GetWidth() - this->fixX2)) {
 			glTexCoord2f(tx1, ty1); glVertex2i(xn1, yn1); // Left Top
 			glTexCoord2f(tx2, ty1); glVertex2i(xn2, yn1); // Right Top
@@ -223,6 +252,40 @@ void Bitmap::PaintTiled() {
 		yn1 = yn2;
 		yn2 = yn1 + (this->textureHeight - this->fixY1 - this->fixY2);
 	}
+
+	// Recalcular ty2
+	xn1 = this->fixX1;
+	xn2 = xn1 + (this->textureWidth - this->fixX1 - this->fixX2);
+	yn2 = this->GetHeight() - this->fixY2;
+	while (xn2 < (this->GetWidth() - this->fixX2)) {
+		glTexCoord2f(tx1, ty1); glVertex2i(xn1, yn1); // Left Top
+		glTexCoord2f(tx2, ty1); glVertex2i(xn2, yn1); // Right Top
+		glTexCoord2f(tx2, ty2); glVertex2i(xn2, yn2); // Right Bottom
+		glTexCoord2f(tx1, ty2); glVertex2i(xn1, yn2); // Left Bottom
+		xn1 = xn2;
+		xn2 = xn1 + (this->textureWidth - this->fixX1 - this->fixX2);
+	}
+
+	// Recalcular tx2
+	yn1 = this->fixY1;
+	yn2 = yn1 + (this->textureHeight - this->fixY1 - this->fixY2);
+	xn2 = this->GetWidth() - this->fixX2;
+	while (yn2 < (this->GetHeight() - this->fixY2)) {
+		glTexCoord2f(tx1, ty1); glVertex2i(xn1, yn1); // Left Top
+		glTexCoord2f(tx2, ty1); glVertex2i(xn2, yn1); // Right Top
+		glTexCoord2f(tx2, ty2); glVertex2i(xn2, yn2); // Right Bottom
+		glTexCoord2f(tx1, ty2); glVertex2i(xn1, yn2); // Left Bottom
+		yn1 = yn2;
+		yn2 = yn1 + (this->textureHeight - this->fixY1 - this->fixY2);
+	}
+
+	// Recalcular la tx2 y la ty2
+	xn2 = this->GetWidth() - this->fixX2;
+	yn2 = this->GetHeight() - this->fixY2;
+	glTexCoord2f(tx1, ty1); glVertex2i(xn1, yn1); // Left Top
+	glTexCoord2f(tx2, ty1); glVertex2i(xn2, yn1); // Right Top
+	glTexCoord2f(tx2, ty2); glVertex2i(xn2, yn2); // Right Bottom
+	glTexCoord2f(tx1, ty2); glVertex2i(xn1, yn2); // Left Bottom
 }
 
 void Bitmap::PaintStretched() {

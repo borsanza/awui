@@ -8,6 +8,7 @@
 #include <awui/Drawing/Color.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/MouseEventArgs.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
@@ -23,7 +24,9 @@ void Form1::InitializeComponent() {
 	this->SetText("Test Form1");
 	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
-	Bitmap * bitmap = new Bitmap("images/button.png");
+	Bitmap * bitmap;
+
+	bitmap = new Bitmap("images/button.png");
 	bitmap->SetDock(DockStyle::None);
 	bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	bitmap->SetLocation(46, 31);
@@ -31,16 +34,17 @@ void Form1::InitializeComponent() {
 	bitmap->SetFixedMargins(22, 25, 22, 24);
 	this->GetControls()->Add(bitmap);
 
-/*
-	Bitmap * bitmap = new Bitmap("images/button4.png");
-	bitmap->SetDock(DockStyle::None);
-	bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	bitmap->SetLocation(0, 0);
-	bitmap->SetSize(Size(400, 400));
-	bitmap->SetFixedMargins(22, 25, 22, 24);
-	bitmap->SetStretchMode(StretchMode::Tile);
-	this->GetControls()->Add(bitmap);
-*/
+	bitmap2 = new Bitmap("images/button.png");
+	bitmap2->SetDock(DockStyle::None);
+	bitmap2->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	bitmap2->SetLocation(0, 0);
+	bitmap2->SetSize(Size(400, 400));
+	bitmap2->SetFixedMargins(22, 25, 22, 24);
+//	bitmap2->SetFixedMargins(26, 20, 26, 22); // Button 5
+//	bitmap2->SetFixedMargins(9, 9, 9, 9); // Button 6
+//	bitmap2->SetStretchMode(StretchMode::Tile);
+	this->GetControls()->Add(bitmap2);
+
 	Test2 *test2 = new Test2();
 	this->GetControls()->Add(test2);
 /*
@@ -50,4 +54,8 @@ void Form1::InitializeComponent() {
 
 	this->SetSize(400, 472);
 	this->SetFullscreen(0);
+}
+
+void Form1::OnMouseMove(MouseEventArgs* e) {
+	this->bitmap2->SetSize(e->GetX() - 10, e->GetY() - 10);
 }
