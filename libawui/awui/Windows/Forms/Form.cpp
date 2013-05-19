@@ -257,6 +257,7 @@ Control * Form::GetControlSelected() {
 
 void Form::SetControlSelected(Control * selected) {
 	Form::controlSelected = selected;
+	Form::GetSelectedBitmap()->SetParent(selected->GetParent());
 }
 
 Bitmap * Form::GetSelectedBitmap() {

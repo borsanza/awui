@@ -2,8 +2,6 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "Bitmap.h"
-#include <awui/Console.h>
-#include <awui/Convert.h>
 #include <awui/Math.h>
 
 #include <SDL.h>

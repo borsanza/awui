@@ -4,7 +4,6 @@
 #include "Keyboard.h"
 
 #include <awui/Drawing/Color.h>
-#include <awui/Convert.h>
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 

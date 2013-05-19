@@ -8,6 +8,7 @@
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Pen.h>
 #include <awui/Drawing/Rectangle.h>
+#include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
@@ -284,6 +285,8 @@ void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 
 // Lo usamos para dibujar el skin
 void Control::OnPaint(OpenGL::GL * gl) {
+	static float lastx1, lasty1, lastwidth, lastheight;
+	static Control * lastParent = NULL;
 	Control * selected = Form::GetControlSelected();
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
@@ -292,10 +295,28 @@ void Control::OnPaint(OpenGL::GL * gl) {
 		if (selected == control) {
 			int x1, y1, x2, y2;
 			Bitmap * bitmap = Form::GetSelectedBitmap();
+			float percent = 0.55f;
+			if (lastParent != bitmap->GetParent()) {
+				lastParent = bitmap->GetParent();
+				percent = 1.0f;
+			}
+
 			bitmap->GetFixedMargins(&x1, &y1, &x2, &y2);
-			bitmap->SetSize(control->GetWidth() + x1 + x2, control->GetHeight() + y1 + y2);
+
+			int width = control->GetWidth() + x1 + x2;
+			int height = control->GetHeight() + y1 + y2;
+			lastwidth = lastwidth + ((width - lastwidth) * percent);
+			lastheight = lastheight + ((height - lastheight) * percent);
+
+			bitmap->SetSize(Math::Round(lastwidth), Math::Round(lastheight));
 			int x = control->GetLeft() - x1;
 			int y = control->GetTop() - y1;
+
+			lastx1 = lastx1 + ((x - lastx1) * percent);
+			lasty1 = lasty1 + ((y - lasty1) * percent);
+			x = Math::Round(lastx1);
+			y = Math::Round(lasty1);
+
 			glTranslatef(x, y, 0);
 			bitmap->OnPaint(NULL);
 			glTranslatef(-x, -y, 0);

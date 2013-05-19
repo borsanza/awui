@@ -27,9 +27,6 @@ Control * ControlCollection::GetOwner() {
 	return this->owner;
 }
 
-#include <awui/Console.h>
-#include <awui/Convert.h>
-
 void ControlCollection::Add(Control * item) {
 	ArrayList::Add(item);
 	item->SetParent(this->owner);
