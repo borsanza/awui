@@ -54,6 +54,13 @@ void Bitmap::SetFixedMargins(int x1, int y1, int x2, int y2) {
 	this->fixY2 = y2;
 }
 
+void Bitmap::GetFixedMargins(int * x1, int * y1, int * x2, int * y2) {
+	*x1 = this->fixX1;
+	*y1 = this->fixY1;
+	*x2 = this->fixX2;
+	*y2 = this->fixY2;
+}
+
 void Bitmap::Load() {
 	if (this->loaded)
 		return;

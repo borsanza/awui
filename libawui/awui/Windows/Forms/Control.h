@@ -25,6 +25,7 @@ namespace awui {
 		namespace Forms {
 			class ControlCollection;
 			class MouseEventArgs;
+			class Form;
 
 			class Control : public Object {
 				friend class Form;
@@ -41,7 +42,8 @@ namespace awui {
 						};
 					};
 
-				protected:
+				private:
+					bool tabStop;
 					Drawing::Rectangle bounds;
 					Drawing::Size minimumSize;
 
@@ -58,10 +60,12 @@ namespace awui {
 					Control * mouseControl;
 					String name;
 
-					void OnTickPre();
 					void OnResizePre();
 					void OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl);
 					void ChangeControlOnMouseOver(Control * control);
+
+				protected:
+					void OnTickPre();
 
 				public:
 					Control();
@@ -129,11 +133,14 @@ namespace awui {
 					virtual void OnMouseUp(MouseEventArgs* e) {}
 					virtual void OnMouseEnter();
 					virtual void OnMouseLeave();
-					virtual void OnPaint(OpenGL::GL * gl) {}
+					virtual void OnPaint(OpenGL::GL * gl);
 					virtual void OnResize() {}
 					virtual void OnTick() {}
 					void SetScissorEnabled(bool mode);
 					bool GetScissorEnabled();
+
+					bool GetTabStop();
+					void SetTabStop(bool tabStop);
 			};
 		}
 	}

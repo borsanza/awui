@@ -50,6 +50,7 @@ namespace awui {
 					virtual int IsClass(Classes::Enum objectClass) const;
 
 					void SetFixedMargins(int x1, int y1, int x2, int y2);
+					void GetFixedMargins(int * x1, int * y1, int * x2, int * y2);
 
 					virtual void OnPaint(OpenGL::GL* gl);
 

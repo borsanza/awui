@@ -12,11 +12,14 @@
 namespace awui {
 	namespace Windows {
 		namespace Forms {
+			class Bitmap;
 			class Form : public Control {
 				friend class Application;
 				friend class Control;
 
 				private:
+					static Bitmap * selectedBitmap;
+					static Control * controlSelected;
 					Control * mouseControlOver;
 					String text;
 
@@ -42,6 +45,10 @@ namespace awui {
 					void SetText(String title);
 					void RefreshVideo();
 					void SetFullscreen(int mode);
+
+					static Control * GetControlSelected();
+					static void SetControlSelected(Control * selected);
+					static Bitmap * GetSelectedBitmap();
 			};
 		}
 	}

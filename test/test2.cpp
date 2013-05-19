@@ -20,7 +20,7 @@ Test2::~Test2() {
 void Test2::InitializeComponent() {
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->SetDock(DockStyle::Left);
-	this->SetSize(420, 400);
+	this->SetSize(480, 400);
 
 	Keyboard * keyboard = new Keyboard();
 	keyboard->SetDock(DockStyle::Fill);

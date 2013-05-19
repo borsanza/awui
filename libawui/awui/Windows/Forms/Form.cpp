@@ -9,6 +9,7 @@
 #include <awui/Drawing/Rectangle.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Application.h>
+#include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL.h>
@@ -21,6 +22,9 @@
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;
+
+Control * Form::controlSelected = NULL;
+Bitmap * Form::selectedBitmap = NULL;
 
 Form::Form() {
 	this->text = "";
@@ -245,4 +249,26 @@ void Form::SetText(String title) {
 
 	if (initialized)
 		SDL_WM_SetCaption(this->text.ToCharArray(), NULL);
+}
+
+Control * Form::GetControlSelected() {
+	return Form::controlSelected;
+}
+
+void Form::SetControlSelected(Control * selected) {
+	Form::controlSelected = selected;
+}
+
+Bitmap * Form::GetSelectedBitmap() {
+	if (!Form::selectedBitmap) {
+		Bitmap * bitmap = new Bitmap("images/button.png");
+		bitmap->SetDock((DockStyle::Enum) 0);//DockStyle::None);
+		bitmap->SetBackColor(Drawing::Color::FromArgb(0, 0, 0, 0));
+		bitmap->SetFixedMargins(22, 25, 22, 24);
+		bitmap->SetLocation(0, 0);
+		bitmap->SetSize(Drawing::Size(97, 97));
+		Form::selectedBitmap = bitmap;
+	}
+
+	return Form::selectedBitmap;
 }

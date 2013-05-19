@@ -22,7 +22,7 @@ Keyboard::Keyboard() {
 		for (int j=0; j<6; j++) {
 			Button * button = new Button();
 			button->SetDock(DockStyle::None);
-			button->SetLocation(j * 70, i * 55);
+			button->SetLocation(30 + j * 70, 30 + i * 55);
 			button->SetSize(50, 50);
 			button->SetFont(&font);
 			button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
@@ -40,7 +40,7 @@ Keyboard::Keyboard() {
 
 	Button * button = new Button();
 	button->SetDock(DockStyle::None);
-	button->SetLocation(0, 330);
+	button->SetLocation(30, 360);
 	button->SetSize(120, 50);
 	button->SetFont(&font);
 	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
@@ -50,7 +50,7 @@ Keyboard::Keyboard() {
 
 	button = new Button();
 	button->SetDock(DockStyle::None);
-	button->SetLocation(140, 330);
+	button->SetLocation(170, 360);
 	button->SetSize(120, 50);
 	button->SetFont(&font);
 	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
@@ -60,7 +60,7 @@ Keyboard::Keyboard() {
 
 	button = new Button();
 	button->SetDock(DockStyle::None);
-	button->SetLocation(280, 330);
+	button->SetLocation(310, 360);
 	button->SetSize(120, 50);
 	button->SetFont(&font);
 	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));

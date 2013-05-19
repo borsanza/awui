@@ -6,6 +6,7 @@
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/OpenGL/GL.h>
+#include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <SDL_opengl.h>
 
@@ -19,7 +20,7 @@ Button::Button() {
 
 	this->SetSize(75,23);
 	this->SetBackColor(Color::FromArgb(0, 0, 0));
-	this->show = 0;
+	this->SetTabStop(true);
 }
 
 Button::~Button() {
@@ -33,26 +34,17 @@ int Button::IsClass(Classes::Enum objectClass) const {
 }
 
 void Button::OnMouseLeave() {
-	this->show = 0;
 }
 
 void Button::OnMouseDown(MouseEventArgs* e) {
-	this->show = 1;
+	Form::SetControlSelected(this);
 }
 
 void Button::OnMouseMove(MouseEventArgs* e) {
-	this->show = 1;
+	Form::SetControlSelected(this);
 }
 
 void Button::OnPaint(GL* gl) {
-	if (this->show) {
-		glColor4f(0.3f, 0.3f, 1.0f, 0.3f);
-		GL::FillRectangle(1, 1, this->GetWidth() - 2, this->GetHeight() - 2);
-
-		glColor3f(0.3f, 0.3f, 1.0f);
-		GL::DrawRectangle(0, 0, this->GetWidth() - 1, this->GetHeight() - 1);
-	}
-
 	this->label.SetSize(this->GetWidth(), this->GetHeight());
 	this->label.OnPaint(gl);
 }

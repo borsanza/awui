@@ -9,6 +9,7 @@
 #include <awui/Drawing/Pen.h>
 #include <awui/Drawing/Rectangle.h>
 #include <awui/OpenGL/GL.h>
+#include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
@@ -21,6 +22,7 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Control::Control() {
+	this->tabStop = false;
 	this->bounds = Rectangle(0, 0, 100, 100);
 	this->controls = new ControlCollection(this);
 	this->mouseEventArgs = new MouseEventArgs();
@@ -280,6 +282,27 @@ void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 	}
 }
 
+// Lo usamos para dibujar el skin
+void Control::OnPaint(OpenGL::GL * gl) {
+	Control * selected = Form::GetControlSelected();
+
+	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
+		Control * control = (Control *)this->GetControls()->Get(i);
+
+		if (selected == control) {
+			int x1, y1, x2, y2;
+			Bitmap * bitmap = Form::GetSelectedBitmap();
+			bitmap->GetFixedMargins(&x1, &y1, &x2, &y2);
+			bitmap->SetSize(control->GetWidth() + x1 + x2, control->GetHeight() + y1 + y2);
+			int x = control->GetLeft() - x1;
+			int y = control->GetTop() - y1;
+			glTranslatef(x, y, 0);
+			bitmap->OnPaint(NULL);
+			glTranslatef(-x, -y, 0);
+		}
+	}
+}
+
 void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons) {
 	this->mouseEventArgs->SetLocation(x, y);
 
@@ -421,4 +444,15 @@ void Control::SetScissorEnabled(bool mode) {
 
 bool Control::GetScissorEnabled() {
 	return this->scissorEnabled;
+}
+
+bool Control::GetTabStop() {
+	return this->tabStop;
+}
+
+void Control::SetTabStop(bool tabStop) {
+	this->tabStop = tabStop;
+
+	if (tabStop && !Form::GetControlSelected())
+		Form::SetControlSelected(this);
 }

@@ -4,6 +4,7 @@
 #include "ControlCollection.h"
 
 #include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/Form.h>
 
 using namespace awui::Collections;
 using namespace awui::Windows::Forms;
@@ -26,8 +27,11 @@ Control * ControlCollection::GetOwner() {
 	return this->owner;
 }
 
-void ControlCollection::Add(Object * item) {
+#include <awui/Console.h>
+#include <awui/Convert.h>
+
+void ControlCollection::Add(Control * item) {
 	ArrayList::Add(item);
-	((Control *)item)->SetParent(this->owner);
+	item->SetParent(this->owner);
 	this->owner->Layout();
 }
