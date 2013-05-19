@@ -24,6 +24,7 @@ namespace awui {
 			static IO::TextWriter * GetOut();
 			static void Write(String value);
 			static void WriteLine(String value);
+			static void WriteLine(Object * value);
 	};
 }
 

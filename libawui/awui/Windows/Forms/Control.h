@@ -11,10 +11,16 @@
 #include <awui/Drawing/Font.h>
 #include <awui/Drawing/Rectangle.h>
 #include <awui/Windows/Forms/MouseButtons.h>
+#include <awui/Windows/Forms/RemoteButtons.h>
 
 namespace awui {
+	namespace Collections {
+		class ArrayList;
+	}
+
 	namespace Drawing {
 		class Font;
+		class Point;
 	}
 
 	namespace OpenGL {
@@ -43,6 +49,7 @@ namespace awui {
 					};
 
 				private:
+					Control * focused;
 					bool tabStop;
 					Drawing::Rectangle bounds;
 					Drawing::Size minimumSize;
@@ -83,9 +90,11 @@ namespace awui {
 					void SetName(const String str);
 
 					int GetLeft() const;
+					int GetAbsoluteLeft() const;
 					void SetLeft(int x);
 
 					int GetTop() const;
+					int GetAbsoluteTop() const;
 					void SetTop(int y);
 
 					const Drawing::Point GetLocation() const;
@@ -126,11 +135,13 @@ namespace awui {
 					void OnMouseMovePre(int x, int y, int buttons);
 					void OnMouseUpPre(MouseButtons::Enum button, int buttons);
 					void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
+					void OnRemoteKeyPressedPre(RemoteButtons::Enum button);
 
 					virtual void Layout();
 					virtual void OnMouseDown(MouseEventArgs* e) {}
 					virtual void OnMouseMove(MouseEventArgs* e) {}
 					virtual void OnMouseUp(MouseEventArgs* e) {}
+					virtual bool OnRemoteKeyPressed(RemoteButtons::Enum button);
 					virtual void OnMouseEnter();
 					virtual void OnMouseLeave();
 					virtual void OnPaint(OpenGL::GL * gl);
@@ -141,6 +152,13 @@ namespace awui {
 
 					bool GetTabStop();
 					void SetTabStop(bool tabStop);
+
+					void SetFocus();
+
+					Control * GetTopParent();
+
+					void GetControlsSelectables(Collections::ArrayList * list);
+					Control * GetNextControl(Control * ommitControl, Drawing::Point * pCenter, Drawing::Point * p1, Drawing::Point * p2);
 			};
 		}
 	}

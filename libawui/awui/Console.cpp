@@ -39,3 +39,7 @@ void awui::Console::Write(String value) {
 void awui::Console::WriteLine(String value) {
 	awui::Console::GetOut()->WriteLine(value);
 }
+
+void awui::Console::WriteLine(Object * value) {
+	awui::Console::GetOut()->WriteLine(value);
+}

@@ -40,9 +40,13 @@ void Form1::InitializeComponent() {
 	Test2 *test2 = new Test2();
 	this->GetControls()->Add(test2);
 
+	test2 = new Test2();
+	this->GetControls()->Add(test2);
+
+/*
 	Test1 *test1 = new Test1();
 	this->GetControls()->Add(test1);
-
+*/
 	this->SetSize(460, 532);
 	this->SetFullscreen(0);
 }

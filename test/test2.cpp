@@ -23,6 +23,12 @@ void Test2::InitializeComponent() {
 	this->SetSize(480, 400);
 
 	Keyboard * keyboard = new Keyboard();
-	keyboard->SetDock(DockStyle::Fill);
+	keyboard->SetDock(DockStyle::Top);
+	keyboard->SetSize(480, 480);
+	this->GetControls()->Add(keyboard);
+
+	keyboard = new Keyboard();
+	keyboard->SetDock(DockStyle::Top);
+	keyboard->SetSize(480, 480);
 	this->GetControls()->Add(keyboard);
 }

@@ -60,7 +60,6 @@ void Form::Init() {
 }
 
 void Form::OnPaintForm() {
-	this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
 	glViewport(0, 0, this->GetWidth(), this->GetHeight());
 	GL gl;
 	Drawing::Rectangle rectangle;
@@ -91,12 +90,40 @@ void Form::ProcessEvents() {
 	while (SDL_PollEvent(&event)) {
 		switch(event.type) {
 			case SDL_KEYDOWN:
-				if (event.key.keysym.sym == SDLK_ESCAPE)
-					Application::Quit();
-				if (event.key.keysym.sym == SDLK_w)
-					this->SetFullscreen(0);
-				if (event.key.keysym.sym == SDLK_f)
-					this->SetFullscreen(1);
+				switch (event.key.keysym.sym) {
+					case SDLK_ESCAPE:
+						if (event.key.keysym.mod & KMOD_LCTRL)
+							Application::Quit();
+						else
+							OnRemoteKeyPressedPre(RemoteButtons::Menu);
+						break;
+					case SDLK_RETURN:
+					case SDLK_KP_ENTER:
+						OnRemoteKeyPressedPre(RemoteButtons::Ok);
+						break;
+					case SDLK_w:
+						if (event.key.keysym.mod & KMOD_LALT)
+							this->SetFullscreen(0);
+						break;
+					case SDLK_f:
+						if (event.key.keysym.mod & KMOD_LALT)
+							this->SetFullscreen(1);
+						break;
+					case SDLK_LEFT:
+						OnRemoteKeyPressedPre(RemoteButtons::Left);
+						break;
+					case SDLK_RIGHT:
+						OnRemoteKeyPressedPre(RemoteButtons::Right);
+						break;
+					case SDLK_UP:
+						OnRemoteKeyPressedPre(RemoteButtons::Up);
+						break;
+					case SDLK_DOWN:
+						OnRemoteKeyPressedPre(RemoteButtons::Down);
+						break;
+					default:
+						break;
+				}
 				break;
 			case SDL_QUIT:
 				Application::Quit();
@@ -258,6 +285,7 @@ Control * Form::GetControlSelected() {
 void Form::SetControlSelected(Control * selected) {
 	Form::controlSelected = selected;
 	Form::GetSelectedBitmap()->SetParent(selected->GetParent());
+	selected->SetFocus();
 }
 
 Bitmap * Form::GetSelectedBitmap() {

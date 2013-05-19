@@ -52,3 +52,18 @@ awui::String Point::ToString() {
 	value = String("{X=") + Convert::ToString(this->x) + ",Y=" + Convert::ToString(this->y) + "}";
 	return value;
 }
+
+
+int Point::Sign(Point * p1, Point * p2, Point * p3) {
+  return (p1->x - p3->x) * (p2->y - p3->y) - (p2->x - p3->x) * (p1->y - p3->y);
+}
+
+bool Point::InTriangle(Point * v1, Point * v2, Point * v3) {
+  bool b1, b2, b3;
+
+  b1 = Point::Sign(this, v1, v2) < 0;
+  b2 = Point::Sign(this, v2, v3) < 0;
+  b3 = Point::Sign(this, v3, v1) < 0;
+
+  return ((b1 == b2) && (b2 == b3));
+}

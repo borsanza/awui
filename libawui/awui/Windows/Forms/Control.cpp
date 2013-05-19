@@ -3,6 +3,7 @@
 
 #include "Control.h"
 
+#include <awui/Collections/ArrayList.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Drawing/Graphics.h>
@@ -18,6 +19,7 @@
 
 #include <iostream>
 
+using namespace awui::Collections;
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
@@ -29,6 +31,7 @@ Control::Control() {
 	this->mouseEventArgs = new MouseEventArgs();
 	this->mouseControl = NULL;
 	this->parent = NULL;
+	this->focused = NULL;
 	this->needRefresh = 1;
 	this->dock = DockStyle::None;
 	this->backColor = Color::FromArgb(0, 0, 0, 0);
@@ -103,8 +106,27 @@ int Control::GetTop() const {
 	return this->bounds.GetTop();
 }
 
+int Control::GetAbsoluteTop() const {
+	Control * parent = GetParent();
+	int pos = 0;
+	if (parent)
+		pos = parent->GetAbsoluteTop();
+
+	return this->GetTop() + pos;
+}
+
+
 int Control::GetLeft() const {
 	return this->bounds.GetLeft();
+}
+
+int Control::GetAbsoluteLeft() const {
+	Control * parent = GetParent();
+	int pos = 0;
+	if (parent)
+		pos = parent->GetAbsoluteLeft();
+
+	return this->GetLeft() + pos;
 }
 
 int Control::GetRight() const {
@@ -283,19 +305,26 @@ void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 	}
 }
 
+float Interpolate(float from, int to, float percent) {
+	if (awui::Math::Round(from) == to)
+		return from;
+
+	return from + ((to - from) * percent);
+}
+
 // Lo usamos para dibujar el skin
 void Control::OnPaint(OpenGL::GL * gl) {
 	static float lastx1, lasty1, lastwidth, lastheight;
 	static Control * lastParent = NULL;
-	Control * selected = Form::GetControlSelected();
+	Control * focused = Form::GetControlSelected();
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
 
-		if (selected == control) {
+		if (focused == control) {
 			int x1, y1, x2, y2;
 			Bitmap * bitmap = Form::GetSelectedBitmap();
-			float percent = 0.55f;
+			float percent = 0.4f;
 			if (lastParent != bitmap->GetParent()) {
 				lastParent = bitmap->GetParent();
 				percent = 1.0f;
@@ -305,15 +334,18 @@ void Control::OnPaint(OpenGL::GL * gl) {
 
 			int width = control->GetWidth() + x1 + x2;
 			int height = control->GetHeight() + y1 + y2;
-			lastwidth = lastwidth + ((width - lastwidth) * percent);
-			lastheight = lastheight + ((height - lastheight) * percent);
 
-			bitmap->SetSize(Math::Round(lastwidth), Math::Round(lastheight));
+			lastwidth = Interpolate(lastwidth, width, percent);
+			lastheight = Interpolate(lastheight, height, percent);
+			width = Math::Round(lastwidth);
+			height = Math::Round(lastheight);
+
+			bitmap->SetSize(width, height);
 			int x = control->GetLeft() - x1;
 			int y = control->GetTop() - y1;
 
-			lastx1 = lastx1 + ((x - lastx1) * percent);
-			lasty1 = lasty1 + ((y - lasty1) * percent);
+			lastx1 = Interpolate(lastx1, x, percent);
+			lasty1 = Interpolate(lasty1, y, percent);
 			x = Math::Round(lastx1);
 			y = Math::Round(lasty1);
 
@@ -476,4 +508,150 @@ void Control::SetTabStop(bool tabStop) {
 
 	if (tabStop && !Form::GetControlSelected())
 		Form::SetControlSelected(this);
+}
+
+void Control::OnRemoteKeyPressedPre(RemoteButtons::Enum button) {
+	bool mustStop = this->OnRemoteKeyPressed(button);
+	if (mustStop)
+		return;
+
+	if (!this->focused)
+		Form::SetControlSelected(Form::GetControlSelected());
+
+	if (this->focused)
+		focused->OnRemoteKeyPressedPre(button);
+}
+
+void Control::SetFocus() {
+	Control * parent = this->GetParent();
+	if (parent) {
+		parent->focused = this;
+		parent->SetFocus();
+	}
+}
+
+Control * Control::GetTopParent() {
+	Control * parent = GetParent();
+	if (parent)
+		return parent->GetTopParent();
+
+	return this;
+}
+
+#include <awui/Console.h>
+#include <awui/Convert.h>
+
+bool Control::OnRemoteKeyPressed(RemoteButtons::Enum button) {
+	if (Form::GetControlSelected() == this) {
+		Point pCenter(Math::Round((this->GetWidth() / 2.0f) + this->GetAbsoluteLeft()), Math::Round((this->GetHeight() / 2.0f) + this->GetAbsoluteTop()));
+		Point p1;
+		Point p2;
+		int distance = 3000;
+
+		switch (button) {
+			case RemoteButtons::Up:
+				pCenter.SetY(this->GetAbsoluteTop());
+				p1.SetX(pCenter.GetX() - distance);
+				p1.SetY(pCenter.GetY() - distance);
+				p2.SetX(pCenter.GetX() + distance);
+				p2.SetY(pCenter.GetY() - distance);
+				break;
+			case RemoteButtons::Right:
+				pCenter.SetX(this->GetAbsoluteLeft() + this->GetWidth());
+				p1.SetX(pCenter.GetX() + distance);
+				p1.SetY(pCenter.GetY() - distance);
+				p2.SetX(pCenter.GetX() + distance);
+				p2.SetY(pCenter.GetY() + distance);
+				break;
+			case RemoteButtons::Down:
+				pCenter.SetY(this->GetAbsoluteTop() + this->GetHeight());
+				p1.SetX(pCenter.GetX() - distance);
+				p1.SetY(pCenter.GetY() + distance);
+				p2.SetX(pCenter.GetX() + distance);
+				p2.SetY(pCenter.GetY() + distance);
+				break;
+			case RemoteButtons::Left:
+				pCenter.SetX(this->GetAbsoluteLeft());
+				p1.SetX(pCenter.GetX() - distance);
+				p1.SetY(pCenter.GetY() - distance);
+				p2.SetX(pCenter.GetX() - distance);
+				p2.SetY(pCenter.GetY() + distance);
+				break;
+			default:
+				break;
+		}
+
+		switch (button) {
+			case RemoteButtons::Up:
+			case RemoteButtons::Right:
+			case RemoteButtons::Down:
+			case RemoteButtons::Left:
+				{
+					Control * control = this->GetTopParent();
+					if (control) {
+						control = control->GetNextControl(this, &pCenter, &p1, &p2);
+						if (control)
+							Form::SetControlSelected(control);
+					}
+				}
+				break;
+			case RemoteButtons::Play:
+				Console::WriteLine("Play");
+				break;
+			case RemoteButtons::Ok:
+				Console::WriteLine("Ok");
+				break;
+			case RemoteButtons::Menu:
+				Console::WriteLine("Menu");
+				break;
+			default:
+				break;
+		}
+	}
+
+	return false;
+}
+
+void Control::GetControlsSelectables(ArrayList * list) {
+	for (int i = 0; i<this->GetControls()->GetCount(); i++) {
+		Control * control = (Control *)this->GetControls()->Get(i);
+		control->GetControlsSelectables(list);
+	}
+
+	if (this->GetTabStop())
+		list->Add(this);
+}
+
+#define PARTS 4.0f
+
+Control * Control::GetNextControl(Control * ommitControl, Point * pCenter, Point * p1, Point * p2) {
+	ArrayList list;
+	this->GetControlsSelectables(&list);
+
+	Control * selected = NULL;
+	float distance = 3000;
+
+	for (int i = 0; i<list.GetCount(); i++) {
+		Control * control = (Control *)list.Get(i);
+		if (control == ommitControl)
+			continue;
+
+		for (int j2=0; j2<=PARTS; j2++) {
+			for (int j3=0; j3<=PARTS; j3++) {
+				int x = Math::Round(control->GetAbsoluteLeft() + (control->GetWidth() * j2 / PARTS));
+				int y = Math::Round(control->GetAbsoluteTop() + (control->GetHeight() * j3 / PARTS));
+				Point pControlCenter(x, y);
+				if (pControlCenter.InTriangle(pCenter, p1, p2)) {
+					float dist = Math::Sqrt(Math::Pow((float)pCenter->GetX() - pControlCenter.GetX(), 2.0f)
+																+ Math::Pow((float)pCenter->GetY() - pControlCenter.GetY(), 2.0f));
+					if (dist < distance) {
+						distance = dist;
+						selected = control;
+					}
+				}
+			}
+		}
+	}
+
+	return selected;
 }

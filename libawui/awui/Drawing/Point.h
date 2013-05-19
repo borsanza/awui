@@ -16,6 +16,8 @@ namespace awui {
 				int x;
 				int y;
 
+				static int Sign(Point * p1, Point * p2, Point * p3);
+
 			public:
 				Point();
 				Point(const Size sz);
@@ -30,6 +32,8 @@ namespace awui {
 				Point & operator= (const Point & other);
 
 				virtual String ToString();
+
+				bool InTriangle(Point * v1, Point * v2, Point * v3);
 		};
 	}
 }
