@@ -89,6 +89,33 @@ void Form::ProcessEvents() {
 
 	while (SDL_PollEvent(&event)) {
 		switch(event.type) {
+			case SDL_JOYBUTTONDOWN:
+				switch (event.jbutton.button) {
+					case 0:
+						OnRemoteKeyPressedPre(RemoteButtons::Ok);
+						break;
+					case 1:
+						OnRemoteKeyPressedPre(RemoteButtons::Menu);
+						break;
+					default:
+						break;
+				}
+				break;
+			case SDL_JOYAXISMOTION:
+				if (event.jaxis.axis == 0) {
+					if (event.jaxis.value < -16000)
+							OnRemoteKeyPressedPre(RemoteButtons::Left);
+					if (event.jaxis.value > 16000)
+							OnRemoteKeyPressedPre(RemoteButtons::Right);
+				}
+
+				if (event.jaxis.axis == 1) {
+					if (event.jaxis.value < -16000)
+							OnRemoteKeyPressedPre(RemoteButtons::Up);
+					if (event.jaxis.value > 16000)
+							OnRemoteKeyPressedPre(RemoteButtons::Down);
+				}
+				break;
 			case SDL_KEYDOWN:
 				switch (event.key.keysym.sym) {
 					case SDLK_ESCAPE:
@@ -293,7 +320,7 @@ Bitmap * Form::GetSelectedBitmap() {
 		Bitmap * bitmap = new Bitmap("images/button.png");
 		bitmap->SetDock((DockStyle::Enum) 0);//DockStyle::None);
 		bitmap->SetBackColor(Drawing::Color::FromArgb(0, 0, 0, 0));
-		bitmap->SetFixedMargins(22, 25, 22, 24);
+		bitmap->SetFixedMargins(28, 25, 28, 24);
 		bitmap->SetLocation(0, 0);
 		bitmap->SetSize(Drawing::Size(97, 97));
 		Form::selectedBitmap = bitmap;

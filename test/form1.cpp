@@ -6,7 +6,9 @@
 #include "test1.h"
 #include "test2.h"
 #include <awui/Drawing/Color.h>
+#include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Bitmap.h>
+#include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 
@@ -39,14 +41,33 @@ void Form1::InitializeComponent() {
 
 	Test2 *test2 = new Test2();
 	this->GetControls()->Add(test2);
-
+/*
 	test2 = new Test2();
 	this->GetControls()->Add(test2);
+*/
 
-/*
 	Test1 *test1 = new Test1();
 	this->GetControls()->Add(test1);
-*/
+
+	Font font = Font("sans-serif", 34, FontStyle::Bold);
+	Button * button = new Button();
+	button->SetDock(DockStyle::None);
+	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	button->SetLocation(100, 1000);
+	button->SetSize(Size(600, 100));
+	button->SetText("Larguisimo");
+	button->SetFont(&font);
+	this->GetControls()->Add(button);
+	button = new Button();
+	button->SetDock(DockStyle::None);
+	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	button->SetLocation(400, 900);
+	button->SetSize(Size(100, 100));
+	button->SetText("No");
+	button->SetFont(&font);
+	this->GetControls()->Add(button);
+
+
 	this->SetSize(460, 532);
 	this->SetFullscreen(0);
 }

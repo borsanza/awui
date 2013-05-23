@@ -10,6 +10,7 @@
 using namespace awui::Windows::Forms;
 
 int Application::quit = 0;
+SDL_Joystick * Application::stick = NULL;
 
 int Application::IsClass(Classes::Enum objectClass) const {
 	if (objectClass == Classes::Application)
@@ -23,8 +24,11 @@ void Application::Quit() {
 }
 
 void Application::Run(Form * form = NULL) {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 		return;
+
+	if (SDL_NumJoysticks() > 0)
+		Application::stick = SDL_JoystickOpen(0);
 
 	form->Init();
 
@@ -38,6 +42,9 @@ void Application::Run(Form * form = NULL) {
 		glFinish();
 		SDL_GL_SwapBuffers();
 	}
+
+	if (Application::stick)
+		SDL_JoystickClose(stick);
 
 	SDL_Quit();
 }
