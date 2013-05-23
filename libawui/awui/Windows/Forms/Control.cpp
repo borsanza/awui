@@ -325,7 +325,7 @@ void Control::OnPaint(OpenGL::GL * gl) {
 			int x1, y1, x2, y2;
 			Bitmap * bitmap = Form::GetSelectedBitmap();
 			float percent = 0.4f;
-			if (lastParent != bitmap->GetParent()) {
+			if ((lastParent != NULL) && (lastParent != bitmap->GetParent())) {
 				lastParent = bitmap->GetParent();
 				percent = 1.0f;
 			}
