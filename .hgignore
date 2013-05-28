@@ -4,7 +4,8 @@ cmake_install.cmake
 CMakeCache.txt
 .cbp
 libaw/libaw.a
-libawui/libawui.a
+libawui/libawui.so
+libawui/libawui_static.a
 test/awuiDemo
 
 Project.layout
