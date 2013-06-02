@@ -7,7 +7,6 @@ namespace awui {
 	namespace Windows {
 		namespace Forms {
 			class Bitmap;
-			class MouseEventArgs;
 		}
 	}
 }
@@ -21,5 +20,4 @@ class Form1 : public awui::Windows::Forms::Form {
 
 	private:
 		void InitializeComponent();
-//		virtual void OnMouseMove(awui::Windows::Forms::MouseEventArgs* e);
 };

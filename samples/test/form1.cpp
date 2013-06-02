@@ -10,7 +10,6 @@
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/ControlCollection.h>
-#include <awui/Windows/Forms/MouseEventArgs.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
@@ -71,9 +70,3 @@ void Form1::InitializeComponent() {
 	this->SetSize(460, 532);
 	this->SetFullscreen(0);
 }
-
-/*
-void Form1::OnMouseMove(MouseEventArgs* e) {
-	this->bitmap2->SetSize(e->GetX() - 10, e->GetY() - 10);
-}
-*/
