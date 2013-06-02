@@ -6,7 +6,7 @@ CMakeCache.txt
 libaw/libaw.a
 libawui/libawui.so
 libawui/libawui_static.a
-test/awuiDemo
+samples/test/awuiDemo
 
 Project.layout
 
