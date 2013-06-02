@@ -325,6 +325,13 @@ void Control::OnPaint(OpenGL::GL * gl) {
 			int x1, y1, x2, y2;
 			Bitmap * bitmap = Form::GetSelectedBitmap();
 			float percent = 0.4f;
+
+			// Esto solo lo hago porque en la inicializacion del programa
+			// no habia nada seleccionado y hay que actualizar esta variable
+			// estatica
+			if (lastParent == NULL)
+				Form::SetControlSelected(control);
+
 			if (lastParent != bitmap->GetParent()) {
 				lastParent = bitmap->GetParent();
 				percent = 1.0f;

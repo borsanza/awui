@@ -3,32 +3,19 @@
 
 #include "test1.h"
 
-#include <awui/Console.h>
-#include <awui/Convert.h>
-#include <awui/Diagnostics/Process.h>
 #include <awui/Drawing/Color.h>
-#include <awui/Drawing/Graphics.h>
-#include <awui/Drawing/Pen.h>
-#include <awui/Drawing/Size.h>
 #include <awui/Effects/Effect.h>
 #include <awui/Math.h>
 #include <awui/Windows/Forms/Button.h>
-#include <awui/Windows/Forms/Control.h>
-#include <awui/Windows/Forms/ControlCollection.h>
-#include <awui/Windows/Forms/Label.h>
 #include <awui/Windows/Forms/Panel.h>
+#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/SplitContainer.h>
-#include <awui/Windows/Forms/Statistics/Stats.h>
 
-using namespace awui::Collections;
 using namespace awui::Drawing;
 using namespace awui::Effects;
 using namespace awui::Windows::Forms;
 
 Test1::Test1() {
-	this->mameProcess = NULL;
-	this->runMame = true;
-	this->endMame = false;
 	this->InitializeComponent();
 }
 
@@ -83,7 +70,7 @@ void Test1::AddButtonEffect(Effect * effect, Control * control, int posy) {
 		button->SetSize(150, 52);
 		button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 		button->SetForeColor(Color::FromArgb(255, 255, 255));
-		button->SetFont(new Font("Monospace", 20, FontStyle::Bold)); // | FontStyle::Underline | FontStyle::Strikeout));
+		button->SetFont(new Font("Monospace", 20, FontStyle::Bold));
 		button->SetTop(y);
 		control->GetControls()->Add(button);
 
@@ -154,75 +141,5 @@ void Test1::OnTick() {
 		int width = button->GetParent()->GetWidth() - button->GetWidth() - 10;
 		int left = awui::Math::Round(width * value3 + 5);
 		button->SetLeft(left);
-//		button->SetText(effect->GetName() + " " + awui::Convert::ToString(left));
 	}
-
-	if (!this->endMame) {
-		this->CheckMame();
-		this->CheckGames();
-	}
-}
-
-void Test1::CheckMame() {
-	if (this->runMame) {
-		this->runMame = false;
-		this->games.Clear();
-		this->mameProcess = new Diagnostics::Process();
-		this->mameProcess->Start("mame", "-listfull");
-	}
-}
-
-void Test1::CheckGames() {
-	static int lines = 0;
-	static awui::TimeSpan lastTime;
-	Statistics::Stats * stats = Statistics::Stats::Instance();
-
-	TimeSpan time = stats->GetIdle();
-	DateTime begin = DateTime::GetNow();
-	DateTime end = begin;
-//	bool reRun = false;
-
-	do {
-		if (this->mameProcess->GetHasExited()) {
-			this->endMame = true;
-//			reRun = true;
-			break;
-		}
-
-		if (!this->mameProcess->GetHasString())
-			break;
-
-		String line = this->mameProcess->GetLine();
-		lines++;
-		if (lines == 1)
-			continue;
-
-		end = DateTime::GetNow();
-
-		int pos = line.IndexOf(" ");
-		awui::String key = line.Substring(0, pos);
-
-		pos = line.IndexOf("\"");
-		awui::String name = line.Substring(pos + 1);
-		pos = name.IndexOf("\"");
-		name = name.Substring(0, pos);
-
-		if (key.GetLength() > 0) {
-			this->games.Add(&name, &key);
-//			Console::WriteLine(key + ": " + name);
-		}
-	} while ((end.GetTicks() - begin.GetTicks()) < ((time.GetTicks() - lastTime.GetTicks()) * 0.25));
-
-	lastTime = end.GetTicks() - begin.GetTicks();
-
-	Button * button = (Button *)this->_buttons->Get(0);
-	button->SetText(Convert::ToString(this->games.GetCount()) + " games");
-/*
-	if (reRun) {
-		delete this->mameProcess;
-		lines = 0;
-		this->mameProcess = NULL;
-		this->runMame = true;
-	}
-*/
 }
