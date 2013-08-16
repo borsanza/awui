@@ -29,6 +29,7 @@ namespace awui {
 			Pen,
 			SplitContainer,
 			Splitter,
+			ListBox,
 		};
 	};
 
