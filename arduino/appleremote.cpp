@@ -80,11 +80,11 @@ const char * RemoteKey::getName() {
 			// Menu + Play en mando blanco cambia el codigo del control remoto
 			case 0x02: // Menu + Ok
 			case 0x03:
-				// Menu + Der
+				// Menu + Right
 				return "Remote linked";
 			case 0x04:
 			case 0x05:
-				// Menu + Izq
+				// Menu + Left
 				return "Accept all remotes";
 		}
 	}
@@ -216,11 +216,13 @@ void AppleRemote::printCommand(const char * text, int pressed) {
 
 	Serial.print(this->actualKey.getId(), HEX);
 	Serial.print(":");
+	if (this->actualKey.getCommand() < 16)
+		Serial.print("0");
 	Serial.print(this->actualKey.getCommand(), HEX);
 	Serial.print(":");
-	Serial.print(pressed);
-	Serial.print(":");
 	Serial.print(this->actualKey.getRemoteId(), HEX);
+	Serial.print(":");
+	Serial.print(pressed);
 	Serial.print(": ");
 	Serial.print(text);
 	Serial.println();
