@@ -266,17 +266,31 @@ void AppleRemote::loop() {
 	readKey.decode(results.value);
 
 	// Convertir botones ignorables en repetibles
-	switch (this->actualKey.getCommand()) {
-		case 0x5C:
-		case 0x5F:
-			if (readKey.getCommand() == 0x05)
-				readKey.setRepeatingKey();
-			break;
-		case 0x5D:
-		case 0x5E:
-			if (readKey.getCommand() == 0x04)
-				readKey.setRepeatingKey();
-			break;
+	{
+		if (this->actualKey.getId() == 0x87E0) {
+			switch (this->actualKey.getCommand()) {
+				case 0x02:
+				case 0x03:
+				case 0x04:
+				case 0x05:
+					if (readKey.getCommand() == this->actualKey.getCommand())
+						readKey.setRepeatingKey();
+					break;
+			}
+		}
+
+		switch (this->actualKey.getCommand()) {
+			case 0x5C:
+			case 0x5F:
+				if (readKey.getCommand() == 0x05)
+					readKey.setRepeatingKey();
+				break;
+			case 0x5D:
+			case 0x5E:
+				if (readKey.getCommand() == 0x04)
+					readKey.setRepeatingKey();
+				break;
+		}
 	}
 	
 	// Mirar si es un codigo de 
