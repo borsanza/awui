@@ -1,3 +1,6 @@
+
+openssl s_client -connect code.google.com:443 < /dev/null 2> /dev/null | openssl x509 -fingerprint -noout -in /dev/stdin
+
 How to compile in Windows:
 
 Install CMake from http://www.cmake.org/
