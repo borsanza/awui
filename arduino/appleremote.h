@@ -4,8 +4,6 @@
 #ifndef AppleRemote_h
 #define AppleRemote_h
 
-class IRrecv;
-
 class RemoteKey {
 	private:
 		unsigned short id;
@@ -17,49 +15,49 @@ class RemoteKey {
 		RemoteKey();
 		void decode(unsigned long command);
 		
-		unsigned short getId();
-		unsigned char getCommand();
-		unsigned char getRemoteId();
+		unsigned short getId() const;
+		unsigned char getCommand() const;
+		unsigned char getRemoteId() const;
+		bool isRepeatingKey() const;
+		bool isKey() const;
+		bool isAppleRemote() const;
+		unsigned long getLastTime() const;
 
 		void updateTime();
-		unsigned long getLastTime();
-		int isRepeatingKey();
-		int isKey();
 		void setRepeatingKey();
 		void setNoKey();
-		int isAppleRemote();
 		
-		const char * getName();
+		const char * getName() const;
 };
+
+class IRrecv;
 
 class AppleRemote {
 	private:
-		unsigned long outputSpeed;
-		int pin;
-		int blink13;
-		int enableLog;
-		int lastState;
-		
 		RemoteKey actualKey;
 
-		unsigned char linkedRemoteId;
-		int canRepeat;
-		unsigned long lastTime;
-
 		IRrecv *irrecv;
-		
-		void sendCommand(const char * value, int pressed);
-		void printCommand(const char * value, int pressed);
 
-		int isAppleRemote();
-		int acceptRemote();
+		bool blink13;
+		bool enableLog;
+		bool lastState;
+		unsigned long lastTime;
+		unsigned long outputSpeed;
+		unsigned char linkedRemoteId;
+		int irpin;
+		int ledPin;
+
+		void sendCommand(const char * value, bool pressed);
+		void printCommand(const char * value, bool pressed);
+		bool acceptRemote() const;
 
 	public:
 		AppleRemote();
 		void setOutputSpeed(unsigned long speed);
-		void setPin(int pin);
-		void setBlink13Mode(int enabled);
-		void setLogMode(int enabled);
+		void setIRPin(int irpin);
+		void setLedPin(int ledPin);
+		void setBlink13Mode(bool enabled);
+		void setLogMode(bool enabled);
 		void init();
 		void loop();
 };

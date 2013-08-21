@@ -7,11 +7,13 @@
 AppleRemote appleRemote;
 
 void setup() {
-	appleRemote.setLogMode(true);
 //	appleRemote.setOutputSpeed(9600);
 	appleRemote.setOutputSpeed(115200);
-	appleRemote.setPin(6);
-	appleRemote.setBlink13Mode(true);
+	appleRemote.setIRPin(6);
+
+	appleRemote.setLogMode(true);
+	appleRemote.setLedPin(13);
+//	appleRemote.setBlink13Mode(true);
 	appleRemote.init();
 }
 

@@ -2,7 +2,7 @@ stty -F /dev/ttyUSB0 cs8 115200 ignbrk -brkint -icrnl -imaxbel -opost -onlcr -is
 cat /dev/ttyUSB0
 
 # Protocol
-Id:Command:RemoteId:Up: Text
+Id:Command:RemoteId:isDown: Text
 
 Commands:
   with Id = 0x87E0

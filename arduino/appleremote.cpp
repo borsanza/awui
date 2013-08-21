@@ -19,15 +19,15 @@ RemoteKey::RemoteKey() {
 	this->setNoKey();
 }
 
-unsigned short RemoteKey::getId() {
+unsigned short RemoteKey::getId() const {
 	return this->id;
 }
 
-unsigned char RemoteKey::getCommand() {
+unsigned char RemoteKey::getCommand() const {
 	return this->command;
 }
 
-unsigned char RemoteKey::getRemoteId() {
+unsigned char RemoteKey::getRemoteId() const {
 	return this->remoteId;
 }
 
@@ -35,11 +35,11 @@ void RemoteKey::updateTime() {
 	this->lastTime = millis();
 }
 
-unsigned long RemoteKey::getLastTime() {
+unsigned long RemoteKey::getLastTime() const {
 	return this->lastTime;
 }
 
-int RemoteKey::isRepeatingKey() {
+bool RemoteKey::isRepeatingKey() const {
 	return ((this->id == 0xFFFF) && (this->remoteId == 0xFF) && (this->command == 0xFF));
 }
 
@@ -49,11 +49,11 @@ void RemoteKey::setRepeatingKey() {
 	this->command = 0xFF;
 }
 
-int RemoteKey::isAppleRemote() {
+bool RemoteKey::isAppleRemote() const {
 	return ((this->id == 0x87EE) || (this->id == 0x87E0));
 }
 
-int RemoteKey::isKey() {
+bool RemoteKey::isKey() const {
 	return this->command != 0xFE;
 }
 
@@ -74,18 +74,18 @@ void RemoteKey::decode(unsigned long command) {
 	this->remoteId = (command3 >> 24) & 0xFF;
 }
 
-const char * RemoteKey::getName() {
+const char * RemoteKey::getName() const {
 	if (this->id == 0x87E0) {
 		switch (this->command) {
 			// Menu + Play en mando blanco cambia el codigo del control remoto
 			case 0x02: // Menu + Ok
 			case 0x03:
 				// Menu + Right
-				return "Remote linked";
+				return "REMOTE LINKED";
 			case 0x04:
 			case 0x05:
 				// Menu + Left
-				return "Accept all remotes";
+				return "ACCEPT ALL REMOTES";
 		}
 	}
 
@@ -96,13 +96,13 @@ const char * RemoteKey::getName() {
 			case 0x5E:
 			case 0x04:
 			case 0x05:
-				return "Play/Pause";
+				return "PLAY/PAUSE";
 			case 0x02:
 			case 0x03:
-				return "Menu";
+				return "MENU";
 			case 0x5C: // ¿?
 			case 0x5D:
-				return "Ok";
+				return "OK";
 			case 0x07:
 			case 0x06:
 				return "RIGHT";
@@ -119,50 +119,50 @@ const char * RemoteKey::getName() {
 // Especiales con Play/Pause (mando blanco)
 			case 0x13:
 				// Play/Pause + Right
-				return "Play/Pause + Right";
+				return "PLAY/PAUSE + RIGHT";
 			case 0x15:
 				// Play/Pause + Left
-				return "Play/Pause + Left";
+				return "PLAY/PAUSE + LEFT";
 			case 0x0E:
 				// Play/Pause + Up
-				return "Play/Pause + Up";
+				return "PLAY/PAUSE + UP";
 			case 0x10:
 				// Play/Pause + Down
-				return "Play/Pause + Down";
+				return "PLAY/PAUSE + DOWN";
 
 // Especiales con Play/Pause (mando gris)
 			case 0x6A:
 				// Play/Pause + Right
-				return "Play/Pause + Right";
+				return "PLAY/PAUSE + RIGHT";
 			case 0x69:
 				// Play/Pause + Left
-				return "Play/Pause + Left";
+				return "PLAY/PAUSE + LEFT";
 			case 0x65:
 				// Play/Pause + Up
-				return "Play/Pause + Up";
+				return "PLAY/PAUSE + UP";
 			case 0x66:
 				// Play/Pause + Down
-				return "Play/Pause + Down";
+				return "PLAY/PAUSE + DOWN";
 			case 0x63:
 				// Play/Pause + Ok
-				return "Play/Pause + Ok";
+				return "PLAY/PAUSE + OK";
 
 // Especiales con Menu
 			case 0x16:
 			case 0x17:
 				// Menu + Arriba
-				return "Change resolution";
+				return "CHANGE RESOLUTION";
 			case 0x18:
 			case 0x19:
 				// Menu + Abajo
-				return "Reset";
+				return "RESET";
 			case 0x60:
 				// Menu + Play/Pause (mando gris)
-				return "Menu + Play/Pause";
+				return "MENU + PLAY/PAUSE";
 		}
 	}
 
-	return "Unknown";
+	return "UNKNOWN";
 }
 
 /******************************************************************************/
@@ -170,18 +170,18 @@ const char * RemoteKey::getName() {
 /******************************************************************************/
 
 AppleRemote::AppleRemote() {
+	this->ledPin = -1;
 	this->outputSpeed = 9600;
-	this->pin = 6;
+	this->irpin = 6;
 	this->blink13 = false;
 	this->irrecv = 0;
 	this->enableLog = false;
 	this->linkedRemoteId = 0;
-	this->canRepeat = false;
 	this->lastTime = 0;
-	this->lastState = 1; // Unpressed
+	this->lastState = false; // Unpressed
 }
 
-void AppleRemote::setLogMode(int enabled) {
+void AppleRemote::setLogMode(bool enabled) {
 	this->enableLog = enabled;
 }
 
@@ -189,11 +189,15 @@ void AppleRemote::setOutputSpeed(unsigned long speed) {
 	this->outputSpeed = speed;
 }
 
-void AppleRemote::setPin(int pin) {
-	this->pin = pin;
+void AppleRemote::setIRPin(int irpin) {
+	this->irpin = irpin;
 }
 
-void AppleRemote::setBlink13Mode(int enabled) {
+void AppleRemote::setLedPin(int ledPin) {
+	this->ledPin = ledPin;
+}
+
+void AppleRemote::setBlink13Mode(bool enabled) {
 	this->blink13 = enabled;
 }
 
@@ -201,16 +205,19 @@ void AppleRemote::init() {
 	Serial.begin(this->outputSpeed);
 
 	if (this->enableLog)
-		Serial.println("Starting app");
+		Serial.println("STARTING APP");
 
-	this->irrecv = new IRrecv(this->pin);
+	this->irrecv = new IRrecv(this->irpin);
 	this->irrecv->enableIRIn();
 	this->irrecv->blink13(this->blink13);
 }
 
-void AppleRemote::printCommand(const char * text, int pressed) {
+void AppleRemote::printCommand(const char * text, bool pressed) {
 	if (pressed == this->lastState)
 		return;
+
+	if (this->ledPin != -1)
+		digitalWrite(this->ledPin, pressed?HIGH:LOW);
 
 	this->lastState = pressed;
 
@@ -223,17 +230,22 @@ void AppleRemote::printCommand(const char * text, int pressed) {
 	Serial.print(this->actualKey.getRemoteId(), HEX);
 	Serial.print(":");
 	Serial.print(pressed);
-	Serial.print(": ");
-	Serial.print(text);
+	Serial.print(":");
+
+	if (this->enableLog) {
+		Serial.print(" ");
+		Serial.print(text);
+	}
+
 	Serial.println();
 }
 
-void AppleRemote::sendCommand(const char * text, int pressed) {
+void AppleRemote::sendCommand(const char * text, bool pressed) {
 	this->lastTime = millis();
 	this->printCommand(text, pressed);
 }
 
-int AppleRemote::acceptRemote() {
+bool AppleRemote::acceptRemote() const {
 	if ((this->actualKey.getId() == 0xFFFF) && (this->actualKey.getRemoteId() == 0xFF) && (this->actualKey.getCommand() == 0xFF))
 		return true;
 
@@ -252,7 +264,7 @@ void AppleRemote::loop() {
 		unsigned long diff = millis() - this->actualKey.getLastTime();
 		// 109 * 1.5
 		if (diff > 164) {
-			this->printCommand("KeyUp", 1);
+			this->printCommand("", 0);
 			this->actualKey.setNoKey();
 		}
 	}
@@ -306,7 +318,7 @@ void AppleRemote::loop() {
 		return;
 	
 	if (this->actualKey.isKey()) {
-		this->printCommand("KeyUp", 1);
+		this->printCommand("", 0);
 		this->actualKey.setNoKey();
 	}
 
@@ -321,7 +333,7 @@ void AppleRemote::loop() {
 				// Menu + Der
 				if (this->linkedRemoteId != this->actualKey.getRemoteId()) {
 					this->linkedRemoteId = this->actualKey.getRemoteId();
-					this->sendCommand("Remote linked", 0);
+					this->sendCommand(actualKey.getName(), 1);
 				}
 				return;
 			case 0x04:
@@ -329,23 +341,16 @@ void AppleRemote::loop() {
 				// Menu + Izq
 				if (this->linkedRemoteId != 0) {
 					this->linkedRemoteId = 0;
-					this->sendCommand("Accept all remotes", 0);
+					this->sendCommand(actualKey.getName(), 1);
 				}
 				return;
 			default:
 				if (this->enableLog)
-					this->sendCommand("Unknown", 0);
+					this->sendCommand(actualKey.getName(), 1);
 				break;
 		}
-
-		this->canRepeat = false;
 	}
 
-	if (this->actualKey.isAppleRemote() && this->acceptRemote()) {
-		unsigned long diferencia;
-		boolean repeat = true;
-		this->sendCommand(actualKey.getName(), 0);
-
-		this->canRepeat = repeat;
-	}
+	if (this->actualKey.isAppleRemote() && this->acceptRemote())
+		this->sendCommand(actualKey.getName(), 1);
 }
