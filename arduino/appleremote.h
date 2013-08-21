@@ -10,11 +10,12 @@ class RemoteKey {
 		unsigned char command;
 		unsigned char remoteId;
 		unsigned long lastTime;
+		unsigned int count;
 
 	public:
 		RemoteKey();
 		void decode(unsigned long command);
-		
+
 		unsigned short getId() const;
 		unsigned char getCommand() const;
 		unsigned char getRemoteId() const;
@@ -22,12 +23,17 @@ class RemoteKey {
 		bool isKey() const;
 		bool isAppleRemote() const;
 		unsigned long getLastTime() const;
+		unsigned int getCount() const;
+		bool isDoubleButton() const;
 
 		void updateTime();
 		void setRepeatingKey();
 		void setNoKey();
+		void resetCount();
+		void incCount();
 		
 		const char * getName() const;
+		void verbose(bool endline);
 };
 
 class IRrecv;
@@ -43,7 +49,7 @@ class AppleRemote {
 		bool lastState;
 		unsigned long lastTime;
 		unsigned long outputSpeed;
-		unsigned char linkedRemoteId;
+		int linkedRemoteId;
 		int irpin;
 		int ledPin;
 

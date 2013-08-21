@@ -17,6 +17,7 @@ RemoteKey::RemoteKey() {
 	this->lastTime = 0;
 
 	this->setNoKey();
+	this->resetCount();
 }
 
 unsigned short RemoteKey::getId() const {
@@ -32,6 +33,8 @@ unsigned char RemoteKey::getRemoteId() const {
 }
 
 void RemoteKey::updateTime() {
+//	unsigned int diff = millis() - this->lastTime;
+//	Serial.println(diff);
 	this->lastTime = millis();
 }
 
@@ -59,6 +62,18 @@ bool RemoteKey::isKey() const {
 
 void RemoteKey::setNoKey() {
 	this->command = 0xFE;
+}
+
+unsigned int RemoteKey::getCount() const {
+	return this->count;
+}
+
+void RemoteKey::resetCount() {
+	this->count = 0;
+}
+
+void RemoteKey::incCount() {
+	this->count++;
 }
 
 void RemoteKey::decode(unsigned long command) {
@@ -92,60 +107,47 @@ const char * RemoteKey::getName() const {
 	if (this->id == 0x87EE) {
 		switch (this->command) {
 // Normales
-			case 0x5F: // ¿?
-			case 0x5E:
-			case 0x04:
-			case 0x05:
-				return "PLAY/PAUSE";
 			case 0x02:
 			case 0x03:
 				return "MENU";
+			case 0x04:
+			case 0x05:
+			case 0x5E:
+			case 0x5F: // ¿?
+				return "PLAY/PAUSE";
 			case 0x5C: // ¿?
 			case 0x5D:
 				return "OK";
-			case 0x07:
 			case 0x06:
+			case 0x07:
 				return "RIGHT";
 			case 0x08:
 			case 0x09:
 				return "LEFT";
-			case 0x0B:
 			case 0x0A:
+			case 0x0B:
 				return "UP";
-			case 0x0D:
 			case 0x0C:
+			case 0x0D:
 				return "DOWN";
 
 // Especiales con Play/Pause (mando blanco)
-			case 0x13:
-				// Play/Pause + Right
-				return "PLAY/PAUSE + RIGHT";
-			case 0x15:
-				// Play/Pause + Left
-				return "PLAY/PAUSE + LEFT";
 			case 0x0E:
+			case 0x0F:
 				// Play/Pause + Up
 				return "PLAY/PAUSE + UP";
 			case 0x10:
+			case 0x11:
 				// Play/Pause + Down
 				return "PLAY/PAUSE + DOWN";
-
-// Especiales con Play/Pause (mando gris)
-			case 0x6A:
+			case 0x12:
+			case 0x13:
 				// Play/Pause + Right
 				return "PLAY/PAUSE + RIGHT";
-			case 0x69:
+			case 0x14:
+			case 0x15:
 				// Play/Pause + Left
 				return "PLAY/PAUSE + LEFT";
-			case 0x65:
-				// Play/Pause + Up
-				return "PLAY/PAUSE + UP";
-			case 0x66:
-				// Play/Pause + Down
-				return "PLAY/PAUSE + DOWN";
-			case 0x63:
-				// Play/Pause + Ok
-				return "PLAY/PAUSE + OK";
 
 // Especiales con Menu
 			case 0x16:
@@ -156,13 +158,63 @@ const char * RemoteKey::getName() const {
 			case 0x19:
 				// Menu + Abajo
 				return "RESET";
+
+// Especiales con Play/Pause (mando gris)
 			case 0x60:
-				// Menu + Play/Pause (mando gris)
+			case 0x61:
+				// Play/Pause + Menu
 				return "MENU + PLAY/PAUSE";
+			case 0x62:
+			case 0x63:
+				// Play/Pause + Ok
+				return "PLAY/PAUSE + OK";
+			case 0x64:
+			case 0x65:
+				// Play/Pause + Up
+				return "PLAY/PAUSE + UP";
+			case 0x66:
+			case 0x67:
+				// Play/Pause + Down
+				return "PLAY/PAUSE + DOWN";
+			case 0x68:
+			case 0x69:
+				// Play/Pause + Left
+				return "PLAY/PAUSE + LEFT";
+			case 0x6A:
+			case 0x6B:
+				// Play/Pause + Right
+				return "PLAY/PAUSE + RIGHT";
 		}
 	}
 
 	return "UNKNOWN";
+}
+
+void RemoteKey::verbose(bool endline) {
+	Serial.print(this->id, HEX);
+	Serial.print(":");
+	if (this->command < 16)
+		Serial.print("0");
+	Serial.print(this->command, HEX);
+	Serial.print(":");
+	if (this->remoteId < 16)
+		Serial.print("0");
+	Serial.print(this->remoteId, HEX);
+
+	if (endline)
+		Serial.println();
+}
+
+bool RemoteKey::isDoubleButton() const {
+	if (this->id == 0x87E0)
+		return true;
+
+	if (this->id == 0x87EE) {
+		if (this->command >= 0x0E)		
+			return true;
+	}
+
+	return false;
 }
 
 /******************************************************************************/
@@ -176,7 +228,7 @@ AppleRemote::AppleRemote() {
 	this->blink13 = false;
 	this->irrecv = 0;
 	this->enableLog = false;
-	this->linkedRemoteId = 0;
+	this->linkedRemoteId = -1;
 	this->lastTime = 0;
 	this->lastState = false; // Unpressed
 }
@@ -221,15 +273,11 @@ void AppleRemote::printCommand(const char * text, bool pressed) {
 
 	this->lastState = pressed;
 
-	Serial.print(this->actualKey.getId(), HEX);
-	Serial.print(":");
-	if (this->actualKey.getCommand() < 16)
-		Serial.print("0");
-	Serial.print(this->actualKey.getCommand(), HEX);
-	Serial.print(":");
-	Serial.print(this->actualKey.getRemoteId(), HEX);
+	this->actualKey.verbose(false);
 	Serial.print(":");
 	Serial.print(pressed);
+	Serial.print(":");
+	Serial.print(this->actualKey.getCount());
 	Serial.print(":");
 
 	if (this->enableLog) {
@@ -252,7 +300,7 @@ bool AppleRemote::acceptRemote() const {
 	if (this->linkedRemoteId == this->actualKey.getRemoteId())
 		return true;
 
-	if (this->linkedRemoteId == 0)
+	if (this->linkedRemoteId == -1)
 		return true;
 	
 	return false;
@@ -262,10 +310,17 @@ void AppleRemote::loop() {
 	// Comprobar si ha pasado un tiempo prudencial para descartar presiones
 	if (this->actualKey.isKey()) {
 		unsigned long diff = millis() - this->actualKey.getLastTime();
-		// 109 * 1.5
-		if (diff > 164) {
+
+		// 109 * 1.5 = 164
+		int temp = 164;
+		if ((this->actualKey.getCount() == 0) && !this->actualKey.isDoubleButton())
+			// 42 * 1.5 = 63
+			temp = 63;
+		
+		if (diff > temp) {
 			this->printCommand("", 0);
 			this->actualKey.setNoKey();
+			this->actualKey.resetCount();
 		}
 	}
 
@@ -278,21 +333,17 @@ void AppleRemote::loop() {
 	// Decodificar el boton
 	RemoteKey readKey;
 	readKey.decode(results.value);
+//	readKey.verbose(true);
+//	return;
 
 	// Convertir botones ignorables en repetibles
 	{
-		if (this->actualKey.getId() == 0x87E0) {
-			switch (this->actualKey.getCommand()) {
-				case 0x02:
-				case 0x03:
-				case 0x04:
-				case 0x05:
-					if (readKey.getCommand() == this->actualKey.getCommand())
-						readKey.setRepeatingKey();
-					break;
-			}
-		}
+		// Si es un comando de doble pulsacion es repetitivo
+		if (this->actualKey.isDoubleButton())
+			if (readKey.getCommand() == this->actualKey.getCommand())
+				readKey.setRepeatingKey();
 
+		// Si son comandos de compatibilidad se convierten a repetitivos
 		switch (this->actualKey.getCommand()) {
 			case 0x5C:
 			case 0x5F:
@@ -309,8 +360,10 @@ void AppleRemote::loop() {
 	
 	// Mirar si es un codigo de 
 	if (readKey.isRepeatingKey()) {
-		if (this->actualKey.isKey())
+		if (this->actualKey.isKey()) {
 			this->actualKey.updateTime();
+			this->actualKey.incCount();
+		}
 		return;
 	}
 
@@ -323,7 +376,8 @@ void AppleRemote::loop() {
 	}
 
 	this->actualKey = readKey;
-	actualKey.updateTime();
+	this->actualKey.updateTime();
+	this->actualKey.resetCount();
 
 	if (this->actualKey.getId() == 0x87E0) {
 		switch (this->actualKey.getCommand()) {
@@ -339,8 +393,8 @@ void AppleRemote::loop() {
 			case 0x04:
 			case 0x05:
 				// Menu + Izq
-				if (this->linkedRemoteId != 0) {
-					this->linkedRemoteId = 0;
+				if (this->linkedRemoteId != -1) {
+					this->linkedRemoteId = -1;
 					this->sendCommand(actualKey.getName(), 1);
 				}
 				return;
