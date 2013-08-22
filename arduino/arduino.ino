@@ -8,6 +8,7 @@ AppleRemote appleRemote;
 
 void setup() {
 //	appleRemote.setOutputSpeed(9600);
+//	appleRemote.setOutputSpeed(57600);
 	appleRemote.setOutputSpeed(115200);
 	appleRemote.setIRPin(6);
 

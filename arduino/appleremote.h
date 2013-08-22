@@ -25,6 +25,7 @@ class RemoteKey {
 		unsigned long getLastTime() const;
 		unsigned int getCount() const;
 		bool isDoubleButton() const;
+		bool isSpecialKey() const;
 
 		void updateTime();
 		void setRepeatingKey();

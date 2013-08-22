@@ -210,9 +210,22 @@ bool RemoteKey::isDoubleButton() const {
 		return true;
 
 	if (this->id == 0x87EE) {
-		if (this->command >= 0x0E)		
+		if ((this->command >= 0x5C) && (this->command <= 0x5F))
+			return false;
+	
+		if (this->command >= 0x0E)
 			return true;
 	}
+
+	return false;
+}
+
+bool RemoteKey::isSpecialKey() const {
+	if (this->isDoubleButton())
+		return true;
+
+	if ((this->id == 0x87EE) && (this->command >= 0x5C) && (this->command <= 0x5F))
+		return true;
 
 	return false;
 }
@@ -313,7 +326,7 @@ void AppleRemote::loop() {
 
 		// 109 * 1.5 = 164
 		int temp = 164;
-		if ((this->actualKey.getCount() == 0) && !this->actualKey.isDoubleButton())
+		if ((this->actualKey.getCount() == 0) && !this->actualKey.isSpecialKey())
 			// 42 * 1.5 = 63
 			temp = 63;
 		
