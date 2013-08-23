@@ -10,6 +10,10 @@
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui {
+	namespace Diagnostics {
+		class Process;
+	}
+
 	namespace Windows {
 		namespace Forms {
 			class Bitmap;
@@ -21,6 +25,7 @@ namespace awui {
 					static Bitmap * selectedBitmap;
 					static Control * controlSelected;
 					Control * mouseControlOver;
+					awui::Diagnostics::Process* remoteProcess;
 					String text;
 
 					int mouseX;

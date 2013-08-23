@@ -90,8 +90,6 @@ void RemoteKey::decode(unsigned long command) {
 	this->remoteId = (command3 >> 24) & 0xFF;
 }
 
-void (*resetFunc) (void) = 0;
-
 const char * RemoteKey::getName() const {
 	if (this->id == 0x87E0) {
 		switch (this->command) {
@@ -159,7 +157,6 @@ const char * RemoteKey::getName() const {
 				return "CHANGE RESOLUTION";
 			case 0x18:
 			case 0x19:
-				resetFunc();
 				// Menu + Abajo
 				return "RESET";
 
@@ -192,6 +189,107 @@ const char * RemoteKey::getName() const {
 	}
 
 	return "UNKNOWN";
+}
+
+const char * RemoteKey::getCodeLibrary() const {
+	if (this->id == 0x87E0) {
+		switch (this->command) {
+			// Menu + Play en mando blanco cambia el codigo del control remoto
+			case 0x02: // Menu + Ok or Menu + Right
+			case 0x03:
+				return "51";
+			case 0x04:
+			case 0x05:
+				// Menu + Left
+				return "52";
+		}
+	}
+
+	if (this->id == 0x87EE) {
+		switch (this->command) {
+// Normales
+			case 0x02:
+			case 0x03:
+				return "10";
+			case 0x04:
+			case 0x05:
+				return "11";
+			case 0x5E:
+			case 0x5F: // ¿?
+				return "17";
+			case 0x5C: // ¿?
+			case 0x5D:
+				return "16";
+			case 0x06:
+			case 0x07:
+				return "12";
+			case 0x08:
+			case 0x09:
+				return "13";
+			case 0x0A:
+			case 0x0B:
+				return "14";
+			case 0x0C:
+			case 0x0D:
+				return "15";
+
+// Especiales con Play/Pause (mando blanco)
+			case 0x0E:
+			case 0x0F:
+				// Play/Pause + Up
+				return "21";
+			case 0x10:
+			case 0x11:
+				// Play/Pause + Down
+				return "22";
+			case 0x12:
+			case 0x13:
+				// Play/Pause + Right
+				return "23";
+			case 0x14:
+			case 0x15:
+				// Play/Pause + Left
+				return "24";
+
+// Especiales con Menu
+			case 0x16:
+			case 0x17:
+				// Menu + Arriba
+				return "31";
+			case 0x18:
+			case 0x19:
+				// Menu + Abajo
+				return "32";
+
+// Especiales con Play/Pause (mando gris)
+			case 0x60:
+			case 0x61:
+				// Play/Pause + Menu
+				return "41";
+			case 0x62:
+			case 0x63:
+				// Play/Pause + Ok
+				return "42";
+			case 0x64:
+			case 0x65:
+				// Play/Pause + Up
+				return "43";
+			case 0x66:
+			case 0x67:
+				// Play/Pause + Down
+				return "44";
+			case 0x68:
+			case 0x69:
+				// Play/Pause + Left
+				return "45";
+			case 0x6A:
+			case 0x6B:
+				// Play/Pause + Right
+				return "46";
+		}
+	}
+
+	return "FF";
 }
 
 void RemoteKey::verbose(bool endline) {
@@ -291,9 +389,13 @@ void AppleRemote::printCommand(const char * text, bool pressed) {
 
 	this->lastState = pressed;
 
-	this->actualKey.verbose(false);
+	Serial.print(this->actualKey.getCodeLibrary());
 	Serial.print(":");
 	Serial.print(pressed);
+	Serial.print(":");
+
+	this->actualKey.verbose(false);
+
 	Serial.print(":");
 	Serial.print(this->actualKey.getCount());
 	Serial.print(":");
@@ -306,9 +408,9 @@ void AppleRemote::printCommand(const char * text, bool pressed) {
 	Serial.println();
 }
 
-void AppleRemote::sendCommand(const char * text, bool pressed) {
+void AppleRemote::sendCommand() {
 	this->lastTime = millis();
-	this->printCommand(text, pressed);
+	this->printCommand(actualKey.getName(), true);
 }
 
 bool AppleRemote::acceptRemote() const {
@@ -426,7 +528,7 @@ void AppleRemote::loop() {
 				// Menu + Der
 				if (this->linkedRemoteId != this->actualKey.getRemoteId()) {
 					this->setLinkedRemoteId(this->actualKey.getRemoteId());
-					this->sendCommand(actualKey.getName(), 1);
+					this->sendCommand();
 				}
 				return;
 			case 0x04:
@@ -434,16 +536,16 @@ void AppleRemote::loop() {
 				// Menu + Izq
 				if (this->linkedRemoteId != -1) {
 					this->setLinkedRemoteId(-1);
-					this->sendCommand(actualKey.getName(), 1);
+					this->sendCommand();
 				}
 				return;
 			default:
 				if (this->enableLog)
-					this->sendCommand(actualKey.getName(), 1);
+					this->sendCommand();
 				break;
 		}
 	}
 
 	if (this->actualKey.isAppleRemote() && this->acceptRemote())
-		this->sendCommand(actualKey.getName(), 1);
+		this->sendCommand();
 }

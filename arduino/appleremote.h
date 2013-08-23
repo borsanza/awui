@@ -34,6 +34,7 @@ class RemoteKey {
 		void incCount();
 		
 		const char * getName() const;
+		const char * getCodeLibrary() const;
 		void verbose(bool endline);
 };
 
@@ -54,7 +55,7 @@ class AppleRemote {
 		int irpin;
 		int ledPin;
 
-		void sendCommand(const char * value, bool pressed);
+		void sendCommand();
 		void printCommand(const char * value, bool pressed);
 		bool acceptRemote() const;
 		void setLinkedRemoteId(int linkedRemoteId);

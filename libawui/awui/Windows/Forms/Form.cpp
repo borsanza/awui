@@ -4,10 +4,12 @@
 #include "Form.h"
 
 #include <awui/Collections/ArrayList.h>
+#include <awui/Diagnostics/Process.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Rectangle.h>
 #include <awui/OpenGL/GL.h>
+#include <awui/String.h>
 #include <awui/Windows/Forms/Application.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
@@ -41,6 +43,9 @@ Form::Form() {
 	Stats * stats = Stats::Instance();
 	stats->SetDock(DockStyle::Bottom);
 	this->GetControls()->Add(stats);
+
+	this->remoteProcess = new awui::Diagnostics::Process();
+	this->remoteProcess->Start("cat", "/dev/ttyUSB0");
 }
 
 Form::~Form() {
@@ -80,12 +85,35 @@ void Form::OnPaintForm() {
 	stats->SetTimeBeforeVSync();
 }
 
+#include <awui/Console.h>
+
 void Form::ProcessEvents() {
 	Stats * stats = Stats::Instance();
 	stats->SetTimeAfterVSync();
 	int resizex = -1;
 	int resizey = -1;
 	SDL_Event event;
+
+	if (this->remoteProcess->GetHasString()) {
+		awui::String line = this->remoteProcess->GetLine();
+		line = line.Substring(0, 4);
+		if (line == "12:1")
+			OnRemoteKeyPressedPre(RemoteButtons::Right);
+		if (line == "13:1")
+			OnRemoteKeyPressedPre(RemoteButtons::Left);
+		if (line == "14:1")
+			OnRemoteKeyPressedPre(RemoteButtons::Up);
+		if (line == "15:1")
+			OnRemoteKeyPressedPre(RemoteButtons::Down);
+		if ((line == "16:1") || (line == "11:1"))
+			OnRemoteKeyPressedPre(RemoteButtons::Ok);
+		if (line == "10:1")
+			OnRemoteKeyPressedPre(RemoteButtons::Menu);
+		if (line == "31:1")
+			SetFullscreen(!this->fullscreen);
+		if (line == "32:1")
+			Application::Quit();
+	}
 
 	while (SDL_PollEvent(&event)) {
 		switch(event.type) {
