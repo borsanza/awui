@@ -7,6 +7,7 @@
 	#include <Arduino.h>
 #endif
 
+#include <EEPROM.h>
 #include <IRremote.h>
 
 #include "appleremote.h"
@@ -89,6 +90,8 @@ void RemoteKey::decode(unsigned long command) {
 	this->remoteId = (command3 >> 24) & 0xFF;
 }
 
+void (*resetFunc) (void) = 0;
+
 const char * RemoteKey::getName() const {
 	if (this->id == 0x87E0) {
 		switch (this->command) {
@@ -156,6 +159,7 @@ const char * RemoteKey::getName() const {
 				return "CHANGE RESOLUTION";
 			case 0x18:
 			case 0x19:
+				resetFunc();
 				// Menu + Abajo
 				return "RESET";
 
@@ -241,7 +245,6 @@ AppleRemote::AppleRemote() {
 	this->blink13 = false;
 	this->irrecv = 0;
 	this->enableLog = false;
-	this->linkedRemoteId = -1;
 	this->lastTime = 0;
 	this->lastState = false; // Unpressed
 }
@@ -275,6 +278,8 @@ void AppleRemote::init() {
 	this->irrecv = new IRrecv(this->irpin);
 	this->irrecv->enableIRIn();
 	this->irrecv->blink13(this->blink13);
+
+	this->loadLinkedRemoteId();
 }
 
 void AppleRemote::printCommand(const char * text, bool pressed) {
@@ -317,6 +322,27 @@ bool AppleRemote::acceptRemote() const {
 		return true;
 	
 	return false;
+}
+
+void AppleRemote::setLinkedRemoteId(int linkedRemoteId) {
+	this->linkedRemoteId = linkedRemoteId;
+
+	EEPROM.write(0, (linkedRemoteId != -1) ? 1 : 0);
+	EEPROM.write(1, linkedRemoteId);
+}
+
+void AppleRemote::loadLinkedRemoteId() {
+	if (EEPROM.read(0) == 1) {
+		this->linkedRemoteId = EEPROM.read(1);
+		if (this->enableLog) {
+			Serial.print("ACCEPT REMOTE: ");
+			Serial.println(this->linkedRemoteId, HEX);
+		}
+	} else {
+		this->linkedRemoteId = -1;
+		if (this->enableLog)
+			Serial.println("ACCEPT ALL REMOTES");
+	}
 }
 
 void AppleRemote::loop() {
@@ -399,7 +425,7 @@ void AppleRemote::loop() {
 			case 0x03:
 				// Menu + Der
 				if (this->linkedRemoteId != this->actualKey.getRemoteId()) {
-					this->linkedRemoteId = this->actualKey.getRemoteId();
+					this->setLinkedRemoteId(this->actualKey.getRemoteId());
 					this->sendCommand(actualKey.getName(), 1);
 				}
 				return;
@@ -407,7 +433,7 @@ void AppleRemote::loop() {
 			case 0x05:
 				// Menu + Izq
 				if (this->linkedRemoteId != -1) {
-					this->linkedRemoteId = -1;
+					this->setLinkedRemoteId(-1);
 					this->sendCommand(actualKey.getName(), 1);
 				}
 				return;

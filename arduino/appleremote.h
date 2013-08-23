@@ -57,6 +57,8 @@ class AppleRemote {
 		void sendCommand(const char * value, bool pressed);
 		void printCommand(const char * value, bool pressed);
 		bool acceptRemote() const;
+		void setLinkedRemoteId(int linkedRemoteId);
+		void loadLinkedRemoteId();
 
 	public:
 		AppleRemote();
