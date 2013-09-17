@@ -39,6 +39,8 @@ void GL::SetClipping() {
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
 }
 
+#define OFFSET 0.5f
+
 void GL::DrawLine(int x1, int y1, int x2, int y2) {
 	int xinc = 0;
 	int yinc = 0;
@@ -60,26 +62,26 @@ void GL::DrawLine(int x1, int y1, int x2, int y2) {
 	}
 
 	glBegin(GL_LINES);
-	glVertex2f(x1 + 0.375f, y1 + 0.375f);
-	glVertex2f(x2 + xinc + 0.375f, y2 + yinc + 0.375f);
+	glVertex2f(x1 + OFFSET, y1 + OFFSET);
+	glVertex2f(x2 + xinc + OFFSET, y2 + yinc + OFFSET);
 	glEnd();
 }
 
 void GL::DrawRectangle(int x1, int y1, int x2, int y2) {
 	glBegin(GL_LINE_LOOP);
-	glVertex2f(x1 + 0.375f, y1 + 0.375f);
-	glVertex2f(x2 + 0.375f, y1 + 0.375f);
-	glVertex2f(x2 + 0.375f, y2 + 0.375f);
-	glVertex2f(x1 + 0.375f, y2 + 0.375f);
+	glVertex2f(x1 + OFFSET, y1 + OFFSET);
+	glVertex2f(x2 + OFFSET, y1 + OFFSET);
+	glVertex2f(x2 + OFFSET, y2 + OFFSET);
+	glVertex2f(x1 + OFFSET, y2 + OFFSET);
 	glEnd();
 }
 
 void GL::FillRectangle(int x1, int y1, int x2, int y2) {
 	glBegin(GL_QUADS);
-	glVertex2f(x1 + 0.375f, y1 + 0.375f);
-	glVertex2f(x2 + 1.375f, y1 + 0.375f);
-	glVertex2f(x2 + 1.375f, y2 + 1.375f);
-	glVertex2f(x1 + 0.375f, y2 + 1.375f);
+	glVertex2f(x1, y1);
+	glVertex2f(x2 + 1.0f, y1);
+	glVertex2f(x2 + 1.0f, y2 + 1.0f);
+	glVertex2f(x1, y2 + 1.0f);
 	glEnd();
 }
 
