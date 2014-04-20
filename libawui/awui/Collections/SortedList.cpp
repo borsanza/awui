@@ -29,7 +29,7 @@ awui::String SortedList::ToString() {
 }
 
 void SortedList::Add(Object * key, Object * value) {
-	ArraListItem * itemList = (ArraListItem *) malloc(sizeof (ArraListItem *));
+	ArraListItem * itemList = (ArraListItem *) malloc(sizeof (struct ArraListItem));
 	itemList->key = key;
 	itemList->value = value;
 	itemList->next = NULL;

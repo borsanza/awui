@@ -29,7 +29,7 @@ awui::String ArrayList::ToString() {
 }
 
 void ArrayList::Add(Object * item) {
-	ArraListItem * itemList = (ArraListItem *) malloc(sizeof (ArraListItem *));
+	ArraListItem * itemList = (ArraListItem *) malloc(sizeof (struct ArraListItem));
 	itemList->object = item;
 	itemList->next = NULL;
 	this->count++;
