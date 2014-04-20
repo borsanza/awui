@@ -11,12 +11,12 @@ namespace awui {
 	namespace Collections {
 		class ArrayList : public Object {
 			private:
-				struct ArraListItem {
+				struct ArrayListItem {
 					Object * object;
-					ArraListItem * next;
+					ArrayListItem * next;
 				};
 
-				ArraListItem * first;
+				ArrayListItem * first;
 				int count;
 
 			public:

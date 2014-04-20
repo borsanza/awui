@@ -29,7 +29,7 @@ awui::String ArrayList::ToString() {
 }
 
 void ArrayList::Add(Object * item) {
-	ArraListItem * itemList = (ArraListItem *) malloc(sizeof (struct ArraListItem));
+	ArrayListItem * itemList = (ArrayListItem *) malloc(sizeof (struct ArrayListItem));
 	itemList->object = item;
 	itemList->next = NULL;
 	this->count++;
@@ -39,7 +39,7 @@ void ArrayList::Add(Object * item) {
 		return;
 	}
 
-	ArraListItem * itemListAux = this->first;
+	ArrayListItem * itemListAux = this->first;
 
 	while (itemListAux->next != NULL)
 		itemListAux = itemListAux->next;
@@ -59,7 +59,7 @@ void ArrayList::Clear() {
 int ArrayList::IndexOf(Object * item) {
 	int pos = 0;
 
-	ArraListItem * itemListAux = this->first;
+	ArrayListItem * itemListAux = this->first;
 
 	while (itemListAux != NULL) {
 		if (itemListAux->object == item)
@@ -75,7 +75,7 @@ int ArrayList::IndexOf(Object * item) {
 awui::Object * ArrayList::Get(int index) {
 	int pos = 0;
 
-	ArraListItem * itemListAux = this->first;
+	ArrayListItem * itemListAux = this->first;
 
 	while (itemListAux != NULL) {
 		if (pos == index)
@@ -89,8 +89,8 @@ awui::Object * ArrayList::Get(int index) {
 }
 
 void ArrayList::Remove(Object * item) {
-	ArraListItem * itemListAux = this->first;
-	ArraListItem * last = NULL;
+	ArrayListItem * itemListAux = this->first;
+	ArrayListItem * last = NULL;
 
 	while (itemListAux != NULL) {
 		if (itemListAux->object == item) {
@@ -112,8 +112,8 @@ void ArrayList::Remove(Object * item) {
 
 void ArrayList::RemoveAt(int index) {
 	int pos = 0;
-	ArraListItem * itemListAux = this->first;
-	ArraListItem * last = NULL;
+	ArrayListItem * itemListAux = this->first;
+	ArrayListItem * last = NULL;
 
 	while (itemListAux != NULL) {
 		if (pos == index) {
@@ -135,8 +135,8 @@ void ArrayList::RemoveAt(int index) {
 }
 
 void ArrayList::SetChildIndex(Object * item, int index) {
-	ArraListItem * itemListAux = this->first;
-	ArraListItem * last = NULL;
+	ArrayListItem * itemListAux = this->first;
+	ArrayListItem * last = NULL;
 
 	while (itemListAux != NULL) {
 		if (itemListAux->object == item) {
@@ -158,7 +158,7 @@ void ArrayList::SetChildIndex(Object * item, int index) {
 
 	int pos = 0;
 
-	ArraListItem * itemListAux2 = this->first;
+	ArrayListItem * itemListAux2 = this->first;
 
 	while (itemListAux2 != NULL) {
 		if (pos == index) {

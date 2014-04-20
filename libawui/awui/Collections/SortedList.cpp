@@ -29,7 +29,7 @@ awui::String SortedList::ToString() {
 }
 
 void SortedList::Add(Object * key, Object * value) {
-	ArraListItem * itemList = (ArraListItem *) malloc(sizeof (struct ArraListItem));
+	SortedListItem * itemList = (SortedListItem *) malloc(sizeof (struct SortedListItem));
 	itemList->key = key;
 	itemList->value = value;
 	itemList->next = NULL;
@@ -41,7 +41,7 @@ void SortedList::Add(Object * key, Object * value) {
 		return;
 	}
 
-	ArraListItem * itemListAux = this->first;
+	SortedListItem * itemListAux = this->first;
 
 	bool change = false;
 	// Para acelerar inserciones, miramos si lo podemos insertar en ultima posicion
@@ -84,7 +84,7 @@ void SortedList::Clear() {
 awui::Object * SortedList::GetKey(int index) {
 	int pos = 0;
 
-	ArraListItem * itemListAux = this->first;
+	SortedListItem * itemListAux = this->first;
 
 	while (itemListAux != NULL) {
 		if (pos == index)
@@ -100,7 +100,7 @@ awui::Object * SortedList::GetKey(int index) {
 awui::Object * SortedList::GetByIndex(int index) {
 	int pos = 0;
 
-	ArraListItem * itemListAux = this->first;
+	SortedListItem * itemListAux = this->first;
 
 	while (itemListAux != NULL) {
 		if (pos == index)
@@ -115,8 +115,8 @@ awui::Object * SortedList::GetByIndex(int index) {
 
 void SortedList::RemoveAt(int index) {
 	int pos = 0;
-	ArraListItem * itemListAux = this->first;
-	ArraListItem * last = NULL;
+	SortedListItem * itemListAux = this->first;
+	SortedListItem * last = NULL;
 
 	while (itemListAux != NULL) {
 		if (pos == index) {

@@ -11,14 +11,14 @@ namespace awui {
 	namespace Collections {
 		class SortedList : public Object {
 			private:
-				struct ArraListItem {
+				struct SortedListItem {
 					Object * key;
 					Object * value;
-					ArraListItem * next;
+					SortedListItem * next;
 				};
 
-				ArraListItem * first;
-				ArraListItem * last;
+				SortedListItem * first;
+				SortedListItem * last;
 				int count;
 
 			public:
