@@ -135,13 +135,15 @@ namespace awui {
 					void OnMouseMovePre(int x, int y, int buttons);
 					void OnMouseUpPre(MouseButtons::Enum button, int buttons);
 					void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
-					void OnRemoteKeyPressedPre(RemoteButtons::Enum button);
+					void OnRemoteKeyPressPre(RemoteButtons::Enum button);
+					void OnRemoteKeyUpPre(RemoteButtons::Enum button);
 
 					virtual void Layout();
 					virtual void OnMouseDown(MouseEventArgs* e) {}
 					virtual void OnMouseMove(MouseEventArgs* e) {}
 					virtual void OnMouseUp(MouseEventArgs* e) {}
-					virtual bool OnRemoteKeyPressed(RemoteButtons::Enum button);
+					virtual bool OnRemoteKeyPress(RemoteButtons::Enum button);
+					virtual bool OnRemoteKeyUp(RemoteButtons::Enum button);
 					virtual void OnMouseEnter();
 					virtual void OnMouseLeave();
 					virtual void OnPaint(OpenGL::GL * gl);

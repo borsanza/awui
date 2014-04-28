@@ -45,8 +45,11 @@ Control::~Control() {
 	delete this->font;
 	delete this->mouseEventArgs;
 
-	for (int i = 0; i < this->controls->GetCount(); i++)
-		delete ((Control *)this->controls->Get(i));
+	while (this->controls->GetCount() > 0) {
+		Control * control = (Control *) this->controls->Get(0);
+		delete control;
+		this->controls->RemoveAt(0);
+	}
 
 	this->controls->Clear();
 	delete this->controls;
@@ -517,8 +520,8 @@ void Control::SetTabStop(bool tabStop) {
 		Form::SetControlSelected(this);
 }
 
-void Control::OnRemoteKeyPressedPre(RemoteButtons::Enum button) {
-	bool mustStop = this->OnRemoteKeyPressed(button);
+void Control::OnRemoteKeyPressPre(RemoteButtons::Enum button) {
+	bool mustStop = this->OnRemoteKeyPress(button);
 	if (mustStop)
 		return;
 
@@ -526,7 +529,19 @@ void Control::OnRemoteKeyPressedPre(RemoteButtons::Enum button) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnRemoteKeyPressedPre(button);
+		focused->OnRemoteKeyPressPre(button);
+}
+
+void Control::OnRemoteKeyUpPre(RemoteButtons::Enum button) {
+	bool mustStop = this->OnRemoteKeyUp(button);
+	if (mustStop)
+		return;
+
+	if (!this->focused)
+		Form::SetControlSelected(Form::GetControlSelected());
+
+	if (this->focused)
+		focused->OnRemoteKeyUpPre(button);
 }
 
 void Control::SetFocus() {
@@ -548,7 +563,11 @@ Control * Control::GetTopParent() {
 #include <awui/Console.h>
 #include <awui/Convert.h>
 
-bool Control::OnRemoteKeyPressed(RemoteButtons::Enum button) {
+bool Control::OnRemoteKeyUp(RemoteButtons::Enum button) {
+	return false;
+}
+
+bool Control::OnRemoteKeyPress(RemoteButtons::Enum button) {
 	if (Form::GetControlSelected() == this) {
 		Point pCenter(Math::Round((this->GetWidth() / 2.0f) + this->GetAbsoluteLeft()), Math::Round((this->GetHeight() / 2.0f) + this->GetAbsoluteTop()));
 		Point p1;

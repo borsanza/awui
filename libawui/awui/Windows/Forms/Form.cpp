@@ -49,6 +49,7 @@ Form::Form() {
 }
 
 Form::~Form() {
+	delete this->remoteProcess;
 }
 
 int Form::IsClass(Classes::Enum objectClass) const {
@@ -96,22 +97,41 @@ void Form::ProcessEvents() {
 
 	if (this->remoteProcess->GetHasString()) {
 		awui::String line = this->remoteProcess->GetLine();
+
+		if (line.Substring(0, 4) != "TICK")
+			Console::WriteLine(line);
+
 		line = line.Substring(0, 4);
 		if (line == "12:1")
-			OnRemoteKeyPressedPre(RemoteButtons::Right);
+			OnRemoteKeyPressPre(RemoteButtons::Right);
 		if (line == "13:1")
-			OnRemoteKeyPressedPre(RemoteButtons::Left);
+			OnRemoteKeyPressPre(RemoteButtons::Left);
 		if (line == "14:1")
-			OnRemoteKeyPressedPre(RemoteButtons::Up);
+			OnRemoteKeyPressPre(RemoteButtons::Up);
 		if (line == "15:1")
-			OnRemoteKeyPressedPre(RemoteButtons::Down);
+			OnRemoteKeyPressPre(RemoteButtons::Down);
 		if ((line == "16:1") || (line == "11:1"))
-			OnRemoteKeyPressedPre(RemoteButtons::Ok);
+			OnRemoteKeyPressPre(RemoteButtons::Ok);
 		if (line == "10:1")
-			OnRemoteKeyPressedPre(RemoteButtons::Menu);
+			OnRemoteKeyPressPre(RemoteButtons::Menu);
 		if (line == "31:1")
 			SetFullscreen(!this->fullscreen);
 		if (line == "32:1")
+			Application::Quit();
+
+		if (line == "12:0")
+			OnRemoteKeyUpPre(RemoteButtons::Right);
+		if (line == "13:0")
+			OnRemoteKeyUpPre(RemoteButtons::Left);
+		if (line == "14:0")
+			OnRemoteKeyUpPre(RemoteButtons::Up);
+		if (line == "15:0")
+			OnRemoteKeyUpPre(RemoteButtons::Down);
+		if ((line == "16:0") || (line == "11:0"))
+			OnRemoteKeyUpPre(RemoteButtons::Ok);
+		if (line == "10:0")
+			OnRemoteKeyUpPre(RemoteButtons::Menu);
+		if (line == "32:0")
 			Application::Quit();
 	}
 
@@ -120,10 +140,10 @@ void Form::ProcessEvents() {
 			case SDL_JOYBUTTONDOWN:
 				switch (event.jbutton.button) {
 					case 0:
-						OnRemoteKeyPressedPre(RemoteButtons::Ok);
+						OnRemoteKeyPressPre(RemoteButtons::Ok);
 						break;
 					case 1:
-						OnRemoteKeyPressedPre(RemoteButtons::Menu);
+						OnRemoteKeyPressPre(RemoteButtons::Menu);
 						break;
 					default:
 						break;
@@ -132,16 +152,16 @@ void Form::ProcessEvents() {
 			case SDL_JOYAXISMOTION:
 				if (event.jaxis.axis == 0) {
 					if (event.jaxis.value < -16000)
-							OnRemoteKeyPressedPre(RemoteButtons::Left);
+							OnRemoteKeyPressPre(RemoteButtons::Left);
 					if (event.jaxis.value > 16000)
-							OnRemoteKeyPressedPre(RemoteButtons::Right);
+							OnRemoteKeyPressPre(RemoteButtons::Right);
 				}
 
 				if (event.jaxis.axis == 1) {
 					if (event.jaxis.value < -16000)
-							OnRemoteKeyPressedPre(RemoteButtons::Up);
+							OnRemoteKeyPressPre(RemoteButtons::Up);
 					if (event.jaxis.value > 16000)
-							OnRemoteKeyPressedPre(RemoteButtons::Down);
+							OnRemoteKeyPressPre(RemoteButtons::Down);
 				}
 				break;
 			case SDL_KEYDOWN:
@@ -150,11 +170,11 @@ void Form::ProcessEvents() {
 						if (event.key.keysym.mod & KMOD_LCTRL)
 							Application::Quit();
 						else
-							OnRemoteKeyPressedPre(RemoteButtons::Menu);
+							OnRemoteKeyPressPre(RemoteButtons::Menu);
 						break;
 					case SDLK_RETURN:
 					case SDLK_KP_ENTER:
-						OnRemoteKeyPressedPre(RemoteButtons::Ok);
+						OnRemoteKeyPressPre(RemoteButtons::Ok);
 						break;
 					case SDLK_w:
 						if (event.key.keysym.mod & KMOD_LALT)
@@ -165,16 +185,16 @@ void Form::ProcessEvents() {
 							this->SetFullscreen(1);
 						break;
 					case SDLK_LEFT:
-						OnRemoteKeyPressedPre(RemoteButtons::Left);
+						OnRemoteKeyPressPre(RemoteButtons::Left);
 						break;
 					case SDLK_RIGHT:
-						OnRemoteKeyPressedPre(RemoteButtons::Right);
+						OnRemoteKeyPressPre(RemoteButtons::Right);
 						break;
 					case SDLK_UP:
-						OnRemoteKeyPressedPre(RemoteButtons::Up);
+						OnRemoteKeyPressPre(RemoteButtons::Up);
 						break;
 					case SDLK_DOWN:
-						OnRemoteKeyPressedPre(RemoteButtons::Down);
+						OnRemoteKeyPressPre(RemoteButtons::Down);
 						break;
 					default:
 						break;

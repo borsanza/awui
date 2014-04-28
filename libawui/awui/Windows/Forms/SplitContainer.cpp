@@ -35,9 +35,6 @@ SplitContainer::SplitContainer() {
 }
 
 SplitContainer::~SplitContainer() {
-	delete this->panel1;
-	delete this->splitter;
-	delete this->panel2;
 }
 
 int SplitContainer::IsClass(Classes::Enum objectClass) const {

@@ -32,7 +32,9 @@ int Process::DoSelect() {
 	tv.tv_usec = 0;
 	tv.tv_sec = 0;
 
-	return select(fileno(pPipe) + 1, &rfds, NULL, NULL, &tv);
+	int r = select(fileno(pPipe) + 1, &rfds, NULL, NULL, &tv);
+
+	return r;
 }
 
 bool Process::GetHasExited() {
@@ -52,11 +54,12 @@ bool Process::GetHasString() {
 
 awui::String Process::GetLine() {
 	char buffer[256];
-	if (!feof(pPipe))
+	if (!feof(pPipe)) {
 		if (fgets(buffer, 256, pPipe) != NULL) {
 			strtok(buffer, "\n");
 			return buffer;
 		}
+	}
 
 	return "";
 }

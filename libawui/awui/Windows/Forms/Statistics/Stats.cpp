@@ -23,31 +23,35 @@ Stats::Stats() {
 	this->afterSync = DateTime::GetNow();
 
 	Font font = Font("Monospace", 14);
-	this->labelidle.SetFont(&font);
-	this->labelused.SetFont(&font);
-	this->labeltotal.SetFont(&font);
-	this->spinner.SetDock(DockStyle::Right);
-	this->labelidle.SetDock(DockStyle::Bottom);
-	this->labelused.SetDock(DockStyle::Bottom);
-	this->labeltotal.SetDock(DockStyle::Bottom);
-	this->labelidle.SetTextAlign(ContentAlignment::MiddleRight);
-	this->labelused.SetTextAlign(ContentAlignment::MiddleRight);
-	this->labeltotal.SetTextAlign(ContentAlignment::MiddleRight);
+	this->labelidle = new Label();
+	this->labelidle->SetFont(&font);
+	this->labelused = new Label();
+	this->labelused->SetFont(&font);
+	this->labeltotal = new Label();
+	this->labeltotal->SetFont(&font);
+	this->spinner = new Spinner();
+	this->spinner->SetDock(DockStyle::Right);
+	this->labelidle->SetDock(DockStyle::Bottom);
+	this->labelused->SetDock(DockStyle::Bottom);
+	this->labeltotal->SetDock(DockStyle::Bottom);
+	this->labelidle->SetTextAlign(ContentAlignment::MiddleRight);
+	this->labelused->SetTextAlign(ContentAlignment::MiddleRight);
+	this->labeltotal->SetTextAlign(ContentAlignment::MiddleRight);
 	Color backColor = Color::FromArgb(0, 0, 0, 0);
 	Color foreColor = Color::FromArgb(255, 255, 255);
-	this->spinner.SetBackColor(backColor);
-	this->labelidle.SetBackColor(backColor);
-	this->labelused.SetBackColor(backColor);
-	this->labeltotal.SetBackColor(backColor);
-	this->spinner.SetForeColor(foreColor);
-	this->labelidle.SetForeColor(foreColor);
-	this->labelused.SetForeColor(foreColor);
-	this->labeltotal.SetForeColor(foreColor);
+	this->spinner->SetBackColor(backColor);
+	this->labelidle->SetBackColor(backColor);
+	this->labelused->SetBackColor(backColor);
+	this->labeltotal->SetBackColor(backColor);
+	this->spinner->SetForeColor(foreColor);
+	this->labelidle->SetForeColor(foreColor);
+	this->labelused->SetForeColor(foreColor);
+	this->labeltotal->SetForeColor(foreColor);
 
-	this->GetControls()->Add(&this->spinner);
-	this->GetControls()->Add(&this->labeltotal);
-	this->GetControls()->Add(&this->labelidle);
-	this->GetControls()->Add(&this->labelused);
+	this->GetControls()->Add(this->spinner);
+	this->GetControls()->Add(this->labeltotal);
+	this->GetControls()->Add(this->labelidle);
+	this->GetControls()->Add(this->labelused);
 	this->SetHeight(72);
 }
 
@@ -72,9 +76,9 @@ void Stats::SetTimeAfterVSync() {
 }
 
 void Stats::OnTick() {
-	this->labelused.SetText(String("Used: ") + this->used.ToString());
-	this->labelidle.SetText(String("Idle: ") + this->idle.ToString());
-	this->labeltotal.SetText(String("Total: ") + this->total.ToString());
+	this->labelused->SetText(String("Used: ") + this->used.ToString());
+	this->labelidle->SetText(String("Idle: ") + this->idle.ToString());
+	this->labeltotal->SetText(String("Total: ") + this->total.ToString());
 }
 
 Stats* Stats::Instance() {

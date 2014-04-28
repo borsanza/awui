@@ -23,10 +23,10 @@ namespace awui {
 						TimeSpan total;
 						TimeSpan used;
 
-						Label labelidle;
-						Label labelused;
-						Label labeltotal;
-						Spinner spinner;
+						Label *labelidle;
+						Label *labelused;
+						Label *labeltotal;
+						Spinner *spinner;
 
 						Stats();
 						virtual ~Stats();
