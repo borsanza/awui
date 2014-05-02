@@ -54,6 +54,7 @@ namespace awui {
 					static Control * GetControlSelected();
 					static void SetControlSelected(Control * selected);
 					static Bitmap * GetSelectedBitmap();
+					virtual void OnRemoteHeartbeat();
 			};
 		}
 	}

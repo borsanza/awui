@@ -78,7 +78,7 @@ int TimeSpan::GetDays() const {
 
 awui::String TimeSpan::ConvertDecimals(int value, int decimals) {
 	String output = "";
-	for (int i=0; i<decimals; i++) {
+	for (int i=0; i < decimals; i++) {
 		output = Convert::ToString(value % 10) + output;
 		value = Math::Floor((float)value / 10);
 	}

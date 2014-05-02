@@ -4,6 +4,7 @@
 #include "Control.h"
 
 #include <awui/Collections/ArrayList.h>
+#include <awui/Console.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Drawing/Graphics.h>
@@ -15,6 +16,7 @@
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
+#include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL_opengl.h>
 
 #include <iostream>
@@ -23,6 +25,7 @@ using namespace awui::Collections;
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Statistics;
 
 Control::Control() {
 	this->tabStop = false;
@@ -255,7 +258,7 @@ void Control::Refresh() {
 	this->needRefresh = 1;
 }
 
-void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
+int Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-x, width - x, height - y, -y, -1.0f, 1.0f);
@@ -294,18 +297,29 @@ void Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 			break;
 	}
 
-	this->OnPaint(NULL);
+	int r = 0;
+
+	Rectangle cr = gl->GetClippingResult();
+	int isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0);
+	if (isVisible) {
+		r++;
+		this->OnPaint(NULL);
+	}
 
 	if (disableScissor)
 		glDisable(GL_SCISSOR_TEST);
 
-	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
-		Control * control = (Control *)this->GetControls()->Get(i);
+	if (isVisible) {
+		for (int i = 0; i < this->GetControls()->GetCount(); i++) {
+			Control * control = (Control *)this->GetControls()->Get(i);
 
-		GL gl2;
-		gl2.SetClippingBase(gl->GetClippingResult());
-		control->OnPaintPre(x + control->GetLeft(), y + control->GetTop(), width, height, &gl2);
+			GL gl2;
+			gl2.SetClippingBase(gl->GetClippingResult());
+			r += control->OnPaintPre(x + control->GetLeft(), y + control->GetTop(), width, height, &gl2);
+		}
 	}
+
+	return r;
 }
 
 float Interpolate(float from, int to, float percent) {
@@ -559,9 +573,6 @@ Control * Control::GetTopParent() {
 
 	return this;
 }
-
-#include <awui/Console.h>
-#include <awui/Convert.h>
 
 bool Control::OnRemoteKeyUp(RemoteButtons::Enum button) {
 	return false;

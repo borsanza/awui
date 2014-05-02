@@ -5,6 +5,7 @@
 #include <awui/TimeSpan.h>
 #include <awui/Windows/Forms/Label.h>
 #include <awui/Windows/Forms/Panel.h>
+#include <awui/Windows/Forms/Statistics/Heartbeat.h>
 #include <awui/Windows/Forms/Statistics/Spinner.h>
 
 namespace awui {
@@ -17,16 +18,22 @@ namespace awui {
 
 						DateTime afterSync;
 						DateTime beforeSync;
-						DateTime beforeSync_last;
 
 						TimeSpan idle;
-						TimeSpan total;
-						TimeSpan used;
 
-						Label *labelidle;
-						Label *labelused;
-						Label *labeltotal;
+						Label *labelPercent;
+						Label *labelControls;
+						Label *labelFPS;
 						Spinner *spinner;
+						Heartbeat *heartbeat;
+
+						DateTime lastTime;
+						long long timeUsed;
+						int lastSecond;
+						int fps;
+						int drawedControls;
+						float fpsCalculated;
+						float percent;
 
 						Stats();
 						virtual ~Stats();
@@ -37,7 +44,9 @@ namespace awui {
 						void SetTimeBeforeVSync();
 						void SetTimeAfterVSync();
 
-						virtual void OnTick();
+						virtual void OnRemoteHeartbeat();
+						void SetDrawedControls(int drawedControls);
+
 						TimeSpan GetIdle();
 				};
 			}

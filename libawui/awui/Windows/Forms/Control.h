@@ -68,7 +68,7 @@ namespace awui {
 					String name;
 
 					void OnResizePre();
-					void OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl);
+					int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl);
 					void ChangeControlOnMouseOver(Control * control);
 
 				protected:
@@ -144,6 +144,7 @@ namespace awui {
 					virtual void OnMouseUp(MouseEventArgs* e) {}
 					virtual bool OnRemoteKeyPress(RemoteButtons::Enum button);
 					virtual bool OnRemoteKeyUp(RemoteButtons::Enum button);
+					virtual void OnRemoteHeartbeat() {}
 					virtual void OnMouseEnter();
 					virtual void OnMouseLeave();
 					virtual void OnPaint(OpenGL::GL * gl);

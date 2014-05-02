@@ -3,6 +3,7 @@
 
 #include "Convert.h"
 
+#include <awui/Math.h>
 #include <awui/String.h>
 #include <sstream>
 
@@ -21,6 +22,13 @@ String Convert::ToString(float value) {
 	ss << value;
 
 	return ss.str().c_str();
+}
+
+String Convert::ToString(float value, int precision) {
+	float p = Math::Pow(10.0f, precision);
+	value = Math::Round(value * p) / p;
+
+	return Convert::ToString(value);
 }
 
 String Convert::ToString(unsigned char value) {

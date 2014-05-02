@@ -80,13 +80,17 @@ void Form::OnPaintForm() {
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 
-	this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
+	int r = this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
 
 	Stats * stats = Stats::Instance();
 	stats->SetTimeBeforeVSync();
+	stats->SetDrawedControls(r);
 }
 
-#include <awui/Console.h>
+void Form::OnRemoteHeartbeat() {
+	Stats * stats = Stats::Instance();
+	stats->OnRemoteHeartbeat();
+}
 
 void Form::ProcessEvents() {
 	Stats * stats = Stats::Instance();
@@ -98,10 +102,13 @@ void Form::ProcessEvents() {
 	if (this->remoteProcess->GetHasString()) {
 		awui::String line = this->remoteProcess->GetLine();
 
-		if (line.Substring(0, 4) != "TICK")
-			Console::WriteLine(line);
+//		if (line.Substring(0, 4) != "TICK")
+//			Console::WriteLine(line);
 
 		line = line.Substring(0, 4);
+		if ((line == "lub ") || (line == "dub "))
+			OnRemoteHeartbeat();
+
 		if (line == "12:1")
 			OnRemoteKeyPressPre(RemoteButtons::Right);
 		if (line == "13:1")

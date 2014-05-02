@@ -29,3 +29,19 @@ DateTime DateTime::GetNow() {
 long long DateTime::GetTicks() {
 	return this->_time * 10;
 }
+
+unsigned char DateTime::GetSecond() {
+	return (this->_time / 1000000) % 60;
+}
+
+unsigned char DateTime::GetMinute() {
+	return (this->_time / 60000000) % 60;
+}
+
+unsigned char DateTime::GetHour() {
+	return (this->_time / 3600000000) % 24;
+}
+
+unsigned int DateTime::GetMillisecond() {
+	return this->_time % 1000000;
+}

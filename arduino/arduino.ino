@@ -21,14 +21,28 @@ void setup() {
 }
 
 void loop() {
-	static int oldSec = 5;
+	static unsigned long oldSec = 5;
+	static unsigned long oldMs = 5;
 	unsigned long time = millis();
-	int sec = (time / 1000) % 60;
+	unsigned long sec = time / 900;
+	unsigned long ms = sec * 900;
 
-	if (sec != oldSec) {
+	if ((time > ms) && (oldSec != sec)) {
 		oldSec = sec;
-		Serial.print("TICK: ");
-		Serial.println(sec);
+		Serial.print("lub");
+		Serial.print(" (");
+		Serial.print(sec);
+		Serial.print(")");
+		Serial.println();
+	}
+
+	if ((time > (ms + 300)) && (oldMs != ms)) {
+		oldMs = ms;
+		Serial.print("dub");
+		Serial.print(" (");
+		Serial.print(sec);
+		Serial.print(")");
+		Serial.println();
 	}
 
 	appleRemote.loop();
