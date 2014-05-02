@@ -4,10 +4,12 @@
 #include "Application.h"
 
 #include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Statistics;
 
 int Application::quit = 0;
 SDL_Joystick * Application::stick = NULL;
@@ -34,13 +36,18 @@ void Application::Run(Form * form = NULL) {
 
 	atexit(SDL_Quit);
 
+	Stats * stats = Stats::Instance();
+
 	while (!Application::quit) {
 		form->ProcessEvents();
 
 		form->OnTickPre();
 		form->OnPaintForm();
+
+		stats->SetTimeBeforeVSync();
 		glFinish();
 		SDL_GL_SwapBuffers();
+		stats->SetTimeAfterVSync();
 	}
 
 	if (Application::stick)

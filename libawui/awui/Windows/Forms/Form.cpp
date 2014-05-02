@@ -85,7 +85,6 @@ void Form::OnPaintForm() {
 
 	Stats * stats = Stats::Instance();
 	stats->SetDrawedControls(r);
-	stats->SetTimeBeforeVSync();
 }
 
 void Form::OnRemoteHeartbeat() {
@@ -107,8 +106,6 @@ void Form::OnTick() {
 }
 
 void Form::ProcessEvents() {
-	Stats * stats = Stats::Instance();
-	stats->SetTimeAfterVSync();
 	int resizex = -1;
 	int resizey = -1;
 	SDL_Event event;
