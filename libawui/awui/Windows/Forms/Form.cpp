@@ -5,6 +5,7 @@
 
 #include <awui/Collections/ArrayList.h>
 #include <awui/Diagnostics/Process.h>
+#include <awui/DateTime.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Rectangle.h>
@@ -45,7 +46,7 @@ Form::Form() {
 	this->GetControls()->Add(stats);
 
 	this->remoteProcess = new awui::Diagnostics::Process();
-	this->remoteProcess->Start("cat", "/dev/ttyUSB0");
+	this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
 }
 
 Form::~Form() {
@@ -92,6 +93,19 @@ void Form::OnRemoteHeartbeat() {
 	stats->OnRemoteHeartbeat();
 }
 
+void Form::OnTick() {
+	static DateTime lastTime = DateTime::GetNow();
+	DateTime now = DateTime::GetNow();
+	if (lastTime.GetSecond() != now.GetSecond()) {
+		lastTime = now;
+		if (this->remoteProcess->GetHasExited()) {
+			delete this->remoteProcess;
+			this->remoteProcess = new awui::Diagnostics::Process();
+			this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
+		}
+	}
+}
+
 void Form::ProcessEvents() {
 	Stats * stats = Stats::Instance();
 	stats->SetTimeAfterVSync();
@@ -101,9 +115,6 @@ void Form::ProcessEvents() {
 
 	if (this->remoteProcess->GetHasString()) {
 		awui::String line = this->remoteProcess->GetLine();
-
-//		if (line.Substring(0, 4) != "TICK")
-//			Console::WriteLine(line);
 
 		line = line.Substring(0, 4);
 		if ((line == "lub ") || (line == "dub "))

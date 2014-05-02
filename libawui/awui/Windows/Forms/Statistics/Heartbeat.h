@@ -9,7 +9,7 @@ namespace awui {
 			namespace Statistics {
 				class Heartbeat : public Control {
 					private:
-						int heartbeat;
+						bool heartbeat;
 
 					public:
 						Heartbeat();

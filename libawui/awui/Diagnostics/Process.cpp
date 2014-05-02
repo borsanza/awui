@@ -54,7 +54,7 @@ bool Process::GetHasString() {
 
 awui::String Process::GetLine() {
 	char buffer[256];
-	if (!feof(pPipe)) {
+	if (!GetHasExited()) {
 		if (fgets(buffer, 256, pPipe) != NULL) {
 			strtok(buffer, "\n");
 			return buffer;
