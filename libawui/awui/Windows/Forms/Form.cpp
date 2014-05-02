@@ -84,8 +84,8 @@ void Form::OnPaintForm() {
 	int r = this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
 
 	Stats * stats = Stats::Instance();
-	stats->SetTimeBeforeVSync();
 	stats->SetDrawedControls(r);
+	stats->SetTimeBeforeVSync();
 }
 
 void Form::OnRemoteHeartbeat() {
