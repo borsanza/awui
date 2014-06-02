@@ -10,6 +10,8 @@ Registers::Registers(unsigned char n) {
 	this->_v = (unsigned char *) malloc (sizeof(unsigned char *) * n);
 	for (unsigned char i = 0; i < n; i++)
 		this->_v[i] = 0;
+
+	this->_i = 0;
 }
 
 Registers::~Registers() {
@@ -22,4 +24,12 @@ void Registers::setV(unsigned char pos, unsigned char value) {
 
 unsigned char Registers::getV(unsigned char pos) {
 	return this->_v[pos];
+}
+
+void Registers::setI(unsigned int value) {
+	this->_i = value;
+}
+
+unsigned int Registers::getI() {
+	return this->_i;
 }

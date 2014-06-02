@@ -5,6 +5,7 @@ class Registers {
 	private:
 		unsigned char * _v;
 		unsigned char _length;
+		unsigned int _i;
 
 	public:
 		Registers(unsigned char n);
@@ -12,4 +13,7 @@ class Registers {
 
 		void setV(unsigned char pos, unsigned char value);
 		unsigned char getV(unsigned char pos);
+
+		void setI(unsigned int value);
+		unsigned int getI();
 };
