@@ -11,9 +11,9 @@ class Registers {
 		Registers(unsigned char n);
 		~Registers();
 
-		void setV(unsigned char pos, unsigned char value);
-		unsigned char getV(unsigned char pos);
+		void SetV(unsigned char pos, unsigned char value);
+		unsigned char GetV(unsigned char pos);
 
-		void setI(unsigned int value);
-		unsigned int getI();
+		void SetI(unsigned int value);
+		unsigned int GetI();
 };

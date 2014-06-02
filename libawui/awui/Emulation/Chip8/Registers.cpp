@@ -18,18 +18,18 @@ Registers::~Registers() {
 	free(this->_v);
 }
 
-void Registers::setV(unsigned char pos, unsigned char value) {
+void Registers::SetV(unsigned char pos, unsigned char value) {
 	this->_v[pos] = value;
 }
 
-unsigned char Registers::getV(unsigned char pos) {
+unsigned char Registers::GetV(unsigned char pos) {
 	return this->_v[pos];
 }
 
-void Registers::setI(unsigned int value) {
+void Registers::SetI(unsigned int value) {
 	this->_i = value;
 }
 
-unsigned int Registers::getI() {
+unsigned int Registers::GetI() {
 	return this->_i;
 }
