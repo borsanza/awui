@@ -5,6 +5,8 @@
 
 #include <stdlib.h>
 
+using namespace awui::Emulation::Chip8;
+
 Graphics::Graphics(int width, int height) {
 	this->_width = width;
 	this->_height = height;

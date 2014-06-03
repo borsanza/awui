@@ -5,6 +5,8 @@
 
 #include <stdlib.h>
 
+using namespace awui::Emulation::Chip8;
+
 Registers::Registers(unsigned char n) {
 	this->_length = n;
 	this->_v = (unsigned char *) malloc (sizeof(unsigned char *) * n);
