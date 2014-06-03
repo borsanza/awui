@@ -10,7 +10,7 @@
 namespace awui {
 	namespace Emulation {
 		namespace Chip8 {
-			class Graphics;
+			class Screen;
 			class Memory;
 			class Registers;
 
@@ -18,7 +18,7 @@ namespace awui {
 				private:
 					int _pc;
 					int _sp;
-					Graphics * _graphics;
+					Screen * _screen;
 					Registers * _registers;
 					Memory * _memory;
 
