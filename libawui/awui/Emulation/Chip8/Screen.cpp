@@ -1,24 +1,24 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "Graphics.h"
+#include "Screen.h"
 
 #include <stdlib.h>
 
 using namespace awui::Emulation::Chip8;
 
-Graphics::Graphics(int width, int height) {
+Screen::Screen(int width, int height) {
 	this->_width = width;
 	this->_height = height;
 	this->_data = (unsigned char *) malloc (sizeof(unsigned char *) * width * height);
 	this->Clear();
 }
 
-Graphics::~Graphics() {
+Screen::~Screen() {
 	free(this->_data);
 }
 
-void Graphics::Clear() {
+void Screen::Clear() {
 	for (int i = 0; i < this->_width * this->_height; i++)
 		this->_data[i] = 0;
 }

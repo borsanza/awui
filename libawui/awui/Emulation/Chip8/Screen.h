@@ -2,21 +2,21 @@
 // feedback: borsanza AT gmail DOT com
 
 #pragma once
-#ifndef __AWUIGRAPHICS_H__
-#define __AWUIGRAPHICS_H__
+#ifndef __AWUISCREEN_H__
+#define __AWUISCREEN_H__
 
 namespace awui {
 	namespace Emulation {
 		namespace Chip8 {
-			class Graphics {
+			class Screen {
 				private:
 					int _width;
 					int _height;
 					unsigned char * _data;
 
 				public:
-					Graphics(int width, int height);
-					~Graphics();
+					Screen(int width, int height);
+					~Screen();
 
 					void Clear();
 			};
