@@ -11,6 +11,7 @@ namespace awui {
 	namespace Emulation {
 		namespace Chip8 {
 			class Graphics;
+			class Memory;
 			class Registers;
 
 			class Processor {
@@ -19,6 +20,7 @@ namespace awui {
 					int _sp;
 					Graphics * _graphics;
 					Registers * _registers;
+					Memory * _memory;
 
 				public:
 					Processor();
