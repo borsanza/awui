@@ -30,6 +30,7 @@ namespace awui {
 			SplitContainer,
 			Splitter,
 			ListBox,
+			Chip8,
 		};
 	};
 
