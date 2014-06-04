@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIPROCESSOR_H__
-#define __AWUIPROCESSOR_H__
+#ifndef _AWUI_EMULATION_CHIP8_PROCESSOR_H
+#define _AWUI_EMULATION_CHIP8_PROCESSOR_H
 
 #include <awui/String.h>
 

@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUITEXTWRITER_H__
-#define __AWUITEXTWRITER_H__
+#ifndef _AWUI_IO_TEXTWRITER_H
+#define _AWUI_IO_TEXTWRITER_H
 
 namespace awui {
 	class Object;

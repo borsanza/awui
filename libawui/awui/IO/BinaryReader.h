@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIBINARYREADER_H__
-#define __AWUIBINARYREADER_H__
+#ifndef _AWUI_IO_BINARYREADER_H
+#define _AWUI_IO_BINARYREADER_H
 
 namespace awui {
 	namespace IO {
@@ -12,6 +8,7 @@ namespace awui {
 		class BinaryReader {
 			public:
 				BinaryReader(Stream * input);
+				virtual ~BinaryReader();
 
 				virtual void Close();
 				virtual unsigned char ReadByte();

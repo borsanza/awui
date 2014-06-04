@@ -1,5 +1,8 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+/*
+ * awui/IO/BinaryReader.cpp
+ *
+ * Copyright (C) 2014 Borja Sánchez Zamorano
+ */
 
 #include "BinaryReader.h"
 
@@ -8,6 +11,9 @@
 using namespace awui::IO;
 
 BinaryReader::BinaryReader(Stream * input) {
+}
+
+BinaryReader::~BinaryReader() {
 }
 
 void BinaryReader::Close() {

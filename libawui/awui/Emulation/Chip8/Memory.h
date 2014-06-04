@@ -1,21 +1,21 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIMEMORY_H__
-#define __AWUIMEMORY_H__
+#ifndef _AWUI_EMULATION_CHIP8_MEMORY_H
+#define _AWUI_EMULATION_CHIP8_MEMORY_H
 
 #include <awui/String.h>
 
 namespace awui {
+	namespace IO {
+		class MemoryStream;
+	}
+
 	namespace Emulation {
 		namespace Chip8 {
 			class Memory {
 				private:
-					unsigned char * _data;
+					IO::MemoryStream * _memory;
 
 				public:
-					Memory(unsigned int size);
+					Memory(int32_t capacity);
 					~Memory();
 
 					void LoadRom(const String file);

@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIREGISTERS_H__
-#define __AWUIREGISTERS_H__
+#ifndef _AWUI_EMULATION_CHIP8_REGISTERS_H
+#define _AWUI_EMULATION_CHIP8_REGISTERS_H
 
 namespace awui {
 	namespace Emulation {

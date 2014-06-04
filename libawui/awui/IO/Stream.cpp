@@ -1,4 +1,7 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+/*
+ * awui/IO/Stream.cpp
+ *
+ * Copyright (C) 2014 Borja Sánchez Zamorano
+ */
 
 #include "Stream.h"

@@ -1,16 +1,14 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIFILESTREAM_H__
-#define __AWUIFILESTREAM_H__
+#ifndef _AWUI_IO_FILESTREAM_H
+#define _AWUI_IO_FILESTREAM_H
 
 #include <awui/IO/Stream.h>
 
 namespace awui {
 	namespace IO {
-		class FileStream : Stream {
+		class FileStream : public Stream {
 			public:
+				virtual ~FileStream();
+
 				virtual void Close();
 
 				virtual void SetPosition(int64_t value);

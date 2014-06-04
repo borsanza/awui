@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIFILE_H__
-#define __AWUIFILE_H__
+#ifndef _AWUI_IO_FILE_H
+#define _AWUI_IO_FILE_H
 
 namespace awui {
 	class String;
@@ -24,7 +20,7 @@ namespace awui {
 
 		class File {
 			public:
-				static FileStream * Open(const String path, FileMode mode);
+				static FileStream * Open(const String path, FileMode::Enum mode);
 		};
 	}
 }
