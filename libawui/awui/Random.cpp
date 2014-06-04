@@ -11,7 +11,6 @@ using namespace awui;
 
 Random::Random() {
 	this->seed = (unsigned)time(NULL);
-
 }
 
 Random::Random(unsigned int seed) {
