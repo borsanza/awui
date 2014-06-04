@@ -13,12 +13,10 @@ namespace awui {
 			class Processor;
 		}
 	}
-}
 
-using namespace awui::Emulation::Chip8;
-using namespace awui::Windows::Forms;
+	using namespace awui::Emulation::Chip8;
+	using namespace awui::Windows::Forms;
 
-namespace awui {
 	namespace Windows {
 		namespace Emulators {
 			class Chip8 : public Control {
