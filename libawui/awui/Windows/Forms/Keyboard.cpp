@@ -1,9 +1,13 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+/*
+ * awui/Windows/Forms/Keyboard.cpp
+ *
+ * Copyright (C) 2013 Borja Sánchez Zamorano
+ */
 
 #include "Keyboard.h"
 
 #include <awui/Drawing/Color.h>
+#include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 

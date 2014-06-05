@@ -1,15 +1,10 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+#ifndef _AWUI_WINDOWS_FORMS_CONTROL_H
+#define _AWUI_WINDOWS_FORMS_CONTROL_H
 
-#pragma once
-#ifndef __AWUICONTROL_H__
-#define __AWUICONTROL_H__
-
+#include <awui/Drawing/Color.h>
+#include <awui/Drawing/Rectangle.h>
 #include <awui/Object.h>
 #include <awui/String.h>
-#include <awui/Drawing/Color.h>
-#include <awui/Drawing/Font.h>
-#include <awui/Drawing/Rectangle.h>
 #include <awui/Windows/Forms/MouseButtons.h>
 #include <awui/Windows/Forms/RemoteButtons.h>
 
@@ -39,12 +34,12 @@ namespace awui {
 				public:
 					struct DockStyle {
 						enum Enum {
-							None,
-							Top,
-							Bottom,
-							Left,
-							Right,
-							Fill,
+							None = 0,
+							Top = 1,
+							Bottom = 2,
+							Left = 3,
+							Right = 4,
+							Fill = 5,
 						};
 					};
 
