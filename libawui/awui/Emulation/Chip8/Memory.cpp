@@ -28,11 +28,11 @@ Memory::~Memory() {
 void Memory::LoadRom(const String file) {
 	this->_memory->SetPosition(0x200);
 
-	FileStream * fs = File::Open(file, FileMode::Open);
+	FileStream * fs = File::Open(file, FileMode::Open, FileAccess::Read);
 	BinaryReader * br = new BinaryReader(fs);
 
 	while (fs->GetPosition() < fs->GetLength())
-		this->_memory->WriteByte(fs->ReadByte());
+		this->_memory->WriteByte(br->ReadByte());
 
 	br->Close();
 	fs->Close();

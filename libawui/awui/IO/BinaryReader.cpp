@@ -11,6 +11,7 @@
 using namespace awui::IO;
 
 BinaryReader::BinaryReader(Stream * input) {
+	this->_stream = input;
 }
 
 BinaryReader::~BinaryReader() {
@@ -19,6 +20,6 @@ BinaryReader::~BinaryReader() {
 void BinaryReader::Close() {
 }
 
-unsigned char BinaryReader::ReadByte() {
-	return 0;
+uint8_t BinaryReader::ReadByte() {
+	return this->_stream->ReadByte();
 }

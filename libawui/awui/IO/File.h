@@ -5,6 +5,14 @@ namespace awui {
 	class String;
 
 	namespace IO {
+		struct FileAccess {
+			enum Enum {
+				Read,
+				ReadWrite,
+				Write
+			};
+		};
+
 		struct FileMode {
 			enum Enum {
 				Append,
@@ -21,6 +29,7 @@ namespace awui {
 		class File {
 			public:
 				static FileStream * Open(const String path, FileMode::Enum mode);
+				static FileStream * Open(const String path, FileMode::Enum mode, FileAccess::Enum access);
 		};
 	}
 }
