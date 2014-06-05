@@ -7,10 +7,10 @@ namespace awui {
 	namespace IO {
 		class MemoryStream : Stream {
 			private:
-					uint8_t * _data;
-					int32_t _capacity;
-					int64_t _length;
-					int64_t _position;
+				uint8_t * _data;
+				int32_t _capacity;
+				int64_t _length;
+				int64_t _position;
 
 			public:
 				MemoryStream(int32_t capacity);
