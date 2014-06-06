@@ -4,6 +4,8 @@
 #include <awui/String.h>
 
 namespace awui {
+	class Random;
+
 	namespace Emulation {
 		namespace Chip8 {
 			class Screen;
@@ -17,12 +19,16 @@ namespace awui {
 					Screen * _screen;
 					Registers * _registers;
 					Memory * _memory;
+					Random * _random;
+
+					bool RunOpcode();
 
 				public:
 					Processor();
 					~Processor();
 
 					void LoadRom(const String file);
+					void OnTick();
 			};
 		}
 	}

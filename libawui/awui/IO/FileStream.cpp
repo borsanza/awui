@@ -51,6 +51,11 @@ FileStream::FileStream(const String path, FileMode::Enum mode, FileAccess::Enum 
 			this->_file = fopen(path.ToCharArray(), "w+b");
 			break;
 	}
+
+	fseek(this->_file, 0L, SEEK_END);
+	this->_length = ftell(this->_file);
+	fseek(this->_file, 0L, SEEK_SET);
+	this->_pos = 0;
 }
 
 FileStream::FileStream(const String path, FileMode::Enum mode) {
@@ -68,22 +73,26 @@ void FileStream::Close() {
 }
 
 void FileStream::SetPosition(int64_t value) {
+	this->_pos = value;
+	fseek(this->_file, this->_pos, SEEK_SET);
 }
 
 int64_t FileStream::GetPosition() {
-	return 0;
+	return this->_pos;
 }
 
 int64_t FileStream::GetLength() {
-	return 0;
+	return _length;
 }
 
 uint8_t FileStream::ReadByte() {
 	uint8_t r;
 	fread(&r, 1, 1, this->_file);
+	this->_pos++;
 	return r;
 }
 
 void FileStream::WriteByte(uint8_t value) {
 	fwrite(&value, 1, 1, this->_file);
+	this->_pos++;
 }

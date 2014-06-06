@@ -30,6 +30,8 @@ namespace awui {
 					virtual int IsClass(Classes::Enum objectClass) const;
 
 					void LoadRom(const String file);
+
+					virtual void OnTick();
 			};
 		}
 	}

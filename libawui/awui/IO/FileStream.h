@@ -13,6 +13,8 @@ namespace awui {
 		class FileStream : public Stream {
 			private:
 				FILE * _file;
+				long _length;
+				long _pos;
 
 			public:
 				FileStream(const String path, FileMode::Enum mode, FileAccess::Enum access);

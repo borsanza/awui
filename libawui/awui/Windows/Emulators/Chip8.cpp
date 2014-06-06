@@ -3,6 +3,7 @@
 
 #include "Chip8.h"
 
+#include <awui/Console.h>
 #include <awui/Emulation/Chip8/Processor.h>
 
 using namespace awui::Windows::Emulators;
@@ -24,4 +25,8 @@ int Chip8::IsClass(Classes::Enum objectClass) const {
 
 void Chip8::LoadRom(const String file) {
 	this->_processor->LoadRom(file);
+}
+
+void Chip8::OnTick() {
+	this->_processor->OnTick();
 }

@@ -28,10 +28,18 @@ void Memory::LoadRom(const String file) {
 
 	FileStream * fs = new FileStream(file, FileMode::Open, FileAccess::Read);
 
-	while (fs->GetPosition() < fs->GetLength())
-		this->_memory->WriteByte(fs->ReadByte());
+	while (fs->GetPosition() < fs->GetLength()) {
+		uint8_t b = fs->ReadByte();
+//		Console::WriteLine(Convert::ToString(b));
+		this->_memory->WriteByte(b);
+	}
 
 	fs->Close();
 
 	delete fs;
+}
+
+uint8_t Memory::ReadByte(int pos) {
+	this->_memory->SetPosition(pos);
+	return this->_memory->ReadByte();
 }
