@@ -10,9 +10,9 @@
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Random.h>
-#include <awui/Emulation/Chip8/Screen.h>
 #include <awui/Emulation/Chip8/Memory.h>
 #include <awui/Emulation/Chip8/Registers.h>
+#include <awui/Emulation/Chip8/Screen.h>
 #include <awui/String.h>
 
 using namespace awui::Emulation::Chip8;
@@ -23,6 +23,7 @@ Processor::Processor() {
 	this->_registers = new Registers(16);
 	this->_random = new Random();
 	this->_pc = 0x200;
+	this->_imageUpdated = true;
 }
 
 Processor::~Processor() {
@@ -41,9 +42,6 @@ void Processor::OnTick() {
 	bool draw = 0;
 	for (int i = 0; i < 7; i++)
 		draw += this->RunOpcode();
-
-	if (draw)
-		this->_screen->WriteConsole();
 }
 
 bool Processor::RunOpcode() {
@@ -64,6 +62,7 @@ bool Processor::RunOpcode() {
 					// 00E0: Clears the screen.
 					case 0x0e0:
 						this->_screen->Clear();
+						this->_imageUpdated = true;
 						drawed = 1;
 						this->_pc += 2;
 						break;
@@ -158,6 +157,7 @@ bool Processor::RunOpcode() {
 			this->_registers->SetV(0xF, changed);
 
 			this->_pc += 2;
+			this->_imageUpdated = true;
 			drawed = 1;
 			}
 			break;
@@ -181,4 +181,16 @@ bool Processor::RunOpcode() {
 	Console::Write(Convert::ToString(drawed));
 */
 	return drawed;
+}
+
+Screen * Processor::GetScreen() {
+	return _screen;
+}
+
+bool Processor::GetImageUpdated() {
+	return this->_imageUpdated;
+}
+
+void Processor::SetImageUpdated(bool mode) {
+	this->_imageUpdated = mode;
 }

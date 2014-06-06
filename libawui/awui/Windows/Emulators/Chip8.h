@@ -1,17 +1,21 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUICHIP8_H__
-#define __AWUICHIP8_H__
+#ifndef _AWUI_WINDOWS_EMULATORS_CHIP8_H
+#define _AWUI_WINDOWS_EMULATORS_CHIP8_H
 
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui {
+	namespace Drawing {
+		class Image;
+	}
+
 	namespace Emulation {
 		namespace Chip8 {
 			class Processor;
 		}
+	}
+
+	namespace OpenGL {
+		class GL;
 	}
 
 	using namespace awui::Emulation::Chip8;
@@ -22,6 +26,7 @@ namespace awui {
 			class Chip8 : public Control {
 				private:
 					Processor * _processor;
+					Drawing::Image * _image;
 
 				public:
 					Chip8();
@@ -32,6 +37,7 @@ namespace awui {
 					void LoadRom(const String file);
 
 					virtual void OnTick();
+					virtual void OnPaint(OpenGL::GL* gl);
 			};
 		}
 	}

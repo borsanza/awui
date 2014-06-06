@@ -1,5 +1,8 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+/*
+ * awui/Windows/Forms/Label.cpp
+ *
+ * Copyright (C) 2013 Borja Sánchez Zamorano
+ */
 
 #include "Label.h"
 
@@ -45,7 +48,7 @@ int Label::IsClass(Classes::Enum objectClass) const {
 #define BORDER 2
 
 void Label::OnPaint(GL* gl) {
-	if (image) {
+	if (this->image) {
 		float posX = 0;
 		float posY = 0;
 
@@ -95,7 +98,7 @@ void Label::OnPaint(GL* gl) {
 		int correctPosX = posX - BORDER;
 		int correctPosY = posY + this->metrics.GetBearingY() - BORDER;
 
-		GL::DrawImageGL(image, correctPosX, correctPosY);
+		GL::DrawImageGL(this->image, correctPosX, correctPosY);
 //		this->DrawLines(posX, posY);
 	}
 }

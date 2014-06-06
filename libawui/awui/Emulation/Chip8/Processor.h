@@ -20,6 +20,7 @@ namespace awui {
 					Registers * _registers;
 					Memory * _memory;
 					Random * _random;
+					bool _imageUpdated;
 
 					bool RunOpcode();
 
@@ -29,6 +30,11 @@ namespace awui {
 
 					void LoadRom(const String file);
 					void OnTick();
+
+					Screen * GetScreen();
+
+					bool GetImageUpdated();
+					void SetImageUpdated(bool mode);
 			};
 		}
 	}

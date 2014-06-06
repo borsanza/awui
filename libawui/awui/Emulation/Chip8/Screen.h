@@ -20,6 +20,9 @@ namespace awui {
 
 					bool SetPixelXOR(int x, int y, bool value);
 					bool GetPixel(int x, int y);
+
+					int GetWidth();
+					int GetHeight();
 			};
 		}
 	}

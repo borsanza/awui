@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUILABEL_H__
-#define __AWUILABEL_H__
+#ifndef _AWUI_WINDOWS_FORMS_LABEL_H
+#define _AWUI_WINDOWS_FORMS_LABEL_H
 
 #include <awui/Drawing/GlyphMetrics.h>
 #include <awui/String.h>

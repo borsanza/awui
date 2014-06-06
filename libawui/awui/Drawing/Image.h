@@ -1,7 +1,8 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+#ifndef _AWUI_DRAWING_IMAGE_H
+#define _AWUI_DRAWING_IMAGE_H
 
 #include <awui/Object.h>
+#include <stdint.h>
 
 typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
@@ -36,6 +37,11 @@ namespace awui {
 
 				void Load();
 				GLuint GetTexture();
+
+				void SetPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+				void Update();
 		};
 	}
 }
+
+#endif

@@ -70,3 +70,11 @@ bool Screen::SetPixelXOR(int x, int y, bool value) {
 bool Screen::GetPixel(int x, int y) {
 	return this->_data[(y * this->_width) + x];
 }
+
+int Screen::GetWidth() {
+	return this->_width;
+}
+
+int Screen::GetHeight() {
+	return this->_height;
+}

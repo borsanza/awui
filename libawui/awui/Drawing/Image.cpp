@@ -1,5 +1,8 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+/*
+ * awui/Drawing/Image.cpp
+ *
+ * Copyright (C) 2011 Borja Sánchez Zamorano
+ */
 
 #include "Image.h"
 
@@ -71,6 +74,21 @@ void Image::Load() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->GetWidth(), this->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, this->image);
 }
 
+void Image::Update() {
+	if (this->loaded) {
+		glBindTexture(GL_TEXTURE_2D, this->texture);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, this->GetWidth(), this->GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, this->image);
+	}
+}
+
 GLuint Image::GetTexture() {
 	return this->texture;
+}
+
+void Image::SetPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	int offset = ((y * this->width) + x) * this->btpp;
+	this->image[offset    ] = b;
+	this->image[offset + 1] = g;
+	this->image[offset + 2] = r;
+	this->image[offset + 3] = a;
 }
