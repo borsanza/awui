@@ -1,5 +1,5 @@
-#ifndef _SAMPLES_AWCHIP8_FORM1.H
-#define _SAMPLES_AWCHIP8_FORM1
+#ifndef _SAMPLES_AWCHIP8_FORM1_H
+#define _SAMPLES_AWCHIP8_FORM1_H
 
 #include <awui/String.h>
 #include <awui/Windows/Emulators/Chip8.h>
