@@ -1,5 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+#ifndef _SAMPLES_AWCHIP8_FORM1.H
+#define _SAMPLES_AWCHIP8_FORM1
 
 #include <awui/String.h>
 #include <awui/Windows/Emulators/Chip8.h>
@@ -18,3 +18,5 @@ class Form1 : public awui::Windows::Forms::Form {
 
 		void LoadRom(const awui::String file);
 };
+
+#endif
