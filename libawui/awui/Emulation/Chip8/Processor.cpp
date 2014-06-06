@@ -64,6 +64,7 @@ bool Processor::RunOpcode() {
 					// 00E0: Clears the screen.
 					case 0x0e0:
 						this->_screen->Clear();
+						drawed = 1;
 						this->_pc += 2;
 						break;
 					case 0x0ee:
