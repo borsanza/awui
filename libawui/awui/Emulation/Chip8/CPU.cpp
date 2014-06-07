@@ -10,6 +10,7 @@
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Random.h>
+#include <awui/Emulation/Chip8/Input.h>
 #include <awui/Emulation/Chip8/Memory.h>
 #include <awui/Emulation/Chip8/Registers.h>
 #include <awui/Emulation/Chip8/Screen.h>
@@ -22,6 +23,7 @@ CPU::CPU() {
 	this->_screen = new Screen(64, 32);
 	this->_memory = new Memory(4096);
 	this->_registers = new Registers(16);
+	this->_input = new Input();
 	this->_stack = new Stack();
 	this->_random = new Random();
 	this->_pc = 0x200;
@@ -54,10 +56,12 @@ CPU::CPU() {
 }
 
 CPU::~CPU() {
-	delete this->_random;
-	delete this->_screen;
+	delete this->_input;
 	delete this->_memory;
+	delete this->_random;
 	delete this->_registers;
+	delete this->_screen;
+	delete this->_stack;
 }
 
 void CPU::LoadRom(const String file) {
@@ -93,6 +97,14 @@ void CPU::OnTick() {
 //		this->_screen->WriteConsole();
 }
 
+void DebugOpCode(String str) {
+	Console::Write(str);
+}
+
+void DebugOpCodeLine(String str) {
+	Console::WriteLine(str);
+}
+
 char DecToHex(int value) {
 	if ((value >= 10) && (value <= 15))
 		return ('A' + value - 10);
@@ -101,10 +113,7 @@ char DecToHex(int value) {
 }
 
 /*
-0NNN	Calls RCA 1802 program at address NNN.
 8XY7	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-EX9E	Skips the next instruction if the key stored in VX is pressed.
-EXA1	Skips the next instruction if the key stored in VX isn't pressed.
 FX0A	A key press is awaited, and then stored in VX.
 */
 
@@ -117,13 +126,13 @@ bool CPU::RunOpcode() {
 	int op3 = opcode2 >> 4;
 	int op4 = opcode2 & 0xf;
 
-	Console::Write(Convert::ToString(this->_pc));
-	Console::Write(" : ");
-	Console::Write(Convert::ToString(DecToHex(op1)));
-	Console::Write(Convert::ToString(DecToHex(op2)));
-	Console::Write(Convert::ToString(DecToHex(op3)));
-	Console::Write(Convert::ToString(DecToHex(op4)));
-	Console::Write(" : ");
+	DebugOpCode(Convert::ToString(this->_pc));
+	DebugOpCode(" : ");
+	DebugOpCode(Convert::ToString(DecToHex(op1)));
+	DebugOpCode(Convert::ToString(DecToHex(op2)));
+	DebugOpCode(Convert::ToString(DecToHex(op3)));
+	DebugOpCode(Convert::ToString(DecToHex(op4)));
+	DebugOpCode(" : ");
 
   // http://en.wikipedia.org/wiki/CHIP-8
 	switch (op1) {
@@ -141,8 +150,8 @@ bool CPU::RunOpcode() {
 					// 00EE: Returns from a subroutine
 					case 0x0ee:
 						this->_pc = this->_stack->Pop();
-						Console::Write("Return ");
-						Console::Write(Convert::ToString(this->_pc));
+						DebugOpCode("Return ");
+						DebugOpCode(Convert::ToString(this->_pc));
 						break;
 					default:
 						break;
@@ -155,11 +164,11 @@ bool CPU::RunOpcode() {
 			{
 				int offset = op2 << 8 | opcode2;
 
-				Console::Write("Jump to ");
-				Console::Write(Convert::ToString(offset));
+				DebugOpCode("Jump to ");
+				DebugOpCode(Convert::ToString(offset));
 
 				if (offset == this->_pc) {
-						Console::WriteLine(" --- ROM FINISHED --- ");
+						DebugOpCodeLine(" --- ROM FINISHED --- ");
 						this->_finished = 1;
 				}
 
@@ -171,8 +180,8 @@ bool CPU::RunOpcode() {
 		case 0x2:
 			{
 				int offset = op2 << 8 | opcode2;
-				Console::Write("Call ");
-				Console::Write(Convert::ToString(offset));
+				DebugOpCode("Call ");
+				DebugOpCode(Convert::ToString(offset));
 				this->_stack->Push(this->_pc + 2);
 				this->_pc = offset;
 			}
@@ -182,15 +191,15 @@ bool CPU::RunOpcode() {
 		case 0x3:
 			{
 				int vx = this->_registers->GetV(op2);
-				Console::Write("V");
-				Console::Write(Convert::ToString(DecToHex(op2)));
-				Console::Write(" == ");
-				Console::Write(Convert::ToString(opcode2));
-				Console::Write(" (");
-				Console::Write(Convert::ToString(vx));
-				Console::Write(" == ");
-				Console::Write(Convert::ToString(opcode2));
-				Console::Write(")");
+				DebugOpCode("V");
+				DebugOpCode(Convert::ToString(DecToHex(op2)));
+				DebugOpCode(" == ");
+				DebugOpCode(Convert::ToString(opcode2));
+				DebugOpCode(" (");
+				DebugOpCode(Convert::ToString(vx));
+				DebugOpCode(" == ");
+				DebugOpCode(Convert::ToString(opcode2));
+				DebugOpCode(")");
 				if (vx == opcode2)
 					this->_pc += 2;
 
@@ -202,15 +211,15 @@ bool CPU::RunOpcode() {
 		case 0x4:
 			{
 				int value = this->_registers->GetV(op2);
-				Console::Write("V");
-				Console::Write(Convert::ToString(DecToHex(op2)));
-				Console::Write(" != ");
-				Console::Write(Convert::ToString(opcode2));
-				Console::Write(" (");
-				Console::Write(Convert::ToString(value));
-				Console::Write(" != ");
-				Console::Write(Convert::ToString(opcode2));
-				Console::Write(")");
+				DebugOpCode("V");
+				DebugOpCode(Convert::ToString(DecToHex(op2)));
+				DebugOpCode(" != ");
+				DebugOpCode(Convert::ToString(opcode2));
+				DebugOpCode(" (");
+				DebugOpCode(Convert::ToString(value));
+				DebugOpCode(" != ");
+				DebugOpCode(Convert::ToString(opcode2));
+				DebugOpCode(")");
 
 				if (value != opcode2)
 					this->_pc += 2;
@@ -230,10 +239,10 @@ bool CPU::RunOpcode() {
 
 		// 6XNN: Sets VX to NN
 		case 0x6:
-			Console::Write("V");
-			Console::Write(Convert::ToString(DecToHex(op2)));
-			Console::Write(" = ");
-			Console::Write(Convert::ToString(opcode2));
+			DebugOpCode("V");
+			DebugOpCode(Convert::ToString(DecToHex(op2)));
+			DebugOpCode(" = ");
+			DebugOpCode(Convert::ToString(opcode2));
 			this->_registers->SetV(op2, opcode2);
 			this->_pc += 2;
 			break;
@@ -314,8 +323,8 @@ bool CPU::RunOpcode() {
 		case 0xA:
 			{
 				int offset = op2 << 8 | opcode2;
-				Console::Write("I = ");
-				Console::Write(Convert::ToString(offset));
+				DebugOpCode("I = ");
+				DebugOpCode(Convert::ToString(offset));
 				this->_registers->SetI(offset);
 				this->_pc += 2;
 			}
@@ -327,8 +336,8 @@ bool CPU::RunOpcode() {
 				int offset = op2 << 8 | opcode2;
 				offset += this->_registers->GetV(0);
 
-				Console::Write("Jump to ");
-				Console::Write(Convert::ToString(offset));
+				DebugOpCode("Jump to ");
+				DebugOpCode(Convert::ToString(offset));
 
 				this->_pc = offset;
 			}
@@ -365,27 +374,45 @@ bool CPU::RunOpcode() {
 			}
 
 			this->_registers->SetV(0xF, pixelCleared);
-			Console::Write("Draw(");
-			Console::Write(Convert::ToString(x));
-			Console::Write(", ");
-			Console::Write(Convert::ToString(y));
-			Console::Write(")");
+			DebugOpCode("Draw(");
+			DebugOpCode(Convert::ToString(x));
+			DebugOpCode(", ");
+			DebugOpCode(Convert::ToString(y));
+			DebugOpCode(")");
 			this->_pc += 2;
 			this->_imageUpdated = true;
 			drawed = 1;
 			}
 			break;
+
 		case 0xE:
+			switch (opcode2) {
+				// EX9E: Skips the next instruction if the key stored in VX is pressed
+				case 0x9E:
+					if (this->_input->IsKeyPressed(this->_registers->GetV(op2)))
+						this->_pc += 2;
+
+					this->_pc += 2;
+					break;
+
+				// EXA1: Skips the next instruction if the key stored in VX isn't pressed
+				case 0xA1:
+					if (!this->_input->IsKeyPressed(this->_registers->GetV(op2)))
+						this->_pc += 2;
+
+					this->_pc += 2;
+					break;
+			}
 			break;
 		case 0xF:
 			switch (opcode2) {
 				// FX07: Sets VX to the value of the delay timer
 				case 0x07:
-					Console::Write("V");
-					Console::Write(Convert::ToString(DecToHex(op2)));
-					Console::Write(" = ");
-					Console::Write(Convert::ToString(this->_delayTimer));
-					Console::Write(" (delay Timer)");
+					DebugOpCode("V");
+					DebugOpCode(Convert::ToString(DecToHex(op2)));
+					DebugOpCode(" = ");
+					DebugOpCode(Convert::ToString(this->_delayTimer));
+					DebugOpCode(" (delay Timer)");
 					this->_registers->SetV(op2, this->_delayTimer);
 					this->_pc += 2;
 					break;
@@ -393,12 +420,12 @@ bool CPU::RunOpcode() {
 				case 0x15:
 					{
 						int value = this->_registers->GetV(op2);
-						Console::Write("_delayTimer");
-						Console::Write(" = ");
-						Console::Write(Convert::ToString(value));
-						Console::Write(" (V");
-						Console::Write(Convert::ToString(DecToHex(op2)));
-						Console::Write(")");
+						DebugOpCode("_delayTimer");
+						DebugOpCode(" = ");
+						DebugOpCode(Convert::ToString(value));
+						DebugOpCode(" (V");
+						DebugOpCode(Convert::ToString(DecToHex(op2)));
+						DebugOpCode(")");
 						this->_delayTimer = value;
 						this->_pc += 2;
 					}
@@ -466,8 +493,8 @@ bool CPU::RunOpcode() {
 			}
 			break;
 	}
-	Console::WriteLine("");
 
+	DebugOpCodeLine("");
 
 	return drawed;
 }

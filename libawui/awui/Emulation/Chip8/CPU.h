@@ -8,6 +8,7 @@ namespace awui {
 
 	namespace Emulation {
 		namespace Chip8 {
+			class Input;
 			class Memory;
 			class Registers;
 			class Screen;
@@ -21,6 +22,7 @@ namespace awui {
 					Registers * _registers;
 					Memory * _memory;
 					Random * _random;
+					Input * _input;
 					Stack * _stack;
 					uint8_t _delayTimer;
 					uint8_t _soundTimer;
