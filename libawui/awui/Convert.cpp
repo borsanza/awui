@@ -1,5 +1,8 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+/*
+ * awui/Convert.cpp
+ *
+ * Copyright (C) 2013 Borja Sánchez Zamorano
+ */
 
 #include "Convert.h"
 
@@ -33,4 +36,11 @@ String Convert::ToString(float value, int precision) {
 
 String Convert::ToString(unsigned char value) {
 	return ToString((int) value);
+}
+
+String Convert::ToString(char value) {
+	std::stringstream ss;
+	ss << value;
+
+	return ss.str().c_str();
 }

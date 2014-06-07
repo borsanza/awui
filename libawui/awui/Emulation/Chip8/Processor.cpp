@@ -27,6 +27,28 @@ Processor::Processor() {
 	this->_pc = 0x200;
 	this->_imageUpdated = true;
 	this->_finished = 0;
+
+	uint8_t fontHex[80] = {
+		0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+		0x20, 0x60, 0x20, 0x20, 0x70, // 1
+		0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+		0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+		0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+		0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+		0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+		0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+		0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+		0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+		0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+		0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+		0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+		0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+		0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+		0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+	};
+
+	for (int i = 0; i < 80; i++)
+		this->_memory->WriteByte(i, fontHex[i]);
 }
 
 Processor::~Processor() {
@@ -63,6 +85,13 @@ void Processor::OnTick() {
 //		this->_screen->WriteConsole();
 }
 
+char DecToHex(int value) {
+	if ((value >= 10) && (value <= 15))
+		return ('A' + value - 10);
+
+	return '0' + value;
+}
+
 /*
 0NNN	Calls RCA 1802 program at address NNN.
 8XY7	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
@@ -74,7 +103,6 @@ FX07	Sets VX to the value of the delay timer.
 FX0A	A key press is awaited, and then stored in VX.
 FX15	Sets the delay timer to VX.
 FX18	Sets the sound timer to VX.
-FX29	Sets I to the location of the sprite for the character in VX. Characters 0-F (in hexadecimal) are represented by a 4x5 font.
 */
 
 bool Processor::RunOpcode() {
@@ -88,14 +116,10 @@ bool Processor::RunOpcode() {
 
 	Console::Write(Convert::ToString(this->_pc));
 	Console::Write(" : ");
-	Console::Write(Convert::ToString(op1));
-	Console::Write("-");
-	Console::Write(Convert::ToString(op2));
-	Console::Write("-");
-	Console::Write(Convert::ToString(op3));
-	Console::Write("-");
-	Console::Write(Convert::ToString(op4));
-	Console::WriteLine("");
+	Console::Write(Convert::ToString(DecToHex(op1)));
+	Console::Write(Convert::ToString(DecToHex(op2)));
+	Console::Write(Convert::ToString(DecToHex(op3)));
+	Console::WriteLine(Convert::ToString(DecToHex(op4)));
 
   // http://en.wikipedia.org/wiki/CHIP-8
 	switch (op1) {
@@ -289,6 +313,13 @@ bool Processor::RunOpcode() {
 				// FX1E: Adds VX to I
 				case 0x1E:
 					this->_registers->SetI(this->_registers->GetI() + this->_registers->GetV(op2));
+					this->_pc += 2;
+					break;
+
+				// FX29: Sets I to the location of the sprite for the character in VX.
+				// Characters 0-F (in hexadecimal) are represented by a 4x5 font
+				case 0x29:
+					this->_registers->SetI(this->_registers->GetV(op2) * 5);
 					this->_pc += 2;
 					break;
 
