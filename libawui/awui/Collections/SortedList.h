@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUISORTEDLIST_H__
-#define __AWUISORTEDLIST_H__
+#ifndef _AWUI_COLLECTIONS_SORTEDLIST_H
+#define _AWUI_COLLECTIONS_SORTEDLIST_H
 
 #include <awui/Object.h>
 

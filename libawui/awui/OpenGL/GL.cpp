@@ -119,3 +119,34 @@ void GL::DrawImageGL(awui::Drawing::Image * image, int x, int y) {
 	if (!oldTexture)
 		glDisable(GL_TEXTURE_2D);
 }
+
+void GL::DrawImageGL(awui::Drawing::Image * image, int x, int y, int width, int height) {
+	image->Load();
+	// Mas rapido guardandose solo el valor y recuperarlo despues
+	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
+
+	GLboolean oldDepth = glIsEnabled(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
+
+	GLboolean oldBlend = glIsEnabled(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glBindTexture(GL_TEXTURE_2D, image->GetTexture());
+
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);glVertex2i(x, y);
+	glTexCoord2f(1.0f, 0.0f);glVertex2i(x + width, y);
+	glTexCoord2f(1.0f, 1.0f);glVertex2i(x + width, y + height);
+	glTexCoord2f(0.0f, 1.0f);glVertex2i(x, y + height) ;
+	glEnd();
+
+	if (!oldBlend)
+		glDisable(GL_BLEND);
+	if (oldDepth)
+		glEnable(GL_DEPTH_TEST);
+	if (!oldTexture)
+		glDisable(GL_TEXTURE_2D);
+}

@@ -20,6 +20,7 @@ namespace awui {
 					Registers * _registers;
 					Memory * _memory;
 					Random * _random;
+					bool _paused = false;
 					bool _imageUpdated;
 
 					bool RunOpcode();

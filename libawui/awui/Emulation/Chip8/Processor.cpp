@@ -24,6 +24,7 @@ Processor::Processor() {
 	this->_random = new Random();
 	this->_pc = 0x200;
 	this->_imageUpdated = true;
+	this->_paused = false;
 }
 
 Processor::~Processor() {
@@ -40,8 +41,15 @@ void Processor::LoadRom(const String file) {
 void Processor::OnTick() {
 	// Intentando 400Hz, similar a 60Hz * 7
 	bool draw = 0;
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 7; i++) {
+		if (this->_paused)
+			break;
+
 		draw += this->RunOpcode();
+	}
+
+//	if (draw)
+//		this->_screen->WriteConsole();
 }
 
 bool Processor::RunOpcode() {
@@ -76,9 +84,21 @@ bool Processor::RunOpcode() {
 
 		// 1NNN: Jumps to address NNN.
 		case 0x1:
-			this->_pc = op2 << 8 | opcode2;
+			{
+				int offset = op2 << 8 | opcode2;
+
+				if (offset == this->_pc)
+						this->_paused = true;
+
+				this->_pc = offset;
+			}
 			break;
+		// 2NNN: Calls subroutine at NNN.
 		case 0x2:
+			{
+				this->_pc += 2;
+				this->_pc = op2 << 8 | opcode2;
+			}
 			break;
 
 		// 3XNN: Skips the next instruction if VX equals NN.
@@ -166,7 +186,7 @@ bool Processor::RunOpcode() {
 		case 0xf:
 			break;
 	}
-/*
+
 	Console::WriteLine("");
 	Console::Write(Convert::ToString(this->_pc));
 	Console::Write(" : ");
@@ -177,9 +197,7 @@ bool Processor::RunOpcode() {
 	Console::Write(Convert::ToString(op3));
 	Console::Write("-");
 	Console::Write(Convert::ToString(op4));
-	Console::Write("-");
-	Console::Write(Convert::ToString(drawed));
-*/
+
 	return drawed;
 }
 

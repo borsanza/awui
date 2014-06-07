@@ -11,6 +11,7 @@
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Chip8/Processor.h>
 #include <awui/Emulation/Chip8/Screen.h>
+#include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 
 using namespace awui::Drawing;
@@ -59,5 +60,10 @@ void Chip8::OnPaint(GL* gl) {
 		this->_processor->SetImageUpdated(false);
 	}
 
-	GL::DrawImageGL(this->_image, 5, 5);
+	int border = 1;
+
+	int borderx = Math::Round((this->GetWidth() * border) / (64.0f + (border * 2)));
+	int bordery = Math::Round((this->GetHeight() * border) / (32.0f + (border * 2)));
+
+	GL::DrawImageGL(this->_image, borderx, bordery, this->GetWidth() - (borderx * 2), this->GetHeight() - (bordery * 2));
 }

@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIARRAYLIST_H__
-#define __AWUIARRAYLIST_H__
+#ifndef _AWUI_COLLECTIONS_ARRAYLIST_H
+#define _AWUI_COLLECTIONS_ARRAYLIST_H
 
 #include <awui/Object.h>
 
