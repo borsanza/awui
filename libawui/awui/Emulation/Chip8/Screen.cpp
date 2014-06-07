@@ -53,6 +53,8 @@ void Screen::WriteConsole() {
 }
 
 bool Screen::SetPixelXOR(int x, int y, bool value) {
+	x = x % this->_width;
+
 	int r = false;
 	int offset = (y * this->_width) + x;
 
