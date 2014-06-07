@@ -8,9 +8,10 @@ namespace awui {
 
 	namespace Emulation {
 		namespace Chip8 {
-			class Screen;
 			class Memory;
 			class Registers;
+			class Screen;
+			class Stack;
 
 			class Processor {
 				private:
@@ -20,6 +21,7 @@ namespace awui {
 					Registers * _registers;
 					Memory * _memory;
 					Random * _random;
+					Stack * _stack;
 					bool _paused = false;
 					bool _imageUpdated;
 

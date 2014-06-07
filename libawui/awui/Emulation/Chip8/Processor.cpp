@@ -13,6 +13,7 @@
 #include <awui/Emulation/Chip8/Memory.h>
 #include <awui/Emulation/Chip8/Registers.h>
 #include <awui/Emulation/Chip8/Screen.h>
+#include <awui/Emulation/Chip8/Stack.h>
 #include <awui/String.h>
 
 using namespace awui::Emulation::Chip8;
@@ -21,6 +22,7 @@ Processor::Processor() {
 	this->_screen = new Screen(64, 32);
 	this->_memory = new Memory(4096);
 	this->_registers = new Registers(16);
+	this->_stack = new Stack();
 	this->_random = new Random();
 	this->_pc = 0x200;
 	this->_imageUpdated = true;
@@ -52,6 +54,34 @@ void Processor::OnTick() {
 //		this->_screen->WriteConsole();
 }
 
+/*
+TODO
+0NNN	Calls RCA 1802 program at address NNN.
+4XNN	Skips the next instruction if VX doesn't equal NN.
+8XY1	Sets VX to VX or VY.
+8XY2	Sets VX to VX and VY.
+8XY3	Sets VX to VX xor VY.
+8XY4	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
+8XY5	VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+8XY6	Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.[2]
+8XY7	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+8XYE	Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift.[2]
+9XY0	Skips the next instruction if VX doesn't equal VY.
+BNNN	Jumps to the address NNN plus V0.
+EX9E	Skips the next instruction if the key stored in VX is pressed.
+EXA1	Skips the next instruction if the key stored in VX isn't pressed.
+FX07	Sets VX to the value of the delay timer.
+FX0A	A key press is awaited, and then stored in VX.
+FX15	Sets the delay timer to VX.
+FX18	Sets the sound timer to VX.
+FX1E	Adds VX to I.[3]
+FX29	Sets I to the location of the sprite for the character in VX. Characters 0-F (in hexadecimal) are represented by a 4x5 font.
+FX33	Stores the Binary-coded decimal representation of VX, with the most significant of three digits at the address in I, the middle digit at I plus 1, and the least significant digit at I plus 2. (In other words, take the decimal representation of VX, place the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2.)
+FX55	Stores V0 to VX in memory starting at address I.[4]
+FX65	Fills V0 to VX with values from memory starting at address I.[4]
+*/
+
+
 bool Processor::RunOpcode() {
 	bool drawed = 0;
 	int opcode1 = this->_memory->ReadByte(this->_pc);
@@ -60,6 +90,17 @@ bool Processor::RunOpcode() {
 	int op2 = opcode1 & 0xf;
 	int op3 = opcode2 >> 4;
 	int op4 = opcode2 & 0xf;
+
+	Console::WriteLine("");
+	Console::Write(Convert::ToString(this->_pc));
+	Console::Write(" : ");
+	Console::Write(Convert::ToString(op1));
+	Console::Write("-");
+	Console::Write(Convert::ToString(op2));
+	Console::Write("-");
+	Console::Write(Convert::ToString(op3));
+	Console::Write("-");
+	Console::Write(Convert::ToString(op4));
 
   // http://en.wikipedia.org/wiki/CHIP-8
 	switch (op1) {
@@ -74,7 +115,9 @@ bool Processor::RunOpcode() {
 						drawed = 1;
 						this->_pc += 2;
 						break;
+					// 00EE: Returns from a subroutine.
 					case 0x0ee:
+						this->_pc = this->_stack->Pop();
 						break;
 					default:
 						break;
@@ -96,7 +139,7 @@ bool Processor::RunOpcode() {
 		// 2NNN: Calls subroutine at NNN.
 		case 0x2:
 			{
-				this->_pc += 2;
+				this->_stack->Push(this->_pc + 2);
 				this->_pc = op2 << 8 | opcode2;
 			}
 			break;
@@ -131,7 +174,17 @@ bool Processor::RunOpcode() {
 			this->_registers->SetV(op2, this->_registers->GetV(op2) + opcode2);
 			this->_pc += 2;
 			break;
+
 		case 0x8:
+			switch (op4) {
+				// 8XY0: Sets VX to the value of VY.
+				case 0x0:
+					this->_registers->SetV(op2, this->_registers->GetV(op3));
+					this->_pc += 2;
+					break;
+				default:
+					break;
+			}
 			break;
 		case 0x9:
 			break;
@@ -186,17 +239,6 @@ bool Processor::RunOpcode() {
 		case 0xf:
 			break;
 	}
-
-	Console::WriteLine("");
-	Console::Write(Convert::ToString(this->_pc));
-	Console::Write(" : ");
-	Console::Write(Convert::ToString(op1));
-	Console::Write("-");
-	Console::Write(Convert::ToString(op2));
-	Console::Write("-");
-	Console::Write(Convert::ToString(op3));
-	Console::Write("-");
-	Console::Write(Convert::ToString(op4));
 
 	return drawed;
 }
