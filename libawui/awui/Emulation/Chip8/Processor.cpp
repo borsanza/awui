@@ -103,7 +103,6 @@ char DecToHex(int value) {
 /*
 0NNN	Calls RCA 1802 program at address NNN.
 8XY7	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-BNNN	Jumps to the address NNN plus V0.
 EX9E	Skips the next instruction if the key stored in VX is pressed.
 EXA1	Skips the next instruction if the key stored in VX isn't pressed.
 FX0A	A key press is awaited, and then stored in VX.
@@ -167,6 +166,7 @@ bool Processor::RunOpcode() {
 				this->_pc = offset;
 			}
 			break;
+
 		// 2NNN: Calls subroutine at NNN
 		case 0x2:
 			{
@@ -320,11 +320,22 @@ bool Processor::RunOpcode() {
 				this->_pc += 2;
 			}
 			break;
-		case 0xb:
+
+		// BNNN: Jumps to the address NNN plus V0.
+		case 0xB:
+			{
+				int offset = op2 << 8 | opcode2;
+				offset += this->_registers->GetV(0);
+
+				Console::Write("Jump to ");
+				Console::Write(Convert::ToString(offset));
+
+				this->_pc = offset;
+			}
 			break;
 
 		// CXKK: Sets VX to a random number and NN
-		case 0xc:
+		case 0xC:
 			this->_registers->SetV(op2, this->_random->Next(0, 256) & opcode2);
 			this->_pc += 2;
 			break;
@@ -336,7 +347,7 @@ bool Processor::RunOpcode() {
 		// execution of this instruction. As described above, VF is set to 1 if any
 		// screen pixels are flipped from set to unset when the sprite is drawn,
 		// and to 0 if that doesn't happen
-		case 0xd: {
+		case 0xD: {
 			int x = this->_registers->GetV(op2);
 			int y = this->_registers->GetV(op3);
 			int height = op4;
