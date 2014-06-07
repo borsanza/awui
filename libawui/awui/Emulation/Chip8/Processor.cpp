@@ -66,8 +66,6 @@ void Processor::OnTick() {
 /*
 0NNN	Calls RCA 1802 program at address NNN.
 8XY1	Sets VX to VX or VY.
-8XY4	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
-8XY5	VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
 8XY7	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
 9XY0	Skips the next instruction if VX doesn't equal VY.
 BNNN	Jumps to the address NNN plus V0.
@@ -202,6 +200,24 @@ bool Processor::RunOpcode() {
 				case 0x3:
 					this->_registers->SetV(op2, this->_registers->GetV(op2) ^ this->_registers->GetV(op3));
 					this->_pc += 2;
+					break;
+				// 8XY4: Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't
+				case 0x4:
+					{
+						int sum = this->_registers->GetV(op2) + this->_registers->GetV(op3);
+						this->_registers->SetV(0xF, (sum >= 256)? 1 : 0);
+						this->_registers->SetV(op2, sum % 256);
+						this->_pc += 2;
+					}
+					break;
+				// 8XY5: VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't
+				case 0x5:
+					{
+						int subs = this->_registers->GetV(op2) - this->_registers->GetV(op3);
+						this->_registers->SetV(0xF, (subs >= 0)? 1 : 0);
+						this->_registers->SetV(op2, (uint8_t) subs);
+						this->_pc += 2;
+					}
 					break;
 				// 8XY6: Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift
 				case 0x6:
