@@ -43,3 +43,8 @@ uint8_t Memory::ReadByte(int pos) {
 	this->_memory->SetPosition(pos);
 	return this->_memory->ReadByte();
 }
+
+void Memory::WriteByte(int pos, uint8_t value) {
+	this->_memory->SetPosition(pos);
+	return this->_memory->WriteByte(value);
+}

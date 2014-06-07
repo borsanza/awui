@@ -21,6 +21,7 @@ namespace awui {
 					void LoadRom(const String file);
 
 					uint8_t ReadByte(int pos);
+					void WriteByte(int pos, uint8_t value);
 			};
 		}
 	}
