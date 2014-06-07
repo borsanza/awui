@@ -65,7 +65,6 @@ void Processor::OnTick() {
 
 /*
 0NNN	Calls RCA 1802 program at address NNN.
-8XY1	Sets VX to VX or VY.
 8XY7	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
 9XY0	Skips the next instruction if VX doesn't equal VY.
 BNNN	Jumps to the address NNN plus V0.
