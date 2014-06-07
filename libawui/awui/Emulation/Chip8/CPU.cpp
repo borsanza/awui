@@ -1,10 +1,10 @@
 /*
- * awui/Emulation/Chip8/Processor.cpp
+ * awui/Emulation/Chip8/CPU.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
 
-#include "Processor.h"
+#include "CPU.h"
 
 #include <assert.h>
 #include <awui/Console.h>
@@ -18,7 +18,7 @@
 
 using namespace awui::Emulation::Chip8;
 
-Processor::Processor() {
+CPU::CPU() {
 	this->_screen = new Screen(64, 32);
 	this->_memory = new Memory(4096);
 	this->_registers = new Registers(16);
@@ -53,18 +53,18 @@ Processor::Processor() {
 		this->_memory->WriteByte(i, fontHex[i]);
 }
 
-Processor::~Processor() {
+CPU::~CPU() {
 	delete this->_random;
 	delete this->_screen;
 	delete this->_memory;
 	delete this->_registers;
 }
 
-void Processor::LoadRom(const String file) {
+void CPU::LoadRom(const String file) {
 	this->_memory->LoadRom(file);
 }
 
-void Processor::OnTick() {
+void CPU::OnTick() {
 	if (this->_delayTimer)
 		this->_delayTimer--;
 
@@ -108,7 +108,7 @@ EXA1	Skips the next instruction if the key stored in VX isn't pressed.
 FX0A	A key press is awaited, and then stored in VX.
 */
 
-bool Processor::RunOpcode() {
+bool CPU::RunOpcode() {
 	bool drawed = 0;
 	int opcode1 = this->_memory->ReadByte(this->_pc);
 	int opcode2 = this->_memory->ReadByte(this->_pc + 1);
@@ -472,14 +472,14 @@ bool Processor::RunOpcode() {
 	return drawed;
 }
 
-Screen * Processor::GetScreen() {
+Screen * CPU::GetScreen() {
 	return _screen;
 }
 
-bool Processor::GetImageUpdated() {
+bool CPU::GetImageUpdated() {
 	return this->_imageUpdated;
 }
 
-void Processor::SetImageUpdated(bool mode) {
+void CPU::SetImageUpdated(bool mode) {
 	this->_imageUpdated = mode;
 }

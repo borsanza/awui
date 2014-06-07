@@ -1,5 +1,5 @@
-#ifndef _AWUI_EMULATION_CHIP8_PROCESSOR_H
-#define _AWUI_EMULATION_CHIP8_PROCESSOR_H
+#ifndef _AWUI_EMULATION_CHIP8_CPU_H
+#define _AWUI_EMULATION_CHIP8_CPU_H
 
 #include <awui/String.h>
 
@@ -13,7 +13,7 @@ namespace awui {
 			class Screen;
 			class Stack;
 
-			class Processor {
+			class CPU {
 				private:
 					int _pc;
 					int _sp;
@@ -30,8 +30,8 @@ namespace awui {
 					bool RunOpcode();
 
 				public:
-					Processor();
-					~Processor();
+					CPU();
+					~CPU();
 
 					void LoadRom(const String file);
 					void OnTick();

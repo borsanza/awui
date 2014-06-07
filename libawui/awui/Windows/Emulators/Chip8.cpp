@@ -9,7 +9,7 @@
 #include <awui/Console.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Image.h>
-#include <awui/Emulation/Chip8/Processor.h>
+#include <awui/Emulation/Chip8/CPU.h>
 #include <awui/Emulation/Chip8/Screen.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
@@ -22,12 +22,12 @@ Chip8::Chip8() {
 	this->SetSize(74, 42);
 	this->SetBackColor(Color::FromArgb(163, 218, 2));
 	this->_image = new Drawing::Image(64, 32);
-	this->_processor = new Processor();
+	this->_cpu = new CPU();
 	this->SetTabStop(true);
 }
 
 Chip8::~Chip8() {
-	delete this->_processor;
+	delete this->_cpu;
 }
 
 int Chip8::IsClass(Classes::Enum objectClass) const {
@@ -38,16 +38,16 @@ int Chip8::IsClass(Classes::Enum objectClass) const {
 }
 
 void Chip8::LoadRom(const String file) {
-	this->_processor->LoadRom(file);
+	this->_cpu->LoadRom(file);
 }
 
 void Chip8::OnTick() {
-	this->_processor->OnTick();
+	this->_cpu->OnTick();
 }
 
 void Chip8::OnPaint(GL* gl) {
-	if (this->_processor->GetImageUpdated()) {
-		Screen * screen = this->_processor->GetScreen();
+	if (this->_cpu->GetImageUpdated()) {
+		Screen * screen = this->_cpu->GetScreen();
 		for (int y = 0; y < screen->GetHeight(); y++) {
 			for (int x = 0; x < screen->GetWidth(); x++) {
 				if (screen->GetPixel(x, y))
@@ -58,7 +58,7 @@ void Chip8::OnPaint(GL* gl) {
 		}
 
 		this->_image->Update();
-		this->_processor->SetImageUpdated(false);
+		this->_cpu->SetImageUpdated(false);
 	}
 
 	int border = 1;

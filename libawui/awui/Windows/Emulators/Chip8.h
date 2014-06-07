@@ -10,7 +10,7 @@ namespace awui {
 
 	namespace Emulation {
 		namespace Chip8 {
-			class Processor;
+			class CPU;
 		}
 	}
 
@@ -25,7 +25,7 @@ namespace awui {
 		namespace Emulators {
 			class Chip8 : public Control {
 				private:
-					Processor * _processor;
+					CPU * _cpu;
 					Drawing::Image * _image;
 
 				public:
