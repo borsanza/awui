@@ -22,6 +22,8 @@ namespace awui {
 					Memory * _memory;
 					Random * _random;
 					Stack * _stack;
+					uint8_t _delayTimer;
+					uint8_t _soundTimer;
 					int _finished;
 					bool _imageUpdated;
 

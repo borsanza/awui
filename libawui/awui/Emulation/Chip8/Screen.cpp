@@ -62,7 +62,8 @@ bool Screen::SetPixelXOR(int x, int y, bool value) {
 	int newValue = oldValue ^ value;
 
 	if (oldValue != newValue) {
-		r = true;
+		if (newValue == 0)
+			r = true;
 		this->_data[offset] = newValue;
 	}
 

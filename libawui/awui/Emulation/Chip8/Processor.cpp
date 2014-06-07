@@ -27,6 +27,8 @@ Processor::Processor() {
 	this->_pc = 0x200;
 	this->_imageUpdated = true;
 	this->_finished = 0;
+	this->_delayTimer = 0;
+	this->_soundTimer = 0;
 
 	uint8_t fontHex[80] = {
 		0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -63,6 +65,12 @@ void Processor::LoadRom(const String file) {
 }
 
 void Processor::OnTick() {
+	if (this->_delayTimer)
+		this->_delayTimer--;
+
+	if (this->_soundTimer)
+		this->_soundTimer--;
+
 	// Intentando 400Hz, similar a 60Hz * 7
 	bool draw = 0;
 	for (int i = 0; i < 7; i++) {
@@ -95,14 +103,10 @@ char DecToHex(int value) {
 /*
 0NNN	Calls RCA 1802 program at address NNN.
 8XY7	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-9XY0	Skips the next instruction if VX doesn't equal VY.
 BNNN	Jumps to the address NNN plus V0.
 EX9E	Skips the next instruction if the key stored in VX is pressed.
 EXA1	Skips the next instruction if the key stored in VX isn't pressed.
-FX07	Sets VX to the value of the delay timer.
 FX0A	A key press is awaited, and then stored in VX.
-FX15	Sets the delay timer to VX.
-FX18	Sets the sound timer to VX.
 */
 
 bool Processor::RunOpcode() {
@@ -119,7 +123,8 @@ bool Processor::RunOpcode() {
 	Console::Write(Convert::ToString(DecToHex(op1)));
 	Console::Write(Convert::ToString(DecToHex(op2)));
 	Console::Write(Convert::ToString(DecToHex(op3)));
-	Console::WriteLine(Convert::ToString(DecToHex(op4)));
+	Console::Write(Convert::ToString(DecToHex(op4)));
+	Console::Write(" : ");
 
   // http://en.wikipedia.org/wiki/CHIP-8
 	switch (op1) {
@@ -137,6 +142,8 @@ bool Processor::RunOpcode() {
 					// 00EE: Returns from a subroutine
 					case 0x0ee:
 						this->_pc = this->_stack->Pop();
+						Console::Write("Return ");
+						Console::Write(Convert::ToString(this->_pc));
 						break;
 					default:
 						break;
@@ -149,6 +156,9 @@ bool Processor::RunOpcode() {
 			{
 				int offset = op2 << 8 | opcode2;
 
+				Console::Write("Jump to ");
+				Console::Write(Convert::ToString(offset));
+
 				if (offset == this->_pc) {
 						Console::WriteLine(" --- ROM FINISHED --- ");
 						this->_finished = 1;
@@ -160,25 +170,53 @@ bool Processor::RunOpcode() {
 		// 2NNN: Calls subroutine at NNN
 		case 0x2:
 			{
+				int offset = op2 << 8 | opcode2;
+				Console::Write("Call ");
+				Console::Write(Convert::ToString(offset));
 				this->_stack->Push(this->_pc + 2);
-				this->_pc = op2 << 8 | opcode2;
+				this->_pc = offset;
 			}
 			break;
 
 		// 3XNN: Skips the next instruction if VX equals NN
 		case 0x3:
-			if (this->_registers->GetV(op2) == opcode2)
-				this->_pc += 2;
+			{
+				int vx = this->_registers->GetV(op2);
+				Console::Write("V");
+				Console::Write(Convert::ToString(DecToHex(op2)));
+				Console::Write(" == ");
+				Console::Write(Convert::ToString(opcode2));
+				Console::Write(" (");
+				Console::Write(Convert::ToString(vx));
+				Console::Write(" == ");
+				Console::Write(Convert::ToString(opcode2));
+				Console::Write(")");
+				if (vx == opcode2)
+					this->_pc += 2;
 
-			this->_pc += 2;
+				this->_pc += 2;
+			}
 			break;
 
 		// 4XNN: Skips the next instruction if VX doesn't equal NN
 		case 0x4:
-			if (this->_registers->GetV(op2) != opcode2)
-				this->_pc += 2;
+			{
+				int value = this->_registers->GetV(op2);
+				Console::Write("V");
+				Console::Write(Convert::ToString(DecToHex(op2)));
+				Console::Write(" != ");
+				Console::Write(Convert::ToString(opcode2));
+				Console::Write(" (");
+				Console::Write(Convert::ToString(value));
+				Console::Write(" != ");
+				Console::Write(Convert::ToString(opcode2));
+				Console::Write(")");
 
-			this->_pc += 2;
+				if (value != opcode2)
+					this->_pc += 2;
+
+				this->_pc += 2;
+			}
 			break;
 
 		// 5XY0: Skips the next instruction if VX equals VY
@@ -192,6 +230,10 @@ bool Processor::RunOpcode() {
 
 		// 6XNN: Sets VX to NN
 		case 0x6:
+			Console::Write("V");
+			Console::Write(Convert::ToString(DecToHex(op2)));
+			Console::Write(" = ");
+			Console::Write(Convert::ToString(opcode2));
 			this->_registers->SetV(op2, opcode2);
 			this->_pc += 2;
 			break;
@@ -258,13 +300,25 @@ bool Processor::RunOpcode() {
 					break;
 			}
 			break;
+
+		// 9XY0: Skips the next instruction if VX doesn't equal VY
 		case 0x9:
+			assert(op4 == 0);
+			if (this->_registers->GetV(op2) != this->_registers->GetV(op3))
+				this->_pc += 2;
+
+			this->_pc += 2;
 			break;
 
 		// ANNN: Sets I to the address NNN
-		case 0xa:
-			this->_registers->SetI(op2 << 8 | opcode2);
-			this->_pc += 2;
+		case 0xA:
+			{
+				int offset = op2 << 8 | opcode2;
+				Console::Write("I = ");
+				Console::Write(Convert::ToString(offset));
+				this->_registers->SetI(offset);
+				this->_pc += 2;
+			}
 			break;
 		case 0xb:
 			break;
@@ -287,29 +341,62 @@ bool Processor::RunOpcode() {
 			int y = this->_registers->GetV(op3);
 			int height = op4;
 
-			int changed = 0;
+			int pixelCleared = 0;
 			for (int y1 = 0; y1 < height; y1++) {
 				uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + y1);
 				int bit = 1;
 				for (int x1 = 7; x1 >= 0; x1--) {
 					int val = (p & bit)? 1 : 0;
 					if (this->_screen->SetPixelXOR(x + x1, y + y1, val))
-						changed = 1;
+						pixelCleared = 1;
 					bit  = bit << 1;
 				}
 			}
 
-			this->_registers->SetV(0xF, changed);
-
+			this->_registers->SetV(0xF, pixelCleared);
+			Console::Write("Draw(");
+			Console::Write(Convert::ToString(x));
+			Console::Write(", ");
+			Console::Write(Convert::ToString(y));
+			Console::Write(")");
 			this->_pc += 2;
 			this->_imageUpdated = true;
 			drawed = 1;
 			}
 			break;
-		case 0xe:
+		case 0xE:
 			break;
-		case 0xf:
+		case 0xF:
 			switch (opcode2) {
+				// FX07: Sets VX to the value of the delay timer
+				case 0x07:
+					Console::Write("V");
+					Console::Write(Convert::ToString(DecToHex(op2)));
+					Console::Write(" = ");
+					Console::Write(Convert::ToString(this->_delayTimer));
+					Console::Write(" (delay Timer)");
+					this->_registers->SetV(op2, this->_delayTimer);
+					this->_pc += 2;
+					break;
+				// FX15: Sets the delay timer to VX
+				case 0x15:
+					{
+						int value = this->_registers->GetV(op2);
+						Console::Write("_delayTimer");
+						Console::Write(" = ");
+						Console::Write(Convert::ToString(value));
+						Console::Write(" (V");
+						Console::Write(Convert::ToString(DecToHex(op2)));
+						Console::Write(")");
+						this->_delayTimer = value;
+						this->_pc += 2;
+					}
+					break;
+				// FX18: Sets the sound timer to VX
+				case 0x18:
+					this->_soundTimer = this->_registers->GetV(op2);
+					this->_pc += 2;
+					break;
 				// FX1E: Adds VX to I
 				case 0x1E:
 					this->_registers->SetI(this->_registers->GetI() + this->_registers->GetV(op2));
@@ -368,6 +455,8 @@ bool Processor::RunOpcode() {
 			}
 			break;
 	}
+	Console::WriteLine("");
+
 
 	return drawed;
 }
