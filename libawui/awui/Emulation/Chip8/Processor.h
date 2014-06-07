@@ -22,7 +22,7 @@ namespace awui {
 					Memory * _memory;
 					Random * _random;
 					Stack * _stack;
-					bool _paused = false;
+					int _finished;
 					bool _imageUpdated;
 
 					bool RunOpcode();

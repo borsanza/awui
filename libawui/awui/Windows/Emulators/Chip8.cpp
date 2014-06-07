@@ -23,6 +23,7 @@ Chip8::Chip8() {
 	this->SetBackColor(Color::FromArgb(163, 218, 2));
 	this->_image = new Drawing::Image(64, 32);
 	this->_processor = new Processor();
+	this->SetTabStop(true);
 }
 
 Chip8::~Chip8() {

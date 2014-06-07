@@ -21,11 +21,13 @@ Form1::~Form1() {
 }
 
 void Form1::InitializeComponent() {
-	this->SetText("Test Form1");
 	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
 	this->_chip8 = new Chip8();
+	this->_chip8->SetLocation(32, 32);
+	this->_chip8->SetSize((64 + 2) * 2, (32 + 2) * 2);
 	this->_chip8->SetDock(DockStyle::Fill);
+
 	this->GetControls()->Add(this->_chip8);
 
 	this->SetSize(650, 350);
@@ -33,5 +35,6 @@ void Form1::InitializeComponent() {
 }
 
 void Form1::LoadRom(const awui::String file) {
+	this->SetText(file);
 	this->_chip8->LoadRom(file);
 }

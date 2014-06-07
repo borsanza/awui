@@ -26,7 +26,7 @@ Processor::Processor() {
 	this->_random = new Random();
 	this->_pc = 0x200;
 	this->_imageUpdated = true;
-	this->_paused = false;
+	this->_finished = 0;
 }
 
 Processor::~Processor() {
@@ -44,10 +44,19 @@ void Processor::OnTick() {
 	// Intentando 400Hz, similar a 60Hz * 7
 	bool draw = 0;
 	for (int i = 0; i < 7; i++) {
-		if (this->_paused)
+		if (this->_finished)
 			break;
 
 		draw += this->RunOpcode();
+	}
+
+	if (this->_finished)
+		this->_finished++;
+
+	if (this->_finished > 300) {
+		this->_screen->Clear();
+		this->_finished = 0;
+		this->_pc = 0x200;
 	}
 
 //	if (draw)
@@ -55,17 +64,11 @@ void Processor::OnTick() {
 }
 
 /*
-TODO
 0NNN	Calls RCA 1802 program at address NNN.
-4XNN	Skips the next instruction if VX doesn't equal NN.
 8XY1	Sets VX to VX or VY.
-8XY2	Sets VX to VX and VY.
-8XY3	Sets VX to VX xor VY.
 8XY4	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
 8XY5	VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-8XY6	Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.[2]
 8XY7	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-8XYE	Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift.[2]
 9XY0	Skips the next instruction if VX doesn't equal VY.
 BNNN	Jumps to the address NNN plus V0.
 EX9E	Skips the next instruction if the key stored in VX is pressed.
@@ -86,7 +89,6 @@ bool Processor::RunOpcode() {
 	int op3 = opcode2 >> 4;
 	int op4 = opcode2 & 0xf;
 
-	Console::WriteLine("");
 	Console::Write(Convert::ToString(this->_pc));
 	Console::Write(" : ");
 	Console::Write(Convert::ToString(op1));
@@ -96,6 +98,7 @@ bool Processor::RunOpcode() {
 	Console::Write(Convert::ToString(op3));
 	Console::Write("-");
 	Console::Write(Convert::ToString(op4));
+	Console::WriteLine("");
 
   // http://en.wikipedia.org/wiki/CHIP-8
 	switch (op1) {
@@ -103,14 +106,14 @@ bool Processor::RunOpcode() {
 			{
 				int offset = op2 << 8 | opcode2;
 				switch (offset) {
-					// 00E0: Clears the screen.
+					// 00E0: Clears the screen
 					case 0x0e0:
 						this->_screen->Clear();
 						this->_imageUpdated = true;
 						drawed = 1;
 						this->_pc += 2;
 						break;
-					// 00EE: Returns from a subroutine.
+					// 00EE: Returns from a subroutine
 					case 0x0ee:
 						this->_pc = this->_stack->Pop();
 						break;
@@ -120,18 +123,20 @@ bool Processor::RunOpcode() {
 			}
 			break;
 
-		// 1NNN: Jumps to address NNN.
+		// 1NNN: Jumps to address NNN
 		case 0x1:
 			{
 				int offset = op2 << 8 | opcode2;
 
-				if (offset == this->_pc)
-						this->_paused = true;
+				if (offset == this->_pc) {
+						Console::WriteLine(" --- ROM FINISHED --- ");
+						this->_finished = 1;
+				}
 
 				this->_pc = offset;
 			}
 			break;
-		// 2NNN: Calls subroutine at NNN.
+		// 2NNN: Calls subroutine at NNN
 		case 0x2:
 			{
 				this->_stack->Push(this->_pc + 2);
@@ -139,17 +144,23 @@ bool Processor::RunOpcode() {
 			}
 			break;
 
-		// 3XNN: Skips the next instruction if VX equals NN.
+		// 3XNN: Skips the next instruction if VX equals NN
 		case 0x3:
 			if (this->_registers->GetV(op2) == opcode2)
 				this->_pc += 2;
 
 			this->_pc += 2;
 			break;
+
+		// 4XNN: Skips the next instruction if VX doesn't equal NN
 		case 0x4:
+			if (this->_registers->GetV(op2) != opcode2)
+				this->_pc += 2;
+
+			this->_pc += 2;
 			break;
 
-		// 5XY0: Skips the next instruction if VX equals VY.
+		// 5XY0: Skips the next instruction if VX equals VY
 		case 0x5:
 			assert(op4 == 0);
 			if (this->_registers->GetV(op2) == this->_registers->GetV(op3))
@@ -158,13 +169,13 @@ bool Processor::RunOpcode() {
 			this->_pc += 2;
 			break;
 
-		// 6XNN: Sets VX to NN.
+		// 6XNN: Sets VX to NN
 		case 0x6:
 			this->_registers->SetV(op2, opcode2);
 			this->_pc += 2;
 			break;
 
-		// 7XNN: Adds NN to VX.
+		// 7XNN: Adds NN to VX
 		case 0x7:
 			this->_registers->SetV(op2, this->_registers->GetV(op2) + opcode2);
 			this->_pc += 2;
@@ -172,9 +183,36 @@ bool Processor::RunOpcode() {
 
 		case 0x8:
 			switch (op4) {
-				// 8XY0: Sets VX to the value of VY.
+				// 8XY0: Sets VX to the value of VY
 				case 0x0:
 					this->_registers->SetV(op2, this->_registers->GetV(op3));
+					this->_pc += 2;
+					break;
+				// 8XY1: Sets VX to VX or VY
+				case 0x1:
+					this->_registers->SetV(op2, this->_registers->GetV(op2) | this->_registers->GetV(op3));
+					this->_pc += 2;
+					break;
+				// 8XY2: Sets VX to VX and VY
+				case 0x2:
+					this->_registers->SetV(op2, this->_registers->GetV(op2) & this->_registers->GetV(op3));
+					this->_pc += 2;
+					break;
+				// 8XY3: Sets VX to VX xor VY
+				case 0x3:
+					this->_registers->SetV(op2, this->_registers->GetV(op2) ^ this->_registers->GetV(op3));
+					this->_pc += 2;
+					break;
+				// 8XY6: Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift
+				case 0x6:
+					this->_registers->SetV(0xF, (this->_registers->GetV(op2) & 0x1) ? 1 : 0);
+					this->_registers->SetV(op2, this->_registers->GetV(op2) >> 1);
+					this->_pc += 2;
+					break;
+				// 8XYE: Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift
+				case 0xE:
+					this->_registers->SetV(0xF, (this->_registers->GetV(op2) & 0x8) ? 1 : 0);
+					this->_registers->SetV(op2, this->_registers->GetV(op2) << 1);
 					this->_pc += 2;
 					break;
 				default:
@@ -184,7 +222,7 @@ bool Processor::RunOpcode() {
 		case 0x9:
 			break;
 
-		// ANNN: Sets I to the address NNN.
+		// ANNN: Sets I to the address NNN
 		case 0xa:
 			this->_registers->SetI(op2 << 8 | opcode2);
 			this->_pc += 2;
@@ -192,7 +230,7 @@ bool Processor::RunOpcode() {
 		case 0xb:
 			break;
 
-		// CXKK: Sets VX to a random number and NN.
+		// CXKK: Sets VX to a random number and NN
 		case 0xc:
 			this->_registers->SetV(op2, this->_random->Next(0, 256) & opcode2);
 			this->_pc += 2;
@@ -204,7 +242,7 @@ bool Processor::RunOpcode() {
 		// starting from memory location I; I value doesn't change after the
 		// execution of this instruction. As described above, VF is set to 1 if any
 		// screen pixels are flipped from set to unset when the sprite is drawn,
-		// and to 0 if that doesn't happen.
+		// and to 0 if that doesn't happen
 		case 0xd: {
 			int x = this->_registers->GetV(op2);
 			int y = this->_registers->GetV(op3);
@@ -233,13 +271,18 @@ bool Processor::RunOpcode() {
 			break;
 		case 0xf:
 			switch (opcode2) {
-				// FX1E: Adds VX to I.[3]
+				// FX1E: Adds VX to I
 				case 0x1E:
 					this->_registers->SetI(this->_registers->GetI() + this->_registers->GetV(op2));
 					this->_pc += 2;
 					break;
 
-				// FX33: Stores the Binary-coded decimal representation of VX, with the most significant of three digits at the address in I, the middle digit at I plus 1, and the least significant digit at I plus 2. (In other words, take the decimal representation of VX, place the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2.)
+				// FX33: Stores the Binary-coded decimal representation of VX, with the
+				// most significant of three digits at the address in I, the middle
+				// digit at I plus 1, and the least significant digit at I plus 2.
+				// (In other words, take the decimal representation of VX, place the
+				// hundreds digit in memory at location in I, the tens digit at
+				// location I+1, and the ones digit at location I+2.)
 				case 0x33:
 					{
 						int value = this->_registers->GetV(op2);
@@ -255,7 +298,7 @@ bool Processor::RunOpcode() {
 					}
 					break;
 
-				// FX55: Stores V0 to VX in memory starting at address I.
+				// FX55: Stores V0 to VX in memory starting at address I
 				case 0x55:
 					{
 						int offset = this->_registers->GetI();
@@ -265,7 +308,7 @@ bool Processor::RunOpcode() {
 					}
 					break;
 
-				// FX65: Fills V0 to VX with values from memory starting at address I.
+				// FX65: Fills V0 to VX with values from memory starting at address I
 				case 0x65:
 					{
 						int offset = this->_registers->GetI();
