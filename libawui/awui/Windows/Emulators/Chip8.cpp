@@ -52,8 +52,10 @@ void Chip8::OnPaint(GL* gl) {
 			for (int x = 0; x < screen->GetWidth(); x++) {
 				if (screen->GetPixel(x, y))
 					this->_image->SetPixel(x, y, 50, 88, 4, 255);
+//					this->_image->SetPixel(x, y, 255, 255, 255, 255);
 				else
 					this->_image->SetPixel(x, y, 128, 185, 0, 255);
+//					this->_image->SetPixel(x, y, 0, 0, 0, 255);
 			}
 		}
 
