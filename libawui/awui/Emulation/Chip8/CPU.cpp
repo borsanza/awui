@@ -120,11 +120,6 @@ char DecToHex(int value) {
 	return '0' + value;
 }
 
-/*
-8XY7	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-FX0A	A key press is awaited, and then stored in VX.
-*/
-
 bool CPU::RunOpcode() {
 	bool drawed = 0;
 	int opcode1 = this->_memory->ReadByte(this->_pc);
@@ -307,6 +302,17 @@ bool CPU::RunOpcode() {
 					this->_registers->SetV(op2, this->_registers->GetV(op2) >> 1);
 					this->_pc += 2;
 					break;
+
+				// 8XY7: Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+				case 0x7:
+					{
+						int subs = this->_registers->GetV(op3) - this->_registers->GetV(op2);
+						this->_registers->SetV(0xF, (subs >= 0)? 1 : 0);
+						this->_registers->SetV(op2, (uint8_t) subs);
+						this->_pc += 2;
+					}
+					break;
+
 				// 8XYE: Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift
 				case 0xE:
 					this->_registers->SetV(0xF, (this->_registers->GetV(op2) & 0x8) ? 1 : 0);
@@ -414,6 +420,16 @@ bool CPU::RunOpcode() {
 			break;
 		case 0xF:
 			switch (opcode2) {
+				// FX0A: A key press is awaited, and then stored in VX
+				case 0x0A:
+					{
+						int key = this->_input->GetKey();
+						if (key != -1) {
+							this->_registers->SetV(op2, key);
+							this->_pc += 2;
+						}
+					}
+					break;
 				// FX07: Sets VX to the value of the delay timer
 				case 0x07:
 					DebugOpCode("V");

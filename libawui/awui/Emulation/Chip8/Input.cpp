@@ -17,3 +17,7 @@ Input::~Input() {
 bool Input::IsKeyPressed(uint8_t key) {
 	return false;
 }
+
+int Input::GetKey() {
+	return -1;
+}
