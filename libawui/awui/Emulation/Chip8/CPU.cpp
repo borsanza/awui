@@ -240,7 +240,7 @@ bool CPU::RunOpcode() {
 			this->_pc += 2;
 			break;
 
-		// 6XNN: Sets VX to NN
+		// 6XNN: Store number NN in register VX
 		case 0x6:
 			DebugOpCode("V");
 			DebugOpCode(Convert::ToString(DecToHex(op2)));
@@ -250,7 +250,7 @@ bool CPU::RunOpcode() {
 			this->_pc += 2;
 			break;
 
-		// 7XNN: Adds NN to VX
+		// 7XNN: Add the value NN to register VX
 		case 0x7:
 			this->_registers->SetV(op2, this->_registers->GetV(op2) + opcode2);
 			this->_pc += 2;
@@ -258,36 +258,45 @@ bool CPU::RunOpcode() {
 
 		case 0x8:
 			switch (op4) {
-				// 8XY0: Sets VX to the value of VY
+				// 8XY0: VX = VY
 				case 0x0:
 					this->_registers->SetV(op2, this->_registers->GetV(op3));
 					this->_pc += 2;
 					break;
-				// 8XY1: Sets VX to VX or VY
+
+				// 8XY1: VX = VX OR VY
 				case 0x1:
 					this->_registers->SetV(op2, this->_registers->GetV(op2) | this->_registers->GetV(op3));
 					this->_pc += 2;
 					break;
-				// 8XY2: Sets VX to VX and VY
+
+				// 8XY2: VX = VX AND VY
 				case 0x2:
 					this->_registers->SetV(op2, this->_registers->GetV(op2) & this->_registers->GetV(op3));
 					this->_pc += 2;
 					break;
-				// 8XY3: Sets VX to VX xor VY
+
+				// 8XY3: VX = VX XOR VY
 				case 0x3:
 					this->_registers->SetV(op2, this->_registers->GetV(op2) ^ this->_registers->GetV(op3));
 					this->_pc += 2;
 					break;
-				// 8XY4: Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't
+
+				// 8XY4: VX = VX + VY
+				//       Set VF to 01 if a carry occurs
+				//       Set VF to 00 if a carry does not occur
 				case 0x4:
 					{
 						int sum = this->_registers->GetV(op2) + this->_registers->GetV(op3);
 						this->_registers->SetV(0xF, (sum >= 256)? 1 : 0);
-						this->_registers->SetV(op2, sum % 256);
+						this->_registers->SetV(op2, (uint8_t) sum);
 						this->_pc += 2;
 					}
 					break;
-				// 8XY5: VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't
+
+				// 8XY5: VX = VX - VY
+				//       Set VF to 00 if a borrow occurs
+				//       Set VF to 01 if a borrow does not occur
 				case 0x5:
 					{
 						int subs = this->_registers->GetV(op2) - this->_registers->GetV(op3);
@@ -296,14 +305,21 @@ bool CPU::RunOpcode() {
 						this->_pc += 2;
 					}
 					break;
-				// 8XY6: Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift
+
+				// 8XY6: VX = VX >> 1
+				//       Set register VF to the least significant bit prior to the shift
 				case 0x6:
-					this->_registers->SetV(0xF, (this->_registers->GetV(op2) & 0x1) ? 1 : 0);
-					this->_registers->SetV(op2, this->_registers->GetV(op2) >> 1);
-					this->_pc += 2;
+					{
+						int value = this->_registers->GetV(op2);
+						this->_registers->SetV(0xF, (value & 0x1) ? 1 : 0);
+						this->_registers->SetV(op2, value >> 1);
+						this->_pc += 2;
+					}
 					break;
 
-				// 8XY7: Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+				// 8XY7: VX = VY - VX
+				//       Set VF to 00 if a borrow occurs
+				//       Set VF to 01 if a borrow does not occur
 				case 0x7:
 					{
 						int subs = this->_registers->GetV(op3) - this->_registers->GetV(op2);
@@ -313,11 +329,15 @@ bool CPU::RunOpcode() {
 					}
 					break;
 
-				// 8XYE: Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift
+				// 8XYE: VX = VX << 1
+				//       Set register VF to the most significant bit prior to the shift
 				case 0xE:
-					this->_registers->SetV(0xF, (this->_registers->GetV(op2) & 0x8) ? 1 : 0);
-					this->_registers->SetV(op2, this->_registers->GetV(op2) << 1);
-					this->_pc += 2;
+					{
+						uint8_t value = this->_registers->GetV(op2);
+						this->_registers->SetV(0xF, (value & 128) ? 1 : 0);
+						this->_registers->SetV(op2, value << 1);
+						this->_pc += 2;
+					}
 					break;
 				default:
 					break;
@@ -459,7 +479,7 @@ bool CPU::RunOpcode() {
 					this->_soundTimer = this->_registers->GetV(op2);
 					this->_pc += 2;
 					break;
-				// FX1E: Adds VX to I
+				// FX1E: I = VX + I
 				case 0x1E:
 					this->_registers->SetI(this->_registers->GetI() + this->_registers->GetV(op2));
 					this->_pc += 2;
@@ -494,21 +514,27 @@ bool CPU::RunOpcode() {
 					break;
 
 				// FX55: Stores V0 to VX in memory starting at address I
+				//       I is set to I + X + 1 after operation
 				case 0x55:
 					{
 						int offset = this->_registers->GetI();
 						for (int i = 0; i <= op2; i++)
 							this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
+
+						this->_registers->SetI(offset + op2 + 1);
 						this->_pc += 2;
 					}
 					break;
 
 				// FX65: Fills V0 to VX with values from memory starting at address I
+				//       I is set to I + X + 1 after operation
 				case 0x65:
 					{
 						int offset = this->_registers->GetI();
 						for (int i = 0; i <= op2; i++)
 							this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
+
+						this->_registers->SetI(offset + op2 + 1);
 						this->_pc += 2;
 					}
 					break;
