@@ -15,6 +15,7 @@
 #include <awui/Emulation/Chip8/Registers.h>
 #include <awui/Emulation/Chip8/Screen.h>
 #include <awui/Emulation/Chip8/Stack.h>
+#include <awui/Emulation/Chip8/Sound.h>
 #include <awui/String.h>
 
 using namespace awui::Emulation::Chip8;
@@ -26,6 +27,7 @@ CPU::CPU() {
 	this->_input = new Input();
 	this->_stack = new Stack();
 	this->_random = new Random();
+	this->_sound = new Sound();
 	this->_pc = 0x200;
 	this->_imageUpdated = true;
 	this->_finished = 0;
@@ -62,6 +64,7 @@ CPU::~CPU() {
 	delete this->_registers;
 	delete this->_screen;
 	delete this->_stack;
+	delete this->_sound;
 }
 
 void CPU::LoadRom(const String file) {
@@ -92,6 +95,11 @@ void CPU::OnTick() {
 		this->_finished = 0;
 		this->_pc = 0x200;
 	}
+
+	if (this->_soundTimer)
+		_sound->Play();
+	else
+		_sound->Stop();
 
 //	if (draw)
 //		this->_screen->WriteConsole();

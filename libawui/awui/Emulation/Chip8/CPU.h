@@ -13,6 +13,7 @@ namespace awui {
 			class Registers;
 			class Screen;
 			class Stack;
+			class Sound;
 
 			class CPU {
 				private:
@@ -24,6 +25,7 @@ namespace awui {
 					Random * _random;
 					Input * _input;
 					Stack * _stack;
+					Sound * _sound;
 					uint8_t _delayTimer;
 					uint8_t _soundTimer;
 					int _finished;
