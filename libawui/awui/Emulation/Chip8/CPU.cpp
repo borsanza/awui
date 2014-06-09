@@ -144,18 +144,42 @@ bool CPU::RunOpcode() {
 				int offset = op2 << 8 | opcode2;
 				switch (offset) {
 					// 00E0: Clears the screen
-					case 0x0e0:
+					case 0xE0:
 						this->_screen->Clear();
 						this->_imageUpdated = true;
 						drawed = 1;
 						this->_pc += 2;
 						break;
+
 					// 00EE: Returns from a subroutine
-					case 0x0ee:
+					case 0xEE:
 						this->_pc = this->_stack->Pop();
 						DebugOpCode("Return ");
 						DebugOpCode(Convert::ToString(this->_pc));
 						break;
+
+					// 00FE: Disable extended screen mode (64 x 32)
+					case 0xFE:
+						if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
+							delete this->_screen;
+							this->_screen = new Screen(64, 32);
+						}
+
+						DebugOpCode("LOW");
+						this->_pc += 2;
+						break;
+
+					// 00FF: Enable extended screen mode (128 x 64)
+					case 0xFF:
+						if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
+							delete this->_screen;
+							this->_screen = new Screen(128, 64);
+						}
+
+						DebugOpCode("HIGH");
+						this->_pc += 2;
+						break;
+
 					default:
 						break;
 				}
@@ -393,17 +417,32 @@ bool CPU::RunOpcode() {
 		case 0xD: {
 			int x = this->_registers->GetV(op2);
 			int y = this->_registers->GetV(op3);
-			int height = op4;
 
 			int pixelCleared = 0;
-			for (int y1 = 0; y1 < height; y1++) {
-				uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + y1);
-				int bit = 1;
-				for (int x1 = 7; x1 >= 0; x1--) {
-					int val = (p & bit)? 1 : 0;
-					if (this->_screen->SetPixelXOR(x + x1, y + y1, val))
-						pixelCleared = 1;
-					bit  = bit << 1;
+			if (op4 == 0) {
+				for (int y1 = 0; y1 < 16; y1++) {
+					for (int x1 = 0; x1 < 2; x1++) {
+						uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + (y1 * 2) + x1);
+						int bit = 1;
+						for (int xbit = 7; xbit >= 0; xbit--) {
+							int val = (p & bit)? 1 : 0;
+							if (this->_screen->SetPixelXOR(x + (x1 * 8) + xbit, y + y1, val))
+								pixelCleared = 1;
+							bit  = bit << 1;
+						}
+					}
+				}
+			 } else {
+				int height = op4;
+				for (int y1 = 0; y1 < height; y1++) {
+					uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + y1);
+					int bit = 1;
+					for (int x1 = 7; x1 >= 0; x1--) {
+						int val = (p & bit)? 1 : 0;
+						if (this->_screen->SetPixelXOR(x + x1, y + y1, val))
+							pixelCleared = 1;
+						bit  = bit << 1;
+					}
 				}
 			}
 

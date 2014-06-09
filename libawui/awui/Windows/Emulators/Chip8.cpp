@@ -48,6 +48,12 @@ void Chip8::OnTick() {
 void Chip8::OnPaint(GL* gl) {
 	if (this->_cpu->GetImageUpdated()) {
 		Screen * screen = this->_cpu->GetScreen();
+
+		if ((screen->GetWidth() != this->_image->GetWidth()) || (screen->GetHeight() != this->_image->GetHeight())) {
+			delete this->_image;
+			this->_image = new Drawing::Image(screen->GetWidth(), screen->GetHeight());
+		}
+
 		for (int y = 0; y < screen->GetHeight(); y++) {
 			for (int x = 0; x < screen->GetWidth(); x++) {
 				if (screen->GetPixel(x, y))
@@ -65,8 +71,8 @@ void Chip8::OnPaint(GL* gl) {
 
 	int border = 1;
 
-	int borderx = Math::Round((this->GetWidth() * border) / (64.0f + (border * 2)));
-	int bordery = Math::Round((this->GetHeight() * border) / (32.0f + (border * 2)));
+	int borderx = Math::Round((this->GetWidth() * border) / ((float)this->_image->GetWidth() + (border * 2)));
+	int bordery = Math::Round((this->GetHeight() * border) / ((float)this->_image->GetHeight() + (border * 2)));
 
 	GL::DrawImageGL(this->_image, borderx, bordery, this->GetWidth() - (borderx * 2), this->GetHeight() - (bordery * 2));
 }
