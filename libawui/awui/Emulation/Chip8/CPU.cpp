@@ -140,49 +140,84 @@ bool CPU::RunOpcode() {
   // http://en.wikipedia.org/wiki/CHIP-8
 	switch (op1) {
 		case 0x0:
-			{
-				int offset = op2 << 8 | opcode2;
-				switch (offset) {
+			assert(op2 == 0);
+			switch (op3) {
+				// 00CN: Scroll screen Nibble lines down
+				case 0xC:
+					this->_screen->ScrollDown(op4);
+					this->_imageUpdated = true;
+					drawed = 1;
+					this->_pc += 2;
+					break;
+
+				case 0xE:
+					switch (op4) {
 					// 00E0: Clears the screen
-					case 0xE0:
-						this->_screen->Clear();
-						this->_imageUpdated = true;
-						drawed = 1;
-						this->_pc += 2;
-						break;
+						case 0x0:
+							this->_screen->Clear();
+							this->_imageUpdated = true;
+							drawed = 1;
+							this->_pc += 2;
+							break;
 
-					// 00EE: Returns from a subroutine
-					case 0xEE:
-						this->_pc = this->_stack->Pop();
-						DebugOpCode("Return ");
-						DebugOpCode(Convert::ToString(this->_pc));
-						break;
+						// 00EE: Returns from a subroutine
+						case 0xE:
+							this->_pc = this->_stack->Pop();
+							DebugOpCode("Return ");
+							DebugOpCode(Convert::ToString(this->_pc));
+							break;
+					}
+					break;
 
-					// 00FE: Disable extended screen mode (64 x 32)
-					case 0xFE:
-						if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
-							delete this->_screen;
-							this->_screen = new Screen(64, 32);
-						}
+				case 0xF:
+					switch (op4) {
+						// 00FB: Scroll screen 4 pixels right. 2 pixels in low Mode
+						case 0xB:
+							DebugOpCode("ScrollRight");
+							this->_screen->ScrollRight(this->_screen->GetWidth() / 32);
+							this->_imageUpdated = true;
+							drawed = 1;
+							this->_pc += 2;
+							break;
 
-						DebugOpCode("LOW");
-						this->_pc += 2;
-						break;
+						// 00FC: Scroll screen 4 pixels left. 2 pixels in low Mode
+						case 0xC:
+							DebugOpCode("ScrollLeft");
+							this->_screen->ScrollLeft(this->_screen->GetWidth() / 32);
+							this->_imageUpdated = true;
+							drawed = 1;
+							this->_pc += 2;
+							break;
 
-					// 00FF: Enable extended screen mode (128 x 64)
-					case 0xFF:
-						if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
-							delete this->_screen;
-							this->_screen = new Screen(128, 64);
-						}
+						// 00FD: Exit Chip Interpreter
+						case 0xD:
+							DebugOpCodeLine(" --- ROM FINISHED --- ");
+							this->_finished = 1;
+							break;
 
-						DebugOpCode("HIGH");
-						this->_pc += 2;
-						break;
+						// 00FE: Disable extended screen mode (64 x 32)
+						case 0xE:
+							if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
+								delete this->_screen;
+								this->_screen = new Screen(64, 32);
+							}
 
-					default:
-						break;
-				}
+							DebugOpCode("LOW");
+							this->_pc += 2;
+							break;
+
+						// 00FF: Enable extended screen mode (128 x 64)
+						case 0xF:
+							if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
+								delete this->_screen;
+								this->_screen = new Screen(128, 64);
+							}
+
+							DebugOpCode("HIGH");
+							this->_pc += 2;
+							break;
+					}
+					break;
 			}
 			break;
 

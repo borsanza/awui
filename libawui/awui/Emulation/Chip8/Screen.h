@@ -23,6 +23,10 @@ namespace awui {
 
 					int GetWidth();
 					int GetHeight();
+
+					void ScrollDown(int lines);
+					void ScrollLeft(int columns);
+					void ScrollRight(int columns);
 			};
 		}
 	}

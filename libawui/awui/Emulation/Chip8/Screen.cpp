@@ -81,3 +81,35 @@ int Screen::GetWidth() {
 int Screen::GetHeight() {
 	return this->_height;
 }
+
+void Screen::ScrollDown(int lines) {
+	for (int i = this->_height - 1; i >= lines; i--)
+		for (int j = 0; j < this->_width; j++)
+			this->_data[(i * this->_width) + j] = this->_data[((i - lines) * this->_width) + j];
+
+	for (int i = 0; i < lines; i++)
+		for (int j = 0; j < this->_width; j++)
+			this->_data[(i * this->_width) + j] = 0;
+}
+
+void Screen::ScrollLeft(int columns) {
+	for (int scroll = 0; scroll < columns; scroll++) {
+		for (int i = 0; i < this->_height; i++) {
+			int aux = this->_data[(i * this->_width)];
+			for (int j = 0; j < this->_width - 1; j++)
+				this->_data[(i * this->_width) + j] = this->_data[(i * this->_width) + (j + 1)];
+			this->_data[(i * this->_width) + (this->_width - 1)] = aux;
+		}
+	}
+}
+
+void Screen::ScrollRight(int columns) {
+	for (int scroll = 0; scroll < columns; scroll++) {
+		for (int i = 0; i < this->_height; i++) {
+			int aux = this->_data[(i * this->_width) + (this->_width - 1)];
+			for (int j = this->_width - 1; j >= 1; j--)
+				this->_data[(i * this->_width) + j] = this->_data[(i * this->_width) + (j - 1)];
+			this->_data[(i * this->_width)] = aux;
+		}
+	}
+}
