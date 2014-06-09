@@ -87,7 +87,10 @@ int64_t FileStream::GetLength() {
 
 uint8_t FileStream::ReadByte() {
 	uint8_t r;
-	fread(&r, 1, 1, this->_file);
+	if (!fread(&r, 1, 1, this->_file)) {
+		assert(0 && "Fallo al leer un stream");
+	}
+
 	this->_pos++;
 	return r;
 }
