@@ -9,13 +9,14 @@
 #include <assert.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
-#include <awui/Random.h>
 #include <awui/Emulation/Chip8/Input.h>
 #include <awui/Emulation/Chip8/Memory.h>
 #include <awui/Emulation/Chip8/Registers.h>
 #include <awui/Emulation/Chip8/Screen.h>
 #include <awui/Emulation/Chip8/Stack.h>
 #include <awui/Emulation/Chip8/Sound.h>
+#include <awui/Math.h>
+#include <awui/Random.h>
 #include <awui/String.h>
 
 using namespace awui::Emulation::Chip8;
@@ -78,13 +79,15 @@ void CPU::OnTick() {
 	if (this->_soundTimer)
 		this->_soundTimer--;
 
-	// Intentando 400Hz, similar a 60Hz * 7
-	bool draw = 0;
-	for (int i = 0; i < 7; i++) {
+	// La frecuencia parece ser 500Hz en Chip 8 y
+	// 1000Hz en SuperChip 8
+	int iterations = (int) Math::Round(500.0f * (this->GetScreen()->GetWidth() / 64) / 60.0f);
+	for (int i = 0; i < iterations; i++) {
 		if (this->_finished)
 			break;
 
-		draw += this->RunOpcode();
+		if (this->RunOpcode())
+			break;
 	}
 
 	if (this->_finished)
@@ -100,17 +103,14 @@ void CPU::OnTick() {
 		_sound->Play();
 	else
 		_sound->Stop();
-
-//	if (draw)
-//		this->_screen->WriteConsole();
 }
 
 void DebugOpCode(String str) {
-//	Console::Write(str);
+	Console::Write(str);
 }
 
 void DebugOpCodeLine(String str) {
-//	Console::WriteLine(str);
+	Console::WriteLine(str);
 }
 
 char DecToHex(int value) {
@@ -140,84 +140,103 @@ bool CPU::RunOpcode() {
   // http://en.wikipedia.org/wiki/CHIP-8
 	switch (op1) {
 		case 0x0:
-			assert(op2 == 0);
-			switch (op3) {
-				// 00CN: Scroll screen Nibble lines down
-				case 0xC:
-					this->_screen->ScrollDown(op4);
-					this->_imageUpdated = true;
-					drawed = 1;
-					this->_pc += 2;
-					break;
+			{
 
-				case 0xE:
-					switch (op4) {
-					// 00E0: Clears the screen
-						case 0x0:
-							this->_screen->Clear();
-							this->_imageUpdated = true;
-							drawed = 1;
-							this->_pc += 2;
-							break;
+				int offset = op2 << 8 | opcode2;
+				if ((offset >= 0x200) && (offset <= 0xFFE)) {
+					// No se como se implementa
+					assert(0);
+/*
+					// Offset must be even
+					assert((offset & 0x1) == 0);
+					int offset = op2 << 8 | opcode2;
 
-						// 00EE: Returns from a subroutine
-						case 0xE:
-							this->_pc = this->_stack->Pop();
-							DebugOpCode("Return ");
-							DebugOpCode(Convert::ToString(this->_pc));
-							break;
-					}
-					break;
+					this->_pc += offset;
 
-				case 0xF:
-					switch (op4) {
-						// 00FB: Scroll screen 4 pixels right. 2 pixels in low Mode
-						case 0xB:
-							DebugOpCode("ScrollRight");
-							this->_screen->ScrollRight(this->_screen->GetWidth() / 32);
-							this->_imageUpdated = true;
-							drawed = 1;
-							this->_pc += 2;
-							break;
-
-						// 00FC: Scroll screen 4 pixels left. 2 pixels in low Mode
+					DebugOpCode("Jump to ");
+					DebugOpCode(Convert::ToString(this->_pc));
+*/
+				} else {
+					switch (op3) {
+						// 00CN: Scroll screen Nibble lines down
 						case 0xC:
-							DebugOpCode("ScrollLeft");
-							this->_screen->ScrollLeft(this->_screen->GetWidth() / 32);
+							this->_screen->ScrollDown(op4);
 							this->_imageUpdated = true;
 							drawed = 1;
 							this->_pc += 2;
 							break;
 
-						// 00FD: Exit Chip Interpreter
-						case 0xD:
-							DebugOpCodeLine(" --- ROM FINISHED --- ");
-							this->_finished = 1;
-							break;
-
-						// 00FE: Disable extended screen mode (64 x 32)
 						case 0xE:
-							if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
-								delete this->_screen;
-								this->_screen = new Screen(64, 32);
-							}
+							switch (op4) {
+							// 00E0: Clears the screen
+								case 0x0:
+									DebugOpCode("Clear Screen");
+									this->_screen->Clear();
+									this->_imageUpdated = true;
+									drawed = 1;
+									this->_pc += 2;
+									break;
 
-							DebugOpCode("LOW");
-							this->_pc += 2;
+								// 00EE: Returns from a subroutine
+								case 0xE:
+									this->_pc = this->_stack->Pop();
+									DebugOpCode("Return ");
+									DebugOpCode(Convert::ToString(this->_pc));
+									break;
+							}
 							break;
 
-						// 00FF: Enable extended screen mode (128 x 64)
 						case 0xF:
-							if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
-								delete this->_screen;
-								this->_screen = new Screen(128, 64);
-							}
+							switch (op4) {
+								// 00FB: Scroll screen 4 pixels right. 2 pixels in low Mode
+								case 0xB:
+									DebugOpCode("ScrollRight");
+									this->_screen->ScrollRight(this->_screen->GetWidth() / 32);
+									this->_imageUpdated = true;
+									drawed = 1;
+									this->_pc += 2;
+									break;
 
-							DebugOpCode("HIGH");
-							this->_pc += 2;
+								// 00FC: Scroll screen 4 pixels left. 2 pixels in low Mode
+								case 0xC:
+									DebugOpCode("ScrollLeft");
+									this->_screen->ScrollLeft(this->_screen->GetWidth() / 32);
+									this->_imageUpdated = true;
+									drawed = 1;
+									this->_pc += 2;
+									break;
+
+								// 00FD: Exit Chip Interpreter
+								case 0xD:
+									DebugOpCodeLine(" --- ROM FINISHED --- ");
+									this->_finished = 1;
+									break;
+
+								// 00FE: Disable extended screen mode (64 x 32)
+								case 0xE:
+									if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
+										delete this->_screen;
+										this->_screen = new Screen(64, 32);
+									}
+
+									DebugOpCode("LOW");
+									this->_pc += 2;
+									break;
+
+								// 00FF: Enable extended screen mode (128 x 64)
+								case 0xF:
+									if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
+										delete this->_screen;
+										this->_screen = new Screen(128, 64);
+									}
+
+									DebugOpCode("HIGH");
+									this->_pc += 2;
+									break;
+							}
 							break;
 					}
-					break;
+				}
 			}
 			break;
 
@@ -347,7 +366,7 @@ bool CPU::RunOpcode() {
 				case 0x4:
 					{
 						int sum = this->_registers->GetV(op2) + this->_registers->GetV(op3);
-						this->_registers->SetV(0xF, (sum >= 256)? 1 : 0);
+						this->_registers->SetV(0xF, (sum > 255)? 1 : 0);
 						this->_registers->SetV(op2, (uint8_t) sum);
 						this->_pc += 2;
 					}
@@ -358,9 +377,10 @@ bool CPU::RunOpcode() {
 				//       Set VF to 01 if a borrow does not occur
 				case 0x5:
 					{
-						int subs = this->_registers->GetV(op2) - this->_registers->GetV(op3);
-						this->_registers->SetV(0xF, (subs >= 0)? 1 : 0);
-						this->_registers->SetV(op2, (uint8_t) subs);
+						uint8_t vx = this->_registers->GetV(op2);
+						uint8_t vy = this->_registers->GetV(op3);
+						this->_registers->SetV(0xF, (vy < vx)? 1 : 0);
+						this->_registers->SetV(op2, (uint8_t) (vx - vy));
 						this->_pc += 2;
 					}
 					break;
@@ -381,9 +401,10 @@ bool CPU::RunOpcode() {
 				//       Set VF to 01 if a borrow does not occur
 				case 0x7:
 					{
-						int subs = this->_registers->GetV(op3) - this->_registers->GetV(op2);
-						this->_registers->SetV(0xF, (subs >= 0)? 1 : 0);
-						this->_registers->SetV(op2, (uint8_t) subs);
+						uint8_t vx = this->_registers->GetV(op2);
+						uint8_t vy = this->_registers->GetV(op3);
+						this->_registers->SetV(0xF, (vx < vy)? 1 : 0);
+						this->_registers->SetV(op2, (uint8_t) (vy - vx));
 						this->_pc += 2;
 					}
 					break;
@@ -497,6 +518,7 @@ bool CPU::RunOpcode() {
 			switch (opcode2) {
 				// EX9E: Skips the next instruction if the key stored in VX is pressed
 				case 0x9E:
+					DebugOpCode("Skip if key pressed");
 					if (this->_input->IsKeyPressed(this->_registers->GetV(op2)))
 						this->_pc += 2;
 
@@ -505,6 +527,7 @@ bool CPU::RunOpcode() {
 
 				// EXA1: Skips the next instruction if the key stored in VX isn't pressed
 				case 0xA1:
+					DebugOpCode("Skip if not key pressed");
 					if (!this->_input->IsKeyPressed(this->_registers->GetV(op2)))
 						this->_pc += 2;
 
@@ -517,6 +540,7 @@ bool CPU::RunOpcode() {
 				// FX0A: A key press is awaited, and then stored in VX
 				case 0x0A:
 					{
+						DebugOpCode("ReadKey");
 						int key = this->_input->GetKey();
 						if (key != -1) {
 							this->_registers->SetV(op2, key);
@@ -553,7 +577,7 @@ bool CPU::RunOpcode() {
 					this->_soundTimer = this->_registers->GetV(op2);
 					this->_pc += 2;
 					break;
-				// FX1E: I = VX + I
+				// FX1E: I = I + VX
 				case 0x1E:
 					this->_registers->SetI(this->_registers->GetI() + this->_registers->GetV(op2));
 					this->_pc += 2;
@@ -595,7 +619,7 @@ bool CPU::RunOpcode() {
 						for (int i = 0; i <= op2; i++)
 							this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
 
-						this->_registers->SetI(offset + op2 + 1);
+//						this->_registers->SetI(offset + op2 + 1);
 						this->_pc += 2;
 					}
 					break;
@@ -608,7 +632,30 @@ bool CPU::RunOpcode() {
 						for (int i = 0; i <= op2; i++)
 							this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
 
-						this->_registers->SetI(offset + op2 + 1);
+//						this->_registers->SetI(offset + op2 + 1);
+						this->_pc += 2;
+					}
+					break;
+
+				// FX75: Stores V0 to VX in RPL memory
+				case 0x75:
+					{
+						int offset = 0x100;
+						for (int i = 0; i <= op2; i++)
+							this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
+
+						this->_pc += 2;
+					}
+					break;
+
+				// FX85: Fills V0 to VX with values from RPL memory
+				case 0x85:
+					{
+						DebugOpCode("Fill V0-VX with RPL Memory");
+						int offset = 0x100;
+						for (int i = 0; i <= op2; i++)
+							this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
+
 						this->_pc += 2;
 					}
 					break;

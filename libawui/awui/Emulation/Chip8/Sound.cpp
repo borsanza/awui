@@ -14,8 +14,9 @@ using namespace awui::Emulation::Chip8;
 #include <unistd.h>
 
 Sound::Sound() {
-	this->_playing = false;
+	this->_playing = true;
 	this->_console_fd = open("/dev/console", O_WRONLY);
+	this->Stop();
 }
 
 Sound::~Sound() {

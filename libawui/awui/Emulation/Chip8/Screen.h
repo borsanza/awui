@@ -16,8 +16,6 @@ namespace awui {
 
 					void Clear();
 
-					void WriteConsole();
-
 					bool SetPixelXOR(int x, int y, bool value);
 					bool GetPixel(int x, int y);
 

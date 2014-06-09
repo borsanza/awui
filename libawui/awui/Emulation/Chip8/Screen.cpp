@@ -28,30 +28,6 @@ void Screen::Clear() {
 		this->_data[i] = 0;
 }
 
-void Screen::WriteConsole() {
-	Console::WriteLine("");
-	Console::Write(" ");
-	for (int j=0; j<this->_width + 2; j++)
-		Console::Write("-");
-	Console::WriteLine("");
-	for (int i=0; i<this->_height; i++) {
-		Console::Write(" |");
-		for (int j=0; j<this->_width; j++) {
-			if (this->_data[(i * this->_width) + j] == 1)
-				Console::Write("0");
-			else
-				Console::Write(" ");
-		}
-		Console::Write("|");
-		Console::WriteLine("");
-	}
-
-	Console::Write(" ");
-	for (int j=0; j<this->_width + 2; j++)
-		Console::Write("-");
-	Console::WriteLine("");
-}
-
 bool Screen::SetPixelXOR(int x, int y, bool value) {
 	x = x % this->_width;
 
