@@ -114,7 +114,8 @@ void Test1::OnTick() {
 	for (int i=0; i<this->_buttons->GetCount(); i++) {
 		Effect * effect = (Effect *)this->_effects->Get(i);
 		Button * button = (Button *)this->_buttons->Get(i);
-		float value3;
+
+		float value3 = 0.0f;
 
 		switch (i % 3) {
 			case 0:

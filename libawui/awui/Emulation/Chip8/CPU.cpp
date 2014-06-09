@@ -106,11 +106,11 @@ void CPU::OnTick() {
 }
 
 void DebugOpCode(String str) {
-	Console::Write(str);
+//	Console::Write(str);
 }
 
 void DebugOpCodeLine(String str) {
-	Console::WriteLine(str);
+//	Console::WriteLine(str);
 }
 
 char DecToHex(int value) {
