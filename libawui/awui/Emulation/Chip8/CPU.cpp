@@ -144,18 +144,14 @@ bool CPU::RunOpcode() {
 
 				int offset = op2 << 8 | opcode2;
 				if ((offset >= 0x200) && (offset <= 0xFFE)) {
-					// No se como se implementa
-					assert(0);
-/*
-					// Offset must be even
-					assert((offset & 0x1) == 0);
-					int offset = op2 << 8 | opcode2;
-
-					this->_pc += offset;
-
+					this->_pc += 22;
+					if ((this->_screen->GetWidth() != 256) ||  (this->_screen->GetHeight() != 192)) {
+						delete this->_screen;
+						this->_screen = new Screen(256 / 4, 192 / 3);
+					}
 					DebugOpCode("Jump to ");
 					DebugOpCode(Convert::ToString(this->_pc));
-*/
+
 				} else {
 					switch (op3) {
 						// 00CN: Scroll screen Nibble lines down
