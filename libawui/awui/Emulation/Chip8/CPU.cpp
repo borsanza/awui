@@ -379,7 +379,7 @@ bool CPU::RunOpcode() {
 					{
 						uint8_t vx = this->_registers->GetV(op2);
 						uint8_t vy = this->_registers->GetV(op3);
-						this->_registers->SetV(0xF, (vy < vx)? 1 : 0);
+						this->_registers->SetV(0xF, (vy <= vx)? 1 : 0);
 						this->_registers->SetV(op2, (uint8_t) (vx - vy));
 						this->_pc += 2;
 					}
@@ -403,7 +403,7 @@ bool CPU::RunOpcode() {
 					{
 						uint8_t vx = this->_registers->GetV(op2);
 						uint8_t vy = this->_registers->GetV(op3);
-						this->_registers->SetV(0xF, (vx < vy)? 1 : 0);
+						this->_registers->SetV(0xF, (vx <= vy)? 1 : 0);
 						this->_registers->SetV(op2, (uint8_t) (vy - vx));
 						this->_pc += 2;
 					}
@@ -572,15 +572,21 @@ bool CPU::RunOpcode() {
 						this->_pc += 2;
 					}
 					break;
+
 				// FX18: Sets the sound timer to VX
 				case 0x18:
 					this->_soundTimer = this->_registers->GetV(op2);
 					this->_pc += 2;
 					break;
+
 				// FX1E: I = I + VX
 				case 0x1E:
-					this->_registers->SetI(this->_registers->GetI() + this->_registers->GetV(op2));
-					this->_pc += 2;
+					{
+						int value = this->_registers->GetI() + this->_registers->GetV(op2);
+						this->_registers->SetV(0xF, (value > 0xFFF) ? 1 : 0);
+						this->_registers->SetI(value & 0xFFF);
+						this->_pc += 2;
+					}
 					break;
 
 				// FX29: Sets I to the location of the sprite for the character in VX.
