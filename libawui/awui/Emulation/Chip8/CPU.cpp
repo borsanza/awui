@@ -11,6 +11,7 @@
 #include <awui/Convert.h>
 #include <awui/Emulation/Chip8/Input.h>
 #include <awui/Emulation/Chip8/Memory.h>
+#include <awui/Emulation/Chip8/Opcode.h>
 #include <awui/Emulation/Chip8/Registers.h>
 #include <awui/Emulation/Chip8/Screen.h>
 #include <awui/Emulation/Chip8/Stack.h>
@@ -120,23 +121,19 @@ char DecToHex(int value) {
 }
 
 bool CPU::RunOpcode() {
-	bool drawed = 0;
-	int opcode1 = this->_memory->ReadByte(this->_pc);
-	int opcode2 = this->_memory->ReadByte(this->_pc + 1);
+	Opcode opcode(this->_memory->ReadByte(this->_pc),
+								this->_memory->ReadByte(this->_pc + 1));
 
-	if ((this->_pc == 0x200) && (opcode1 == 0x12) && (opcode2 == 0x60)) {
+	if ((this->_pc == 0x200) && (opcode.GetOpcode() == 0x1260)) {
 		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {
 			delete this->_screen;
 			this->_screen = new Screen(64, 64);
 		}
-		opcode2 = 0xc0;
+
+		opcode.SetByte2(0xc0);
 	}
 
-	int op1 = opcode1 >> 4;
-	int op2 = opcode1 & 0xf;
-	int op3 = opcode2 >> 4;
-	int op4 = opcode2 & 0xf;
-
+/*
 	DebugOpCode(Convert::ToString(this->_pc));
 	DebugOpCode(" : ");
 	DebugOpCode(Convert::ToString(DecToHex(op1)));
@@ -144,9 +141,11 @@ bool CPU::RunOpcode() {
 	DebugOpCode(Convert::ToString(DecToHex(op3)));
 	DebugOpCode(Convert::ToString(DecToHex(op4)));
 	DebugOpCode(" : ");
-
+*/
+	bool drawed = 0;
   // http://en.wikipedia.org/wiki/CHIP-8
-	switch (op1) {
+	switch (opcode.GetEnum()) {
+/*
 		case 0x0:
 			{
 
@@ -158,95 +157,72 @@ bool CPU::RunOpcode() {
 					}
 				} else {
 					switch (op3) {
-						// 00CN: Scroll screen Nibble lines down
-						case 0xC:
-							this->_screen->ScrollDown(op4);
-							this->_imageUpdated = true;
-							drawed = 1;
-							this->_pc += 2;
-							break;
+*/
 
-						case 0xE:
-							switch (op4) {
-							// 00E0: Clears the screen
-								case 0x0:
-									DebugOpCode("Clear Screen");
-									this->_screen->Clear();
-									this->_imageUpdated = true;
-									drawed = 1;
-									this->_pc += 2;
-									break;
-
-								// 00EE: Returns from a subroutine
-								case 0xE:
-									this->_pc = this->_stack->Pop();
-									DebugOpCode("Return ");
-									DebugOpCode(Convert::ToString(this->_pc));
-									break;
-							}
-							break;
-
-						case 0xF:
-							switch (op4) {
-								// 00FB: Scroll screen 4 pixels right. 2 pixels in low Mode
-								case 0xB:
-									DebugOpCode("ScrollRight");
-									this->_screen->ScrollRight(this->_screen->GetWidth() / 32);
-									this->_imageUpdated = true;
-									drawed = 1;
-									this->_pc += 2;
-									break;
-
-								// 00FC: Scroll screen 4 pixels left. 2 pixels in low Mode
-								case 0xC:
-									DebugOpCode("ScrollLeft");
-									this->_screen->ScrollLeft(this->_screen->GetWidth() / 32);
-									this->_imageUpdated = true;
-									drawed = 1;
-									this->_pc += 2;
-									break;
-
-								// 00FD: Exit Chip Interpreter
-								case 0xD:
-									DebugOpCodeLine(" --- ROM FINISHED --- ");
-									this->_finished = 1;
-									break;
-
-								// 00FE: Disable extended screen mode (64 x 32)
-								case 0xE:
-									if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
-										delete this->_screen;
-										this->_screen = new Screen(64, 32);
-									}
-
-									DebugOpCode("LOW");
-									this->_pc += 2;
-									break;
-
-								// 00FF: Enable extended screen mode (128 x 64)
-								case 0xF:
-									if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
-										delete this->_screen;
-										this->_screen = new Screen(128, 64);
-									}
-
-									DebugOpCode("HIGH");
-									this->_pc += 2;
-									break;
-							}
-							break;
-					}
-				}
-			}
+		// Scroll screen Nibble lines down
+		case Ox00CN:
+			this->_screen->ScrollDown(opcode.GetN());
+			this->_imageUpdated = true;
+			drawed = 1;
+			this->_pc += 2;
 			break;
 
-		// 1NNN: Jumps to address NNN
-		case 0x1:
-			{
-				int offset = op2 << 8 | opcode2;
+		// Clears the screen
+		case Ox00E0:
+			this->_screen->Clear();
+			this->_imageUpdated = true;
+			drawed = 1;
+			this->_pc += 2;
+			break;
 
-				DebugOpCode("Jump to ");
-				DebugOpCode(Convert::ToString(offset));
+		// Returns from a subroutine
+		case Ox00EE:
+			this->_pc = this->_stack->Pop();
+			break;
+
+		// Scroll screen 4 pixels right. 2 pixels in low Mode
+		case Ox00FB:
+			this->_screen->ScrollRight(this->_screen->GetWidth() / 32);
+			this->_imageUpdated = true;
+			drawed = 1;
+			this->_pc += 2;
+			break;
+
+		// Scroll screen 4 pixels left. 2 pixels in low Mode
+		case Ox00FC:
+			this->_screen->ScrollLeft(this->_screen->GetWidth() / 32);
+			this->_imageUpdated = true;
+			drawed = 1;
+			this->_pc += 2;
+			break;
+
+		// Exit Chip Interpreter
+		case Ox00FD:
+			this->_finished = 1;
+			break;
+
+		// Disable extended screen mode (64 x 32)
+		case Ox00FE:
+			if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
+				delete this->_screen;
+				this->_screen = new Screen(64, 32);
+			}
+			this->_pc += 2;
+			break;
+
+		// Enable extended screen mode (128 x 64)
+		case Ox00FF:
+			if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
+				delete this->_screen;
+				this->_screen = new Screen(128, 64);
+			}
+			this->_pc += 2;
+			break;
+
+		// Jumps to address NNN
+		case Ox1NNN:
+			{
+				uint16_t offset = opcode.GetNNN();
 
 				if (offset == this->_pc) {
 						DebugOpCodeLine(" --- ROM FINISHED --- ");
@@ -257,421 +233,374 @@ bool CPU::RunOpcode() {
 			}
 			break;
 
-		// 2NNN: Calls subroutine at NNN
-		case 0x2:
+		// Calls subroutine at NNN
+		case Ox2NNN:
 			{
-				int offset = op2 << 8 | opcode2;
-				DebugOpCode("Call ");
-				DebugOpCode(Convert::ToString(offset));
 				this->_stack->Push(this->_pc + 2);
-				this->_pc = offset;
+				this->_pc = opcode.GetNNN();
 			}
 			break;
 
-		// 3XNN: Skips the next instruction if VX equals NN
-		case 0x3:
+		// Skips the next instruction if VX equals KK
+		case Ox3XKK:
+			if (this->_registers->GetV(opcode.GetX()) == opcode.GetKK())
+				this->_pc += 2;
+
+			this->_pc += 2;
+			break;
+
+		// Skips the next instruction if VX doesn't equal KK
+		case Ox4XKK:
 			{
-				int vx = this->_registers->GetV(op2);
-				DebugOpCode("V");
-				DebugOpCode(Convert::ToString(DecToHex(op2)));
-				DebugOpCode(" == ");
-				DebugOpCode(Convert::ToString(opcode2));
-				DebugOpCode(" (");
-				DebugOpCode(Convert::ToString(vx));
-				DebugOpCode(" == ");
-				DebugOpCode(Convert::ToString(opcode2));
-				DebugOpCode(")");
-				if (vx == opcode2)
+				if (this->_registers->GetV(opcode.GetX()) != opcode.GetKK())
 					this->_pc += 2;
 
 				this->_pc += 2;
 			}
 			break;
 
-		// 4XNN: Skips the next instruction if VX doesn't equal NN
-		case 0x4:
+		// Skips the next instruction if VX equals VY
+		case Ox5XY0:
+			if (this->_registers->GetV(opcode.GetX()) == this->_registers->GetV(opcode.GetY()))
+				this->_pc += 2;
+
+			this->_pc += 2;
+			break;
+
+		// Store number KK in register VX
+		case Ox6XKK:
+			this->_registers->SetV(opcode.GetX(), opcode.GetKK());
+			this->_pc += 2;
+			break;
+
+		// Add the value KK to register VX
+		case Ox7XKK:
 			{
-				int value = this->_registers->GetV(op2);
-				DebugOpCode("V");
-				DebugOpCode(Convert::ToString(DecToHex(op2)));
-				DebugOpCode(" != ");
-				DebugOpCode(Convert::ToString(opcode2));
-				DebugOpCode(" (");
-				DebugOpCode(Convert::ToString(value));
-				DebugOpCode(" != ");
-				DebugOpCode(Convert::ToString(opcode2));
-				DebugOpCode(")");
-
-				if (value != opcode2)
-					this->_pc += 2;
-
+				uint8_t x = opcode.GetX();
+				this->_registers->SetV(x, this->_registers->GetV(x) + opcode.GetKK());
 				this->_pc += 2;
 			}
 			break;
 
-		// 5XY0: Skips the next instruction if VX equals VY
-		case 0x5:
-			assert(op4 == 0);
-			if (this->_registers->GetV(op2) == this->_registers->GetV(op3))
-				this->_pc += 2;
-
+		// VX = VY
+		case Ox8XY0:
+			this->_registers->SetV(opcode.GetX(), this->_registers->GetV(opcode.GetY()));
 			this->_pc += 2;
 			break;
 
-		// 6XNN: Store number NN in register VX
-		case 0x6:
-			DebugOpCode("V");
-			DebugOpCode(Convert::ToString(DecToHex(op2)));
-			DebugOpCode(" = ");
-			DebugOpCode(Convert::ToString(opcode2));
-			this->_registers->SetV(op2, opcode2);
-			this->_pc += 2;
-			break;
-
-		// 7XNN: Add the value NN to register VX
-		case 0x7:
-			this->_registers->SetV(op2, this->_registers->GetV(op2) + opcode2);
-			this->_pc += 2;
-			break;
-
-		case 0x8:
-			switch (op4) {
-				// 8XY0: VX = VY
-				case 0x0:
-					this->_registers->SetV(op2, this->_registers->GetV(op3));
-					this->_pc += 2;
-					break;
-
-				// 8XY1: VX = VX OR VY
-				case 0x1:
-					this->_registers->SetV(op2, this->_registers->GetV(op2) | this->_registers->GetV(op3));
-					this->_pc += 2;
-					break;
-
-				// 8XY2: VX = VX AND VY
-				case 0x2:
-					this->_registers->SetV(op2, this->_registers->GetV(op2) & this->_registers->GetV(op3));
-					this->_pc += 2;
-					break;
-
-				// 8XY3: VX = VX XOR VY
-				case 0x3:
-					this->_registers->SetV(op2, this->_registers->GetV(op2) ^ this->_registers->GetV(op3));
-					this->_pc += 2;
-					break;
-
-				// 8XY4: VX = VX + VY
-				//       Set VF to 01 if a carry occurs
-				//       Set VF to 00 if a carry does not occur
-				case 0x4:
-					{
-						int sum = this->_registers->GetV(op2) + this->_registers->GetV(op3);
-						this->_registers->SetV(0xF, (sum > 255)? 1 : 0);
-						this->_registers->SetV(op2, (uint8_t) sum);
-						this->_pc += 2;
-					}
-					break;
-
-				// 8XY5: VX = VX - VY
-				//       Set VF to 00 if a borrow occurs
-				//       Set VF to 01 if a borrow does not occur
-				case 0x5:
-					{
-						uint8_t vx = this->_registers->GetV(op2);
-						uint8_t vy = this->_registers->GetV(op3);
-						this->_registers->SetV(0xF, (vy <= vx)? 1 : 0);
-						this->_registers->SetV(op2, (uint8_t) (vx - vy));
-						this->_pc += 2;
-					}
-					break;
-
-				// 8XY6: VX = VX >> 1
-				//       Set register VF to the least significant bit prior to the shift
-				case 0x6:
-					{
-						int value = this->_registers->GetV(op2);
-						this->_registers->SetV(0xF, (value & 0x1) ? 1 : 0);
-						this->_registers->SetV(op2, value >> 1);
-						this->_pc += 2;
-					}
-					break;
-
-				// 8XY7: VX = VY - VX
-				//       Set VF to 00 if a borrow occurs
-				//       Set VF to 01 if a borrow does not occur
-				case 0x7:
-					{
-						uint8_t vx = this->_registers->GetV(op2);
-						uint8_t vy = this->_registers->GetV(op3);
-						this->_registers->SetV(0xF, (vx <= vy)? 1 : 0);
-						this->_registers->SetV(op2, (uint8_t) (vy - vx));
-						this->_pc += 2;
-					}
-					break;
-
-				// 8XYE: VX = VX << 1
-				//       Set register VF to the most significant bit prior to the shift
-				case 0xE:
-					{
-						uint8_t value = this->_registers->GetV(op2);
-						this->_registers->SetV(0xF, (value & 128) ? 1 : 0);
-						this->_registers->SetV(op2, value << 1);
-						this->_pc += 2;
-					}
-					break;
-				default:
-					break;
-			}
-			break;
-
-		// 9XY0: Skips the next instruction if VX doesn't equal VY
-		case 0x9:
-			assert(op4 == 0);
-			if (this->_registers->GetV(op2) != this->_registers->GetV(op3))
-				this->_pc += 2;
-
-			this->_pc += 2;
-			break;
-
-		// ANNN: Sets I to the address NNN
-		case 0xA:
+		// VX = VX OR VY
+		case Ox8XY1:
 			{
-				int offset = op2 << 8 | opcode2;
-				DebugOpCode("I = ");
-				DebugOpCode(Convert::ToString(offset));
-				this->_registers->SetI(offset);
+				uint8_t x = opcode.GetX();
+				uint8_t y = opcode.GetY();
+				this->_registers->SetV(x, this->_registers->GetV(x) | this->_registers->GetV(y));
 				this->_pc += 2;
 			}
 			break;
 
-		// BNNN: Jumps to the address NNN plus V0.
-		case 0xB:
+		// VX = VX AND VY
+		case Ox8XY2:
 			{
-				int offset = op2 << 8 | opcode2;
-				offset += this->_registers->GetV(0);
-
-				DebugOpCode("Jump to ");
-				DebugOpCode(Convert::ToString(offset));
-
-				this->_pc = offset;
+				uint8_t x = opcode.GetX();
+				uint8_t y = opcode.GetY();
+				this->_registers->SetV(x, this->_registers->GetV(x) & this->_registers->GetV(y));
+				this->_pc += 2;
 			}
 			break;
 
-		// CXKK: Sets VX to a random number and NN
-		case 0xC:
-			this->_registers->SetV(op2, this->_random->Next(0, 256) & opcode2);
+		// VX = VX XOR VY
+		case Ox8XY3:
+			{
+				uint8_t x = opcode.GetX();
+				uint8_t y = opcode.GetY();
+				this->_registers->SetV(x, this->_registers->GetV(x) ^ this->_registers->GetV(y));
+				this->_pc += 2;
+			}
+			break;
+
+
+		// VX = VX + VY
+		// Set VF to 01 if a carry occurs
+		// Set VF to 00 if a carry does not occur
+		case Ox8XY4:
+			{
+				uint8_t x = opcode.GetX();
+				uint8_t y = opcode.GetY();
+				int sum = this->_registers->GetV(x) + this->_registers->GetV(y);
+				this->_registers->SetV(0xF, (sum > 255)? 1 : 0);
+				this->_registers->SetV(x, (uint8_t) sum);
+				this->_pc += 2;
+			}
+			break;
+
+		// VX = VX - VY
+		// Set VF to 00 if a borrow occurs
+		// Set VF to 01 if a borrow does not occur
+		case Ox8XY5:
+			{
+				uint8_t x = opcode.GetX();
+				uint8_t vx = this->_registers->GetV(x);
+				uint8_t vy = this->_registers->GetV(opcode.GetY());
+				this->_registers->SetV(0xF, (vy <= vx)? 1 : 0);
+				this->_registers->SetV(x, (uint8_t) (vx - vy));
+				this->_pc += 2;
+			}
+			break;
+
+		// VX = VX >> 1
+		// Set register VF to the least significant bit prior to the shift
+		case Ox8XY6:
+			{
+				uint8_t x = opcode.GetX();
+				int value = this->_registers->GetV(x);
+				this->_registers->SetV(0xF, (value & 0x1) ? 1 : 0);
+				this->_registers->SetV(x, value >> 1);
+				this->_pc += 2;
+			}
+			break;
+
+		// VX = VY - VX
+		// Set VF to 00 if a borrow occurs
+		// Set VF to 01 if a borrow does not occur
+		case Ox8XY7:
+			{
+				uint8_t x = opcode.GetX();
+				uint8_t vx = this->_registers->GetV(x);
+				uint8_t vy = this->_registers->GetV(opcode.GetY());
+				this->_registers->SetV(0xF, (vx <= vy)? 1 : 0);
+				this->_registers->SetV(x, (uint8_t) (vy - vx));
+				this->_pc += 2;
+			}
+			break;
+
+		// VX = VX << 1
+		// Set register VF to the most significant bit prior to the shift
+		case Ox8XYE:
+			{
+				uint8_t x = opcode.GetX();
+				uint8_t value = this->_registers->GetV(x);
+				this->_registers->SetV(0xF, (value & 128) ? 1 : 0);
+				this->_registers->SetV(x, value << 1);
+				this->_pc += 2;
+			}
+			break;
+
+		// Skips the next instruction if VX doesn't equal VY
+		case Ox9XY0:
+			if (this->_registers->GetV(opcode.GetX()) != this->_registers->GetV(opcode.GetY()))
+				this->_pc += 2;
+
 			this->_pc += 2;
 			break;
 
-		// DXYN: Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels
+		// Sets I to the address NNN
+		case OxANNN:
+			{
+				this->_registers->SetI(opcode.GetNNN());
+				this->_pc += 2;
+			}
+			break;
+
+		// Jumps to the address NNN plus V0.
+		case OxBNNN:
+			{
+				this->_pc = opcode.GetNNN() + this->_registers->GetV(0);
+			}
+			break;
+
+		// Sets VX to a random number and NN
+		case OxCXKK:
+			this->_registers->SetV(opcode.GetX(), this->_random->Next(0, 256) & opcode.GetKK());
+			this->_pc += 2;
+			break;
+
+		// Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels
 		// and a height of N pixels. Each row of 8 pixels is read as bit-coded
 		// (with the most significant bit of each byte displayed on the left)
 		// starting from memory location I; I value doesn't change after the
 		// execution of this instruction. As described above, VF is set to 1 if any
 		// screen pixels are flipped from set to unset when the sprite is drawn,
 		// and to 0 if that doesn't happen
-		case 0xD: {
-			int x = this->_registers->GetV(op2);
-			int y = this->_registers->GetV(op3);
+		case OxDXYN:
+			{
+				int x = this->_registers->GetV(opcode.GetX());
+				int y = this->_registers->GetV(opcode.GetY());
 
-			int pixelCleared = 0;
-			if (op4 == 0) {
-				for (int y1 = 0; y1 < 16; y1++) {
-					for (int x1 = 0; x1 < 2; x1++) {
-						uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + (y1 * 2) + x1);
+				int pixelCleared = 0;
+				int height = opcode.GetN();
+				if (height == 0) {
+					for (int y1 = 0; y1 < 16; y1++) {
+						for (int x1 = 0; x1 < 2; x1++) {
+							uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + (y1 * 2) + x1);
+							int bit = 1;
+							for (int xbit = 7; xbit >= 0; xbit--) {
+								int val = (p & bit)? 1 : 0;
+								if (this->_screen->SetPixelXOR(x + (x1 * 8) + xbit, y + y1, val))
+									pixelCleared = 1;
+								bit  = bit << 1;
+							}
+						}
+					}
+				 } else {
+					for (int y1 = 0; y1 < height; y1++) {
+						uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + y1);
 						int bit = 1;
-						for (int xbit = 7; xbit >= 0; xbit--) {
+						for (int x1 = 7; x1 >= 0; x1--) {
 							int val = (p & bit)? 1 : 0;
-							if (this->_screen->SetPixelXOR(x + (x1 * 8) + xbit, y + y1, val))
+							if (this->_screen->SetPixelXOR(x + x1, y + y1, val))
 								pixelCleared = 1;
 							bit  = bit << 1;
 						}
 					}
 				}
-			 } else {
-				int height = op4;
-				for (int y1 = 0; y1 < height; y1++) {
-					uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + y1);
-					int bit = 1;
-					for (int x1 = 7; x1 >= 0; x1--) {
-						int val = (p & bit)? 1 : 0;
-						if (this->_screen->SetPixelXOR(x + x1, y + y1, val))
-							pixelCleared = 1;
-						bit  = bit << 1;
-					}
+
+				this->_registers->SetV(0xF, pixelCleared);
+				this->_pc += 2;
+				this->_imageUpdated = true;
+				drawed = 1;
+			}
+			break;
+
+		// Skips the next instruction if the key stored in VX is pressed
+		case OxEX9E:
+			if (this->_input->IsKeyPressed(this->_registers->GetV(opcode.GetX())))
+				this->_pc += 2;
+
+			this->_pc += 2;
+			break;
+
+		// Skips the next instruction if the key stored in VX isn't pressed
+		case OxEXA1:
+			if (!this->_input->IsKeyPressed(this->_registers->GetV(opcode.GetX())))
+				this->_pc += 2;
+
+			this->_pc += 2;
+			break;
+
+		// Sets VX to the value of the delay timer
+		case OxFX07:
+			this->_registers->SetV(opcode.GetX(), this->_delayTimer);
+			this->_pc += 2;
+			break;
+
+		// A key press is awaited, and then stored in VX
+		case OxFX0A:
+			{
+				int key = this->_input->GetKey();
+				if (key != -1) {
+					this->_registers->SetV(opcode.GetX(), key);
+					this->_pc += 2;
 				}
 			}
+			break;
 
-			this->_registers->SetV(0xF, pixelCleared);
-			DebugOpCode("Draw(");
-			DebugOpCode(Convert::ToString(x));
-			DebugOpCode(", ");
-			DebugOpCode(Convert::ToString(y));
-			DebugOpCode(")");
+		// Sets the delay timer to VX
+		case OxFX15:
+			this->_delayTimer = this->_registers->GetV(opcode.GetX());
 			this->_pc += 2;
-			this->_imageUpdated = true;
-			drawed = 1;
+			break;
+
+		// Sets the sound timer to VX
+		case OxFX18:
+			this->_soundTimer = this->_registers->GetV(opcode.GetX());
+			this->_pc += 2;
+			break;
+
+		// I = I + VX
+		case OxFX1E:
+			{
+				int value = this->_registers->GetI() + this->_registers->GetV(opcode.GetX());
+				this->_registers->SetV(0xF, (value > 0xFFF) ? 1 : 0);
+				this->_registers->SetI(value & 0xFFF);
+				this->_pc += 2;
 			}
 			break;
 
-		case 0xE:
-			switch (opcode2) {
-				// EX9E: Skips the next instruction if the key stored in VX is pressed
-				case 0x9E:
-					DebugOpCode("Skip if key pressed");
-					if (this->_input->IsKeyPressed(this->_registers->GetV(op2)))
-						this->_pc += 2;
+		// Sets I to the location of the sprite for the character in VX.
+		// Characters 0-F (in hexadecimal) are represented by a 4x5 font
+		case OxFX29:
+			this->_registers->SetI(this->_registers->GetV(opcode.GetX()) * 5);
+			this->_pc += 2;
+			break;
 
-					this->_pc += 2;
-					break;
-
-				// EXA1: Skips the next instruction if the key stored in VX isn't pressed
-				case 0xA1:
-					DebugOpCode("Skip if not key pressed");
-					if (!this->_input->IsKeyPressed(this->_registers->GetV(op2)))
-						this->_pc += 2;
-
-					this->_pc += 2;
-					break;
+		// Stores the Binary-coded decimal representation of VX, with the
+		// most significant of three digits at the address in I, the middle
+		// digit at I plus 1, and the least significant digit at I plus 2.
+		// (In other words, take the decimal representation of VX, place the
+		// hundreds digit in memory at location in I, the tens digit at
+		// location I+1, and the ones digit at location I+2.)
+		case OxFX33:
+			{
+				int value = this->_registers->GetV(opcode.GetX());
+				int offset = this->_registers->GetI();
+				int units = value % 10;
+				value = value / 10;
+				int tens = value % 10;
+				int hundreds = value / 10;
+				this->_memory->WriteByte(offset, hundreds);
+				this->_memory->WriteByte(offset + 1, tens);
+				this->_memory->WriteByte(offset + 2, units);
+				this->_pc += 2;
 			}
 			break;
-		case 0xF:
-			switch (opcode2) {
-				// FX0A: A key press is awaited, and then stored in VX
-				case 0x0A:
-					{
-						DebugOpCode("ReadKey");
-						int key = this->_input->GetKey();
-						if (key != -1) {
-							this->_registers->SetV(op2, key);
-							this->_pc += 2;
-						}
-					}
-					break;
-				// FX07: Sets VX to the value of the delay timer
-				case 0x07:
-					DebugOpCode("V");
-					DebugOpCode(Convert::ToString(DecToHex(op2)));
-					DebugOpCode(" = ");
-					DebugOpCode(Convert::ToString(this->_delayTimer));
-					DebugOpCode(" (delay Timer)");
-					this->_registers->SetV(op2, this->_delayTimer);
-					this->_pc += 2;
-					break;
-				// FX15: Sets the delay timer to VX
-				case 0x15:
-					{
-						int value = this->_registers->GetV(op2);
-						DebugOpCode("_delayTimer");
-						DebugOpCode(" = ");
-						DebugOpCode(Convert::ToString(value));
-						DebugOpCode(" (V");
-						DebugOpCode(Convert::ToString(DecToHex(op2)));
-						DebugOpCode(")");
-						this->_delayTimer = value;
-						this->_pc += 2;
-					}
-					break;
 
-				// FX18: Sets the sound timer to VX
-				case 0x18:
-					this->_soundTimer = this->_registers->GetV(op2);
-					this->_pc += 2;
-					break;
+		// Stores V0 to VX in memory starting at address I
+		// I is set to I + X + 1 after operation
+		case OxFX55:
+			{
+				uint8_t x = opcode.GetX();
+				int offset = this->_registers->GetI();
+				for (int i = 0; i <= x; i++)
+					this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
 
-				// FX1E: I = I + VX
-				case 0x1E:
-					{
-						int value = this->_registers->GetI() + this->_registers->GetV(op2);
-						this->_registers->SetV(0xF, (value > 0xFFF) ? 1 : 0);
-						this->_registers->SetI(value & 0xFFF);
-						this->_pc += 2;
-					}
-					break;
-
-				// FX29: Sets I to the location of the sprite for the character in VX.
-				// Characters 0-F (in hexadecimal) are represented by a 4x5 font
-				case 0x29:
-					this->_registers->SetI(this->_registers->GetV(op2) * 5);
-					this->_pc += 2;
-					break;
-
-				// FX33: Stores the Binary-coded decimal representation of VX, with the
-				// most significant of three digits at the address in I, the middle
-				// digit at I plus 1, and the least significant digit at I plus 2.
-				// (In other words, take the decimal representation of VX, place the
-				// hundreds digit in memory at location in I, the tens digit at
-				// location I+1, and the ones digit at location I+2.)
-				case 0x33:
-					{
-						int value = this->_registers->GetV(op2);
-						int offset = this->_registers->GetI();
-						int units = value % 10;
-						value = value / 10;
-						int tens = value % 10;
-						int hundreds = value / 10;
-						this->_memory->WriteByte(offset, hundreds);
-						this->_memory->WriteByte(offset + 1, tens);
-						this->_memory->WriteByte(offset + 2, units);
-						this->_pc += 2;
-					}
-					break;
-
-				// FX55: Stores V0 to VX in memory starting at address I
-				//       I is set to I + X + 1 after operation
-				case 0x55:
-					{
-						int offset = this->_registers->GetI();
-						for (int i = 0; i <= op2; i++)
-							this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
-
-//						this->_registers->SetI(offset + op2 + 1);
-						this->_pc += 2;
-					}
-					break;
-
-				// FX65: Fills V0 to VX with values from memory starting at address I
-				//       I is set to I + X + 1 after operation
-				case 0x65:
-					{
-						int offset = this->_registers->GetI();
-						for (int i = 0; i <= op2; i++)
-							this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
-
-//						this->_registers->SetI(offset + op2 + 1);
-						this->_pc += 2;
-					}
-					break;
-
-				// FX75: Stores V0 to VX in RPL memory
-				case 0x75:
-					{
-						int offset = 0x100;
-						for (int i = 0; i <= op2; i++)
-							this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
-
-						this->_pc += 2;
-					}
-					break;
-
-				// FX85: Fills V0 to VX with values from RPL memory
-				case 0x85:
-					{
-						DebugOpCode("Fill V0-VX with RPL Memory");
-						int offset = 0x100;
-						for (int i = 0; i <= op2; i++)
-							this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
-
-						this->_pc += 2;
-					}
-					break;
-				default:
-					break;
+//				this->_registers->SetI(offset + x + 1);
+				this->_pc += 2;
 			}
+			break;
+
+		// Fills V0 to VX with values from memory starting at address I
+		// I is set to I + X + 1 after operation
+		case OxFX65:
+			{
+				uint8_t x = opcode.GetX();
+				int offset = this->_registers->GetI();
+				for (int i = 0; i <= x; i++)
+					this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
+
+//				this->_registers->SetI(offset + x + 1);
+				this->_pc += 2;
+			}
+			break;
+
+		// FX75: Stores V0 to VX in RPL memory
+		case OxFX75:
+			{
+				uint8_t x = opcode.GetX();
+				int offset = 0x100;
+				for (int i = 0; i <= x; i++)
+					this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
+
+				this->_pc += 2;
+			}
+			break;
+
+		// FX85: Fills V0 to VX with values from RPL memory
+		case OxFX85:
+			{
+				uint8_t x = opcode.GetX();
+				int offset = 0x100;
+				for (int i = 0; i <= x; i++)
+					this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
+
+				this->_pc += 2;
+			}
+			break;
+
+		default:
+		case OxNOTIMPLEMENTED:
+			assert(0);
 			break;
 	}
-
-	DebugOpCodeLine("");
 
 	return drawed;
 }
