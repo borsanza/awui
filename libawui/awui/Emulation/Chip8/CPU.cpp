@@ -86,8 +86,7 @@ void CPU::OnTick() {
 		if (this->_finished)
 			break;
 
-		if (this->RunOpcode())
-			break;
+		this->RunOpcode();
 	}
 
 	if (this->_finished)
@@ -106,11 +105,11 @@ void CPU::OnTick() {
 }
 
 void DebugOpCode(String str) {
-	Console::Write(str);
+//	Console::Write(str);
 }
 
 void DebugOpCodeLine(String str) {
-	Console::WriteLine(str);
+//	Console::WriteLine(str);
 }
 
 char DecToHex(int value) {
@@ -125,7 +124,7 @@ bool CPU::RunOpcode() {
 	int opcode1 = this->_memory->ReadByte(this->_pc);
 	int opcode2 = this->_memory->ReadByte(this->_pc + 1);
 
-	if ((this->_pc == 0x200) && (opcode1 = 0x12) && (opcode2 == 0x60)) {
+	if ((this->_pc == 0x200) && (opcode1 == 0x12) && (opcode2 == 0x60)) {
 		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {
 			delete this->_screen;
 			this->_screen = new Screen(64, 64);
