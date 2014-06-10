@@ -124,6 +124,15 @@ bool CPU::RunOpcode() {
 	bool drawed = 0;
 	int opcode1 = this->_memory->ReadByte(this->_pc);
 	int opcode2 = this->_memory->ReadByte(this->_pc + 1);
+
+	if ((this->_pc == 0x200) && (opcode1 = 0x12) && (opcode2 == 0x60)) {
+		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {
+			delete this->_screen;
+			this->_screen = new Screen(64, 64);
+		}
+		opcode2 = 0xc0;
+	}
+
 	int op1 = opcode1 >> 4;
 	int op2 = opcode1 & 0xf;
 	int op3 = opcode2 >> 4;
@@ -143,15 +152,11 @@ bool CPU::RunOpcode() {
 			{
 
 				int offset = op2 << 8 | opcode2;
-				if ((offset >= 0x200) && (offset <= 0xFFE)) {
-					this->_pc += 22;
-					if ((this->_screen->GetWidth() != 256) ||  (this->_screen->GetHeight() != 192)) {
-						delete this->_screen;
-						this->_screen = new Screen(256 / 4, 192 / 3);
+				if ((offset >= 0x100) && (offset <= 0xFFE)) {
+					if (offset == 0x230) {
+						this->_screen->Clear();
+						this->_pc += 2;
 					}
-					DebugOpCode("Jump to ");
-					DebugOpCode(Convert::ToString(this->_pc));
-
 				} else {
 					switch (op3) {
 						// 00CN: Scroll screen Nibble lines down
