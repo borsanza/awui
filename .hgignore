@@ -9,10 +9,9 @@ libawui/libawui_static.a
 samples/awuiDemo/awuiDemo
 samples/awChip8/awChip8
 
-Project.layout
-
 syntax: glob
 */Debug/*
+*.layout
 *.vcproj
 *.sln
 *.ncb
