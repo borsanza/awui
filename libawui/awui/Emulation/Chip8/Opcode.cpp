@@ -102,6 +102,9 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 					}
 					break;
 
+				case 0x1:
+					return Ox01NN;
+
 				case 0x2:
 					if ((chipmode == CHIP8HIRES) && (this->_byte2 == 0x30))
 						return Ox0230;

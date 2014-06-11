@@ -45,8 +45,10 @@ namespace awui {
 
 					Screen * GetScreen();
 
-					bool GetImageUpdated();
+					bool GetImageUpdated() const;
 					void SetImageUpdated(bool mode);
+
+					uint8_t GetChip8Mode() const;
 			};
 		}
 	}

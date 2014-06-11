@@ -26,6 +26,7 @@ namespace awui {
 				Ox00FD,
 				Ox00FE,
 				Ox00FF,
+				Ox01NN,
 				Ox0230,
 				Ox02NN,
 				Ox03NN,

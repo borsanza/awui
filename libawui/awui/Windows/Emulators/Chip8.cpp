@@ -11,6 +11,7 @@
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Chip8/CPU.h>
 #include <awui/Emulation/Chip8/Screen.h>
+#include <awui/Emulation/Chip8/Opcode.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 
@@ -54,14 +55,25 @@ void Chip8::OnPaint(GL* gl) {
 			this->_image = new Drawing::Image(screen->GetWidth(), screen->GetHeight());
 		}
 
-		for (int y = 0; y < screen->GetHeight(); y++) {
-			for (int x = 0; x < screen->GetWidth(); x++) {
-				if (screen->GetPixel(x, y))
-					this->_image->SetPixel(x, y, 50, 88, 4, 255);
-//					this->_image->SetPixel(x, y, 255, 255, 255, 255);
-				else
-					this->_image->SetPixel(x, y, 128, 185, 0, 255);
-//					this->_image->SetPixel(x, y, 0, 0, 0, 255);
+		if (this->_cpu->GetChip8Mode() == MEGACHIP8) {
+			this->SetBackColor(Color::FromArgb(0, 0, 0));
+			for (int y = 0; y < screen->GetHeight(); y++) {
+				for (int x = 0; x < screen->GetWidth(); x++) {
+					if (screen->GetPixel(x, y))
+						this->_image->SetPixel(x, y, 255, 255, 255, 255);
+					else
+						this->_image->SetPixel(x, y, 0, 0, 0, 255);
+				}
+			}
+		} else {
+			this->SetBackColor(Color::FromArgb(163, 218, 2));
+			for (int y = 0; y < screen->GetHeight(); y++) {
+				for (int x = 0; x < screen->GetWidth(); x++) {
+					if (screen->GetPixel(x, y))
+						this->_image->SetPixel(x, y, 50, 88, 4, 255);
+					else
+						this->_image->SetPixel(x, y, 128, 185, 0, 255);
+				}
 			}
 		}
 

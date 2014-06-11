@@ -222,6 +222,20 @@ bool CPU::RunOpcode() {
 			this->_pc += 2;
 			break;
 
+		// I=(nn<<16)+nnnn , PC+=2;
+		case Ox01NN:
+			{
+				this->_pc += 2;
+				int16_t i = opcode.GetX() << 16 | (this->_memory->ReadByte(this->_pc) << 8) | this->_memory->ReadByte(this->_pc + 1);
+				this->_registers->SetI(i);
+				this->_pc += 2;
+			}
+			break;
+
+		case Ox02NN:
+			this->_pc += 2;
+			break;
+
 		// Clear screen in Chip 8 HiRes
 		case Ox0230:
 			this->_screen->Clear();
@@ -630,10 +644,14 @@ Screen * CPU::GetScreen() {
 	return _screen;
 }
 
-bool CPU::GetImageUpdated() {
+bool CPU::GetImageUpdated() const {
 	return this->_imageUpdated;
 }
 
 void CPU::SetImageUpdated(bool mode) {
 	this->_imageUpdated = mode;
+}
+
+uint8_t CPU::GetChip8Mode() const {
+	return this->_chip8mode;
 }
