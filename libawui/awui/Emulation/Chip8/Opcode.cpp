@@ -69,6 +69,9 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 							}
 							break;
 
+						case 0xB:
+							return Ox00BN;
+
 						case 0xC:
 							return Ox00CN;
 

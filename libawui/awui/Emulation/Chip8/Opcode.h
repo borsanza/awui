@@ -18,6 +18,7 @@ namespace awui {
 				OxNOTIMPLEMENTED = -1,
 				Ox0010 = 1,
 				Ox0011,
+				Ox00BN,
 				Ox00CN,
 				Ox00E0,
 				Ox00EE,

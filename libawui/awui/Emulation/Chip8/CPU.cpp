@@ -159,6 +159,14 @@ int CPU::RunOpcode(int iteration) {
 			this->_pc += 2;
 			break;
 
+		// Scroll screen Nibble lines up
+		case Ox00BN:
+			this->_screen->ScrollUp(opcode.GetN());
+			this->_imageUpdated = true;
+			drawed = 1;
+			this->_pc += 2;
+			break;
+
 		// Scroll screen Nibble lines down
 		case Ox00CN:
 			this->_screen->ScrollDown(opcode.GetN());
