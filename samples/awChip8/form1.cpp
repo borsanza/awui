@@ -24,13 +24,12 @@ void Form1::InitializeComponent() {
 	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
 	this->_chip8 = new Chip8();
-	this->_chip8->SetLocation(32, 32);
-	this->_chip8->SetSize((64 + 2) * 2, (32 + 2) * 2);
+//	this->_chip8->SetLocation(32, 32);
+//	this->_chip8->SetSize((64 + 2) * 2, (32 + 2) * 2);
 	this->_chip8->SetDock(DockStyle::Fill);
-
 	this->GetControls()->Add(this->_chip8);
 
-	this->SetSize(650, 350);
+	this->SetSize(((256 + 2) * 2), ((192 + 2) * 2) + 25);
 	this->SetFullscreen(0);
 }
 

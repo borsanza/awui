@@ -46,6 +46,22 @@ bool Screen::SetPixelXOR(int x, int y, bool value) {
 	return r;
 }
 
+bool Screen::SetPixel(int x, int y, int value) {
+	x = x % this->_width;
+
+	int r = false;
+	int offset = (y * this->_width) + x;
+
+	int oldValue = this->_data[offset];
+	if (oldValue != value) {
+		if (value == 0)
+			r = true;
+		this->_data[offset] = value;
+	}
+
+	return r;
+}
+
 bool Screen::GetPixel(int x, int y) {
 	return this->_data[(y * this->_width) + x];
 }
