@@ -7,6 +7,7 @@
 #include "Chip8.h"
 
 #include <awui/Console.h>
+#include <awui/Convert.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Chip8/CPU.h>
@@ -59,10 +60,8 @@ void Chip8::OnPaint(GL* gl) {
 			this->SetBackColor(Color::FromArgb(0, 0, 0));
 			for (int y = 0; y < screen->GetHeight(); y++) {
 				for (int x = 0; x < screen->GetWidth(); x++) {
-					if (screen->GetPixel(x, y))
-						this->_image->SetPixel(x, y, 255, 255, 255, 255);
-					else
-						this->_image->SetPixel(x, y, 0, 0, 0, 255);
+					int pixel = screen->GetPixel(x, y) * 2;
+					this->_image->SetPixel(x, y, pixel, pixel, pixel, 255);
 				}
 			}
 		} else {

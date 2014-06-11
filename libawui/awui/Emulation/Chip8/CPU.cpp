@@ -87,10 +87,9 @@ void CPU::OnTick() {
 		case CHIP8HIRES:
 			ticks = 500.0f;
 			break;
-		case MEGACHIP8:
 		case SUPERCHIP8:
+		case MEGACHIP8:
 			ticks = 1000.0f;
-			break;
 	}
 
 	int iterations = (int) Math::Round(ticks / 60.0f);
@@ -98,7 +97,9 @@ void CPU::OnTick() {
 		if (this->_finished)
 			break;
 
-		this->RunOpcode();
+		int mode = this->RunOpcode(i);
+		if ((mode == -1) && (this->_chip8mode == MEGACHIP8))
+			break;
 	}
 
 	if (this->_finished)
@@ -116,12 +117,12 @@ void CPU::OnTick() {
 		_sound->Stop();
 }
 
-bool CPU::RunOpcode() {
+int CPU::RunOpcode(int iteration) {
 	static Opcode opcode;
 	opcode.SetByte1(this->_memory->ReadByte(this->_pc));
 	opcode.SetByte2(this->_memory->ReadByte(this->_pc + 1));
 
-	opcode.ShowLog(this->_pc);
+//	opcode.ShowLog(this->_pc);
 
 	if ((this->_pc == 0x200) && (opcode.GetOpcode() == 0x1260)) {
 		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {
@@ -168,6 +169,11 @@ bool CPU::RunOpcode() {
 
 		// Clears the screen
 		case Ox00E0:
+			if ((iteration != 1) && (this->_chip8mode == MEGACHIP8)) {
+				drawed = -1;
+				break;
+			}
+
 			this->_screen->Clear();
 			this->_imageUpdated = true;
 			drawed = 1;

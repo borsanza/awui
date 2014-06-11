@@ -62,7 +62,7 @@ bool Screen::SetPixel(int x, int y, int value) {
 	return r;
 }
 
-bool Screen::GetPixel(int x, int y) {
+int Screen::GetPixel(int x, int y) {
 	return this->_data[(y * this->_width) + x];
 }
 

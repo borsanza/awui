@@ -34,7 +34,7 @@ namespace awui {
 					int _finished;
 					bool _imageUpdated;
 
-					bool RunOpcode();
+					int RunOpcode(int iteration);
 
 				public:
 					CPU();
