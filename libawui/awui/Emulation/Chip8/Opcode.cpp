@@ -6,6 +6,10 @@
 
 #include "Opcode.h"
 
+#include <awui/Console.h>
+#include <awui/Convert.h>
+#include <awui/String.h>
+
 using namespace awui::Emulation::Chip8;
 
 Opcode::Opcode() {
@@ -38,6 +42,10 @@ uint8_t Opcode::GetKK() const {
 	return this->_byte2;
 }
 
+uint8_t Opcode::GetNN() const {
+	return this->_byte2;
+}
+
 uint8_t Opcode::GetN() const {
 	return this->_byte2 & 0xf;
 }
@@ -46,12 +54,21 @@ uint16_t Opcode::GetOpcode() const {
 	return (this->_byte1 << 8) | (this->_byte2);
 }
 
-int Opcode::GetEnum() const {
+int Opcode::GetEnum(uint8_t chipmode) const {
 	switch (this->_byte1 >> 4) {
 		case 0x0:
 			switch (this->GetX()) {
 				case 0x0:
 					switch (this->GetY()) {
+						case 0x1:
+							switch (this->GetN()) {
+								case 0x0:
+									return Ox0010;
+								case 0x1:
+									return Ox0011;
+							}
+							break;
+
 						case 0xC:
 							return Ox00CN;
 
@@ -84,6 +101,18 @@ int Opcode::GetEnum() const {
 							break;
 					}
 					break;
+
+				case 0x2:
+					if ((chipmode == CHIP8HIRES) && (this->_byte2 == 0x30))
+						return Ox0230;
+
+					return Ox02NN;
+
+				case 0x3:
+					return Ox03NN;
+
+				case 0x4:
+					return Ox04NN;
 			}
 			break;
 
@@ -192,4 +221,22 @@ int Opcode::GetEnum() const {
 	}
 
 	return OxNOTIMPLEMENTED;
+}
+
+char Opcode::DecToHex(int value) const {
+	if ((value >= 10) && (value <= 15))
+		return ('A' + value - 10);
+
+	return '0' + value;
+}
+
+void Opcode::ShowLog(int pc) const {
+	Console::Write(Convert::ToString(pc));
+	Console::Write(": ");
+	Console::Write(Convert::ToString(DecToHex(this->_byte1 >> 4)));
+	Console::Write(Convert::ToString(DecToHex(this->_byte1 & 0xF)));
+	Console::Write(Convert::ToString(DecToHex(this->_byte2 >> 4)));
+	Console::Write(Convert::ToString(DecToHex(this->_byte2 & 0xF)));
+	Console::Write(": ");
+	Console::WriteLine("");
 }

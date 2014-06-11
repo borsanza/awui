@@ -8,7 +8,6 @@
 
 #include <assert.h>
 #include <awui/Console.h>
-#include <awui/Convert.h>
 #include <awui/Emulation/Chip8/Input.h>
 #include <awui/Emulation/Chip8/Memory.h>
 #include <awui/Emulation/Chip8/Opcode.h>
@@ -35,6 +34,7 @@ CPU::CPU() {
 	this->_finished = 0;
 	this->_delayTimer = 0;
 	this->_soundTimer = 0;
+	this->_chip8mode = CHIP8;
 
 	uint8_t fontHex[80] = {
 		0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -80,9 +80,20 @@ void CPU::OnTick() {
 	if (this->_soundTimer)
 		this->_soundTimer--;
 
-	// La frecuencia parece ser 500Hz en Chip 8 y
-	// 1000Hz en SuperChip 8
-	int iterations = (int) Math::Round(500.0f * (this->GetScreen()->GetWidth() / 64) / 60.0f);
+	float ticks;
+	switch (this->_chip8mode) {
+		default:
+		case CHIP8:
+		case CHIP8HIRES:
+			ticks = 500.0f;
+			break;
+		case MEGACHIP8:
+		case SUPERCHIP8:
+			ticks = 1000.0f;
+			break;
+	}
+
+	int iterations = (int) Math::Round(ticks / 60.0f);
 	for (int i = 0; i < iterations; i++) {
 		if (this->_finished)
 			break;
@@ -105,60 +116,47 @@ void CPU::OnTick() {
 		_sound->Stop();
 }
 
-void DebugOpCode(String str) {
-//	Console::Write(str);
-}
-
-void DebugOpCodeLine(String str) {
-//	Console::WriteLine(str);
-}
-
-char DecToHex(int value) {
-	if ((value >= 10) && (value <= 15))
-		return ('A' + value - 10);
-
-	return '0' + value;
-}
-
 bool CPU::RunOpcode() {
 	static Opcode opcode;
 	opcode.SetByte1(this->_memory->ReadByte(this->_pc));
 	opcode.SetByte2(this->_memory->ReadByte(this->_pc + 1));
 
+	opcode.ShowLog(this->_pc);
+
 	if ((this->_pc == 0x200) && (opcode.GetOpcode() == 0x1260)) {
 		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {
 			delete this->_screen;
 			this->_screen = new Screen(64, 64);
+			this->_chip8mode = CHIP8HIRES;
 		}
 
 		opcode.SetByte2(0xc0);
 	}
 
-/*
-	DebugOpCode(Convert::ToString(this->_pc));
-	DebugOpCode(" : ");
-	DebugOpCode(Convert::ToString(DecToHex(op1)));
-	DebugOpCode(Convert::ToString(DecToHex(op2)));
-	DebugOpCode(Convert::ToString(DecToHex(op3)));
-	DebugOpCode(Convert::ToString(DecToHex(op4)));
-	DebugOpCode(" : ");
-*/
 	bool drawed = 0;
-  // http://en.wikipedia.org/wiki/CHIP-8
-	switch (opcode.GetEnum()) {
-/*
-		case 0x0:
-			{
 
-				int offset = op2 << 8 | opcode2;
-				if ((offset >= 0x100) && (offset <= 0xFFE)) {
-					if (offset == 0x230) {
-						this->_screen->Clear();
-						this->_pc += 2;
-					}
-				} else {
-					switch (op3) {
-*/
+	switch (opcode.GetEnum(this->_chip8mode)) {
+		// Disable Megachip mode
+		case Ox0010:
+			if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
+				delete this->_screen;
+				this->_screen = new Screen(64, 32);
+				this->_chip8mode = CHIP8;
+			}
+
+			this->_pc += 2;
+			break;
+
+		// Enable Megachip mode
+		case Ox0011:
+			if ((this->_screen->GetWidth() != 256) ||  (this->_screen->GetHeight() != 192)) {
+				delete this->_screen;
+				this->_screen = new Screen(256, 192);
+				this->_chip8mode = MEGACHIP8;
+			}
+
+			this->_pc += 2;
+			break;
 
 		// Scroll screen Nibble lines down
 		case Ox00CN:
@@ -207,7 +205,9 @@ bool CPU::RunOpcode() {
 			if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
 				delete this->_screen;
 				this->_screen = new Screen(64, 32);
+				this->_chip8mode = CHIP8;
 			}
+
 			this->_pc += 2;
 			break;
 
@@ -216,7 +216,27 @@ bool CPU::RunOpcode() {
 			if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
 				delete this->_screen;
 				this->_screen = new Screen(128, 64);
+				this->_chip8mode = SUPERCHIP8;
 			}
+
+			this->_pc += 2;
+			break;
+
+		// Clear screen in Chip 8 HiRes
+		case Ox0230:
+			this->_screen->Clear();
+			this->_pc += 2;
+			break;
+
+		// Set Sprite-width to nn		(SPRW  nn)
+		case Ox03NN:
+			this->_spriteWidth = opcode.GetNN();
+			this->_pc += 2;
+			break;
+
+		// Set Sprite-height to nn	(SPRH  nn)
+		case Ox04NN:
+			this->_spriteHeight = opcode.GetNN();
 			this->_pc += 2;
 			break;
 
@@ -226,7 +246,7 @@ bool CPU::RunOpcode() {
 				uint16_t offset = opcode.GetNNN();
 
 				if (offset == this->_pc) {
-						DebugOpCodeLine(" --- ROM FINISHED --- ");
+						Console::WriteLine(" --- ROM FINISHED --- ");
 						this->_finished = 1;
 				}
 

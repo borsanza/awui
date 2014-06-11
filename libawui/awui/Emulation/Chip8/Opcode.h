@@ -7,8 +7,18 @@ namespace awui {
 	namespace Emulation {
 		namespace Chip8 {
 			enum {
+				CHIP8 = 1,
+				SUPERCHIP8,
+				CHIP8HIRES,
+				MEGACHIP8,
+			};
+
+			// http://en.wikipedia.org/wiki/CHIP-8
+			enum {
 				OxNOTIMPLEMENTED = -1,
-				Ox00CN = 1,
+				Ox0010 = 1,
+				Ox0011,
+				Ox00CN,
 				Ox00E0,
 				Ox00EE,
 				Ox00FB,
@@ -16,6 +26,10 @@ namespace awui {
 				Ox00FD,
 				Ox00FE,
 				Ox00FF,
+				Ox0230,
+				Ox02NN,
+				Ox03NN,
+				Ox04NN,
 				Ox1NNN,
 				Ox2NNN,
 				Ox3XKK,
@@ -57,6 +71,8 @@ namespace awui {
 					uint8_t _byte1;
 					uint8_t _byte2;
 
+					char DecToHex(int value) const;
+
 				public:
 					Opcode();
 					~Opcode();
@@ -69,9 +85,12 @@ namespace awui {
 					uint8_t GetY() const;
 					uint16_t GetNNN() const;
 					uint8_t GetKK() const;
+					uint8_t GetNN() const;
 					uint8_t GetN() const;
 
-					int GetEnum() const;
+					int GetEnum(uint8_t chipmode) const;
+
+					void ShowLog(int pc) const;
 			};
 		}
 	}

@@ -26,8 +26,11 @@ namespace awui {
 					Input * _input;
 					Stack * _stack;
 					Sound * _sound;
+					uint8_t _chip8mode;
 					uint8_t _delayTimer;
 					uint8_t _soundTimer;
+					uint8_t _spriteWidth;
+					uint8_t _spriteHeight;
 					int _finished;
 					bool _imageUpdated;
 
