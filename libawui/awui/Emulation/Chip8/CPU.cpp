@@ -121,8 +121,9 @@ char DecToHex(int value) {
 }
 
 bool CPU::RunOpcode() {
-	Opcode opcode(this->_memory->ReadByte(this->_pc),
-								this->_memory->ReadByte(this->_pc + 1));
+	static Opcode opcode;
+	opcode.SetByte1(this->_memory->ReadByte(this->_pc));
+	opcode.SetByte2(this->_memory->ReadByte(this->_pc + 1));
 
 	if ((this->_pc == 0x200) && (opcode.GetOpcode() == 0x1260)) {
 		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {

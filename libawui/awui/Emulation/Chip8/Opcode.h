@@ -58,9 +58,10 @@ namespace awui {
 					uint8_t _byte2;
 
 				public:
-					Opcode(uint8_t byte1, uint8_t byte2);
+					Opcode();
 					~Opcode();
 
+					void SetByte1(uint8_t byte1);
 					void SetByte2(uint8_t byte2);
 
 					uint16_t GetOpcode() const;

@@ -6,16 +6,16 @@
 
 #include "Opcode.h"
 
-#include <assert.h>
-
 using namespace awui::Emulation::Chip8;
 
-Opcode::Opcode(uint8_t byte1, uint8_t byte2) {
-	this->_byte1 = byte1;
-	this->_byte2 = byte2;
+Opcode::Opcode() {
 }
 
 Opcode::~Opcode() {
+}
+
+void Opcode::SetByte1(uint8_t byte1) {
+	this->_byte1 = byte1;
 }
 
 void Opcode::SetByte2(uint8_t byte2) {
@@ -100,8 +100,11 @@ int Opcode::GetEnum() const {
 			return Ox4XKK;
 
 		case 0x5:
-			assert(this->GetN() == 0);
-			return Ox5XY0;
+			switch (this->GetN()) {
+				case 0x0:
+					return Ox5XY0;
+			}
+			break;
 
 		case 0x6:
 			return Ox6XKK;
@@ -133,8 +136,11 @@ int Opcode::GetEnum() const {
 			break;
 
 		case 0x9:
-			assert(this->GetN() == 0);
-			return Ox9XY0;
+			switch (this->GetN()) {
+				case 0x0:
+					return Ox9XY0;
+			}
+			break;
 
 		case 0xA:
 			return OxANNN;
