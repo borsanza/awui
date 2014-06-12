@@ -175,6 +175,8 @@ int CPU::RunOpcode(int iteration) {
 			this->_pc += 2;
 			break;
 
+		// Chip 8 HiRes
+		case Ox0230:
 		// Clears the screen
 		case Ox00E0:
 			if ((iteration != 1) && (this->_chip8mode == MEGACHIP8)) {
@@ -183,8 +185,6 @@ int CPU::RunOpcode(int iteration) {
 			}
 
 			this->_screen->Clear();
-			this->_imageUpdated = true;
-			drawed = 1;
 			this->_pc += 2;
 			break;
 
@@ -247,12 +247,6 @@ int CPU::RunOpcode(int iteration) {
 			break;
 
 		case Ox02NN:
-			this->_pc += 2;
-			break;
-
-		// Clear screen in Chip 8 HiRes
-		case Ox0230:
-			this->_screen->Clear();
 			this->_pc += 2;
 			break;
 

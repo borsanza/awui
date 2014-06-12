@@ -60,7 +60,7 @@ void Chip8::OnPaint(GL* gl) {
 			this->SetBackColor(Color::FromArgb(0, 0, 0));
 			for (int y = 0; y < screen->GetHeight(); y++) {
 				for (int x = 0; x < screen->GetWidth(); x++) {
-					int pixel = screen->GetPixel(x, y) * 2;
+					int pixel = screen->GetPixel(x, y) * 255;
 					this->_image->SetPixel(x, y, pixel, pixel, pixel, 255);
 				}
 			}
