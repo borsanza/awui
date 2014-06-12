@@ -1,4 +1,3 @@
-#pragma once
 #ifndef _AWUI_STRING_H
 #define _AWUI_STRING_H
 
