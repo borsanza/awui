@@ -61,6 +61,7 @@ namespace awui {
 				OxFX18,
 				OxFX1E,
 				OxFX29,
+				OxFX30,
 				OxFX33,
 				OxFX55,
 				OxFX65,

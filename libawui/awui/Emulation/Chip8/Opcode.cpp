@@ -212,6 +212,8 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 					return OxFX1E;
 				case 0x29:
 					return OxFX29;
+				case 0x30:
+					return OxFX30;
 				case 0x33:
 					return OxFX33;
 				case 0x55:
