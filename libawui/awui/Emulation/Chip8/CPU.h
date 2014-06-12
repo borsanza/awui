@@ -28,8 +28,8 @@ namespace awui {
 					uint8_t _chip8mode;
 					uint8_t _delayTimer;
 					uint8_t _soundTimer;
-					uint8_t _spriteWidth;
-					uint8_t _spriteHeight;
+					uint16_t _spriteWidth;
+					uint16_t _spriteHeight;
 					int _finished;
 					bool _imageUpdated;
 

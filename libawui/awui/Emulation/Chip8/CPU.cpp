@@ -286,12 +286,16 @@ int CPU::RunOpcode(int iteration) {
 		// Set Sprite-width to nn		(SPRW  nn)
 		case Ox03NN:
 			this->_spriteWidth = opcode.GetNN();
+			if (this->_spriteWidth == 0)
+				this->_spriteWidth = 256;
 			this->_pc += 2;
 			break;
 
 		// Set Sprite-height to nn	(SPRH  nn)
 		case Ox04NN:
 			this->_spriteHeight = opcode.GetNN();
+			if (this->_spriteHeight == 0)
+				this->_spriteHeight = 256;
 			this->_pc += 2;
 			break;
 
