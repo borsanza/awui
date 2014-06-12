@@ -100,10 +100,9 @@ void Screen::ScrollRight(int columns) {
 void Screen::ScrollUp(int lines) {
 	for (int scroll = 0; scroll < lines; scroll++) {
 		for (int j = 0; j < this->_width; j++) {
-			int aux = this->_data[j];
 			for (int i = 0; i < this->_height - 1; i++)
 				this->_data[(i * this->_width) + j] = this->_data[((i + 1) * this->_width) + j];
-			this->_data[((this->_height - 1) * this->_width) + j] = aux;
+			this->_data[((this->_height - 1) * this->_width) + j] = 0;
 		}
 	}
 }
@@ -111,10 +110,9 @@ void Screen::ScrollUp(int lines) {
 void Screen::ScrollDown(int lines) {
 	for (int scroll = 0; scroll < lines; scroll++) {
 		for (int j = 0; j < this->_width; j++) {
-			int aux = this->_data[((this->_height - 1) * this->_width) + j];
 			for (int i = this->_height - 1; i >= 1; i--)
 				this->_data[(i * this->_width) + j] = this->_data[((i - 1) * this->_width) + j];
-			this->_data[j] = aux;
+			this->_data[j] = 0;
 		}
 	}
 }

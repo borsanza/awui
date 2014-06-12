@@ -49,14 +49,15 @@ void CPU::LoadRom(const String file) {
 
 void CPU::Reset() {
 	this->_registers->Clear();
-	this->_screen->Clear();
+	delete this->_screen;
+	this->_screen = new Screen(64, 32);
 	this->_stack->Clear();
 	this->_delayTimer = 0;
 	this->_soundTimer = 0;
 	this->_finished = 0;
 	this->_pc = 0x200;
 	this->_chip8mode = CHIP8;
-	this->_imageUpdated = true;
+	this->_imageUpdated = false;
 	this->_sound->Stop();
 
 	this->_memory->Reload();
@@ -128,6 +129,7 @@ void CPU::OnTick() {
 
 int CPU::RunOpcode(int iteration) {
 	static Opcode opcode;
+
 	opcode.SetByte1(this->_memory->ReadByte(this->_pc));
 	opcode.SetByte2(this->_memory->ReadByte(this->_pc + 1));
 
@@ -137,9 +139,9 @@ int CPU::RunOpcode(int iteration) {
 		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {
 			delete this->_screen;
 			this->_screen = new Screen(64, 64);
-			this->_chip8mode = CHIP8HIRES;
 		}
 
+		this->_chip8mode = CHIP8HIRES;
 		opcode.SetByte2(0xc0);
 	}
 
@@ -151,9 +153,9 @@ int CPU::RunOpcode(int iteration) {
 			if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
 				delete this->_screen;
 				this->_screen = new Screen(64, 32);
-				this->_chip8mode = CHIP8;
 			}
 
+			this->_chip8mode = CHIP8;
 			this->_pc += 2;
 			break;
 
@@ -162,9 +164,9 @@ int CPU::RunOpcode(int iteration) {
 			if ((this->_screen->GetWidth() != 256) ||  (this->_screen->GetHeight() != 192)) {
 				delete this->_screen;
 				this->_screen = new Screen(256, 192);
-				this->_chip8mode = MEGACHIP8;
 			}
 
+			this->_chip8mode = MEGACHIP8;
 			this->_pc += 2;
 			break;
 
@@ -228,9 +230,9 @@ int CPU::RunOpcode(int iteration) {
 			if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
 				delete this->_screen;
 				this->_screen = new Screen(64, 32);
-				this->_chip8mode = CHIP8;
 			}
 
+			this->_chip8mode = CHIP8;
 			this->_pc += 2;
 			break;
 
@@ -239,9 +241,9 @@ int CPU::RunOpcode(int iteration) {
 			if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
 				delete this->_screen;
 				this->_screen = new Screen(128, 64);
-				this->_chip8mode = SUPERCHIP8;
 			}
 
+			this->_chip8mode = SUPERCHIP8;
 			this->_pc += 2;
 			break;
 
