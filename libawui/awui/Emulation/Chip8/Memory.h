@@ -13,6 +13,7 @@ namespace awui {
 			class Memory {
 				private:
 					IO::MemoryStream * _memory;
+					String _file;
 
 				public:
 					Memory(int32_t capacity);
@@ -22,6 +23,8 @@ namespace awui {
 
 					uint8_t ReadByte(int pos);
 					void WriteByte(int pos, uint8_t value);
+
+					void Reload();
 			};
 		}
 	}

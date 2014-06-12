@@ -42,15 +42,21 @@ void MemoryStream::SetLength(int64_t value) {
 	this->_length = value;
 }
 
+void MemoryStream::Clear() {
+	for (int32_t i = 0; i < this->_capacity; i++)
+		this->_data[i] = 0;
+}
+
 void MemoryStream::SetCapacity(int32_t value) {
+	if (this->_capacity == value)
+		return;
+
 	if (this->_data)
 		free(this->_data);
 
 	this->_data = (uint8_t *) malloc (sizeof(uint8_t *) * value);
-	for (int32_t i = 0; i < value; i++)
-		this->_data[i] = 0;
-
 	this->_capacity = value;
+	this->Clear();
 }
 
 int32_t MemoryStream::GetCapacity() {

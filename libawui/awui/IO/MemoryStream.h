@@ -29,6 +29,8 @@ namespace awui {
 
 				virtual uint8_t ReadByte();
 				virtual void WriteByte(uint8_t value);
+
+				void Clear();
 		};
 	}
 }

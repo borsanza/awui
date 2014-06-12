@@ -1,9 +1,6 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
 #pragma once
-#ifndef __AWUISTRING_H__
-#define __AWUISTRING_H__
+#ifndef _AWUI_STRING_H
+#define _AWUI_STRING_H
 
 #include <string>
 #include <awui/Object.h>
@@ -15,7 +12,6 @@ namespace awui {
 		private:
 			std::string value;
 		public:
-			static const String Empty;
 			String();
 			String(const char * value);
 			virtual ~String();

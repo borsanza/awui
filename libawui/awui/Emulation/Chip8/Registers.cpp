@@ -13,14 +13,18 @@ using namespace awui::Emulation::Chip8;
 Registers::Registers(unsigned char n) {
 	this->_length = n;
 	this->_v = (unsigned char *) malloc (sizeof(unsigned char *) * n);
-	for (unsigned char i = 0; i < n; i++)
-		this->_v[i] = 0;
-
-	this->_i = 0;
+	this->Clear();
 }
 
 Registers::~Registers() {
 	free(this->_v);
+}
+
+void Registers::Clear() {
+	for (unsigned char i = 0; i < this->_length; i++)
+		this->_v[i] = 0;
+
+	this->_i = 0;
 }
 
 void Registers::SetV(unsigned char pos, unsigned char value) {

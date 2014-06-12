@@ -29,12 +29,37 @@ CPU::CPU() {
 	this->_stack = new Stack();
 	this->_random = new Random();
 	this->_sound = new Sound();
-	this->_pc = 0x200;
-	this->_imageUpdated = true;
-	this->_finished = 0;
+
+	this->Reset();
+}
+
+CPU::~CPU() {
+	delete this->_input;
+	delete this->_memory;
+	delete this->_random;
+	delete this->_registers;
+	delete this->_screen;
+	delete this->_stack;
+	delete this->_sound;
+}
+
+void CPU::LoadRom(const String file) {
+	this->_memory->LoadRom(file);
+}
+
+void CPU::Reset() {
+	this->_registers->Clear();
+	this->_screen->Clear();
+	this->_stack->Clear();
 	this->_delayTimer = 0;
 	this->_soundTimer = 0;
+	this->_finished = 0;
+	this->_pc = 0x200;
 	this->_chip8mode = CHIP8;
+	this->_imageUpdated = true;
+	this->_sound->Stop();
+
+	this->_memory->Reload();
 
 	uint8_t fontHex[80] = {
 		0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -59,20 +84,6 @@ CPU::CPU() {
 		this->_memory->WriteByte(i, fontHex[i]);
 }
 
-CPU::~CPU() {
-	delete this->_input;
-	delete this->_memory;
-	delete this->_random;
-	delete this->_registers;
-	delete this->_screen;
-	delete this->_stack;
-	delete this->_sound;
-}
-
-void CPU::LoadRom(const String file) {
-	this->_memory->LoadRom(file);
-}
-
 void CPU::OnTick() {
 	if (this->_delayTimer)
 		this->_delayTimer--;
@@ -90,6 +101,7 @@ void CPU::OnTick() {
 		case SUPERCHIP8:
 		case MEGACHIP8:
 			ticks = 1000.0f;
+			break;
 	}
 
 	int iterations = (int) Math::Round(ticks / 60.0f);
@@ -105,16 +117,13 @@ void CPU::OnTick() {
 	if (this->_finished)
 		this->_finished++;
 
-	if (this->_finished > 300) {
-		this->_screen->Clear();
-		this->_finished = 0;
-		this->_pc = 0x200;
-	}
-
 	if (this->_soundTimer)
-		_sound->Play();
+		this->_sound->Play();
 	else
-		_sound->Stop();
+		this->_sound->Stop();
+
+	if (this->_finished > 300)
+		this->Reset();
 }
 
 int CPU::RunOpcode(int iteration) {

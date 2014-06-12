@@ -28,3 +28,7 @@ int Stack::Pop() {
 	delete o;
 	return r;
 }
+
+void Stack::Clear() {
+	this->_stack->Clear();
+}

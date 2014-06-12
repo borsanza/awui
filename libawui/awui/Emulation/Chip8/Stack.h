@@ -29,6 +29,7 @@ namespace awui {
 
 					void Push(int value);
 					int Pop();
+					void Clear();
 			};
 		}
 	}

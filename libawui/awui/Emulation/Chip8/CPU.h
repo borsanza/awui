@@ -18,7 +18,6 @@ namespace awui {
 			class CPU {
 				private:
 					int _pc;
-					int _sp;
 					Screen * _screen;
 					Registers * _registers;
 					Memory * _memory;
@@ -49,6 +48,8 @@ namespace awui {
 					void SetImageUpdated(bool mode);
 
 					uint8_t GetChip8Mode() const;
+
+					void Reset();
 			};
 		}
 	}

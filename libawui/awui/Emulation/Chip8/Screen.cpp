@@ -24,7 +24,8 @@ Screen::~Screen() {
 }
 
 void Screen::Clear() {
-	for (int i = 0; i < this->_width * this->_height; i++)
+	int length = this->_width * this->_height;
+	for (int i = 0; i < length; i++)
 		this->_data[i] = 0;
 }
 

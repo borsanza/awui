@@ -14,6 +14,8 @@ namespace awui {
 					Registers(unsigned char n);
 					~Registers();
 
+					void Clear();
+
 					void SetV(unsigned char pos, unsigned char value);
 					unsigned char GetV(unsigned char pos);
 
