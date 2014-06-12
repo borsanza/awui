@@ -1,26 +1,28 @@
 #ifndef _AWUI_EMULATION_CHIP8_REGISTERS_H
 #define _AWUI_EMULATION_CHIP8_REGISTERS_H
 
+#include <stdint.h>
+
 namespace awui {
 	namespace Emulation {
 		namespace Chip8 {
 			class Registers {
 				private:
-					unsigned char * _v;
-					unsigned char _length;
-					unsigned int _i;
+					uint8_t * _v;
+					uint8_t _length;
+					uint16_t _i;
 
 				public:
-					Registers(unsigned char n);
+					Registers(uint8_t n);
 					~Registers();
 
 					void Clear();
 
-					void SetV(unsigned char pos, unsigned char value);
-					unsigned char GetV(unsigned char pos);
+					void SetV(uint8_t pos, uint8_t value);
+					uint8_t GetV(uint8_t pos);
 
-					void SetI(unsigned int value);
-					unsigned int GetI();
+					void SetI(uint16_t value);
+					uint16_t GetI();
 			};
 		}
 	}

@@ -104,7 +104,7 @@ void CPU::Reset() {
 		this->_memory->WriteByte(i, fontHex[i]);
 
 	for (int i = 0; i < 160; i++)
-		this->_memory->WriteByte(i + 80, superFontHex[i]);
+		this->_memory->WriteByte(i + 256, superFontHex[i]);
 }
 
 void CPU::OnTick() {
@@ -155,7 +155,7 @@ int CPU::RunOpcode(int iteration) {
 	opcode.SetByte1(this->_memory->ReadByte(this->_pc));
 	opcode.SetByte2(this->_memory->ReadByte(this->_pc + 1));
 
-	opcode.ShowLog(this->_pc);
+//	opcode.ShowLog(this->_pc);
 
 	if ((this->_pc == 0x200) && (opcode.GetOpcode() == 0x1260)) {
 		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {
@@ -504,10 +504,11 @@ int CPU::RunOpcode(int iteration) {
 
 				int pixelCleared = 0;
 				int height = opcode.GetN();
+				uint16_t i = this->_registers->GetI();
 				if (this->_chip8mode == MEGACHIP8) {
 						for (int y1 = 0; y1 < this->_spriteHeight; y1++) {
 							for (int x1 = 0; x1 < this->_spriteWidth; x1++) {
-								uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + (y1 * this->_spriteWidth) + x1);
+								uint8_t p = this->_memory->ReadByte(i + (y1 * this->_spriteWidth) + x1);
 								if (this->_screen->SetPixel(x + x1, y + y1, p))
 									pixelCleared = 1;
 							}
@@ -516,7 +517,7 @@ int CPU::RunOpcode(int iteration) {
 					if (height == 0) {
 						for (int y1 = 0; y1 < 16; y1++) {
 							for (int x1 = 0; x1 < 2; x1++) {
-								uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + (y1 * 2) + x1);
+								uint8_t p = this->_memory->ReadByte(i + (y1 * 2) + x1);
 								int bit = 1;
 								for (int xbit = 7; xbit >= 0; xbit--) {
 									int val = (p & bit)? 1 : 0;
@@ -528,7 +529,7 @@ int CPU::RunOpcode(int iteration) {
 						}
 					 } else {
 						for (int y1 = 0; y1 < height; y1++) {
-							uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + y1);
+							uint8_t p = this->_memory->ReadByte(i + y1);
 							int bit = 1;
 							for (int x1 = 7; x1 >= 0; x1--) {
 								int val = (p & bit)? 1 : 0;
@@ -611,7 +612,7 @@ int CPU::RunOpcode(int iteration) {
 
 		// Point I to 10-byte font sprite
 		case OxFX30:
-			this->_registers->SetI(80 + (this->_registers->GetV(opcode.GetX()) * 10));
+			this->_registers->SetI(256 + (this->_registers->GetV(opcode.GetX()) * 10));
 			this->_pc += 2;
 			break;
 
@@ -668,7 +669,7 @@ int CPU::RunOpcode(int iteration) {
 		case OxFX75:
 			{
 				uint8_t x = opcode.GetX();
-				int offset = 0x100;
+				int offset = 128;
 				for (int i = 0; i <= x; i++)
 					this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
 
@@ -680,7 +681,7 @@ int CPU::RunOpcode(int iteration) {
 		case OxFX85:
 			{
 				uint8_t x = opcode.GetX();
-				int offset = 0x100;
+				int offset = 128;
 				for (int i = 0; i <= x; i++)
 					this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
 

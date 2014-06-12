@@ -10,9 +10,9 @@
 
 using namespace awui::Emulation::Chip8;
 
-Registers::Registers(unsigned char n) {
+Registers::Registers(uint8_t n) {
 	this->_length = n;
-	this->_v = (unsigned char *) malloc (sizeof(unsigned char *) * n);
+	this->_v = (uint8_t *) malloc (sizeof(uint8_t *) * n);
 	this->Clear();
 }
 
@@ -21,24 +21,24 @@ Registers::~Registers() {
 }
 
 void Registers::Clear() {
-	for (unsigned char i = 0; i < this->_length; i++)
+	for (uint8_t i = 0; i < this->_length; i++)
 		this->_v[i] = 0;
 
 	this->_i = 0;
 }
 
-void Registers::SetV(unsigned char pos, unsigned char value) {
+void Registers::SetV(uint8_t pos, uint8_t value) {
 	this->_v[pos] = value;
 }
 
-unsigned char Registers::GetV(unsigned char pos) {
+uint8_t Registers::GetV(uint8_t pos) {
 	return this->_v[pos];
 }
 
-void Registers::SetI(unsigned int value) {
+void Registers::SetI(uint16_t value) {
 	this->_i = value;
 }
 
-unsigned int Registers::GetI() {
+uint16_t Registers::GetI() {
 	return this->_i;
 }
