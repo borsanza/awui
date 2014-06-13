@@ -8,6 +8,7 @@
 
 #include <assert.h>
 #include <awui/Console.h>
+#include <awui/Drawing/Color.h>
 #include <awui/Emulation/Chip8/Input.h>
 #include <awui/Emulation/Chip8/Memory.h>
 #include <awui/Emulation/Chip8/Opcode.h>
@@ -19,7 +20,10 @@
 #include <awui/Random.h>
 #include <awui/String.h>
 
+using namespace awui::Drawing;
 using namespace awui::Emulation::Chip8;
+
+// TODO: Mirar de mejorar el borrado de los colores
 
 CPU::CPU() {
 	this->_screen = new Screen(64, 32);
@@ -29,6 +33,7 @@ CPU::CPU() {
 	this->_stack = new Stack();
 	this->_random = new Random();
 	this->_sound = new Sound();
+	this->_colors = 0;
 
 	this->Reset();
 }
@@ -41,6 +46,9 @@ CPU::~CPU() {
 	delete this->_screen;
 	delete this->_stack;
 	delete this->_sound;
+
+	if (this->_colors)
+		delete this->_colors;
 }
 
 void CPU::LoadRom(const String file) {
@@ -122,8 +130,10 @@ void CPU::OnTick() {
 			ticks = 500.0f;
 			break;
 		case SUPERCHIP8:
-		case MEGACHIP8:
 			ticks = 1000.0f;
+			break;
+		case MEGACHIP8:
+			ticks = 4000.0f;
 			break;
 	}
 
@@ -280,7 +290,22 @@ int CPU::RunOpcode(int iteration) {
 			break;
 
 		case Ox02NN:
-			this->_pc += 2;
+			{
+				int total = opcode.GetNN();
+				int offset = this->_registers->GetI();
+				this->_colors = new Color *[total + 1];
+				this->_colors[0] = new Color(Color::FromArgb(0, 0, 0));
+
+				for (int i = 0; i < total; i++) {
+					this->_colors[i + 1] = new Color(Color::FromArgb(this->_memory->ReadByte(offset),
+																					this->_memory->ReadByte(offset + 1),
+																					this->_memory->ReadByte(offset + 2),
+																					this->_memory->ReadByte(offset + 3)));
+					offset += 4;
+				}
+
+				this->_pc += 2;
+			}
 			break;
 
 		// Set Sprite-width to nn		(SPRW  nn)
@@ -716,4 +741,8 @@ void CPU::SetImageUpdated(bool mode) {
 
 uint8_t CPU::GetChip8Mode() const {
 	return this->_chip8mode;
+}
+
+Drawing::Color ** CPU::GetColors() const {
+	return this->_colors;
 }
