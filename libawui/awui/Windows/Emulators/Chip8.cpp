@@ -57,12 +57,11 @@ void Chip8::OnPaint(GL* gl) {
 		}
 
 		if (this->_cpu->GetChip8Mode() == MEGACHIP8) {
-			Color ** colors = this->_cpu->GetColors();
 			this->SetBackColor(Color::FromArgb(0, 0, 0));
 			for (int y = 0; y < screen->GetHeight(); y++) {
 				for (int x = 0; x < screen->GetWidth(); x++) {
-					uint8_t pixel = screen->GetPixel(x, y);
-					this->_image->SetPixel(x, y, colors[pixel]->GetR(), colors[pixel]->GetG(), colors[pixel]->GetB(), colors[pixel]->GetA());
+					uint32_t pixel = screen->GetPixel(x, y);
+					this->_image->SetPixel(x, y, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF, 255);
 				}
 			}
 		} else {

@@ -119,6 +119,12 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 
 				case 0x4:
 					return Ox04NN;
+
+				case 0x6:
+					return Ox060N;
+
+				case 0x7:
+					return Ox0700;
 			}
 			break;
 

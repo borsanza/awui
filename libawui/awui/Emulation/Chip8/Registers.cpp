@@ -35,10 +35,10 @@ uint8_t Registers::GetV(uint8_t pos) {
 	return this->_v[pos];
 }
 
-void Registers::SetI(uint16_t value) {
+void Registers::SetI(uint32_t value) {
 	this->_i = value;
 }
 
-uint16_t Registers::GetI() {
+uint32_t Registers::GetI() {
 	return this->_i;
 }

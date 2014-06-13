@@ -4,11 +4,6 @@
 #include <awui/String.h>
 
 namespace awui {
-
-	namespace Drawing {
-		class Color;
-	}
-
 	class Random;
 
 	namespace Emulation {
@@ -38,7 +33,7 @@ namespace awui {
 					int _finished;
 					bool _imageUpdated;
 
-					Drawing::Color ** _colors;
+					uint32_t * _colors;
 
 					int RunOpcode(int iteration);
 
@@ -57,8 +52,6 @@ namespace awui {
 					uint8_t GetChip8Mode() const;
 
 					void Reset();
-
-					Drawing::Color ** GetColors() const;
 			};
 		}
 	}

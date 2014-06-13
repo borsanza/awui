@@ -32,6 +32,8 @@ namespace awui {
 				Ox02NN,
 				Ox03NN,
 				Ox04NN,
+				Ox060N,
+				Ox0700,
 				Ox1NNN,
 				Ox2NNN,
 				Ox3XKK,

@@ -50,12 +50,12 @@ void Memory::Reload() {
 		this->LoadRom(this->_file);
 }
 
-uint8_t Memory::ReadByte(int pos) {
+uint8_t Memory::ReadByte(int64_t pos) {
 	this->_memory->SetPosition(pos);
 	return this->_memory->ReadByte();
 }
 
-void Memory::WriteByte(int pos, uint8_t value) {
+void Memory::WriteByte(int64_t pos, uint8_t value) {
 	this->_memory->SetPosition(pos);
 	return this->_memory->WriteByte(value);
 }

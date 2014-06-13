@@ -17,6 +17,7 @@ syntax: glob
 *.ncb
 *.suo
 *.vcproj.*user
+*.workspace
 libaw/*.c
 libaw/*.h
 libaw/aw/*.h

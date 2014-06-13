@@ -8,7 +8,7 @@
 
 #include <assert.h>
 #include <awui/Console.h>
-#include <awui/Drawing/Color.h>
+#include <awui/Convert.h>
 #include <awui/Emulation/Chip8/Input.h>
 #include <awui/Emulation/Chip8/Memory.h>
 #include <awui/Emulation/Chip8/Opcode.h>
@@ -20,7 +20,6 @@
 #include <awui/Random.h>
 #include <awui/String.h>
 
-using namespace awui::Drawing;
 using namespace awui::Emulation::Chip8;
 
 // TODO: Mirar de mejorar el borrado de los colores
@@ -48,7 +47,7 @@ CPU::~CPU() {
 	delete this->_sound;
 
 	if (this->_colors)
-		delete this->_colors;
+		free(this->_colors);
 }
 
 void CPU::LoadRom(const String file) {
@@ -133,12 +132,14 @@ void CPU::OnTick() {
 			ticks = 1000.0f;
 			break;
 		case MEGACHIP8:
-			ticks = 4000.0f;
+			ticks = 1000000.0f;
 			break;
 	}
 
 	int iterations = (int) Math::Round(ticks / 60.0f);
-	for (int i = 0; i < iterations; i++) {
+//	iterations = 2;
+	int i;
+	for (i = 0; i < iterations; i++) {
 		if (this->_finished)
 			break;
 
@@ -177,7 +178,7 @@ int CPU::RunOpcode(int iteration) {
 		opcode.SetByte2(0xc0);
 	}
 
-	bool drawed = 0;
+	int drawed = 0;
 
 	switch (opcode.GetEnum(this->_chip8mode)) {
 		// Disable Megachip mode
@@ -222,7 +223,7 @@ int CPU::RunOpcode(int iteration) {
 		case Ox0230:
 		// Clears the screen
 		case Ox00E0:
-			if ((iteration != 1) && (this->_chip8mode == MEGACHIP8)) {
+			if ((iteration != 0) && (this->_chip8mode == MEGACHIP8)) {
 				drawed = -1;
 				break;
 			}
@@ -283,24 +284,30 @@ int CPU::RunOpcode(int iteration) {
 		case Ox01NN:
 			{
 				this->_pc += 2;
-				int16_t i = opcode.GetX() << 16 | (this->_memory->ReadByte(this->_pc) << 8) | this->_memory->ReadByte(this->_pc + 1);
+				int byte1 = opcode.GetNN();
+				int byte2 = this->_memory->ReadByte(this->_pc);
+				int byte3 = this->_memory->ReadByte(this->_pc + 1);
+				uint32_t i = (byte1 << 16) | (byte2 << 8) | byte3;
 				this->_registers->SetI(i);
 				this->_pc += 2;
 			}
 			break;
 
+		// Load nn-colors palette at I
 		case Ox02NN:
 			{
 				int total = opcode.GetNN();
-				int offset = this->_registers->GetI();
-				this->_colors = new Color *[total + 1];
-				this->_colors[0] = new Color(Color::FromArgb(0, 0, 0));
+				uint32_t offset = this->_registers->GetI();
+				if (this->_colors)
+					free(this->_colors);
+				this->_colors = (uint32_t *) malloc(sizeof(uint32_t *) * (total + 1));
+				this->_colors[0] = 0xFF << 24;
 
 				for (int i = 0; i < total; i++) {
-					this->_colors[i + 1] = new Color(Color::FromArgb(this->_memory->ReadByte(offset),
-																					this->_memory->ReadByte(offset + 1),
-																					this->_memory->ReadByte(offset + 2),
-																					this->_memory->ReadByte(offset + 3)));
+					this->_colors[i + 1] = 	this->_memory->ReadByte(offset) << 24 |
+											this->_memory->ReadByte(offset + 1) << 16 |
+											this->_memory->ReadByte(offset + 2) << 8 |
+											this->_memory->ReadByte(offset + 3);
 					offset += 4;
 				}
 
@@ -321,6 +328,16 @@ int CPU::RunOpcode(int iteration) {
 			this->_spriteHeight = opcode.GetNN();
 			if (this->_spriteHeight == 0)
 				this->_spriteHeight = 256;
+			this->_pc += 2;
+			break;
+
+		// Play digitised sound at I
+		case Ox060N:
+			this->_pc += 2;
+			break;
+
+		// Stop digitised sound
+		case Ox0700:
 			this->_pc += 2;
 			break;
 
@@ -533,15 +550,15 @@ int CPU::RunOpcode(int iteration) {
 
 				int pixelCleared = 0;
 				int height = opcode.GetN();
-				uint16_t i = this->_registers->GetI();
+				uint32_t i = this->_registers->GetI();
 				if (this->_chip8mode == MEGACHIP8) {
-						for (int y1 = 0; y1 < this->_spriteHeight; y1++) {
-							for (int x1 = 0; x1 < this->_spriteWidth; x1++) {
-								uint8_t p = this->_memory->ReadByte(i + (y1 * this->_spriteWidth) + x1);
-								if (this->_screen->SetPixel(x + x1, y + y1, p))
-									pixelCleared = 1;
-							}
+					for (uint32_t y1 = 0; y1 < this->_spriteHeight; y1++) {
+						for (uint32_t x1 = 0; x1 < this->_spriteWidth; x1++) {
+							uint8_t p = this->_memory->ReadByte(i + (y1 * this->_spriteWidth) + x1);
+							uint32_t color = this->_colors[p];
+							this->_screen->SetPixel(x + x1, y + y1, color);
 						}
+					}
 				} else {
 					if (height == 0) {
 						for (int y1 = 0; y1 < 16; y1++) {
@@ -625,9 +642,14 @@ int CPU::RunOpcode(int iteration) {
 		// I = I + VX
 		case OxFX1E:
 			{
-				int value = this->_registers->GetI() + this->_registers->GetV(opcode.GetX());
-				this->_registers->SetV(0xF, (value > 0xFFF) ? 1 : 0);
-				this->_registers->SetI(value & 0xFFF);
+				int32_t value = this->_registers->GetI() + this->_registers->GetV(opcode.GetX());
+				if (this->_chip8mode == MEGACHIP8) {
+					this->_registers->SetV(0xF, (value > 0xFFFFFF) ? 1 : 0);
+					this->_registers->SetI(value & 0xFFFFFF);
+				} else {
+					this->_registers->SetV(0xF, (value > 0xFFF) ? 1 : 0);
+					this->_registers->SetI(value & 0xFFF);
+				}
 				this->_pc += 2;
 			}
 			break;
@@ -741,8 +763,4 @@ void CPU::SetImageUpdated(bool mode) {
 
 uint8_t CPU::GetChip8Mode() const {
 	return this->_chip8mode;
-}
-
-Drawing::Color ** CPU::GetColors() const {
-	return this->_colors;
 }
