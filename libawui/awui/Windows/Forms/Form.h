@@ -1,11 +1,6 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+#ifndef _AWUI_WINDOWS_FORMS_FORM_H
+#define _AWUI_WINDOWS_FORMS_FORM_H
 
-#pragma once
-#ifndef __AWUIFORM_H__
-#define __AWUIFORM_H__
-
-#include <awui/Collections/ArrayList.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
 

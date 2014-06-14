@@ -1,5 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+#ifndef _AWUI_OPENGL_GL_H
+#define _AWUI_OPENGL_GL_H
 
 #include <awui/Drawing/Rectangle.h>
 
@@ -7,6 +7,7 @@ namespace awui {
 	namespace Drawing {
 		class Image;
 	}
+
 	namespace Windows {
 		namespace Forms {
 			class Control;
@@ -43,3 +44,5 @@ namespace awui {
 		};
 	}
 }
+
+#endif

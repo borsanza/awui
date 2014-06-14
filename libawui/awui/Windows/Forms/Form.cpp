@@ -1,5 +1,8 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+/*
+ * awui/Windows/Forms/Form.cpp
+ *
+ * Copyright (C) 2013 Borja Sánchez Zamorano
+ */
 
 #include "Form.h"
 
