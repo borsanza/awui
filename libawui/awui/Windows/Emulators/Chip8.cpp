@@ -22,7 +22,6 @@ using namespace awui::Windows::Emulators;
 
 Chip8::Chip8() {
 	this->SetSize(74, 42);
-	this->SetBackColor(Color::FromArgb(163, 218, 2));
 	this->_image = new Drawing::Image(64, 32);
 	this->_cpu = new CPU();
 	this->SetTabStop(true);
@@ -48,12 +47,12 @@ void Chip8::OnTick() {
 }
 
 void Chip8::OnPaint(GL* gl) {
-	if (this->_cpu->GetChip8Mode() == MEGACHIP8)
-		this->SetBackColor(Color::FromArgb(0, 0, 0));
-	else
-		this->SetBackColor(Color::FromArgb(163, 218, 2));
-
 	if (this->_cpu->GetImageUpdated()) {
+		if (this->_cpu->GetChip8Mode() == MEGACHIP8)
+			this->SetBackColor(Color::FromArgb(0, 0, 0));
+		else
+			this->SetBackColor(Color::FromArgb(163, 218, 2));
+
 		Screen * screen = this->_cpu->GetScreen();
 
 		if ((screen->GetWidth() != this->_image->GetWidth()) || (screen->GetHeight() != this->_image->GetHeight())) {

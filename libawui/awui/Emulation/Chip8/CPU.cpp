@@ -115,6 +115,12 @@ void CPU::Reset() {
 }
 
 void CPU::OnTick() {
+	static bool firstTime = true;
+	if (firstTime) {
+		this->_imageUpdated = true;
+		firstTime = false;
+	}
+
 	if (this->_delayTimer)
 		this->_delayTimer--;
 
@@ -138,8 +144,8 @@ void CPU::OnTick() {
 
 	int iterations = (int) Math::Round(ticks / 60.0f);
 //	iterations = 2;
-	int i;
-	for (i = 0; i < iterations; i++) {
+
+	for (int i = 0; i < iterations; i++) {
 		if (this->_finished)
 			break;
 
@@ -547,49 +553,55 @@ int CPU::RunOpcode(int iteration) {
 		// and to 0 if that doesn't happen
 		case OxDXYN:
 			{
-				int x = this->_registers->GetV(opcode.GetX());
-				int y = this->_registers->GetV(opcode.GetY());
+				uint8_t x = this->_registers->GetV(opcode.GetX());
+				uint8_t y = this->_registers->GetV(opcode.GetY());
 
-				int pixelCleared = 0;
-				int height = opcode.GetN();
+				uint8_t pixelCleared = 0;
 				uint32_t i = this->_registers->GetI();
-				if (this->_chip8mode == MEGACHIP8) {
-					for (uint32_t y1 = 0; y1 < this->_spriteHeight; y1++) {
-						for (uint32_t x1 = 0; x1 < this->_spriteWidth; x1++) {
-							uint8_t p = this->_memory->ReadByte(i + (y1 * this->_spriteWidth) + x1);
-							uint32_t color = this->_colors[p];
-							this->_screen->SetPixel(x + x1, y + y1, color);
-						}
-					}
-				} else {
-					if ((this->_chip8mode == CHIP8) && (height == 0))
-						height = 16;
-
-					if (height == 0) {
-						for (int y1 = 0; y1 < 16; y1++) {
-							for (int x1 = 0; x1 < 2; x1++) {
-								uint8_t p = this->_memory->ReadByte(i + (y1 * 2) + x1);
+				uint8_t height = opcode.GetN();
+				switch (this->_chip8mode) {
+					default:
+					case CHIP8:
+					case SUPERCHIP8:
+						if ((height == 0) && (this->_chip8mode == SUPERCHIP8)) {
+							for (int y1 = 0; y1 < 16; y1++) {
+								for (int x1 = 0; x1 < 2; x1++) {
+									uint8_t p = this->_memory->ReadByte(i + (y1 * 2) + x1);
+									int bit = 1;
+									for (int xbit = 7; xbit >= 0; xbit--) {
+										int val = (p & bit)? 1 : 0;
+										if (this->_screen->SetPixelXOR(x + (x1 * 8) + xbit, y + y1, val))
+											pixelCleared = 1;
+										bit  = bit << 1;
+									}
+								}
+							}
+						} else {
+							if (height == 0)
+								height = 16;
+							for (int y1 = 0; y1 < height; y1++) {
+								uint8_t p = this->_memory->ReadByte(i + y1);
 								int bit = 1;
-								for (int xbit = 7; xbit >= 0; xbit--) {
+								for (int x1 = 7; x1 >= 0; x1--) {
 									int val = (p & bit)? 1 : 0;
-									if (this->_screen->SetPixelXOR(x + (x1 * 8) + xbit, y + y1, val))
+									if (this->_screen->SetPixelXOR(x + x1, y + y1, val))
 										pixelCleared = 1;
 									bit  = bit << 1;
 								}
 							}
 						}
-					 } else {
-						for (int y1 = 0; y1 < height; y1++) {
-							uint8_t p = this->_memory->ReadByte(i + y1);
-							int bit = 1;
-							for (int x1 = 7; x1 >= 0; x1--) {
-								int val = (p & bit)? 1 : 0;
-								if (this->_screen->SetPixelXOR(x + x1, y + y1, val))
-									pixelCleared = 1;
-								bit  = bit << 1;
+
+						break;
+
+					case MEGACHIP8:
+						for (uint32_t y1 = 0; y1 < this->_spriteHeight; y1++) {
+							for (uint32_t x1 = 0; x1 < this->_spriteWidth; x1++) {
+								uint8_t p = this->_memory->ReadByte(i + (y1 * this->_spriteWidth) + x1);
+								uint32_t color = this->_colors[p];
+								this->_screen->SetPixel(x + x1, y + y1, color);
 							}
 						}
-					}
+						break;
 				}
 
 				this->_registers->SetV(0xF, pixelCleared);
