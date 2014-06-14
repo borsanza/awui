@@ -1,6 +1,7 @@
 #ifndef _AWUI_EMULATION_CHIP8_CPU_H
 #define _AWUI_EMULATION_CHIP8_CPU_H
 
+#include <awui/Emulation/Chip8/Opcode.h>
 #include <awui/String.h>
 
 namespace awui {
@@ -32,6 +33,9 @@ namespace awui {
 					uint16_t _spriteHeight;
 					int _finished;
 					bool _imageUpdated;
+
+					bool _firstTime;
+					Opcode _opcode;
 
 					uint32_t * _colors;
 

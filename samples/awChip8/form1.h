@@ -11,6 +11,7 @@ class Form1 : public awui::Windows::Forms::Form {
 	private:
 		void InitializeComponent();
 		awui::Windows::Emulators::Chip8 * _chip8;
+		awui::Windows::Emulators::Chip8 * _chip82;
 
 	public:
 		Form1();

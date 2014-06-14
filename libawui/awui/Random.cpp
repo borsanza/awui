@@ -8,12 +8,11 @@
 
 #include <awui/Math.h>
 #include <stdlib.h>
-#include <time.h>
 
 using namespace awui;
 
 Random::Random() {
-	this->seed = (unsigned)time(NULL);
+	this->seed = 0;
 }
 
 Random::Random(unsigned int seed) {
@@ -24,7 +23,10 @@ Random::~Random() {
 }
 
 int Random::Next() {
-	return rand_r(&this->seed);
+	if (this->seed)
+		return rand_r(&this->seed);
+
+	return rand();
 }
 
 /**
