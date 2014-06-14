@@ -184,7 +184,7 @@ int CPU::RunOpcode(int iteration) {
 
 	int drawed = 0;
 	int enumopcode = this->_opcode.GetEnum(this->_chip8mode);
-	// this->_opcode.ShowLog(this->_pc, enumopcode);
+//	this->_opcode.ShowLog(this->_pc, enumopcode);
 
 	switch (enumopcode) {
 		// Disable Megachip mode
@@ -597,6 +597,8 @@ int CPU::RunOpcode(int iteration) {
 						for (uint32_t y1 = 0; y1 < this->_spriteHeight; y1++) {
 							for (uint32_t x1 = 0; x1 < this->_spriteWidth; x1++) {
 								uint8_t p = this->_memory->ReadByte(i + (y1 * this->_spriteWidth) + x1);
+								if (p == 0)
+									continue;
 								uint32_t color = this->_colors[p];
 								this->_screen->SetPixel(x + x1, y + y1, color);
 							}
@@ -759,7 +761,9 @@ int CPU::RunOpcode(int iteration) {
 
 		default:
 		case OxNOTIMPLEMENTED:
-			assert(0);
+//			this->_opcode.ShowLog(this->_pc, enumopcode);
+//			assert(0);
+			this->_pc += 2;
 			break;
 	}
 

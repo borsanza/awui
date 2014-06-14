@@ -320,16 +320,14 @@ void Form::RefreshVideo() {
 	if (!initialized)
 		return;
 
-	SDL_Surface * screen;
-
 	int flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
 	int width = 0;
 	int height = 0;
 
 	if (this->fullscreenWidth == -1) {
-		screen = SDL_SetVideoMode(0, 0, 32, flags | SDL_FULLSCREEN);
-		this->fullscreenWidth = screen->w;
-		this->fullscreenHeight = screen->h;
+		const SDL_VideoInfo * videoInfo = SDL_GetVideoInfo();
+		this->fullscreenWidth = videoInfo->current_w;
+		this->fullscreenHeight = videoInfo->current_h;
 	}
 
 	if (!this->fullscreen) {
@@ -343,7 +341,7 @@ void Form::RefreshVideo() {
 		this->SetSize(width, height);
 	}
 
-	screen = SDL_SetVideoMode(width, height, 32, flags);
+	SDL_SetVideoMode(width, height, 32, flags);
 
 	void (*swapInterval)(int);
 //	if (checkGLXExtension("GLX_MESA_swap_control", screen))

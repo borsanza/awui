@@ -38,6 +38,7 @@ namespace awui {
 
 					virtual void OnTick();
 					virtual void OnPaint(OpenGL::GL* gl);
+					int GetChip8Mode();
 			};
 		}
 	}

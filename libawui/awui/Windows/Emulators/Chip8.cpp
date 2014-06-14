@@ -103,3 +103,7 @@ void Chip8::OnPaint(GL* gl) {
 
 	GL::DrawImageGL(this->_image, left, top, width, height);
 }
+
+int Chip8::GetChip8Mode() {
+	return this->_cpu->GetChip8Mode();
+}
