@@ -178,7 +178,7 @@ int CPU::RunOpcode(int iteration) {
 
 	int drawed = 0;
 	int enumopcode = opcode.GetEnum(this->_chip8mode);
-	//opcode.ShowLog(this->_pc, enumopcode);
+	// opcode.ShowLog(this->_pc, enumopcode);
 
 	switch (enumopcode) {
 		// Disable Megachip mode
@@ -562,6 +562,9 @@ int CPU::RunOpcode(int iteration) {
 						}
 					}
 				} else {
+					if ((this->_chip8mode == CHIP8) && (height == 0))
+						height = 16;
+
 					if (height == 0) {
 						for (int y1 = 0; y1 < 16; y1++) {
 							for (int x1 = 0; x1 < 2; x1++) {

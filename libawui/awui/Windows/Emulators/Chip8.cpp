@@ -48,6 +48,11 @@ void Chip8::OnTick() {
 }
 
 void Chip8::OnPaint(GL* gl) {
+	if (this->_cpu->GetChip8Mode() == MEGACHIP8)
+		this->SetBackColor(Color::FromArgb(0, 0, 0));
+	else
+		this->SetBackColor(Color::FromArgb(163, 218, 2));
+
 	if (this->_cpu->GetImageUpdated()) {
 		Screen * screen = this->_cpu->GetScreen();
 
@@ -57,7 +62,6 @@ void Chip8::OnPaint(GL* gl) {
 		}
 
 		if (this->_cpu->GetChip8Mode() == MEGACHIP8) {
-			this->SetBackColor(Color::FromArgb(0, 0, 0));
 			for (int y = 0; y < screen->GetHeight(); y++) {
 				for (int x = 0; x < screen->GetWidth(); x++) {
 					uint32_t pixel = screen->GetPixel(x, y);
@@ -65,7 +69,6 @@ void Chip8::OnPaint(GL* gl) {
 				}
 			}
 		} else {
-			this->SetBackColor(Color::FromArgb(163, 218, 2));
 			for (int y = 0; y < screen->GetHeight(); y++) {
 				for (int x = 0; x < screen->GetWidth(); x++) {
 					if (screen->GetPixel(x, y))
