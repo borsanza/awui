@@ -166,8 +166,6 @@ int CPU::RunOpcode(int iteration) {
 	opcode.SetByte1(this->_memory->ReadByte(this->_pc));
 	opcode.SetByte2(this->_memory->ReadByte(this->_pc + 1));
 
-//	opcode.ShowLog(this->_pc);
-
 	if ((this->_pc == 0x200) && (opcode.GetOpcode() == 0x1260)) {
 		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {
 			delete this->_screen;
@@ -179,8 +177,10 @@ int CPU::RunOpcode(int iteration) {
 	}
 
 	int drawed = 0;
+	int enumopcode = opcode.GetEnum(this->_chip8mode);
+	//opcode.ShowLog(this->_pc, enumopcode);
 
-	switch (opcode.GetEnum(this->_chip8mode)) {
+	switch (enumopcode) {
 		// Disable Megachip mode
 		case Ox0010:
 			if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
@@ -333,11 +333,13 @@ int CPU::RunOpcode(int iteration) {
 
 		// Play digitised sound at I
 		case Ox060N:
+			Console::WriteLine(Convert::ToString(opcode.GetN()));
 			this->_pc += 2;
 			break;
 
 		// Stop digitised sound
 		case Ox0700:
+			Console::WriteLine("Stop");
 			this->_pc += 2;
 			break;
 
@@ -532,7 +534,7 @@ int CPU::RunOpcode(int iteration) {
 
 		// Sets VX to a random number and NN
 		case OxCXKK:
-			this->_registers->SetV(opcode.GetX(), this->_random->Next(0, 256) & opcode.GetKK());
+			this->_registers->SetV(opcode.GetX(), this->_random->NextByte() & opcode.GetKK());
 			this->_pc += 2;
 			break;
 

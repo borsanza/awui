@@ -244,13 +244,91 @@ char Opcode::DecToHex(int value) const {
 	return '0' + value;
 }
 
-void Opcode::ShowLog(int pc) const {
+void Opcode::ShowLog(int pc, int enumopcode) const {
 	Console::Write(Convert::ToString(pc));
 	Console::Write(": ");
-	Console::Write(Convert::ToString(DecToHex(this->_byte1 >> 4)));
-	Console::Write(Convert::ToString(DecToHex(this->_byte1 & 0xF)));
-	Console::Write(Convert::ToString(DecToHex(this->_byte2 >> 4)));
-	Console::Write(Convert::ToString(DecToHex(this->_byte2 & 0xF)));
+	Console::Write(Convert::ToString(this->DecToHex(this->_byte1 >> 4)));
+	Console::Write(Convert::ToString(this->DecToHex(this->_byte1 & 0xF)));
+	Console::Write(Convert::ToString(this->DecToHex(this->_byte2 >> 4)));
+	Console::Write(Convert::ToString(this->DecToHex(this->_byte2 & 0xF)));
 	Console::Write(": ");
+	ShowLogOpcode(enumopcode);
 	Console::WriteLine("");
+}
+
+void Opcode::ShowLogOpcode(int enumOpcode) const {
+	switch (enumOpcode) {
+		case Ox00E0:
+			Console::Write("CLS");
+			break;
+		case Ox00EE:
+			Console::Write("RET");
+			break;
+		case Ox1NNN:
+			Console::Write("JP ");
+			Console::Write(Convert::ToString(this->GetNNN()));
+			break;
+		case Ox3XKK:
+			Console::Write("SE V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(", ");
+			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write("        ; Skip if Equal V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(" == ");
+			Console::Write(Convert::ToString(this->GetKK()));
+			break;
+		case Ox6XKK:
+			Console::Write("LD V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(", ");
+			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write("       ; V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(" := ");
+			Console::Write(Convert::ToString(this->GetKK()));
+			break;
+		case Ox7XKK:
+			Console::Write("ADD V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(", ");
+			Console::Write(Convert::ToString(this->GetKK()));
+			break;
+		case OxANNN:
+			Console::Write("LD I, ");
+			Console::Write(Convert::ToString(this->GetNNN()));
+			Console::Write("       ; I := ");
+			Console::Write(Convert::ToString(this->GetNNN()));
+			break;
+		case OxCXKK:
+			Console::Write("RND V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(", ");
+			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write("       ; V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(" := Random(0..255) & ");
+			Console::Write(Convert::ToString(this->GetKK()));
+			break;
+		case OxDXYN:
+			Console::Write("DRW V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(", V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetY())));
+			Console::Write(", ");
+			Console::Write(Convert::ToString(this->GetN()));
+			break;
+		case OxFX1E:
+			Console::Write("ADD I, V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			break;
+		case OxFX29:
+			Console::Write("LD F, V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			break;
+		case OxFX33:
+			Console::Write("LD B, V");
+			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			break;
+	}
 }

@@ -43,3 +43,7 @@ int Random::Next(int min, int exclusive_max) {
 	double value = (double) this->Next() / RAND_MAX;
 	return min + Math::Round(value * ((exclusive_max - 1) - min));
 }
+
+int Random::NextByte() {
+	return this->Next(0, 256);
+}

@@ -80,10 +80,24 @@ void Chip8::OnPaint(GL* gl) {
 		this->_cpu->SetImageUpdated(false);
 	}
 
-	int border = 1;
+	int border = (this->_cpu->GetChip8Mode() == MEGACHIP8) ? 0 : 2;
 
-	int borderx = Math::Round((this->GetWidth() * border) / ((float)this->_image->GetWidth() + (border * 2)));
-	int bordery = Math::Round((this->GetHeight() * border) / ((float)this->_image->GetHeight() + (border * 2)));
+	int borderx = (border * this->GetWidth()) / (this->_image->GetWidth() + border);
+	int bordery = (border * this->GetHeight()) / (this->_image->GetHeight() + border);
 
-	GL::DrawImageGL(this->_image, borderx, bordery, this->GetWidth() - (borderx * 2), this->GetHeight() - (bordery * 2));
+	int controlWidth = this->GetWidth() - borderx;
+	int controlHeight = this->GetHeight() - bordery;
+
+	float ratio = this->_image->GetWidth() / this->_image->GetHeight();
+	int width = controlHeight * ratio;
+	int height = controlHeight;
+	if (width > controlWidth) {
+		width = controlWidth;
+		height = controlWidth / ratio;
+	}
+
+	int left = (this->GetWidth() - width) / 2.0f;
+	int top = (this->GetHeight() - height) / 2.0f;
+
+	GL::DrawImageGL(this->_image, left, top, width, height);
 }

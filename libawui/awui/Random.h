@@ -15,6 +15,7 @@ namespace awui {
 			int Next();
 			int Next(int exclusive_max);
 			int Next(int min, int exclusive_max);
+			int NextByte();
 	};
 }
 

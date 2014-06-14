@@ -77,6 +77,7 @@ namespace awui {
 					uint8_t _byte2;
 
 					char DecToHex(int value) const;
+					void ShowLogOpcode(int enumOpcode) const;
 
 				public:
 					Opcode();
@@ -95,7 +96,7 @@ namespace awui {
 
 					int GetEnum(uint8_t chipmode) const;
 
-					void ShowLog(int pc) const;
+					void ShowLog(int pc, int enumOpcode) const;
 			};
 		}
 	}

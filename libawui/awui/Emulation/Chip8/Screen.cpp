@@ -48,7 +48,8 @@ bool Screen::SetPixelXOR(uint16_t x, uint16_t y, bool value) {
 }
 
 void Screen::SetPixel(uint16_t x, uint16_t y, uint32_t value) {
-	x = x % this->_width;
+	if ((x >= this->_width) || (x < 0) || (y < 0) || (y >= this->_height))
+		return;
 
 	uint16_t offset = (y * this->_width) + x;
 
@@ -70,7 +71,6 @@ void Screen::SetPixel(uint16_t x, uint16_t y, uint32_t value) {
 		g = ((uint8_t) (go + ((g - go) * p))) & 0xFF;
 		b = ((uint8_t) (bo + ((b - bo) * p))) & 0xFF;
 		this->_data[offset] = 0xFF000000 | r << 16 | g << 8 | b;
-		//this->_data[offset] = 0xFFFF0000;
 	}
 }
 
