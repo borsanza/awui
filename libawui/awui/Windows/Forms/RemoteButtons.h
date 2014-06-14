@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIREMOTEBUTTONS_H__
-#define __AWUIREMOTEBUTTONS_H__
+#ifndef _AWUI_WINDOWS_FORMS_REMOTEBUTTONS_H
+#define _AWUI_WINDOWS_FORMS_REMOTEBUTTONS_H
 
 namespace awui {
 	namespace Windows {
