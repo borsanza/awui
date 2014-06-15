@@ -27,7 +27,6 @@ Input::~Input() {
 }
 
 bool Input::IsKeyPressed(uint8_t key) {
-	this->_lastKey = -1;
 	return this->_keys[key];
 }
 

@@ -12,6 +12,7 @@
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Rectangle.h>
+#include <awui/IO/Directory.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Application.h>
@@ -196,10 +197,6 @@ void Form::ProcessEvents() {
 					case SDLK_KP_ENTER:
 						OnRemoteKeyPressPre(RemoteButtons::Ok);
 						break;
-					case SDLK_w:
-						if (event.key.keysym.mod & KMOD_LALT)
-							this->SetFullscreen(0);
-						break;
 					case SDLK_LEFT:
 						OnRemoteKeyPressPre(RemoteButtons::Left);
 						break;
@@ -234,6 +231,19 @@ void Form::ProcessEvents() {
 						else
 							OnKeyPressPre(Keys::Key_F);
 						break;
+					case SDLK_q: OnKeyPressPre(Keys::Key_Q); break;
+					case SDLK_w:
+						if (event.key.keysym.mod & KMOD_LALT)
+							this->SetFullscreen(0);
+						else
+							OnKeyPressPre(Keys::Key_W);
+						break;
+
+					case SDLK_s: OnKeyPressPre(Keys::Key_S); break;
+					case SDLK_z: OnKeyPressPre(Keys::Key_Z); break;
+					case SDLK_x: OnKeyPressPre(Keys::Key_X); break;
+					case SDLK_r: OnKeyPressPre(Keys::Key_R); break;
+					case SDLK_v: OnKeyPressPre(Keys::Key_V); break;
 
 					case SDLK_KP0: OnKeyPressPre(Keys::Key_KP0); break;
 					case SDLK_KP1: OnKeyPressPre(Keys::Key_KP1); break;
@@ -275,6 +285,13 @@ void Form::ProcessEvents() {
 					case SDLK_d: OnKeyUpPre(Keys::Key_D); break;
 					case SDLK_e: OnKeyUpPre(Keys::Key_E); break;
 					case SDLK_f: OnKeyUpPre(Keys::Key_F); break;
+					case SDLK_q: OnKeyUpPre(Keys::Key_Q); break;
+					case SDLK_w: OnKeyUpPre(Keys::Key_W); break;
+					case SDLK_s: OnKeyUpPre(Keys::Key_S); break;
+					case SDLK_z: OnKeyUpPre(Keys::Key_Z); break;
+					case SDLK_x: OnKeyUpPre(Keys::Key_X); break;
+					case SDLK_r: OnKeyUpPre(Keys::Key_R); break;
+					case SDLK_v: OnKeyUpPre(Keys::Key_V); break;
 
 					case SDLK_KP0: OnKeyUpPre(Keys::Key_KP0); break;
 					case SDLK_KP1: OnKeyUpPre(Keys::Key_KP1); break;
@@ -461,7 +478,8 @@ void Form::SetControlSelected(Control * selected) {
 
 Bitmap * Form::GetSelectedBitmap() {
 	if (!Form::selectedBitmap) {
-		Bitmap * bitmap = new Bitmap("images/button.png");
+		String file = IO::Directory::GetCurrentDirectory();
+		Bitmap * bitmap = new Bitmap(file + "/images/button.png");
 		bitmap->SetDock((DockStyle::Enum) 0);//DockStyle::None);
 		bitmap->SetBackColor(Drawing::Color::FromArgb(0, 0, 0, 0));
 		bitmap->SetFixedMargins(28, 25, 28, 24);

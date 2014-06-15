@@ -7,11 +7,14 @@
 
 using namespace awui::Windows::Forms;
 
+#define TOTALCHIP8 3
+
 class Form1 : public awui::Windows::Forms::Form {
 	private:
 		void InitializeComponent();
-		awui::Windows::Emulators::Chip8 * _chip8;
-		awui::Windows::Emulators::Chip8 * _chip82;
+		awui::Windows::Emulators::Chip8 * _chip8[TOTALCHIP8];
+
+		void AdjustSizeOfChip8(awui::Windows::Emulators::Chip8 * _chip8);
 
 	public:
 		Form1();

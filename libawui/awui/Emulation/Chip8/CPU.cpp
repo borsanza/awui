@@ -118,6 +118,9 @@ void CPU::Reset() {
 }
 
 void CPU::OnTick() {
+	static int frame = 1;
+	frame++;
+
 	if (_firstTime) {
 		this->_imageUpdated = true;
 		_firstTime = false;
@@ -133,21 +136,26 @@ void CPU::OnTick() {
 	switch (this->_chip8mode) {
 		default:
 		case CHIP8:
-		case CHIP8HIRES:
-			ticks = 500.0f;
+			ticks = 400.0f;
 			break;
-		case SUPERCHIP8:
+		case CHIP8HIRES:
 			ticks = 1000.0f;
 			break;
+		case SUPERCHIP8:
+			ticks = 2000.0f;
+			break;
 		case MEGACHIP8:
-			ticks = 1000000.0f;
+			ticks = 1200000.0f;
+//			if ((frame % 10) != 1)
+//				return;
 			break;
 	}
 
+	int i;
 	int iterations = (int) Math::Round(ticks / 60.0f);
 //	iterations = 2;
 
-	for (int i = 0; i < iterations; i++) {
+	for (i = 0; i < iterations; i++) {
 		if (this->_finished)
 			break;
 
@@ -155,6 +163,8 @@ void CPU::OnTick() {
 		if ((mode == -1) && (this->_chip8mode == MEGACHIP8))
 			break;
 	}
+
+//	Console::WriteLine(Convert::ToString(i));
 
 	if (this->_finished)
 		this->_finished++;

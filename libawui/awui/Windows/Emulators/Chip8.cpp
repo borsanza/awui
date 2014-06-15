@@ -49,7 +49,7 @@ void Chip8::OnTick() {
 void Chip8::OnPaint(GL* gl) {
 	if (this->_cpu->GetImageUpdated()) {
 		if (this->_cpu->GetChip8Mode() == MEGACHIP8)
-			this->SetBackColor(Color::FromArgb(0, 0, 0));
+			this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 		else
 			this->SetBackColor(Color::FromArgb(163, 218, 2));
 
@@ -90,16 +90,21 @@ void Chip8::OnPaint(GL* gl) {
 	int controlWidth = this->GetWidth() - borderx;
 	int controlHeight = this->GetHeight() - bordery;
 
-	float ratio = this->_image->GetWidth() / this->_image->GetHeight();
+	float ratio = (float)this->_image->GetWidth() / (float)this->_image->GetHeight();
 	int width = controlHeight * ratio;
 	int height = controlHeight;
+
 	if (width > controlWidth) {
 		width = controlWidth;
-		height = controlWidth / ratio;
+		height = (float)controlWidth / ratio;
 	}
 
 	int left = (this->GetWidth() - width) / 2.0f;
 	int top = (this->GetHeight() - height) / 2.0f;
+
+	// Console::Write(Convert::ToString(width));
+	// Console::Write("x");
+	// Console::WriteLine(Convert::ToString(height));
 
 	GL::DrawImageGL(this->_image, left, top, width, height);
 }
@@ -112,11 +117,13 @@ int Chip8::ConvertKeyAwToChip8(Keys::Enum key) {
 	int keyPressed = -1;
 
 	switch (key) {
+		case Keys::Key_X:
 		case Keys::Key_0:
 			keyPressed = 0;
 			break;
 
 		case Keys::Key_1:
+		case Keys::Key_KP7:
 			keyPressed = 1;
 			break;
 
@@ -126,57 +133,67 @@ int Chip8::ConvertKeyAwToChip8(Keys::Enum key) {
 			break;
 
 		case Keys::Key_3:
+		case Keys::Key_KP9:
 			keyPressed = 3;
 			break;
 
+		case Keys::Key_Q:
 		case Keys::Key_KP4:
-		case Keys::Key_4:
 			keyPressed = 4;
 			break;
 
+		case Keys::Key_W:
+		case Keys::Key_KP5:
 		case Keys::Key_5:
 			keyPressed = 5;
 			break;
 
+		case Keys::Key_E:
 		case Keys::Key_KP6:
 		case Keys::Key_6:
 			keyPressed = 6;
 			break;
 
+		case Keys::Key_A:
 		case Keys::Key_7:
+		case Keys::Key_KP1:
 			keyPressed = 7;
 			break;
 
+		case Keys::Key_S:
 		case Keys::Key_KP2:
 		case Keys::Key_8:
 			keyPressed = 8;
 			break;
 
+		case Keys::Key_D:
 		case Keys::Key_9:
+		case Keys::Key_KP3:
 			keyPressed = 9;
 			break;
 
-		case Keys::Key_A:
+		case Keys::Key_Z:
 			keyPressed = 10;
 			break;
 
+		case Keys::Key_C:
 		case Keys::Key_B:
 			keyPressed = 11;
 			break;
 
-		case Keys::Key_C:
+		case Keys::Key_4:
 			keyPressed = 12;
 			break;
 
-		case Keys::Key_D:
+		case Keys::Key_R:
 			keyPressed = 13;
 			break;
 
-		case Keys::Key_E:
+		case Keys::Key_F:
 			keyPressed = 14;
 			break;
 
-		case Keys::Key_F:
+		case Keys::Key_V:
 			keyPressed = 15;
 			break;
 
