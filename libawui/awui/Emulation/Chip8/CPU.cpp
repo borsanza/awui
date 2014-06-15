@@ -33,6 +33,7 @@ CPU::CPU() {
 	this->_sound = new Sound();
 	this->_colors = 0;
 	this->_frameCounter = 0;
+	this->_chip8mode = CHIP8;
 
 	this->Reset();
 
@@ -60,14 +61,18 @@ void CPU::LoadRom(const String file) {
 
 void CPU::Reset() {
 	this->_registers->Clear();
-	delete this->_screen;
-	this->_screen = new Screen(64, 32);
+  // Es un reset, dudo que cambie el screen o el chipmode...
+
+//	delete this->_screen;
+//	this->_screen = new Screen(64, 32);
+//	this->_chip8mode = CHIP8;
+	this->_screen->Clear();
+
 	this->_stack->Clear();
 	this->_delayTimer = 0;
 	this->_soundTimer = 0;
 	this->_finished = 0;
 	this->_pc = 0x200;
-	this->_chip8mode = CHIP8;
 	this->_imageUpdated = false;
 	this->_sound->Stop();
 
