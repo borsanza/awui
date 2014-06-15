@@ -561,6 +561,30 @@ void Control::OnRemoteKeyUpPre(RemoteButtons::Enum button) {
 		focused->OnRemoteKeyUpPre(button);
 }
 
+void Control::OnKeyPressPre(Keys::Enum key) {
+	bool mustStop = this->OnKeyPress(key);
+	if (mustStop)
+		return;
+
+	if (!this->focused)
+		Form::SetControlSelected(Form::GetControlSelected());
+
+	if (this->focused)
+		focused->OnKeyPressPre(key);
+}
+
+void Control::OnKeyUpPre(Keys::Enum key) {
+	bool mustStop = this->OnKeyUp(key);
+	if (mustStop)
+		return;
+
+	if (!this->focused)
+		Form::SetControlSelected(Form::GetControlSelected());
+
+	if (this->focused)
+		focused->OnKeyUpPre(key);
+}
+
 void Control::SetFocus() {
 	Control * parent = this->GetParent();
 	if (parent) {
@@ -578,6 +602,10 @@ Control * Control::GetTopParent() {
 }
 
 bool Control::OnRemoteKeyUp(RemoteButtons::Enum button) {
+	return false;
+}
+
+bool Control::OnKeyUp(Keys::Enum button) {
 	return false;
 }
 
@@ -647,6 +675,13 @@ bool Control::OnRemoteKeyPress(RemoteButtons::Enum button) {
 			default:
 				break;
 		}
+	}
+
+	return false;
+}
+
+bool Control::OnKeyPress(Keys::Enum key) {
+	if (Form::GetControlSelected() == this) {
 	}
 
 	return false;

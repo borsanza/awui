@@ -9,15 +9,28 @@
 using namespace awui::Emulation::Chip8;
 
 Input::Input() {
+	this->_lastKey = -1;
+	for (int i = 0; i <= 15; i++)
+		this->_keys[i] = false;
 }
 
 Input::~Input() {
 }
 
 bool Input::IsKeyPressed(uint8_t key) {
-	return false;
+	return this->_keys[key];
 }
 
 int Input::GetKey() {
-	return -1;
+	return this->_lastKey;
+}
+
+void Input::KeyDown(uint8_t key) {
+	this->_keys[key] = true;
+	this->_lastKey = key;
+}
+
+void Input::KeyUp(uint8_t key) {
+	this->_keys[key] = false;
+	this->_lastKey = -1;
 }

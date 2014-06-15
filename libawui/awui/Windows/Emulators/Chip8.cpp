@@ -107,3 +107,51 @@ void Chip8::OnPaint(GL* gl) {
 int Chip8::GetChip8Mode() {
 	return this->_cpu->GetChip8Mode();
 }
+
+bool Chip8::OnKeyPress(Keys::Enum key) {
+	switch (key) {
+		case Keys::Key_0: this->_cpu->KeyDown(0); break;
+		case Keys::Key_1: this->_cpu->KeyDown(1); break;
+		case Keys::Key_2: this->_cpu->KeyDown(2); break;
+		case Keys::Key_3: this->_cpu->KeyDown(3); break;
+		case Keys::Key_4: this->_cpu->KeyDown(4); break;
+		case Keys::Key_5: this->_cpu->KeyDown(5); break;
+		case Keys::Key_6: this->_cpu->KeyDown(6); break;
+		case Keys::Key_7: this->_cpu->KeyDown(7); break;
+		case Keys::Key_8: this->_cpu->KeyDown(8); break;
+		case Keys::Key_9: this->_cpu->KeyDown(9); break;
+		case Keys::Key_A: this->_cpu->KeyDown(10); break;
+		case Keys::Key_B: this->_cpu->KeyDown(11); break;
+		case Keys::Key_C: this->_cpu->KeyDown(12); break;
+		case Keys::Key_D: this->_cpu->KeyDown(13); break;
+		case Keys::Key_E: this->_cpu->KeyDown(14); break;
+		case Keys::Key_F: this->_cpu->KeyDown(15); break;
+	}
+
+	Console::WriteLine("OnKeyPress");
+	return true;
+}
+
+bool Chip8::OnKeyUp(Keys::Enum key) {
+	switch (key) {
+		case Keys::Key_0: this->_cpu->KeyUp(0); break;
+		case Keys::Key_1: this->_cpu->KeyUp(1); break;
+		case Keys::Key_2: this->_cpu->KeyUp(2); break;
+		case Keys::Key_3: this->_cpu->KeyUp(3); break;
+		case Keys::Key_4: this->_cpu->KeyUp(4); break;
+		case Keys::Key_5: this->_cpu->KeyUp(5); break;
+		case Keys::Key_6: this->_cpu->KeyUp(6); break;
+		case Keys::Key_7: this->_cpu->KeyUp(7); break;
+		case Keys::Key_8: this->_cpu->KeyUp(8); break;
+		case Keys::Key_9: this->_cpu->KeyUp(9); break;
+		case Keys::Key_A: this->_cpu->KeyUp(10); break;
+		case Keys::Key_B: this->_cpu->KeyUp(11); break;
+		case Keys::Key_C: this->_cpu->KeyUp(12); break;
+		case Keys::Key_D: this->_cpu->KeyUp(13); break;
+		case Keys::Key_E: this->_cpu->KeyUp(14); break;
+		case Keys::Key_F: this->_cpu->KeyUp(15); break;
+	}
+
+	Console::WriteLine("OnKeyPress");
+	return true;
+}

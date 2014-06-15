@@ -17,6 +17,8 @@
 #include <awui/Windows/Forms/Application.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Keys.h>
+#include <awui/Windows/Forms/RemoteButtons.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
@@ -198,10 +200,6 @@ void Form::ProcessEvents() {
 						if (event.key.keysym.mod & KMOD_LALT)
 							this->SetFullscreen(0);
 						break;
-					case SDLK_f:
-						if (event.key.keysym.mod & KMOD_LALT)
-							this->SetFullscreen(1);
-						break;
 					case SDLK_LEFT:
 						OnRemoteKeyPressPre(RemoteButtons::Left);
 						break;
@@ -214,6 +212,53 @@ void Form::ProcessEvents() {
 					case SDLK_DOWN:
 						OnRemoteKeyPressPre(RemoteButtons::Down);
 						break;
+
+					case SDLK_0: OnKeyPressPre(Keys::Key_0); break;
+					case SDLK_1: OnKeyPressPre(Keys::Key_1); break;
+					case SDLK_2: OnKeyPressPre(Keys::Key_2); break;
+					case SDLK_3: OnKeyPressPre(Keys::Key_3); break;
+					case SDLK_4: OnKeyPressPre(Keys::Key_4); break;
+					case SDLK_5: OnKeyPressPre(Keys::Key_5); break;
+					case SDLK_6: OnKeyPressPre(Keys::Key_6); break;
+					case SDLK_7: OnKeyPressPre(Keys::Key_7); break;
+					case SDLK_8: OnKeyPressPre(Keys::Key_8); break;
+					case SDLK_9: OnKeyPressPre(Keys::Key_9); break;
+					case SDLK_a: OnKeyPressPre(Keys::Key_A); break;
+					case SDLK_b: OnKeyPressPre(Keys::Key_B); break;
+					case SDLK_c: OnKeyPressPre(Keys::Key_C); break;
+					case SDLK_d: OnKeyPressPre(Keys::Key_D); break;
+					case SDLK_e: OnKeyPressPre(Keys::Key_E); break;
+					case SDLK_f:
+						if (event.key.keysym.mod & KMOD_LALT)
+							this->SetFullscreen(1);
+						else
+							OnKeyPressPre(Keys::Key_F);
+						break;
+
+					default:
+						break;
+				}
+				break;
+
+			case SDL_KEYUP:
+				switch (event.key.keysym.sym) {
+					case SDLK_0: OnKeyUpPre(Keys::Key_0); break;
+					case SDLK_1: OnKeyUpPre(Keys::Key_1); break;
+					case SDLK_2: OnKeyUpPre(Keys::Key_2); break;
+					case SDLK_3: OnKeyUpPre(Keys::Key_3); break;
+					case SDLK_4: OnKeyUpPre(Keys::Key_4); break;
+					case SDLK_5: OnKeyUpPre(Keys::Key_5); break;
+					case SDLK_6: OnKeyUpPre(Keys::Key_6); break;
+					case SDLK_7: OnKeyUpPre(Keys::Key_7); break;
+					case SDLK_8: OnKeyUpPre(Keys::Key_8); break;
+					case SDLK_9: OnKeyUpPre(Keys::Key_9); break;
+					case SDLK_a: OnKeyUpPre(Keys::Key_A); break;
+					case SDLK_b: OnKeyUpPre(Keys::Key_B); break;
+					case SDLK_c: OnKeyUpPre(Keys::Key_C); break;
+					case SDLK_d: OnKeyUpPre(Keys::Key_D); break;
+					case SDLK_e: OnKeyUpPre(Keys::Key_E); break;
+					case SDLK_f: OnKeyUpPre(Keys::Key_F); break;
+
 					default:
 						break;
 				}

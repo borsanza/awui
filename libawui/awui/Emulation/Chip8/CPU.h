@@ -56,6 +56,9 @@ namespace awui {
 					uint8_t GetChip8Mode() const;
 
 					void Reset();
+
+					void KeyDown(uint8_t key);
+					void KeyUp(uint8_t key);
 			};
 		}
 	}

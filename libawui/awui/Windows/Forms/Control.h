@@ -5,6 +5,7 @@
 #include <awui/Drawing/Rectangle.h>
 #include <awui/Object.h>
 #include <awui/String.h>
+#include <awui/Windows/Forms/Keys.h>
 #include <awui/Windows/Forms/MouseButtons.h>
 #include <awui/Windows/Forms/RemoteButtons.h>
 
@@ -132,6 +133,8 @@ namespace awui {
 					void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
 					void OnRemoteKeyPressPre(RemoteButtons::Enum button);
 					void OnRemoteKeyUpPre(RemoteButtons::Enum button);
+					void OnKeyPressPre(Keys::Enum key);
+					void OnKeyUpPre(Keys::Enum key);
 
 					virtual void Layout();
 					virtual void OnMouseDown(MouseEventArgs* e) {}
@@ -139,6 +142,8 @@ namespace awui {
 					virtual void OnMouseUp(MouseEventArgs* e) {}
 					virtual bool OnRemoteKeyPress(RemoteButtons::Enum button);
 					virtual bool OnRemoteKeyUp(RemoteButtons::Enum button);
+					virtual bool OnKeyPress(Keys::Enum key);
+					virtual bool OnKeyUp(Keys::Enum key);
 					virtual void OnRemoteHeartbeat() {}
 					virtual void OnMouseEnter();
 					virtual void OnMouseLeave();

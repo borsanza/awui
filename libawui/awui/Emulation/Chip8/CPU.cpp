@@ -785,3 +785,11 @@ void CPU::SetImageUpdated(bool mode) {
 uint8_t CPU::GetChip8Mode() const {
 	return this->_chip8mode;
 }
+
+void CPU::KeyDown(uint8_t key) {
+	this->_input->KeyDown(key);
+}
+
+void CPU::KeyUp(uint8_t key) {
+	this->_input->KeyUp(key);
+}

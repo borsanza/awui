@@ -8,6 +8,8 @@ namespace awui {
 		namespace Chip8 {
 			class Input {
 				private:
+					bool _keys[16];
+					int _lastKey;
 
 				public:
 					Input();
@@ -15,6 +17,9 @@ namespace awui {
 
 					bool IsKeyPressed(uint8_t key);
 					int GetKey();
+
+					void KeyDown(uint8_t key);
+					void KeyUp(uint8_t key);
 			};
 		}
 	}

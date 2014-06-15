@@ -24,11 +24,10 @@ Form1::~Form1() {
 void Form1::InitializeComponent() {
 	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
-/*
 	this->_chip82 = new Chip8();
 	this->_chip82->SetDock(DockStyle::Bottom);
 	this->GetControls()->Add(this->_chip82);
-*/
+
 	this->_chip8 = new Chip8();
 	this->_chip8->SetDock(DockStyle::Fill);
 	this->GetControls()->Add(this->_chip8);
@@ -40,11 +39,10 @@ void Form1::InitializeComponent() {
 void Form1::LoadRom(const awui::String file) {
 	this->SetText(file);
 	this->_chip8->LoadRom(file);
-//	this->_chip82->LoadRom(file);
+	this->_chip82->LoadRom(file);
 }
 
 void Form1::OnTick() {
-/*
 	int width, height;
 
 	switch (this->_chip82->GetChip8Mode()) {
@@ -69,5 +67,4 @@ void Form1::OnTick() {
 
 	this->_chip82->SetSize(((width + 2) * 2), ((height + 2) * 2));
 	this->Layout();
-*/
 }
