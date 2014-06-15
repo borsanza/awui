@@ -1,7 +1,7 @@
 #ifndef _AWUI_WINDOWS_EMULATORS_CHIP8_H
 #define _AWUI_WINDOWS_EMULATORS_CHIP8_H
 
-#include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/Button.h>
 
 namespace awui {
 	namespace Drawing {
@@ -23,7 +23,7 @@ namespace awui {
 
 	namespace Windows {
 		namespace Emulators {
-			class Chip8 : public Control {
+			class Chip8 : public Button {
 				private:
 					CPU * _cpu;
 					Drawing::Image * _image;
