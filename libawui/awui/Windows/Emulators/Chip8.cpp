@@ -108,50 +108,100 @@ int Chip8::GetChip8Mode() {
 	return this->_cpu->GetChip8Mode();
 }
 
-bool Chip8::OnKeyPress(Keys::Enum key) {
+int Chip8::ConvertKeyAwToChip8(Keys::Enum key) {
+	int keyPressed = -1;
+
 	switch (key) {
-		case Keys::Key_0: this->_cpu->KeyDown(0); break;
-		case Keys::Key_1: this->_cpu->KeyDown(1); break;
-		case Keys::Key_2: this->_cpu->KeyDown(2); break;
-		case Keys::Key_3: this->_cpu->KeyDown(3); break;
-		case Keys::Key_4: this->_cpu->KeyDown(4); break;
-		case Keys::Key_5: this->_cpu->KeyDown(5); break;
-		case Keys::Key_6: this->_cpu->KeyDown(6); break;
-		case Keys::Key_7: this->_cpu->KeyDown(7); break;
-		case Keys::Key_8: this->_cpu->KeyDown(8); break;
-		case Keys::Key_9: this->_cpu->KeyDown(9); break;
-		case Keys::Key_A: this->_cpu->KeyDown(10); break;
-		case Keys::Key_B: this->_cpu->KeyDown(11); break;
-		case Keys::Key_C: this->_cpu->KeyDown(12); break;
-		case Keys::Key_D: this->_cpu->KeyDown(13); break;
-		case Keys::Key_E: this->_cpu->KeyDown(14); break;
-		case Keys::Key_F: this->_cpu->KeyDown(15); break;
+		case Keys::Key_0:
+			keyPressed = 0;
+			break;
+
+		case Keys::Key_1:
+			keyPressed = 1;
+			break;
+
+		case Keys::Key_KP8:
+		case Keys::Key_2:
+			keyPressed = 2;
+			break;
+
+		case Keys::Key_3:
+			keyPressed = 3;
+			break;
+
+		case Keys::Key_KP4:
+		case Keys::Key_4:
+			keyPressed = 4;
+			break;
+
+		case Keys::Key_5:
+			keyPressed = 5;
+			break;
+
+		case Keys::Key_KP6:
+		case Keys::Key_6:
+			keyPressed = 6;
+			break;
+
+		case Keys::Key_7:
+			keyPressed = 7;
+			break;
+
+		case Keys::Key_KP2:
+		case Keys::Key_8:
+			keyPressed = 8;
+			break;
+
+		case Keys::Key_9:
+			keyPressed = 9;
+			break;
+
+		case Keys::Key_A:
+			keyPressed = 10;
+			break;
+
+		case Keys::Key_B:
+			keyPressed = 11;
+			break;
+
+		case Keys::Key_C:
+			keyPressed = 12;
+			break;
+
+		case Keys::Key_D:
+			keyPressed = 13;
+			break;
+
+		case Keys::Key_E:
+			keyPressed = 14;
+			break;
+
+		case Keys::Key_F:
+			keyPressed = 15;
+			break;
+
+		default:
+			break;
 	}
 
-	Console::WriteLine("OnKeyPress");
+	return keyPressed;
+}
+
+bool Chip8::OnKeyPress(Keys::Enum key) {
+	int keypressed = this->ConvertKeyAwToChip8(key);
+	if (keypressed >= 0)
+		this->_cpu->KeyDown(keypressed);
+
+//	Console::WriteLine("OnKeyPress");
 	return true;
 }
 
 bool Chip8::OnKeyUp(Keys::Enum key) {
-	switch (key) {
-		case Keys::Key_0: this->_cpu->KeyUp(0); break;
-		case Keys::Key_1: this->_cpu->KeyUp(1); break;
-		case Keys::Key_2: this->_cpu->KeyUp(2); break;
-		case Keys::Key_3: this->_cpu->KeyUp(3); break;
-		case Keys::Key_4: this->_cpu->KeyUp(4); break;
-		case Keys::Key_5: this->_cpu->KeyUp(5); break;
-		case Keys::Key_6: this->_cpu->KeyUp(6); break;
-		case Keys::Key_7: this->_cpu->KeyUp(7); break;
-		case Keys::Key_8: this->_cpu->KeyUp(8); break;
-		case Keys::Key_9: this->_cpu->KeyUp(9); break;
-		case Keys::Key_A: this->_cpu->KeyUp(10); break;
-		case Keys::Key_B: this->_cpu->KeyUp(11); break;
-		case Keys::Key_C: this->_cpu->KeyUp(12); break;
-		case Keys::Key_D: this->_cpu->KeyUp(13); break;
-		case Keys::Key_E: this->_cpu->KeyUp(14); break;
-		case Keys::Key_F: this->_cpu->KeyUp(15); break;
-	}
+	int keypressed = this->ConvertKeyAwToChip8(key);
+	if (keypressed >= 0)
+		this->_cpu->KeyUp(keypressed);
 
-	Console::WriteLine("OnKeyPress");
+//	Console::WriteLine("OnKeyUp");
 	return true;
+
 }

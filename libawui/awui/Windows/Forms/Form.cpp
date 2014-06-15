@@ -235,6 +235,23 @@ void Form::ProcessEvents() {
 							OnKeyPressPre(Keys::Key_F);
 						break;
 
+					case SDLK_KP0: OnKeyPressPre(Keys::Key_KP0); break;
+					case SDLK_KP1: OnKeyPressPre(Keys::Key_KP1); break;
+					case SDLK_KP2: OnKeyPressPre(Keys::Key_KP2); break;
+					case SDLK_KP3: OnKeyPressPre(Keys::Key_KP3); break;
+					case SDLK_KP4: OnKeyPressPre(Keys::Key_KP4); break;
+					case SDLK_KP5: OnKeyPressPre(Keys::Key_KP5); break;
+					case SDLK_KP6: OnKeyPressPre(Keys::Key_KP6); break;
+					case SDLK_KP7: OnKeyPressPre(Keys::Key_KP7); break;
+					case SDLK_KP8: OnKeyPressPre(Keys::Key_KP8); break;
+					case SDLK_KP9: OnKeyPressPre(Keys::Key_KP9); break;
+					case SDLK_KP_DIVIDE: OnKeyPressPre(Keys::Key_KP_DIVIDE); break;
+					case SDLK_KP_EQUALS: OnKeyPressPre(Keys::Key_KP_EQUALS); break;
+					case SDLK_KP_MINUS: OnKeyPressPre(Keys::Key_KP_MINUS); break;
+					case SDLK_KP_MULTIPLY: OnKeyPressPre(Keys::Key_KP_MULTIPLY); break;
+					case SDLK_KP_PERIOD: OnKeyPressPre(Keys::Key_KP_PERIOD); break;
+					case SDLK_KP_PLUS: OnKeyPressPre(Keys::Key_KP_PLUS); break;
+
 					default:
 						break;
 				}
@@ -258,6 +275,24 @@ void Form::ProcessEvents() {
 					case SDLK_d: OnKeyUpPre(Keys::Key_D); break;
 					case SDLK_e: OnKeyUpPre(Keys::Key_E); break;
 					case SDLK_f: OnKeyUpPre(Keys::Key_F); break;
+
+					case SDLK_KP0: OnKeyUpPre(Keys::Key_KP0); break;
+					case SDLK_KP1: OnKeyUpPre(Keys::Key_KP1); break;
+					case SDLK_KP2: OnKeyUpPre(Keys::Key_KP2); break;
+					case SDLK_KP3: OnKeyUpPre(Keys::Key_KP3); break;
+					case SDLK_KP4: OnKeyUpPre(Keys::Key_KP4); break;
+					case SDLK_KP5: OnKeyUpPre(Keys::Key_KP5); break;
+					case SDLK_KP6: OnKeyUpPre(Keys::Key_KP6); break;
+					case SDLK_KP7: OnKeyUpPre(Keys::Key_KP7); break;
+					case SDLK_KP8: OnKeyUpPre(Keys::Key_KP8); break;
+					case SDLK_KP9: OnKeyUpPre(Keys::Key_KP9); break;
+					case SDLK_KP_DIVIDE: OnKeyUpPre(Keys::Key_KP_DIVIDE); break;
+					case SDLK_KP_ENTER: OnKeyUpPre(Keys::Key_KP_ENTER); break;
+					case SDLK_KP_EQUALS: OnKeyUpPre(Keys::Key_KP_EQUALS); break;
+					case SDLK_KP_MINUS: OnKeyUpPre(Keys::Key_KP_MINUS); break;
+					case SDLK_KP_MULTIPLY: OnKeyUpPre(Keys::Key_KP_MULTIPLY); break;
+					case SDLK_KP_PERIOD: OnKeyUpPre(Keys::Key_KP_PERIOD); break;
+					case SDLK_KP_PLUS: OnKeyUpPre(Keys::Key_KP_PLUS); break;
 
 					default:
 						break;

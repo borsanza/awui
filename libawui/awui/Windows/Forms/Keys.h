@@ -22,6 +22,24 @@ namespace awui {
 					Key_D,
 					Key_E,
 					Key_F,
+
+					Key_KP0,
+					Key_KP1,
+					Key_KP2,
+					Key_KP3,
+					Key_KP4,
+					Key_KP5,
+					Key_KP6,
+					Key_KP7,
+					Key_KP8,
+					Key_KP9,
+					Key_KP_DIVIDE,
+					Key_KP_ENTER,
+					Key_KP_EQUALS,
+					Key_KP_MINUS,
+					Key_KP_MULTIPLY,
+					Key_KP_PERIOD,
+					Key_KP_PLUS,
 				};
 			};
 		}

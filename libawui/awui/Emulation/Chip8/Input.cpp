@@ -6,6 +6,15 @@
 
 #include "Input.h"
 
+/*
+ * This is the physical distribution
+ *
+ * 1 2 3 C
+ * 4 5 6 D
+ * 7 8 9 E
+ * A 0 B F
+ */
+
 using namespace awui::Emulation::Chip8;
 
 Input::Input() {
@@ -18,11 +27,14 @@ Input::~Input() {
 }
 
 bool Input::IsKeyPressed(uint8_t key) {
+	this->_lastKey = -1;
 	return this->_keys[key];
 }
 
 int Input::GetKey() {
-	return this->_lastKey;
+	int r = this->_lastKey;
+	this->_lastKey = -1;
+	return r;
 }
 
 void Input::KeyDown(uint8_t key) {

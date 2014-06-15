@@ -28,6 +28,8 @@ namespace awui {
 					CPU * _cpu;
 					Drawing::Image * _image;
 
+					int ConvertKeyAwToChip8(Keys::Enum key);
+
 				public:
 					Chip8();
 					virtual ~Chip8();
