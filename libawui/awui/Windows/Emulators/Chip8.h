@@ -27,6 +27,7 @@ namespace awui {
 				private:
 					CPU * _cpu;
 					Drawing::Image * _image;
+					bool _invertedColors;
 
 					int ConvertKeyAwToChip8(Keys::Enum key);
 

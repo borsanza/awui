@@ -25,6 +25,7 @@ Chip8::Chip8() {
 	this->_image = new Drawing::Image(64, 32);
 	this->_cpu = new CPU();
 	this->SetTabStop(true);
+	this->_invertedColors = false;
 }
 
 Chip8::~Chip8() {
@@ -50,8 +51,12 @@ void Chip8::OnPaint(GL* gl) {
 	if (this->_cpu->GetImageUpdated()) {
 		if (this->_cpu->GetChip8Mode() == MEGACHIP8)
 			this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-		else
-			this->SetBackColor(Color::FromArgb(163, 218, 2));
+		else {
+			if (!this->_invertedColors)
+				this->SetBackColor(Color::FromArgb(163, 218, 2));
+			else
+				this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+		}
 
 		Screen * screen = this->_cpu->GetScreen();
 
@@ -70,10 +75,17 @@ void Chip8::OnPaint(GL* gl) {
 		} else {
 			for (int y = 0; y < screen->GetHeight(); y++) {
 				for (int x = 0; x < screen->GetWidth(); x++) {
-					if (screen->GetPixel(x, y))
-						this->_image->SetPixel(x, y, 50, 88, 4, 255);
-					else
-						this->_image->SetPixel(x, y, 128, 185, 0, 255);
+					if (!this->_invertedColors) {
+						if (screen->GetPixel(x, y))
+							this->_image->SetPixel(x, y, 50, 88, 4, 255);
+						else
+							this->_image->SetPixel(x, y, 128, 185, 0, 255);
+					} else {
+						if (screen->GetPixel(x, y))
+							this->_image->SetPixel(x, y, 255, 255, 255, 255);
+						else
+							this->_image->SetPixel(x, y, 0, 0, 0, 255);
+					}
 				}
 			}
 		}
@@ -208,6 +220,11 @@ bool Chip8::OnKeyPress(Keys::Enum key) {
 	int keypressed = this->ConvertKeyAwToChip8(key);
 	if (keypressed >= 0)
 		this->_cpu->KeyDown(keypressed);
+
+	if (key == Keys::Key_I) {
+		this->_invertedColors = !this->_invertedColors;
+		this->_cpu->SetImageUpdated(true);
+	}
 
 //	Console::WriteLine("OnKeyPress");
 	return true;
