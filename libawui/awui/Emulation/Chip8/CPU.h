@@ -31,6 +31,7 @@ namespace awui {
 					uint8_t _soundTimer;
 					uint16_t _spriteWidth;
 					uint16_t _spriteHeight;
+					uint16_t _frameCounter;
 					int _finished;
 					bool _imageUpdated;
 

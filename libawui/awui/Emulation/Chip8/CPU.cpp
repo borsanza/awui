@@ -32,6 +32,7 @@ CPU::CPU() {
 	this->_random = new Random();
 	this->_sound = new Sound();
 	this->_colors = 0;
+	this->_frameCounter = 0;
 
 	this->Reset();
 
@@ -118,8 +119,7 @@ void CPU::Reset() {
 }
 
 void CPU::OnTick() {
-	static int frame = 1;
-	frame++;
+	this->_frameCounter++;
 
 	if (_firstTime) {
 		this->_imageUpdated = true;
@@ -146,7 +146,7 @@ void CPU::OnTick() {
 			break;
 		case MEGACHIP8:
 			ticks = 1200000.0f;
-//			if ((frame % 10) != 1)
+//			if ((this->_frameCounter % 10) != 1)
 //				return;
 			break;
 	}
