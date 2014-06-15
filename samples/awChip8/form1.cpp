@@ -75,8 +75,8 @@ void Form1::AdjustSizeOfChip8(awui::Windows::Emulators::Chip8 * chip8) {
 void Form1::OnTick() {
 	int x = 32;
 	for (int i = 0; i < TOTALCHIP8; i++) {
-		this->_chip8[i]->SetLocation(x, 32);
 		this->AdjustSizeOfChip8(this->_chip8[i]);
+		this->_chip8[i]->SetLocation(x, (this->GetHeight() - this->_chip8[i]->GetHeight()) / 3);
 		x += this->_chip8[i]->GetWidth() + 32;
 	}
 }
