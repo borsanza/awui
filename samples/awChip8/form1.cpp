@@ -31,6 +31,8 @@ void Form1::InitializeComponent() {
 		this->GetControls()->Add(this->_chip8[i]);
 	}
 
+	this->_chip8[0]->SetInvertedColors(true);
+
 	this->SetSize(((256 + 2) * 2), ((192 + 2) * 2) + 25);
 	this->SetFullscreen(1);
 }

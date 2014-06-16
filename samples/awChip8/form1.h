@@ -7,7 +7,7 @@
 
 using namespace awui::Windows::Forms;
 
-#define TOTALCHIP8 3
+#define TOTALCHIP8 2
 
 class Form1 : public awui::Windows::Forms::Form {
 	private:

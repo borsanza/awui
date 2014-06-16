@@ -42,6 +42,7 @@ namespace awui {
 					virtual void OnTick();
 					virtual void OnPaint(OpenGL::GL* gl);
 					int GetChip8Mode();
+					void SetInvertedColors(bool mode);
 
 					virtual bool OnKeyPress(Keys::Enum key);
 					virtual bool OnKeyUp(Keys::Enum key);

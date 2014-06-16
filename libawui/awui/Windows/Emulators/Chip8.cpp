@@ -239,3 +239,7 @@ bool Chip8::OnKeyUp(Keys::Enum key) {
 	return true;
 
 }
+
+void Chip8::SetInvertedColors(bool mode) {
+	this->_invertedColors = mode;
+}
