@@ -47,6 +47,7 @@ void Form1::AdjustSizeOfChip8(awui::Windows::Emulators::Chip8 * chip8) {
 	int width, height;
 
 	int multiply = 1;
+	int margin = 2;
 	switch (chip8->GetChip8Mode()) {
 		default:
 		case awui::Emulation::Chip8::CHIP8:
@@ -68,10 +69,11 @@ void Form1::AdjustSizeOfChip8(awui::Windows::Emulators::Chip8 * chip8) {
 			width = 256;
 			height = 192;
 			multiply = 2;
+			margin = 0;
 			break;
 	}
 
-	chip8->SetSize(((width + 2) * multiply), ((height + 2) * multiply));
+	chip8->SetSize(((width + margin) * multiply), ((height + margin) * multiply));
 }
 
 void Form1::OnTick() {

@@ -151,8 +151,9 @@ void CPU::OnTick() {
 			break;
 		case MEGACHIP8:
 			ticks = 1200000.0f;
-//			if ((this->_frameCounter % 10) != 1)
-//				return;
+			// 30FPS
+			if ((this->_frameCounter % 2) != 1)
+				return;
 			break;
 	}
 
