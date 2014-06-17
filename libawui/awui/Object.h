@@ -32,6 +32,7 @@ namespace awui {
 			ListBox,
 			Stack,
 			Chip8,
+			MasterSystem,
 		};
 	};
 

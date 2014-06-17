@@ -170,6 +170,7 @@ void Form::ProcessEvents() {
 						break;
 				}
 				break;
+
 			case SDL_JOYAXISMOTION:
 				if (event.jaxis.axis == 0) {
 					if (event.jaxis.value < -16000)
@@ -185,6 +186,7 @@ void Form::ProcessEvents() {
 							OnRemoteKeyPressPre(RemoteButtons::Down);
 				}
 				break;
+
 			case SDL_KEYDOWN:
 				switch (event.key.keysym.sym) {
 					case SDLK_ESCAPE:
@@ -342,9 +344,11 @@ void Form::ProcessEvents() {
 						break;
 				}
 				break;
+
 			case SDL_QUIT:
 				Application::Quit();
 				break;
+
 			case SDL_MOUSEBUTTONDOWN: {
 					MouseButtons::Enum button = MouseButtons::None;
 					switch (event.button.button) {
@@ -370,6 +374,7 @@ void Form::ProcessEvents() {
 					}
 				}
 				break;
+
 			case SDL_MOUSEBUTTONUP: {
 					MouseButtons::Enum button = MouseButtons::None;
 					switch (event.button.button) {
@@ -398,15 +403,18 @@ void Form::ProcessEvents() {
 					}
 				}
 				break;
+
 			case SDL_MOUSEMOTION:
 				this->mouseX = event.motion.x;
 				this->mouseY = event.motion.y;
 				this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
 				break;
+
 			case SDL_VIDEORESIZE:
 				resizex = event.resize.w;
 				resizey = event.resize.h;
 				break;
+
 			default:
 				break;
 		}
