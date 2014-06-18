@@ -193,6 +193,7 @@ int CPU::RunOpcode(int iteration) {
 
 	int drawed = 0;
 	int enumopcode = this->_opcode.GetEnum(this->_chip8mode);
+	bool advance = true;
 //	this->_opcode.ShowLog(this->_pc, enumopcode);
 
 	switch (enumopcode) {
@@ -202,14 +203,12 @@ int CPU::RunOpcode(int iteration) {
 		case Ox00FE:
 			this->ChangeResolution(64, 32);
 			this->_chip8mode = CHIP8;
-			this->_pc += 2;
 			break;
 
 		// Enable Megachip mode
 		case Ox0011:
 			this->ChangeResolution(256, 192);
 			this->_chip8mode = MEGACHIP8;
-			this->_pc += 2;
 			break;
 
 		// Scroll screen Nibble lines up
@@ -217,7 +216,6 @@ int CPU::RunOpcode(int iteration) {
 			this->_screen->ScrollUp(this->_opcode.GetN());
 			this->_imageUpdated = true;
 			drawed = 1;
-			this->_pc += 2;
 			break;
 
 		// Scroll screen Nibble lines down
@@ -225,7 +223,6 @@ int CPU::RunOpcode(int iteration) {
 			this->_screen->ScrollDown(this->_opcode.GetN());
 			this->_imageUpdated = true;
 			drawed = 1;
-			this->_pc += 2;
 			break;
 
 		// Chip 8 HiRes
@@ -234,16 +231,17 @@ int CPU::RunOpcode(int iteration) {
 		case Ox00E0:
 			if ((iteration != 0) && (this->_chip8mode == MEGACHIP8)) {
 				drawed = -1;
+				advance = false;
 				break;
 			}
 
 			this->_screen->Clear();
-			this->_pc += 2;
 			break;
 
 		// Returns from a subroutine
 		case Ox00EE:
 			this->_pc = this->_stack->Pop();
+			advance = false;
 			break;
 
 		// Scroll screen 4 pixels right. 2 pixels in low Mode
@@ -251,7 +249,6 @@ int CPU::RunOpcode(int iteration) {
 			this->_screen->ScrollRight(this->_screen->GetWidth() / 32);
 			this->_imageUpdated = true;
 			drawed = 1;
-			this->_pc += 2;
 			break;
 
 		// Scroll screen 4 pixels left. 2 pixels in low Mode
@@ -259,19 +256,18 @@ int CPU::RunOpcode(int iteration) {
 			this->_screen->ScrollLeft(this->_screen->GetWidth() / 32);
 			this->_imageUpdated = true;
 			drawed = 1;
-			this->_pc += 2;
 			break;
 
 		// Exit Chip Interpreter
 		case Ox00FD:
 			this->_finished = 1;
+			advance = false;
 			break;
 
 		// Enable extended screen mode (128 x 64)
 		case Ox00FF:
 			this->ChangeResolution(128, 64);
 			this->_chip8mode = SUPERCHIP8;
-			this->_pc += 2;
 			break;
 
 		// I=(nn<<16)+nnnn , PC+=2;
@@ -283,7 +279,6 @@ int CPU::RunOpcode(int iteration) {
 				int byte3 = this->_memory->ReadByte(this->_pc + 1);
 				uint32_t i = (byte1 << 16) | (byte2 << 8) | byte3;
 				this->_registers->SetI(i);
-				this->_pc += 2;
 			}
 			break;
 
@@ -304,8 +299,6 @@ int CPU::RunOpcode(int iteration) {
 											this->_memory->ReadByte(offset + 3);
 					offset += 4;
 				}
-
-				this->_pc += 2;
 			}
 			break;
 
@@ -314,7 +307,6 @@ int CPU::RunOpcode(int iteration) {
 			this->_spriteWidth = this->_opcode.GetNN();
 			if (this->_spriteWidth == 0)
 				this->_spriteWidth = 256;
-			this->_pc += 2;
 			break;
 
 		// Set Sprite-height to nn	(SPRH  nn)
@@ -322,19 +314,16 @@ int CPU::RunOpcode(int iteration) {
 			this->_spriteHeight = this->_opcode.GetNN();
 			if (this->_spriteHeight == 0)
 				this->_spriteHeight = 256;
-			this->_pc += 2;
 			break;
 
 		// Play digitised sound at I
 		case Ox060N:
 			Console::WriteLine(Convert::ToString(this->_opcode.GetN()));
-			this->_pc += 2;
 			break;
 
 		// Stop digitised sound
 		case Ox0700:
 			Console::WriteLine("Stop");
-			this->_pc += 2;
 			break;
 
 		// Jumps to address NNN
@@ -348,47 +337,38 @@ int CPU::RunOpcode(int iteration) {
 				}
 
 				this->_pc = offset;
+				advance = false;
 			}
 			break;
 
 		// Calls subroutine at NNN
 		case Ox2NNN:
-			{
-				this->_stack->Push(this->_pc + 2);
-				this->_pc = this->_opcode.GetNNN();
-			}
+			this->_stack->Push(this->_pc + 2);
+			this->_pc = this->_opcode.GetNNN();
+			advance = false;
 			break;
 
 		// Skips the next instruction if VX equals KK
 		case Ox3XKK:
 			if (this->_registers->GetV(this->_opcode.GetX()) == this->_opcode.GetKK())
 				this->_pc += 2;
-
-			this->_pc += 2;
 			break;
 
 		// Skips the next instruction if VX doesn't equal KK
 		case Ox4XKK:
-			{
-				if (this->_registers->GetV(this->_opcode.GetX()) != this->_opcode.GetKK())
-					this->_pc += 2;
-
+			if (this->_registers->GetV(this->_opcode.GetX()) != this->_opcode.GetKK())
 				this->_pc += 2;
-			}
 			break;
 
 		// Skips the next instruction if VX equals VY
 		case Ox5XY0:
 			if (this->_registers->GetV(this->_opcode.GetX()) == this->_registers->GetV(this->_opcode.GetY()))
 				this->_pc += 2;
-
-			this->_pc += 2;
 			break;
 
 		// Store number KK in register VX
 		case Ox6XKK:
 			this->_registers->SetV(this->_opcode.GetX(), this->_opcode.GetKK());
-			this->_pc += 2;
 			break;
 
 		// Add the value KK to register VX
@@ -396,14 +376,12 @@ int CPU::RunOpcode(int iteration) {
 			{
 				uint8_t x = this->_opcode.GetX();
 				this->_registers->SetV(x, this->_registers->GetV(x) + this->_opcode.GetKK());
-				this->_pc += 2;
 			}
 			break;
 
 		// VX = VY
 		case Ox8XY0:
 			this->_registers->SetV(this->_opcode.GetX(), this->_registers->GetV(this->_opcode.GetY()));
-			this->_pc += 2;
 			break;
 
 		// VX = VX OR VY
@@ -412,7 +390,6 @@ int CPU::RunOpcode(int iteration) {
 				uint8_t x = this->_opcode.GetX();
 				uint8_t y = this->_opcode.GetY();
 				this->_registers->SetV(x, this->_registers->GetV(x) | this->_registers->GetV(y));
-				this->_pc += 2;
 			}
 			break;
 
@@ -422,7 +399,6 @@ int CPU::RunOpcode(int iteration) {
 				uint8_t x = this->_opcode.GetX();
 				uint8_t y = this->_opcode.GetY();
 				this->_registers->SetV(x, this->_registers->GetV(x) & this->_registers->GetV(y));
-				this->_pc += 2;
 			}
 			break;
 
@@ -432,7 +408,6 @@ int CPU::RunOpcode(int iteration) {
 				uint8_t x = this->_opcode.GetX();
 				uint8_t y = this->_opcode.GetY();
 				this->_registers->SetV(x, this->_registers->GetV(x) ^ this->_registers->GetV(y));
-				this->_pc += 2;
 			}
 			break;
 
@@ -447,7 +422,6 @@ int CPU::RunOpcode(int iteration) {
 				int sum = this->_registers->GetV(x) + this->_registers->GetV(y);
 				this->_registers->SetV(0xF, (sum > 255)? 1 : 0);
 				this->_registers->SetV(x, (uint8_t) sum);
-				this->_pc += 2;
 			}
 			break;
 
@@ -461,7 +435,6 @@ int CPU::RunOpcode(int iteration) {
 				uint8_t vy = this->_registers->GetV(this->_opcode.GetY());
 				this->_registers->SetV(0xF, (vy <= vx)? 1 : 0);
 				this->_registers->SetV(x, (uint8_t) (vx - vy));
-				this->_pc += 2;
 			}
 			break;
 
@@ -473,7 +446,6 @@ int CPU::RunOpcode(int iteration) {
 				int value = this->_registers->GetV(x);
 				this->_registers->SetV(0xF, (value & 0x1) ? 1 : 0);
 				this->_registers->SetV(x, value >> 1);
-				this->_pc += 2;
 			}
 			break;
 
@@ -487,7 +459,6 @@ int CPU::RunOpcode(int iteration) {
 				uint8_t vy = this->_registers->GetV(this->_opcode.GetY());
 				this->_registers->SetV(0xF, (vx <= vy)? 1 : 0);
 				this->_registers->SetV(x, (uint8_t) (vy - vx));
-				this->_pc += 2;
 			}
 			break;
 
@@ -499,7 +470,6 @@ int CPU::RunOpcode(int iteration) {
 				uint8_t value = this->_registers->GetV(x);
 				this->_registers->SetV(0xF, (value & 128) ? 1 : 0);
 				this->_registers->SetV(x, value << 1);
-				this->_pc += 2;
 			}
 			break;
 
@@ -507,29 +477,22 @@ int CPU::RunOpcode(int iteration) {
 		case Ox9XY0:
 			if (this->_registers->GetV(this->_opcode.GetX()) != this->_registers->GetV(this->_opcode.GetY()))
 				this->_pc += 2;
-
-			this->_pc += 2;
 			break;
 
 		// Sets I to the address NNN
 		case OxANNN:
-			{
-				this->_registers->SetI(this->_opcode.GetNNN());
-				this->_pc += 2;
-			}
+			this->_registers->SetI(this->_opcode.GetNNN());
 			break;
 
 		// Jumps to the address NNN plus V0.
 		case OxBNNN:
-			{
-				this->_pc = this->_opcode.GetNNN() + this->_registers->GetV(0);
-			}
+			this->_pc = this->_opcode.GetNNN() + this->_registers->GetV(0);
+			advance = false;
 			break;
 
 		// Sets VX to a random number and NN
 		case OxCXKK:
 			this->_registers->SetV(this->_opcode.GetX(), this->_random->NextByte() & this->_opcode.GetKK());
-			this->_pc += 2;
 			break;
 
 		// Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels
@@ -595,7 +558,6 @@ int CPU::RunOpcode(int iteration) {
 				}
 
 				this->_registers->SetV(0xF, pixelCleared);
-				this->_pc += 2;
 				this->_imageUpdated = true;
 				drawed = 1;
 			}
@@ -605,45 +567,38 @@ int CPU::RunOpcode(int iteration) {
 		case OxEX9E:
 			if (this->_input->IsKeyPressed(this->_registers->GetV(this->_opcode.GetX())))
 				this->_pc += 2;
-
-			this->_pc += 2;
 			break;
 
 		// Skips the next instruction if the key stored in VX isn't pressed
 		case OxEXA1:
 			if (!this->_input->IsKeyPressed(this->_registers->GetV(this->_opcode.GetX())))
 				this->_pc += 2;
-
-			this->_pc += 2;
 			break;
 
 		// Sets VX to the value of the delay timer
 		case OxFX07:
 			this->_registers->SetV(this->_opcode.GetX(), this->_delayTimer);
-			this->_pc += 2;
 			break;
 
 		// A key press is awaited, and then stored in VX
 		case OxFX0A:
 			{
 				int key = this->_input->GetKey();
-				if (key != -1) {
+				if (key != -1)
 					this->_registers->SetV(this->_opcode.GetX(), key);
-					this->_pc += 2;
-				}
+				else
+					advance = false;
 			}
 			break;
 
 		// Sets the delay timer to VX
 		case OxFX15:
 			this->_delayTimer = this->_registers->GetV(this->_opcode.GetX());
-			this->_pc += 2;
 			break;
 
 		// Sets the sound timer to VX
 		case OxFX18:
 			this->_soundTimer = this->_registers->GetV(this->_opcode.GetX());
-			this->_pc += 2;
 			break;
 
 		// I = I + VX
@@ -657,7 +612,6 @@ int CPU::RunOpcode(int iteration) {
 					this->_registers->SetV(0xF, (value > 0xFFF) ? 1 : 0);
 					this->_registers->SetI(value & 0xFFF);
 				}
-				this->_pc += 2;
 			}
 			break;
 
@@ -665,13 +619,11 @@ int CPU::RunOpcode(int iteration) {
 		// Characters 0-F (in hexadecimal) are represented by a 4x5 font
 		case OxFX29:
 			this->_registers->SetI(this->_registers->GetV(this->_opcode.GetX()) * 5);
-			this->_pc += 2;
 			break;
 
 		// Point I to 10-byte font sprite
 		case OxFX30:
 			this->_registers->SetI(256 + (this->_registers->GetV(this->_opcode.GetX()) * 10));
-			this->_pc += 2;
 			break;
 
 		// Stores the Binary-coded decimal representation of VX, with the
@@ -691,7 +643,6 @@ int CPU::RunOpcode(int iteration) {
 				this->_memory->WriteByte(offset, hundreds);
 				this->_memory->WriteByte(offset + 1, tens);
 				this->_memory->WriteByte(offset + 2, units);
-				this->_pc += 2;
 			}
 			break;
 
@@ -705,7 +656,6 @@ int CPU::RunOpcode(int iteration) {
 					this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
 
 //				this->_registers->SetI(offset + x + 1);
-				this->_pc += 2;
 			}
 			break;
 
@@ -719,7 +669,6 @@ int CPU::RunOpcode(int iteration) {
 					this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
 
 //				this->_registers->SetI(offset + x + 1);
-				this->_pc += 2;
 			}
 			break;
 
@@ -730,8 +679,6 @@ int CPU::RunOpcode(int iteration) {
 				int offset = 128;
 				for (int i = 0; i <= x; i++)
 					this->_memory->WriteByte(offset + i, this->_registers->GetV(i));
-
-				this->_pc += 2;
 			}
 			break;
 
@@ -742,8 +689,6 @@ int CPU::RunOpcode(int iteration) {
 				int offset = 128;
 				for (int i = 0; i <= x; i++)
 					this->_registers->SetV(i, this->_memory->ReadByte(offset + i));
-
-				this->_pc += 2;
 			}
 			break;
 
@@ -751,9 +696,11 @@ int CPU::RunOpcode(int iteration) {
 		case OxNOTIMPLEMENTED:
 //			this->_opcode.ShowLog(this->_pc, enumopcode);
 //			assert(0);
-			this->_pc += 2;
 			break;
 	}
+
+	if (advance)
+		this->_pc += 2;
 
 	return drawed;
 }
