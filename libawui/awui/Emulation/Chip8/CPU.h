@@ -41,6 +41,7 @@ namespace awui {
 					uint32_t * _colors;
 
 					int RunOpcode(int iteration);
+					void ChangeResolution(uint16_t width, uint16_t height);
 
 				public:
 					CPU();

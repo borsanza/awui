@@ -61,11 +61,8 @@ void CPU::LoadRom(const String file) {
 
 void CPU::Reset() {
 	this->_registers->Clear();
-  // Es un reset, dudo que cambie el screen o el chipmode...
 
-//	delete this->_screen;
-//	this->_screen = new Screen(64, 32);
-//	this->_chip8mode = CHIP8;
+  // Es un reset, dudo que cambie el screen o el chipmode...
 	this->_screen->Clear();
 
 	this->_stack->Clear();
@@ -189,11 +186,7 @@ int CPU::RunOpcode(int iteration) {
 	this->_opcode.SetByte2(this->_memory->ReadByte(this->_pc + 1));
 
 	if ((this->_pc == 0x200) && (this->_opcode.GetOpcode() == 0x1260)) {
-		if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 64)) {
-			delete this->_screen;
-			this->_screen = new Screen(64, 64);
-		}
-
+		this->ChangeResolution(64, 64);
 		this->_chip8mode = CHIP8HIRES;
 		this->_opcode.SetByte2(0xc0);
 	}
@@ -205,22 +198,16 @@ int CPU::RunOpcode(int iteration) {
 	switch (enumopcode) {
 		// Disable Megachip mode
 		case Ox0010:
-			if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
-				delete this->_screen;
-				this->_screen = new Screen(64, 32);
-			}
-
+		// Disable extended screen mode (64 x 32)
+		case Ox00FE:
+			this->ChangeResolution(64, 32);
 			this->_chip8mode = CHIP8;
 			this->_pc += 2;
 			break;
 
 		// Enable Megachip mode
 		case Ox0011:
-			if ((this->_screen->GetWidth() != 256) ||  (this->_screen->GetHeight() != 192)) {
-				delete this->_screen;
-				this->_screen = new Screen(256, 192);
-			}
-
+			this->ChangeResolution(256, 192);
 			this->_chip8mode = MEGACHIP8;
 			this->_pc += 2;
 			break;
@@ -280,24 +267,9 @@ int CPU::RunOpcode(int iteration) {
 			this->_finished = 1;
 			break;
 
-		// Disable extended screen mode (64 x 32)
-		case Ox00FE:
-			if ((this->_screen->GetWidth() != 64) ||  (this->_screen->GetHeight() != 32)) {
-				delete this->_screen;
-				this->_screen = new Screen(64, 32);
-			}
-
-			this->_chip8mode = CHIP8;
-			this->_pc += 2;
-			break;
-
 		// Enable extended screen mode (128 x 64)
 		case Ox00FF:
-			if ((this->_screen->GetWidth() != 128) ||  (this->_screen->GetHeight() != 64)) {
-				delete this->_screen;
-				this->_screen = new Screen(128, 64);
-			}
-
+			this->ChangeResolution(128, 64);
 			this->_chip8mode = SUPERCHIP8;
 			this->_pc += 2;
 			break;
@@ -808,4 +780,11 @@ void CPU::KeyDown(uint8_t key) {
 
 void CPU::KeyUp(uint8_t key) {
 	this->_input->KeyUp(key);
+}
+
+void CPU::ChangeResolution(uint16_t width, uint16_t height) {
+	if ((this->_screen->GetWidth() != width) ||  (this->_screen->GetHeight() != height)) {
+		delete this->_screen;
+		this->_screen = new Screen(width, height);
+	}
 }
