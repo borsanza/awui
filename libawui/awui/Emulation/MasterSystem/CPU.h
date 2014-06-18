@@ -6,14 +6,18 @@
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
+			class Registers;
 			class Rom;
 
 			class CPU {
 				private:
-					int _pc;
+					int16_t _pc;
+					Registers * _registers;
 					Rom * _rom;
+					int64_t _cycles;
 
 					void RunOpcode();
+					void Reset();
 
 				public:
 					CPU();

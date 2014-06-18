@@ -19,8 +19,6 @@ class Form1 : public awui::Windows::Forms::Form {
 		virtual ~Form1();
 
 		void LoadRom(const awui::String file);
-
-		virtual void OnTick();
 };
 
 #endif

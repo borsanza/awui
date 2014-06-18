@@ -18,7 +18,7 @@ namespace awui {
 
 			class CPU {
 				private:
-					int _pc;
+					int16_t _pc;
 					Screen * _screen;
 					Registers * _registers;
 					Memory * _memory;
