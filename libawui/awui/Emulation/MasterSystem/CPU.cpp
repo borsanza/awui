@@ -20,6 +20,9 @@ CPU::CPU() {
 	this->_pc = 0;
 	this->_cycles = 0;
 
+	this->_ff1 = false;
+	this->_ff2 = false;
+
 	this->Reset();
 }
 
@@ -107,9 +110,19 @@ void CPU::RunOpcode() {
 
 		// F3 DI
 		// |1|4| Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
-		// Not developed
 		case 0xF3:
 			this->_pc++;
+			this->_ff1 = false;
+			this->_ff2 = false;
+			this->_cycles += 4;
+			break;
+
+		// FB EI
+		// |1|4| Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
+		case 0xF3:
+			this->_pc++;
+			this->_ff1 = true;
+			this->_ff2 = true;
 			this->_cycles += 4;
 			break;
 	}

@@ -18,6 +18,9 @@ namespace awui {
 					Rom * _rom;
 					int64_t _cycles;
 
+					bool _ff1;
+					bool _ff2;
+
 					void RunOpcode();
 					void Reset();
 
