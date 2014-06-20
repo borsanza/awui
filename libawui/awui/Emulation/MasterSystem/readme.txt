@@ -50,3 +50,8 @@ CPU:
 			- F: Flags o bits de condicion
 			- IX e IY: Registros indice
 			- I: Registro de interrupciones
+
+
+Memoria:
+ - Ram:  0xC000 a 0xDFFF
+ - VRam: 0x0000 a 0x3FFF 
