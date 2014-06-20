@@ -45,23 +45,32 @@ void CPU::RunOpcode() {
 
 	printf("0x%x: 0x%x\n", this->_pc, opcode1);
 
+	// http://clrhome.org/table/
 	switch (opcode1) {
-		// 31 n n: LD SP,nn		10	3	1
-		// 31: LD   SP,&0000  -              SLS  C      sls (iy+0)->c    -
+		// 00: NOP
+		// |1|4| No operation is performed.
+		case 0x00:
+			this->_pc++;
+			this->_cycles += 4;
+			break;
+
+		// 31 nn: LD SP, **
+		// |3|10| Loads ** into sp.
 		case 0x31:
 			this->_registers->SetSP((this->_rom->ReadByte(this->_pc + 2) << 8) | this->_rom->ReadByte(this->_pc + 1));
-			printf("%x\n", this->_registers->GetSP());
 			this->_pc += 3;
 			this->_cycles += 10;
 			break;
 
-		// C3 n n:		JP (nn)			10	3	1
+		// C3 nn: JP **
+		// |3|10| ** is copied to pc.
 		case 0xC3:
 			this->_pc = (this->_rom->ReadByte(this->_pc + 2) << 8) | this->_rom->ReadByte(this->_pc + 1);
 			this->_cycles += 10;
 			break;
 
-		// CD n n:	CALL (nn)		17	5	1
+		// CD nn: CALL **
+		// |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
 		case 0xCD:
 			{
 				this->_pc += 3;
@@ -74,27 +83,31 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		// ED **** ED ****   -              SET  5,L    set 5,(iy+0)->l  -
+		// Extended instructions
 		case 0xED:
-			this->_pc++;
-			opcode1 = this->_rom->ReadByte(this->_pc);
+			opcode1 = this->_rom->ReadByte(this->_pc + 1);
 
 			switch (opcode1) {
 				// ED56: IM 1
+				// |2|8| Sets interrupt mode 1.
 				case 0x56:
-					this->_pc++;
+					this->_pc += 2;
 					this->_cycles += 8;
 					break;
 			}
 			break;
 
-		// DB n: IN A,(n)		11	3	1
+		// DB n: IN A, *
+		// |2|11| A byte from port * is written to a.
+		// Not developed
 		case 0xDB:
 			this->_pc += 2;
 			this->_cycles += 11;
 			break;
 
-		// F3 DI             -              SET  6,E    set 6,(iy+0)->e  -
+		// F3 DI
+		// |1|4| Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
+		// Not developed
 		case 0xF3:
 			this->_pc++;
 			this->_cycles += 4;
