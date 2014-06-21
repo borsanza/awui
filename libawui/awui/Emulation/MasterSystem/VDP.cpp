@@ -44,7 +44,7 @@ void VDP::OnTick() {
 		}
 	}
 
-	printf("                       %dx%d\n", this->_col, this->_line);
+	// printf("                       %dx%d\n", this->_col, this->_line);
 }
 
 uint8_t VDP::GetStatus() {

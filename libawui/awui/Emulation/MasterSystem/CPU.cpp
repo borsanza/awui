@@ -43,7 +43,7 @@ void CPU::LoadRom(const String file) {
 }
 
 void CPU::OnTick() {
-	for (int i = 0; i<=300; i++) {
+	for (int i = 0; i<=3000; i++) {
 		this->RunOpcode();
 		this->_vdp->OnTick();
 	}
@@ -126,6 +126,17 @@ void CPU::RunOpcode() {
 			this->_cycles += 7;
 			break;
 
+		// 10 n: DJNZ *
+		// |2|13/8| The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
+		case Ox10:
+			{
+				uint8_t bDec = this->_registers->GetB() - 1;
+				this->_registers->SetB(bDec);
+				this->JR(bDec != 0);
+				this->_cycles++;
+			}
+			break;
+
 		// 28 nn: JR X, *
 		// |2|12/7| If condition X is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox18: this->JR(true); break;
@@ -133,6 +144,29 @@ void CPU::RunOpcode() {
 		case Ox28: this->JR(  this->_registers->GetF() & FFlag_Z);  break;
 		case Ox30: this->JR(!(this->_registers->GetF() & FFlag_C)); break;
 		case Ox38: this->JR(  this->_registers->GetF() & FFlag_C);  break;
+
+		// 11 nn: LD DE, **
+		// |3|10| Loads ** into de.
+		case Ox11:
+			{
+				uint16_t pc = this->_registers->GetPC();
+				this->_registers->SetDE((this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
+				this->_registers->IncPC(3);
+				this->_cycles += 10;
+			}
+			break;
+
+
+		// 21 nn: LD HL, **
+		// |3|10| Loads ** into hl.
+		case Ox21:
+			{
+				uint16_t pc = this->_registers->GetPC();
+				this->_registers->SetHL((this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
+				this->_registers->IncPC(3);
+				this->_cycles += 10;
+			}
+			break;
 
 		// 31 nn: LD SP, **
 		// |3|10| Loads ** into sp.
