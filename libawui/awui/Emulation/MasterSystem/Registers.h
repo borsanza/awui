@@ -60,7 +60,7 @@ namespace awui {
 
 					uint16_t GetPC() const;
 					void IncPC();
-					void IncPC(uint8_t value);
+					void IncPC(int16_t value);
 					void SetPC(uint16_t value);
 
 					void SetIFF1(bool mode);

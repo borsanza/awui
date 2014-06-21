@@ -75,7 +75,7 @@ void Registers::IncPC() {
 	this->_pc++;
 }
 
-void Registers::IncPC(uint8_t value) {
+void Registers::IncPC(int16_t value) {
 	this->_pc += value;
 }
 

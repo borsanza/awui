@@ -44,17 +44,17 @@ void CPU::OnTick() {
 }
 
 void CPU::RunOpcode() {
-	uint8_t opcode1 = this->_rom->ReadByte(this->_registers->GetPC());
+	uint8_t opcode1 = this->ReadMemory(this->_registers->GetPC());
 	this->_opcode.SetByte1(opcode1);
-	printf("0x%.4X: 0x%.2X", this->_registers->GetPC(), opcode1);
+	printf("%.4X: %.2X", this->_registers->GetPC(), opcode1);
 	if ((opcode1 == 0xCB) || (opcode1 == 0xDD) || (opcode1 == 0xED) || (opcode1 == 0xFD)) {
-		uint8_t opcode2 = this->_rom->ReadByte(this->_registers->GetPC() + 1);
+		uint8_t opcode2 = this->ReadMemory(this->_registers->GetPC() + 1);
 		this->_opcode.SetByte2(opcode2);
-		printf("%.2X", opcode2);
+		printf(" %.2X", opcode2);
 		if (((opcode1 == 0xDD) || (opcode1 == 0xFD)) && (opcode2 == 0xCB)) {
-			uint8_t opcode4 = this->_rom->ReadByte(this->_registers->GetPC() + 3);
+			uint8_t opcode4 = this->ReadMemory(this->_registers->GetPC() + 3);
 			this->_opcode.SetByte4(opcode4);
-			printf("nn%.2X", opcode4);
+			printf(" %.2X", opcode4);
 		}
 	}
 
@@ -74,7 +74,7 @@ void CPU::RunOpcode() {
 		case Ox01:
 			{
 				uint16_t pc = this->_registers->GetPC();
-				this->_registers->SetBC((this->_rom->ReadByte(pc + 2) << 8) | this->_rom->ReadByte(pc + 1));
+				this->_registers->SetBC((this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
 				this->_registers->IncPC(3);
 				this->_cycles += 10;
 			}
@@ -115,9 +115,25 @@ void CPU::RunOpcode() {
 		// 06: LD B, *
 		// |2|7| Loads * into b.
 		case Ox06:
-			this->_registers->SetB(this->_rom->ReadByte(this->_registers->GetPC() + 1));
+			this->_registers->SetB(this->ReadMemory(this->_registers->GetPC() + 1));
 			this->_registers->IncPC(2);
 			this->_cycles += 7;
+			break;
+
+		// 28 nn: JR Z, *
+		// |2|12/7| If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
+		// Not Developed
+		case Ox28:
+			{
+				int8_t value = this->ReadMemory(this->_registers->GetPC() + 1);
+				if (this->_registers->GetF() & FFlag_Z) {
+					this->_registers->IncPC(value + 2);
+					this->_cycles += 12;
+				} else {
+					this->_registers->IncPC(2);
+					this->_cycles += 7;
+				}
+			}
 			break;
 
 		// 31 nn: LD SP, **
@@ -125,7 +141,7 @@ void CPU::RunOpcode() {
 		case Ox31:
 			{
 				uint16_t pc = this->_registers->GetPC();
-				this->_registers->SetSP((this->_rom->ReadByte(pc + 2) << 8) | this->_rom->ReadByte(pc + 1));
+				this->_registers->SetSP((this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
 				this->_registers->IncPC(3);
 				this->_cycles += 10;
 			}
@@ -136,7 +152,7 @@ void CPU::RunOpcode() {
 		case OxC3:
 			{
 				uint16_t pc = this->_registers->GetPC();
-				this->_registers->SetPC((this->_rom->ReadByte(pc + 2) << 8) | this->_rom->ReadByte(pc + 1));
+				this->_registers->SetPC((this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
 				this->_cycles += 10;
 			}
 			break;
@@ -218,7 +234,7 @@ void CPU::RunOpcode() {
 				this->WriteMemory(sp, pc & 0xFF);
 				this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
 				this->_cycles += 17;
-				this->_registers->SetPC((this->_rom->ReadByte(pc - 1) << 8) | this->_rom->ReadByte(pc - 2));
+				this->_registers->SetPC((this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2));
 			}
 			break;
 
@@ -257,7 +273,7 @@ void CPU::RunOpcode() {
 		case OxDB:
 			{
 				uint16_t pc = this->_registers->GetPC();
-				this->_registers->SetA(this->_ports->ReadByte(this->_rom->ReadByte(pc + 1)));
+				this->_registers->SetA(this->_ports->ReadByte(this->ReadMemory(pc + 1)));
 				this->_registers->IncPC(2);
 				this->_cycles += 11;
 			}
@@ -286,24 +302,30 @@ void CPU::RunOpcode() {
 }
 
 void CPU::WriteMemory(uint16_t pos, uint8_t value) {
+	if (pos <= 0xBFFF)
+		this->_rom->WriteByte(pos, value);
+
 	// RAM
 	if (pos >= 0xC000) {
 		// RAM or RAM (mirror)
 		if (pos <= 0xDFFF)
-			this->_rom->WriteByte(pos - 0xC000, value);
+			this->_ram->WriteByte(pos - 0xC000, value);
 		else
-			this->_rom->WriteByte(pos - 0xE000, value);
+			this->_ram->WriteByte(pos - 0xE000, value);
 	}
 }
 
 uint8_t CPU::ReadMemory(uint16_t pos) {
+	if (pos <= 0xBFFF)
+		return this->_rom->ReadByte(pos);
+
 	// RAM
 	if (pos >= 0xC000) {
 		// RAM or RAM (mirror)
 		if (pos <= 0xDFFF)
-			return this->_rom->ReadByte(pos - 0xC000);
+			return this->_ram->ReadByte(pos - 0xC000);
 		else
-			return this->_rom->ReadByte(pos - 0xE000);
+			return this->_ram->ReadByte(pos - 0xE000);
 	}
 
 	return 0;
