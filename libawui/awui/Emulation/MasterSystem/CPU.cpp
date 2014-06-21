@@ -45,19 +45,20 @@ void CPU::OnTick() {
 
 void CPU::RunOpcode() {
 	uint8_t opcode1 = this->_rom->ReadByte(this->_registers->GetPC());
-	uint8_t opcode2 = 0;
-	uint8_t opcode4 = 0;
 	this->_opcode.SetByte1(opcode1);
+	printf("0x%.4X: 0x%.2X", this->_registers->GetPC(), opcode1);
 	if ((opcode1 == 0xCB) || (opcode1 == 0xDD) || (opcode1 == 0xED) || (opcode1 == 0xFD)) {
-		opcode2 = this->_rom->ReadByte(this->_registers->GetPC() + 1);
+		uint8_t opcode2 = this->_rom->ReadByte(this->_registers->GetPC() + 1);
 		this->_opcode.SetByte2(opcode2);
+		printf("%.2X", opcode2);
 		if (((opcode1 == 0xDD) || (opcode1 == 0xFD)) && (opcode2 == 0xCB)) {
-			opcode4 = this->_rom->ReadByte(this->_registers->GetPC() + 3);
+			uint8_t opcode4 = this->_rom->ReadByte(this->_registers->GetPC() + 3);
 			this->_opcode.SetByte4(opcode4);
+			printf("nn%.2X", opcode4);
 		}
 	}
 
-	printf("0x%.4x: 0x%.2x%.2xnn%.2x\n", this->_registers->GetPC(), opcode1, opcode2, opcode4);
+	printf("\n");
 
 	// http://clrhome.org/table/
 	switch (this->_opcode.GetEnum()) {
