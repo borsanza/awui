@@ -27,6 +27,8 @@ namespace awui {
 					void WriteMemory(uint16_t pos, uint8_t value);
 					uint8_t ReadMemory(uint16_t pos);
 
+					void BIT(uint8_t param, uint8_t compare);
+
 				public:
 					CPU();
 					~CPU();

@@ -6,6 +6,28 @@
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
+
+/*
+ * Flags of F
+ * 7  6  5  4  3  2   1  0
+ * S  Z     H     PV  N  C
+ *
+ * S: Sign flag. Set if the 2-complement value is negative (copy of MSB)
+ * Z: Zero flag. Set if the value is zero
+ * H: Half Carry. Carry from bit 3 to bit 4
+ * PV: Parity or Overflow. Parity set if even number of bits set. Overflow set if the 2-complement result does not fit in the register
+ * N: Subtract. Set if the last operation was a subtraction
+ * C: Carry. Set if the result did not fit in the register
+ */
+			enum {
+				FFlag_C  = 1,
+				FFlag_N  = 2,
+				FFlag_PV = 4,
+				FFlag_H  = 16,
+				FFlag_Z  = 64,
+				FFlag_S  = 128,
+			};
+
 			class Registers {
 				private:
 					uint8_t _a;
@@ -78,6 +100,8 @@ namespace awui {
 
 					void SetIM(uint8_t mode);
 					uint8_t GetIM();
+
+					void SetFFlag(uint8_t flag, bool value);
 			};
 		}
 	}

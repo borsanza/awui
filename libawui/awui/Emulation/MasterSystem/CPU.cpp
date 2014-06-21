@@ -140,13 +140,72 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		// CB7F: BIT 7, A
-		// |2|8| Tests bit 7 of a.
-		// Not developed
-		case OxCB7F:
-			this->_registers->IncPC(2);
-			this->_cycles += 8;
-			break;
+		// CB40-CB7F: BIT X, Y
+		// |2|8| Tests bit X of Y.
+		case OxCB40: BIT(this->_registers->GetB(), 0x01); break;
+		case OxCB41: BIT(this->_registers->GetC(), 0x01); break;
+		case OxCB42: BIT(this->_registers->GetD(), 0x01); break;
+		case OxCB43: BIT(this->_registers->GetE(), 0x01); break;
+		case OxCB44: BIT(this->_registers->GetH(), 0x01); break;
+		case OxCB45: BIT(this->_registers->GetL(), 0x01); break;
+		case OxCB46: BIT(this->ReadMemory(this->_registers->GetHL()), 0x01); break;
+		case OxCB47: BIT(this->_registers->GetA(), 0x01); break;
+		case OxCB48: BIT(this->_registers->GetB(), 0x02); break;
+		case OxCB49: BIT(this->_registers->GetC(), 0x02); break;
+		case OxCB4A: BIT(this->_registers->GetD(), 0x02); break;
+		case OxCB4B: BIT(this->_registers->GetE(), 0x02); break;
+		case OxCB4C: BIT(this->_registers->GetH(), 0x02); break;
+		case OxCB4D: BIT(this->_registers->GetL(), 0x02); break;
+		case OxCB4E: BIT(this->ReadMemory(this->_registers->GetHL()), 0x02); break;
+		case OxCB4F: BIT(this->_registers->GetA(), 0x02); break;
+		case OxCB50: BIT(this->_registers->GetB(), 0x04); break;
+		case OxCB51: BIT(this->_registers->GetC(), 0x04); break;
+		case OxCB52: BIT(this->_registers->GetD(), 0x04); break;
+		case OxCB53: BIT(this->_registers->GetE(), 0x04); break;
+		case OxCB54: BIT(this->_registers->GetH(), 0x04); break;
+		case OxCB55: BIT(this->_registers->GetL(), 0x04); break;
+		case OxCB56: BIT(this->ReadMemory(this->_registers->GetHL()), 0x04); break;
+		case OxCB57: BIT(this->_registers->GetA(), 0x04); break;
+		case OxCB58: BIT(this->_registers->GetB(), 0x08); break;
+		case OxCB59: BIT(this->_registers->GetC(), 0x08); break;
+		case OxCB5A: BIT(this->_registers->GetD(), 0x08); break;
+		case OxCB5B: BIT(this->_registers->GetE(), 0x08); break;
+		case OxCB5C: BIT(this->_registers->GetH(), 0x08); break;
+		case OxCB5D: BIT(this->_registers->GetL(), 0x08); break;
+		case OxCB5E: BIT(this->ReadMemory(this->_registers->GetHL()), 0x08); break;
+		case OxCB5F: BIT(this->_registers->GetA(), 0x08); break;
+		case OxCB60: BIT(this->_registers->GetB(), 0x10); break;
+		case OxCB61: BIT(this->_registers->GetC(), 0x10); break;
+		case OxCB62: BIT(this->_registers->GetD(), 0x10); break;
+		case OxCB63: BIT(this->_registers->GetE(), 0x10); break;
+		case OxCB64: BIT(this->_registers->GetH(), 0x10); break;
+		case OxCB65: BIT(this->_registers->GetL(), 0x10); break;
+		case OxCB66: BIT(this->ReadMemory(this->_registers->GetHL()), 0x10); break;
+		case OxCB67: BIT(this->_registers->GetA(), 0x10); break;
+		case OxCB68: BIT(this->_registers->GetB(), 0x20); break;
+		case OxCB69: BIT(this->_registers->GetC(), 0x20); break;
+		case OxCB6A: BIT(this->_registers->GetD(), 0x20); break;
+		case OxCB6B: BIT(this->_registers->GetE(), 0x20); break;
+		case OxCB6C: BIT(this->_registers->GetH(), 0x20); break;
+		case OxCB6D: BIT(this->_registers->GetL(), 0x20); break;
+		case OxCB6E: BIT(this->ReadMemory(this->_registers->GetHL()), 0x20); break;
+		case OxCB6F: BIT(this->_registers->GetA(), 0x20); break;
+		case OxCB70: BIT(this->_registers->GetB(), 0x40); break;
+		case OxCB71: BIT(this->_registers->GetC(), 0x40); break;
+		case OxCB72: BIT(this->_registers->GetD(), 0x40); break;
+		case OxCB73: BIT(this->_registers->GetE(), 0x40); break;
+		case OxCB74: BIT(this->_registers->GetH(), 0x40); break;
+		case OxCB75: BIT(this->_registers->GetL(), 0x40); break;
+		case OxCB76: BIT(this->ReadMemory(this->_registers->GetHL()), 0x40); break;
+		case OxCB77: BIT(this->_registers->GetA(), 0x40); break;
+		case OxCB78: BIT(this->_registers->GetB(), 0x80); break;
+		case OxCB79: BIT(this->_registers->GetC(), 0x80); break;
+		case OxCB7A: BIT(this->_registers->GetD(), 0x80); break;
+		case OxCB7B: BIT(this->_registers->GetE(), 0x80); break;
+		case OxCB7C: BIT(this->_registers->GetH(), 0x80); break;
+		case OxCB7D: BIT(this->_registers->GetL(), 0x80); break;
+		case OxCB7E: BIT(this->ReadMemory(this->_registers->GetHL()), 0x80); break;
+		case OxCB7F: BIT(this->_registers->GetA(), 0x80); break;
 
 		// CD nn: CALL **
 		// |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
@@ -247,4 +306,13 @@ uint8_t CPU::ReadMemory(uint16_t pos) {
 	}
 
 	return 0;
+}
+
+void CPU::BIT(uint8_t value, uint8_t compare) {
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_H, true);
+	this->_registers->SetFFlag(FFlag_Z, !(value & compare));
+	this->_registers->IncPC(2);
+	this->_cycles += 8;
+//	printf("%.2x: %.2x\n", value, this->_registers->GetF());
 }
