@@ -6,20 +6,18 @@
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
+			class Ports;
 			class Ram;
 			class Registers;
 			class Rom;
 
 			class CPU {
 				private:
-					int16_t _pc;
 					Ram * _ram;
 					Registers * _registers;
 					Rom * _rom;
+					Ports * _ports;
 					int64_t _cycles;
-
-					bool _ff1;
-					bool _ff2;
 
 					void RunOpcode();
 					void Reset();

@@ -28,3 +28,10 @@ Ports::Ports() {
 
 Ports::~Ports() {
 }
+
+void Ports::WriteByte(uint8_t pos, uint8_t value) {
+}
+
+uint8_t Ports::ReadByte(uint8_t pos) const {
+	return 0;
+}
