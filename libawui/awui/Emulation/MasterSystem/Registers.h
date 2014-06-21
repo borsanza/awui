@@ -22,6 +22,7 @@ namespace awui {
 					uint16_t _iy;
 					uint16_t _pc;
 					uint16_t _sp;
+					uint8_t _im;
 					bool _iff1;
 					bool _iff2;
 
@@ -74,6 +75,9 @@ namespace awui {
 
 					void SetIY(uint16_t value);
 					uint16_t GetIY() const;
+
+					void SetIM(uint8_t mode);
+					uint8_t GetIM();
 			};
 		}
 	}

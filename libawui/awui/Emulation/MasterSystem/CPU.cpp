@@ -45,17 +45,19 @@ void CPU::OnTick() {
 
 void CPU::RunOpcode() {
 	uint8_t opcode1 = this->_rom->ReadByte(this->_registers->GetPC());
+	uint8_t opcode2 = 0;
+	uint8_t opcode4 = 0;
 	this->_opcode.SetByte1(opcode1);
 	if ((opcode1 == 0xCB) || (opcode1 == 0xDD) || (opcode1 == 0xED) || (opcode1 == 0xFD)) {
-		uint8_t opcode2 = this->_rom->ReadByte(this->_registers->GetPC() + 1);
+		opcode2 = this->_rom->ReadByte(this->_registers->GetPC() + 1);
 		this->_opcode.SetByte2(opcode2);
 		if (((opcode1 == 0xDD) || (opcode1 == 0xFD)) && (opcode2 == 0xCB)) {
-			uint8_t opcode4 = this->_rom->ReadByte(this->_registers->GetPC() + 3);
+			opcode4 = this->_rom->ReadByte(this->_registers->GetPC() + 3);
 			this->_opcode.SetByte4(opcode4);
 		}
 	}
 
-	printf("0x%x: 0x%x\n", this->_registers->GetPC(), opcode1);
+	printf("0x%.4x: 0x%.2x%.2xnn%.2x\n", this->_registers->GetPC(), opcode1, opcode2, opcode4);
 
 	// http://clrhome.org/table/
 	switch (this->_opcode.GetEnum()) {
@@ -75,6 +77,46 @@ void CPU::RunOpcode() {
 				this->_registers->IncPC(3);
 				this->_cycles += 10;
 			}
+			break;
+
+		// 02: LD (BC), A
+		// |1|7| Stores a into the memory location pointed to by bc.
+		case Ox02:
+			this->WriteMemory(this->_registers->GetBC(), this->_registers->GetA());
+			this->_registers->IncPC();
+			this->_cycles += 7;
+			break;
+
+		// 03: INC BC
+		// |1|6| Adds one to bc.
+		case Ox03:
+			this->_registers->SetBC(this->_registers->GetBC() + 1);
+			this->_registers->IncPC();
+			this->_cycles += 6;
+			break;
+
+		// 04: INC B
+		// |1|4| Adds one to b.
+		case Ox04:
+			this->_registers->SetB(this->_registers->GetB() + 1);
+			this->_registers->IncPC();
+			this->_cycles += 4;
+			break;
+
+		// 05: DEC B
+		// |1|4| Subtracts one from b.
+		case Ox05:
+			this->_registers->SetB(this->_registers->GetB() - 1);
+			this->_registers->IncPC();
+			this->_cycles += 4;
+			break;
+
+		// 06: LD B, *
+		// |2|7| Loads * into b.
+		case Ox06:
+			this->_registers->SetB(this->_rom->ReadByte(this->_registers->GetPC() + 1));
+			this->_registers->IncPC(2);
+			this->_cycles += 7;
 			break;
 
 		// 31 nn: LD SP, **
@@ -120,9 +162,32 @@ void CPU::RunOpcode() {
 			}
 			break;
 
+		// ED46: IM 0
+		// ED66: IM 0
+		// |2|8| Sets interrupt mode 0.
+		case OxED46:
+		case OxED66:
+			this->_registers->SetIM(0);
+			this->_registers->IncPC(2);
+			this->_cycles += 8;
+			break;
+
 		// ED56: IM 1
+		// ED76: IM 1
 		// |2|8| Sets interrupt mode 1.
 		case OxED56:
+		case OxED76:
+			this->_registers->SetIM(1);
+			this->_registers->IncPC(2);
+			this->_cycles += 8;
+			break;
+
+		// ED5E: IM 2
+		// ED7E: IM 2
+		// |2|8| Sets interrupt mode 1.
+		case OxED5E:
+		case OxED7E:
+			this->_registers->SetIM(2);
 			this->_registers->IncPC(2);
 			this->_cycles += 8;
 			break;
@@ -140,6 +205,7 @@ void CPU::RunOpcode() {
 
 		// F3 DI
 		// |1|4| Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
+		// I dont know if is completed
 		case OxF3:
 			this->_registers->IncPC();
 			this->_registers->SetIFF1(false);
@@ -149,6 +215,7 @@ void CPU::RunOpcode() {
 
 		// FB EI
 		// |1|4| Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
+		// I dont know if is completed
 		case OxFB:
 			this->_registers->IncPC();
 			this->_registers->SetIFF1(true);
