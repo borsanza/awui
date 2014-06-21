@@ -11,6 +11,7 @@ namespace awui {
 			class Ram;
 			class Registers;
 			class Rom;
+			class VDP;
 
 			class CPU {
 				private:
@@ -18,6 +19,7 @@ namespace awui {
 					Registers * _registers;
 					Rom * _rom;
 					Ports * _ports;
+					VDP * _vdp;
 					int64_t _cycles;
 					Opcode _opcode;
 
@@ -28,6 +30,7 @@ namespace awui {
 					uint8_t ReadMemory(uint16_t pos);
 
 					void BIT(uint8_t param, uint8_t compare);
+					void JR(bool condition);
 
 				public:
 					CPU();

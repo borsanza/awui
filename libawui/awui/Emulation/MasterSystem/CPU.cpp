@@ -11,14 +11,16 @@
 #include <awui/Emulation/MasterSystem/Ram.h>
 #include <awui/Emulation/MasterSystem/Registers.h>
 #include <awui/Emulation/MasterSystem/Rom.h>
+#include <awui/Emulation/MasterSystem/VDP.h>
 
 using namespace awui::Emulation::MasterSystem;
 
 CPU::CPU() {
-	this->_ports = new Ports();
 	this->_ram = new Ram();
 	this->_registers = new Registers();
 	this->_rom = new Rom(4096);
+	this->_vdp = new VDP();
+	this->_ports = new Ports(this->_vdp);
 	this->_cycles = 0;
 
 	this->Reset();
@@ -26,9 +28,10 @@ CPU::CPU() {
 
 CPU::~CPU() {
 	delete this->_ports;
-	delete this->_ram;
-	delete this->_registers;
+	delete this->_vdp;
 	delete this->_rom;
+	delete this->_registers;
+	delete this->_ram;
 }
 
 void CPU::Reset() {
@@ -40,7 +43,10 @@ void CPU::LoadRom(const String file) {
 }
 
 void CPU::OnTick() {
-	this->RunOpcode();
+	for (int i = 0; i<=300; i++) {
+		this->RunOpcode();
+		this->_vdp->OnTick();
+	}
 }
 
 void CPU::RunOpcode() {
@@ -120,21 +126,13 @@ void CPU::RunOpcode() {
 			this->_cycles += 7;
 			break;
 
-		// 28 nn: JR Z, *
-		// |2|12/7| If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
-		// Not Developed
-		case Ox28:
-			{
-				int8_t value = this->ReadMemory(this->_registers->GetPC() + 1);
-				if (this->_registers->GetF() & FFlag_Z) {
-					this->_registers->IncPC(value + 2);
-					this->_cycles += 12;
-				} else {
-					this->_registers->IncPC(2);
-					this->_cycles += 7;
-				}
-			}
-			break;
+		// 28 nn: JR X, *
+		// |2|12/7| If condition X is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
+		case Ox18: this->JR(true); break;
+		case Ox20: this->JR(!(this->_registers->GetF() & FFlag_Z)); break;
+		case Ox28: this->JR(  this->_registers->GetF() & FFlag_Z);  break;
+		case Ox30: this->JR(!(this->_registers->GetF() & FFlag_C)); break;
+		case Ox38: this->JR(  this->_registers->GetF() & FFlag_C);  break;
 
 		// 31 nn: LD SP, **
 		// |3|10| Loads ** into sp.
@@ -274,6 +272,7 @@ void CPU::RunOpcode() {
 			{
 				uint16_t pc = this->_registers->GetPC();
 				this->_registers->SetA(this->_ports->ReadByte(this->ReadMemory(pc + 1)));
+				printf("PORT: %d: %X\n", this->ReadMemory(pc + 1), this->ReadMemory(pc + 1));
 				this->_registers->IncPC(2);
 				this->_cycles += 11;
 			}
@@ -338,4 +337,15 @@ void CPU::BIT(uint8_t value, uint8_t compare) {
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
 //	printf("%.2x: %.2x\n", value, this->_registers->GetF());
+}
+
+void CPU::JR(bool condition) {
+	int8_t value = this->ReadMemory(this->_registers->GetPC() + 1);
+	if (condition) {
+		this->_registers->IncPC(value + 2);
+		this->_cycles += 12;
+	} else {
+		this->_registers->IncPC(2);
+		this->_cycles += 7;
+	}
 }

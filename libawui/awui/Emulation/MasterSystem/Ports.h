@@ -6,9 +6,14 @@
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
+			class VDP;
+
 			class Ports {
+				private:
+					VDP * _vdp;
+
 				public:
-					Ports();
+					Ports(VDP * vdp);
 					~Ports();
 
 					void WriteByte(uint8_t pos, uint8_t value);

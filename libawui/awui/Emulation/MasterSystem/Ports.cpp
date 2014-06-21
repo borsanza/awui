@@ -8,6 +8,8 @@
 
 using namespace awui::Emulation::MasterSystem;
 
+#include <awui/Emulation/MasterSystem/VDP.h>
+
 /*
  *|-----------------------------------|
  *| Port |   Input   |     Output     |
@@ -23,7 +25,8 @@ using namespace awui::Emulation::MasterSystem;
  *|-----------------------------------|
  */
 
-Ports::Ports() {
+Ports::Ports(VDP * vdp) {
+	this->_vdp = vdp;
 }
 
 Ports::~Ports() {
@@ -33,5 +36,9 @@ void Ports::WriteByte(uint8_t pos, uint8_t value) {
 }
 
 uint8_t Ports::ReadByte(uint8_t pos) const {
+	// Port BF and BD are the same
+	if ((pos == 0xBF) || (pos == 0xBD))
+		return this->_vdp->GetStatus();
+
 	return 0;
 }
