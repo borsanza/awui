@@ -57,6 +57,17 @@ void CPU::RunOpcode() {
 			this->_cycles += 4;
 			break;
 
+		// 01: LD BC, **
+		// |3|10| Loads ** into bc.
+		case 0x01:
+			{
+				uint16_t pc = this->_registers->GetPC();
+				this->_registers->SetBC((this->_rom->ReadByte(pc + 2) << 8) | this->_rom->ReadByte(pc + 1));
+				this->_registers->IncPC(3);
+				this->_cycles += 10;
+			}
+			break;
+
 		// 31 nn: LD SP, **
 		// |3|10| Loads ** into sp.
 		case 0x31:
@@ -75,6 +86,24 @@ void CPU::RunOpcode() {
 				uint16_t pc = this->_registers->GetPC();
 				this->_registers->SetPC((this->_rom->ReadByte(pc + 2) << 8) | this->_rom->ReadByte(pc + 1));
 				this->_cycles += 10;
+			}
+			break;
+
+		// Bit instructions
+		case 0xCB:
+			{
+				uint16_t pc = this->_registers->GetPC();
+				opcode1 = this->_rom->ReadByte(pc + 1);
+
+				switch (opcode1) {
+					// CB7F: BIT 7, A
+					// |2|8| Tests bit 7 of a.
+					// Not developed
+					case 0x7F:
+						this->_registers->IncPC(2);
+						this->_cycles += 8;
+						break;
+				}
 			}
 			break;
 

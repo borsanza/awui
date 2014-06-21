@@ -8,6 +8,12 @@
 
 using namespace awui::Emulation::MasterSystem;
 
+/*
+ * Flags of F
+ * 7  6  5  4  3  2   1  0
+ * S  Z     H     PV  N  C
+ */
+
 Registers::Registers() {
 	this->Clear();
 }
