@@ -45,21 +45,30 @@ void CPU::OnTick() {
 
 void CPU::RunOpcode() {
 	uint8_t opcode1 = this->_rom->ReadByte(this->_registers->GetPC());
+	this->_opcode.SetByte1(opcode1);
+	if ((opcode1 == 0xCB) || (opcode1 == 0xDD) || (opcode1 == 0xED) || (opcode1 == 0xFD)) {
+		uint8_t opcode2 = this->_rom->ReadByte(this->_registers->GetPC() + 1);
+		this->_opcode.SetByte2(opcode2);
+		if (((opcode1 == 0xDD) || (opcode1 == 0xFD)) && (opcode2 == 0xCB)) {
+			uint8_t opcode4 = this->_rom->ReadByte(this->_registers->GetPC() + 3);
+			this->_opcode.SetByte4(opcode4);
+		}
+	}
 
 	printf("0x%x: 0x%x\n", this->_registers->GetPC(), opcode1);
 
 	// http://clrhome.org/table/
-	switch (opcode1) {
+	switch (this->_opcode.GetEnum()) {
 		// 00: NOP
 		// |1|4| No operation is performed.
-		case 0x00:
+		case Ox00:
 			this->_registers->IncPC();
 			this->_cycles += 4;
 			break;
 
 		// 01: LD BC, **
 		// |3|10| Loads ** into bc.
-		case 0x01:
+		case Ox01:
 			{
 				uint16_t pc = this->_registers->GetPC();
 				this->_registers->SetBC((this->_rom->ReadByte(pc + 2) << 8) | this->_rom->ReadByte(pc + 1));
@@ -70,7 +79,7 @@ void CPU::RunOpcode() {
 
 		// 31 nn: LD SP, **
 		// |3|10| Loads ** into sp.
-		case 0x31:
+		case Ox31:
 			{
 				uint16_t pc = this->_registers->GetPC();
 				this->_registers->SetSP((this->_rom->ReadByte(pc + 2) << 8) | this->_rom->ReadByte(pc + 1));
@@ -81,7 +90,7 @@ void CPU::RunOpcode() {
 
 		// C3 nn: JP **
 		// |3|10| ** is copied to pc.
-		case 0xC3:
+		case OxC3:
 			{
 				uint16_t pc = this->_registers->GetPC();
 				this->_registers->SetPC((this->_rom->ReadByte(pc + 2) << 8) | this->_rom->ReadByte(pc + 1));
@@ -89,27 +98,17 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		// Bit instructions
-		case 0xCB:
-			{
-				uint16_t pc = this->_registers->GetPC();
-				opcode1 = this->_rom->ReadByte(pc + 1);
-
-				switch (opcode1) {
-					// CB7F: BIT 7, A
-					// |2|8| Tests bit 7 of a.
-					// Not developed
-					case 0x7F:
-						this->_registers->IncPC(2);
-						this->_cycles += 8;
-						break;
-				}
-			}
+		// CB7F: BIT 7, A
+		// |2|8| Tests bit 7 of a.
+		// Not developed
+		case OxCB7F:
+			this->_registers->IncPC(2);
+			this->_cycles += 8;
 			break;
 
 		// CD nn: CALL **
 		// |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
-		case 0xCD:
+		case OxCD:
 			{
 				uint16_t pc = this->_registers->GetPC() + 3;
 				uint16_t sp = this->_registers->GetSP() - 2;
@@ -121,26 +120,16 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		// Extended instructions
-		case 0xED:
-			{
-				uint16_t pc = this->_registers->GetPC();
-				opcode1 = this->_rom->ReadByte(pc + 1);
-
-				switch (opcode1) {
-					// ED56: IM 1
-					// |2|8| Sets interrupt mode 1.
-					case 0x56:
-						this->_registers->IncPC(2);
-						this->_cycles += 8;
-						break;
-				}
-			}
+		// ED56: IM 1
+		// |2|8| Sets interrupt mode 1.
+		case OxED56:
+			this->_registers->IncPC(2);
+			this->_cycles += 8;
 			break;
 
 		// DB n: IN A, *
 		// |2|11| A byte from port * is written to a.
-		case 0xDB:
+		case OxDB:
 			{
 				uint16_t pc = this->_registers->GetPC();
 				this->_registers->SetA(this->_ports->ReadByte(this->_rom->ReadByte(pc + 1)));
@@ -151,7 +140,7 @@ void CPU::RunOpcode() {
 
 		// F3 DI
 		// |1|4| Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
-		case 0xF3:
+		case OxF3:
 			this->_registers->IncPC();
 			this->_registers->SetIFF1(false);
 			this->_registers->SetIFF2(false);
@@ -160,7 +149,7 @@ void CPU::RunOpcode() {
 
 		// FB EI
 		// |1|4| Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
-		case 0xFB:
+		case OxFB:
 			this->_registers->IncPC();
 			this->_registers->SetIFF1(true);
 			this->_registers->SetIFF2(true);

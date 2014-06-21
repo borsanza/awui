@@ -1,6 +1,7 @@
 #ifndef _AWUI_EMULATION_MASTERSYSTEM_CPU_H
 #define _AWUI_EMULATION_MASTERSYSTEM_CPU_H
 
+#include <awui/Emulation/MasterSystem/Opcode.h>
 #include <awui/String.h>
 
 namespace awui {
@@ -18,6 +19,7 @@ namespace awui {
 					Rom * _rom;
 					Ports * _ports;
 					int64_t _cycles;
+					Opcode _opcode;
 
 					void RunOpcode();
 					void Reset();
