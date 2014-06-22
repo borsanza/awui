@@ -341,6 +341,27 @@ void CPU::RunOpcode() {
 			this->_cycles += 8;
 			break;
 
+		// EDB3: OTIR
+		// |2|21/16| A byte from the memory location pointed to by hl is written to port c.
+		// Then hl is incremented and b is decremented. If b is not zero, this operation is repeated.
+		// Interrupts can trigger while this instruction is processing.
+		case OxEDB3:
+			{
+				uint16_t hl = this->_registers->GetHL();
+				uint8_t b = this->_registers->GetB();
+				this->_ports->WriteByte(this->_registers->GetC(), this->ReadMemory(hl));
+				this->_registers->SetHL(hl + 1);
+				this->_registers->SetB(b - 1);
+				this->_registers->SetFFlag(FFlag_N, true);
+				this->_registers->SetFFlag(FFlag_Z, true);
+				if (b == 0) {
+					this->_registers->IncPC(2);
+					this->_cycles += 16;
+				} else
+					this->_cycles += 21;
+			}
+			break;
+
 		// DB n: IN A, *
 		// |2|11| A byte from port * is written to a.
 		case OxDB:
@@ -374,7 +395,7 @@ void CPU::RunOpcode() {
 			break;
 
 		default:
-			// showLog = true;
+			showLog = true;
 			this->_cycles += 71400;
 			break;
 	}
