@@ -16,7 +16,7 @@
 using namespace awui::Emulation::MasterSystem;
 
 CPU::CPU() {
-	this->_ram = new Ram();
+	this->_ram = new Ram(8192);
 	this->_registers = new Registers();
 	this->_rom = new Rom(4096);
 	this->_vdp = new VDP();
@@ -348,10 +348,10 @@ void CPU::RunOpcode() {
 		case OxEDB3:
 			{
 				uint16_t hl = this->_registers->GetHL();
-				uint8_t b = this->_registers->GetB();
+				uint8_t b = this->_registers->GetB() - 1;
 				this->_ports->WriteByte(this->_registers->GetC(), this->ReadMemory(hl));
 				this->_registers->SetHL(hl + 1);
-				this->_registers->SetB(b - 1);
+				this->_registers->SetB(b);
 				this->_registers->SetFFlag(FFlag_N, true);
 				this->_registers->SetFFlag(FFlag_Z, true);
 				if (b == 0) {
@@ -395,7 +395,7 @@ void CPU::RunOpcode() {
 			break;
 
 		default:
-			showLog = true;
+			// showLog = true;
 			this->_cycles += 71400;
 			break;
 	}

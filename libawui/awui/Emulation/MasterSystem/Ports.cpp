@@ -35,8 +35,8 @@ Ports::~Ports() {
 }
 
 void Ports::WriteByte(uint8_t port, uint8_t value) {
-	printf("Write Port: %.2X    Value: %d   Not developed\n", port, value);
-	assert(false);
+	printf("Write Port: %.2X    Value: %.2X   Not developed\n", port, value);
+//	assert(false);
 }
 
 uint8_t Ports::ReadByte(uint8_t port) const {
