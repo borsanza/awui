@@ -264,6 +264,54 @@ void CPU::RunOpcode() {
 			}
 			break;
 
+		// 70: LD (HL), B
+		// |1|7| The contents of b are loaded into (hl).
+		case Ox70:
+			this->WriteMemory(this->_registers->GetHL(), this->_registers->GetB());
+			this->_registers->IncPC();
+			this->_cycles += 7;
+			break;
+
+		// 71: LD (HL), C
+		// |1|7| The contents of c are loaded into (hl).
+		case Ox71:
+			this->WriteMemory(this->_registers->GetHL(), this->_registers->GetC());
+			this->_registers->IncPC();
+			this->_cycles += 7;
+			break;
+
+		// 72: LD (HL), D
+		// |1|7| The contents of d are loaded into (hl).
+		case Ox72:
+			this->WriteMemory(this->_registers->GetHL(), this->_registers->GetD());
+			this->_registers->IncPC();
+			this->_cycles += 7;
+			break;
+
+		// 73: LD (HL), E
+		// |1|7| The contents of e are loaded into (hl).
+		case Ox73:
+			this->WriteMemory(this->_registers->GetHL(), this->_registers->GetE());
+			this->_registers->IncPC();
+			this->_cycles += 7;
+			break;
+
+		// 74: LD (HL), H
+		// |1|7| The contents of h are loaded into (hl).
+		case Ox74:
+			this->WriteMemory(this->_registers->GetHL(), this->_registers->GetH());
+			this->_registers->IncPC();
+			this->_cycles += 7;
+			break;
+
+		// 75: LD (HL), L
+		// |1|7| The contents of l are loaded into (hl).
+		case Ox75:
+			this->WriteMemory(this->_registers->GetHL(), this->_registers->GetL());
+			this->_registers->IncPC();
+			this->_cycles += 7;
+			break;
+
 		// A8-AF,EE: XOR X
 		// |1/2|4/7| Bitwise XOR on a with X.
 		case OxA8: this->XOR(this->_registers->GetA(), this->_registers->GetB()); break;
@@ -418,6 +466,32 @@ void CPU::RunOpcode() {
 			this->_registers->SetIM(2);
 			this->_registers->IncPC(2);
 			this->_cycles += 8;
+			break;
+
+		// EDB0: LDIR
+		// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de.
+		// Then hl and de are incremented and bc is decremented.
+		// If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
+		case OxEDB0:
+			{
+				uint16_t hl = this->_registers->GetHL();
+				uint16_t de = this->_registers->GetDE();
+				uint16_t bc = this->_registers->GetBC() - 1;
+				this->WriteMemory(de, this->ReadMemory(hl));
+				this->_registers->SetHL(hl + 1);
+				this->_registers->SetDE(de + 1);
+				this->_registers->SetBC(bc);
+
+				this->_registers->SetFFlag(FFlag_N, false);
+				this->_registers->SetFFlag(FFlag_PV, false);
+				this->_registers->SetFFlag(FFlag_H, false);
+
+				if (bc == 0) {
+					this->_registers->IncPC(2);
+					this->_cycles += 16;
+				} else
+					this->_cycles += 21;
+			}
 			break;
 
 		// EDB3: OTIR
