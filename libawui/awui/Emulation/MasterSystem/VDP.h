@@ -17,7 +17,12 @@ namespace awui {
 					uint16_t _col;
 					uint8_t _status;
 
-					Ram * _cram;
+					// 32 Color Ram
+					uint8_t _cram[32];
+
+					// 11 Registers
+					uint8_t _registers[11];
+
 					Ram * _vram;
 
 				public:

@@ -30,16 +30,12 @@ VDP::VDP() {
 	this->_col = 0;
 	this->_status = 0x1F;
 
-	// 32 Colors in ColorRam
-	this->_cram = new Ram(32);
-
 	// 16Kb in Video Ram
 	this->_vram = new Ram(0x4000);
 }
 
 VDP::~VDP() {
 	delete this->_vram;
-	delete this->_cram;
 }
 
 bool VDP::OnTick() {
