@@ -34,15 +34,17 @@ Ports::Ports(VDP * vdp) {
 Ports::~Ports() {
 }
 
-void Ports::WriteByte(uint8_t pos, uint8_t value) {
-	printf("Not developed\n");
+void Ports::WriteByte(uint8_t port, uint8_t value) {
+	printf("Write Port: %.2X    Value: %d   Not developed\n", port, value);
 	assert(false);
 }
 
-uint8_t Ports::ReadByte(uint8_t pos) const {
+uint8_t Ports::ReadByte(uint8_t port) const {
 	// Port BF and BD are the same
-	if ((pos == 0xBF) || (pos == 0xBD))
+	if ((port == 0xBF) || (port == 0xBD))
 		return this->_vdp->GetStatus();
 
+	printf("Read Port: %.2X    Not developed\n", port);
+	assert(false);
 	return 0;
 }

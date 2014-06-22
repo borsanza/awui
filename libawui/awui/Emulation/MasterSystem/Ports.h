@@ -16,8 +16,8 @@ namespace awui {
 					Ports(VDP * vdp);
 					~Ports();
 
-					void WriteByte(uint8_t pos, uint8_t value);
-					uint8_t ReadByte(uint8_t pos) const;
+					void WriteByte(uint8_t port, uint8_t value);
+					uint8_t ReadByte(uint8_t port) const;
 			};
 		}
 	}
