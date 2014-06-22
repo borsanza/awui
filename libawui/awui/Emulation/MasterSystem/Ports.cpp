@@ -8,6 +8,8 @@
 
 using namespace awui::Emulation::MasterSystem;
 
+#include <assert.h>
+#include <stdio.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
 /*
@@ -33,6 +35,8 @@ Ports::~Ports() {
 }
 
 void Ports::WriteByte(uint8_t pos, uint8_t value) {
+	printf("Not developed\n");
+	assert(false);
 }
 
 uint8_t Ports::ReadByte(uint8_t pos) const {

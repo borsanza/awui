@@ -64,7 +64,10 @@ void CPU::OnTick() {
 	bool vsync = false;
 	int vdpCount = 0;
 	float vdpIters = 0;
+
+	// int realIters = 0;
 	for (int i = 0; i < iters; i++) {
+		// realIters++;
 		int64_t oldCycles = this->_cycles;
 		this->RunOpcode();
 		int times = this->_cycles - oldCycles;
@@ -77,6 +80,8 @@ void CPU::OnTick() {
 			}
 		}
 	}
+
+	// printf("%d\n", realIters);
 
 	while (!vsync)
 		vsync = this->_vdp->OnTick();
@@ -370,7 +375,7 @@ void CPU::RunOpcode() {
 
 		default:
 			// showLog = true;
-			this->_cycles += 4;
+			this->_cycles += 71400;
 			break;
 	}
 }
