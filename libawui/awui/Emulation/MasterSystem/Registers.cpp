@@ -45,18 +45,27 @@ void Registers::Alternate() {
 	this->_f = this->_f_;
 	this->_f_ = aux1;
 
-	uint8_t aux2;
-	aux2 = this->_bc;
+	this->AlternateBC();
+	this->AlternateDE();
+	this->AlternateHL();
+}
+
+void Registers::AlternateBC() {
+	uint8_t aux = this->_bc;
 	this->_bc = this->_bc_;
-	this->_bc_ = aux2;
+	this->_bc_ = aux;
+}
 
-	aux2 = this->_de;
+void Registers::AlternateDE() {
+	uint8_t aux = this->_de;
 	this->_de = this->_de_;
-	this->_de_ = aux2;
+	this->_de_ = aux;
+}
 
-	aux2 = this->_hl;
+void Registers::AlternateHL() {
+	uint8_t aux = this->_hl;
 	this->_hl = this->_hl_;
-	this->_hl_ = aux2;
+	this->_hl_ = aux;
 }
 
 void Registers::SetSP(uint16_t value) {

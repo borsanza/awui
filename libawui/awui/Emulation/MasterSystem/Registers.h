@@ -54,6 +54,9 @@ namespace awui {
 
 					void Clear();
 					void Alternate();
+					void AlternateBC();
+					void AlternateDE();
+					void AlternateHL();
 
 					void SetSP(uint16_t value);
 					uint16_t GetSP() const;

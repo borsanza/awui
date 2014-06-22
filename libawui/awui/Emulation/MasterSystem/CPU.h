@@ -33,8 +33,9 @@ namespace awui {
 					void WriteMemory(uint16_t pos, uint8_t value);
 					uint8_t ReadMemory(uint16_t pos);
 
-					void BIT(uint8_t param, uint8_t compare);
+					void BIT(uint8_t param, uint8_t compare, uint8_t cycles = 8);
 					void JR(bool condition);
+					void XOR(uint8_t a, uint8_t b, uint8_t cycles = 4, uint8_t size = 1);
 
 				public:
 					CPU();
