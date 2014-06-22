@@ -23,6 +23,10 @@ namespace awui {
 					int64_t _cycles;
 					Opcode _opcode;
 
+					float _frame;
+					float _oldFrame;
+					bool _showLog;
+
 					void RunOpcode();
 					void Reset();
 

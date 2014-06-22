@@ -23,6 +23,10 @@ CPU::CPU() {
 	this->_ports = new Ports(this->_vdp);
 	this->_cycles = 0;
 
+	this->_frame = 0;
+	this->_oldFrame = 0;
+	this->_showLog = false;
+
 	this->Reset();
 }
 
@@ -48,15 +52,13 @@ void CPU::LoadRom(const String file) {
 #define FPS 50.0f
 
 void CPU::OnTick() {
-	static float frame = 0;
-	static float oldFrame = 0;
-	frame += FPS / GUIFPS;
+	this->_frame += FPS / GUIFPS;
 
-	if ((int) frame == (int) oldFrame) {
+	if ((int) this->_frame == (int) this->_oldFrame) {
 		return;
 	}
 
-	oldFrame = frame;
+	this->_oldFrame = this->_frame;
 
 	float iters = (SPEED * 1000000.0f) / FPS; // 71400
 	float itersVDP = 256 * 192;               // 49152
@@ -88,24 +90,22 @@ void CPU::OnTick() {
 }
 
 void CPU::RunOpcode() {
-	static bool showLog = false;
-
 	uint8_t opcode1 = this->ReadMemory(this->_registers->GetPC());
 	this->_opcode.SetByte1(opcode1);
 
-	if (showLog) printf("%.4X: %.2X", this->_registers->GetPC(), opcode1);
+	if (this->_showLog) printf("%.4X: %.2X", this->_registers->GetPC(), opcode1);
 	if ((opcode1 == 0xCB) || (opcode1 == 0xDD) || (opcode1 == 0xED) || (opcode1 == 0xFD)) {
 		uint8_t opcode2 = this->ReadMemory(this->_registers->GetPC() + 1);
 		this->_opcode.SetByte2(opcode2);
-		if (showLog) printf(" %.2X", opcode2);
+		if (this->_showLog) printf(" %.2X", opcode2);
 		if (((opcode1 == 0xDD) || (opcode1 == 0xFD)) && (opcode2 == 0xCB)) {
 			uint8_t opcode4 = this->ReadMemory(this->_registers->GetPC() + 3);
 			this->_opcode.SetByte4(opcode4);
-			if (showLog) printf(" %.2X", opcode4);
+			if (this->_showLog) printf(" %.2X", opcode4);
 		}
 	}
 
-	if (showLog) printf("\n");
+	if (this->_showLog) printf("\n");
 
 	// http://clrhome.org/table/
 	switch (this->_opcode.GetEnum()) {
@@ -395,7 +395,7 @@ void CPU::RunOpcode() {
 			break;
 
 		default:
-			// showLog = true;
+			// this->_showLog = true;
 			this->_cycles += 71400;
 			break;
 	}
