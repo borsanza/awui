@@ -11,9 +11,9 @@
 using namespace awui::Emulation::MasterSystem;
 using namespace awui::IO;
 
-Ram::Ram() {
-	this->_memory = new MemoryStream(8192);
-	this->_memory->SetLength(8192);
+Ram::Ram(int32_t size) {
+	this->_memory = new MemoryStream(size);
+	this->_memory->SetLength(size);
 }
 
 Ram::~Ram() {

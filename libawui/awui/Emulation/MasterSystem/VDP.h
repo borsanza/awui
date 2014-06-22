@@ -6,6 +6,8 @@
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
+			class Ram;
+
 			class VDP {
 				private:
 					uint16_t _width;
@@ -14,6 +16,9 @@ namespace awui {
 					uint16_t _line;
 					uint16_t _col;
 					uint8_t _status;
+
+					Ram * _cram;
+					Ram * _vram;
 
 				public:
 					VDP();

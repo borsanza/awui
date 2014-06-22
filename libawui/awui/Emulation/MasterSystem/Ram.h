@@ -15,7 +15,7 @@ namespace awui {
 					IO::MemoryStream * _memory;
 
 				public:
-					Ram();
+					Ram(int32_t size);
 					~Ram();
 
 					uint8_t ReadByte(int64_t pos);
