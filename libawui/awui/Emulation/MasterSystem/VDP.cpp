@@ -33,7 +33,8 @@ VDP::VDP() {
 VDP::~VDP() {
 }
 
-void VDP::OnTick() {
+bool VDP::OnTick() {
+	bool r = false;
 	this->_col++;
 	if (this->_col >= this->_width) {
 		this->_col = 0;
@@ -41,10 +42,12 @@ void VDP::OnTick() {
 		if (this->_line >= this->_height) {
 			this->_line = 0;
 			this->_status |= 0x80;
+			r = true;
 		}
 	}
 
 	// printf("                       %dx%d\n", this->_col, this->_line);
+	return r;
 }
 
 uint8_t VDP::GetStatus() {

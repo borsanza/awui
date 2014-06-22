@@ -19,7 +19,7 @@ namespace awui {
 					VDP();
 					~VDP();
 
-					void OnTick();
+					bool OnTick();
 
 					uint8_t GetStatus();
 			};
