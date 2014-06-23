@@ -163,6 +163,14 @@ void CPU::RunOpcode() {
 			}
 			break;
 
+		// 36: LD (HL), *
+		// |2|10| Loads * into (hl).
+		case Ox36:
+			this->WriteMemory(this->_registers->GetHL() , this->ReadMemory(this->_registers->GetPC() + 1));
+			this->_registers->IncPC(2);
+			this->_cycles += 10;
+			break;
+
 		// DEC X
 		case Ox05: this->DECm (Reg_B);  break;
 		case Ox0B: this->DECss(Reg_BC); break;
@@ -482,6 +490,14 @@ void CPU::RunOpcode() {
 				this->_cycles += 17;
 				this->_registers->SetPC((this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2));
 			}
+			break;
+
+		// D3 *: OUT (*), A
+		// |2|11| The value of a is written to port *.
+		case OxD3:
+			this->_ports->WriteByte(this->ReadMemory(this->_registers->GetPC() + 1), this->_registers->GetA());
+			this->_registers->IncPC(2);
+			this->_cycles += 11;
 			break;
 
 		// D9: EXX
