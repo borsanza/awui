@@ -28,6 +28,23 @@ namespace awui {
 				FFlag_S  = 128,
 			};
 
+			enum {
+				Reg_B = 0,
+				Reg_C = 1,
+				Reg_D = 2,
+				Reg_E = 3,
+				Reg_H = 4,
+				Reg_L = 5,
+				Reg_A = 7,
+			};
+
+			enum {
+				Reg_BC = 0,
+				Reg_DE = 1,
+				Reg_HL = 2,
+				Reg_SP = 3,
+			};
+
 			class Registers {
 				private:
 					uint8_t _a;
@@ -105,6 +122,11 @@ namespace awui {
 					uint8_t GetIM();
 
 					void SetFFlag(uint8_t flag, bool value);
+
+					uint8_t GetRegm(uint8_t reg);
+					uint16_t GetRegss(uint8_t reg);
+					void SetRegm(uint8_t reg, uint8_t value);
+					void SetRegss(uint8_t reg, uint16_t value);
 			};
 		}
 	}

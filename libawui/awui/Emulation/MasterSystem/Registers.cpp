@@ -6,6 +6,8 @@
 
 #include "Registers.h"
 
+#include <assert.h>
+
 using namespace awui::Emulation::MasterSystem;
 
 Registers::Registers() {
@@ -217,4 +219,54 @@ void Registers::SetFFlag(uint8_t flag, bool value) {
 		this->_f |= flag;
 	else
 		this->_f &= (0xFF ^ flag);
+}
+
+uint8_t Registers::GetRegm(uint8_t reg) {
+	switch (reg) {
+		case Reg_B: return *(((uint8_t *) &this->_bc) + 1);
+		case Reg_C: return this->_bc;
+		case Reg_D: return *(((uint8_t *) &this->_de) + 1);
+		case Reg_E: return this->_de;
+		case Reg_H: return *(((uint8_t *) &this->_hl) + 1);
+		case Reg_L: return this->_hl;
+		case Reg_A: return this->_a;
+	}
+
+	assert(false);
+	return 0;
+}
+
+uint16_t Registers::GetRegss(uint8_t reg) {
+	switch (reg) {
+		case Reg_BC: return this->_bc;
+		case Reg_DE: return this->_de;
+		case Reg_HL: return this->_hl;
+		case Reg_SP: return this->_sp;
+	}
+
+	assert(false);
+	return 0;
+}
+
+void Registers::SetRegm(uint8_t reg, uint8_t value) {
+	switch (reg) {
+		case Reg_B: *(((uint8_t *) &this->_bc) + 1) = value; break;
+		case Reg_C: *((uint8_t *) &this->_bc) = value; break;
+		case Reg_D: *(((uint8_t *) &this->_de) + 1) = value; break;
+		case Reg_E: *((uint8_t *) &this->_de) = value; break;
+		case Reg_H: *(((uint8_t *) &this->_hl) + 1) = value; break;
+		case Reg_L: *((uint8_t *) &this->_hl) = value; break;
+		case Reg_A: this->_a = value; break;
+		default: assert(0);
+	}
+}
+
+void Registers::SetRegss(uint8_t reg, uint16_t value) {
+	switch (reg) {
+		case Reg_BC: this->_bc = value; break;
+		case Reg_DE: this->_de = value; break;
+		case Reg_HL: this->_hl = value; break;
+		case Reg_SP: this->_sp = value; break;
+		default: assert(0);
+	}
 }

@@ -152,14 +152,6 @@ void CPU::RunOpcode() {
 			this->_cycles += 4;
 			break;
 
-		// 05: DEC B
-		// |1|4| Subtracts one from b.
-		case Ox05:
-			this->_registers->SetB(this->_registers->GetB() - 1);
-			this->_registers->IncPC();
-			this->_cycles += 4;
-			break;
-
 		// 10 n: DJNZ *
 		// |2|13/8| The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox10:
@@ -170,6 +162,20 @@ void CPU::RunOpcode() {
 				this->_cycles++;
 			}
 			break;
+
+		// DEC X
+		case Ox05: this->DECm (Reg_B);  break;
+		case Ox0B: this->DECss(Reg_BC); break;
+		case Ox0D: this->DECm (Reg_C);  break;
+		case Ox15: this->DECm (Reg_D);  break;
+		case Ox1B: this->DECss(Reg_DE); break;
+		case Ox1D: this->DECm (Reg_E);  break;
+		case Ox25: this->DECm (Reg_H);  break;
+		case Ox2B: this->DECss(Reg_HL); break;
+		case Ox2D: this->DECm (Reg_L);  break;
+		case Ox35: this->DECHL();       break;
+		case Ox3B: this->DECss(Reg_SP); break;
+		case Ox3D: this->DECm (Reg_A);  break;
 
 		// 28 nn: JR X, *
 		// |2|12/7| If condition X is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
@@ -615,4 +621,39 @@ void CPU::XOR(uint8_t a, uint8_t b, uint8_t cycles, uint8_t size) {
 	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
+}
+
+// |1|4| Subtracts one from m
+void CPU::DECm(uint8_t reg) {
+	uint8_t old = this->_registers->GetRegm(reg);
+	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
+	uint8_t value = old - 1;
+	this->_registers->SetRegm(reg, value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_N, true);
+	// TODO: H is set if borrow from bit 4, reset otherwise
+	this->_registers->IncPC();
+	this->_cycles += 4;
+}
+
+// |1|6| Subtracts one from ss
+void CPU::DECss(uint8_t reg) {
+	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg)  - 1);
+	this->_registers->IncPC();
+	this->_cycles += 6;
+}
+
+// |1|11| Subtracts one from (hl)
+void CPU::DECHL() {
+	uint8_t old = this->ReadMemory(this->_registers->GetHL());
+	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
+	uint8_t value = old - 1;
+	this->WriteMemory(this->_registers->GetHL(), value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_N, true);
+	// TODO: H is set if borrow from bit 4, reset otherwise
+	this->_registers->IncPC();
+	this->_cycles += 11;
 }
