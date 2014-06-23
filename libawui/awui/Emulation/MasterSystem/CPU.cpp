@@ -177,6 +177,56 @@ void CPU::RunOpcode() {
 		case Ox3B: this->DECss(Reg_SP); break;
 		case Ox3D: this->DECm (Reg_A);  break;
 
+		case Ox40: this->LDrr(Reg_B, Reg_B); break;
+		case Ox41: this->LDrr(Reg_B, Reg_C); break;
+		case Ox42: this->LDrr(Reg_B, Reg_D); break;
+		case Ox43: this->LDrr(Reg_B, Reg_E); break;
+		case Ox44: this->LDrr(Reg_B, Reg_H); break;
+		case Ox45: this->LDrr(Reg_B, Reg_L); break;
+		case Ox47: this->LDrr(Reg_B, Reg_A); break;
+		case Ox48: this->LDrr(Reg_C, Reg_B); break;
+		case Ox49: this->LDrr(Reg_C, Reg_C); break;
+		case Ox4A: this->LDrr(Reg_C, Reg_D); break;
+		case Ox4B: this->LDrr(Reg_C, Reg_E); break;
+		case Ox4C: this->LDrr(Reg_C, Reg_H); break;
+		case Ox4D: this->LDrr(Reg_C, Reg_L); break;
+		case Ox4F: this->LDrr(Reg_C, Reg_A); break;
+		case Ox50: this->LDrr(Reg_D, Reg_B); break;
+		case Ox51: this->LDrr(Reg_D, Reg_C); break;
+		case Ox52: this->LDrr(Reg_D, Reg_D); break;
+		case Ox53: this->LDrr(Reg_D, Reg_E); break;
+		case Ox54: this->LDrr(Reg_D, Reg_H); break;
+		case Ox55: this->LDrr(Reg_D, Reg_L); break;
+		case Ox57: this->LDrr(Reg_D, Reg_A); break;
+		case Ox58: this->LDrr(Reg_E, Reg_B); break;
+		case Ox59: this->LDrr(Reg_E, Reg_C); break;
+		case Ox5A: this->LDrr(Reg_E, Reg_D); break;
+		case Ox5B: this->LDrr(Reg_E, Reg_E); break;
+		case Ox5C: this->LDrr(Reg_E, Reg_H); break;
+		case Ox5D: this->LDrr(Reg_E, Reg_L); break;
+		case Ox5F: this->LDrr(Reg_E, Reg_A); break;
+		case Ox60: this->LDrr(Reg_H, Reg_B); break;
+		case Ox61: this->LDrr(Reg_H, Reg_C); break;
+		case Ox62: this->LDrr(Reg_H, Reg_D); break;
+		case Ox63: this->LDrr(Reg_H, Reg_E); break;
+		case Ox64: this->LDrr(Reg_H, Reg_H); break;
+		case Ox65: this->LDrr(Reg_H, Reg_L); break;
+		case Ox67: this->LDrr(Reg_H, Reg_A); break;
+		case Ox68: this->LDrr(Reg_L, Reg_B); break;
+		case Ox69: this->LDrr(Reg_L, Reg_C); break;
+		case Ox6A: this->LDrr(Reg_L, Reg_D); break;
+		case Ox6B: this->LDrr(Reg_L, Reg_E); break;
+		case Ox6C: this->LDrr(Reg_L, Reg_H); break;
+		case Ox6D: this->LDrr(Reg_L, Reg_L); break;
+		case Ox6F: this->LDrr(Reg_L, Reg_A); break;
+		case Ox78: this->LDrr(Reg_A, Reg_B); break;
+		case Ox79: this->LDrr(Reg_A, Reg_C); break;
+		case Ox7A: this->LDrr(Reg_A, Reg_D); break;
+		case Ox7B: this->LDrr(Reg_A, Reg_E); break;
+		case Ox7C: this->LDrr(Reg_A, Reg_H); break;
+		case Ox7D: this->LDrr(Reg_A, Reg_L); break;
+		case Ox7F: this->LDrr(Reg_A, Reg_A); break;
+
 		// 28 nn: JR X, *
 		// |2|12/7| If condition X is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox18: this->JR(true); break;
@@ -656,4 +706,11 @@ void CPU::DECHL() {
 	// TODO: H is set if borrow from bit 4, reset otherwise
 	this->_registers->IncPC();
 	this->_cycles += 11;
+}
+
+// |1|4| The contents of reg2 are loaded into reg1
+void CPU::LDrr(uint8_t reg1, uint8_t reg2) {
+	this->_registers->SetRegm(reg1, this->_registers->GetRegm(reg2));
+	this->_registers->IncPC();
+	this->_cycles += 4;
 }
