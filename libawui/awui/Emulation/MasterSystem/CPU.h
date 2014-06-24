@@ -39,8 +39,9 @@ namespace awui {
 					void DECm(uint8_t reg);
 					void DECss(uint8_t reg);
 					void DECHL();
-
 					void LDrr(uint8_t reg1, uint8_t reg2);
+					void PUSHqq(uint8_t reg1, uint8_t reg2);
+					void POPqq(uint8_t reg1, uint8_t reg2);
 
 				public:
 					CPU();

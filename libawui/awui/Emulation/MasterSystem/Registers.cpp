@@ -230,6 +230,7 @@ uint8_t Registers::GetRegm(uint8_t reg) {
 		case Reg_H: return *(((uint8_t *) &this->_hl) + 1);
 		case Reg_L: return this->_hl;
 		case Reg_A: return this->_a;
+		case Reg_F: return this->_f;
 	}
 
 	assert(false);
@@ -257,6 +258,7 @@ void Registers::SetRegm(uint8_t reg, uint8_t value) {
 		case Reg_H: *(((uint8_t *) &this->_hl) + 1) = value; break;
 		case Reg_L: *((uint8_t *) &this->_hl) = value; break;
 		case Reg_A: this->_a = value; break;
+		case Reg_F: this->_f = value; break;
 		default: assert(0);
 	}
 }

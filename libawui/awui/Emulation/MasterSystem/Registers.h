@@ -36,6 +36,7 @@ namespace awui {
 				Reg_H = 4,
 				Reg_L = 5,
 				Reg_A = 7,
+				Reg_F = 8,
 			};
 
 			enum {

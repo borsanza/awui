@@ -185,6 +185,7 @@ void CPU::RunOpcode() {
 		case Ox3B: this->DECss(Reg_SP); break;
 		case Ox3D: this->DECm (Reg_A);  break;
 
+		// LD r, r'
 		case Ox40: this->LDrr(Reg_B, Reg_B); break;
 		case Ox41: this->LDrr(Reg_B, Reg_C); break;
 		case Ox42: this->LDrr(Reg_B, Reg_D); break;
@@ -397,6 +398,18 @@ void CPU::RunOpcode() {
 				this->_cycles += 10;
 			}
 			break;
+
+		// PUSH qq
+		case OxC5: this->PUSHqq(Reg_B, Reg_C); break;
+		case OxD5: this->PUSHqq(Reg_D, Reg_E); break;
+		case OxE5: this->PUSHqq(Reg_H, Reg_L); break;
+		case OxF5: this->PUSHqq(Reg_A, Reg_F); break;
+
+		// POP qq
+		case OxC1: this->POPqq(Reg_B, Reg_C); break;
+		case OxD1: this->POPqq(Reg_D, Reg_E); break;
+		case OxE1: this->POPqq(Reg_H, Reg_L); break;
+		case OxF1: this->POPqq(Reg_A, Reg_F); break;
 
 		// CB40-CB7F: BIT X, Y
 		// |2|8| Tests bit X of Y.
@@ -729,4 +742,26 @@ void CPU::LDrr(uint8_t reg1, uint8_t reg2) {
 	this->_registers->SetRegm(reg1, this->_registers->GetRegm(reg2));
 	this->_registers->IncPC();
 	this->_cycles += 4;
+}
+
+// |1|11| sp is decremented and reg1 is stored into the memory location pointed to by sp.
+// sp is decremented again and reg2 is stored into the memory location pointed to by sp.
+void CPU::PUSHqq(uint8_t reg1, uint8_t reg2) {
+	uint16_t sp = this->_registers->GetSP();
+	this->WriteMemory(sp - 1, this->_registers->GetRegm(reg1));
+	this->WriteMemory(sp - 2, this->_registers->GetRegm(reg2));
+	this->_registers->SetSP(sp - 2);
+	this->_registers->IncPC();
+	this->_cycles += 11;
+}
+
+// |1|10|The memory location pointed to by sp is stored into c and sp is incremented.
+// The memory location pointed to by sp is stored into b and sp is incremented again.
+void CPU::POPqq(uint8_t reg1, uint8_t reg2) {
+	uint16_t sp = this->_registers->GetSP();
+	this->_registers->SetRegm(reg2, this->ReadMemory(sp));
+	this->_registers->SetRegm(reg1, this->ReadMemory(sp + 1));
+	this->_registers->SetSP(sp + 2);
+	this->_registers->IncPC();
+	this->_cycles += 10;
 }
