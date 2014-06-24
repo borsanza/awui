@@ -151,6 +151,12 @@ void CPU::RunOpcode() {
 		case Ox2C: this->INCr(Reg_L); break;
 		case Ox3C: this->INCr(Reg_A); break;
 
+		// ADD HL, s
+		case Ox09: this->ADDHLs(Reg_BC); break;
+		case Ox19: this->ADDHLs(Reg_DE); break;
+		case Ox29: this->ADDHLs(Reg_HL); break;
+		case Ox39: this->ADDHLs(Reg_SP); break;
+
 		// 10 n: DJNZ *
 		// |2|13/8| The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox10:
@@ -159,6 +165,22 @@ void CPU::RunOpcode() {
 				this->_registers->SetB(bDec);
 				this->JR(bDec != 0);
 				this->_cycles++;
+			}
+			break;
+
+		// 22: LD (**), HL
+		// |3|16| Stores hl into the memory location pointed to by **
+		case Ox22:
+			{
+				uint16_t pc = this->_registers->GetPC();
+				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
+				uint16_t hl = this->_registers->GetHL();
+				uint8_t h = hl >> 8;
+				uint8_t l = hl;
+				this->WriteMemory(offset, l);
+				this->WriteMemory(offset + 1, h);
+				this->_registers->IncPC(3);
+				this->_cycles += 16;
 			}
 			break;
 
@@ -754,4 +776,14 @@ void CPU::LDHLr(uint8_t reg) {
 	this->WriteMemory(this->_registers->GetHL(), this->_registers->GetRegm(reg));
 	this->_registers->IncPC();
 	this->_cycles += 7;
+}
+
+void CPU::ADDHLs(uint8_t reg) {
+	uint16_t value = this->_registers->GetHL() + this->_registers->GetRegss(reg);
+	this->_registers->SetHL(value);
+	this->_registers->SetFFlag(FFlag_N, false);
+	// TODO: H is set if carry out of bit 11; reset otherwise
+	// TODO: C is set if carry from bit 15; reset otherwise
+	this->_registers->IncPC();
+	this->_cycles += 11;
 }

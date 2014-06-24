@@ -33,6 +33,7 @@ namespace awui {
 					void WriteMemory(uint16_t pos, uint8_t value);
 					uint8_t ReadMemory(uint16_t pos);
 
+					void ADDHLs(uint8_t reg);
 					void BIT(uint8_t param, uint8_t compare, uint8_t cycles = 8);
 					void DECm(uint8_t reg);
 					void DECss(uint8_t reg);
