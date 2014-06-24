@@ -389,6 +389,15 @@ void CPU::RunOpcode() {
 		case OxAF: this->XOR(this->_registers->GetA(), this->_registers->GetA()); break;
 		case OxEE: this->XOR(this->_registers->GetA(), this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
 
+		// OR s
+		case OxB0: this->ORs(Reg_B); break;
+		case OxB1: this->ORs(Reg_C); break;
+		case OxB2: this->ORs(Reg_D); break;
+		case OxB3: this->ORs(Reg_E); break;
+		case OxB4: this->ORs(Reg_H); break;
+		case OxB5: this->ORs(Reg_L); break;
+		case OxB7: this->ORs(Reg_A); break;
+
 		// C3 nn: JP **
 		// |3|10| ** is copied to pc.
 		case OxC3:
@@ -696,7 +705,7 @@ void CPU::XOR(uint8_t a, uint8_t b, uint8_t cycles, uint8_t size) {
 	this->_registers->SetFFlag(FFlag_H, false);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
-	this->_registers->SetFFlag(FFlag_PV, !(value & 1));
+//	this->_registers->SetFFlag(FFlag_PV, !(value & 1));
 	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -755,7 +764,7 @@ void CPU::PUSHqq(uint8_t reg1, uint8_t reg2) {
 	this->_cycles += 11;
 }
 
-// |1|10|The memory location pointed to by sp is stored into reg2 and sp is incremented.
+// |1|10| The memory location pointed to by sp is stored into reg2 and sp is incremented.
 // The memory location pointed to by sp is stored into reg1 and sp is incremented again.
 void CPU::POPqq(uint8_t reg1, uint8_t reg2) {
 	uint16_t sp = this->_registers->GetSP();
@@ -764,4 +773,18 @@ void CPU::POPqq(uint8_t reg1, uint8_t reg2) {
 	this->_registers->SetSP(sp + 2);
 	this->_registers->IncPC();
 	this->_cycles += 10;
+}
+
+// |1|4| Bitwise OR on a with reg.
+void CPU::ORs(uint8_t reg) {
+	uint8_t value = this->_registers->GetA() | this->_registers->GetRegm(reg);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, false);
+	// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, false);
+	this->_registers->SetA(value);
+	this->_registers->IncPC();
+	this->_cycles += 4;
 }

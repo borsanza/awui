@@ -42,6 +42,7 @@ namespace awui {
 					void LDrr(uint8_t reg1, uint8_t reg2);
 					void PUSHqq(uint8_t reg1, uint8_t reg2);
 					void POPqq(uint8_t reg1, uint8_t reg2);
+					void ORs(uint8_t reg);
 
 				public:
 					CPU();
