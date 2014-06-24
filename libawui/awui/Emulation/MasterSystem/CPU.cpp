@@ -755,8 +755,8 @@ void CPU::PUSHqq(uint8_t reg1, uint8_t reg2) {
 	this->_cycles += 11;
 }
 
-// |1|10|The memory location pointed to by sp is stored into c and sp is incremented.
-// The memory location pointed to by sp is stored into b and sp is incremented again.
+// |1|10|The memory location pointed to by sp is stored into reg2 and sp is incremented.
+// The memory location pointed to by sp is stored into reg1 and sp is incremented again.
 void CPU::POPqq(uint8_t reg1, uint8_t reg2) {
 	uint16_t sp = this->_registers->GetSP();
 	this->_registers->SetRegm(reg2, this->ReadMemory(sp));
