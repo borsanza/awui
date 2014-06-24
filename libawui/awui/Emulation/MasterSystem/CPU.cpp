@@ -612,6 +612,20 @@ void CPU::RunOpcode() {
 		case OxCB7E: this->BIT(this->ReadMemory(this->_registers->GetHL()), 0x80, 12); break;
 		case OxCB7F: this->BIT(this->_registers->GetA(), 0x80); break;
 
+/******************************************************************************/
+/*************************** IX instructions (DD) *****************************/
+/******************************************************************************/
+
+		case OxDDE1: this->POP16(Reg_IX); break;
+		case OxDDE5: this->PUSH16(Reg_IX); break;
+
+/******************************************************************************/
+/*************************** IY instructions (FD) *****************************/
+/******************************************************************************/
+
+		case OxFDE1: this->POP16(Reg_IY); break;
+		case OxFDE5: this->PUSH16(Reg_IY); break;
+
 		default:
 			this->_showLog = true;
 			this->_cycles += 71400;
@@ -748,6 +762,27 @@ void CPU::POPqq(uint8_t reg1, uint8_t reg2) {
 	this->_registers->SetSP(sp + 2);
 	this->_registers->IncPC();
 	this->_cycles += 10;
+}
+
+void CPU::PUSH16(uint8_t reg) {
+	uint16_t value = this->_registers->GetRegss(reg);
+	uint8_t high = value >> 8;
+	uint8_t low = value;
+	uint16_t sp = this->_registers->GetSP();
+	this->WriteMemory(sp - 1, high);
+	this->WriteMemory(sp - 2, low);
+	this->_registers->SetSP(sp - 2);
+	this->_registers->IncPC(2);
+	this->_cycles += 15;
+}
+
+void CPU::POP16(uint8_t reg) {
+	uint16_t sp = this->_registers->GetSP();
+	uint16_t value = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
+	this->_registers->SetRegss(reg, value);
+	this->_registers->SetSP(sp + 2);
+	this->_registers->IncPC(2);
+	this->_cycles += 14;
 }
 
 // |1|4| Bitwise OR on a with valueb

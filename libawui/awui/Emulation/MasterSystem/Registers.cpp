@@ -243,6 +243,8 @@ uint16_t Registers::GetRegss(uint8_t reg) {
 		case Reg_DE: return this->_de;
 		case Reg_HL: return this->_hl;
 		case Reg_SP: return this->_sp;
+		case Reg_IX: return this->_ix;
+		case Reg_IY: return this->_iy;
 	}
 
 	assert(false);
@@ -269,6 +271,8 @@ void Registers::SetRegss(uint8_t reg, uint16_t value) {
 		case Reg_DE: this->_de = value; break;
 		case Reg_HL: this->_hl = value; break;
 		case Reg_SP: this->_sp = value; break;
+		case Reg_IX: this->_ix = value; break;
+		case Reg_IY: this->_iy = value; break;
 		default: assert(0);
 	}
 }

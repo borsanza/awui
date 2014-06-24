@@ -52,6 +52,8 @@ namespace awui {
 					void OR(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
 					void POPqq(uint8_t reg1, uint8_t reg2);
 					void PUSHqq(uint8_t reg1, uint8_t reg2);
+					void POP16(uint8_t reg);
+					void PUSH16(uint8_t reg);
 					void XOR(uint8_t b, uint8_t cycles = 4, uint8_t size = 1);
 
 				public:

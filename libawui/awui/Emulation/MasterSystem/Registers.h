@@ -44,6 +44,8 @@ namespace awui {
 				Reg_DE = 1,
 				Reg_HL = 2,
 				Reg_SP = 3,
+				Reg_IX = 4,
+				Reg_IY = 5,
 			};
 
 			class Registers {
