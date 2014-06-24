@@ -33,6 +33,7 @@ namespace awui {
 					void WriteMemory(uint16_t pos, uint8_t value);
 					uint8_t ReadMemory(uint16_t pos);
 
+					void ADD(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
 					void ADDHLs(uint8_t reg);
 					void BIT(uint8_t param, uint8_t compare, uint8_t cycles = 8);
 					void DECm(uint8_t reg);
@@ -40,7 +41,8 @@ namespace awui {
 					void DECHL();
 					void INCr(uint8_t reg);
 					void INCss(uint8_t reg);
-					void JR(bool condition);
+					void JPccnn(bool cc);
+					void JR(bool cc);
 					void LDddnn(uint8_t reg);
 					void LDHLr(uint8_t reg);
 					void LDnndd(uint8_t reg);

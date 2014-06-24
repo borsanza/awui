@@ -312,6 +312,17 @@ void CPU::RunOpcode() {
 		case Ox75: this->LDHLr(Reg_L); break;
 		case Ox77: this->LDHLr(Reg_A); break;
 
+		// ADD s
+		case Ox80: this->ADD(this->_registers->GetB()); break;
+		case Ox81: this->ADD(this->_registers->GetC()); break;
+		case Ox82: this->ADD(this->_registers->GetD()); break;
+		case Ox83: this->ADD(this->_registers->GetE()); break;
+		case Ox84: this->ADD(this->_registers->GetH()); break;
+		case Ox85: this->ADD(this->_registers->GetL()); break;
+		case Ox86: this->ADD(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case Ox87: this->ADD(this->_registers->GetA()); break;
+		case OxC6: this->ADD(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+
 		// XOR s
 		case OxA8: this->XOR(this->_registers->GetB()); break;
 		case OxA9: this->XOR(this->_registers->GetC()); break;
@@ -333,6 +344,16 @@ void CPU::RunOpcode() {
 		case OxB6: this->OR(this->ReadMemory(this->_registers->GetHL()), 7); break;
 		case OxB7: this->OR(this->_registers->GetA()); break;
 		case OxF6: this->OR(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+
+		// JP cc, nn
+		case OxC2: this->JPccnn(!(this->_registers->GetF() & FFlag_Z));  break;
+		case OxCA: this->JPccnn(  this->_registers->GetF() & FFlag_Z);   break;
+		case OxD2: this->JPccnn(!(this->_registers->GetF() & FFlag_C));  break;
+		case OxDA: this->JPccnn(  this->_registers->GetF() & FFlag_C);   break;
+		case OxE2: this->JPccnn(!(this->_registers->GetF() & FFlag_PV)); break;
+		case OxEA: this->JPccnn(  this->_registers->GetF() & FFlag_PV);  break;
+		case OxF2: this->JPccnn(!(this->_registers->GetF() & FFlag_S));  break;
+		case OxFA: this->JPccnn(  this->_registers->GetF() & FFlag_S);   break;
 
 		// C3 nn: JP **
 		// |3|10| ** is copied to pc.
@@ -628,6 +649,7 @@ uint8_t CPU::ReadMemory(uint16_t pos) {
 	return 0;
 }
 
+// |2|8| Tests bit compare of value.
 void CPU::BIT(uint8_t value, uint8_t compare, uint8_t cycles) {
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_H, true);
@@ -637,9 +659,11 @@ void CPU::BIT(uint8_t value, uint8_t compare, uint8_t cycles) {
 //	printf("%.2x: %.2x\n", value, this->_registers->GetF());
 }
 
-void CPU::JR(bool condition) {
+// |2|12/7| If condition cc is true, the signed value * is added to pc.
+// The jump is measured from the start of the instruction opcode.
+void CPU::JR(bool cc) {
 	int8_t value = this->ReadMemory(this->_registers->GetPC() + 1);
-	if (condition) {
+	if (cc) {
 		this->_registers->IncPC(value + 2);
 		this->_cycles += 12;
 	} else {
@@ -796,12 +820,38 @@ void CPU::LDrHL(uint8_t reg) {
 	this->_cycles += 7;
 }
 
+// |1|11| The value of reg is added to hl.
 void CPU::ADDHLs(uint8_t reg) {
-	uint16_t value = this->_registers->GetHL() + this->_registers->GetRegss(reg);
-	this->_registers->SetHL(value);
+	uint32_t value = this->_registers->GetHL() + this->_registers->GetRegss(reg);
+	this->_registers->SetHL((uint16_t) value);
 	this->_registers->SetFFlag(FFlag_N, false);
-	// TODO: H is set if carry out of bit 11; reset otherwise
-	// TODO: C is set if carry from bit 15; reset otherwise
+	this->_registers->SetFFlag(FFlag_H, value > 0xFFF);
+	this->_registers->SetFFlag(FFlag_C, value > 0xFFFF);
 	this->_registers->IncPC();
 	this->_cycles += 11;
+}
+
+// |3|10| If condition cc is true, ** is copied to pc.
+void CPU::JPccnn(bool cc) {
+	if (cc) {
+		uint16_t pc = this->_registers->GetPC();
+		this->_registers->SetPC((this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
+	} else
+		this->_registers->IncPC(3);
+
+	this->_cycles += 10;
+}
+
+// |1|4| Adds valueb to a.
+void CPU::ADD(uint8_t valueb, uint8_t cycles, uint8_t size) {
+	uint16_t value = this->_registers->GetA() + valueb;
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, value > 0xF);
+	// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, value > 0xFF);
+	this->_registers->SetA((uint8_t) value);
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
