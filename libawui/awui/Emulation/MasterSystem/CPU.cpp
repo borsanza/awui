@@ -257,6 +257,15 @@ void CPU::RunOpcode() {
 		case Ox7D: this->LDrr(Reg_A, Reg_L); break;
 		case Ox7F: this->LDrr(Reg_A, Reg_A); break;
 
+		// LD r, (HL)
+		case Ox46: this->LDrHL(Reg_B); break;
+		case Ox4E: this->LDrHL(Reg_C); break;
+		case Ox56: this->LDrHL(Reg_D); break;
+		case Ox5E: this->LDrHL(Reg_E); break;
+		case Ox66: this->LDrHL(Reg_H); break;
+		case Ox6E: this->LDrHL(Reg_L); break;
+		case Ox7E: this->LDrHL(Reg_A); break;
+
 		// F9: LD SP, HL
 		// |1|6| Loads the value of hl into sp.
 		case OxF9:
@@ -304,24 +313,26 @@ void CPU::RunOpcode() {
 		case Ox77: this->LDHLr(Reg_A); break;
 
 		// XOR s
-		case OxA8: this->XORs(this->_registers->GetB()); break;
-		case OxA9: this->XORs(this->_registers->GetC()); break;
-		case OxAA: this->XORs(this->_registers->GetD()); break;
-		case OxAB: this->XORs(this->_registers->GetE()); break;
-		case OxAC: this->XORs(this->_registers->GetH()); break;
-		case OxAD: this->XORs(this->_registers->GetL()); break;
-		case OxAE: this->XORs(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case OxAF: this->XORs(this->_registers->GetA()); break;
-		case OxEE: this->XORs(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+		case OxA8: this->XOR(this->_registers->GetB()); break;
+		case OxA9: this->XOR(this->_registers->GetC()); break;
+		case OxAA: this->XOR(this->_registers->GetD()); break;
+		case OxAB: this->XOR(this->_registers->GetE()); break;
+		case OxAC: this->XOR(this->_registers->GetH()); break;
+		case OxAD: this->XOR(this->_registers->GetL()); break;
+		case OxAE: this->XOR(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case OxAF: this->XOR(this->_registers->GetA()); break;
+		case OxEE: this->XOR(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
 
 		// OR s
-		case OxB0: this->ORs(Reg_B); break;
-		case OxB1: this->ORs(Reg_C); break;
-		case OxB2: this->ORs(Reg_D); break;
-		case OxB3: this->ORs(Reg_E); break;
-		case OxB4: this->ORs(Reg_H); break;
-		case OxB5: this->ORs(Reg_L); break;
-		case OxB7: this->ORs(Reg_A); break;
+		case OxB0: this->OR(this->_registers->GetB()); break;
+		case OxB1: this->OR(this->_registers->GetC()); break;
+		case OxB2: this->OR(this->_registers->GetD()); break;
+		case OxB3: this->OR(this->_registers->GetE()); break;
+		case OxB4: this->OR(this->_registers->GetH()); break;
+		case OxB5: this->OR(this->_registers->GetL()); break;
+		case OxB6: this->OR(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case OxB7: this->OR(this->_registers->GetA()); break;
+		case OxF6: this->OR(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
 
 		// C3 nn: JP **
 		// |3|10| ** is copied to pc.
@@ -638,7 +649,7 @@ void CPU::JR(bool condition) {
 }
 
 // |1/2|4/7| Bitwise XOR on a with b.
-void CPU::XORs(uint8_t b, uint8_t cycles, uint8_t size) {
+void CPU::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t value = this->_registers->GetA() ^ b;
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
@@ -715,9 +726,9 @@ void CPU::POPqq(uint8_t reg1, uint8_t reg2) {
 	this->_cycles += 10;
 }
 
-// |1|4| Bitwise OR on a with reg
-void CPU::ORs(uint8_t reg) {
-	uint8_t value = this->_registers->GetA() | this->_registers->GetRegm(reg);
+// |1|4| Bitwise OR on a with valueb
+void CPU::OR(uint8_t valueb, uint8_t cycles, uint8_t size) {
+	uint8_t value = this->_registers->GetA() | valueb;
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, false);
@@ -725,8 +736,8 @@ void CPU::ORs(uint8_t reg) {
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, false);
 	this->_registers->SetA(value);
-	this->_registers->IncPC();
-	this->_cycles += 4;
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
 // |3|10| Loads ** into reg
@@ -774,6 +785,13 @@ void CPU::LDrn(uint8_t reg) {
 // |1|7| The contents of reg are loaded into (hl).
 void CPU::LDHLr(uint8_t reg) {
 	this->WriteMemory(this->_registers->GetHL(), this->_registers->GetRegm(reg));
+	this->_registers->IncPC();
+	this->_cycles += 7;
+}
+
+// |1|7| The contents of (hl) are loaded into reg
+void CPU::LDrHL(uint8_t reg) {
+	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetHL()));
 	this->_registers->IncPC();
 	this->_cycles += 7;
 }

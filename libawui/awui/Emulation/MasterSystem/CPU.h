@@ -46,10 +46,11 @@ namespace awui {
 					void LDnndd(uint8_t reg);
 					void LDrn(uint8_t reg);
 					void LDrr(uint8_t reg1, uint8_t reg2);
-					void ORs(uint8_t reg);
+					void LDrHL(uint8_t reg);
+					void OR(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
 					void POPqq(uint8_t reg1, uint8_t reg2);
 					void PUSHqq(uint8_t reg1, uint8_t reg2);
-					void XORs(uint8_t b, uint8_t cycles = 4, uint8_t size = 1);
+					void XOR(uint8_t b, uint8_t cycles = 4, uint8_t size = 1);
 
 				public:
 					CPU();
