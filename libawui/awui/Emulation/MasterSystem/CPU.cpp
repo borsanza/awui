@@ -764,6 +764,8 @@ void CPU::POPqq(uint8_t reg1, uint8_t reg2) {
 	this->_cycles += 10;
 }
 
+// |2|15| sp is decremented and ixh is stored into the memory location pointed to by sp.
+// sp is decremented again and ixl is stored into the memory location pointed to by sp.
 void CPU::PUSH16(uint8_t reg) {
 	uint16_t value = this->_registers->GetRegss(reg);
 	uint8_t high = value >> 8;
@@ -776,6 +778,8 @@ void CPU::PUSH16(uint8_t reg) {
 	this->_cycles += 15;
 }
 
+// |2|14| The memory location pointed to by sp is stored into ixl and sp is incremented.
+// The memory location pointed to by sp is stored into ixh and sp is incremented again.
 void CPU::POP16(uint8_t reg) {
 	uint16_t sp = this->_registers->GetSP();
 	uint16_t value = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
