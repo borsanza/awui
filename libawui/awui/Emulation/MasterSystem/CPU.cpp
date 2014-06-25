@@ -345,6 +345,17 @@ void CPU::RunOpcode() {
 		case OxB7: this->OR(this->_registers->GetA()); break;
 		case OxF6: this->OR(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
 
+		// AND s
+		case OxA0: this->AND(this->_registers->GetB()); break;
+		case OxA1: this->AND(this->_registers->GetC()); break;
+		case OxA2: this->AND(this->_registers->GetD()); break;
+		case OxA3: this->AND(this->_registers->GetE()); break;
+		case OxA4: this->AND(this->_registers->GetH()); break;
+		case OxA5: this->AND(this->_registers->GetL()); break;
+		case OxA6: this->AND(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case OxA7: this->AND(this->_registers->GetA()); break;
+		case OxE6: this->AND(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+
 		// JP cc, nn
 		case OxC2: this->JPccnn(!(this->_registers->GetF() & FFlag_Z));  break;
 		case OxCA: this->JPccnn(  this->_registers->GetF() & FFlag_Z);   break;
@@ -891,6 +902,20 @@ void CPU::ADD(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, value > 0xFF);
 	this->_registers->SetA((uint8_t) value);
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
+}
+
+// |1|4|Bitwise AND on a with valueb.
+void CPU::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
+	uint8_t value = this->_registers->GetA() & valueb;
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, true);
+	// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, false);
+	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
