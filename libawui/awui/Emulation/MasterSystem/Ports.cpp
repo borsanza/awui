@@ -35,16 +35,22 @@ Ports::~Ports() {
 }
 
 void Ports::WriteByte(uint8_t port, uint8_t value) {
-	printf("Write Port: %.2X    Value: %.2X   Not developed\n", port, value);
+//	printf("Write Port: %.2X    Value: %.2X\n", port, value);
+
+	if (port >= 0x40 && port <= 0xBF) {
+		this->_vdp->WriteByte(port, value);
+		return;
+	}
+
 //	assert(false);
 }
 
 uint8_t Ports::ReadByte(uint8_t port) const {
-	// Port BF and BD are the same
-	if ((port == 0xBF) || (port == 0xBD))
-		return this->_vdp->GetStatus();
+//	printf("Read Port: %.2X\n", port);
 
-	printf("Read Port: %.2X    Not developed\n", port);
-	assert(false);
+	if (port >= 0x40 && port <= 0xBF)
+		return this->_vdp->ReadByte(port);
+
+//	assert(false);
 	return 0;
 }

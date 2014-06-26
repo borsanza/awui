@@ -14,19 +14,21 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
+using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
 
 CPU::CPU() {
 	this->_ram = new Ram(8192);
 	this->_registers = new Registers();
 	this->_rom = new Rom(4096);
-	this->_vdp = new VDP();
+	this->_vdp = new VDP(this);
 	this->_ports = new Ports(this->_vdp);
 	this->_cycles = 0;
+	this->_addressBus._w = 0;
 
 	this->_frame = 0;
 	this->_oldFrame = 0;
-	this->_showLog = true;
+	this->_showLog = false;
 
 	this->Reset();
 }
@@ -415,12 +417,29 @@ void CPU::RunOpcode() {
 			}
 			break;
 
+		// RST p
+		case OxC7: this->RSTp(0x00); break;
+		case OxCF: this->RSTp(0x08); break;
+		case OxD7: this->RSTp(0x10); break;
+		case OxDF: this->RSTp(0x18); break;
+		case OxE7: this->RSTp(0x20); break;
+		case OxEF: this->RSTp(0x28); break;
+		case OxF7: this->RSTp(0x30); break;
+		case OxFF: this->RSTp(0x38); break;
+
 		// D3 *: OUT (*), A
 		// |2|11| The value of a is written to port *.
 		case OxD3:
-			this->_ports->WriteByte(this->ReadMemory(this->_registers->GetPC() + 1), this->_registers->GetA());
-			this->_registers->IncPC(2);
-			this->_cycles += 11;
+			{
+				uint8_t n = this->ReadMemory(this->_registers->GetPC() + 1);
+				uint8_t a = this->_registers->GetA();
+				this->_addressBus._l = n;
+				this->_addressBus._h = a;
+				// printf("Address: %.4X\n", this->_addressBus._w);
+				this->_ports->WriteByte(n, a);
+				this->_registers->IncPC(2);
+				this->_cycles += 11;
+			}
 			break;
 
 		// D9: EXX
@@ -442,6 +461,18 @@ void CPU::RunOpcode() {
 //				printf("PORT: %d: %X\n", this->ReadMemory(pc + 1), this->ReadMemory(pc + 1));
 				this->_registers->IncPC(2);
 				this->_cycles += 11;
+			}
+			break;
+
+		// EB: EX DE, HL
+		// |1|4| Exchanges the 16-bit contents of de and hl.
+		case OxEB:
+			{
+				uint16_t aux = this->_registers->GetDE();
+				this->_registers->SetDE(this->_registers->GetHL());
+				this->_registers->SetHL(aux);
+				this->_registers->IncPC();
+				this->_cycles += 4;
 			}
 			break;
 
@@ -468,6 +499,15 @@ void CPU::RunOpcode() {
 /******************************************************************************/
 /************************ Extended instructions (ED) **************************/
 /******************************************************************************/
+
+		// OUT (C), r
+		case OxED41: this->OUTCr(Reg_B); break;
+		case OxED49: this->OUTCr(Reg_C); break;
+		case OxED51: this->OUTCr(Reg_D); break;
+		case OxED59: this->OUTCr(Reg_E); break;
+		case OxED61: this->OUTCr(Reg_H); break;
+		case OxED69: this->OUTCr(Reg_L); break;
+		case OxED79: this->OUTCr(Reg_A); break;
 
 		// LD (nn), dd
 		case OxED43: this->LDnndd(Reg_BC); break;
@@ -539,7 +579,11 @@ void CPU::RunOpcode() {
 			{
 				uint16_t hl = this->_registers->GetHL();
 				uint8_t b = this->_registers->GetB() - 1;
-				this->_ports->WriteByte(this->_registers->GetC(), this->ReadMemory(hl));
+				uint8_t c = this->_registers->GetC();
+				this->_addressBus._l = c;
+				this->_addressBus._h = b;
+				this->_ports->WriteByte(c, this->ReadMemory(hl));
+				// printf("Address: %.4X\n", this->_addressBus._w);
 				this->_registers->SetHL(hl + 1);
 				this->_registers->SetB(b);
 				this->_registers->SetFFlag(FFlag_N, true);
@@ -918,4 +962,33 @@ void CPU::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
+}
+
+uint16_t CPU::GetAddressBus() const {
+	return this->_addressBus._w;
+}
+
+void CPU::SetAddressBus(uint16_t data) {
+	this->_addressBus._w = data;
+}
+
+void CPU::RSTp(uint8_t p) {
+	uint16_t pc = this->_registers->GetPC() + 1;
+	uint16_t sp = this->_registers->GetSP() - 2;
+	this->_registers->SetSP(sp);
+	this->WriteMemory(sp, pc & 0xFF);
+	this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
+	this->_cycles += 11;
+	this->_registers->SetPC(p);
+}
+
+void CPU::OUTCr(uint8_t reg) {
+	uint8_t n = this->_registers->GetRegm(reg);
+	uint8_t a = this->_registers->GetA();
+	this->_addressBus._l = n;
+	this->_addressBus._h = a;
+	// printf("Address: %.4X\n", this->_addressBus._w);
+	this->_ports->WriteByte(n, a);
+	this->_registers->IncPC(2);
+	this->_cycles += 12;
 }

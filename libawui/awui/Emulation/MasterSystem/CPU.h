@@ -6,6 +6,14 @@
 
 namespace awui {
 	namespace Emulation {
+		union UINT16 {
+				uint16_t _w;
+				struct {
+						uint8_t _l;
+						uint8_t _h;
+				};
+		};
+
 		namespace MasterSystem {
 			class Ports;
 			class Ram;
@@ -22,6 +30,7 @@ namespace awui {
 					VDP * _vdp;
 					int64_t _cycles;
 					Opcode _opcode;
+					UINT16 _addressBus;
 
 					float _frame;
 					float _oldFrame;
@@ -51,10 +60,12 @@ namespace awui {
 					void LDrr(uint8_t reg1, uint8_t reg2);
 					void LDrHL(uint8_t reg);
 					void OR(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
+					void OUTCr(uint8_t reg);
 					void POPqq(uint8_t reg1, uint8_t reg2);
 					void PUSHqq(uint8_t reg1, uint8_t reg2);
 					void POP16(uint8_t reg);
 					void PUSH16(uint8_t reg);
+					void RSTp(uint8_t p);
 					void XOR(uint8_t b, uint8_t cycles = 4, uint8_t size = 1);
 
 				public:
@@ -63,6 +74,9 @@ namespace awui {
 
 					void LoadRom(const String file);
 					void OnTick();
+
+					uint16_t GetAddressBus() const;
+					void SetAddressBus(uint16_t);
 			};
 		}
 	}
