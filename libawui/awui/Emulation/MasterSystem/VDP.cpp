@@ -34,15 +34,34 @@ VDP::VDP(CPU * cpu) {
 	this->_status = 0x1F;
 	this->_address = 0;
 	this->_goVram = true;
+	this->_baseAddress = 0;
 
 	this->_controlByte = -1;
 
 	// 16Kb in Video Ram
 	this->_vram = new Ram(0x4000);
+
+	this->Reset();
 }
 
 VDP::~VDP() {
 	delete this->_vram;
+}
+
+void VDP::Reset() {
+	uint8_t values[] = {0x36, 0x80, 0xFF, 0xFF, 0xFF, 0xFF, 0xFB, 0x00, 0x00, 0x00, 0xFF};
+	for (uint8_t i = 0; i<=10; i++)
+		this->_registers[i] = values[i];
+
+	this->UpdateAllRegisters();
+}
+
+uint16_t VDP::GetWidth() {
+	return this->_width;
+}
+
+uint16_t VDP::GetHeight() {
+	return this->_height;
 }
 
 bool VDP::OnTick() {
@@ -70,6 +89,42 @@ uint8_t VDP::GetStatus() {
 
 	return r;
 }
+
+void VDP::UpdateAllRegisters() {
+	// Register #0
+
+	// Register #1
+	this->_visible = this->_registers[0] & 0x40;
+
+	if (this->_registers[0] & 0x04) {
+		this->_height = 192;
+		if (this->_registers[0] & 0x02) {
+			if (this->_registers[1] & 0x10)
+				this->_height = 224;
+			else
+				if (this->_registers[1] & 0x08)
+					this->_height = 240;
+		}
+	}
+
+	if (this->_registers[1] & 0x01) {
+		if (this->_registers[0] & 0x04)
+			this->_spriteSize = SPRITE_8x16;
+		else
+			this->_spriteSize = SPRITE_16x16;
+	} else
+		this->_spriteSize = SPRITE_8x8;
+
+	// Register #2
+	uint8_t code = (this->_registers[2] >> 1) & 0x7;
+	if ((this->_height == 224) || (this->_height == 240)) {
+		code = code >> 1;
+		this->_baseAddress = (code * 0x1000) + 0x0700;
+	} else {
+		this->_baseAddress = code * 0x0800;
+	}
+}
+
 
 void VDP::WriteControlByte(uint8_t value) {
 	if (this->_controlByte == -1) {
@@ -100,7 +155,8 @@ void VDP::WriteControlByte(uint8_t value) {
 				uint8_t pos = value & 0xF;
 				if (pos < 11) {
 					this->_registers[pos] = this->_controlByte;
-					printf("VReg[%X] = %.2X\n", value & 0xF, this->_controlByte);
+					// printf("VReg[%X] = %.2X\n", value & 0xF, this->_controlByte);
+					this->UpdateAllRegisters();
 				}
 			}
 			break;
@@ -115,13 +171,13 @@ void VDP::WriteControlByte(uint8_t value) {
 void VDP::WriteDataByte(uint8_t value) {
 	if (this->_goVram) {
 		this->_vram->WriteByte(this->_address, value);
-		printf("VRam");
+		// printf("VRam");
 	} else {
 		this->_cram[this->_address] = value;
-		printf("CRam");
+		// printf("CRam");
 	}
 
-	printf("[%.4X] = %.2X\n", this->_address, value);
+	// printf("[%.4X] = %.2X\n", this->_address, value);
 
 	this->_address = (this->_address + 1) & 0x3FFF;
 //	this->_cpu->SetAddressBus(this->_cpu->GetAddressBus() + 1);

@@ -23,7 +23,6 @@ CPU::CPU() {
 	this->_rom = new Rom(4096);
 	this->_vdp = new VDP(this);
 	this->_ports = new Ports(this->_vdp);
-	this->_cycles = 0;
 	this->_addressBus._w = 0;
 
 	this->_frame = 0;
@@ -42,6 +41,8 @@ CPU::~CPU() {
 }
 
 void CPU::Reset() {
+	this->_cycles = 0;
+	this->_finished = 0;
 	this->_registers->Clear();
 }
 
@@ -64,7 +65,7 @@ void CPU::OnTick() {
 	this->_oldFrame = this->_frame;
 
 	float iters = (SPEED * 1000000.0f) / FPS; // 71400
-	float itersVDP = 256 * 192;               // 49152
+	float itersVDP = this->_vdp->GetWidth() * this->_vdp->GetHeight();               // 49152
 
 	bool vsync = false;
 	int vdpCount = 0;
@@ -72,6 +73,9 @@ void CPU::OnTick() {
 
 	// int realIters = 0;
 	for (int i = 0; i < iters; i++) {
+		if (this->_finished)
+			break;
+
 		// realIters++;
 		int64_t oldCycles = this->_cycles;
 		this->RunOpcode();
@@ -90,6 +94,12 @@ void CPU::OnTick() {
 
 	while (!vsync)
 		vsync = this->_vdp->OnTick();
+
+	if (this->_finished)
+		this->_finished++;
+
+	if (this->_finished > 300)
+		this->Reset();
 }
 
 void CPU::RunOpcode() {
@@ -325,6 +335,17 @@ void CPU::RunOpcode() {
 		case Ox87: this->ADD(this->_registers->GetA()); break;
 		case OxC6: this->ADD(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
 
+		// CP s
+		case OxB8: this->CP(this->_registers->GetB()); break;
+		case OxB9: this->CP(this->_registers->GetC()); break;
+		case OxBA: this->CP(this->_registers->GetD()); break;
+		case OxBB: this->CP(this->_registers->GetE()); break;
+		case OxBC: this->CP(this->_registers->GetH()); break;
+		case OxBD: this->CP(this->_registers->GetL()); break;
+		case OxBE: this->CP(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case OxBF: this->CP(this->_registers->GetA()); break;
+		case OxFE: this->CP(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+
 		// XOR s
 		case OxA8: this->XOR(this->_registers->GetB()); break;
 		case OxA9: this->XOR(this->_registers->GetC()); break;
@@ -373,7 +394,13 @@ void CPU::RunOpcode() {
 		case OxC3:
 			{
 				uint16_t pc = this->_registers->GetPC();
-				this->_registers->SetPC((this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
+				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
+				if (offset == pc) {
+						Console::WriteLine(" --- ROM FINISHED --- ");
+						this->_finished = 1;
+				}
+
+				this->_registers->SetPC(offset);
 				this->_cycles += 10;
 			}
 			break;
@@ -875,8 +902,15 @@ void CPU::INCss(uint8_t reg) {
 
 // |1|4| Adds one to reg
 void CPU::INCr(uint8_t reg) {
-	this->_registers->SetRegm(reg, this->_registers->GetRegm(reg) + 1);
+	uint8_t old = this->_registers->GetRegm(reg);
+	uint8_t value = old + 1;
+	this->_registers->SetRegm(reg, value);
 	this->_registers->IncPC();
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, value > 0xF);
+	this->_registers->SetFFlag(FFlag_PV, old == 0x7F);
+	this->_registers->SetFFlag(FFlag_N, 0);
 	this->_cycles += 4;
 }
 
@@ -938,8 +972,8 @@ void CPU::JPccnn(bool cc) {
 
 // |1|4| Adds valueb to a.
 void CPU::ADD(uint8_t valueb, uint8_t cycles, uint8_t size) {
-	uint16_t value = this->_registers->GetA() + valueb;
-	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	int16_t value = this->_registers->GetA() + valueb;
+	this->_registers->SetFFlag(FFlag_S, value < 0);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, value > 0xF);
 	// TODO: P/V is set if overflow; reset otherwise
@@ -991,4 +1025,15 @@ void CPU::OUTCr(uint8_t reg) {
 	this->_ports->WriteByte(n, a);
 	this->_registers->IncPC(2);
 	this->_cycles += 12;
+}
+
+void CPU::CP(uint8_t valueb, uint8_t cycles, uint8_t size) {
+	int16_t value = this->_registers->GetA() - valueb;
+	this->_registers->SetFFlag(FFlag_S, value < 0);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, true);
+// TODO: C is set if borrow; reset otherwise
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }

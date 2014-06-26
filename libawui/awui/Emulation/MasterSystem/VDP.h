@@ -8,6 +8,11 @@ namespace awui {
 		namespace MasterSystem {
 			class CPU;
 			class Ram;
+			enum {
+				SPRITE_16x16 = 1,
+				SPRITE_8x16 = 2,
+				SPRITE_8x8 = 3,
+			};
 
 			class VDP {
 				private:
@@ -18,6 +23,9 @@ namespace awui {
 					uint16_t _line;
 					uint16_t _col;
 					uint8_t _status;
+					bool _visible;
+					uint16_t _baseAddress;
+					uint8_t _spriteSize;
 
 					// 32 Color Ram
 					uint8_t _cram[32];
@@ -33,6 +41,7 @@ namespace awui {
 					Ram * _vram;
 
 					uint8_t GetStatus();
+					void UpdateAllRegisters();
 
 				public:
 					VDP(CPU * cpu);
@@ -45,6 +54,11 @@ namespace awui {
 
 					void WriteByte(uint8_t port, uint8_t value);
 					uint8_t ReadByte(uint8_t port);
+
+					uint16_t GetWidth();
+					uint16_t GetHeight();
+
+					void Reset();
 			};
 		}
 	}
