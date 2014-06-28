@@ -11,6 +11,7 @@
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
+using namespace awui::Emulation::MasterSystem;
 
 MasterSystem::MasterSystem() {
 	this->SetSize(256, 192);
@@ -35,4 +36,8 @@ void MasterSystem::LoadRom(const String file) {
 
 void MasterSystem::OnTick() {
 	this->_cpu->OnTick();
+}
+
+CPU * MasterSystem::GetCPU() {
+	return this->_cpu;
 }

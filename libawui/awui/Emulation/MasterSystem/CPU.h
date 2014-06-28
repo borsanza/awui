@@ -31,7 +31,6 @@ namespace awui {
 					int64_t _cycles;
 					Opcode _opcode;
 					UINT16 _addressBus;
-					int _finished;
 
 					float _frame;
 					float _oldFrame;
@@ -79,6 +78,8 @@ namespace awui {
 
 					uint16_t GetAddressBus() const;
 					void SetAddressBus(uint16_t);
+
+					VDP * GetVDP();
 			};
 		}
 	}

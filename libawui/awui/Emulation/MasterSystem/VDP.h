@@ -59,6 +59,8 @@ namespace awui {
 					uint16_t GetHeight();
 
 					void Reset();
+
+					uint8_t * GetColors();
 			};
 		}
 	}

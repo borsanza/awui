@@ -28,6 +28,8 @@ namespace awui {
 					void LoadRom(const String file);
 
 					virtual void OnTick();
+
+					CPU * GetCPU();
 			};
 		}
 	}

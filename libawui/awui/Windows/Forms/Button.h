@@ -1,5 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+#ifndef _AWUI_WINDOWS_FORMS_BUTTON_H
+#define _AWUI_WINDOWS_FORMS_BUTTON_H
 
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
@@ -36,3 +36,5 @@ namespace awui {
 		}
 	}
 }
+
+#endif

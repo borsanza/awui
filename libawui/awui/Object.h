@@ -33,6 +33,7 @@ namespace awui {
 			Stack,
 			Chip8,
 			MasterSystem,
+			DebuggerSMS,
 		};
 	};
 

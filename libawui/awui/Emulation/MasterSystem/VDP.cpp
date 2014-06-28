@@ -53,6 +53,9 @@ void VDP::Reset() {
 	for (uint8_t i = 0; i<=10; i++)
 		this->_registers[i] = values[i];
 
+	for (uint8_t i = 0; i<32; i++)
+		this->_cram[i] = 0;
+
 	this->UpdateAllRegisters();
 }
 
@@ -219,4 +222,8 @@ uint8_t VDP::ReadByte(uint8_t port) {
 
 	assert(0);
 	return 0;
+}
+
+uint8_t * VDP::GetColors() {
+	return this->_cram;
 }

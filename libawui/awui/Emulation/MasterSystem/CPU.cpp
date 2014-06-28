@@ -42,7 +42,6 @@ CPU::~CPU() {
 
 void CPU::Reset() {
 	this->_cycles = 0;
-	this->_finished = 0;
 	this->_registers->Clear();
 }
 
@@ -73,9 +72,6 @@ void CPU::OnTick() {
 
 	// int realIters = 0;
 	for (int i = 0; i < iters; i++) {
-		if (this->_finished)
-			break;
-
 		// realIters++;
 		int64_t oldCycles = this->_cycles;
 		this->RunOpcode();
@@ -94,12 +90,6 @@ void CPU::OnTick() {
 
 	while (!vsync)
 		vsync = this->_vdp->OnTick();
-
-	if (this->_finished)
-		this->_finished++;
-
-	if (this->_finished > 300)
-		this->Reset();
 }
 
 void CPU::RunOpcode() {
@@ -396,8 +386,10 @@ void CPU::RunOpcode() {
 				uint16_t pc = this->_registers->GetPC();
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
 				if (offset == pc) {
-						Console::WriteLine(" --- ROM FINISHED --- ");
-						this->_finished = 1;
+						if (this->_showLog) {
+							Console::WriteLine(" --- ROM FINISHED --- ");
+							this->_showLog = false;
+						}
 				}
 
 				this->_registers->SetPC(offset);
@@ -716,33 +708,29 @@ void CPU::RunOpcode() {
 }
 
 void CPU::WriteMemory(uint16_t pos, uint8_t value) {
-	if (pos <= 0xBFFF)
-		this->_rom->WriteByte(pos, value);
-
 	// RAM
 	if (pos >= 0xC000) {
 		// RAM or RAM (mirror)
-		if (pos <= 0xDFFF)
+		if (pos < 0xE000)
 			this->_ram->WriteByte(pos - 0xC000, value);
 		else
 			this->_ram->WriteByte(pos - 0xE000, value);
+	} else {
+		this->_rom->WriteByte(pos, value);
 	}
 }
 
 uint8_t CPU::ReadMemory(uint16_t pos) {
-	if (pos <= 0xBFFF)
-		return this->_rom->ReadByte(pos);
-
 	// RAM
 	if (pos >= 0xC000) {
 		// RAM or RAM (mirror)
-		if (pos <= 0xDFFF)
+		if (pos < 0xE000)
 			return this->_ram->ReadByte(pos - 0xC000);
 		else
 			return this->_ram->ReadByte(pos - 0xE000);
 	}
 
-	return 0;
+	return this->_rom->ReadByte(pos);
 }
 
 // |2|8| Tests bit compare of value.
@@ -1036,4 +1024,8 @@ void CPU::CP(uint8_t valueb, uint8_t cycles, uint8_t size) {
 // TODO: C is set if borrow; reset otherwise
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
+}
+
+VDP * CPU::GetVDP() {
+	return this->_vdp;
 }
