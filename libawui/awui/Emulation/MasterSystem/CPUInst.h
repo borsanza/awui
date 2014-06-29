@@ -70,6 +70,7 @@ namespace awui {
 
 					// Rotate and Shift Group
 					void RL(uint8_t reg);
+					void RR(uint8_t reg);
 					void SLA(uint8_t reg);
 
 					// Bit Set, Reset, and Test Group

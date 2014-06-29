@@ -299,8 +299,7 @@ void CPUInst::DECHL() {
 
 // |1|4| The contents of a are inverted (one's complement).
 void CPUInst::CPL() {
-	uint8_t value = this->_registers->GetA() ^ 0xFF;
-	this->_registers->SetA(value);
+	this->_registers->SetA(this->_registers->GetA() ^ 0xFF);
 	this->_registers->SetFFlag(FFlag_H, true);
 	this->_registers->SetFFlag(FFlag_N, true);
 	this->_registers->IncPC();
@@ -364,6 +363,21 @@ void CPUInst::RL(uint8_t reg) {
 	// TODO: P/V is set if parity is even; reset otherwise
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, old & 0x80);
+	this->_registers->IncPC(2);
+	this->_cycles += 2;
+}
+
+// |2|8| The contents of d are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
+void CPUInst::RR(uint8_t reg) {
+	uint8_t old = this->_registers->GetRegm(reg);
+	uint8_t value = (old >> 1) | ((this->_registers->GetF() & FFlag_C) * 0x80);
+	this->_registers->SetRegm(reg, value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, false);
+	// TODO: P/V is set if parity is even; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, old & 0x01);
 	this->_registers->IncPC(2);
 	this->_cycles += 2;
 }

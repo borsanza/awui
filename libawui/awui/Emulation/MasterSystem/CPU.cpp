@@ -701,6 +701,15 @@ void CPU::RunOpcode() {
 		case OxCB15: this->RL(Reg_L); break;
 		case OxCB17: this->RL(Reg_A); break;
 
+		// RR reg
+		case OxCB18: this->RR(Reg_B); break;
+		case OxCB19: this->RR(Reg_C); break;
+		case OxCB1A: this->RR(Reg_D); break;
+		case OxCB1B: this->RR(Reg_E); break;
+		case OxCB1C: this->RR(Reg_H); break;
+		case OxCB1D: this->RR(Reg_L); break;
+		case OxCB1F: this->RR(Reg_A); break;
+
 		// SLA reg
 		case OxCB20: this->SLA(Reg_B); break;
 		case OxCB21: this->SLA(Reg_C); break;
