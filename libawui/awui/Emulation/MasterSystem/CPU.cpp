@@ -336,6 +336,9 @@ void CPU::RunOpcode() {
 				this->_cycles += 16;
 			}
 
+		// CPL
+		case Ox2F: this->CPL(); break;
+
 		// LD r, *
 		case Ox06: this->LDrn(Reg_B); break;
 		case Ox0E: this->LDrn(Reg_C); break;

@@ -297,6 +297,16 @@ void CPUInst::DECHL() {
 /************** General-Purpose Arithmetic and CPU Control Group **************/
 /******************************************************************************/
 
+// |1|4| The contents of a are inverted (one's complement).
+void CPUInst::CPL() {
+	uint8_t value = this->_registers->GetA() ^ 0xFF;
+	this->_registers->SetA(value);
+	this->_registers->SetFFlag(FFlag_H, true);
+	this->_registers->SetFFlag(FFlag_N, true);
+	this->_registers->IncPC();
+	this->_cycles += 4;
+}
+
 /******************************************************************************/
 /*************************** 16-Bit Arithmetic Group **************************/
 /******************************************************************************/

@@ -60,6 +60,7 @@ namespace awui {
 					void DECHL();
 
 					// General-Purpose Arithmetic and CPU Control Group
+					void CPL();
 
 					// 16-Bit Arithmetic Group
 					void ADDHLss(uint8_t reg);
