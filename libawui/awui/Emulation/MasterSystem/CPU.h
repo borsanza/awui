@@ -65,6 +65,7 @@ namespace awui {
 					void PUSHqq(uint8_t reg1, uint8_t reg2);
 					void POP16(uint8_t reg);
 					void PUSH16(uint8_t reg);
+					void RET(bool cc, uint8_t cycles = 11);
 					void RSTp(uint8_t p);
 					void XOR(uint8_t b, uint8_t cycles = 4, uint8_t size = 1);
 					void Print(const char * str, ...);

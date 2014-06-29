@@ -307,6 +307,49 @@ void CPU::RunOpcode() {
 			}
 			break;
 
+		// 0A: LD A, (BC)
+		// |1|7| Loads the value pointed to by bc into a.
+		case Ox0A:
+			{
+				this->_registers->SetA(this->ReadMemory(this->_registers->GetBC()));
+				this->_registers->IncPC();
+				this->_cycles += 7;
+			}
+			break;
+
+		// 1A: LD A, (DE)
+		// |1|7| Loads the value pointed to by de into a.
+		case Ox1A:
+			{
+				this->_registers->SetA(this->ReadMemory(this->_registers->GetDE()));
+				this->_registers->IncPC();
+				this->_cycles += 7;
+			}
+			break;
+
+		// 3A: LD A, (**)
+		// |3|13| Loads the value pointed to by ** into a.
+		case Ox3A:
+			{
+				uint16_t pc = this->_registers->GetPC();
+				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
+				this->_registers->SetA(this->ReadMemory(offset));
+				this->_registers->IncPC(3);
+				this->_cycles += 13;
+			}
+			break;
+
+		// 2A: LD HL, (**)
+		// |3|16| Loads the value pointed to by ** into hl.
+		case Ox2A:
+			{
+				uint16_t pc = this->_registers->GetPC();
+				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
+				this->_registers->SetHL(offset);
+				this->_registers->IncPC(3);
+				this->_cycles += 16;
+			}
+
 		// LD r, *
 		case Ox06: this->LDrn(Reg_B); break;
 		case Ox0E: this->LDrn(Reg_C); break;
@@ -422,16 +465,15 @@ void CPU::RunOpcode() {
 
 		// C9: RET
 		// |1|10| The top stack entry is popped into pc.
-		case OxC9:
-			{
-				uint16_t sp = this->_registers->GetSP();
-				uint16_t pc = this->ReadMemory(sp);
-				pc |= (this->ReadMemory(sp + 1) << 8);
-				this->_registers->SetSP(sp + 2);
-				this->_cycles += 10;
-				this->_registers->SetPC(pc);
-			}
-			break;
+		case OxC0: this->RET(!(this->_registers->GetF() & FFlag_Z)); break;
+		case OxC8: this->RET( (this->_registers->GetF() & FFlag_Z)); break;
+		case OxC9: this->RET(true, 10); break;
+		case OxD0: this->RET(!(this->_registers->GetF() & FFlag_C)); break;
+		case OxD8: this->RET( (this->_registers->GetF() & FFlag_C)); break;
+		case OxE0: this->RET(!(this->_registers->GetF() & FFlag_PV)); break;
+		case OxE8: this->RET( (this->_registers->GetF() & FFlag_PV)); break;
+		case OxF0: this->RET(!(this->_registers->GetF() & FFlag_S)); break;
+		case OxF8: this->RET( (this->_registers->GetF() & FFlag_S)); break;
 
 		// CD nn: CALL **
 		// |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
@@ -764,6 +806,21 @@ void CPU::JR(bool cc) {
 	} else {
 		this->_registers->IncPC(2);
 		this->_cycles += 7;
+	}
+}
+
+// |1|11/5| If condition cc is true, the top stack entry is popped into pc.
+void CPU::RET(bool cc, uint8_t cycles) {
+	if (cc) {
+		uint16_t sp = this->_registers->GetSP();
+		uint16_t pc = this->ReadMemory(sp);
+		pc |= (this->ReadMemory(sp + 1) << 8);
+		this->_registers->SetSP(sp + 2);
+		this->_registers->SetPC(pc);
+		this->_cycles += cycles;
+	} else {
+		this->_registers->IncPC();
+		this->_cycles += 5;
 	}
 }
 
