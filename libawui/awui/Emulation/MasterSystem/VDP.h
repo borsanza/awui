@@ -26,6 +26,7 @@ namespace awui {
 					bool _visible;
 					uint16_t _baseAddress;
 					uint8_t _spriteSize;
+					bool _ntsc;
 
 					// 32 Color Ram
 					uint8_t _cram[32];
@@ -40,7 +41,15 @@ namespace awui {
 
 					Ram * _vram;
 
-					uint8_t GetStatus();
+					uint8_t NTSCx192[262];
+					uint8_t NTSCx224[262];
+					uint8_t NTSCx240[262];
+					uint8_t PALx192[313];
+					uint8_t PALx224[313];
+					uint8_t PALx240[313];
+					uint8_t HORSYNC[342];
+
+					uint8_t GetStatus(bool resetStatus = true);
 					void UpdateAllRegisters();
 
 				public:
@@ -61,6 +70,13 @@ namespace awui {
 					void Reset();
 
 					uint8_t * GetColors();
+
+					void SetNTSC();
+					void SetPAL();
+					bool GetNTSC();
+					bool GetPAL();
+					uint16_t GetTotalWidth();
+					uint16_t GetTotalHeight();
 			};
 		}
 	}

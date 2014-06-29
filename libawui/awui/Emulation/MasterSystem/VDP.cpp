@@ -8,6 +8,7 @@
 
 #include <awui/Emulation/MasterSystem/CPU.h>
 #include <awui/Emulation/MasterSystem/Ram.h>
+#include <awui/Emulation/MasterSystem/Registers.h>
 #include <assert.h>
 #include <stdio.h>
 
@@ -35,17 +36,56 @@ VDP::VDP(CPU * cpu) {
 	this->_address = 0;
 	this->_goVram = true;
 	this->_baseAddress = 0;
+	this->_ntsc = true;
 
 	this->_controlByte = -1;
 
 	// 16Kb in Video Ram
 	this->_vram = new Ram(0x4000);
 
+	// Rellenando array de valores para el vertical
+	for (int i = 0; i < 262; i++) {
+		this->NTSCx192[i] = i <= 0xDA ? i : i - 0xDA + 0xD5 - 1; // 00-DA, D5-FF
+		this->NTSCx224[i] = i <= 0xEA ? i : i - 0xEA + 0xE5 - 1; // 00-EA, E5-FF
+		this->NTSCx240[i] = i <= 0xFF ? i : i - 0xFF + 0x00 - 1; // 00-FF, 00-06
+	}
+
+	for (int i = 0; i < 313; i++) {
+		this->PALx192[i] = i <= 0xF2 ? i : i - 0xF2 + 0xBA - 1; // 00-F2, BA-FF
+		this->PALx224[i] = i <= 0xFF ? i : ((i <= 0x100 + 0x02)? i - 0xFF - 1 : i - 0xFF - 0x02 + 0xCA - 2); // 00-FF, 00-02, CA-FF
+		this->PALx240[i] = i <= 0xFF ? i : ((i <= 0x100 + 0x0A)? i - 0xFF - 1 : i - 0xFF - 0x0A + 0xD2 - 2); // 00-FF, 00-0A, D2-FF
+	}
+
+	for (int i = 0; i < 256; i++) this->HORSYNC[i]       =    0 + ((i / 255.0f) * 0x7F); // 256 : 00-7F : Active display
+	for (int i = 0; i < 15; i++)  this->HORSYNC[i + 256] = 0x80 + ((i / 14.0f) * 0x7);   //  15 : 80-87 : Right border
+	for (int i = 0; i < 8; i++)   this->HORSYNC[i + 271] = 0x87 + ((i / 7.0f) * 0x4);    //   8 : 87-8B : Right blanking
+	for (int i = 0; i < 26; i++)  this->HORSYNC[i + 279] = 0x8B + ((i / 25.0f) * 0x62);  //  26 : 8B-ED : Horizontal sync
+	for (int i = 0; i < 2; i++)   this->HORSYNC[i + 305] = 0xED + ((i / 1.0f) * 0x1);    //   2 : ED-EE : Left blanking
+	for (int i = 0; i < 14; i++)  this->HORSYNC[i + 307] = 0xEE + ((i / 13.0f) * 0x7);   //  14 : EE-F5 : Color burst
+	for (int i = 0; i < 8; i++)   this->HORSYNC[i + 321] = 0xF5 + ((i / 7.0f) * 0x4);    //   8 : F5-F9 : Left blanking
+	for (int i = 0; i < 13; i++)  this->HORSYNC[i + 329] = 0xF9 + ((i / 12.0f) * 0x6);   //  13 : F9-FF : Left border
+
 	this->Reset();
 }
 
 VDP::~VDP() {
 	delete this->_vram;
+}
+
+void VDP::SetNTSC() {
+	this->_ntsc = true;
+}
+
+void VDP::SetPAL() {
+	this->_ntsc = false;
+}
+
+bool VDP::GetNTSC() {
+	return this->_ntsc;
+}
+
+bool VDP::GetPAL() {
+	return !this->_ntsc;
 }
 
 void VDP::Reset() {
@@ -67,13 +107,21 @@ uint16_t VDP::GetHeight() {
 	return this->_height;
 }
 
+uint16_t VDP::GetTotalWidth() {
+	return 342;
+}
+
+uint16_t VDP::GetTotalHeight() {
+	return (this->_ntsc ? 262 : 313);
+}
+
 bool VDP::OnTick() {
 	bool r = false;
 	this->_col++;
-	if (this->_col >= this->_width) {
+	if (this->_col >= this->GetTotalWidth()) {
 		this->_col = 0;
 		this->_line++;
-		if (this->_line >= this->_height) {
+		if (this->_line >= this->GetTotalHeight()) {
 			this->_line = 0;
 			this->_status |= 0x80;
 			r = true;
@@ -84,11 +132,21 @@ bool VDP::OnTick() {
 	return r;
 }
 
-uint8_t VDP::GetStatus() {
+/*
+ * NTSC, 256x192   262 (3 vsync)
+ * NTSC, 256x224   262 (3 vsync)
+ * PAL, 256x192    313 (3 vsync)
+ * PAL, 256x224    313 (3 vsync)
+ * PAL, 256x240    313 (3 vsync)
+ * Horizontal:     342 (26 hsync)
+ */
+
+uint8_t VDP::GetStatus(bool resetStatus) {
 	uint8_t r = this->_status;
 
 	// Clear bits 6 and 7
-	this->_status &= 0x3F;
+	if (resetStatus)
+		this->_status &= 0x3F;
 
 	return r;
 }
@@ -177,7 +235,7 @@ void VDP::WriteDataByte(uint8_t value) {
 		// printf("VRam");
 	} else {
 		this->_cram[this->_address] = value;
-		// printf("CRam");
+//		printf("CRam[%.2X] = %.2X\n", this->_address, value);
 	}
 
 	// printf("[%.4X] = %.2X\n", this->_address, value);
@@ -206,21 +264,60 @@ void VDP::WriteByte(uint8_t port, uint8_t value) {
 
 uint8_t VDP::ReadByte(uint8_t port) {
 	bool even = ((port & 1) == 0);
+	bool r = false;
 
 	if (port >= 0x40 && port <= 0x7F) {
+		r = true;
 		if (even) {
+			uint8_t line;
+			if (this->_ntsc) {
+				switch (this->_height) {
+					case 192:
+						line = this->NTSCx192[this->_line];
+						break;
+					case 224:
+						line = this->NTSCx224[this->_line];
+						break;
+					case 240:
+						line = this->NTSCx240[this->_line];
+						break;
+				}
+			} else {
+				switch (this->_height) {
+					case 192:
+						line = this->PALx192[this->_line];
+						break;
+					case 224:
+						line = this->PALx224[this->_line];
+						break;
+					case 240:
+						line = this->PALx240[this->_line];
+						break;
+				}
+			}
+
+			// printf("Line: %d:%d\n", line, this->_cpu->GetRegisters()->GetD());
+			return line;
 		} else {
+			uint8_t col = this->HORSYNC[this->_col];
+			// printf("Col: %d:%d\n", col, this->_cpu->GetRegisters()->GetD());
+			return col;
 		}
 	}
 
 	if (port >= 0x80 && port <= 0xBF) {
+		r = true;
 		if (even) {
 		} else {
 			return this->GetStatus();
 		}
 	}
 
-	assert(0);
+	if (!r) {
+		printf("VDP::ReadByte(port = %.2X);\n", port);
+		assert(0);
+	}
+
 	return 0;
 }
 

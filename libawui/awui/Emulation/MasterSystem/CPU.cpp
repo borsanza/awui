@@ -17,7 +17,8 @@
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
 
-CPU::CPU() {
+CPU::CPU() : _opcode(this) {
+
 	this->_ram = new Ram(8192);
 	this->_registers = new Registers();
 	this->_rom = new Rom(4096);
@@ -52,10 +53,10 @@ void CPU::LoadRom(const String file) {
 //#define SPEED 3.54f
 #define SPEED 3.57f
 #define GUIFPS 60.0f
-#define FPS 50.0f
 
 void CPU::OnTick() {
-	this->_frame += FPS / GUIFPS;
+	float fps = this->_vdp->GetNTSC() ? 60.0f : 50.0f;
+	this->_frame += fps / GUIFPS;
 
 	if ((int) this->_frame == (int) this->_oldFrame) {
 		return;
@@ -63,8 +64,8 @@ void CPU::OnTick() {
 
 	this->_oldFrame = this->_frame;
 
-	float iters = (SPEED * 1000000.0f) / FPS; // 71400
-	float itersVDP = this->_vdp->GetWidth() * this->_vdp->GetHeight();               // 49152
+	float iters = (SPEED * 1000000.0f) / fps; // 71400
+	float itersVDP = this->_vdp->GetTotalWidth() * this->_vdp->GetTotalHeight();               // 49152
 
 	bool vsync = false;
 	int vdpCount = 0;
@@ -92,26 +93,36 @@ void CPU::OnTick() {
 		vsync = this->_vdp->OnTick();
 }
 
+#define Print(...)  if (this->_showLog) printf(__VA_ARGS__);
+
 void CPU::RunOpcode() {
 	uint8_t opcode1 = this->ReadMemory(this->_registers->GetPC());
 	this->_opcode.SetByte1(opcode1);
 
-	if (this->_showLog) printf("%.4X: %.2X", this->_registers->GetPC(), opcode1);
+	Print("%.4X: %.2X ", this->_registers->GetPC(), opcode1);
+
 	if ((opcode1 == 0xCB) || (opcode1 == 0xDD) || (opcode1 == 0xED) || (opcode1 == 0xFD)) {
 		uint8_t opcode2 = this->ReadMemory(this->_registers->GetPC() + 1);
 		this->_opcode.SetByte2(opcode2);
-		if (this->_showLog) printf(" %.2X", opcode2);
+		Print("%.2X ", opcode2);
 		if (((opcode1 == 0xDD) || (opcode1 == 0xFD)) && (opcode2 == 0xCB)) {
 			uint8_t opcode4 = this->ReadMemory(this->_registers->GetPC() + 3);
 			this->_opcode.SetByte4(opcode4);
-			if (this->_showLog) printf(" %.2X", opcode4);
-		}
-	}
+			Print("%.2X ", opcode4);
+		} else
+			Print("   ");
+	} else
+		Print("      ");
 
-	if (this->_showLog) printf("\n");
+	uint16_t opcodeEnum = this->_opcode.GetEnum();
+
+	if (this->_showLog)
+		this->_opcode.ShowLogOpcode(opcodeEnum);
+
+	Print("\n");
 
 	// http://clrhome.org/table/
-	switch (this->_opcode.GetEnum()) {
+	switch (opcodeEnum) {
 
 /******************************************************************************/
 /***************************** Main instructions ******************************/
@@ -1028,4 +1039,8 @@ void CPU::CP(uint8_t valueb, uint8_t cycles, uint8_t size) {
 
 VDP * CPU::GetVDP() {
 	return this->_vdp;
+}
+
+Registers * CPU::GetRegisters() {
+	return this->_registers;
 }

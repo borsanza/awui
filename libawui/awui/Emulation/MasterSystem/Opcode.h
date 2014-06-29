@@ -1278,14 +1278,17 @@ namespace awui {
 				OxNOTIMPLEMENTED,
 			};
 
+			class CPU;
+
 			class Opcode {
 				private:
 					uint8_t _byte1;
 					uint8_t _byte2;
 					uint8_t _byte4;
+					CPU * _cpu;
 
 				public:
-					Opcode();
+					Opcode(CPU * cpu);
 					~Opcode();
 
 					void SetByte1(uint8_t byte1);
@@ -1293,6 +1296,8 @@ namespace awui {
 					void SetByte4(uint8_t byte2);
 
 					int GetEnum() const;
+
+					void ShowLogOpcode(uint16_t enumOpcode);
 			};
 		}
 	}

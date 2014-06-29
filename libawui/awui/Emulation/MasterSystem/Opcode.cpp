@@ -6,9 +6,14 @@
 
 #include "Opcode.h"
 
+#include <stdio.h>
+#include <awui/Emulation/MasterSystem/CPU.h>
+#include <awui/Emulation/MasterSystem/Registers.h>
+
 using namespace awui::Emulation::MasterSystem;
 
-Opcode::Opcode() {
+Opcode::Opcode(CPU * cpu) {
+	this->_cpu = cpu;
 }
 
 Opcode::~Opcode() {
@@ -1329,4 +1334,21 @@ int Opcode::GetEnum() const {
 	}
 
 	return OxNOTIMPLEMENTED;
+}
+
+void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
+	uint16_t pc = this->_cpu->GetRegisters()->GetPC();
+	uint8_t opcode2 = this->_cpu->ReadMemory(pc + 1);
+
+	switch (enumOpcode) {
+		case OxDB: printf("INA (%.2Xh)", opcode2); break;
+		case OxBA: printf("CP D"); break;
+		case Ox20: {
+			if (opcode2 & 0x80)
+				printf("JR NZ, -%.2dh (%.4Xh)", -((int8_t) opcode2), (pc + (int8_t)opcode2 + 2));
+			else
+				printf("JR NZ, %.2dh (%.4Xh)", opcode2, (pc + (int8_t)opcode2 + 2));
+			break;
+		}
+	}
 }

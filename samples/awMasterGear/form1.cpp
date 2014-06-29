@@ -28,10 +28,9 @@ void Form1::InitializeComponent() {
 	this->_masterSystem = new MasterSystem();
 	this->GetControls()->Add(this->_masterSystem);
 
-
 	DebuggerSMS * debugger = new DebuggerSMS(this->_masterSystem);
 	debugger->SetDock(DockStyle::Right);
-	debugger->SetWidth(200);
+	debugger->SetWidth(194);
 	this->GetControls()->Add(debugger);
 
 	this->SetSize(800, 600);

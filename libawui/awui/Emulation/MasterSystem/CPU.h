@@ -40,7 +40,6 @@ namespace awui {
 					void Reset();
 
 					void WriteMemory(uint16_t pos, uint8_t value);
-					uint8_t ReadMemory(uint16_t pos);
 
 					void ADD(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
 					void ADDHLs(uint8_t reg);
@@ -68,6 +67,7 @@ namespace awui {
 					void PUSH16(uint8_t reg);
 					void RSTp(uint8_t p);
 					void XOR(uint8_t b, uint8_t cycles = 4, uint8_t size = 1);
+					void Print(const char * str, ...);
 
 				public:
 					CPU();
@@ -78,8 +78,10 @@ namespace awui {
 
 					uint16_t GetAddressBus() const;
 					void SetAddressBus(uint16_t);
+					uint8_t ReadMemory(uint16_t pos);
 
 					VDP * GetVDP();
+					Registers * GetRegisters();
 			};
 		}
 	}
