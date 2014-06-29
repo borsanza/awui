@@ -401,6 +401,17 @@ void CPU::RunOpcode() {
 		case OxAF: this->XOR(this->_registers->GetA()); break;
 		case OxEE: this->XOR(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
 
+		// ADC s
+		case Ox88: this->ADC(this->_registers->GetB()); break;
+		case Ox89: this->ADC(this->_registers->GetC()); break;
+		case Ox8A: this->ADC(this->_registers->GetD()); break;
+		case Ox8B: this->ADC(this->_registers->GetE()); break;
+		case Ox8C: this->ADC(this->_registers->GetH()); break;
+		case Ox8D: this->ADC(this->_registers->GetL()); break;
+		case Ox8E: this->ADC(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case Ox8F: this->ADC(this->_registers->GetA()); break;
+		case OxCE: this->ADC(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+
 		// OR s
 		case OxB0: this->OR(this->_registers->GetB()); break;
 		case OxB1: this->OR(this->_registers->GetC()); break;
@@ -542,6 +553,20 @@ void CPU::RunOpcode() {
 			{
 				uint16_t aux = this->_registers->GetDE();
 				this->_registers->SetDE(this->_registers->GetHL());
+				this->_registers->SetHL(aux);
+				this->_registers->IncPC();
+				this->_cycles += 4;
+			}
+			break;
+
+		// E3: EX (SP), HL
+		// |1|4| Exchanges the 16-bit contents of de and hl.
+		case OxE3:
+			{
+				uint16_t sp = this->_registers->GetSP();
+				uint16_t aux = this->ReadMemory(sp + 1) << 8 | this->ReadMemory(sp);
+				this->WriteMemory(sp + 1, this->_registers->GetH());
+				this->WriteMemory(sp, this->_registers->GetL());
 				this->_registers->SetHL(aux);
 				this->_registers->IncPC();
 				this->_cycles += 4;
@@ -833,6 +858,20 @@ void CPU::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
 	// TODO: P/V is set if overflow; reset otherwise
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, false);
+	this->_registers->SetA(value);
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
+}
+
+// |1|4| Adds l and the carry flag to a.
+void CPU::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
+	int16_t value = this->_registers->GetA() + b + (this->_registers->GetF() & FFlag_C);
+	this->_registers->SetFFlag(FFlag_S, value < 0);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, value > 0x0F);
+	// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, value > 0xFF);
 	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
