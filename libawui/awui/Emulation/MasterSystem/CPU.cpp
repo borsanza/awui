@@ -121,6 +121,12 @@ void CPU::RunOpcode() {
 			this->_cycles += 4;
 			break;
 
+		// 76: HALT
+		// |1|4| Suspends CPU operation until an interrupt or reset occurs.
+		case Ox76:
+			this->_cycles += 4;
+			break;
+
 		// LD dd, nn
 		case Ox01: this->LDddnn(Reg_BC); break;
 		case Ox11: this->LDddnn(Reg_DE); break;

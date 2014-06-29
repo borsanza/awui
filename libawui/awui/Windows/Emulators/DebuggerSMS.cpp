@@ -46,5 +46,5 @@ void DebuggerSMS::OnPaint(OpenGL::GL * gl) {
 		GL::FillRectangle((i * 6) + 1, 1, (((i + 1) * 6) - 1) + 1, 50);
 	}
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	GL::DrawRectangle(0, 0, 194, 51);
+	GL::DrawRectangle(0, 0, 193, 51);
 }
