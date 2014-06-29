@@ -51,6 +51,8 @@ namespace awui {
 					// 8-Bit Arithmetic Group
 					void ADD(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
 					void ADC(uint8_t b, uint8_t cycles = 4, uint8_t size = 1);
+					void SUB(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
+					void SBC(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
 					void AND(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
 					void OR(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
 					void XOR(uint8_t b, uint8_t cycles = 4, uint8_t size = 1);

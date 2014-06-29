@@ -401,6 +401,17 @@ void CPU::RunOpcode() {
 		case Ox8F: this->ADC(this->_registers->GetA()); break;
 		case OxCE: this->ADC(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
 
+		// SUB s
+		case Ox90: this->SUB(this->_registers->GetB()); break;
+		case Ox91: this->SUB(this->_registers->GetC()); break;
+		case Ox92: this->SUB(this->_registers->GetD()); break;
+		case Ox93: this->SUB(this->_registers->GetE()); break;
+		case Ox94: this->SUB(this->_registers->GetH()); break;
+		case Ox95: this->SUB(this->_registers->GetL()); break;
+		case Ox96: this->SUB(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case Ox97: this->SUB(this->_registers->GetA()); break;
+		case OxD6: this->SUB(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+
 		// OR s
 		case OxB0: this->OR(this->_registers->GetB()); break;
 		case OxB1: this->OR(this->_registers->GetC()); break;

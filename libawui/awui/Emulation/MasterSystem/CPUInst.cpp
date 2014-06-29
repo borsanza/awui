@@ -198,13 +198,41 @@ void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
 	this->_cycles += cycles;
 }
 
+// |1|4| Subtracts reg from a.
+void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
+	int16_t value = this->_registers->GetA() - b;
+	this->_registers->SetFFlag(FFlag_S, value < 0);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	// TODO: H is set if borrow from bit 4; reset otherwise
+	// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, true);
+	// TODO: C is set if borrow; reset otherwise
+	this->_registers->SetA(value);
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
+}
+
+// |1|4| Subtracts e and the carry flag from a.
+void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
+	int16_t value = this->_registers->GetA() - (b + (this->_registers->GetF() & FFlag_C));
+	this->_registers->SetFFlag(FFlag_S, value < 0);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	// TODO: H is set if borrow from bit 4; reset otherwise
+	// TODO: P/V is reset if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, true);
+	// TODO: C is set if borrow; reset otherwise
+	this->_registers->SetA(value);
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
+}
+
 // |1|4|Bitwise AND on a with valueb.
 void CPUInst::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	uint8_t value = this->_registers->GetA() & valueb;
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, true);
-	// TODO: P/V is set if overflow; reset otherwise
+	// TODO: P/V is reset if overflow; reset otherwise
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, false);
 	this->_registers->SetA(value);
