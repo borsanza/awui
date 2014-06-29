@@ -127,14 +127,6 @@ void CPU::RunOpcode() {
 		case Ox21: this->LDddnn(Reg_HL); break;
 		case Ox31: this->LDddnn(Reg_SP); break;
 
-		// 02: LD (BC), A
-		// |1|7| Stores a into the memory location pointed to by bc.
-		case Ox02:
-			this->WriteMemory(this->_registers->GetBC(), this->_registers->GetA());
-			this->_registers->IncPC();
-			this->_cycles += 7;
-			break;
-
 		// INC ss
 		case Ox03: this->INCss(Reg_BC); break;
 		case Ox13: this->INCss(Reg_DE); break;
@@ -348,14 +340,16 @@ void CPU::RunOpcode() {
 		case Ox2E: this->LDrn(Reg_L); break;
 		case Ox3E: this->LDrn(Reg_A); break;
 
-		// LD (HL), r
-		case Ox70: this->LDHLr(Reg_B); break;
-		case Ox71: this->LDHLr(Reg_C); break;
-		case Ox72: this->LDHLr(Reg_D); break;
-		case Ox73: this->LDHLr(Reg_E); break;
-		case Ox74: this->LDHLr(Reg_H); break;
-		case Ox75: this->LDHLr(Reg_L); break;
-		case Ox77: this->LDHLr(Reg_A); break;
+		// LD (ss), r
+		case Ox02: this->LDssr(Reg_A, Reg_BC); break;
+		case Ox12: this->LDssr(Reg_A, Reg_DE); break;
+		case Ox70: this->LDssr(Reg_B, Reg_HL); break;
+		case Ox71: this->LDssr(Reg_C, Reg_HL); break;
+		case Ox72: this->LDssr(Reg_D, Reg_HL); break;
+		case Ox73: this->LDssr(Reg_E, Reg_HL); break;
+		case Ox74: this->LDssr(Reg_H, Reg_HL); break;
+		case Ox75: this->LDssr(Reg_L, Reg_HL); break;
+		case Ox77: this->LDssr(Reg_A, Reg_HL); break;
 
 		// ADD s
 		case Ox80: this->ADD(this->_registers->GetB()); break;
@@ -949,12 +943,28 @@ void CPU::RunOpcode() {
 		case OxDDE1: this->POP16(Reg_IX); break;
 		case OxDDE5: this->PUSH16(Reg_IX); break;
 
+		case OxDD46: this->LDrXXd(Reg_B, Reg_IX); break;
+		case OxDD4E: this->LDrXXd(Reg_C, Reg_IX); break;
+		case OxDD56: this->LDrXXd(Reg_D, Reg_IX); break;
+		case OxDD5E: this->LDrXXd(Reg_E, Reg_IX); break;
+		case OxDD66: this->LDrXXd(Reg_H, Reg_IX); break;
+		case OxDD6E: this->LDrXXd(Reg_L, Reg_IX); break;
+		case OxDD7E: this->LDrXXd(Reg_A, Reg_IX); break;
+
 /******************************************************************************/
 /*************************** IY instructions (FD) *****************************/
 /******************************************************************************/
 
 		case OxFDE1: this->POP16(Reg_IY); break;
 		case OxFDE5: this->PUSH16(Reg_IY); break;
+
+		case OxFD46: this->LDrXXd(Reg_B, Reg_IY); break;
+		case OxFD4E: this->LDrXXd(Reg_C, Reg_IY); break;
+		case OxFD56: this->LDrXXd(Reg_D, Reg_IY); break;
+		case OxFD5E: this->LDrXXd(Reg_E, Reg_IY); break;
+		case OxFD66: this->LDrXXd(Reg_H, Reg_IY); break;
+		case OxFD6E: this->LDrXXd(Reg_L, Reg_IY); break;
+		case OxFD7E: this->LDrXXd(Reg_A, Reg_IY); break;
 
 		default:
 			this->_showLog = true;

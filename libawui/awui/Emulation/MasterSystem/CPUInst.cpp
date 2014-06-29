@@ -83,9 +83,16 @@ void CPUInst::LDrHL(uint8_t reg) {
 	this->_cycles += 7;
 }
 
-// |1|7| The contents of reg are loaded into (hl).
-void CPUInst::LDHLr(uint8_t reg) {
-	this->WriteMemory(this->_registers->GetHL(), this->_registers->GetRegm(reg));
+// |3|19| Loads the value pointed to by ix plus * into reg
+void CPUInst::LDrXXd(uint8_t reg, uint8_t reg2) {
+	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetRegss(reg2)) + this->ReadMemory(this->_registers->GetPC() + 2));
+	this->_registers->IncPC(3);
+	this->_cycles += 19;
+}
+
+// |1|7| The contents of reg are loaded into (ss).
+void CPUInst::LDssr(uint8_t reg, uint8_t ss) {
+	this->WriteMemory(this->_registers->GetRegss(ss), this->_registers->GetRegm(reg));
 	this->_registers->IncPC();
 	this->_cycles += 7;
 }

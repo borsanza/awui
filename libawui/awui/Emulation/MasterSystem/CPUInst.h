@@ -36,7 +36,8 @@ namespace awui {
 					void LDrr(uint8_t reg1, uint8_t reg2);
 					void LDrn(uint8_t reg);
 					void LDrHL(uint8_t reg);
-					void LDHLr(uint8_t reg);
+					void LDrXXd(uint8_t reg, uint8_t reg2);
+					void LDssr(uint8_t reg, uint8_t ss);
 
 					// 16-Bit Load Group
 					void LDddnn(uint8_t reg);
