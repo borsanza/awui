@@ -193,7 +193,7 @@ void CPUInst::ADD(uint8_t valueb, uint8_t cycles, uint8_t size) {
 
 // |1|4| Adds l and the carry flag to a.
 void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() + b + (this->_registers->GetF() & FFlag_C);
+	int16_t value = this->_registers->GetA() + b + bool(this->_registers->GetF() & FFlag_C);
 	this->_registers->SetFFlag(FFlag_S, value < 0);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, value > 0x0F);
@@ -221,7 +221,7 @@ void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
 
 // |1|4| Subtracts e and the carry flag from a.
 void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() - (b + (this->_registers->GetF() & FFlag_C));
+	int16_t value = this->_registers->GetA() - (b + bool(this->_registers->GetF() & FFlag_C));
 	this->_registers->SetFFlag(FFlag_S, value < 0);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	// TODO: H is set if borrow from bit 4; reset otherwise
@@ -358,7 +358,7 @@ void CPUInst::ADDHLss(uint8_t reg) {
 
 // |2|15| Subtracts reg and the carry flag from hl.
 void CPUInst::SBCHLss(uint8_t reg) {
-	uint32_t value = this->_registers->GetHL() - (this->_registers->GetRegss(reg) + (this->_registers->GetF() & FFlag_C));
+	uint32_t value = this->_registers->GetHL() - (this->_registers->GetRegss(reg) + bool(this->_registers->GetF() & FFlag_C));
 	this->_registers->SetHL((uint16_t) value);
 	this->_registers->SetFFlag(FFlag_S, value < 0);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
@@ -394,10 +394,35 @@ void CPUInst::DECss(uint8_t reg) {
 /*************************** Rotate and Shift Group ***************************/
 /******************************************************************************/
 
+// |1|4| The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
+void CPUInst::RLCA() {
+	uint8_t old = this->_registers->GetA();
+	this->_registers->SetFFlag(FFlag_C, old & 0x80);
+	uint8_t value = (old << 1) | bool(this->_registers->GetF() & FFlag_C);
+	this->_registers->SetA(value);
+	this->_registers->SetFFlag(FFlag_H, false);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, old & 0x80);
+	this->_registers->IncPC();
+	this->_cycles += 4;
+}
+
+// |1|4| The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
+void CPUInst::RLA() {
+	uint8_t old = this->_registers->GetA();
+	uint8_t value = (old << 1) | bool(this->_registers->GetF() & FFlag_C);
+	this->_registers->SetA(value);
+	this->_registers->SetFFlag(FFlag_H, false);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, old & 0x80);
+	this->_registers->IncPC();
+	this->_cycles += 4;
+}
+
 // |2|8| The contents of b are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
 void CPUInst::RL(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
-	uint8_t value = (old << 1) | (this->_registers->GetF() & FFlag_C);
+	uint8_t value = (old << 1) | bool(this->_registers->GetF() & FFlag_C);
 	this->_registers->SetRegm(reg, value);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
@@ -406,13 +431,13 @@ void CPUInst::RL(uint8_t reg) {
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, old & 0x80);
 	this->_registers->IncPC(2);
-	this->_cycles += 2;
+	this->_cycles += 8;
 }
 
 // |2|8| The contents of d are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
 void CPUInst::RR(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
-	uint8_t value = (old >> 1) | ((this->_registers->GetF() & FFlag_C) * 0x80);
+	uint8_t value = (old >> 1) | (bool(this->_registers->GetF() & FFlag_C) * 0x80);
 	this->_registers->SetRegm(reg, value);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);

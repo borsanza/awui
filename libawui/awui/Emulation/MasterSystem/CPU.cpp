@@ -154,6 +154,12 @@ void CPU::RunOpcode() {
 		case Ox29: this->ADDHLss(Reg_HL); break;
 		case Ox39: this->ADDHLss(Reg_SP); break;
 
+		// RLCA
+		case Ox07: this->RLCA(); break;
+
+		// RLA
+		case Ox17: this->RLA(); break;
+
 		// 10 n: DJNZ *
 		// |2|13/8| The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox10:

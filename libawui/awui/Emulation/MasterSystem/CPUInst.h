@@ -73,6 +73,8 @@ namespace awui {
 					void DECss(uint8_t reg);
 
 					// Rotate and Shift Group
+					void RLCA();
+					void RLA();
 					void RL(uint8_t reg);
 					void RR(uint8_t reg);
 					void SLA(uint8_t reg);
