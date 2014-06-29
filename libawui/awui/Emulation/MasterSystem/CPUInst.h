@@ -63,6 +63,7 @@ namespace awui {
 
 					// 16-Bit Arithmetic Group
 					void ADDHLss(uint8_t reg);
+					void SBCHLss(uint8_t reg);
 					void INCss(uint8_t reg);
 					void DECss(uint8_t reg);
 

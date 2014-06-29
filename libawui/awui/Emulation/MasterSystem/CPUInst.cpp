@@ -312,6 +312,19 @@ void CPUInst::ADDHLss(uint8_t reg) {
 	this->_cycles += 11;
 }
 
+// |2|15| Subtracts reg and the carry flag from hl.
+void CPUInst::SBCHLss(uint8_t reg) {
+	uint32_t value = this->_registers->GetHL() - (this->_registers->GetRegss(reg) + (this->_registers->GetF() & FFlag_C));
+	this->_registers->SetHL((uint16_t) value);
+	this->_registers->SetFFlag(FFlag_S, value < 0);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, value > 0xFFF);
+	this->_registers->SetFFlag(FFlag_N, true);
+	// TODO: C is set if borrow; reset otherwise
+	this->_registers->IncPC(2);
+	this->_cycles += 15;
+}
+
 // |1|6| Adds one to reg
 void CPUInst::INCss(uint8_t reg) {
 	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg) + 1);

@@ -598,6 +598,12 @@ void CPU::RunOpcode() {
 		case OxED63: this->LDnndd(Reg_HL); break;
 		case OxED73: this->LDnndd(Reg_SP); break;
 
+		// SBC HL, ss
+		case OxED42: this->SBCHLss(Reg_BC); break;
+		case OxED52: this->SBCHLss(Reg_DE); break;
+		case OxED62: this->SBCHLss(Reg_HL); break;
+		case OxED72: this->SBCHLss(Reg_SP); break;
+
 		// ED46: IM 0
 		// ED66: IM 0
 		// |2|8| Sets interrupt mode 0.
