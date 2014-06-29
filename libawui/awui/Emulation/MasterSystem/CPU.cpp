@@ -764,6 +764,140 @@ void CPU::RunOpcode() {
 		case OxCB7E: this->BIT(this->ReadMemory(this->_registers->GetHL()), 0x80, 12); break;
 		case OxCB7F: this->BIT(this->_registers->GetA(), 0x80); break;
 
+		// CB80-CBBF: RES X, Y
+		// |2|8| Resets bit X of Y.
+		case OxCB80: this->RES(Reg_B, 0x01); break;
+		case OxCB81: this->RES(Reg_C, 0x01); break;
+		case OxCB82: this->RES(Reg_D, 0x01); break;
+		case OxCB83: this->RES(Reg_E, 0x01); break;
+		case OxCB84: this->RES(Reg_H, 0x01); break;
+		case OxCB85: this->RES(Reg_L, 0x01); break;
+		case OxCB86: this->RESHL(0x01); break;
+		case OxCB87: this->RES(Reg_A, 0x01); break;
+		case OxCB88: this->RES(Reg_B, 0x02); break;
+		case OxCB89: this->RES(Reg_C, 0x02); break;
+		case OxCB8A: this->RES(Reg_D, 0x02); break;
+		case OxCB8B: this->RES(Reg_E, 0x02); break;
+		case OxCB8C: this->RES(Reg_H, 0x02); break;
+		case OxCB8D: this->RES(Reg_L, 0x02); break;
+		case OxCB8E: this->RESHL(0x02); break;
+		case OxCB8F: this->RES(Reg_A, 0x02); break;
+		case OxCB90: this->RES(Reg_B, 0x04); break;
+		case OxCB91: this->RES(Reg_C, 0x04); break;
+		case OxCB92: this->RES(Reg_D, 0x04); break;
+		case OxCB93: this->RES(Reg_E, 0x04); break;
+		case OxCB94: this->RES(Reg_H, 0x04); break;
+		case OxCB95: this->RES(Reg_L, 0x04); break;
+		case OxCB96: this->RESHL(0x04); break;
+		case OxCB97: this->RES(Reg_A, 0x04); break;
+		case OxCB98: this->RES(Reg_B, 0x08); break;
+		case OxCB99: this->RES(Reg_C, 0x08); break;
+		case OxCB9A: this->RES(Reg_D, 0x08); break;
+		case OxCB9B: this->RES(Reg_E, 0x08); break;
+		case OxCB9C: this->RES(Reg_H, 0x08); break;
+		case OxCB9D: this->RES(Reg_L, 0x08); break;
+		case OxCB9E: this->RESHL(0x08); break;
+		case OxCB9F: this->RES(Reg_A, 0x08); break;
+		case OxCBA0: this->RES(Reg_B, 0x10); break;
+		case OxCBA1: this->RES(Reg_C, 0x10); break;
+		case OxCBA2: this->RES(Reg_D, 0x10); break;
+		case OxCBA3: this->RES(Reg_E, 0x10); break;
+		case OxCBA4: this->RES(Reg_H, 0x10); break;
+		case OxCBA5: this->RES(Reg_L, 0x10); break;
+		case OxCBA6: this->RESHL(0x10); break;
+		case OxCBA7: this->RES(Reg_A, 0x10); break;
+		case OxCBA8: this->RES(Reg_B, 0x20); break;
+		case OxCBA9: this->RES(Reg_C, 0x20); break;
+		case OxCBAA: this->RES(Reg_D, 0x20); break;
+		case OxCBAB: this->RES(Reg_E, 0x20); break;
+		case OxCBAC: this->RES(Reg_H, 0x20); break;
+		case OxCBAD: this->RES(Reg_L, 0x20); break;
+		case OxCBAE: this->RESHL(0x20); break;
+		case OxCBAF: this->RES(Reg_A, 0x20); break;
+		case OxCBB0: this->RES(Reg_B, 0x40); break;
+		case OxCBB1: this->RES(Reg_C, 0x40); break;
+		case OxCBB2: this->RES(Reg_D, 0x40); break;
+		case OxCBB3: this->RES(Reg_E, 0x40); break;
+		case OxCBB4: this->RES(Reg_H, 0x40); break;
+		case OxCBB5: this->RES(Reg_L, 0x40); break;
+		case OxCBB6: this->RESHL(0x40); break;
+		case OxCBB7: this->RES(Reg_A, 0x40); break;
+		case OxCBB8: this->RES(Reg_B, 0x80); break;
+		case OxCBB9: this->RES(Reg_C, 0x80); break;
+		case OxCBBA: this->RES(Reg_D, 0x80); break;
+		case OxCBBB: this->RES(Reg_E, 0x80); break;
+		case OxCBBC: this->RES(Reg_H, 0x80); break;
+		case OxCBBD: this->RES(Reg_L, 0x80); break;
+		case OxCBBE: this->RESHL(0x80); break;
+		case OxCBBF: this->RES(Reg_A, 0x80); break;
+
+		// CBC0-CBFF: SET X, Y
+		// |2|8| Sets bit X of Y.
+		case OxCBC0: this->SET(Reg_B, 0x01); break;
+		case OxCBC1: this->SET(Reg_C, 0x01); break;
+		case OxCBC2: this->SET(Reg_D, 0x01); break;
+		case OxCBC3: this->SET(Reg_E, 0x01); break;
+		case OxCBC4: this->SET(Reg_H, 0x01); break;
+		case OxCBC5: this->SET(Reg_L, 0x01); break;
+		case OxCBC6: this->SETHL(0x01); break;
+		case OxCBC7: this->SET(Reg_A, 0x01); break;
+		case OxCBC8: this->SET(Reg_B, 0x02); break;
+		case OxCBC9: this->SET(Reg_C, 0x02); break;
+		case OxCBCA: this->SET(Reg_D, 0x02); break;
+		case OxCBCB: this->SET(Reg_E, 0x02); break;
+		case OxCBCC: this->SET(Reg_H, 0x02); break;
+		case OxCBCD: this->SET(Reg_L, 0x02); break;
+		case OxCBCE: this->SETHL(0x02); break;
+		case OxCBCF: this->SET(Reg_A, 0x02); break;
+		case OxCBD0: this->SET(Reg_B, 0x04); break;
+		case OxCBD1: this->SET(Reg_C, 0x04); break;
+		case OxCBD2: this->SET(Reg_D, 0x04); break;
+		case OxCBD3: this->SET(Reg_E, 0x04); break;
+		case OxCBD4: this->SET(Reg_H, 0x04); break;
+		case OxCBD5: this->SET(Reg_L, 0x04); break;
+		case OxCBD6: this->SETHL(0x04); break;
+		case OxCBD7: this->SET(Reg_A, 0x04); break;
+		case OxCBD8: this->SET(Reg_B, 0x08); break;
+		case OxCBD9: this->SET(Reg_C, 0x08); break;
+		case OxCBDA: this->SET(Reg_D, 0x08); break;
+		case OxCBDB: this->SET(Reg_E, 0x08); break;
+		case OxCBDC: this->SET(Reg_H, 0x08); break;
+		case OxCBDD: this->SET(Reg_L, 0x08); break;
+		case OxCBDE: this->SETHL(0x08); break;
+		case OxCBDF: this->SET(Reg_A, 0x08); break;
+		case OxCBE0: this->SET(Reg_B, 0x10); break;
+		case OxCBE1: this->SET(Reg_C, 0x10); break;
+		case OxCBE2: this->SET(Reg_D, 0x10); break;
+		case OxCBE3: this->SET(Reg_E, 0x10); break;
+		case OxCBE4: this->SET(Reg_H, 0x10); break;
+		case OxCBE5: this->SET(Reg_L, 0x10); break;
+		case OxCBE6: this->SETHL(0x10); break;
+		case OxCBE7: this->SET(Reg_A, 0x10); break;
+		case OxCBE8: this->SET(Reg_B, 0x20); break;
+		case OxCBE9: this->SET(Reg_C, 0x20); break;
+		case OxCBEA: this->SET(Reg_D, 0x20); break;
+		case OxCBEB: this->SET(Reg_E, 0x20); break;
+		case OxCBEC: this->SET(Reg_H, 0x20); break;
+		case OxCBED: this->SET(Reg_L, 0x20); break;
+		case OxCBEE: this->SETHL(0x20); break;
+		case OxCBEF: this->SET(Reg_A, 0x20); break;
+		case OxCBF0: this->SET(Reg_B, 0x40); break;
+		case OxCBF1: this->SET(Reg_C, 0x40); break;
+		case OxCBF2: this->SET(Reg_D, 0x40); break;
+		case OxCBF3: this->SET(Reg_E, 0x40); break;
+		case OxCBF4: this->SET(Reg_H, 0x40); break;
+		case OxCBF5: this->SET(Reg_L, 0x40); break;
+		case OxCBF6: this->SETHL(0x40); break;
+		case OxCBF7: this->SET(Reg_A, 0x40); break;
+		case OxCBF8: this->SET(Reg_B, 0x80); break;
+		case OxCBF9: this->SET(Reg_C, 0x80); break;
+		case OxCBFA: this->SET(Reg_D, 0x80); break;
+		case OxCBFB: this->SET(Reg_E, 0x80); break;
+		case OxCBFC: this->SET(Reg_H, 0x80); break;
+		case OxCBFD: this->SET(Reg_L, 0x80); break;
+		case OxCBFE: this->SETHL(0x80); break;
+		case OxCBFF: this->SET(Reg_A, 0x80); break;
+
 /******************************************************************************/
 /*************************** IX instructions (DD) *****************************/
 /******************************************************************************/
@@ -819,6 +953,36 @@ void CPU::BIT(uint8_t value, uint8_t compare, uint8_t cycles) {
 	this->_registers->IncPC(2);
 	this->_cycles += cycles;
 //	printf("%.2x: %.2x\n", value, this->_registers->GetF());
+}
+
+// |2|8| Resets bit X of reg.
+void CPU::RES(uint8_t reg, uint8_t bit) {
+	this->_registers->SetRegm(reg, this->_registers->GetRegm(reg) & (0xFF ^ bit));
+	this->_registers->IncPC(2);
+	this->_cycles += 8;
+}
+
+// |2|8| Sets bit X of reg.
+void CPU::SET(uint8_t reg, uint8_t bit) {
+	this->_registers->SetRegm(reg, this->_registers->GetRegm(reg) | bit);
+	this->_registers->IncPC(2);
+	this->_cycles += 8;
+}
+
+// |2|15| Resets bit X of (HL).
+void CPU::RESHL(uint8_t bit) {
+	uint16_t offset = this->_registers->GetHL();
+	this->WriteMemory(offset, this->ReadMemory(offset) & (0xFF ^ bit));
+	this->_registers->IncPC(2);
+	this->_cycles += 15;
+}
+
+// |2|15| Sets bit X of (HL).
+void CPU::SETHL(uint8_t bit) {
+	uint16_t offset = this->_registers->GetHL();
+	this->WriteMemory(offset, this->ReadMemory(offset) | bit);
+	this->_registers->IncPC(2);
+	this->_cycles += 15;
 }
 
 // |2|12/7| If condition cc is true, the signed value * is added to pc.
