@@ -27,11 +27,14 @@ using namespace awui::Emulation::MasterSystem;
  *|-----------------------------------|
  */
 
-Ports::Ports(VDP * vdp) {
-	this->_vdp = vdp;
+Ports::Ports() {
 }
 
 Ports::~Ports() {
+}
+
+void Ports::SetVDP(VDP * vdp) {
+	this->_vdp = vdp;
 }
 
 void Ports::WriteByte(uint8_t port, uint8_t value) {

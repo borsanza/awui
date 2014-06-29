@@ -13,9 +13,10 @@ namespace awui {
 					VDP * _vdp;
 
 				public:
-					Ports(VDP * vdp);
+					Ports();
 					~Ports();
 
+					void SetVDP(VDP * vdp);
 					void WriteByte(uint8_t port, uint8_t value);
 					uint8_t ReadByte(uint8_t port) const;
 			};

@@ -9,7 +9,6 @@
 #include <assert.h>
 #include <awui/Console.h>
 #include <awui/Emulation/MasterSystem/Ports.h>
-#include <awui/Emulation/MasterSystem/Ram.h>
 #include <awui/Emulation/MasterSystem/Registers.h>
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
@@ -18,32 +17,19 @@ using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
 
 CPU::CPU() : _opcode(this) {
-
-	this->_ram = new Ram(8192);
-	this->_registers = new Registers();
-	this->_rom = new Rom(4096);
 	this->_vdp = new VDP(this);
-	this->_ports = new Ports(this->_vdp);
 	this->_addressBus._w = 0;
-
 	this->_frame = 0;
 	this->_oldFrame = 0;
 	this->_showLog = false;
+
+	this->_ports->SetVDP(this->_vdp);
 
 	this->Reset();
 }
 
 CPU::~CPU() {
-	delete this->_ports;
 	delete this->_vdp;
-	delete this->_rom;
-	delete this->_registers;
-	delete this->_ram;
-}
-
-void CPU::Reset() {
-	this->_cycles = 0;
-	this->_registers->Clear();
 }
 
 void CPU::LoadRom(const String file) {
@@ -165,10 +151,10 @@ void CPU::RunOpcode() {
 		case Ox3C: this->INCr(Reg_A); break;
 
 		// ADD HL, s
-		case Ox09: this->ADDHLs(Reg_BC); break;
-		case Ox19: this->ADDHLs(Reg_DE); break;
-		case Ox29: this->ADDHLs(Reg_HL); break;
-		case Ox39: this->ADDHLs(Reg_SP); break;
+		case Ox09: this->ADDHLss(Reg_BC); break;
+		case Ox19: this->ADDHLss(Reg_DE); break;
+		case Ox29: this->ADDHLss(Reg_HL); break;
+		case Ox39: this->ADDHLss(Reg_SP); break;
 
 		// 10 n: DJNZ *
 		// |2|13/8| The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
@@ -697,6 +683,24 @@ void CPU::RunOpcode() {
 /*************************** Bit instructions (CB) ****************************/
 /******************************************************************************/
 
+		// RL reg
+		case OxCB10: this->RL(Reg_B); break;
+		case OxCB11: this->RL(Reg_C); break;
+		case OxCB12: this->RL(Reg_D); break;
+		case OxCB13: this->RL(Reg_E); break;
+		case OxCB14: this->RL(Reg_H); break;
+		case OxCB15: this->RL(Reg_L); break;
+		case OxCB17: this->RL(Reg_A); break;
+
+		// SLA reg
+		case OxCB20: this->SLA(Reg_B); break;
+		case OxCB21: this->SLA(Reg_C); break;
+		case OxCB22: this->SLA(Reg_D); break;
+		case OxCB23: this->SLA(Reg_E); break;
+		case OxCB24: this->SLA(Reg_H); break;
+		case OxCB25: this->SLA(Reg_L); break;
+		case OxCB27: this->SLA(Reg_A); break;
+
 		// CB40-CB7F: BIT X, Y
 		// |2|8| Tests bit X of Y.
 		case OxCB40: this->BIT(this->_registers->GetB(), 0x01); break;
@@ -919,382 +923,12 @@ void CPU::RunOpcode() {
 	}
 }
 
-void CPU::WriteMemory(uint16_t pos, uint8_t value) {
-	// RAM
-	if (pos >= 0xC000) {
-		// RAM or RAM (mirror)
-		if (pos < 0xE000)
-			this->_ram->WriteByte(pos - 0xC000, value);
-		else
-			this->_ram->WriteByte(pos - 0xE000, value);
-	} else {
-		this->_rom->WriteByte(pos, value);
-	}
-}
-
-uint8_t CPU::ReadMemory(uint16_t pos) {
-	// RAM
-	if (pos >= 0xC000) {
-		// RAM or RAM (mirror)
-		if (pos < 0xE000)
-			return this->_ram->ReadByte(pos - 0xC000);
-		else
-			return this->_ram->ReadByte(pos - 0xE000);
-	}
-
-	return this->_rom->ReadByte(pos);
-}
-
-// |2|8| Tests bit compare of value.
-void CPU::BIT(uint8_t value, uint8_t compare, uint8_t cycles) {
-	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_H, true);
-	this->_registers->SetFFlag(FFlag_Z, !(value & compare));
-	this->_registers->IncPC(2);
-	this->_cycles += cycles;
-//	printf("%.2x: %.2x\n", value, this->_registers->GetF());
-}
-
-// |2|8| Resets bit X of reg.
-void CPU::RES(uint8_t reg, uint8_t bit) {
-	this->_registers->SetRegm(reg, this->_registers->GetRegm(reg) & (0xFF ^ bit));
-	this->_registers->IncPC(2);
-	this->_cycles += 8;
-}
-
-// |2|8| Sets bit X of reg.
-void CPU::SET(uint8_t reg, uint8_t bit) {
-	this->_registers->SetRegm(reg, this->_registers->GetRegm(reg) | bit);
-	this->_registers->IncPC(2);
-	this->_cycles += 8;
-}
-
-// |2|15| Resets bit X of (HL).
-void CPU::RESHL(uint8_t bit) {
-	uint16_t offset = this->_registers->GetHL();
-	this->WriteMemory(offset, this->ReadMemory(offset) & (0xFF ^ bit));
-	this->_registers->IncPC(2);
-	this->_cycles += 15;
-}
-
-// |2|15| Sets bit X of (HL).
-void CPU::SETHL(uint8_t bit) {
-	uint16_t offset = this->_registers->GetHL();
-	this->WriteMemory(offset, this->ReadMemory(offset) | bit);
-	this->_registers->IncPC(2);
-	this->_cycles += 15;
-}
-
-// |2|12/7| If condition cc is true, the signed value * is added to pc.
-// The jump is measured from the start of the instruction opcode.
-void CPU::JR(bool cc) {
-	int8_t value = this->ReadMemory(this->_registers->GetPC() + 1);
-	if (cc) {
-		this->_registers->IncPC(value + 2);
-		this->_cycles += 12;
-	} else {
-		this->_registers->IncPC(2);
-		this->_cycles += 7;
-	}
-}
-
-// |1|11/5| If condition cc is true, the top stack entry is popped into pc.
-void CPU::RET(bool cc, uint8_t cycles) {
-	if (cc) {
-		uint16_t sp = this->_registers->GetSP();
-		uint16_t pc = this->ReadMemory(sp);
-		pc |= (this->ReadMemory(sp + 1) << 8);
-		this->_registers->SetSP(sp + 2);
-		this->_registers->SetPC(pc);
-		this->_cycles += cycles;
-	} else {
-		this->_registers->IncPC();
-		this->_cycles += 5;
-	}
-}
-
-// |1/2|4/7| Bitwise XOR on a with b.
-void CPU::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
-	uint8_t value = this->_registers->GetA() ^ b;
-	this->_registers->SetFFlag(FFlag_S, value & 0x80);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, false);
-	// TODO: P/V is set if overflow; reset otherwise
-	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_C, false);
-	this->_registers->SetA(value);
-	this->_registers->IncPC(size);
-	this->_cycles += cycles;
-}
-
-// |1|4| Adds l and the carry flag to a.
-void CPU::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() + b + (this->_registers->GetF() & FFlag_C);
-	this->_registers->SetFFlag(FFlag_S, value < 0);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, value > 0x0F);
-	// TODO: P/V is set if overflow; reset otherwise
-	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_C, value > 0xFF);
-	this->_registers->SetA(value);
-	this->_registers->IncPC(size);
-	this->_cycles += cycles;
-}
-
-// |1|4| Subtracts one from m
-void CPU::DECm(uint8_t reg) {
-	uint8_t old = this->_registers->GetRegm(reg);
-	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
-	uint8_t value = old - 1;
-	this->_registers->SetRegm(reg, value);
-	this->_registers->SetFFlag(FFlag_S, value & 0x80);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_N, true);
-	// TODO: H is set if borrow from bit 4, reset otherwise
-	this->_registers->IncPC();
-	this->_cycles += 4;
-}
-
-// |1|6| Subtracts one from ss
-void CPU::DECss(uint8_t reg) {
-	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg)  - 1);
-	this->_registers->IncPC();
-	this->_cycles += 6;
-}
-
-// |1|11| Subtracts one from (hl)
-void CPU::DECHL() {
-	uint8_t old = this->ReadMemory(this->_registers->GetHL());
-	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
-	uint8_t value = old - 1;
-	this->WriteMemory(this->_registers->GetHL(), value);
-	this->_registers->SetFFlag(FFlag_S, value & 0x80);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_N, true);
-	// TODO: H is set if borrow from bit 4, reset otherwise
-	this->_registers->IncPC();
-	this->_cycles += 11;
-}
-
-// |1|4| The contents of reg2 are loaded into reg1
-void CPU::LDrr(uint8_t reg1, uint8_t reg2) {
-	this->_registers->SetRegm(reg1, this->_registers->GetRegm(reg2));
-	this->_registers->IncPC();
-	this->_cycles += 4;
-}
-
-// |1|11| sp is decremented and reg1 is stored into the memory location pointed to by sp.
-// sp is decremented again and reg2 is stored into the memory location pointed to by sp.
-void CPU::PUSHqq(uint8_t reg1, uint8_t reg2) {
-	uint16_t sp = this->_registers->GetSP();
-	this->WriteMemory(sp - 1, this->_registers->GetRegm(reg1));
-	this->WriteMemory(sp - 2, this->_registers->GetRegm(reg2));
-	this->_registers->SetSP(sp - 2);
-	this->_registers->IncPC();
-	this->_cycles += 11;
-}
-
-// |1|10| The memory location pointed to by sp is stored into reg2 and sp is incremented.
-// The memory location pointed to by sp is stored into reg1 and sp is incremented again.
-void CPU::POPqq(uint8_t reg1, uint8_t reg2) {
-	uint16_t sp = this->_registers->GetSP();
-	this->_registers->SetRegm(reg2, this->ReadMemory(sp));
-	this->_registers->SetRegm(reg1, this->ReadMemory(sp + 1));
-	this->_registers->SetSP(sp + 2);
-	this->_registers->IncPC();
-	this->_cycles += 10;
-}
-
-// |2|15| sp is decremented and ixh is stored into the memory location pointed to by sp.
-// sp is decremented again and ixl is stored into the memory location pointed to by sp.
-void CPU::PUSH16(uint8_t reg) {
-	uint16_t value = this->_registers->GetRegss(reg);
-	uint8_t high = value >> 8;
-	uint8_t low = value;
-	uint16_t sp = this->_registers->GetSP();
-	this->WriteMemory(sp - 1, high);
-	this->WriteMemory(sp - 2, low);
-	this->_registers->SetSP(sp - 2);
-	this->_registers->IncPC(2);
-	this->_cycles += 15;
-}
-
-// |2|14| The memory location pointed to by sp is stored into ixl and sp is incremented.
-// The memory location pointed to by sp is stored into ixh and sp is incremented again.
-void CPU::POP16(uint8_t reg) {
-	uint16_t sp = this->_registers->GetSP();
-	uint16_t value = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
-	this->_registers->SetRegss(reg, value);
-	this->_registers->SetSP(sp + 2);
-	this->_registers->IncPC(2);
-	this->_cycles += 14;
-}
-
-// |1|4| Bitwise OR on a with valueb
-void CPU::OR(uint8_t valueb, uint8_t cycles, uint8_t size) {
-	uint8_t value = this->_registers->GetA() | valueb;
-	this->_registers->SetFFlag(FFlag_S, value & 0x80);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, false);
-	// TODO: P/V is set if overflow; reset otherwise
-	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_C, false);
-	this->_registers->SetA(value);
-	this->_registers->IncPC(size);
-	this->_cycles += cycles;
-}
-
-// |3|10| Loads ** into reg
-void CPU::LDddnn(uint8_t reg) {
-	uint16_t pc = this->_registers->GetPC();
-	this->_registers->SetRegss(reg, (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
-	this->_registers->IncPC(3);
-	this->_cycles += 10;
-}
-
-// |1|6| Adds one to reg
-void CPU::INCss(uint8_t reg) {
-	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg) + 1);
-	this->_registers->IncPC();
-	this->_cycles += 6;
-}
-
-// |1|4| Adds one to reg
-void CPU::INCr(uint8_t reg) {
-	uint8_t old = this->_registers->GetRegm(reg);
-	uint8_t value = old + 1;
-	this->_registers->SetRegm(reg, value);
-	this->_registers->IncPC();
-	this->_registers->SetFFlag(FFlag_S, value & 0x80);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, value > 0xF);
-	this->_registers->SetFFlag(FFlag_PV, old == 0x7F);
-	this->_registers->SetFFlag(FFlag_N, 0);
-	this->_cycles += 4;
-}
-
-// |4|20| Stores reg into the memory location pointed to by **
-void CPU::LDnndd(uint8_t reg) {
-	uint16_t pc = this->_registers->GetPC();
-	uint16_t word = this->_registers->GetRegss(reg);
-	uint8_t high = word >> 8;
-	uint8_t low = word;
-	uint16_t offset = (this->ReadMemory(pc + 3) << 8) | this->ReadMemory(pc + 2);
-	this->WriteMemory(offset, low);
-	this->WriteMemory(offset + 1, high);
-	this->_registers->IncPC(4);
-	this->_cycles += 20;
-}
-
-// |2|7| Loads * into reg
-void CPU::LDrn(uint8_t reg) {
-	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetPC() + 1));
-	this->_registers->IncPC(2);
-	this->_cycles += 7;
-}
-
-// |1|7| The contents of reg are loaded into (hl).
-void CPU::LDHLr(uint8_t reg) {
-	this->WriteMemory(this->_registers->GetHL(), this->_registers->GetRegm(reg));
-	this->_registers->IncPC();
-	this->_cycles += 7;
-}
-
-// |1|7| The contents of (hl) are loaded into reg
-void CPU::LDrHL(uint8_t reg) {
-	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetHL()));
-	this->_registers->IncPC();
-	this->_cycles += 7;
-}
-
-// |1|11| The value of reg is added to hl.
-void CPU::ADDHLs(uint8_t reg) {
-	uint32_t value = this->_registers->GetHL() + this->_registers->GetRegss(reg);
-	this->_registers->SetHL((uint16_t) value);
-	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_H, value > 0xFFF);
-	this->_registers->SetFFlag(FFlag_C, value > 0xFFFF);
-	this->_registers->IncPC();
-	this->_cycles += 11;
-}
-
-// |3|10| If condition cc is true, ** is copied to pc.
-void CPU::JPccnn(bool cc) {
-	if (cc) {
-		uint16_t pc = this->_registers->GetPC();
-		this->_registers->SetPC((this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
-	} else
-		this->_registers->IncPC(3);
-
-	this->_cycles += 10;
-}
-
-// |1|4| Adds valueb to a.
-void CPU::ADD(uint8_t valueb, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() + valueb;
-	this->_registers->SetFFlag(FFlag_S, value < 0);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, value > 0xF);
-	// TODO: P/V is set if overflow; reset otherwise
-	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_C, value > 0xFF);
-	this->_registers->SetA((uint8_t) value);
-	this->_registers->IncPC(size);
-	this->_cycles += cycles;
-}
-
-// |1|4|Bitwise AND on a with valueb.
-void CPU::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
-	uint8_t value = this->_registers->GetA() & valueb;
-	this->_registers->SetFFlag(FFlag_S, value & 0x80);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, true);
-	// TODO: P/V is set if overflow; reset otherwise
-	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_C, false);
-	this->_registers->SetA(value);
-	this->_registers->IncPC(size);
-	this->_cycles += cycles;
-}
-
 uint16_t CPU::GetAddressBus() const {
 	return this->_addressBus._w;
 }
 
 void CPU::SetAddressBus(uint16_t data) {
 	this->_addressBus._w = data;
-}
-
-void CPU::RSTp(uint8_t p) {
-	uint16_t pc = this->_registers->GetPC() + 1;
-	uint16_t sp = this->_registers->GetSP() - 2;
-	this->_registers->SetSP(sp);
-	this->WriteMemory(sp, pc & 0xFF);
-	this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
-	this->_cycles += 11;
-	this->_registers->SetPC(p);
-}
-
-void CPU::OUTCr(uint8_t reg) {
-	uint8_t n = this->_registers->GetRegm(reg);
-	uint8_t a = this->_registers->GetA();
-	this->_addressBus._l = n;
-	this->_addressBus._h = a;
-	// printf("Address: %.4X\n", this->_addressBus._w);
-	this->_ports->WriteByte(n, a);
-	this->_registers->IncPC(2);
-	this->_cycles += 12;
-}
-
-void CPU::CP(uint8_t valueb, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() - valueb;
-	this->_registers->SetFFlag(FFlag_S, value < 0);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-// TODO: P/V is set if overflow; reset otherwise
-	this->_registers->SetFFlag(FFlag_N, true);
-// TODO: C is set if borrow; reset otherwise
-	this->_registers->IncPC(size);
-	this->_cycles += cycles;
 }
 
 VDP * CPU::GetVDP() {
