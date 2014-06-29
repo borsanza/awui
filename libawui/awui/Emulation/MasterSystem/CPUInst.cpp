@@ -376,6 +376,13 @@ void CPUInst::INCss(uint8_t reg) {
 	this->_cycles += 6;
 }
 
+// |2|10| Adds one to ix.
+void CPUInst::INCXX(uint8_t reg) {
+	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg) + 1);
+	this->_registers->IncPC(2);
+	this->_cycles += 10;
+}
+
 // |1|6| Subtracts one from ss
 void CPUInst::DECss(uint8_t reg) {
 	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg)  - 1);

@@ -942,6 +942,7 @@ void CPU::RunOpcode() {
 
 		case OxDDE1: this->POP16(Reg_IX); break;
 		case OxDDE5: this->PUSH16(Reg_IX); break;
+		case OxDD23: this->INCXX(Reg_IX); break;
 
 		case OxDD46: this->LDrXXd(Reg_B, Reg_IX); break;
 		case OxDD4E: this->LDrXXd(Reg_C, Reg_IX); break;
@@ -957,6 +958,7 @@ void CPU::RunOpcode() {
 
 		case OxFDE1: this->POP16(Reg_IY); break;
 		case OxFDE5: this->PUSH16(Reg_IY); break;
+		case OxFD23: this->INCXX(Reg_IY); break;
 
 		case OxFD46: this->LDrXXd(Reg_B, Reg_IY); break;
 		case OxFD4E: this->LDrXXd(Reg_C, Reg_IY); break;
