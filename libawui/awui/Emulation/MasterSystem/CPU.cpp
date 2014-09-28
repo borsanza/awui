@@ -564,6 +564,17 @@ void CPU::RunOpcode() {
 			}
 			break;
 
+		// E9: JP (HL)
+		// |1|4| Loads the value of hl into pc.
+		case OxE9:
+			{
+				uint16_t hl = this->_registers->GetHL();
+				uint16_t aux = this->ReadMemory(hl + 1) << 8 | this->ReadMemory(hl);
+			    this->_registers->SetPC(aux);
+				this->_cycles += 4;
+			}
+			break;
+
 		// EB: EX DE, HL
 		// |1|4| Exchanges the 16-bit contents of de and hl.
 		case OxEB:
@@ -965,6 +976,19 @@ void CPU::RunOpcode() {
 		case OxDD7E: this->LDrXXd(Reg_A, Reg_IX); break;
 
 /******************************************************************************/
+/************************* IX bit instructions (DDCB) *************************/
+/******************************************************************************/
+
+		case OxDDCBnnC6: this->SETbssd(0, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnnCE: this->SETbssd(1, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnnD6: this->SETbssd(2, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnnDE: this->SETbssd(3, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnnE6: this->SETbssd(4, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnnEE: this->SETbssd(5, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnnF6: this->SETbssd(6, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnnFE: this->SETbssd(7, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+
+/******************************************************************************/
 /*************************** IY instructions (FD) *****************************/
 /******************************************************************************/
 
@@ -979,6 +1003,19 @@ void CPU::RunOpcode() {
 		case OxFD66: this->LDrXXd(Reg_H, Reg_IY); break;
 		case OxFD6E: this->LDrXXd(Reg_L, Reg_IY); break;
 		case OxFD7E: this->LDrXXd(Reg_A, Reg_IY); break;
+
+/******************************************************************************/
+/************************* IY bit instructions (DDCB) *************************/
+/******************************************************************************/
+
+		case OxFDCBnnC6: this->SETbssd(0, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnnCE: this->SETbssd(1, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnnD6: this->SETbssd(2, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnnDE: this->SETbssd(3, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnnE6: this->SETbssd(4, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnnEE: this->SETbssd(5, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnnF6: this->SETbssd(6, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnnFE: this->SETbssd(7, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
 
 		default:
 			this->_showLog = true;

@@ -508,6 +508,14 @@ void CPUInst::RESHL(uint8_t bit) {
 	this->_cycles += 15;
 }
 
+// |4|23| Sets bit 'bit' of the memory location pointed to by ss plus *.
+void CPUInst::SETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
+    uint16_t offset = this->_registers->GetRegss(reg) + d;
+    this->WriteMemory(offset, this->ReadMemory(offset) | bit);
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
+}
+
 /******************************************************************************/
 /********************************* Jump Group *********************************/
 /******************************************************************************/
