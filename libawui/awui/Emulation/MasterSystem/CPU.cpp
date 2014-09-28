@@ -504,18 +504,15 @@ void CPU::RunOpcode() {
 		case OxF8: this->RET( (this->_registers->GetF() & FFlag_S)); break;
 
 		// CD nn: CALL **
-		// |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
-		case OxCD:
-			{
-				uint16_t pc = this->_registers->GetPC() + 3;
-				uint16_t sp = this->_registers->GetSP() - 2;
-				this->_registers->SetSP(sp);
-				this->WriteMemory(sp, pc & 0xFF);
-				this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
-				this->_cycles += 17;
-				this->_registers->SetPC((this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2));
-			}
-			break;
+		case OxC4: this->CALLccnn(!(this->_registers->GetF() & FFlag_Z)); break;
+		case OxCC: this->CALLccnn( (this->_registers->GetF() & FFlag_Z)); break;
+		case OxCD: this->CALLnn(); break;
+		case OxD4: this->CALLccnn(!(this->_registers->GetF() & FFlag_C)); break;
+		case OxDC: this->CALLccnn( (this->_registers->GetF() & FFlag_C)); break;
+		case OxE4: this->CALLccnn(!(this->_registers->GetF() & FFlag_PV)); break;
+		case OxEC: this->CALLccnn( (this->_registers->GetF() & FFlag_PV)); break;
+		case OxF4: this->CALLccnn(!(this->_registers->GetF() & FFlag_S)); break;
+		case OxFC: this->CALLccnn( (this->_registers->GetF() & FFlag_S)); break;
 
 		// RST p
 		case OxC7: this->RSTp(0x00); break;

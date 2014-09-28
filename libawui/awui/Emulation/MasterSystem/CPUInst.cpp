@@ -574,6 +574,27 @@ void CPUInst::RSTp(uint8_t p) {
 	this->_registers->SetPC(p);
 }
 
+// |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
+void CPUInst::CALLnn() {
+    uint16_t pc = this->_registers->GetPC() + 3;
+    uint16_t sp = this->_registers->GetSP() - 2;
+    this->_registers->SetSP(sp);
+    this->WriteMemory(sp, pc & 0xFF);
+    this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
+    this->_cycles += 17;
+    this->_registers->SetPC((this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2));
+}
+
+// |3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+void CPUInst::CALLccnn(bool cc) {
+    if (cc)
+        CALLnn();
+    else {
+		this->_registers->IncPC(3);
+		this->_cycles += 10;
+    }
+}
+
 /******************************************************************************/
 /*************************** Input and Output Group ***************************/
 /******************************************************************************/

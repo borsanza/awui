@@ -94,6 +94,8 @@ namespace awui {
 					// Call And Return Group
 					void RET(bool cc, uint8_t cycles = 11);
 					void RSTp(uint8_t p);
+					void CALLnn();
+					void CALLccnn(bool cc);
 
 					// Input and Output Group
 					void OUTCr(uint8_t reg);
