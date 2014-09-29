@@ -157,6 +157,9 @@ void CPU::RunOpcode() {
 		// RLCA
 		case Ox07: this->RLCA(); break;
 
+		// RRCA
+		case Ox0F: this->RRCA(); break;
+
 		// RLA
 		case Ox17: this->RLA(); break;
 

@@ -419,7 +419,20 @@ void CPUInst::RLA() {
 	this->_cycles += 4;
 }
 
-// |1|4|The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
+// |1|4| The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
+void CPUInst::RRCA() {
+	uint8_t old = this->_registers->GetA();
+	this->_registers->SetFFlag(FFlag_C, old & 0x01);
+	uint8_t value = (old >> 1) | (0x80 & bool(this->_registers->GetF() & FFlag_C));
+	this->_registers->SetA(value);
+	this->_registers->SetFFlag(FFlag_H, false);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, old & 0x01);
+	this->_registers->IncPC();
+	this->_cycles += 4;
+}
+
+// |1|4| The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
 void CPUInst::RRA() {
 	uint8_t old = this->_registers->GetA();
 	uint8_t value = (old >> 1) | (0x80 & bool(this->_registers->GetF() & FFlag_C));
