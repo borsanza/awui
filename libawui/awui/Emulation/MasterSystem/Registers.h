@@ -74,6 +74,7 @@ namespace awui {
 
 					void Clear();
 					void Alternate();
+					void AlternateAF();
 					void AlternateBC();
 					void AlternateDE();
 					void AlternateHL();

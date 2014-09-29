@@ -160,6 +160,9 @@ void CPU::RunOpcode() {
 		// RLA
 		case Ox17: this->RLA(); break;
 
+		// RRA
+		case Ox1F: this->RRA(); break;
+
 		// 10 n: DJNZ *
 		// |2|13/8| The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox10:
@@ -568,6 +571,16 @@ void CPU::RunOpcode() {
 				uint16_t hl = this->_registers->GetHL();
 				uint16_t aux = this->ReadMemory(hl + 1) << 8 | this->ReadMemory(hl);
 			    this->_registers->SetPC(aux);
+				this->_cycles += 4;
+			}
+			break;
+
+		// 08: EX AF, AF'
+		// |1|4| Exchanges the 16-bit contents of af and af'.
+		case Ox08:
+			{
+				this->_registers->AlternateAF();
+				this->_registers->IncPC();
 				this->_cycles += 4;
 			}
 			break;

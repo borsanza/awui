@@ -38,6 +38,13 @@ void Registers::Clear() {
 }
 
 void Registers::Alternate() {
+	this->AlternateAF();
+	this->AlternateBC();
+	this->AlternateDE();
+	this->AlternateHL();
+}
+
+void Registers::AlternateAF() {
 	uint8_t aux1;
 	aux1 = this->_a;
 	this->_a = this->_a_;
@@ -46,10 +53,6 @@ void Registers::Alternate() {
 	aux1 = this->_f;
 	this->_f = this->_f_;
 	this->_f_ = aux1;
-
-	this->AlternateBC();
-	this->AlternateDE();
-	this->AlternateHL();
 }
 
 void Registers::AlternateBC() {
