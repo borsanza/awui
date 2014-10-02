@@ -18,6 +18,7 @@ int main(int argc, char ** argv) {
 	Form1 *form = new Form1();
 	Console::WriteLine(Directory::GetCurrentDirectory());
 	form->LoadRom(argv[1]);
+//	form->LoadRom("./tests/64 Color Palette Test Program by Charles MacDonald V1.00 (PD).sms");
 
 	Application::Run(form);
 

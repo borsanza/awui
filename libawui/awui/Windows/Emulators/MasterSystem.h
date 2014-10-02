@@ -4,10 +4,18 @@
 #include <awui/Windows/Forms/Button.h>
 
 namespace awui {
+	namespace Drawing {
+		class Image;
+	}
+
 	namespace Emulation {
 		namespace MasterSystem {
 			class CPU;
 		}
+	}
+
+	namespace OpenGL {
+		class GL;
 	}
 
 	using namespace awui::Emulation::MasterSystem;
@@ -17,6 +25,7 @@ namespace awui {
 		namespace Emulators {
 			class MasterSystem : public Button {
 				private:
+					Drawing::Image * _image;
 					CPU * _cpu;
 
 				public:
@@ -30,6 +39,8 @@ namespace awui {
 					virtual void OnTick();
 
 					CPU * GetCPU();
+
+					virtual void OnPaint(OpenGL::GL* gl);
 			};
 		}
 	}

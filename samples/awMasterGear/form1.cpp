@@ -27,6 +27,7 @@ void Form1::InitializeComponent() {
 
 	this->_masterSystem = new MasterSystem();
 	this->GetControls()->Add(this->_masterSystem);
+	this->_masterSystem->SetLocation(50, 50);
 
 	DebuggerSMS * debugger = new DebuggerSMS(this->_masterSystem);
 	debugger->SetDock(DockStyle::Right);

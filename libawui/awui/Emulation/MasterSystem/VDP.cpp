@@ -27,11 +27,17 @@ using namespace awui::Emulation::MasterSystem;
  */
 
 VDP::VDP(CPU * cpu) {
-	this->_cpu = cpu;
+	this->_data = NULL;
 	this->_width = 256;
 	this->_height = 192;
+	this->ResetVideo();
+
+	this->_cpu = cpu;
 	this->_line = 0;
 	this->_col = 0;
+	this->_lastLine = 0;
+	this->_lastCol = 0;
+
 	this->_status = 0x1F;
 	this->_address = 0;
 	this->_goVram = true;
@@ -70,6 +76,15 @@ VDP::VDP(CPU * cpu) {
 
 VDP::~VDP() {
 	delete this->_vram;
+	free(this->_data);
+}
+
+void VDP::ResetVideo() {
+	if (this->_data)
+		free(this->_data);
+
+	//this->_data = (uint32_t *) malloc (this->_width * this->_height * sizeof(uint32_t));
+	this->_data = (uint32_t *) calloc (this->_width * this->_height, sizeof(uint32_t));
 }
 
 void VDP::SetNTSC() {
@@ -107,6 +122,13 @@ uint16_t VDP::GetHeight() {
 	return this->_height;
 }
 
+void VDP::SetHeight(uint16_t height) {
+	if (height != this->_height) {
+		this->_height = height;
+		this->ResetVideo();
+	}
+}
+
 uint16_t VDP::GetTotalWidth() {
 	return 342;
 }
@@ -115,8 +137,30 @@ uint16_t VDP::GetTotalHeight() {
 	return (this->_ntsc ? 262 : 313);
 }
 
-bool VDP::OnTick() {
-	bool r = false;
+uint32_t VDP::GetPixel(uint16_t x, uint16_t y) {
+	return this->_data[(y * this->_width) + x];
+}
+
+bool VDP::OnTick(uint32_t counter) {
+/*
+	{
+//		int8_t r = (counter % 2) == 0?0xFF : 0x00;
+//		int8_t g = (counter % 2) == 0?0xFF : 0x00;
+//		int8_t b = (counter % 2) == 0?0xFF : 0x00;
+		counter = (this->_col * 8) / this->_width;
+		counter += 8;
+		// min = 8
+		// max = 15
+		uint8_t b = (this->_cram[counter % 32] >> 4) & 0x3;
+		uint8_t g = (this->_cram[counter % 32] >> 2) & 0x3;
+		uint8_t r = this->_cram[counter % 32] & 0x3;
+		r = r * 85;
+		g = g * 85;
+		b = b * 85;
+		this->_data[this->_col + (this->_line * this->_width)] = 0xFF000000 | r << 16 | g << 8 | b;
+	}
+*/
+	bool ret = false;
 	this->_col++;
 	if (this->_col >= this->GetTotalWidth()) {
 		this->_col = 0;
@@ -124,12 +168,47 @@ bool VDP::OnTick() {
 		if (this->_line >= this->GetTotalHeight()) {
 			this->_line = 0;
 			this->_status |= 0x80;
-			r = true;
+			ret = true;
 		}
 	}
 
-	// printf("                       %dx%d\n", this->_col, this->_line);
-	return r;
+	if (this->_col % 32 == 0) {
+		while ((this->_col != this->_lastCol) && (this->_line != this->_lastLine)) {
+
+//			if (this->_lastCol % 32 == 0)
+			{
+/*
+				int8_t r = (counter % 2) == 0?0xFF : 0x00;
+				int8_t g = (counter % 2) == 0?0xFF : 0x00;
+				int8_t b = (counter % 2) == 0?0xFF : 0x00;
+*/
+				counter = (this->_lastCol * 8) / this->_width;
+				counter += 8;
+
+				uint8_t b = (this->_cram[counter % 32] >> 4) & 0x3;
+				uint8_t g = (this->_cram[counter % 32] >> 2) & 0x3;
+				uint8_t r = this->_cram[counter % 32] & 0x3;
+				r = r * 85;
+				g = g * 85;
+				b = b * 85;
+
+				this->_data[this->_lastCol + (this->_lastLine * this->_width)] = 0xFF000000 | r << 16 | g << 8 | b;
+			}
+
+			this->_lastCol++;
+			if (this->_lastCol >= this->GetTotalWidth()) {
+				this->_lastCol = 0;
+				this->_lastLine++;
+				if (this->_lastLine >= this->GetTotalHeight())
+					this->_lastLine = 0;
+			}
+		}
+	}
+
+//	if (this->_line == 110)
+//		printf("                       %5d: %3dx%3d\n", counter, this->_col, this->_line);
+
+	return ret;
 }
 
 /*
@@ -158,14 +237,16 @@ void VDP::UpdateAllRegisters() {
 	this->_visible = this->_registers[0] & 0x40;
 
 	if (this->_registers[0] & 0x04) {
-		this->_height = 192;
+		uint16_t height = 192;
 		if (this->_registers[0] & 0x02) {
 			if (this->_registers[1] & 0x10)
-				this->_height = 224;
+				height = 224;
 			else
 				if (this->_registers[1] & 0x08)
-					this->_height = 240;
+					height = 240;
 		}
+
+		this->SetHeight(height);
 	}
 
 	if (this->_registers[1] & 0x01) {
@@ -185,7 +266,6 @@ void VDP::UpdateAllRegisters() {
 		this->_baseAddress = code * 0x0800;
 	}
 }
-
 
 void VDP::WriteControlByte(uint8_t value) {
 	if (this->_controlByte == -1) {

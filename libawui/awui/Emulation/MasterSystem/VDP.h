@@ -22,6 +22,9 @@ namespace awui {
 
 					uint16_t _line;
 					uint16_t _col;
+					uint16_t _lastLine;
+					uint16_t _lastCol;
+
 					uint8_t _status;
 					bool _visible;
 					uint16_t _baseAddress;
@@ -33,6 +36,8 @@ namespace awui {
 
 					// 11 Registers
 					uint8_t _registers[11];
+
+					uint32_t * _data;
 
 					int16_t _controlByte;
 					uint16_t _dataByte;
@@ -52,11 +57,14 @@ namespace awui {
 					uint8_t GetStatus(bool resetStatus = true);
 					void UpdateAllRegisters();
 
+					void ResetVideo();
+					void SetHeight(uint16_t height);
+
 				public:
 					VDP(CPU * cpu);
 					~VDP();
 
-					bool OnTick();
+					bool OnTick(uint32_t counter);
 
 					void WriteControlByte(uint8_t value);
 					void WriteDataByte(uint8_t value);
@@ -77,6 +85,8 @@ namespace awui {
 					bool GetPAL();
 					uint16_t GetTotalWidth();
 					uint16_t GetTotalHeight();
+
+					uint32_t GetPixel(uint16_t x, uint16_t y);
 			};
 		}
 	}

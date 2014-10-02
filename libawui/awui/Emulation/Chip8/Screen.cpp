@@ -78,7 +78,10 @@ void Screen::SetPixel(uint16_t x, uint16_t y, uint32_t value) {
 }
 
 uint32_t Screen::GetPixel(uint16_t x, uint16_t y) {
-	return this->_data[(y * this->_width) + x];
+	if (this->_data)
+		return this->_data[(y * this->_width) + x];
+
+	return 0;
 }
 
 uint16_t Screen::GetWidth() {

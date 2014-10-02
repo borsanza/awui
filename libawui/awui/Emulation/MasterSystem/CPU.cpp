@@ -36,9 +36,10 @@ void CPU::LoadRom(const String file) {
 	this->_rom->LoadRom(file);
 }
 
-//#define SPEED 3.54f
 #define SPEED 3.57f
 #define GUIFPS 60.0f
+//#define SPEED 3.54f
+//#define GUIFPS 50.0f
 
 void CPU::OnTick() {
 	float fps = this->_vdp->GetNTSC() ? 60.0f : 50.0f;
@@ -50,33 +51,33 @@ void CPU::OnTick() {
 
 	this->_oldFrame = this->_frame;
 
-	float iters = (SPEED * 1000000.0f) / fps; // 71400
-	float itersVDP = this->_vdp->GetTotalWidth() * this->_vdp->GetTotalHeight();               // 49152
+	float iters = (SPEED * 1000000.0f) / fps;
+	float itersVDP = this->_vdp->GetTotalWidth() * this->_vdp->GetTotalHeight();
 
 	bool vsync = false;
 	int vdpCount = 0;
 	float vdpIters = 0;
 
-	// int realIters = 0;
+	int realIters = 0;
 	for (int i = 0; i < iters; i++) {
-		// realIters++;
 		int64_t oldCycles = this->_cycles;
 		this->RunOpcode();
-		int times = this->_cycles - oldCycles;
-		i += times - 1;
+		int times = (this->_cycles - oldCycles);
+		i = i + times - 1;
 		vdpIters += times * (itersVDP / iters);
 		if (!vsync) {
 			for (; vdpCount < vdpIters; vdpCount++) {
 				if (vsync) continue;
-				vsync = this->_vdp->OnTick();
+				vsync = this->_vdp->OnTick(realIters);
 			}
 		}
+		realIters++;
 	}
 
-	// printf("%d\n", realIters);
+//	printf("%d %d\n", realIters, vsync);
 
 	while (!vsync)
-		vsync = this->_vdp->OnTick();
+		vsync = this->_vdp->OnTick(realIters);
 }
 
 #define Print(...)  if (this->_showLog) printf(__VA_ARGS__);
