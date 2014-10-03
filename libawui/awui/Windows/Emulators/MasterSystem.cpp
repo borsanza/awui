@@ -51,17 +51,22 @@ void MasterSystem::OnPaint(GL* gl) {
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 
 	VDP * screen = this->_cpu->GetVDP();
+	int width = screen->GetTotalWidth();
+	int height = screen->GetTotalHeight();
 
-	if ((screen->GetWidth() != this->_image->GetWidth()) || (screen->GetHeight() != this->_image->GetHeight())) {
+	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
 		delete this->_image;
-		this->_image = new Drawing::Image(screen->GetWidth(), screen->GetHeight());
-		this->SetSize(screen->GetWidth() * 2, screen->GetHeight() * 2);
+		this->_image = new Drawing::Image(width, height);
+		this->SetSize(width * 2, height * 2);
 	}
 
-	for (int y = 0; y < screen->GetHeight(); y++) {
-		for (int x = 0; x < screen->GetWidth(); x++) {
-			uint32_t pixel = screen->GetPixel(x, y);
-			this->_image->SetPixel(x, y, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF, 255);
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			uint8_t c = screen->GetPixel(x, y);
+			uint8_t r = (c & 0x3) * 85;
+			uint8_t g = ((c >> 2) & 0x3) * 85;
+			uint8_t b = ((c >> 4) & 0x3) * 85;
+			this->_image->SetPixel(x, y, r, g, b, 255);
 		}
 	}
 
@@ -71,8 +76,9 @@ void MasterSystem::OnPaint(GL* gl) {
 	int controlHeight = this->GetHeight();
 
 	float ratio = (float)this->_image->GetWidth() / (float)this->_image->GetHeight();
-	int width = controlHeight * ratio;
-	int height = controlHeight;
+
+	width = controlHeight * ratio;
+	height = controlHeight;
 
 	if (width > controlWidth) {
 		width = controlWidth;

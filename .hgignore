@@ -19,6 +19,8 @@ syntax: glob
 *.suo
 *.vcproj.*user
 *.workspace
+*.sms
+*.rar
 libaw/*.c
 libaw/*.h
 libaw/aw/*.h

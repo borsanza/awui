@@ -37,7 +37,7 @@ namespace awui {
 					// 11 Registers
 					uint8_t _registers[11];
 
-					uint32_t * _data;
+					uint8_t * _data;
 
 					int16_t _controlByte;
 					uint16_t _dataByte;
@@ -59,6 +59,8 @@ namespace awui {
 
 					void ResetVideo();
 					void SetHeight(uint16_t height);
+					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) const;
+					bool IsVSYNC(uint16_t line) const;
 
 				public:
 					VDP(CPU * cpu);
@@ -72,8 +74,8 @@ namespace awui {
 					void WriteByte(uint8_t port, uint8_t value);
 					uint8_t ReadByte(uint8_t port);
 
-					uint16_t GetWidth();
-					uint16_t GetHeight();
+					uint16_t GetWidth() const;
+					uint16_t GetHeight() const;
 
 					void Reset();
 
@@ -81,12 +83,12 @@ namespace awui {
 
 					void SetNTSC();
 					void SetPAL();
-					bool GetNTSC();
-					bool GetPAL();
-					uint16_t GetTotalWidth();
-					uint16_t GetTotalHeight();
+					bool GetNTSC() const;
+					bool GetPAL() const;
+					uint16_t GetTotalWidth() const;
+					uint16_t GetTotalHeight() const;
 
-					uint32_t GetPixel(uint16_t x, uint16_t y);
+					uint8_t GetPixel(uint16_t x, uint16_t y) const;
 			};
 		}
 	}

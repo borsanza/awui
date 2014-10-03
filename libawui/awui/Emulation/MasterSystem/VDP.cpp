@@ -30,6 +30,7 @@ VDP::VDP(CPU * cpu) {
 	this->_data = NULL;
 	this->_width = 256;
 	this->_height = 192;
+	this->_ntsc = true;
 	this->ResetVideo();
 
 	this->_cpu = cpu;
@@ -42,7 +43,6 @@ VDP::VDP(CPU * cpu) {
 	this->_address = 0;
 	this->_goVram = true;
 	this->_baseAddress = 0;
-	this->_ntsc = true;
 
 	this->_controlByte = -1;
 
@@ -83,23 +83,29 @@ void VDP::ResetVideo() {
 	if (this->_data)
 		free(this->_data);
 
-	//this->_data = (uint32_t *) malloc (this->_width * this->_height * sizeof(uint32_t));
-	this->_data = (uint32_t *) calloc (this->_width * this->_height, sizeof(uint32_t));
+	//this->_data = (uint8_t *) malloc (this->GetTotalWidth() * this->GetTotalHeight() * sizeof(uint8_t));
+	this->_data = (uint8_t *) calloc (this->GetTotalWidth() * this->GetTotalHeight(), sizeof(uint8_t));
 }
 
 void VDP::SetNTSC() {
-	this->_ntsc = true;
+	if (!this->_ntsc) {
+		this->_ntsc = true;
+		this->ResetVideo();
+	}
 }
 
 void VDP::SetPAL() {
-	this->_ntsc = false;
+	if (this->_ntsc) {
+		this->_ntsc = false;
+		this->ResetVideo();
+	}
 }
 
-bool VDP::GetNTSC() {
+bool VDP::GetNTSC() const {
 	return this->_ntsc;
 }
 
-bool VDP::GetPAL() {
+bool VDP::GetPAL() const {
 	return !this->_ntsc;
 }
 
@@ -114,11 +120,11 @@ void VDP::Reset() {
 	this->UpdateAllRegisters();
 }
 
-uint16_t VDP::GetWidth() {
+uint16_t VDP::GetWidth() const {
 	return this->_width;
 }
 
-uint16_t VDP::GetHeight() {
+uint16_t VDP::GetHeight() const {
 	return this->_height;
 }
 
@@ -129,81 +135,116 @@ void VDP::SetHeight(uint16_t height) {
 	}
 }
 
-uint16_t VDP::GetTotalWidth() {
+uint16_t VDP::GetTotalWidth() const {
 	return 342;
 }
 
-uint16_t VDP::GetTotalHeight() {
+uint16_t VDP::GetTotalHeight() const {
 	return (this->_ntsc ? 262 : 313);
 }
 
-uint32_t VDP::GetPixel(uint16_t x, uint16_t y) {
-	return this->_data[(y * this->_width) + x];
+uint8_t VDP::GetPixel(uint16_t x, uint16_t y) const {
+	return this->_data[(y * this->GetTotalWidth()) + x];
+}
+
+bool VDP::IsVSYNC(uint16_t line) const {
+	if (this->GetNTSC()) {
+		switch (this->_height) {
+			// 192    Active display
+			// 24     Bottom border
+			// 3      Bottom blanking
+			// 3      Vertical blanking
+			case 192: return 220 == line;
+
+			// 224    Active display
+			// 8      Bottom border
+			// 3      Bottom blanking
+			// 3      Vertical blanking
+			case 224: return 236 == line;
+
+			// 240    Active display
+			case 240:
+				// Segun documentacion no funciona en maquinas reales
+				assert(0);
+				return 241 == line;
+		}
+	} else {
+		switch (this->_height) {
+			// 192    Active display
+			// 48     Bottom border
+			// 3      Bottom blanking
+			// 3      Vertical blanking
+			case 192: return 244 == line;
+
+			// 224    Active display
+			// 32     Bottom border
+			// 3      Bottom blanking
+			// 3      Vertical blanking
+			case 224: return 260 == line;
+
+			// 240    Active display
+			// 24     Bottom border
+			// 3      Bottom blanking
+			// 3      Vertical blanking
+			case 240: return 268 == line;
+		}
+	}
+
+	assert(0);
+	return false;
+}
+
+void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) const {
+	(*col)++;
+	*hsync = false;
+	*vsync = false;
+
+	// 256 Active Display +
+	// 15 Right Border +
+	// 8 Right Blank +
+	// 26 HSync / 2 <- Suponemos que cambia de linea a mitad
+	if (*col == 292) {
+		*hsync = true;
+		(*line)++;
+
+		*vsync = this->IsVSYNC(*line);
+
+		if (*line == this->GetTotalHeight())
+			*line = 0;
+	}
+
+	if (*col == this->GetTotalWidth())
+		*col = 0;
 }
 
 bool VDP::OnTick(uint32_t counter) {
-/*
-	{
-//		int8_t r = (counter % 2) == 0?0xFF : 0x00;
-//		int8_t g = (counter % 2) == 0?0xFF : 0x00;
-//		int8_t b = (counter % 2) == 0?0xFF : 0x00;
-		counter = (this->_col * 8) / this->_width;
-		counter += 8;
-		// min = 8
-		// max = 15
-		uint8_t b = (this->_cram[counter % 32] >> 4) & 0x3;
-		uint8_t g = (this->_cram[counter % 32] >> 2) & 0x3;
-		uint8_t r = this->_cram[counter % 32] & 0x3;
-		r = r * 85;
-		g = g * 85;
-		b = b * 85;
-		this->_data[this->_col + (this->_line * this->_width)] = 0xFF000000 | r << 16 | g << 8 | b;
-	}
-*/
 	bool ret = false;
-	this->_col++;
-	if (this->_col >= this->GetTotalWidth()) {
-		this->_col = 0;
-		this->_line++;
-		if (this->_line >= this->GetTotalHeight()) {
-			this->_line = 0;
-			this->_status |= 0x80;
-			ret = true;
-		}
+	bool hsync, vsync;
+
+	this->CalcNextPixel(&this->_col, &this->_line, &hsync, &vsync);
+	if (vsync) {
+		this->_status |= 0x80;
+		ret = true;
 	}
 
-	if (this->_col % 32 == 0) {
-		while ((this->_col != this->_lastCol) && (this->_line != this->_lastLine)) {
+//	if (this->_col % 32 == 0) {
+	while ((this->_col != this->_lastCol) && (this->_line != this->_lastLine)) {
 
 //			if (this->_lastCol % 32 == 0)
-			{
-/*
-				int8_t r = (counter % 2) == 0?0xFF : 0x00;
-				int8_t g = (counter % 2) == 0?0xFF : 0x00;
-				int8_t b = (counter % 2) == 0?0xFF : 0x00;
-*/
-				counter = (this->_lastCol * 8) / this->_width;
-				counter += 8;
+		if ((this->_lastCol < this->GetWidth()) && (this->_lastLine < this->GetHeight()))
+		{
+//				this->_data[50 + this->_lastCol + (this->_lastLine * this->GetTotalWidth())] = ((counter % 2) == 0)?0x3F : 0x00;
 
-				uint8_t b = (this->_cram[counter % 32] >> 4) & 0x3;
-				uint8_t g = (this->_cram[counter % 32] >> 2) & 0x3;
-				uint8_t r = this->_cram[counter % 32] & 0x3;
-				r = r * 85;
-				g = g * 85;
-				b = b * 85;
+			counter = (this->_lastCol * 8) / this->_width;
+			counter += 8;
 
-				this->_data[this->_lastCol + (this->_lastLine * this->_width)] = 0xFF000000 | r << 16 | g << 8 | b;
-			}
-
-			this->_lastCol++;
-			if (this->_lastCol >= this->GetTotalWidth()) {
-				this->_lastCol = 0;
-				this->_lastLine++;
-				if (this->_lastLine >= this->GetTotalHeight())
-					this->_lastLine = 0;
-			}
+			this->_data[50 + this->_lastCol + (this->_lastLine * this->GetTotalWidth())] = this->_cram[counter % 32];
 		}
+
+		bool aux;
+		this->CalcNextPixel(&this->_lastCol, &this->_lastLine, &aux, &aux);
 	}
+//	}
 
 //	if (this->_line == 110)
 //		printf("                       %5d: %3dx%3d\n", counter, this->_col, this->_line);

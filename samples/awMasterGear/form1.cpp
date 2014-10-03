@@ -34,7 +34,7 @@ void Form1::InitializeComponent() {
 	debugger->SetWidth(194);
 	this->GetControls()->Add(debugger);
 
-	this->SetSize(800, 600);
+	this->SetSize(1000, 650);
 	this->SetFullscreen(0);
 }
 
