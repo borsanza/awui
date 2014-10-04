@@ -48,11 +48,13 @@ CPU * MasterSystem::GetCPU() {
 }
 
 void MasterSystem::OnPaint(GL* gl) {
+	uint8_t color[4] {0, 85, 170, 255};
+
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 
 	VDP * screen = this->_cpu->GetVDP();
-	int width = screen->GetTotalWidth();
-	int height = screen->GetTotalHeight();
+	int width = screen->GetVisualWidth();
+	int height = screen->GetVisualHeight();
 
 	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
 		delete this->_image;
@@ -63,10 +65,10 @@ void MasterSystem::OnPaint(GL* gl) {
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			uint8_t c = screen->GetPixel(x, y);
-			uint8_t r = (c & 0x3) * 85;
-			uint8_t g = ((c >> 2) & 0x3) * 85;
-			uint8_t b = ((c >> 4) & 0x3) * 85;
-			this->_image->SetPixel(x, y, r, g, b, 255);
+			uint8_t r = color[c & 0x3];
+			uint8_t g = color[(c >> 2) & 0x3];
+			uint8_t b = color[(c >> 4) & 0x3];
+			this->_image->SetPixel(x, y, r, g, b);
 		}
 	}
 
@@ -85,12 +87,23 @@ void MasterSystem::OnPaint(GL* gl) {
 		height = (float)controlWidth / ratio;
 	}
 
-	int left = (this->GetWidth() - width) / 2.0f;
-	int top = (this->GetHeight() - height) / 2.0f;
+	int left = (this->GetWidth() - width) >> 1;
+	int top = (this->GetHeight() - height) >> 1;
 
 	// Console::Write(Convert::ToString(width));
 	// Console::Write("x");
 	// Console::WriteLine(Convert::ToString(height));
 
 	GL::DrawImageGL(this->_image, left, top, width, height);
+}
+
+bool MasterSystem::OnKeyPress(Keys::Enum key) {
+	if (key == Keys::Key_B) {
+		VDP * screen = this->_cpu->GetVDP();
+		screen->SetShowBorder(!screen->GetShowBorder());
+		screen->Clear();;
+	}
+
+//	Console::WriteLine("OnKeyPress");
+	return true;
 }

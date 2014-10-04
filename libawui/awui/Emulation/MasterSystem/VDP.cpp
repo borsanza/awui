@@ -4,6 +4,14 @@
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
 
+// Segun documentacion
+#define LEFTBORDER 13
+#define RIGHTBORDER 15
+
+// Comparado con la Master System
+//#define LEFTBORDER 1
+//#define RIGHTBORDER 12
+
 #include "VDP.h"
 
 #include <awui/Emulation/MasterSystem/CPU.h>
@@ -11,6 +19,7 @@
 #include <awui/Emulation/MasterSystem/Registers.h>
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 using namespace awui::Emulation::MasterSystem;
 
@@ -38,6 +47,7 @@ VDP::VDP(CPU * cpu) {
 	this->_col = 0;
 	this->_lastLine = 0;
 	this->_lastCol = 0;
+	this->_showBorder = false;
 
 	this->_status = 0x1F;
 	this->_address = 0;
@@ -79,12 +89,16 @@ VDP::~VDP() {
 	free(this->_data);
 }
 
+void VDP::Clear() {
+	memset(this->_data, 0, this->GetVisualWidth() * this->GetVisualHeight() * sizeof(uint8_t));
+}
+
 void VDP::ResetVideo() {
 	if (this->_data)
 		free(this->_data);
 
-	//this->_data = (uint8_t *) malloc (this->GetTotalWidth() * this->GetTotalHeight() * sizeof(uint8_t));
-	this->_data = (uint8_t *) calloc (this->GetTotalWidth() * this->GetTotalHeight(), sizeof(uint8_t));
+	this->_data = (uint8_t *) calloc (this->GetVisualWidth() * this->GetVisualHeight(), sizeof(uint8_t));
+	this->Clear();
 }
 
 void VDP::SetNTSC() {
@@ -139,12 +153,50 @@ uint16_t VDP::GetTotalWidth() const {
 	return 342;
 }
 
+uint16_t VDP::GetVisualWidth() const {
+	return 256 + LEFTBORDER + RIGHTBORDER;
+}
+
+uint16_t VDP::GetVisualHeight() const {
+	if (this->GetNTSC())
+		return 243;
+	else
+		return 294;
+}
+
+uint16_t VDP::GetActiveLeft() const {
+	return LEFTBORDER;
+}
+
+uint16_t VDP::GetBorderBottom() const {
+	return this->GetVisualHeight() - (this->GetHeight() + this->GetActiveTop());
+}
+
+uint16_t VDP::GetActiveTop() const {
+	if (this->GetNTSC()) {
+		switch (this->_height) {
+			case 192: return 27;
+			case 224: return 11;
+			case 240: return 2;
+		}
+	} else {
+		switch (this->_height) {
+			case 192: return 54;
+			case 224: return 38;
+			case 240: return 30;
+		}
+	}
+
+	assert(0);
+	return 0;
+}
+
 uint16_t VDP::GetTotalHeight() const {
 	return (this->_ntsc ? 262 : 313);
 }
 
 uint8_t VDP::GetPixel(uint16_t x, uint16_t y) const {
-	return this->_data[(y * this->GetTotalWidth()) + x];
+	return this->_data[(y * this->GetVisualWidth()) + x];
 }
 
 bool VDP::IsVSYNC(uint16_t line) const {
@@ -206,7 +258,6 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 	if (*col == 292) {
 		*hsync = true;
 		(*line)++;
-
 		*vsync = this->IsVSYNC(*line);
 
 		if (*line == this->GetTotalHeight())
@@ -215,6 +266,36 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 
 	if (*col == this->GetTotalWidth())
 		*col = 0;
+}
+
+void VDP::OnTickBorder() {
+	int x = 0;
+	int y = 0;
+	bool draw = false;
+	if ((this->_col >= this->GetWidth()) || (this->_line >= this->GetHeight())) {
+		if (this->_col >= (this->GetTotalWidth() - LEFTBORDER)) {
+			draw = true;
+			x = this->_col - (this->GetTotalWidth() - LEFTBORDER);
+		} else {
+			if (this->_col < this->GetWidth() + RIGHTBORDER) {
+				draw = true;
+				x = LEFTBORDER + this->_col;
+			}
+		}
+
+		if (this->_line >= (this->GetTotalHeight() - this->GetActiveTop())) {
+			draw = true;
+			y = this->_line - (this->GetTotalHeight() - this->GetActiveTop());
+		} else {
+			if (this->_line < (this->GetHeight() + this->GetBorderBottom())) {
+				draw = true;
+				y = this->GetActiveTop() + this->_line;
+			}
+		}
+	}
+
+	if (draw)
+		this->_data[x + (y * this->GetVisualWidth())] = this->_cram[this->_registers[7] & 0x0F];
 }
 
 bool VDP::OnTick(uint32_t counter) {
@@ -227,24 +308,14 @@ bool VDP::OnTick(uint32_t counter) {
 		ret = true;
 	}
 
-//	if (this->_col % 32 == 0) {
-	while ((this->_col != this->_lastCol) && (this->_line != this->_lastLine)) {
+	if ((this->_col < this->_width) && (this->_line < this->_height)) {
+		counter = ((this->_col * 8) / this->_width) + 8;
 
-//			if (this->_lastCol % 32 == 0)
-		if ((this->_lastCol < this->GetWidth()) && (this->_lastLine < this->GetHeight()))
-		{
-//				this->_data[50 + this->_lastCol + (this->_lastLine * this->GetTotalWidth())] = ((counter % 2) == 0)?0x3F : 0x00;
-
-			counter = (this->_lastCol * 8) / this->_width;
-			counter += 8;
-
-			this->_data[50 + this->_lastCol + (this->_lastLine * this->GetTotalWidth())] = this->_cram[counter % 32];
-		}
-
-		bool aux;
-		this->CalcNextPixel(&this->_lastCol, &this->_lastLine, &aux, &aux);
+		this->_data[LEFTBORDER + this->_col + ((this->_line + this->GetActiveTop()) * this->GetVisualWidth())] = this->_cram[counter % 32];
+	} else {
+		if (this->_showBorder)
+			this->OnTickBorder();
 	}
-//	}
 
 //	if (this->_line == 110)
 //		printf("                       %5d: %3dx%3d\n", counter, this->_col, this->_line);
@@ -444,4 +515,12 @@ uint8_t VDP::ReadByte(uint8_t port) {
 
 uint8_t * VDP::GetColors() {
 	return this->_cram;
+}
+
+bool VDP::GetShowBorder() const {
+	return this->_showBorder;
+}
+
+void VDP::SetShowBorder(bool mode) {
+	this->_showBorder = mode;
 }

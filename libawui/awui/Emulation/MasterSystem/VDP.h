@@ -24,6 +24,7 @@ namespace awui {
 					uint16_t _col;
 					uint16_t _lastLine;
 					uint16_t _lastCol;
+					bool _showBorder;
 
 					uint8_t _status;
 					bool _visible;
@@ -66,6 +67,7 @@ namespace awui {
 					VDP(CPU * cpu);
 					~VDP();
 
+					void OnTickBorder();
 					bool OnTick(uint32_t counter);
 
 					void WriteControlByte(uint8_t value);
@@ -87,8 +89,18 @@ namespace awui {
 					bool GetPAL() const;
 					uint16_t GetTotalWidth() const;
 					uint16_t GetTotalHeight() const;
+					uint16_t GetVisualWidth() const;
+					uint16_t GetVisualHeight() const;
+					uint16_t GetActiveTop() const;
+					uint16_t GetActiveLeft() const;
+					uint16_t GetBorderBottom() const;
 
 					uint8_t GetPixel(uint16_t x, uint16_t y) const;
+
+					bool GetShowBorder() const;
+					void SetShowBorder(bool mode);
+
+					void Clear();
 			};
 		}
 	}

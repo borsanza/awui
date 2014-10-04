@@ -41,6 +41,7 @@ namespace awui {
 					CPU * GetCPU();
 
 					virtual void OnPaint(OpenGL::GL* gl);
+					virtual bool OnKeyPress(Keys::Enum key);
 			};
 		}
 	}

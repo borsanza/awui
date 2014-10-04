@@ -10,21 +10,21 @@
 #include <cairo.h>
 #include <SDL_opengl.h>
 
+#define BTPP 4
+
 using namespace awui::Drawing;
 
 Image::Image(int width, int height) {
 	this->width = width;
 	this->height = height;
-	this->btpp = 4;
-	this->image = (unsigned char *) calloc (this->btpp, this->width * this->height);
-	this->cairo_surface = cairo_image_surface_create_for_data(this->image, CAIRO_FORMAT_ARGB32, this->width, this->height, this->btpp * this->width);
+	this->image = (unsigned char *) calloc (BTPP, this->width * this->height);
+	this->cairo_surface = cairo_image_surface_create_for_data(this->image, CAIRO_FORMAT_ARGB32, this->width, this->height, BTPP * this->width);
 	this->cr = cairo_create(this->cairo_surface);
 	this->loaded = false;
 }
 
 Image::Image(String filename) {
 	this->image = NULL;
-	this->btpp = 4;
 	this->cairo_surface = cairo_image_surface_create_from_png(filename.ToCharArray());
 	this->width = cairo_image_surface_get_width(this->cairo_surface);
 	this->height = cairo_image_surface_get_height(this->cairo_surface);
@@ -86,7 +86,7 @@ GLuint Image::GetTexture() {
 }
 
 void Image::SetPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-	int offset = ((y * this->width) + x) * this->btpp;
+	int offset = ((y * this->width) + x) * BTPP;
 	this->image[offset    ] = b;
 	this->image[offset + 1] = g;
 	this->image[offset + 2] = r;
