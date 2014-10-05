@@ -68,7 +68,7 @@ void CPU::OnTick() {
 	for (int i = 0; i < iters; i++) {
 		int64_t oldCycles = this->_cycles;
 		this->RunOpcode();
-		int times = (this->_cycles - oldCycles);
+		float times = (this->_cycles - oldCycles);
 		i = i + times - 1;
 		vdpIters += times * (itersVDP / iters);
 		if (!vsync) {
