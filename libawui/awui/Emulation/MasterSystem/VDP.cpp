@@ -88,8 +88,12 @@ VDP::~VDP() {
 	free(this->_data);
 }
 
-uint8_t * VDP::GetColors() {
+const uint8_t * VDP::GetColors() const {
 	return this->_cram;
+}
+
+Ram * VDP::GetVram() const {
+	return this->_vram;
 }
 
 bool VDP::GetShowBorder() const {

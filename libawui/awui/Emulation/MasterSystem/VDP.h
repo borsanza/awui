@@ -80,7 +80,8 @@ namespace awui {
 
 					void Reset();
 
-					uint8_t * GetColors();
+					const uint8_t * GetColors() const;
+					Ram * GetVram() const;
 
 					void SetNTSC();
 					void SetPAL();

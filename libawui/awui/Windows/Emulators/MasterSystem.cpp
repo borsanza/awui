@@ -59,7 +59,7 @@ void MasterSystem::OnPaint(GL* gl) {
 	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
 		delete this->_image;
 		this->_image = new Drawing::Image(width, height);
-		this->SetSize(width * 2, height * 2);
+		this->SetSize(width * 3, height * 3);
 	}
 
 	for (int y = 0; y < height; y++) {

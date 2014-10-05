@@ -643,20 +643,20 @@ void CPU::RunOpcode() {
 		case OxED59: this->OUTCr(Reg_E); break;
 		case OxED61: this->OUTCr(Reg_H); break;
 		case OxED69: this->OUTCr(Reg_L); break;
-		case OxED79: this->OUTCr(Reg_A); break;
 		case OxED71: this->OUTC(); break;
-
-		// LD (nn), dd
-		case OxED43: this->LDnndd(Reg_BC); break;
-		case OxED53: this->LDnndd(Reg_DE); break;
-		case OxED63: this->LDnndd(Reg_HL); break;
-		case OxED73: this->LDnndd(Reg_SP); break;
+		case OxED79: this->OUTCr(Reg_A); break;
 
 		// SBC HL, ss
 		case OxED42: this->SBCHLss(Reg_BC); break;
 		case OxED52: this->SBCHLss(Reg_DE); break;
 		case OxED62: this->SBCHLss(Reg_HL); break;
 		case OxED72: this->SBCHLss(Reg_SP); break;
+
+		// LD (nn), dd
+		case OxED43: this->LDnndd(Reg_BC); break;
+		case OxED53: this->LDnndd(Reg_DE); break;
+		case OxED63: this->LDnndd(Reg_HL); break;
+		case OxED73: this->LDnndd(Reg_SP); break;
 
 		// ED46: IM 0
 		// ED66: IM 0

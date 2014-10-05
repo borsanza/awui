@@ -6,6 +6,10 @@
 using namespace awui::Windows::Forms;
 
 namespace awui {
+	namespace Drawing {
+		class Image;
+	}
+
 	namespace Windows {
 		namespace Emulators {
 			class MasterSystem;
@@ -13,6 +17,9 @@ namespace awui {
 			class DebuggerSMS : public Button {
 				private:
 					MasterSystem * _sms;
+					Drawing::Image * _tiles;
+					Drawing::Image * _colors;
+					bool _show;
 
 				public:
 					DebuggerSMS(MasterSystem * sms);
@@ -23,6 +30,7 @@ namespace awui {
 					virtual void OnTick();
 
 					virtual void OnPaint(OpenGL::GL * gl);
+					virtual bool OnKeyPress(Keys::Enum key);
 			};
 		}
 	}
