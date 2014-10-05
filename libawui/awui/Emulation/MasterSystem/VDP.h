@@ -24,6 +24,7 @@ namespace awui {
 					uint16_t _col;
 					uint16_t _lastLine;
 					uint16_t _lastCol;
+					bool _interrupt;
 					bool _showBorder;
 
 					uint8_t _status;
@@ -60,7 +61,7 @@ namespace awui {
 
 					void ResetVideo();
 					void SetHeight(uint16_t height);
-					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) const;
+					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync);
 					bool IsVSYNC(uint16_t line) const;
 
 				public:
@@ -101,6 +102,11 @@ namespace awui {
 					void SetShowBorder(bool mode);
 
 					void Clear();
+
+					bool GetInterrupt();
+
+					uint16_t GetLine() const;
+					uint16_t GetColumn() const;
 			};
 		}
 	}

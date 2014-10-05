@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <awui/Emulation/MasterSystem/CPU.h>
 #include <awui/Emulation/MasterSystem/Registers.h>
+#include <awui/Emulation/MasterSystem/VDP.h>
 
 using namespace awui::Emulation::MasterSystem;
 
@@ -1337,12 +1338,13 @@ int Opcode::GetEnum() const {
 }
 
 void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
+	printf(" %3d x %3d ", this->_cpu->GetVDP()->GetLine(), this->_cpu->GetVDP()->GetColumn());
 	uint16_t pc = this->_cpu->GetRegisters()->GetPC();
 	uint8_t opcode2 = this->_cpu->ReadMemory(pc + 1);
+	uint8_t opcode3 = this->_cpu->ReadMemory(pc + 2);
 
 	switch (enumOpcode) {
-		case OxDB: printf("INA (%.2Xh)", opcode2); break;
-		case OxBA: printf("CP D"); break;
+		case Ox08: printf("EX AF, AF'"); break;
 		case Ox20: {
 			if (opcode2 & 0x80)
 				printf("JR NZ, -%.2dh (%.4Xh)", -((int8_t) opcode2), (pc + (int8_t)opcode2 + 2));
@@ -1350,5 +1352,14 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 				printf("JR NZ, %.2dh (%.4Xh)", opcode2, (pc + (int8_t)opcode2 + 2));
 			break;
 		}
+		case OxBA: printf("CP D"); break;
+		case OxC9: printf("RET"); break;
+		case OxCD: printf("CALL %.4Xh", ((opcode3 << 8) | opcode2)); break;
+		case OxD9: printf("EXX"); break;
+		case OxD3: printf("OUTA (%.2Xh)", opcode2); break;
+		case OxDB: printf("INA (%.2Xh)", opcode2); break;
+		case OxED4D: printf("RETI"); break;
+		case OxF3: printf("DI"); break;
+		case OxFB: printf("EI"); break;
 	}
 }

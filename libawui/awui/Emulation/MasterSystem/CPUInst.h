@@ -98,9 +98,13 @@ namespace awui {
 					void RSTp(uint8_t p);
 					void CALLnn();
 					void CALLccnn(bool cc);
+					void CallInterrupt();
+					void RETI();
 
 					// Input and Output Group
+					void OUTnA();
 					void OUTCr(uint8_t reg);
+					void OUTC();
 
 				public:
 					CPUInst();

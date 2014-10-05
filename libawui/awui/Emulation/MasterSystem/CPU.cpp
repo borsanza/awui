@@ -41,6 +41,16 @@ void CPU::LoadRom(const String file) {
 //#define SPEED 3.54f
 //#define GUIFPS 50.0f
 
+void CPU::CheckInterrupts() {
+	if (!this->_registers->GetIFF1() || !this->_registers->GetIFF2() || !this->_registers->GetInterruptsEnabled())
+		return;
+
+	if (this->_vdp->GetInterrupt()) {
+//		printf("Entra %d\n", this->_vdp->GetLine());
+		this->CallInterrupt();
+	}
+}
+
 void CPU::OnTick() {
 	float fps = this->_vdp->GetNTSC() ? 60.0f : 50.0f;
 	this->_frame += fps / GUIFPS;
@@ -69,6 +79,7 @@ void CPU::OnTick() {
 			for (; vdpCount < vdpIters; vdpCount++) {
 				if (vsync) continue;
 				vsync = this->_vdp->OnTick(realIters);
+				this->CheckInterrupts();
 			}
 		}
 		realIters++;
@@ -76,8 +87,10 @@ void CPU::OnTick() {
 
 //	printf("%d %d\n", realIters, vsync);
 
-	while (!vsync)
+	while (!vsync) {
 		vsync = this->_vdp->OnTick(realIters);
+		this->CheckInterrupts();
+	}
 }
 
 #define Print(...)  if (this->_showLog) printf(__VA_ARGS__);
@@ -532,19 +545,7 @@ void CPU::RunOpcode() {
 		case OxFF: this->RSTp(0x38); break;
 
 		// D3 *: OUT (*), A
-		// |2|11| The value of a is written to port *.
-		case OxD3:
-			{
-				uint8_t n = this->ReadMemory(this->_registers->GetPC() + 1);
-				uint8_t a = this->_registers->GetA();
-				this->_addressBus._l = n;
-				this->_addressBus._h = a;
-				// printf("Address: %.4X\n", this->_addressBus._w);
-				this->_ports->WriteByte(n, a);
-				this->_registers->IncPC(2);
-				this->_cycles += 11;
-			}
-			break;
+		case OxD3: this->OUTnA(); break;
 
 		// D9: EXX
 		// |1|4| Exchanges the 16-bit contents of bc, de, and hl with bc', de', and hl'.
@@ -647,6 +648,7 @@ void CPU::RunOpcode() {
 		case OxED61: this->OUTCr(Reg_H); break;
 		case OxED69: this->OUTCr(Reg_L); break;
 		case OxED79: this->OUTCr(Reg_A); break;
+		case OxED71: this->OUTC(); break;
 
 		// LD (nn), dd
 		case OxED43: this->LDnndd(Reg_BC); break;
@@ -689,6 +691,8 @@ void CPU::RunOpcode() {
 			this->_registers->IncPC(2);
 			this->_cycles += 8;
 			break;
+
+		case OxED4D: this->RETI(); /* printf("Sale %d\n", this->_vdp->GetLine()); */ break;
 
 		// EDB0: LDIR
 		// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de.
@@ -1034,6 +1038,7 @@ void CPU::RunOpcode() {
 		default:
 			this->_showLog = true;
 			this->_cycles += 71400;
+//			assert(0);
 			break;
 	}
 }

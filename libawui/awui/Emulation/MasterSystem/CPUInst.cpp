@@ -535,8 +535,8 @@ void CPUInst::RESHL(uint8_t bit) {
 
 // |4|23| Sets bit 'bit' of the memory location pointed to by ss plus *.
 void CPUInst::SETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
-    uint16_t offset = this->_registers->GetRegss(reg) + d;
-    this->WriteMemory(offset, this->ReadMemory(offset) | bit);
+	uint16_t offset = this->_registers->GetRegss(reg) + d;
+	this->WriteMemory(offset, this->ReadMemory(offset) | bit);
 	this->_registers->IncPC(4);
 	this->_cycles += 23;
 }
@@ -601,37 +601,85 @@ void CPUInst::RSTp(uint8_t p) {
 
 // |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
 void CPUInst::CALLnn() {
-    uint16_t pc = this->_registers->GetPC() + 3;
-    uint16_t sp = this->_registers->GetSP() - 2;
-    this->_registers->SetSP(sp);
-    this->WriteMemory(sp, pc & 0xFF);
-    this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
-    this->_cycles += 17;
-    this->_registers->SetPC((this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2));
+	uint16_t pc = this->_registers->GetPC() + 3;
+	uint16_t sp = this->_registers->GetSP() - 2;
+	this->_registers->SetSP(sp);
+	this->WriteMemory(sp, pc & 0xFF);
+	this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
+	this->_cycles += 17;
+	this->_registers->SetPC((this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2));
 }
 
 // |3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 void CPUInst::CALLccnn(bool cc) {
-    if (cc)
-        CALLnn();
-    else {
+	if (cc)
+		CALLnn();
+	else {
 		this->_registers->IncPC(3);
 		this->_cycles += 10;
-    }
+	}
 }
 
+void CPUInst::CallInterrupt() {
+	this->_registers->SetInterruptsEnabled(false);
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t sp = this->_registers->GetSP() - 2;
+	this->_registers->SetSP(sp);
+	this->WriteMemory(sp, pc & 0xFF);
+	this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
+	this->_cycles += 11;
+	this->_registers->SetPC(0x0038);
+}
+
+void CPUInst::RETI() {
+	uint16_t sp = this->_registers->GetSP();
+	uint16_t pc = this->ReadMemory(sp);
+	pc |= (this->ReadMemory(sp + 1) << 8);
+	this->_registers->SetSP(sp + 2);
+	this->_registers->SetPC(pc);
+	this->_cycles += 10;
+	this->_registers->SetInterruptsEnabled(true);
+}
 /******************************************************************************/
 /*************************** Input and Output Group ***************************/
 /******************************************************************************/
 
-// |2|12| The value of reg is written to port c.
-void CPUInst::OUTCr(uint8_t reg) {
-	uint8_t n = this->_registers->GetRegm(reg);
+// |2|11| The value of a is written to port *.
+void CPUInst::OUTnA() {
+	uint8_t n = this->ReadMemory(this->_registers->GetPC() + 1);
 	uint8_t a = this->_registers->GetA();
 	this->_addressBus._l = n;
 	this->_addressBus._h = a;
 	// printf("Address: %.4X\n", this->_addressBus._w);
 	this->_ports->WriteByte(n, a);
+	this->_registers->IncPC(2);
+	this->_cycles += 11;
+}
+
+// |2|12| The value of reg is written to port c.
+void CPUInst::OUTCr(uint8_t reg) {
+	uint8_t C = this->_registers->GetC();
+	uint8_t B = this->_registers->GetB();
+	uint8_t r = this->_registers->GetRegm(reg);
+	this->_addressBus._l = C;
+	this->_addressBus._h = B;
+	// printf("Address: %.4X\n", this->_addressBus._w);
+	this->_ports->WriteByte(C, r);
+	this->_registers->IncPC(2);
+	this->_cycles += 12;
+}
+
+// |2|12| Outputs a zero to port c.
+void CPUInst::OUTC() {
+	uint8_t C = this->_registers->GetC();
+/*
+	uint8_t C = this->_registers->GetC();
+	uint8_t B = this->_registers->GetB();
+	this->_addressBus._l = C;
+	this->_addressBus._h = B;
+	// printf("Address: %.4X\n", this->_addressBus._w);
+*/
+	this->_ports->WriteByte(C, 0);
 	this->_registers->IncPC(2);
 	this->_cycles += 12;
 }

@@ -17,9 +17,11 @@ namespace awui {
 					float _frame;
 					float _oldFrame;
 					bool _showLog;
+					bool _enableInterrupts;
 
 					void RunOpcode();
 					void Print(const char * str, ...);
+					void CheckInterrupts();
 
 				public:
 					CPU();

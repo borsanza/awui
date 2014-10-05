@@ -67,6 +67,7 @@ namespace awui {
 					uint8_t _im;
 					bool _iff1;
 					bool _iff2;
+					bool _interruptsEnabled;
 
 				public:
 					Registers();
@@ -79,6 +80,9 @@ namespace awui {
 					void AlternateDE();
 					void AlternateHL();
 
+					void SetInterruptsEnabled(bool mode);
+					bool GetInterruptsEnabled() const;
+
 					void SetSP(uint16_t value);
 					uint16_t GetSP() const;
 
@@ -89,6 +93,8 @@ namespace awui {
 
 					void SetIFF1(bool mode);
 					void SetIFF2(bool mode);
+					bool GetIFF1() const;
+					bool GetIFF2() const;
 
 					void SetA(uint8_t value);
 					void SetF(uint8_t value);

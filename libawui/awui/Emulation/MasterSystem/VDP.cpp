@@ -40,6 +40,7 @@ VDP::VDP(CPU * cpu) {
 	this->_width = 256;
 	this->_height = 192;
 	this->_ntsc = true;
+	this->_showBorder = false;
 	this->ResetVideo();
 
 	this->_cpu = cpu;
@@ -47,7 +48,7 @@ VDP::VDP(CPU * cpu) {
 	this->_col = 0;
 	this->_lastLine = 0;
 	this->_lastCol = 0;
-	this->_showBorder = false;
+	this->_interrupt = false;
 
 	this->_status = 0x1F;
 	this->_address = 0;
@@ -87,6 +88,29 @@ VDP::VDP(CPU * cpu) {
 VDP::~VDP() {
 	delete this->_vram;
 	free(this->_data);
+}
+
+uint8_t * VDP::GetColors() {
+	return this->_cram;
+}
+
+bool VDP::GetShowBorder() const {
+	return this->_showBorder;
+}
+
+uint16_t VDP::GetLine() const {
+	return this->_line;
+}
+
+uint16_t VDP::GetColumn() const {
+	return this->_col;
+}
+
+void VDP::SetShowBorder(bool mode) {
+	if (this->_showBorder != mode) {
+		this->_showBorder = mode;
+		this->ResetVideo();
+	}
 }
 
 void VDP::Clear() {
@@ -154,40 +178,54 @@ uint16_t VDP::GetTotalWidth() const {
 }
 
 uint16_t VDP::GetVisualWidth() const {
-	return 256 + LEFTBORDER + RIGHTBORDER;
+	if (this->_showBorder)
+		return 256 + LEFTBORDER + RIGHTBORDER;
+
+	return this->GetWidth();
 }
 
 uint16_t VDP::GetVisualHeight() const {
-	if (this->GetNTSC())
-		return 243;
-	else
-		return 294;
+	if (this->_showBorder) {
+		if (this->GetNTSC())
+			return 243;
+		else
+			return 294;
+	}
+
+	return this->GetHeight();
 }
 
 uint16_t VDP::GetActiveLeft() const {
-	return LEFTBORDER;
+	if (this->_showBorder)
+		return LEFTBORDER;
+
+	return 0;
 }
 
 uint16_t VDP::GetBorderBottom() const {
-	return this->GetVisualHeight() - (this->GetHeight() + this->GetActiveTop());
+	if (this->_showBorder)
+		return this->GetVisualHeight() - (this->GetHeight() + this->GetActiveTop());
+
+	return 0;
 }
 
 uint16_t VDP::GetActiveTop() const {
-	if (this->GetNTSC()) {
-		switch (this->_height) {
-			case 192: return 27;
-			case 224: return 11;
-			case 240: return 2;
-		}
-	} else {
-		switch (this->_height) {
-			case 192: return 54;
-			case 224: return 38;
-			case 240: return 30;
+	if (this->_showBorder) {
+		if (this->GetNTSC()) {
+			switch (this->_height) {
+				case 192: return 27;
+				case 224: return 11;
+				case 240: return 2;
+			}
+		} else {
+			switch (this->_height) {
+				case 192: return 54;
+				case 224: return 38;
+				case 240: return 30;
+			}
 		}
 	}
 
-	assert(0);
 	return 0;
 }
 
@@ -206,19 +244,19 @@ bool VDP::IsVSYNC(uint16_t line) const {
 			// 24     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 192: return 220 == line;
+			case 192: return 219 == line;
 
 			// 224    Active display
 			// 8      Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 224: return 236 == line;
+			case 224: return 235 == line;
 
 			// 240    Active display
 			case 240:
 				// Segun documentacion no funciona en maquinas reales
 				assert(0);
-				return 241 == line;
+				return 240 == line;
 		}
 	} else {
 		switch (this->_height) {
@@ -226,19 +264,19 @@ bool VDP::IsVSYNC(uint16_t line) const {
 			// 48     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 192: return 244 == line;
+			case 192: return 243 == line;
 
 			// 224    Active display
 			// 32     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 224: return 260 == line;
+			case 224: return 259 == line;
 
 			// 240    Active display
 			// 24     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 240: return 268 == line;
+			case 240: return 267 == line;
 		}
 	}
 
@@ -246,7 +284,7 @@ bool VDP::IsVSYNC(uint16_t line) const {
 	return false;
 }
 
-void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) const {
+void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) {
 	(*col)++;
 	*hsync = false;
 	*vsync = false;
@@ -259,6 +297,7 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 		*hsync = true;
 		(*line)++;
 		*vsync = this->IsVSYNC(*line);
+		this->_interrupt = *vsync;
 
 		if (*line == this->GetTotalHeight())
 			*line = 0;
@@ -309,16 +348,22 @@ bool VDP::OnTick(uint32_t counter) {
 	}
 
 	if ((this->_col < this->_width) && (this->_line < this->_height)) {
-		counter = ((this->_col * 8) / this->_width) + 8;
+		int pos;
+		if (this->_showBorder)
+			pos = this->_col + this->GetActiveLeft() + ((this->_line + this->GetActiveTop()) * this->GetVisualWidth());
+		else
+			pos = this->_col + (this->_line * this->GetVisualWidth());
 
-		this->_data[LEFTBORDER + this->_col + ((this->_line + this->GetActiveTop()) * this->GetVisualWidth())] = this->_cram[counter % 32];
+//		this->_data[pos] = counter & 0x01? 0xFF:0x00;
+		this->_data[pos] = this->_cram[(this->_col >> 5) + 8];
+//		this->_data[pos] = this->_cram[10];
 	} else {
 		if (this->_showBorder)
 			this->OnTickBorder();
 	}
 
 //	if (this->_line == 110)
-//		printf("                       %5d: %3dx%3d\n", counter, this->_col, this->_line);
+//		printf("%5d: %3dx%3d\n", counter, this->_col, this->_line);
 
 	return ret;
 }
@@ -513,14 +558,11 @@ uint8_t VDP::ReadByte(uint8_t port) {
 	return 0;
 }
 
-uint8_t * VDP::GetColors() {
-	return this->_cram;
-}
+bool VDP::GetInterrupt() {
+	if (this->_interrupt) {
+		this->_interrupt = false;
+		return true;
+	}
 
-bool VDP::GetShowBorder() const {
-	return this->_showBorder;
-}
-
-void VDP::SetShowBorder(bool mode) {
-	this->_showBorder = mode;
+	return false;
 }

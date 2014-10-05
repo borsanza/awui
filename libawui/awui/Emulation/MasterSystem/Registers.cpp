@@ -35,6 +35,7 @@ void Registers::Clear() {
 	this->_im = 0;
 	this->_iff1 = false;
 	this->_iff2 = false;
+	this->_interruptsEnabled = true;
 }
 
 void Registers::Alternate() {
@@ -103,6 +104,14 @@ void Registers::SetIFF1(bool mode) {
 
 void Registers::SetIFF2(bool mode) {
 	this->_iff2 = mode;
+}
+
+bool Registers::GetIFF1() const {
+	return this->_iff1;
+}
+
+bool Registers::GetIFF2() const {
+	return this->_iff2;
 }
 
 void Registers::SetA(uint8_t value) {
@@ -278,4 +287,12 @@ void Registers::SetRegss(uint8_t reg, uint16_t value) {
 		case Reg_IY: this->_iy = value; break;
 		default: assert(0);
 	}
+}
+
+void Registers::SetInterruptsEnabled(bool mode) {
+	this->_interruptsEnabled = mode;
+}
+
+bool Registers::GetInterruptsEnabled() const {
+	return this->_interruptsEnabled;
 }
