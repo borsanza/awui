@@ -36,11 +36,6 @@ void CPU::LoadRom(const String file) {
 	this->_rom->LoadRom(file);
 }
 
-#define SPEED 3.57f
-#define GUIFPS 60.0f
-//#define SPEED 3.54f
-//#define GUIFPS 50.0f
-
 void CPU::CheckInterrupts() {
 	if (!this->_registers->GetIFF1() || !this->_registers->GetIFF2() || !this->_registers->GetInterruptsEnabled())
 		return;
@@ -53,7 +48,8 @@ void CPU::CheckInterrupts() {
 
 void CPU::OnTick() {
 	float fps = this->_vdp->GetNTSC() ? 60.0f : 50.0f;
-	this->_frame += fps / GUIFPS;
+	float speed = this->_vdp->GetNTSC() ? 3.57f : 3.54f;
+	this->_frame += fps / 60.0f; // Refresco de awui
 
 	if ((int) this->_frame == (int) this->_oldFrame) {
 		return;
@@ -61,7 +57,7 @@ void CPU::OnTick() {
 
 	this->_oldFrame = this->_frame;
 
-	float iters = (SPEED * 1000000.0f) / fps;
+	float iters = (speed * 1000000.0f) / fps;
 	float itersVDP = this->_vdp->GetTotalWidth() * this->_vdp->GetTotalHeight();
 
 	bool vsync = false;
