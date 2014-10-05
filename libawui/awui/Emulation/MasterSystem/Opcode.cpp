@@ -1355,10 +1355,11 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxBA: printf("CP D"); break;
 		case OxC9: printf("RET"); break;
 		case OxCD: printf("CALL %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxD9: printf("EXX"); break;
 		case OxD3: printf("OUTA (%.2Xh)", opcode2); break;
+		case OxD9: printf("EXX"); break;
 		case OxDB: printf("INA (%.2Xh)", opcode2); break;
 		case OxED4D: printf("RETI"); break;
+		case OxEDB3: printf("OTIR"); break;
 		case OxF3: printf("DI"); break;
 		case OxFB: printf("EI"); break;
 	}
