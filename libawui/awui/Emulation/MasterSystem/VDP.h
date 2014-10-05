@@ -22,8 +22,6 @@ namespace awui {
 
 					uint16_t _line;
 					uint16_t _col;
-					uint16_t _lastLine;
-					uint16_t _lastCol;
 					bool _interrupt;
 					bool _showBorder;
 

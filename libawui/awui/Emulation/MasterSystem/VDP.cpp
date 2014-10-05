@@ -46,8 +46,6 @@ VDP::VDP(CPU * cpu) {
 	this->_cpu = cpu;
 	this->_line = 0;
 	this->_col = 0;
-	this->_lastLine = 0;
-	this->_lastCol = 0;
 	this->_interrupt = false;
 
 	this->_status = 0x1F;
@@ -346,6 +344,9 @@ bool VDP::OnTick(uint32_t counter) {
 		this->_status |= 0x80;
 		ret = true;
 	}
+
+	if (hsync)
+		this->_status |= 0x40;
 
 	if ((this->_col < this->_width) && (this->_line < this->_height)) {
 		int pos;
