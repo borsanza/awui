@@ -339,6 +339,22 @@ void VDP::OnTickBorder() {
 		this->_data[x + (y * this->GetVisualWidth())] = this->_cram[this->_registers[7] & 0x0F];
 }
 
+uint8_t VDP::GetSpritePixel(int sprite, int x, int y) const {
+	int64_t offset = sprite * 32 + (y * 4);
+	uint8_t byte1 = this->_vram->ReadByte(offset);
+	uint8_t byte2 = this->_vram->ReadByte(offset + 1);
+	uint8_t byte3 = this->_vram->ReadByte(offset + 2);
+	uint8_t byte4 = this->_vram->ReadByte(offset + 3);
+	uint8_t mask = 0x80 >> x;
+	uint8_t realX = 7 - x;
+	uint8_t c;
+	c  = (  byte1 & mask) >> realX;
+	c |= (((byte2 & mask) >> realX) << 1);
+	c |= (((byte3 & mask) >> realX) << 2);
+	c |= (((byte4 & mask) >> realX) << 3);
+	return this->_cram[c];
+}
+
 bool VDP::OnTick(uint32_t counter) {
 	bool ret = false;
 	bool hsync, vsync;
@@ -359,8 +375,14 @@ bool VDP::OnTick(uint32_t counter) {
 		else
 			pos = this->_col + (this->_line * this->GetVisualWidth());
 
+
+		int offset = 0x3800 + ((this->_line >> 3) * 64) + ((this->_col >> 3) * 2);
+		uint8_t byte1 = this->_vram->ReadByte(offset);
+		uint8_t byte2 = this->_vram->ReadByte(offset + 1);
+		uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
+
+		this->_data[pos] = this->GetSpritePixel(sprite, this->_col % 8, this->_line % 8);
 //		this->_data[pos] = counter & 0x01? 0xFF:0x00;
-		this->_data[pos] = this->_cram[(this->_col >> 5) + 8];
 //		this->_data[pos] = this->_cram[10];
 	} else {
 		if (this->_showBorder)

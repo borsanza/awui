@@ -5,27 +5,22 @@
  */
 
 #include "Ram.h"
-
-#include <awui/IO/MemoryStream.h>
+#include <stdlib.h>
 
 using namespace awui::Emulation::MasterSystem;
-using namespace awui::IO;
 
 Ram::Ram(int32_t size) {
-	this->_memory = new MemoryStream(size);
-	this->_memory->SetLength(size);
+	this->_data = (uint8_t *) calloc(size, sizeof(uint8_t));
 }
 
 Ram::~Ram() {
-	delete this->_memory;
+	free(this->_data);
 }
 
-uint8_t Ram::ReadByte(int64_t pos) {
-	this->_memory->SetPosition(pos);
-	return this->_memory->ReadByte();
+uint8_t Ram::ReadByte(int64_t pos) const {
+	return this->_data[pos];
 }
 
 void Ram::WriteByte(int64_t pos, uint8_t value) {
-	this->_memory->SetPosition(pos);
-	return this->_memory->WriteByte(value);
+	this->_data[pos] = value;
 }
