@@ -295,7 +295,8 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 	// 15 Right Border +
 	// 8 Right Blank +
 	// 26 HSync / 2 <- Suponemos que cambia de linea a mitad
-	if (*col == 292) {
+
+	if (*col == 279) {
 		*hsync = true;
 		(*line)++;
 		*vsync = this->IsVSYNC(*line);
@@ -382,19 +383,26 @@ bool VDP::OnTick(uint32_t counter) {
 		this->_status |= 0x40;
 
 	if ((this->_col < this->_width) && (this->_line < this->_height)) {
-		int pos;
+		int16_t col = this->_col;
+		col = col - this->_registers[8];
+		while (col < 0) col += 256;
+		int16_t line = this->_line;
+		line = line - this->_registers[9];
+		while (line < 0) line += this->GetHeight();
+
+		int32_t pos;
 		if (this->_showBorder)
 			pos = this->_col + this->GetActiveLeft() + ((this->_line + this->GetActiveTop()) * this->GetVisualWidth());
 		else
 			pos = this->_col + (this->_line * this->GetVisualWidth());
 
 		uint16_t base = (this->_registers[2] & 0x0E) << 10;
-		int offset = base + ((this->_line >> 3) * 64) + ((this->_col >> 3) * 2);
+		int32_t offset = base + ((line >> 3) * 64) + ((col >> 3) * 2);
 		uint8_t byte1 = this->_vram->ReadByte(offset);
 		uint8_t byte2 = this->_vram->ReadByte(offset + 1);
 		uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
 
-		this->_data[pos] = this->GetSpritePixel(sprite, this->_col % 8, this->_line % 8, byte2 & 0x2, byte2 & 0x4);
+		this->_data[pos] = this->GetSpritePixel(sprite, col % 8, line % 8, byte2 & 0x2, byte2 & 0x4);
 //		this->_data[pos] = counter & 0x01? 0xFF:0x00;
 //		this->_data[pos] = this->_cram[10];
 	} else {
