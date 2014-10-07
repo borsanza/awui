@@ -486,7 +486,22 @@ void CPUInst::SLA(uint8_t reg) {
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, old & 0x80);
 	this->_registers->IncPC(2);
-	this->_cycles += 2;
+	this->_cycles += 8;
+}
+
+// |2|8| The contents of a are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
+void CPUInst::SRA(uint8_t reg) {
+	uint8_t old = this->_registers->GetRegm(reg);
+	uint8_t value =  (old & 0x80) | (old >> 1);
+	this->_registers->SetRegm(reg, value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, false);
+	// TODO: P/V is set if parity is even; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, old & 0x01);
+	this->_registers->IncPC(2);
+	this->_cycles += 8;
 }
 
 /******************************************************************************/

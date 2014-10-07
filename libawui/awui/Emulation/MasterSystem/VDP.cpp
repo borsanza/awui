@@ -388,8 +388,8 @@ bool VDP::OnTick(uint32_t counter) {
 		else
 			pos = this->_col + (this->_line * this->GetVisualWidth());
 
-
-		int offset = 0x3800 + ((this->_line >> 3) * 64) + ((this->_col >> 3) * 2);
+		uint16_t base = (this->_registers[2] & 0x0E) << 10;
+		int offset = base + ((this->_line >> 3) * 64) + ((this->_col >> 3) * 2);
 		uint8_t byte1 = this->_vram->ReadByte(offset);
 		uint8_t byte2 = this->_vram->ReadByte(offset + 1);
 		uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;

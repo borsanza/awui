@@ -772,6 +772,15 @@ void CPU::RunOpcode() {
 		case OxCB25: this->SLA(Reg_L); break;
 		case OxCB27: this->SLA(Reg_A); break;
 
+		// SRA reg
+		case OxCB28: this->SRA(Reg_B); break;
+		case OxCB29: this->SRA(Reg_C); break;
+		case OxCB2A: this->SRA(Reg_D); break;
+		case OxCB2B: this->SRA(Reg_E); break;
+		case OxCB2C: this->SRA(Reg_H); break;
+		case OxCB2D: this->SRA(Reg_L); break;
+		case OxCB2F: this->SRA(Reg_A); break;
+
 		// CB40-CB7F: BIT X, Y
 		// |2|8| Tests bit X of Y.
 		case OxCB40: this->BIT(this->_registers->GetB(), 0x01); break;
