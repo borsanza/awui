@@ -21,7 +21,7 @@ CPU::CPU() : _opcode(this) {
 	this->_addressBus._w = 0;
 	this->_frame = 0;
 	this->_oldFrame = 0;
-	this->_showLog = false;
+	this->_showLog = true;
 
 	this->_ports->SetVDP(this->_vdp);
 
@@ -148,6 +148,7 @@ void CPU::RunOpcode() {
 		case Ox13: this->INCss(Reg_DE); break;
 		case Ox23: this->INCss(Reg_HL); break;
 		case Ox33: this->INCss(Reg_SP); break;
+		case Ox34: this->INCHL();       break;
 
 		// INC r
 		case Ox04: this->INCr(Reg_B); break;

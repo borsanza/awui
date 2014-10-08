@@ -61,6 +61,7 @@ namespace awui {
 					void INCr(uint8_t reg);
 					void DECm(uint8_t reg);
 					void DECHL();
+					void INCHL();
 
 					// General-Purpose Arithmetic and CPU Control Group
 					void CPL();

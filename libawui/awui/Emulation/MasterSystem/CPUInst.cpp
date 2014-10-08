@@ -328,6 +328,20 @@ void CPUInst::DECHL() {
 	this->_cycles += 11;
 }
 
+// |1|11| Adds one to (hl).
+void CPUInst::INCHL() {
+	uint8_t old = this->ReadMemory(this->_registers->GetHL());
+	uint8_t value = old + 1;
+	this->WriteMemory(this->_registers->GetHL(), value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	// H is set if carry from bit 3; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, old == 0x7F);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->IncPC();
+	this->_cycles += 11;
+}
+
 /******************************************************************************/
 /************** General-Purpose Arithmetic and CPU Control Group **************/
 /******************************************************************************/
@@ -596,6 +610,7 @@ void CPUInst::RET(bool cc, uint8_t cycles) {
 		pc |= (this->ReadMemory(sp + 1) << 8);
 		this->_registers->SetSP(sp + 2);
 		this->_registers->SetPC(pc);
+//		printf("RET: %.4X\n", pc);
 		this->_cycles += cycles;
 	} else {
 		this->_registers->IncPC();
@@ -617,6 +632,7 @@ void CPUInst::RSTp(uint8_t p) {
 // |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
 void CPUInst::CALLnn() {
 	uint16_t pc = this->_registers->GetPC() + 3;
+//	printf("CALLnn: %.4X\n", pc);
 	uint16_t sp = this->_registers->GetSP() - 2;
 	this->_registers->SetSP(sp);
 	this->WriteMemory(sp, pc & 0xFF);
