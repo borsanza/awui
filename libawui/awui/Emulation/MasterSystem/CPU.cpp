@@ -13,6 +13,8 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
+#define Print(...)  if (this->_showLog) printf(__VA_ARGS__);
+
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
 
@@ -88,8 +90,6 @@ void CPU::OnTick() {
 		this->CheckInterrupts();
 	}
 }
-
-#define Print(...)  if (this->_showLog) printf(__VA_ARGS__);
 
 void CPU::RunOpcode() {
 	uint8_t opcode1 = this->ReadMemory(this->_registers->GetPC());
@@ -287,12 +287,7 @@ void CPU::RunOpcode() {
 		case Ox7E: this->LDrHL(Reg_A); break;
 
 		// F9: LD SP, HL
-		// |1|6| Loads the value of hl into sp.
-		case OxF9:
-			this->_registers->SetSP(this->_registers->GetHL());
-			this->_registers->IncPC();
-			this->_cycles += 6;
-			break;
+		case OxF9: this->LDSPr(Reg_HL); break;
 
 		// 28 nn: JR X, *
 		// |2|12/7| If condition X is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
@@ -498,17 +493,15 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		// PUSH qq
-		case OxC5: this->PUSHqq(Reg_B, Reg_C); break;
-		case OxD5: this->PUSHqq(Reg_D, Reg_E); break;
-		case OxE5: this->PUSHqq(Reg_H, Reg_L); break;
-		case OxF5: this->PUSHqq(Reg_A, Reg_F); break;
+		case OxC1: this->POP16(Reg_BC, 10, 1); break;
+		case OxD1: this->POP16(Reg_DE, 10, 1); break;
+		case OxE1: this->POP16(Reg_HL, 10, 1); break;
+		case OxF1: this->POP16(Reg_AF, 10, 1); break;
 
-		// POP qq
-		case OxC1: this->POPqq(Reg_B, Reg_C); break;
-		case OxD1: this->POPqq(Reg_D, Reg_E); break;
-		case OxE1: this->POPqq(Reg_H, Reg_L); break;
-		case OxF1: this->POPqq(Reg_A, Reg_F); break;
+		case OxC5: this->PUSH16(Reg_BC, 11, 1); break;
+		case OxD5: this->PUSH16(Reg_DE, 11, 1); break;
+		case OxE5: this->PUSH16(Reg_HL, 11, 1); break;
+		case OxF5: this->PUSH16(Reg_AF, 11, 1); break;
 
 		// C9: RET
 		// |1|10| The top stack entry is popped into pc.
@@ -1004,9 +997,16 @@ void CPU::RunOpcode() {
 /*************************** IX instructions (DD) *****************************/
 /******************************************************************************/
 
-		case OxDDE1: this->POP16(Reg_IX); break;
-		case OxDDE5: this->PUSH16(Reg_IX); break;
+		case OxDD09: this->ADDXXpp(Reg_IX, Reg_BC); break;
+		case OxDD19: this->ADDXXpp(Reg_IX, Reg_DE); break;
+		case OxDD29: this->ADDXXpp(Reg_IX, Reg_IX); break;
+		case OxDD39: this->ADDXXpp(Reg_IX, Reg_SP); break;
+
+		case OxDDE1: this->POP16(Reg_IX, 14, 2); break;
+		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
 		case OxDD23: this->INCXX(Reg_IX); break;
+
+		case OxDD21: this->LDddnn(Reg_IX, 4); break;
 
 		case OxDD46: this->LDrXXd(Reg_B, Reg_IX); break;
 		case OxDD4E: this->LDrXXd(Reg_C, Reg_IX); break;
@@ -1015,6 +1015,8 @@ void CPU::RunOpcode() {
 		case OxDD66: this->LDrXXd(Reg_H, Reg_IX); break;
 		case OxDD6E: this->LDrXXd(Reg_L, Reg_IX); break;
 		case OxDD7E: this->LDrXXd(Reg_A, Reg_IX); break;
+
+		case OxDDF9: this->LDSPr(Reg_IX, 10, 2); break;
 
 /******************************************************************************/
 /************************* IX bit instructions (DDCB) *************************/
@@ -1033,9 +1035,16 @@ void CPU::RunOpcode() {
 /*************************** IY instructions (FD) *****************************/
 /******************************************************************************/
 
-		case OxFDE1: this->POP16(Reg_IY); break;
-		case OxFDE5: this->PUSH16(Reg_IY); break;
+		case OxFD09: this->ADDXXpp(Reg_IY, Reg_BC); break;
+		case OxFD19: this->ADDXXpp(Reg_IY, Reg_DE); break;
+		case OxFD29: this->ADDXXpp(Reg_IY, Reg_IY); break;
+		case OxFD39: this->ADDXXpp(Reg_IY, Reg_SP); break;
+
+		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
+		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;
 		case OxFD23: this->INCXX(Reg_IY); break;
+
+		case OxFD21: this->LDddnn(Reg_IY, 4); break;
 
 		case OxFD46: this->LDrXXd(Reg_B, Reg_IY); break;
 		case OxFD4E: this->LDrXXd(Reg_C, Reg_IY); break;
@@ -1044,6 +1053,8 @@ void CPU::RunOpcode() {
 		case OxFD66: this->LDrXXd(Reg_H, Reg_IY); break;
 		case OxFD6E: this->LDrXXd(Reg_L, Reg_IY); break;
 		case OxFD7E: this->LDrXXd(Reg_A, Reg_IY); break;
+
+		case OxFDF9: this->LDSPr(Reg_IY, 10, 2); break;
 
 /******************************************************************************/
 /************************* IY bit instructions (DDCB) *************************/

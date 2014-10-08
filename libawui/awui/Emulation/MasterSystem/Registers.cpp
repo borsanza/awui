@@ -7,6 +7,7 @@
 #include "Registers.h"
 
 #include <assert.h>
+#include <stdio.h>
 
 using namespace awui::Emulation::MasterSystem;
 
@@ -249,20 +250,6 @@ uint8_t Registers::GetRegm(uint8_t reg) {
 	return 0;
 }
 
-uint16_t Registers::GetRegss(uint8_t reg) {
-	switch (reg) {
-		case Reg_BC: return this->_bc;
-		case Reg_DE: return this->_de;
-		case Reg_HL: return this->_hl;
-		case Reg_SP: return this->_sp;
-		case Reg_IX: return this->_ix;
-		case Reg_IY: return this->_iy;
-	}
-
-	assert(false);
-	return 0;
-}
-
 void Registers::SetRegm(uint8_t reg, uint8_t value) {
 	switch (reg) {
 		case Reg_B: *(((uint8_t *) &this->_bc) + 1) = value; break;
@@ -277,6 +264,21 @@ void Registers::SetRegm(uint8_t reg, uint8_t value) {
 	}
 }
 
+uint16_t Registers::GetRegss(uint8_t reg) {
+	switch (reg) {
+		case Reg_BC: return this->_bc;
+		case Reg_DE: return this->_de;
+		case Reg_HL: return this->_hl;
+		case Reg_SP: return this->_sp;
+		case Reg_IX: return this->_ix;
+		case Reg_IY: return this->_iy;
+		case Reg_AF: return ((this->_a << 8) | this->_f);
+	}
+
+	assert(false);
+	return 0;
+}
+
 void Registers::SetRegss(uint8_t reg, uint16_t value) {
 	switch (reg) {
 		case Reg_BC: this->_bc = value; break;
@@ -285,6 +287,10 @@ void Registers::SetRegss(uint8_t reg, uint16_t value) {
 		case Reg_SP: this->_sp = value; break;
 		case Reg_IX: this->_ix = value; break;
 		case Reg_IY: this->_iy = value; break;
+		case Reg_AF:
+			this->_a = value >> 8;
+			this->_f = value & 0xFF;
+			break;
 		default: assert(0);
 	}
 }

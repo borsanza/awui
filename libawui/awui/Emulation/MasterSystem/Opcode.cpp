@@ -1358,15 +1358,24 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		}
 		case Ox2F: printf("CPL"); break;
 		case Ox3F: printf("CCF"); break;
+		case Ox76: printf("HALT"); break;
 		case OxBA: printf("CP D"); break;
+		case OxC1: printf("POP BC"); break;
+		case OxC5: printf("PUSH BC"); break;
 		case OxC9: printf("RET"); break;
 		case OxCD: printf("CALL %.4Xh", ((opcode3 << 8) | opcode2)); break;
+		case OxD1: printf("POP DE"); break;
 		case OxD3: printf("OUTA (%.2Xh)", opcode2); break;
+		case OxD5: printf("PUSH DE"); break;
 		case OxD9: printf("EXX"); break;
 		case OxDB: printf("INA (%.2Xh)", opcode2); break;
+		case OxE1: printf("POP HL"); break;
+		case OxE5: printf("PUSH HL"); break;
 		case OxED4D: printf("RETI"); break;
 		case OxEDB3: printf("OTIR"); break;
+		case OxF1: printf("POP AF"); break;
 		case OxF3: printf("DI"); break;
+		case OxF5: printf("PUSH AF"); break;
 		case OxFB: printf("EI"); break;
 	}
 }

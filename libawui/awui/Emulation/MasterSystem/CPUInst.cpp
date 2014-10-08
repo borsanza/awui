@@ -86,7 +86,7 @@ void CPUInst::LDrHL(uint8_t reg) {
 
 // |3|19| Loads the value pointed to by ix plus * into reg
 void CPUInst::LDrXXd(uint8_t reg, uint8_t reg2) {
-	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetRegss(reg2)) + this->ReadMemory(this->_registers->GetPC() + 2));
+	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetRegss(reg2) + this->ReadMemory(this->_registers->GetPC() + 2)));
 	this->_registers->IncPC(3);
 	this->_cycles += 19;
 }
@@ -103,10 +103,10 @@ void CPUInst::LDssr(uint8_t reg, uint8_t ss) {
 /******************************************************************************/
 
 // |3|10| Loads ** into reg
-void CPUInst::LDddnn(uint8_t reg) {
+void CPUInst::LDddnn(uint8_t reg, uint8_t size) {
 	uint16_t pc = this->_registers->GetPC();
 	this->_registers->SetRegss(reg, (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
-	this->_registers->IncPC(3);
+	this->_registers->IncPC(size);
 	this->_cycles += 10;
 }
 
@@ -132,51 +132,31 @@ void CPUInst::LDnndd(uint8_t reg) {
 	this->_cycles += 20;
 }
 
-// |1|11| sp is decremented and reg1 is stored into the memory location pointed to by sp.
-// sp is decremented again and reg2 is stored into the memory location pointed to by sp.
-void CPUInst::PUSHqq(uint8_t reg1, uint8_t reg2) {
-	uint16_t sp = this->_registers->GetSP();
-	this->WriteMemory(sp - 1, this->_registers->GetRegm(reg1));
-	this->WriteMemory(sp - 2, this->_registers->GetRegm(reg2));
-	this->_registers->SetSP(sp - 2);
-	this->_registers->IncPC();
-	this->_cycles += 11;
-}
-
-// |2|15| sp is decremented and ixh is stored into the memory location pointed to by sp.
-// sp is decremented again and ixl is stored into the memory location pointed to by sp.
-void CPUInst::PUSH16(uint8_t reg) {
+void CPUInst::PUSH16(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint16_t value = this->_registers->GetRegss(reg);
 	uint8_t high = value >> 8;
-	uint8_t low = value;
+	uint8_t low = (uint8_t) value;
 	uint16_t sp = this->_registers->GetSP();
 	this->WriteMemory(sp - 1, high);
 	this->WriteMemory(sp - 2, low);
 	this->_registers->SetSP(sp - 2);
-	this->_registers->IncPC(2);
-	this->_cycles += 15;
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
-// |1|10| The memory location pointed to by sp is stored into reg2 and sp is incremented.
-// The memory location pointed to by sp is stored into reg1 and sp is incremented again.
-void CPUInst::POPqq(uint8_t reg1, uint8_t reg2) {
-	uint16_t sp = this->_registers->GetSP();
-	this->_registers->SetRegm(reg2, this->ReadMemory(sp));
-	this->_registers->SetRegm(reg1, this->ReadMemory(sp + 1));
-	this->_registers->SetSP(sp + 2);
-	this->_registers->IncPC();
-	this->_cycles += 10;
-}
-
-// |2|14| The memory location pointed to by sp is stored into ixl and sp is incremented.
-// The memory location pointed to by sp is stored into ixh and sp is incremented again.
-void CPUInst::POP16(uint8_t reg) {
+void CPUInst::POP16(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint16_t sp = this->_registers->GetSP();
 	uint16_t value = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
 	this->_registers->SetRegss(reg, value);
 	this->_registers->SetSP(sp + 2);
-	this->_registers->IncPC(2);
-	this->_cycles += 14;
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
+}
+
+void CPUInst::LDSPr(uint8_t reg, uint8_t cycles, uint8_t size) {
+	this->_registers->SetSP(this->_registers->GetRegss(reg));
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
 /******************************************************************************/
@@ -402,6 +382,17 @@ void CPUInst::SBCHLss(uint8_t reg) {
 	this->_cycles += 15;
 }
 
+// |2|15| The value of pp is added to XX.
+void CPUInst::ADDXXpp(uint8_t XX, uint8_t pp) {
+	uint32_t value = this->_registers->GetRegss(XX) + this->_registers->GetRegss(pp);
+	this->_registers->SetRegss(XX, (uint16_t) value);
+	this->_registers->SetFFlag(FFlag_H, value > 0xFFF);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, value > 0xFFFF);
+	this->_registers->IncPC(2);
+	this->_cycles += 15;
+}
+
 // |1|6| Adds one to reg
 void CPUInst::INCss(uint8_t reg) {
 	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg) + 1);
@@ -557,9 +548,9 @@ void CPUInst::SRL(uint8_t reg) {
 
 // |2|8| Tests bit compare of value.
 void CPUInst::BIT(uint8_t value, uint8_t compare, uint8_t cycles) {
-	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_H, true);
 	this->_registers->SetFFlag(FFlag_Z, !(value & compare));
+	this->_registers->SetFFlag(FFlag_H, true);
+	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->IncPC(2);
 	this->_cycles += cycles;
 //	printf("%.2x: %.2x\n", value, this->_registers->GetF());
@@ -643,7 +634,6 @@ void CPUInst::RET(bool cc, uint8_t cycles) {
 		pc |= (this->ReadMemory(sp + 1) << 8);
 		this->_registers->SetSP(sp + 2);
 		this->_registers->SetPC(pc);
-//		printf("RET: %.4X\n", pc);
 		this->_cycles += cycles;
 	} else {
 		this->_registers->IncPC();
@@ -665,7 +655,6 @@ void CPUInst::RSTp(uint8_t p) {
 // |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
 void CPUInst::CALLnn() {
 	uint16_t pc = this->_registers->GetPC() + 3;
-//	printf("CALLnn: %.4X\n", pc);
 	uint16_t sp = this->_registers->GetSP() - 2;
 	this->_registers->SetSP(sp);
 	this->WriteMemory(sp, pc & 0xFF);

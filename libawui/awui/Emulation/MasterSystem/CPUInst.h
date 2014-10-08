@@ -40,13 +40,12 @@ namespace awui {
 					void LDssr(uint8_t reg, uint8_t ss);
 
 					// 16-Bit Load Group
-					void LDddnn(uint8_t reg);
+					void LDddnn(uint8_t reg, uint8_t size = 3);
 					void LDdd_nn(uint8_t reg);
 					void LDnndd(uint8_t reg);
-					void PUSHqq(uint8_t reg1, uint8_t reg2);
-					void PUSH16(uint8_t reg);
-					void POPqq(uint8_t reg1, uint8_t reg2);
-					void POP16(uint8_t reg);
+					void PUSH16(uint8_t reg, uint8_t cycles, uint8_t size);
+					void POP16(uint8_t reg, uint8_t cycles, uint8_t size);
+					void LDSPr(uint8_t reg, uint8_t cycles = 6, uint8_t size = 1);
 
 					// Exchange, Block Transfer, and Search Group
 
@@ -71,6 +70,7 @@ namespace awui {
 					// 16-Bit Arithmetic Group
 					void ADDHLss(uint8_t reg);
 					void SBCHLss(uint8_t reg);
+					void ADDXXpp(uint8_t XX, uint8_t pp);
 					void INCss(uint8_t reg);
 					void INCXX(uint8_t reg);
 					void DECss(uint8_t reg);

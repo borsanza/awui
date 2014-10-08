@@ -37,7 +37,7 @@ namespace awui {
 					// 11 Registers
 					uint8_t _registers[11];
 
-					uint8_t * _data;
+					Ram * _data;
 
 					int16_t _controlByte;
 					uint16_t _dataByte;

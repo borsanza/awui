@@ -85,7 +85,7 @@ VDP::VDP(CPU * cpu) {
 
 VDP::~VDP() {
 	delete this->_vram;
-	free(this->_data);
+	delete this->_data;
 }
 
 const uint8_t * VDP::GetColors() const {
@@ -116,15 +116,14 @@ void VDP::SetShowBorder(bool mode) {
 }
 
 void VDP::Clear() {
-	memset(this->_data, 0, this->GetVisualWidth() * this->GetVisualHeight() * sizeof(uint8_t));
+	this->_data->Clear();
 }
 
 void VDP::ResetVideo() {
-	if (this->_data)
-		free(this->_data);
-
-	this->_data = (uint8_t *) calloc (this->GetVisualWidth() * this->GetVisualHeight(), sizeof(uint8_t));
-	this->Clear();
+	if (!this->_data)
+		this->_data = new Ram(this->GetVisualWidth() * this->GetVisualHeight());
+	else
+		this->_data->Resize(this->GetVisualWidth() * this->GetVisualHeight());
 }
 
 void VDP::SetNTSC() {
@@ -236,7 +235,7 @@ uint16_t VDP::GetTotalHeight() const {
 }
 
 uint8_t VDP::GetPixel(uint16_t x, uint16_t y) const {
-	return this->_data[(y * this->GetVisualWidth()) + x];
+	return this->_data->ReadByte((y * this->GetVisualWidth()) + x);
 }
 
 bool VDP::IsVSYNC(uint16_t line) const {
@@ -337,7 +336,7 @@ void VDP::OnTickBorder() {
 	}
 
 	if (draw)
-		this->_data[x + (y * this->GetVisualWidth())] = this->_cram[this->_registers[7] & 0x0F];
+		this->_data->WriteByte(x + (y * this->GetVisualWidth()), this->_cram[this->_registers[7] & 0x0F]);
 }
 
 uint8_t VDP::GetSpritePixel(int sprite, int x, int y, bool flipx, bool flipy) const {
@@ -402,9 +401,9 @@ bool VDP::OnTick(uint32_t counter) {
 		uint8_t byte2 = this->_vram->ReadByte(offset + 1);
 		uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
 
-		this->_data[pos] = this->GetSpritePixel(sprite, col % 8, line % 8, byte2 & 0x2, byte2 & 0x4);
-//		this->_data[pos] = counter & 0x01? 0xFF:0x00;
-//		this->_data[pos] = this->_cram[10];
+		this->_data->WriteByte(pos, this->GetSpritePixel(sprite, col % 8, line % 8, byte2 & 0x2, byte2 & 0x4));
+//		this->_data->WriteByte(pos, counter & 0x01? 0xFF:0x00);
+//		this->_data->WriteByte(pos, this->_cram[10]);
 	} else {
 		if (this->_showBorder)
 			this->OnTickBorder();
@@ -554,40 +553,33 @@ uint8_t VDP::ReadByte(uint8_t port) {
 	if (port >= 0x40 && port <= 0x7F) {
 		r = true;
 		if (even) {
-			uint8_t line;
 			if (this->_ntsc) {
 				switch (this->_height) {
 					case 192:
-						line = this->NTSCx192[this->_line];
+						return this->NTSCx192[this->_line];
 						break;
 					case 224:
-						line = this->NTSCx224[this->_line];
+						return this->NTSCx224[this->_line];
 						break;
 					case 240:
-						line = this->NTSCx240[this->_line];
+						return this->NTSCx240[this->_line];
 						break;
 				}
 			} else {
 				switch (this->_height) {
 					case 192:
-						line = this->PALx192[this->_line];
+						return this->PALx192[this->_line];
 						break;
 					case 224:
-						line = this->PALx224[this->_line];
+						return this->PALx224[this->_line];
 						break;
 					case 240:
-						line = this->PALx240[this->_line];
+						return this->PALx240[this->_line];
 						break;
 				}
 			}
-
-			// printf("Line: %d:%d\n", line, this->_cpu->GetRegisters()->GetD());
-			return line;
-		} else {
-			uint8_t col = this->HORSYNC[this->_col];
-			// printf("Col: %d:%d\n", col, this->_cpu->GetRegisters()->GetD());
-			return col;
-		}
+		} else
+			return this->HORSYNC[this->_col];
 	}
 
 	if (port >= 0x80 && port <= 0xBF) {
