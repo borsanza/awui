@@ -10,6 +10,7 @@
 #include <awui/Emulation/MasterSystem/Ram.h>
 #include <awui/Emulation/MasterSystem/Registers.h>
 #include <awui/Emulation/MasterSystem/Rom.h>
+#include <assert.h>
 
 using namespace awui::Emulation::MasterSystem;
 
@@ -107,6 +108,15 @@ void CPUInst::LDddnn(uint8_t reg) {
 	this->_registers->SetRegss(reg, (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
 	this->_registers->IncPC(3);
 	this->_cycles += 10;
+}
+
+// |4|20| Loads the value pointed to by ** into reg.
+void CPUInst::LDdd_nn(uint8_t reg) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
+	this->_registers->SetRegss(reg, (this->ReadMemory(offset + 1) << 8) | this->ReadMemory(offset));
+	this->_registers->IncPC(4);
+	this->_cycles += 20;
 }
 
 // |4|20| Stores reg into the memory location pointed to by **
@@ -351,6 +361,15 @@ void CPUInst::CPL() {
 	this->_registers->SetA(this->_registers->GetA() ^ 0xFF);
 	this->_registers->SetFFlag(FFlag_H, true);
 	this->_registers->SetFFlag(FFlag_N, true);
+	this->_registers->IncPC();
+	this->_cycles += 4;
+}
+
+// |1|4| Inverts the carry flag.
+void CPUInst::CCF() {
+	this->_registers->SetFFlag(FFlag_H, this->_registers->GetF() & FFlag_C);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, !(this->_registers->GetF() & FFlag_C));
 	this->_registers->IncPC();
 	this->_cycles += 4;
 }

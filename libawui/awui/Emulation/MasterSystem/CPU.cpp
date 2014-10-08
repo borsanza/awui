@@ -127,7 +127,6 @@ void CPU::RunOpcode() {
 		// 00: NOP
 		// |1|4| No operation is performed.
 		case Ox00:
-			assert(0);
 			this->_registers->IncPC();
 			this->_cycles += 4;
 			break;
@@ -353,7 +352,7 @@ void CPU::RunOpcode() {
 			{
 				uint16_t pc = this->_registers->GetPC();
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				this->_registers->SetHL(offset);
+				this->_registers->SetHL((this->ReadMemory(offset + 1) << 8) | this->ReadMemory(offset));
 				this->_registers->IncPC(3);
 				this->_cycles += 16;
 			}
@@ -361,6 +360,7 @@ void CPU::RunOpcode() {
 
 		// CPL
 		case Ox2F: this->CPL(); break;
+		case Ox3F: this->CCF(); break;
 
 		// LD r, *
 		case Ox06: this->LDrn(Reg_B); break;
@@ -660,6 +660,12 @@ void CPU::RunOpcode() {
 		case OxED53: this->LDnndd(Reg_DE); break;
 		case OxED63: this->LDnndd(Reg_HL); break;
 		case OxED73: this->LDnndd(Reg_SP); break;
+
+		// LD dd, (nn)
+		case OxED4B: this->LDdd_nn(Reg_BC); break;
+		case OxED5B: this->LDdd_nn(Reg_DE); break;
+		case OxED6B: this->LDdd_nn(Reg_HL); break;
+		case OxED7B: this->LDdd_nn(Reg_SP); break;
 
 		// ED46: IM 0
 		// ED66: IM 0
@@ -1045,7 +1051,7 @@ void CPU::RunOpcode() {
 
 		default:
 			this->_showLog = true;
-			this->_cycles += 71400;
+			this->_cycles += 12; // 71400;
 //			assert(0);
 			break;
 	}

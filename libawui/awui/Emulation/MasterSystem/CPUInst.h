@@ -41,6 +41,7 @@ namespace awui {
 
 					// 16-Bit Load Group
 					void LDddnn(uint8_t reg);
+					void LDdd_nn(uint8_t reg);
 					void LDnndd(uint8_t reg);
 					void PUSHqq(uint8_t reg1, uint8_t reg2);
 					void PUSH16(uint8_t reg);
@@ -65,6 +66,7 @@ namespace awui {
 
 					// General-Purpose Arithmetic and CPU Control Group
 					void CPL();
+					void CCF();
 
 					// 16-Bit Arithmetic Group
 					void ADDHLss(uint8_t reg);
