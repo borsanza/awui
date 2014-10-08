@@ -696,12 +696,12 @@ void CPUInst::RETI() {
 
 // |2|11| The value of a is written to port *.
 void CPUInst::OUTnA() {
-	uint8_t n = this->ReadMemory(this->_registers->GetPC() + 1);
-	uint8_t a = this->_registers->GetA();
-	this->_addressBus._l = n;
-	this->_addressBus._h = a;
+	uint8_t port = this->ReadMemory(this->_registers->GetPC() + 1);
+	uint8_t data = this->_registers->GetA();
+	this->_addressBus._l = port;
+	this->_addressBus._h = data;
 	// printf("Address: %.4X\n", this->_addressBus._w);
-	this->_ports->WriteByte(n, a);
+	this->_ports->WriteByte(port, data);
 	this->_registers->IncPC(2);
 	this->_cycles += 11;
 }

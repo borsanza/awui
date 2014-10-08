@@ -45,6 +45,12 @@ void Ports::WriteByte(uint8_t port, uint8_t value) {
 		return;
 	}
 
+	// SDSC
+	if (port == 0xFD) {
+		printf("%c", value);
+		fflush(stdout);
+	}
+
 //	assert(false);
 }
 
