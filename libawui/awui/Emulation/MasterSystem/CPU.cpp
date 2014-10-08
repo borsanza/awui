@@ -21,7 +21,7 @@ CPU::CPU() : _opcode(this) {
 	this->_addressBus._w = 0;
 	this->_frame = 0;
 	this->_oldFrame = 0;
-	this->_showLog = true;
+	this->_showLog = false;
 
 	this->_ports->SetVDP(this->_vdp);
 
