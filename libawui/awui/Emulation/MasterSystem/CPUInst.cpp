@@ -98,6 +98,14 @@ void CPUInst::LDssr(uint8_t reg, uint8_t ss) {
 	this->_cycles += 7;
 }
 
+void CPUInst::LDXXdr(uint8_t xx, uint8_t reg) {
+	uint16_t x = this->_registers->GetRegss(xx);
+	uint16_t offset = x + this->ReadMemory(this->_registers->GetPC() + 2);
+	this->WriteMemory(offset, this->_registers->GetRegm(reg));
+	this->_registers->IncPC(3);
+	this->_cycles += 19;
+}
+
 /******************************************************************************/
 /***************************** 16-Bit Load Group ******************************/
 /******************************************************************************/
@@ -332,6 +340,20 @@ void CPUInst::INCHL() {
 	this->_cycles += 11;
 }
 
+void CPUInst::INCXXd(uint8_t xx) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t offset = this->_registers->GetRegss(xx) + this->ReadMemory(pc + 2);
+	uint8_t old = this->ReadMemory(offset);
+	uint8_t value = old + 1;
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, value > 0xFF);
+	this->_registers->SetFFlag(FFlag_PV, old == 0x7F);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->IncPC(3);
+	this->_cycles += 23;
+}
+
 /******************************************************************************/
 /************** General-Purpose Arithmetic and CPU Control Group **************/
 /******************************************************************************/
@@ -343,6 +365,21 @@ void CPUInst::CPL() {
 	this->_registers->SetFFlag(FFlag_N, true);
 	this->_registers->IncPC();
 	this->_cycles += 4;
+}
+
+// |2|8| The contents of a are negated (two's complement). Operation is the same as subtracting a from zero.
+void CPUInst::NEG() {
+	uint8_t old = this->_registers->GetA();
+	uint8_t value = 256 - old;
+	this->_registers->SetA(this->_registers->GetA() ^ 0xFF);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	// H is set if borrow from bit 4; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
+	this->_registers->SetFFlag(FFlag_N, true);
+	this->_registers->SetFFlag(FFlag_C, old != 0);
+	this->_registers->IncPC(2);
+	this->_cycles += 8;
 }
 
 // |1|4| Inverts the carry flag.

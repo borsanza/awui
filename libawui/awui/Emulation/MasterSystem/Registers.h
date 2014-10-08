@@ -29,24 +29,24 @@ namespace awui {
 			};
 
 			enum {
-				Reg_B = 0,
-				Reg_C = 1,
-				Reg_D = 2,
-				Reg_E = 3,
-				Reg_H = 4,
-				Reg_L = 5,
-				Reg_A = 7,
-				Reg_F = 8,
+				Reg_B = 10,
+				Reg_C = 11,
+				Reg_D = 12,
+				Reg_E = 13,
+				Reg_H = 14,
+				Reg_L = 15,
+				Reg_A = 17,
+				Reg_F = 18,
 			};
 
 			enum {
-				Reg_BC = 0,
-				Reg_DE = 1,
-				Reg_HL = 2,
-				Reg_SP = 3,
-				Reg_IX = 4,
-				Reg_IY = 5,
-				Reg_AF = 6,
+				Reg_BC = 20,
+				Reg_DE = 21,
+				Reg_HL = 22,
+				Reg_SP = 23,
+				Reg_IX = 24,
+				Reg_IY = 25,
+				Reg_AF = 26,
 			};
 
 			class Registers {

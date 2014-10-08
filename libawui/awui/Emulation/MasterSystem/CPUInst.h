@@ -38,6 +38,7 @@ namespace awui {
 					void LDrHL(uint8_t reg);
 					void LDrXXd(uint8_t reg, uint8_t reg2);
 					void LDssr(uint8_t reg, uint8_t ss);
+					void LDXXdr(uint8_t xx, uint8_t reg);
 
 					// 16-Bit Load Group
 					void LDddnn(uint8_t reg, uint8_t size = 3);
@@ -62,9 +63,11 @@ namespace awui {
 					void DECm(uint8_t reg);
 					void DECHL();
 					void INCHL();
+					void INCXXd(uint8_t xx);
 
 					// General-Purpose Arithmetic and CPU Control Group
 					void CPL();
+					void NEG();
 					void CCF();
 
 					// 16-Bit Arithmetic Group

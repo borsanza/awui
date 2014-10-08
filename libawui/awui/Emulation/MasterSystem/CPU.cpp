@@ -632,6 +632,16 @@ void CPU::RunOpcode() {
 /************************ Extended instructions (ED) **************************/
 /******************************************************************************/
 
+		// NEG
+		case OxED44: this->NEG(); break;
+		case OxED4C: this->NEG(); break;
+		case OxED54: this->NEG(); break;
+		case OxED5C: this->NEG(); break;
+		case OxED64: this->NEG(); break;
+		case OxED6C: this->NEG(); break;
+		case OxED74: this->NEG(); break;
+		case OxED7C: this->NEG(); break;
+
 		// OUT (C), r
 		case OxED41: this->OUTCr(Reg_B); break;
 		case OxED49: this->OUTCr(Reg_C); break;
@@ -1005,6 +1015,7 @@ void CPU::RunOpcode() {
 		case OxDDE1: this->POP16(Reg_IX, 14, 2); break;
 		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
 		case OxDD23: this->INCXX(Reg_IX); break;
+		case OxDD34: this->INCXXd(Reg_IX); break;
 
 		case OxDD21: this->LDddnn(Reg_IX, 4); break;
 
@@ -1015,6 +1026,14 @@ void CPU::RunOpcode() {
 		case OxDD66: this->LDrXXd(Reg_H, Reg_IX); break;
 		case OxDD6E: this->LDrXXd(Reg_L, Reg_IX); break;
 		case OxDD7E: this->LDrXXd(Reg_A, Reg_IX); break;
+
+		case OxDD70: this->LDXXdr(Reg_IX, Reg_B); break;
+		case OxDD71: this->LDXXdr(Reg_IX, Reg_C); break;
+		case OxDD72: this->LDXXdr(Reg_IX, Reg_D); break;
+		case OxDD73: this->LDXXdr(Reg_IX, Reg_E); break;
+		case OxDD74: this->LDXXdr(Reg_IX, Reg_H); break;
+		case OxDD75: this->LDXXdr(Reg_IX, Reg_L); break;
+		case OxDD77: this->LDXXdr(Reg_IX, Reg_A); break;
 
 		case OxDDF9: this->LDSPr(Reg_IX, 10, 2); break;
 
@@ -1043,6 +1062,7 @@ void CPU::RunOpcode() {
 		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
 		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;
 		case OxFD23: this->INCXX(Reg_IY); break;
+		case OxFD34: this->INCXXd(Reg_IX); break;
 
 		case OxFD21: this->LDddnn(Reg_IY, 4); break;
 
@@ -1053,6 +1073,14 @@ void CPU::RunOpcode() {
 		case OxFD66: this->LDrXXd(Reg_H, Reg_IY); break;
 		case OxFD6E: this->LDrXXd(Reg_L, Reg_IY); break;
 		case OxFD7E: this->LDrXXd(Reg_A, Reg_IY); break;
+
+		case OxFD70: this->LDXXdr(Reg_IY, Reg_B); break;
+		case OxFD71: this->LDXXdr(Reg_IY, Reg_C); break;
+		case OxFD72: this->LDXXdr(Reg_IY, Reg_D); break;
+		case OxFD73: this->LDXXdr(Reg_IY, Reg_E); break;
+		case OxFD74: this->LDXXdr(Reg_IY, Reg_H); break;
+		case OxFD75: this->LDXXdr(Reg_IY, Reg_L); break;
+		case OxFD77: this->LDXXdr(Reg_IY, Reg_A); break;
 
 		case OxFDF9: this->LDSPr(Reg_IY, 10, 2); break;
 
