@@ -127,6 +127,7 @@ void CPU::RunOpcode() {
 		// 00: NOP
 		// |1|4| No operation is performed.
 		case Ox00:
+			assert(0);
 			this->_registers->IncPC();
 			this->_cycles += 4;
 			break;
@@ -356,6 +357,7 @@ void CPU::RunOpcode() {
 				this->_registers->IncPC(3);
 				this->_cycles += 16;
 			}
+			break;
 
 		// CPL
 		case Ox2F: this->CPL(); break;
