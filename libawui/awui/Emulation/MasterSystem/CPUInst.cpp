@@ -537,6 +537,20 @@ void CPUInst::SRA(uint8_t reg) {
 	this->_cycles += 8;
 }
 
+void CPUInst::SRL(uint8_t reg) {
+	uint8_t old = this->_registers->GetRegm(reg);
+	uint8_t value =  old >> 1;
+	this->_registers->SetRegm(reg, value);
+	this->_registers->SetFFlag(FFlag_S, false);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, false);
+	// TODO: P/V is set if parity is even; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, old & 0x01);
+	this->_registers->IncPC(2);
+	this->_cycles += 8;
+}
+
 /******************************************************************************/
 /*********************** Bit Set, Reset, and Test Group ***********************/
 /******************************************************************************/

@@ -84,6 +84,7 @@ namespace awui {
 					void RR(uint8_t reg);
 					void SLA(uint8_t reg);
 					void SRA(uint8_t reg);
+					void SRL(uint8_t reg);
 
 					// Bit Set, Reset, and Test Group
 					void BIT(uint8_t param, uint8_t compare, uint8_t cycles = 8);
