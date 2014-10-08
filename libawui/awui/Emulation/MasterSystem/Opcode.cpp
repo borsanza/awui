@@ -1344,7 +1344,11 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 	uint8_t opcode3 = this->_cpu->ReadMemory(pc + 2);
 
 	switch (enumOpcode) {
+		case Ox00: printf("NOP"); break;
+		case Ox07: printf("RLCA"); break;
 		case Ox08: printf("EX AF, AF'"); break;
+		case Ox17: printf("RLA"); break;
+		case Ox1F: printf("RRA"); break;
 		case Ox20: {
 			if (opcode2 & 0x80)
 				printf("JR NZ, -%.2dh (%.4Xh)", -((int8_t) opcode2), (pc + (int8_t)opcode2 + 2));
@@ -1352,6 +1356,8 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 				printf("JR NZ, %.2dh (%.4Xh)", opcode2, (pc + (int8_t)opcode2 + 2));
 			break;
 		}
+		case Ox2F: printf("CPL"); break;
+		case Ox3F: printf("CCF"); break;
 		case OxBA: printf("CP D"); break;
 		case OxC9: printf("RET"); break;
 		case OxCD: printf("CALL %.4Xh", ((opcode3 << 8) | opcode2)); break;
