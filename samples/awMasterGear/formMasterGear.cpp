@@ -1,10 +1,10 @@
 /*
- * samples/awMasterGear/form1.cpp
+ * samples/awMasterGear/formMasterGear.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
 
-#include "form1.h"
+#include "formMasterGear.h"
 
 #include <awui/Drawing/Color.h>
 //#include <awui/Emulation/MasterSystem/CPU.h>
@@ -15,14 +15,14 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
-Form1::Form1() {
+FormMasterGear::FormMasterGear() {
 	this->InitializeComponent();
 }
 
-Form1::~Form1() {
+FormMasterGear::~FormMasterGear() {
 }
 
-void Form1::InitializeComponent() {
+void FormMasterGear::InitializeComponent() {
 	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
 	this->_masterSystem = new MasterSystem();
@@ -38,7 +38,7 @@ void Form1::InitializeComponent() {
 	this->SetFullscreen(0);
 }
 
-void Form1::LoadRom(const awui::String file) {
+void FormMasterGear::LoadRom(const awui::String file) {
 	this->SetText(file);
 	this->_masterSystem->LoadRom(file);
 }
