@@ -9,6 +9,7 @@ libawui/libawui_static.a
 samples/awuiDemo/awuiDemo
 samples/awChip8/awChip8
 samples/awMasterGear/awMasterGear
+build/
 
 syntax: glob
 */Debug/*
@@ -21,6 +22,7 @@ syntax: glob
 *.workspace
 *.sms
 *.rar
+*.kdev4
 libaw/*.c
 libaw/*.h
 libaw/aw/*.h
