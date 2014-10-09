@@ -8,6 +8,7 @@ namespace awui {
 		class Directory {
 			public:
 				static String GetCurrentDirectory();
+				static String GetWorkingDirectory();
 		};
 	}
 }

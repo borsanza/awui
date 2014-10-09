@@ -513,7 +513,7 @@ void Form::SetControlSelected(Control * selected) {
 
 Bitmap * Form::GetSelectedBitmap() {
 	if (!Form::selectedBitmap) {
-		String file = IO::Directory::GetCurrentDirectory();
+		String file = IO::Directory::GetWorkingDirectory();
 		Bitmap * bitmap = new Bitmap(file + "/images/button.png");
 		bitmap->SetDock((DockStyle::Enum) 0);//DockStyle::None);
 		bitmap->SetBackColor(Drawing::Color::FromArgb(0, 0, 0, 0));
