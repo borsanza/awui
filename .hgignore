@@ -9,6 +9,7 @@ libawui/libawui_static.a
 samples/awuiDemo/awuiDemo
 samples/awChip8/awChip8
 samples/awMasterGear/awMasterGear
+samples/awArcade/awArcade
 build/
 
 syntax: glob
