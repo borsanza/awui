@@ -10,6 +10,7 @@ samples/awuiDemo/awuiDemo
 samples/awChip8/awChip8
 samples/awMasterGear/awMasterGear
 samples/awArcade/awArcade
+samples/awSlider/awSlider
 build/
 
 syntax: glob

@@ -1,7 +1,7 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#include "form1.h"
+#include "formArcade.h"
 
 #include "test2.h"
 #include <awui/Drawing/Color.h>
@@ -12,14 +12,14 @@
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
-Form1::Form1() {
+FormArcade::FormArcade() {
 	this->InitializeComponent();
 }
 
-Form1::~Form1() {
+FormArcade::~FormArcade() {
 }
 
-bool Form1::OnRemoteKeyPress(RemoteButtons::Enum button) {
+bool FormArcade::OnRemoteKeyPress(RemoteButtons::Enum button) {
 	buttonPressed = button;
 
 	if (buttonPressed == RemoteButtons::Enum::Ok)
@@ -28,13 +28,13 @@ bool Form1::OnRemoteKeyPress(RemoteButtons::Enum button) {
 	return 0;
 }
 
-bool Form1::OnRemoteKeyUp(RemoteButtons::Enum button) {
+bool FormArcade::OnRemoteKeyUp(RemoteButtons::Enum button) {
 	buttonPressed = RemoteButtons::Enum::None;
 	return 0;
 }
 
-void Form1::InitializeComponent() {
-	this->SetText("Test Form1");
+void FormArcade::InitializeComponent() {
+	this->SetText("Test FormArcade");
 	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
 	Test2 *test2 = new Test2();
@@ -54,7 +54,7 @@ void Form1::InitializeComponent() {
 	this->SetFullscreen(0);
 }
 
-void Form1::OnTick() {
+void FormArcade::OnTick() {
 	switch (buttonPressed) {
 		case RemoteButtons::Enum::Left:
 			buttonL->SetLeft(buttonL->GetLeft() - 5);
