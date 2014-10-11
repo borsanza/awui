@@ -7,14 +7,6 @@ namespace awui {
 	namespace Collections {
 		class ArrayList : public Object {
 			private:
-/*
-				struct ArrayListItem {
-					Object * object;
-					ArrayListItem * next;
-				};
-
-				ArrayListItem * first;
-*/
 				Object ** _data;
 				int _count;
 				int _size;
@@ -28,7 +20,7 @@ namespace awui {
 				virtual String ToString();
 
 				virtual void Add(Object * item);
-				int GetCount();
+				inline int GetCount() const { return this->_count; }
 
 				void Clear();
 				Object * Get(int index);

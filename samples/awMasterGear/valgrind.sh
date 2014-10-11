@@ -1,2 +1,2 @@
 #!/bin/sh
-valgrind --tool=callgrind ./awSlider
+valgrind --tool=callgrind ./awMasterGear ./tests/1.sms

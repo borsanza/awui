@@ -43,10 +43,6 @@ void ArrayList::Add(Object * item) {
 	this->_count++;
 }
 
-int ArrayList::GetCount() {
-	return this->_count;
-}
-
 void ArrayList::Clear() {
 	this->_count = 0;
 	this->_size = 8;
