@@ -7,13 +7,17 @@ namespace awui {
 	namespace Collections {
 		class ArrayList : public Object {
 			private:
+/*
 				struct ArrayListItem {
 					Object * object;
 					ArrayListItem * next;
 				};
 
 				ArrayListItem * first;
-				int count;
+*/
+				Object ** _data;
+				int _count;
+				int _size;
 
 			public:
 				ArrayList();

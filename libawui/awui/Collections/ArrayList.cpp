@@ -7,17 +7,19 @@
 #include "ArrayList.h"
 
 #include <awui/String.h>
+#include <assert.h>
 #include <stdlib.h>
 
 using namespace awui::Collections;
 
 ArrayList::ArrayList() {
-	this->first = NULL;
-	this->count = 0;
+	this->_count = 0;
+	this->_size = 8;
+	this->_data = (Object **) malloc (this->_size * sizeof(Object *));
 }
 
 ArrayList::~ArrayList() {
-	this->Clear();
+	free(this->_data);
 }
 
 int ArrayList::IsClass(Classes::Enum objectClass) const {
@@ -32,156 +34,77 @@ awui::String ArrayList::ToString() {
 }
 
 void ArrayList::Add(Object * item) {
-	ArrayListItem * itemList = (ArrayListItem *) malloc(sizeof (struct ArrayListItem));
-	itemList->object = item;
-	itemList->next = NULL;
-	this->count++;
-
-	if (this->first == NULL) {
-		this->first = itemList;
-		return;
+	if (this->_count == this->_size) {
+		this->_size = this->_size * 2;
+		this->_data = (Object **) realloc (this->_data, this->_size * sizeof(Object *));
 	}
-
-	ArrayListItem * itemListAux = this->first;
-
-	while (itemListAux->next != NULL)
-		itemListAux = itemListAux->next;
-
-	itemListAux->next = itemList;
+	
+	this->_data[this->_count] = item;
+	this->_count++;
 }
 
 int ArrayList::GetCount() {
-	return this->count;
+	return this->_count;
 }
 
 void ArrayList::Clear() {
-	while (this->GetCount() > 0)
-		this->RemoveAt(0);
+	this->_count = 0;
+	this->_size = 8;
+	this->_data = (Object **) realloc (this->_data, this->_size * sizeof(Object *));
 }
 
 int ArrayList::IndexOf(Object * item) {
-	int pos = 0;
-
-	ArrayListItem * itemListAux = this->first;
-
-	while (itemListAux != NULL) {
-		if (itemListAux->object == item)
-			return pos;
-
-		pos++;
-		itemListAux = itemListAux->next;
-	}
+	for (int i = 0; i < this->_count; i++)
+		if (this->_data[i] == item)
+			return i;
 
 	return -1;
 }
 
 awui::Object * ArrayList::Get(int index) {
-	int pos = 0;
+	if (index < this->_count)
+		return this->_data[index];
 
-	ArrayListItem * itemListAux = this->first;
-
-	while (itemListAux != NULL) {
-		if (pos == index)
-			return itemListAux->object;
-
-		pos++;
-		itemListAux = itemListAux->next;
-	}
-
+	assert(0);
 	return NULL;
 }
 
 void ArrayList::Remove(Object * item) {
-	ArrayListItem * itemListAux = this->first;
-	ArrayListItem * last = NULL;
-
-	while (itemListAux != NULL) {
-		if (itemListAux->object == item) {
-			this->count--;
-
-			if (last == NULL)
-				this->first = itemListAux->next;
-			else
-				last->next = itemListAux->next;
-
-			free(itemListAux);
-			return;
-		}
-
-		last = itemListAux;
-		itemListAux = itemListAux->next;
-	}
+	int pos = this->IndexOf(item);
+	
+	if (pos != -1)
+		this->RemoveAt(pos);
 }
 
 void ArrayList::RemoveAt(int index) {
-	int pos = 0;
-	ArrayListItem * itemListAux = this->first;
-	ArrayListItem * last = NULL;
+	for (int i = index + 1; i < this->_count; i++)
+		this->_data[i - 1] = this->_data[i];
+	
+	if (index < this->_count) {
+		this->_count--;
 
-	while (itemListAux != NULL) {
-		if (pos == index) {
-			this->count--;
-
-			if (last == NULL)
-				this->first = itemListAux->next;
-			else
-				last->next = itemListAux->next;
-
-			free(itemListAux);
-			return;
+		if ((this->_size > 8) && ((this->_size >> 1) > this->_count)) {
+			this->_size = this->_size >> 1;
+			this->_data = (Object **) realloc (this->_data, this->_size * sizeof(Object *));
 		}
-
-		pos++;
-		last = itemListAux;
-		itemListAux = itemListAux->next;
 	}
 }
 
-void ArrayList::SetChildIndex(Object * item, int index) {
-	ArrayListItem * itemListAux = this->first;
-	ArrayListItem * last = NULL;
-
-	while (itemListAux != NULL) {
-		if (itemListAux->object == item) {
-			if (last == NULL)
-				this->first = itemListAux->next;
-			else
-				last->next = itemListAux->next;
-
-			break;
-		}
-
-		last = itemListAux;
-		itemListAux = itemListAux->next;
-	}
-
-	// Sino encontramos el item, descartamos su inserción
-	if (itemListAux == NULL)
+void ArrayList::SetChildIndex(Object * item, int newIndex) {
+	// newIndex no puede ser mayor que el tamaño
+	if (newIndex >= this->_count)
 		return;
 
-	int pos = 0;
+	// Sino encontramos el item, no se mueve nada
+	int oldIndex = this->IndexOf(item);
+	if (oldIndex == -1)
+		return;
+	
+	for (int i = oldIndex; i < newIndex; i++)
+		this->_data[i] = this->_data[i + 1];
 
-	ArrayListItem * itemListAux2 = this->first;
-
-	while (itemListAux2 != NULL) {
-		if (pos == index) {
-			itemListAux->next = itemListAux2;
-			if (last == NULL)
-				this->first = itemListAux;
-			else
-				last->next = itemListAux;
-
-			break;
-		}
-
-		last = itemListAux2;
-		itemListAux2 = itemListAux2->next;
-	}
-
-	// Si estamos en esta situación es que no se ha podido insertar,
-	// lo insertamos el ultimo
-	if (itemListAux2 == NULL) {
-		last->next = itemListAux;
-		itemListAux->next = NULL;
-	}
+	for (int i = oldIndex; i > newIndex; i--)
+		this->_data[i] = this->_data[i - 1];
+	
+	this->_data[newIndex] = item;
 }
