@@ -415,8 +415,6 @@ void Control::OnMouseMovePre(int x, int y, int buttons) {
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
 		Control * control = (Control *)this->GetControls()->Get(i);
-		if (!control->IsVisible())
-			continue;
 
 		int find = 0;
 
