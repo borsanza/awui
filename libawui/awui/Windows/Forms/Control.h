@@ -66,6 +66,7 @@ namespace awui {
 					void OnResizePre();
 					int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl);
 					void ChangeControlOnMouseOver(Control * control);
+					bool IsVisible() const;
 
 				protected:
 					void OnTickPre();

@@ -7,8 +7,16 @@ namespace awui {
 	namespace Windows {
 		namespace Forms {
 			class SliderBrowser : public Control {
-				SliderBrowser();
-				virtual ~SliderBrowser();
+				private:
+					int _margin;
+	
+				public:
+					SliderBrowser();
+					virtual ~SliderBrowser();
+					
+					void SetMargin(int margin);
+					
+					virtual void OnTick();
 			};
 		}
 	}

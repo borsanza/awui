@@ -1,5 +1,8 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+/*
+ * awui/Drawing/Rectangle.cpp
+ *
+ * Copyright (C) 2011 Borja Sánchez Zamorano
+ */
 
 #include "Rectangle.h"
 
@@ -41,16 +44,8 @@ void Rectangle::SetHeight(int height) {
 	this->size.SetHeight(height);
 }
 
-int Rectangle::GetX() const {
-	return this->location.GetX();
-}
-
 void Rectangle::SetX(int x) {
 	this->location.SetX(x);
-}
-
-int Rectangle::GetY() const {
-	return this->location.GetY();
 }
 
 void Rectangle::SetY(int y) {
@@ -61,16 +56,8 @@ int Rectangle::GetBottom() const {
 	return this->GetY() + this->GetHeight() - 1;
 }
 
-int Rectangle::GetLeft() const {
-	return this->GetX();
-}
-
 int Rectangle::GetRight() const {
 	return this->GetX() + this->GetWidth() - 1;
-}
-
-int Rectangle::GetTop() const {
-	return this->GetY();
 }
 
 Point Rectangle::GetLocation() const {

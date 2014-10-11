@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIPOINT_H__
-#define __AWUIPOINT_H__
+#ifndef _AWUI_DRAWING_POINT_H
+#define _AWUI_DRAWING_POINT_H
 
 namespace awui {
 	class String;
@@ -13,8 +9,8 @@ namespace awui {
 
 		class Point {
 			private:
-				int x;
-				int y;
+				int _x;
+				int _y;
 
 				static int Sign(Point * p1, Point * p2, Point * p3);
 
@@ -23,10 +19,10 @@ namespace awui {
 				Point(const Size sz);
 				Point(int x, int y);
 
-				int GetX() const;
+				inline int GetX() const { return this->_x; }
 				void SetX(int x);
 
-				int GetY() const;
+				inline int GetY() const { return this->_y; }
 				void SetY(int y);
 
 				Point & operator= (const Point & other);

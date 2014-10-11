@@ -415,6 +415,8 @@ void Control::OnMouseMovePre(int x, int y, int buttons) {
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
 		Control * control = (Control *)this->GetControls()->Get(i);
+		if (!control->IsVisible())
+			continue;
 
 		int find = 0;
 
@@ -501,12 +503,25 @@ const awui::String Control::GetName() {
 	return this->name;
 }
 
-void Control::OnTickPre() {
-	this->OnTick();
+bool Control::IsVisible() const {
+	bool isVisible = true;
 
-	for (int i = 0; i<this->GetControls()->GetCount(); i++) {
-		Control * control = (Control *)this->GetControls()->Get(i);
-		control->OnTickPre();
+	if (this->GetParent()) {
+		Rectangle cr = Rectangle::Intersect(this->bounds, this->GetParent()->GetBounds());
+		isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0);
+	}
+
+	return isVisible;
+}
+
+void Control::OnTickPre() {
+	if (this->IsVisible()) {
+		this->OnTick();
+
+		for (int i = 0; i<this->GetControls()->GetCount(); i++) {
+			Control * control = (Control *)this->GetControls()->Get(i);
+			control->OnTickPre();
+		}
 	}
 }
 

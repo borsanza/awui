@@ -1,9 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#pragma once
-#ifndef __AWUIRECTANGLE_H__
-#define __AWUIRECTANGLE_H__
+#ifndef _AWUI_DRAWING_RECTANGLE_H
+#define _AWUI_DRAWING_RECTANGLE_H
 
 #include <awui/Drawing/Point.h>
 #include <awui/Drawing/Size.h>
@@ -28,16 +24,16 @@ namespace awui {
 				int GetHeight() const;
 				void SetHeight(int height);
 
-				int GetX() const;
+				inline int GetX() const { return this->location.GetX(); }
 				void SetX(int x);
 
-				int GetY() const;
+				inline int GetY() const { return this->location.GetY(); }
 				void SetY(int y);
 
 				int GetBottom() const;
-				int GetLeft() const;
+				inline int GetLeft() const { return this->location.GetX(); }
 				int GetRight() const;
-				int GetTop() const;
+				inline int GetTop() const { return this->location.GetY(); }
 				Point GetLocation() const;
 				Size GetSize() const;
 				void SetLocation(const Point location);
