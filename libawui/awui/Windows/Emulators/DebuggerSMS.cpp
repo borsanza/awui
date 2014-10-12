@@ -19,8 +19,8 @@ using namespace awui::Emulation::MasterSystem;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 
-DebuggerSMS::DebuggerSMS(MasterSystem * sms) {
-	this->_sms = sms;
+DebuggerSMS::DebuggerSMS() {
+	this->_rom = NULL;
 	this->_tiles = new Drawing::Image(128, 256);
 	this->_colors = new Drawing::Image(32, 1);
 	this->_show = true;
@@ -37,13 +37,13 @@ int DebuggerSMS::IsClass(Classes::Enum objectClass) const {
 }
 
 void DebuggerSMS::OnTick() {
-	if (!this->_show)
+	if (!this->_show || !this->_rom)
 		return;
 
 	uint8_t c, r, g, b;
 	uint8_t color[4] {0, 85, 170, 255};
 
-	VDP * vdp = this->_sms->GetCPU()->GetVDP();
+	VDP * vdp = this->_rom->GetCPU()->GetVDP();
 	const uint8_t * colors = vdp->GetColors();
 
 	for (int i=0; i<32; i++) {
@@ -114,4 +114,8 @@ bool DebuggerSMS::OnKeyPress(Keys::Enum key) {
 	}
 
 	return true;
+}
+
+void DebuggerSMS::SetRom(MasterSystem * rom) {
+	this->_rom = rom;
 }

@@ -16,15 +16,13 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
-#define GAMES 500
-
 FormMasterGear::FormMasterGear() {
 	this->_games = new ArrayList();
 	this->InitializeComponent();
 }
 
 FormMasterGear::~FormMasterGear() {
-	for (int i = 0; i < GAMES; i++) {
+	for (int i = 0; i < this->_games->GetCount(); i++) {
 		MasterSystem * ms = (MasterSystem *)this->_games->Get(i);
 		delete ms;
 	}
@@ -33,33 +31,30 @@ FormMasterGear::~FormMasterGear() {
 }
 
 void FormMasterGear::InitializeComponent() {
+	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
+
 	this->_slider = new SliderBrowser();
 	this->_slider->SetDock(DockStyle::Fill);
 	this->_slider->SetMargin(25);
-	
-	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
-	for (int i = 0; i < GAMES; i++) {
-		MasterSystem * ms = new MasterSystem();
-		this->_slider->GetControls()->Add(ms);
-		ms->SetSize(342, 313);
-		this->_games->Add(ms);
-	}
+	this->_debugger = new DebuggerSMS();
+	this->_debugger->SetDock(DockStyle::Right);
+	this->_debugger->SetTabStop(false);
+	this->_debugger->SetWidth(194);
 
-	DebuggerSMS * debugger = new DebuggerSMS((MasterSystem*)this->_games->Get(0));
-	debugger->SetDock(DockStyle::Right);
-	debugger->SetTabStop(false);
-	debugger->SetWidth(194);
-	this->GetControls()->Add(debugger);
-	this->GetControls()->Add(_slider);
+	this->GetControls()->Add(this->_debugger);
+	this->GetControls()->Add(this->_slider);
 
 	this->SetSize(1200, 850);
 	this->SetFullscreen(0);
+	this->SetText("awMasterGear");
 }
 
 void FormMasterGear::LoadRom(const awui::String file) {
-	this->SetText(file);
-	for (int i = 0; i < GAMES; i++) {
-		((MasterSystem *)this->_games->Get(i))->LoadRom(file);
-	}
+	MasterSystem * ms = new MasterSystem();
+	this->_debugger->SetRom(ms);
+	ms->SetSize(342, 313);
+	ms->LoadRom(file);
+	this->_games->Add(ms);
+	this->_slider->GetControls()->Add(ms);
 }

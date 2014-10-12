@@ -16,13 +16,13 @@ namespace awui {
 
 			class DebuggerSMS : public Button {
 				private:
-					MasterSystem * _sms;
+					MasterSystem * _rom;
 					Drawing::Image * _tiles;
 					Drawing::Image * _colors;
 					bool _show;
 
 				public:
-					DebuggerSMS(MasterSystem * sms);
+					DebuggerSMS();
 					virtual ~DebuggerSMS();
 
 					virtual int IsClass(Classes::Enum objectClass) const;
@@ -31,6 +31,8 @@ namespace awui {
 
 					virtual void OnPaint(OpenGL::GL * gl);
 					virtual bool OnKeyPress(Keys::Enum key);
+					
+					void SetRom(MasterSystem * rom);
 			};
 		}
 	}

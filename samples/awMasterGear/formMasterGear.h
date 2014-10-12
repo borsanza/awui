@@ -11,6 +11,7 @@ namespace awui {
 
 	namespace Windows {
 		namespace Emulators {
+			class DebuggerSMS;
 			class MasterSystem;
 		}
 
@@ -28,10 +29,9 @@ class FormMasterGear : public awui::Windows::Forms::Form {
 	private:
 		SliderBrowser * _slider;
 		ArrayList * _games;
+		DebuggerSMS * _debugger;
 
 		void InitializeComponent();
-
-		void AdjustSizeOfMasterSystem(MasterSystem * masterSystem);
 
 	public:
 		FormMasterGear();
