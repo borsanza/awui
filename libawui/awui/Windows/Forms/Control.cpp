@@ -415,6 +415,8 @@ void Control::OnMouseMovePre(int x, int y, int buttons) {
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
 		Control * control = (Control *)this->GetControls()->Get(i);
+		if (!control->IsVisible())
+			continue;
 
 		int find = 0;
 
@@ -505,7 +507,9 @@ bool Control::IsVisible() const {
 	bool isVisible = true;
 
 	if (this->GetParent()) {
-		Rectangle cr = Rectangle::Intersect(this->bounds, this->GetParent()->GetBounds());
+		Rectangle pr = this->GetParent()->GetBounds();
+		pr.SetLocation(0, 0);
+		Rectangle cr = Rectangle::Intersect(this->bounds, pr);
 		isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0);
 	}
 

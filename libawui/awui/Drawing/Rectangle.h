@@ -37,6 +37,7 @@ namespace awui {
 				Point GetLocation() const;
 				Size GetSize() const;
 				void SetLocation(const Point location);
+				void SetLocation(int x, int y) { this->SetLocation(Point(x, y)); }
 				void SetSize(const Size size);
 
 				void Inflate(const Size size);
