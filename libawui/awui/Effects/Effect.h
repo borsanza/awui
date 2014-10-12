@@ -1,7 +1,5 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-// based on easing equations from Robert Penner (http://www.robertpenner.com/easing)
+#ifndef _AWUI_EFFECTS_EFFECT_H
+#define _AWUI_EFFECTS_EFFECT_H
 
 #include <awui/Object.h>
 #include <awui/String.h>
@@ -120,3 +118,5 @@ namespace awui {
 		};
 	}
 }
+
+#endif

@@ -4,11 +4,19 @@
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui {
+	namespace Effects {
+		class Effect;
+	}
+
 	namespace Windows {
 		namespace Forms {
 			class SliderBrowser : public Control {
 				private:
 					int _margin;
+					awui::Effects::Effect * _effect;
+					Control * _lastControl;
+					float _lastTime;
+					int _initPos;
 	
 				public:
 					SliderBrowser();

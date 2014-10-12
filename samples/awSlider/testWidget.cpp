@@ -8,6 +8,7 @@
 
 #include <awui/Drawing/Image.h>
 #include <awui/OpenGL/GL.h>
+#include <awui/Windows/Forms/ControlCollection.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -23,6 +24,7 @@ TestWidget::~TestWidget() {
 }
 
 void TestWidget::OnTick() {
+//	printf("%d\n", this->GetParent()->GetControls()->IndexOf(this));
 }
 
 void TestWidget::OnPaint(GL* gl) {
