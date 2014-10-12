@@ -1098,7 +1098,7 @@ void CPU::RunOpcode() {
 		case OxFDCBnnFE: this->SETbssd(7, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
 
 		default:
-			this->_showLog = true;
+//			this->_showLog = true;
 			this->_cycles += 12; // 71400;
 //			assert(0);
 			break;
