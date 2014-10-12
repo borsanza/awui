@@ -2,17 +2,36 @@
 #define _FORMMASTERGEAR_H
 
 #include <awui/String.h>
-#include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Forms/Form.h>
 
+namespace awui {
+	namespace Collections {
+		class ArrayList;
+	}
+
+	namespace Windows {
+		namespace Emulators {
+			class MasterSystem;
+		}
+
+		namespace Forms {
+			class SliderBrowser;
+		}
+	}
+}
+
+using namespace awui::Collections;
+using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
 class FormMasterGear : public awui::Windows::Forms::Form {
 	private:
-		void InitializeComponent();
-		awui::Windows::Emulators::MasterSystem * _masterSystem;
+		SliderBrowser * _slider;
+		ArrayList * _games;
 
-		void AdjustSizeOfMasterSystem(awui::Windows::Emulators::MasterSystem * masterSystem);
+		void InitializeComponent();
+
+		void AdjustSizeOfMasterSystem(MasterSystem * masterSystem);
 
 	public:
 		FormMasterGear();

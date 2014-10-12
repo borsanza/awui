@@ -67,16 +67,16 @@ void SliderBrowser::OnTick() {
 	int x = w->GetLeft() + w->GetWidth() + this->_margin;
 	for (int i = pos + 1; i< this->GetControls()->GetCount(); i++) {
 		x += this->_margin;
-		Control * w = (Control *)this->GetControls()->Get(i);
-		w->SetLocation(x, (this->GetHeight() - w->GetHeight()) >> 1);
-		x += w->GetWidth() + this->_margin;
+		Control * w2 = (Control *)this->GetControls()->Get(i);
+		w2->SetLocation(x, (this->GetHeight() - w2->GetHeight()) >> 1);
+		x += w2->GetWidth() + this->_margin;
 	}
 
 	x = w->GetLeft() - this->_margin;
 	for (int i = pos - 1; i >= 0; i--) {
-		x -= (this->_margin + w->GetWidth());
-		Control * w = (Control *)this->GetControls()->Get(i);
-		w->SetLocation(x, (this->GetHeight() - w->GetHeight()) >> 1);
+		Control * w2 = (Control *)this->GetControls()->Get(i);
+		x -= (this->_margin + w2->GetWidth());
+		w2->SetLocation(x, (this->GetHeight() - w2->GetHeight()) >> 1);
 		x -= this->_margin;
 	}
 }
