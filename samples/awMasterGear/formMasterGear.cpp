@@ -16,6 +16,8 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
+#define MULTIPLY 1
+
 FormMasterGear::FormMasterGear() {
 	this->_games = new ArrayList();
 	this->InitializeComponent();
@@ -31,7 +33,7 @@ FormMasterGear::~FormMasterGear() {
 }
 
 void FormMasterGear::InitializeComponent() {
-	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
+	this->SetBackColor(Color::FromArgb(255, 16, 16, 16));
 
 	this->_slider = new SliderBrowser();
 	this->_slider->SetDock(DockStyle::Fill);
@@ -45,7 +47,10 @@ void FormMasterGear::InitializeComponent() {
 	this->GetControls()->Add(this->_debugger);
 	this->GetControls()->Add(this->_slider);
 
-	this->SetSize(1200, 850);
+	int height = 262 * MULTIPLY;
+	if (height < 480)
+		height = 480;
+	this->SetSize((256 * MULTIPLY) + 50 + 194, height);
 	this->SetFullscreen(0);
 	this->SetText("awMasterGear");
 }
@@ -53,8 +58,13 @@ void FormMasterGear::InitializeComponent() {
 void FormMasterGear::LoadRom(const awui::String file) {
 	MasterSystem * ms = new MasterSystem();
 	this->_debugger->SetRom(ms);
-	ms->SetSize(342, 313);
+	ms->SetMultiply(MULTIPLY);
+	ms->SetSize(256 * MULTIPLY, 262 * MULTIPLY);
 	ms->LoadRom(file);
 	this->_games->Add(ms);
 	this->_slider->GetControls()->Add(ms);
+}
+
+void FormMasterGear::OnTick() {
+	this->_debugger->SetRom((MasterSystem *)this->_slider->GetControlSelected());
 }

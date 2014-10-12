@@ -27,6 +27,7 @@ namespace awui {
 				private:
 					Drawing::Image * _image;
 					CPU * _cpu;
+					int _multiply;
 
 				public:
 					MasterSystem();
@@ -42,6 +43,8 @@ namespace awui {
 
 					virtual void OnPaint(OpenGL::GL* gl);
 					virtual bool OnKeyPress(Keys::Enum key);
+					
+					void SetMultiply(int multiply);
 			};
 		}
 	}

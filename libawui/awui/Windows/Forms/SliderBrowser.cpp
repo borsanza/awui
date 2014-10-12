@@ -6,6 +6,7 @@
 
 #include "SliderBrowser.h"
 
+#include <awui/Console.h>
 #include <awui/Effects/Effect.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
@@ -20,6 +21,7 @@ SliderBrowser::SliderBrowser() {
 	this->_lastControl = NULL;
 	this->_lastTime = 0;
 	this->_initPos = 0;
+	this->_selected = -1;
 }
 
 SliderBrowser::~SliderBrowser() {
@@ -31,12 +33,24 @@ void SliderBrowser::SetMargin(int margin) {
 }
 
 void SliderBrowser::OnTick() {
-	int pos = this->GetControls()->IndexOf(Form::GetControlSelected());
+	int posSelected = this->GetControls()->IndexOf(Form::GetControlSelected());
 
-	if (pos == -1)
-		return;
+	bool changed = false;
+	if (posSelected != -1) {
+		if (this->_selected != posSelected) {
+			changed = true;
+			this->_selected = posSelected;
+		}
+	}
 
-	Control * w = (Control *)this->GetControls()->Get(pos);
+	if (this->_selected == -1) {
+		changed = true;
+		this->_selected = 0;
+	}
+
+	Control * w = (Control *)this->GetControls()->Get(this->_selected);
+	if (changed)
+		Console::WriteLine(w->GetName());
 	
 	bool leftOut = (w->GetLeft() - this->_margin) <= 0;
 	bool rightOut = (w->GetRight() + this->_margin) >= this->GetWidth();
@@ -65,7 +79,7 @@ void SliderBrowser::OnTick() {
 	w->SetTop((this->GetHeight() - w->GetHeight()) >> 1);
 	
 	int x = w->GetLeft() + w->GetWidth() + this->_margin;
-	for (int i = pos + 1; i< this->GetControls()->GetCount(); i++) {
+	for (int i = this->_selected + 1; i< this->GetControls()->GetCount(); i++) {
 		x += this->_margin;
 		Control * w2 = (Control *)this->GetControls()->Get(i);
 		w2->SetLocation(x, (this->GetHeight() - w2->GetHeight()) >> 1);
@@ -73,10 +87,17 @@ void SliderBrowser::OnTick() {
 	}
 
 	x = w->GetLeft() - this->_margin;
-	for (int i = pos - 1; i >= 0; i--) {
+	for (int i = this->_selected - 1; i >= 0; i--) {
 		Control * w2 = (Control *)this->GetControls()->Get(i);
 		x -= (this->_margin + w2->GetWidth());
 		w2->SetLocation(x, (this->GetHeight() - w2->GetHeight()) >> 1);
 		x -= this->_margin;
 	}
+}
+
+Control * SliderBrowser::GetControlSelected() const {
+	if ((this->_selected >= 0) && (this->_selected < this->GetControls()->GetCount()))
+		return (Control *) this->GetControls()->Get(this->_selected);
+	
+	return NULL;
 }

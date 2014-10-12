@@ -38,6 +38,8 @@ class FormMasterGear : public awui::Windows::Forms::Form {
 		virtual ~FormMasterGear();
 
 		void LoadRom(const awui::String file);
+		
+		virtual void OnTick();
 };
 
 #endif

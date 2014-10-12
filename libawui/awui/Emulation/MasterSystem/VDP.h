@@ -107,6 +107,8 @@ namespace awui {
 
 					uint16_t GetLine() const;
 					uint16_t GetColumn() const;
+					
+					uint8_t GetBackColor() const;
 			};
 		}
 	}

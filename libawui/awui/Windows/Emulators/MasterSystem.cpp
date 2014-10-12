@@ -21,6 +21,7 @@ MasterSystem::MasterSystem() {
 	this->_image = new Drawing::Image(1, 1);
 	this->_cpu = new CPU();
 	this->SetTabStop(true);
+	this->_multiply = 1;
 }
 
 MasterSystem::~MasterSystem() {
@@ -36,6 +37,7 @@ int MasterSystem::IsClass(Classes::Enum objectClass) const {
 }
 
 void MasterSystem::LoadRom(const String file) {
+	this->SetName(file);
 	this->_cpu->LoadRom(file);
 }
 
@@ -48,53 +50,39 @@ CPU * MasterSystem::GetCPU() {
 }
 
 void MasterSystem::OnPaint(GL* gl) {
+	uint8_t c, r, g, b;
 	uint8_t color[4] {0, 85, 170, 255};
-
-	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-
 	VDP * screen = this->_cpu->GetVDP();
+
+//	¿Lo rellenamos con el registro 7?
+//	c = screen->GetBackColor();
+//	r = color[c & 0x3];
+//	g = color[(c >> 2) & 0x3];
+//	b = color[(c >> 4) & 0x3];
+//	this->SetBackColor(Color::FromArgb(255, r, g, b));
+
 	int width = screen->GetVisualWidth();
 	int height = screen->GetVisualHeight();
 
 	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
 		delete this->_image;
 		this->_image = new Drawing::Image(width, height);
-		this->SetSize(width * 2, height * 2);
+		this->SetSize(width * this->_multiply, height * this->_multiply);
 	}
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			uint8_t c = screen->GetPixel(x, y);
-			uint8_t r = color[c & 0x3];
-			uint8_t g = color[(c >> 2) & 0x3];
-			uint8_t b = color[(c >> 4) & 0x3];
+			c = screen->GetPixel(x, y);
+			r = color[c & 0x3];
+			g = color[(c >> 2) & 0x3];
+			b = color[(c >> 4) & 0x3];
 			this->_image->SetPixel(x, y, r, g, b);
 		}
 	}
 
 	this->_image->Update();
 
-	int controlWidth = this->GetWidth();
-	int controlHeight = this->GetHeight();
-
-	float ratio = (float)this->_image->GetWidth() / (float)this->_image->GetHeight();
-
-	width = controlHeight * ratio;
-	height = controlHeight;
-
-	if (width > controlWidth) {
-		width = controlWidth;
-		height = (float)controlWidth / ratio;
-	}
-
-	int left = (this->GetWidth() - width) >> 1;
-	int top = (this->GetHeight() - height) >> 1;
-
-	// Console::Write(Convert::ToString(width));
-	// Console::Write("x");
-	// Console::WriteLine(Convert::ToString(height));
-
-	GL::DrawImageGL(this->_image, left, top, width, height);
+	GL::DrawImageGL(this->_image, 0, 0, this->GetWidth(), this->GetHeight());
 }
 
 bool MasterSystem::OnKeyPress(Keys::Enum key) {
@@ -106,4 +94,8 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 
 //	Console::WriteLine("OnKeyPress");
 	return true;
+}
+
+void MasterSystem::SetMultiply(int multiply) {
+	this->_multiply = multiply;
 }

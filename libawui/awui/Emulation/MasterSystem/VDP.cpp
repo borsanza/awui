@@ -365,6 +365,7 @@ uint8_t VDP::GetSpritePixel(int sprite, int x, int y, bool flipx, bool flipy) co
 	c |= (((byte2 & mask) >> realX) << 1);
 	c |= (((byte3 & mask) >> realX) << 2);
 	c |= (((byte4 & mask) >> realX) << 3);
+	// assert(c < 32);
 	return this->_cram[c];
 }
 
@@ -518,7 +519,9 @@ void VDP::WriteDataByte(uint8_t value) {
 		this->_vram->WriteByte(this->_address, value);
 		// printf("VRam");
 	} else {
-		this->_cram[this->_address] = value;
+		// TODO: Mirar que pasa y porque a veces se escribe en el espacio de colores fuera de rango
+		// assert(this->_address < 32);
+		this->_cram[this->_address & 0x1F] = value;
 //		printf("CRam[%.2X] = %.2X\n", this->_address, value);
 	}
 
@@ -605,4 +608,8 @@ bool VDP::GetInterrupt() {
 	}
 
 	return false;
+}
+
+uint8_t VDP::GetBackColor() const {
+	return this->_cram[this->_registers[7] & 0x0F];
 }

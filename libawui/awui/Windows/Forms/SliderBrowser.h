@@ -17,6 +17,7 @@ namespace awui {
 					Control * _lastControl;
 					float _lastTime;
 					int _initPos;
+					int _selected;
 	
 				public:
 					SliderBrowser();
@@ -25,6 +26,8 @@ namespace awui {
 					void SetMargin(int margin);
 					
 					virtual void OnTick();
+
+					Control * GetControlSelected() const;
 			};
 		}
 	}
