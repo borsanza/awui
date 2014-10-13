@@ -672,6 +672,7 @@ void CPUInst::RET(bool cc, uint8_t cycles) {
 		this->_registers->SetSP(sp + 2);
 		this->_registers->SetPC(pc);
 		this->_cycles += cycles;
+		this->_registers->SetInterruptsEnabled(true);
 	} else {
 		this->_registers->IncPC();
 		this->_cycles += 5;
@@ -730,6 +731,7 @@ void CPUInst::RETI() {
 	this->_cycles += 10;
 	this->_registers->SetInterruptsEnabled(true);
 }
+
 /******************************************************************************/
 /*************************** Input and Output Group ***************************/
 /******************************************************************************/

@@ -16,7 +16,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
-#define MULTIPLY 1
+#define MULTIPLY 2
 
 FormMasterGear::FormMasterGear() {
 	this->_games = new ArrayList();
@@ -33,13 +33,14 @@ FormMasterGear::~FormMasterGear() {
 }
 
 void FormMasterGear::InitializeComponent() {
-	this->SetBackColor(Color::FromArgb(255, 16, 16, 16));
+	this->SetBackColor(Color::FromArgb(255, 8, 8, 8));
 
 	this->_slider = new SliderBrowser();
 	this->_slider->SetDock(DockStyle::Fill);
 	this->_slider->SetMargin(25);
 
 	this->_debugger = new DebuggerSMS();
+	this->_debugger->SetBackColor(Color::FromArgb(255, 8, 8, 8));
 	this->_debugger->SetDock(DockStyle::Right);
 	this->_debugger->SetTabStop(false);
 	this->_debugger->SetWidth(194);
@@ -61,6 +62,7 @@ void FormMasterGear::LoadRom(const awui::String file) {
 	ms->SetMultiply(MULTIPLY);
 	ms->SetSize(256 * MULTIPLY, 262 * MULTIPLY);
 	ms->LoadRom(file);
+	ms->SetTabStop(true);
 	this->_games->Add(ms);
 	this->_slider->GetControls()->Add(ms);
 }

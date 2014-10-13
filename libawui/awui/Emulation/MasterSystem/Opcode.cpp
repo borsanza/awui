@@ -1349,13 +1349,18 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case Ox08: printf("EX AF, AF'"); break;
 		case Ox17: printf("RLA"); break;
 		case Ox1F: printf("RRA"); break;
-		case Ox20: {
+		case Ox20:
 			if (opcode2 & 0x80)
 				printf("JR NZ, -%.2dh (%.4Xh)", -((int8_t) opcode2), (pc + (int8_t)opcode2 + 2));
 			else
 				printf("JR NZ, %.2dh (%.4Xh)", opcode2, (pc + (int8_t)opcode2 + 2));
 			break;
-		}
+		case Ox28:
+			if (opcode2 & 0x80)
+				printf("JR Z, -%.2Xh (%.4Xh)", -((int8_t) opcode2), (pc + (int8_t)opcode2 + 2));
+			else
+				printf("JR Z, +%.2Xh (%.4Xh)", opcode2, (pc + (int8_t)opcode2 + 2));
+			break;
 		case Ox2F: printf("CPL"); break;
 		case Ox3F: printf("CCF"); break;
 		case Ox76: printf("HALT"); break;
@@ -1371,6 +1376,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxDB: printf("INA (%.2Xh)", opcode2); break;
 		case OxE1: printf("POP HL"); break;
 		case OxE5: printf("PUSH HL"); break;
+		case OxE6: printf("AND %.2Xh", opcode2); break;
 		case OxED4D: printf("RETI"); break;
 		case OxEDB3: printf("OTIR"); break;
 		case OxF1: printf("POP AF"); break;

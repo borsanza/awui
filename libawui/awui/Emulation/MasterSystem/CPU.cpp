@@ -700,7 +700,11 @@ void CPU::RunOpcode() {
 			this->_cycles += 8;
 			break;
 
-		case OxED4D: this->RETI(); /* printf("Sale %d\n", this->_vdp->GetLine()); */ break;
+		case OxED4D:
+			this->RETI();
+			// printf("Sale %d\n", this->_vdp->GetLine());
+			// this->_showLog = false;
+			break;
 
 		// EDB0: LDIR
 		// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de.

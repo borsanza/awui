@@ -549,9 +549,6 @@ bool Control::GetTabStop() {
 
 void Control::SetTabStop(bool tabStop) {
 	this->tabStop = tabStop;
-
-	if (tabStop && !Form::GetControlSelected())
-		Form::SetControlSelected(this);
 }
 
 void Control::OnRemoteKeyPressPre(RemoteButtons::Enum button) {

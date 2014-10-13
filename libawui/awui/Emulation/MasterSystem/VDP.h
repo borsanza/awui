@@ -19,6 +19,7 @@ namespace awui {
 					CPU * _cpu;
 					uint16_t _width;
 					uint16_t _height;
+					uint8_t _verticalScroll;
 
 					uint16_t _line;
 					uint16_t _col;

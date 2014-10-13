@@ -506,9 +506,13 @@ Control * Form::GetControlSelected() {
 }
 
 void Form::SetControlSelected(Control * selected) {
-	Form::controlSelected = selected;
-	Form::GetSelectedBitmap()->SetParent(selected->GetParent());
-	selected->SetFocus();
+	if (!selected || selected->GetTabStop()) {
+		Form::controlSelected = selected;
+		if (selected) {
+			Form::GetSelectedBitmap()->SetParent(selected->GetParent());
+			selected->SetFocus();
+		}
+	}
 }
 
 Bitmap * Form::GetSelectedBitmap() {

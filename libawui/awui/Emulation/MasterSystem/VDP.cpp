@@ -301,6 +301,9 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 		*vsync = this->IsVSYNC(*line);
 		this->_interrupt = *vsync;
 
+		if (this->_registers[0] & 0x10)
+			this->_interrupt = true;
+
 		if (*line == this->GetTotalHeight())
 			*line = 0;
 	}
@@ -372,6 +375,8 @@ uint8_t VDP::GetSpritePixel(int sprite, int x, int y, bool flipx, bool flipy) co
 bool VDP::OnTick(uint32_t counter) {
 	bool ret = false;
 	bool hsync, vsync;
+	if (this->_line == this->_height) // && (this->_line < (this->_height + 10)))
+		this->_verticalScroll = this->_registers[9];
 
 	this->CalcNextPixel(&this->_col, &this->_line, &hsync, &vsync);
 	if (vsync) {
@@ -384,11 +389,25 @@ bool VDP::OnTick(uint32_t counter) {
 
 	if ((this->_col < this->_width) && (this->_line < this->_height)) {
 		int16_t col = this->_col;
-		col = col - this->_registers[8];
-		while (col < 0) col += 256;
 		int16_t line = this->_line;
-		line = line - this->_registers[9];
-		while (line < 0) line += this->GetHeight();
+		bool vScroll = true;
+		bool hScroll = true;
+
+		if ((col >= 192) && (this->_registers[0] & 0x80))
+			vScroll = false;
+
+		if ((line <= 15) && (this->_registers[0] & 0x40))
+			hScroll = false;
+
+		if (hScroll) {
+			col = col - this->_registers[8];
+			while (col < 0) col += 256;
+		}
+
+		if (vScroll) {
+			line = line - this->_verticalScroll;
+			while (line < 0) line += this->_height;
+		}
 
 		int32_t pos;
 		if (this->_showBorder)
@@ -402,7 +421,11 @@ bool VDP::OnTick(uint32_t counter) {
 		uint8_t byte2 = this->_vram->ReadByte(offset + 1);
 		uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
 
-		this->_data->WriteByte(pos, this->GetSpritePixel(sprite, col % 8, line % 8, byte2 & 0x2, byte2 & 0x4));
+		// Blank Display
+		if (!(this->_registers[1] & 0x40))
+			this->_data->WriteByte(pos, this->_cram[this->_registers[7] & 0x0F]);
+		else
+			this->_data->WriteByte(pos, this->GetSpritePixel(sprite, col & 0x7, line & 0x7, byte2 & 0x2, byte2 & 0x4));
 //		this->_data->WriteByte(pos, counter & 0x01? 0xFF:0x00);
 //		this->_data->WriteByte(pos, this->_cram[10]);
 	} else {
