@@ -68,5 +68,11 @@ void FormMasterGear::LoadRom(const awui::String file) {
 }
 
 void FormMasterGear::OnTick() {
-	this->_debugger->SetRom((MasterSystem *)this->_slider->GetControlSelected());
+	static MasterSystem * selected = NULL;
+
+	if (selected != this->_slider->GetControlSelected()) {
+		selected = (MasterSystem *) this->_slider->GetControlSelected();
+		this->_debugger->SetRom(selected);
+		this->SetText(selected->GetName());
+	}
 }

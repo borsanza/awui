@@ -35,22 +35,14 @@ void SliderBrowser::SetMargin(int margin) {
 void SliderBrowser::OnTick() {
 	int posSelected = this->GetControls()->IndexOf(Form::GetControlSelected());
 
-	bool changed = false;
-	if (posSelected != -1) {
-		if (this->_selected != posSelected) {
-			changed = true;
+	if (posSelected != -1)
+		if (this->_selected != posSelected)
 			this->_selected = posSelected;
-		}
-	}
 
-	if (this->_selected == -1) {
-		changed = true;
+	if (this->_selected == -1)
 		this->_selected = 0;
-	}
 
 	Control * w = (Control *)this->GetControls()->Get(this->_selected);
-	if (changed)
-		Console::WriteLine(w->GetName());
 	
 	bool leftOut = (w->GetLeft() - this->_margin) <= 0;
 	bool rightOut = (w->GetRight() + this->_margin) >= this->GetWidth();

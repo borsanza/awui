@@ -342,7 +342,7 @@ void VDP::OnTickBorder() {
 		this->_data->WriteByte(x + (y * this->GetVisualWidth()), this->_cram[this->_registers[7] & 0x0F]);
 }
 
-uint8_t VDP::GetSpritePixel(int sprite, int x, int y, bool flipx, bool flipy) const {
+uint8_t VDP::GetSpritePixel(int sprite, int x, int y, bool flipx, bool flipy, bool otherPalete) const {
 	int64_t offset;
 	if (flipy)
 		offset = sprite * 32 + ((7 - y) * 4);
@@ -368,6 +368,9 @@ uint8_t VDP::GetSpritePixel(int sprite, int x, int y, bool flipx, bool flipy) co
 	c |= (((byte2 & mask) >> realX) << 1);
 	c |= (((byte3 & mask) >> realX) << 2);
 	c |= (((byte4 & mask) >> realX) << 3);
+	if (otherPalete)
+		c |= 16;
+
 	// assert(c < 32);
 	return this->_cram[c];
 }
@@ -425,7 +428,7 @@ bool VDP::OnTick(uint32_t counter) {
 		if (!(this->_registers[1] & 0x40))
 			this->_data->WriteByte(pos, this->_cram[this->_registers[7] & 0x0F]);
 		else
-			this->_data->WriteByte(pos, this->GetSpritePixel(sprite, col & 0x7, line & 0x7, byte2 & 0x2, byte2 & 0x4));
+			this->_data->WriteByte(pos, this->GetSpritePixel(sprite, col & 0x7, line & 0x7, byte2 & 0x2, byte2 & 0x4, byte2 & 0x8));
 //		this->_data->WriteByte(pos, counter & 0x01? 0xFF:0x00);
 //		this->_data->WriteByte(pos, this->_cram[10]);
 	} else {
