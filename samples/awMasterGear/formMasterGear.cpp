@@ -67,7 +67,7 @@ void FormMasterGear::LoadRom(const awui::String file) {
 	this->_slider->GetControls()->Add(ms);
 	
 	if (this->_games->GetCount() == 1)
-		Form::SetControlSelected(ms);
+		ms->SetFocus();
 }
 
 void FormMasterGear::OnTick() {

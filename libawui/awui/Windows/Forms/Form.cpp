@@ -510,7 +510,7 @@ void Form::SetControlSelected(Control * selected) {
 		Form::controlSelected = selected;
 		if (selected) {
 			Form::GetSelectedBitmap()->SetParent(selected->GetParent());
-			selected->SetFocus();
+			selected->SetFocus(false);
 		}
 	}
 }

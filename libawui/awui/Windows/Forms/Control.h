@@ -157,7 +157,7 @@ namespace awui {
 					bool GetTabStop();
 					void SetTabStop(bool tabStop);
 
-					void SetFocus();
+					void SetFocus(bool selectControl = true);
 
 					Control * GetTopParent();
 

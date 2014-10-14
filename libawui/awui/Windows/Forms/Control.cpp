@@ -599,11 +599,13 @@ void Control::OnKeyUpPre(Keys::Enum key) {
 		focused->OnKeyUpPre(key);
 }
 
-void Control::SetFocus() {
+void Control::SetFocus(bool selectControl) {
 	Control * parent = this->GetParent();
 	if (parent) {
+		if (selectControl)
+			Form::SetControlSelected(this);
 		parent->focused = this;
-		parent->SetFocus();
+		parent->SetFocus(false);
 	}
 }
 
