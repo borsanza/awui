@@ -186,6 +186,9 @@ void CPU::RunOpcode() {
 		// RRA
 		case Ox1F: this->RRA(); break;
 
+		// SCF
+		case Ox37: this->SCF(); break;
+
 		// 10 n: DJNZ *
 		// |2|13/8| The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox10:

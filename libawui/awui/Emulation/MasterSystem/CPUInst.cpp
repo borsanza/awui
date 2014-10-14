@@ -403,6 +403,15 @@ void CPUInst::CCF() {
 	this->_cycles += 4;
 }
 
+// |1|4| Sets the carry flag.
+void CPUInst::SCF() {
+	this->_registers->SetFFlag(FFlag_H, false);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, true);
+	this->_registers->IncPC();
+	this->_cycles += 4;
+}
+
 /******************************************************************************/
 /*************************** 16-Bit Arithmetic Group **************************/
 /******************************************************************************/

@@ -69,6 +69,7 @@ namespace awui {
 					void CPL();
 					void NEG();
 					void CCF();
+					void SCF();
 
 					// 16-Bit Arithmetic Group
 					void ADDHLss(uint8_t reg);
