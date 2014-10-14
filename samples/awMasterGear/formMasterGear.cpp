@@ -65,6 +65,9 @@ void FormMasterGear::LoadRom(const awui::String file) {
 	ms->SetTabStop(true);
 	this->_games->Add(ms);
 	this->_slider->GetControls()->Add(ms);
+	
+	if (this->_games->GetCount() == 1)
+		Form::SetControlSelected(ms);
 }
 
 void FormMasterGear::OnTick() {
