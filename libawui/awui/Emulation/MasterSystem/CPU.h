@@ -17,6 +17,7 @@ namespace awui {
 					float _frame;
 					float _oldFrame;
 					bool _showLog;
+					bool _showNotImplemented;
 					bool _enableInterrupts;
 
 					void RunOpcode();

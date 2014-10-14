@@ -95,6 +95,8 @@ namespace awui {
 					void SETHL(uint8_t bit);
 					void RES(uint8_t reg, uint8_t bit);
 					void RESHL(uint8_t bit);
+					void BITbssd(uint8_t bit, uint8_t reg, uint8_t d);
+					void RESETbssd(uint8_t bit, uint8_t reg, uint8_t d);
 					void SETbssd(uint8_t bit, uint8_t reg, uint8_t d);
 
 					// Jump Group

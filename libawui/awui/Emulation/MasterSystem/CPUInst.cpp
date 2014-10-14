@@ -14,6 +14,18 @@
 
 using namespace awui::Emulation::MasterSystem;
 
+// Setting a bit:
+//   number |= 1 << x;
+//
+// Clearing a bit:
+//   number &= ~(1 << x);
+//
+// Toggling a bit:
+//   number ^= 1 << x;
+//
+// Checking a bit:
+//   bit = number & (1 << x);
+
 CPUInst::CPUInst() {
 	this->_ports = new Ports();
 	this->_ram = new Ram(8192);
@@ -610,7 +622,7 @@ void CPUInst::SETHL(uint8_t bit) {
 
 // |2|8| Resets bit X of reg.
 void CPUInst::RES(uint8_t reg, uint8_t bit) {
-	this->_registers->SetRegm(reg, this->_registers->GetRegm(reg) & (0xFF ^ bit));
+	this->_registers->SetRegm(reg, this->_registers->GetRegm(reg) & ~bit);
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
 }
@@ -618,9 +630,28 @@ void CPUInst::RES(uint8_t reg, uint8_t bit) {
 // |2|15| Resets bit X of (HL).
 void CPUInst::RESHL(uint8_t bit) {
 	uint16_t offset = this->_registers->GetHL();
-	this->WriteMemory(offset, this->ReadMemory(offset) & (0xFF ^ bit));
+	this->WriteMemory(offset, this->ReadMemory(offset) & ~bit);
 	this->_registers->IncPC(2);
 	this->_cycles += 15;
+}
+
+// |4|20| Tests bit 'bit' of the memory location pointed to by ss plus *.
+void CPUInst::BITbssd(uint8_t bit, uint8_t reg, uint8_t d) {
+	uint16_t offset = this->_registers->GetRegss(reg) + d;
+	uint8_t value = this->ReadMemory(offset);
+	this->_registers->SetFFlag(FFlag_Z, !(value & bit));
+	this->_registers->SetFFlag(FFlag_H, true);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->IncPC(4);
+	this->_cycles += 20;
+}
+
+// |4|23| Resets bit 'bit' of the memory location pointed to by ss plus *.
+void CPUInst::RESETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
+	uint16_t offset = this->_registers->GetRegss(reg) + d;
+	this->WriteMemory(offset, this->ReadMemory(offset) & ~bit);
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
 }
 
 // |4|23| Sets bit 'bit' of the memory location pointed to by ss plus *.
