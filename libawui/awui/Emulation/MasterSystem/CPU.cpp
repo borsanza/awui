@@ -718,6 +718,8 @@ void CPU::RunOpcode() {
 			// this->_showLog = false;
 			break;
 
+		case OxEDA3: this->OUTI(); break;
+
 		// EDB0: LDIR
 		// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de.
 		// Then hl and de are incremented and bc is decremented.
@@ -1032,6 +1034,7 @@ void CPU::RunOpcode() {
 		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
 		case OxDD23: this->INCXX(Reg_IX); break;
 		case OxDD34: this->INCXXd(Reg_IX); break;
+		case OxDD36: this->LDXXdn(Reg_IX); break;
 
 		case OxDD21: this->LDddnn(Reg_IX, 4); break;
 		case OxDD2A: this->LDdd_nn(Reg_IX); break;
@@ -1160,7 +1163,8 @@ void CPU::RunOpcode() {
 		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
 		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;
 		case OxFD23: this->INCXX(Reg_IY); break;
-		case OxFD34: this->INCXXd(Reg_IX); break;
+		case OxFD34: this->INCXXd(Reg_IY); break;
+		case OxFD36: this->LDXXdn(Reg_IY); break;
 
 		case OxFD21: this->LDddnn(Reg_IY, 4); break;
 
@@ -1280,6 +1284,7 @@ void CPU::RunOpcode() {
 			this->_cycles += 12; // 71400;
 			if (this->_showNotImplemented) {
 				printf("%s (Not implemented)\n", logCode);
+				fflush(stdout);
 				this->_showNotImplemented = false;
 			}
 

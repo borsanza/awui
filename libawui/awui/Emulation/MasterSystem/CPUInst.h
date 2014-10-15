@@ -39,6 +39,7 @@ namespace awui {
 					void LDrXXd(uint8_t reg, uint8_t reg2);
 					void LDssr(uint8_t reg, uint8_t ss);
 					void LDXXdr(uint8_t xx, uint8_t reg);
+					void LDXXdn(uint8_t xx);
 
 					// 16-Bit Load Group
 					void LDddnn(uint8_t reg, uint8_t size = 3);
@@ -116,6 +117,7 @@ namespace awui {
 					void OUTnA();
 					void OUTCr(uint8_t reg);
 					void OUTC();
+					void OUTI();
 
 				public:
 					CPUInst();

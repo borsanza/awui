@@ -110,11 +110,22 @@ void CPUInst::LDssr(uint8_t reg, uint8_t ss) {
 	this->_cycles += 7;
 }
 
+// |3|19| Stores reg to the memory location pointed to by xx plus *.
 void CPUInst::LDXXdr(uint8_t xx, uint8_t reg) {
 	uint16_t x = this->_registers->GetRegss(xx);
 	uint16_t offset = x + this->ReadMemory(this->_registers->GetPC() + 2);
 	this->WriteMemory(offset, this->_registers->GetRegm(reg));
 	this->_registers->IncPC(3);
+	this->_cycles += 19;
+}
+
+// |4|19| Stores * to the memory location pointed to by xx plus *.
+void CPUInst::LDXXdn(uint8_t xx) {
+	uint16_t x = this->_registers->GetRegss(xx);
+	uint16_t offset = x + this->ReadMemory(this->_registers->GetPC() + 2);
+	uint16_t n = this->ReadMemory(this->_registers->GetPC() + 3);
+	this->WriteMemory(offset, n);
+	this->_registers->IncPC(4);
 	this->_cycles += 19;
 }
 
@@ -814,4 +825,20 @@ void CPUInst::OUTC() {
 	this->_ports->WriteByte(C, 0);
 	this->_registers->IncPC(2);
 	this->_cycles += 12;
+}
+
+// |2|16| A byte from the memory location pointed to by hl is written to port c. Then hl is incremented and b is decremented.
+void CPUInst::OUTI() {
+	uint8_t C = this->_registers->GetC();
+	uint8_t B = this->_registers->GetB();
+	uint16_t HL = this->_registers->GetHL();
+	uint8_t value = this->ReadMemory(HL);
+	this->_ports->WriteByte(C, value);
+	this->_registers->SetHL(HL + 1);
+	this->_registers->SetB(B - 1);
+	this->_registers->SetFFlag(FFlag_N, true);
+	this->_registers->SetFFlag(FFlag_Z, ((B - 1) == 0));
+
+	this->_registers->IncPC(2);
+	this->_cycles += 16;
 }
