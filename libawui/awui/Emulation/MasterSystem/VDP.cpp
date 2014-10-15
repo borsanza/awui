@@ -292,8 +292,8 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 
 	// 256 Active Display +
 	// 15 Right Border +
-	// 8 Right Blank +
-	// 26 HSync / 2 <- Suponemos que cambia de linea a mitad
+	// 8 Right Blank <- Suponemos que cambia al final del Right Blank
+	// 26 HSync
 
 	if (*col == 279) {
 		*hsync = true;
@@ -301,8 +301,10 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 		*vsync = this->IsVSYNC(*line);
 		this->_interrupt = *vsync;
 
-		if (this->_registers[0] & 0x10)
-			this->_interrupt = true;
+		if (this->_registers[0] & 0x10) {
+			if ((*line % (this->_registers[10] + 1)) == 0)
+				this->_interrupt = true;
+		}
 
 		if (*line == this->GetTotalHeight())
 			*line = 0;
@@ -378,7 +380,17 @@ uint8_t VDP::GetSpritePixel(int sprite, int x, int y, bool flipx, bool flipy, bo
 bool VDP::OnTick(uint32_t counter) {
 	bool ret = false;
 	bool hsync, vsync;
-	if (this->_line == this->_height) // && (this->_line < (this->_height + 10)))
+
+/*
+	static bool a = true;
+	if (this->_line == 0 && this->_col == 0)
+		a = !a;
+	if (a)
+		this->_registers[8] = 0x71;
+	else
+		this->_registers[8] = 0x70;
+*/
+	if (this->_line == 0 && this->_col == 0)
 		this->_verticalScroll = this->_registers[9];
 
 	this->CalcNextPixel(&this->_col, &this->_line, &hsync, &vsync);
@@ -396,6 +408,9 @@ bool VDP::OnTick(uint32_t counter) {
 		bool vScroll = true;
 		bool hScroll = true;
 
+		if (this->_registers[1] & 0x10)
+			line -= 32;
+
 		if ((col >= 192) && (this->_registers[0] & 0x80))
 			vScroll = false;
 
@@ -408,8 +423,8 @@ bool VDP::OnTick(uint32_t counter) {
 		}
 
 		if (vScroll) {
-			line = line - this->_verticalScroll;
-			while (line < 0) line += this->_height;
+			line = line + this->_verticalScroll;
+			while (line >= 0xe0) line -= 0xe0;
 		}
 
 		int32_t pos;

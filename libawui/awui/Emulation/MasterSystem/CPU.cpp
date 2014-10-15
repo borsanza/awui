@@ -123,8 +123,12 @@ void CPU::RunOpcode() {
 
 	uint16_t opcodeEnum = this->_opcode.GetEnum();
 
-	if (this->_showLog)
+	if (this->_showLog) {
+		printf("%s: %s", logLine, logCode);
 		this->_opcode.ShowLogOpcode(opcodeEnum);
+		printf("\n");
+		fflush(stdout);
+	}
 
 	// http://clrhome.org/table/
 	switch (opcodeEnum) {
@@ -493,13 +497,6 @@ void CPU::RunOpcode() {
 			{
 				uint16_t pc = this->_registers->GetPC();
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				if (offset == pc) {
-						if (this->_showLog) {
-							Console::WriteLine(" --- ROM FINISHED --- ");
-							this->_showLog = false;
-						}
-				}
-
 				this->_registers->SetPC(offset);
 				this->_cycles += 10;
 			}
