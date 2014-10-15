@@ -119,12 +119,20 @@ void Registers::SetA(uint8_t value) {
 	this->_a = value;
 }
 
+void Registers::SetR(uint8_t value) {
+	this->_r = value;
+}
+
 void Registers::SetF(uint8_t value) {
 	this->_f = value;
 }
 
 uint8_t Registers::GetA() const {
 	return this->_a;
+}
+
+uint8_t Registers::GetR() const {
+	return this->_r;
 }
 
 uint8_t Registers::GetF() const {
@@ -244,6 +252,7 @@ uint8_t Registers::GetRegm(uint8_t reg) {
 		case Reg_L: return this->_hl;
 		case Reg_A: return this->_a;
 		case Reg_F: return this->_f;
+		case Reg_R: return this->_r;
 	}
 
 	assert(false);
@@ -260,6 +269,7 @@ void Registers::SetRegm(uint8_t reg, uint8_t value) {
 		case Reg_L: *((uint8_t *) &this->_hl) = value; break;
 		case Reg_A: this->_a = value; break;
 		case Reg_F: this->_f = value; break;
+		case Reg_R: this->_r = value; break;
 		default: assert(0);
 	}
 }

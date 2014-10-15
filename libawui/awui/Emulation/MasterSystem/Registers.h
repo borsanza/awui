@@ -37,6 +37,7 @@ namespace awui {
 				Reg_L = 15,
 				Reg_A = 17,
 				Reg_F = 18,
+				Reg_R = 19,
 			};
 
 			enum {
@@ -66,6 +67,7 @@ namespace awui {
 					uint16_t _pc;
 					uint16_t _sp;
 					uint8_t _im;
+					uint8_t _r;
 					bool _iff1;
 					bool _iff2;
 					bool _interruptsEnabled;
@@ -101,6 +103,9 @@ namespace awui {
 					void SetF(uint8_t value);
 					uint8_t GetA() const;
 					uint8_t GetF() const;
+
+					void SetR(uint8_t value);
+					uint8_t GetR() const;
 
 					void SetBC(uint16_t value);
 					void SetB(uint8_t value);
