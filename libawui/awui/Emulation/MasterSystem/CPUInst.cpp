@@ -194,6 +194,21 @@ void CPUInst::LDSPr(uint8_t reg, uint8_t cycles, uint8_t size) {
 /***************** Exchange, Block Transfer, and Search Group *****************/
 /******************************************************************************/
 
+// |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented.
+void CPUInst::LDI() {
+	uint8_t dataHL = this->ReadMemory(this->_registers->GetHL());
+	this->WriteMemory(this->_registers->GetDE(), dataHL);
+	this->_registers->SetHL(this->_registers->GetHL() + 1);
+	this->_registers->SetDE(this->_registers->GetDE() + 1);
+	uint16_t value = this->_registers->GetBC() - 1;
+	this->_registers->SetBC(value);
+	this->_registers->SetFFlag(FFlag_H, false);
+	this->_registers->SetFFlag(FFlag_PV, value != 0);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->IncPC(2);
+	this->_cycles += 16;
+}
+
 /******************************************************************************/
 /*************************** 8-Bit Arithmetic Group ***************************/
 /******************************************************************************/
@@ -438,9 +453,27 @@ void CPUInst::ADDHLss(uint8_t reg) {
 	this->_cycles += 11;
 }
 
+// |2|15| Adds ss and the carry flag to hl.
+void CPUInst::ADCHLss(uint8_t reg) {
+	int32_t value = this->_registers->GetRegss(reg);
+	if (this->_registers->GetF() & FFlag_C)
+		value++;
+
+	value += this->_registers->GetHL();
+	this->_registers->SetHL((uint16_t) value);
+	this->_registers->SetFFlag(FFlag_S, value < 0);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, value > 0xFFF);
+	// P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, value > 0xFFFF);
+	this->_registers->IncPC(2);
+	this->_cycles += 15;
+}
+
 // |2|15| Subtracts reg and the carry flag from hl.
 void CPUInst::SBCHLss(uint8_t reg) {
-	uint32_t value = this->_registers->GetHL() - (this->_registers->GetRegss(reg) + bool(this->_registers->GetF() & FFlag_C));
+	int32_t value = this->_registers->GetHL() - (this->_registers->GetRegss(reg) + bool(this->_registers->GetF() & FFlag_C));
 	this->_registers->SetHL((uint16_t) value);
 	this->_registers->SetFFlag(FFlag_S, value < 0);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);

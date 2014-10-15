@@ -679,6 +679,11 @@ void CPU::RunOpcode() {
 		case OxED6B: this->LDdd_nn(Reg_HL); break;
 		case OxED7B: this->LDdd_nn(Reg_SP); break;
 
+		case OxED4A: this->ADCHLss(Reg_BC); break;
+		case OxED5A: this->ADCHLss(Reg_DE); break;
+		case OxED6A: this->ADCHLss(Reg_HL); break;
+		case OxED7A: this->ADCHLss(Reg_SP); break;
+
 		// ED46: IM 0
 		// ED66: IM 0
 		// |2|8| Sets interrupt mode 0.
@@ -715,6 +720,7 @@ void CPU::RunOpcode() {
 			// this->_showLog = false;
 			break;
 
+		case OxEDA0: this->LDI(); break;
 		case OxEDA3: this->OUTI(); break;
 
 		// EDB0: LDIR

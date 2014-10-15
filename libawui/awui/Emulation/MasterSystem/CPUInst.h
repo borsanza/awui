@@ -50,6 +50,7 @@ namespace awui {
 					void LDSPr(uint8_t reg, uint8_t cycles = 6, uint8_t size = 1);
 
 					// Exchange, Block Transfer, and Search Group
+					void LDI();
 
 					// 8-Bit Arithmetic Group
 					void ADD(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
@@ -74,6 +75,7 @@ namespace awui {
 
 					// 16-Bit Arithmetic Group
 					void ADDHLss(uint8_t reg);
+					void ADCHLss(uint8_t reg);
 					void SBCHLss(uint8_t reg);
 					void ADDXXpp(uint8_t XX, uint8_t pp);
 					void INCss(uint8_t reg);
