@@ -1167,6 +1167,7 @@ void CPU::RunOpcode() {
 		case OxFD36: this->LDXXdn(Reg_IY); break;
 
 		case OxFD21: this->LDddnn(Reg_IY, 4); break;
+		case OxFD2A: this->LDdd_nn(Reg_IY); break;
 
 		case OxFD46: this->LDrXXd(Reg_B, Reg_IY); break;
 		case OxFD4E: this->LDrXXd(Reg_C, Reg_IY); break;
