@@ -68,6 +68,7 @@ namespace awui {
 					void INCXXd(uint8_t xx);
 
 					// General-Purpose Arithmetic and CPU Control Group
+					void DAA();
 					void CPL();
 					void NEG();
 					void CCF();

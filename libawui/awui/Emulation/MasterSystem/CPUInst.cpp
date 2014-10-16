@@ -26,6 +26,16 @@ using namespace awui::Emulation::MasterSystem;
 // Checking a bit:
 //   bit = number & (1 << x);
 
+static bool PARITYEVEN(uint8_t value) {
+    bool parity = false;
+    while (value) {
+        parity = !parity;
+        value = value & (value - 1);
+    }
+
+    return parity;
+}
+
 CPUInst::CPUInst() {
 	this->_ports = new Ports();
 	this->_ram = new Ram(8192);
@@ -396,9 +406,41 @@ void CPUInst::INCXXd(uint8_t xx) {
 /************** General-Purpose Arithmetic and CPU Control Group **************/
 /******************************************************************************/
 
+// |1|4| Adjusts a for BCD addition and subtraction operations.
+void CPUInst::DAA() {
+	uint8_t A = this->_registers->GetA();
+	bool C = this->_registers->GetF() & FFlag_C;
+	bool H = this->_registers->GetF() & FFlag_H;
+	bool N = this->_registers->GetF() & FFlag_N;
+	uint8_t correction = 0x00;
+
+	if (C || (A > 0x99)) {
+		correction |= 0x60;
+		this->_registers->SetFFlag(FFlag_C, true);
+	} else
+		this->_registers->SetFFlag(FFlag_C, false);
+
+	if (H || ((A & 0x0F) > 9))
+		correction |= 0x06;
+
+	uint8_t value;
+	if (!N)
+		value = A + C;
+	else
+		value = A - C;
+
+	this->_registers->SetA(value);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_H, (A xor value) & 0x10);
+	this->_registers->SetFFlag(FFlag_PV, PARITYEVEN(value));
+	this->_registers->IncPC();
+	this->_cycles += 4;
+}
+
 // |1|4| The contents of a are inverted (one's complement).
 void CPUInst::CPL() {
-	this->_registers->SetA(this->_registers->GetA() ^ 0xFF);
+	this->_registers->SetA(~this->_registers->GetA());
 	this->_registers->SetFFlag(FFlag_H, true);
 	this->_registers->SetFFlag(FFlag_N, true);
 	this->_registers->IncPC();
@@ -408,8 +450,8 @@ void CPUInst::CPL() {
 // |2|8| The contents of a are negated (two's complement). Operation is the same as subtracting a from zero.
 void CPUInst::NEG() {
 	uint8_t old = this->_registers->GetA();
-	uint8_t value = 256 - old;
-	this->_registers->SetA(this->_registers->GetA() ^ 0xFF);
+	uint8_t value = (0xFF - old) + 1;
+	this->_registers->SetA(value);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	// H is set if borrow from bit 4; reset otherwise
@@ -578,7 +620,7 @@ void CPUInst::RL(uint8_t reg) {
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, false);
-	// TODO: P/V is set if parity is even; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, PARITYEVEN(value));
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, old & 0x80);
 	this->_registers->IncPC(2);
@@ -593,7 +635,7 @@ void CPUInst::RR(uint8_t reg) {
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, false);
-	// TODO: P/V is set if parity is even; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, PARITYEVEN(value));
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, old & 0x01);
 	this->_registers->IncPC(2);
@@ -608,7 +650,7 @@ void CPUInst::SLA(uint8_t reg) {
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, false);
-	// TODO: P/V is set if parity is even; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, PARITYEVEN(value));
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, old & 0x80);
 	this->_registers->IncPC(2);
@@ -623,7 +665,7 @@ void CPUInst::SRA(uint8_t reg) {
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, false);
-	// TODO: P/V is set if parity is even; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, PARITYEVEN(value));
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, old & 0x01);
 	this->_registers->IncPC(2);
@@ -637,7 +679,7 @@ void CPUInst::SRL(uint8_t reg) {
 	this->_registers->SetFFlag(FFlag_S, false);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, false);
-	// TODO: P/V is set if parity is even; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, PARITYEVEN(value));
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, old & 0x01);
 	this->_registers->IncPC(2);

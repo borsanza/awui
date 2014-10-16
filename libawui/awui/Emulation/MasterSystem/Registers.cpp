@@ -239,7 +239,7 @@ void Registers::SetFFlag(uint8_t flag, bool value) {
 	if (value)
 		this->_f |= flag;
 	else
-		this->_f &= (0xFF ^ flag);
+		this->_f &= ~flag;
 }
 
 uint8_t Registers::GetRegm(uint8_t reg) {
