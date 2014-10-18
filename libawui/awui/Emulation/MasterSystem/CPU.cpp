@@ -1023,6 +1023,7 @@ void CPU::RunOpcode() {
 		case OxDD19: this->ADDXXpp(Reg_IX, Reg_DE); break;
 		case OxDD29: this->ADDXXpp(Reg_IX, Reg_IX); break;
 		case OxDD39: this->ADDXXpp(Reg_IX, Reg_SP); break;
+		case OxDD86: this->ADD(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
 
 		case OxDDE1: this->POP16(Reg_IX, 14, 2); break;
 		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
@@ -1154,6 +1155,7 @@ void CPU::RunOpcode() {
 		case OxFD19: this->ADDXXpp(Reg_IY, Reg_DE); break;
 		case OxFD29: this->ADDXXpp(Reg_IY, Reg_IY); break;
 		case OxFD39: this->ADDXXpp(Reg_IY, Reg_SP); break;
+		case OxFD86: this->ADD(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
 
 		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
 		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;

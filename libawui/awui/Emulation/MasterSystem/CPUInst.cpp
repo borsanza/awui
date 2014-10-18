@@ -228,13 +228,14 @@ void CPUInst::ADD(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	uint8_t old = this->_registers->GetA();
 	uint8_t value = old + valueb;
 	int16_t pvalue = ((int8_t) old) + ((int8_t) valueb);
+
+	this->_registers->SetA(value);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, (value & 0xF) < (old & 0xF));
 	this->_registers->SetFFlag(FFlag_PV, pvalue > 127 || pvalue < -128);
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, value < old);
-	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
