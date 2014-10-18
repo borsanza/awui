@@ -225,56 +225,77 @@ void CPUInst::LDI() {
 
 // |1|4| Adds valueb to a.
 void CPUInst::ADD(uint8_t valueb, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() + valueb;
-	this->_registers->SetFFlag(FFlag_S, value < 0);
+	uint8_t old = this->_registers->GetA();
+	uint8_t value = old + valueb;
+	int16_t pvalue = ((int8_t) old) + ((int8_t) valueb);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, value > 0xF);
-	// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) < (old & 0xF));
+	this->_registers->SetFFlag(FFlag_PV, pvalue > 127 || pvalue < -128);
 	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_C, value > 0xFF);
-	this->_registers->SetA((uint8_t) value);
+	this->_registers->SetFFlag(FFlag_C, value < old);
+	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
 
 // |1|4| Adds l and the carry flag to a.
 void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() + b + bool(this->_registers->GetF() & FFlag_C);
-	this->_registers->SetFFlag(FFlag_S, value < 0);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, value > 0x0F);
-	// TODO: P/V is set if overflow; reset otherwise
-	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_C, value > 0xFF);
+	uint8_t old = this->_registers->GetA();
+	uint8_t value = old + b;
+	int16_t pvalue = ((int8_t) old) + ((int8_t) b);
+
+	if (this->_registers->GetF() & FFlag_C) {
+		value++;
+		pvalue++;
+	}
+
 	this->_registers->SetA(value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) < (old & 0xF));
+	this->_registers->SetFFlag(FFlag_PV, pvalue > 127 || pvalue < -128);
+	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->SetFFlag(FFlag_C, value < old);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
 
 // |1|4| Subtracts reg from a.
 void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() - b;
-	this->_registers->SetFFlag(FFlag_S, value < 0);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	// TODO: H is set if borrow from bit 4; reset otherwise
-	// TODO: P/V is set if overflow; reset otherwise
-	this->_registers->SetFFlag(FFlag_N, true);
-	// TODO: C is set if borrow; reset otherwise
+	uint8_t old = this->_registers->GetA();
+	uint8_t value = old - b;
+	int16_t pvalue = ((int8_t) old) - ((int8_t) b);
+
 	this->_registers->SetA(value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) > (old & 0xF));
+	this->_registers->SetFFlag(FFlag_PV, pvalue > 127 || pvalue < -128);
+	this->_registers->SetFFlag(FFlag_N, true);
+	this->_registers->SetFFlag(FFlag_C, value > old);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
 
 // |1|4| Subtracts e and the carry flag from a.
 void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() - (b + bool(this->_registers->GetF() & FFlag_C));
-	this->_registers->SetFFlag(FFlag_S, value < 0);
-	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	// TODO: H is set if borrow from bit 4; reset otherwise
-	// TODO: P/V is reset if overflow; reset otherwise
-	this->_registers->SetFFlag(FFlag_N, true);
-	// TODO: C is set if borrow; reset otherwise
+	uint8_t old = this->_registers->GetA();
+	uint8_t value = old - b;
+	int16_t pvalue = ((int8_t) old) - ((int8_t) b);
+
+	if (this->_registers->GetF() & FFlag_C) {
+		value--;
+		pvalue--;
+	}
+
 	this->_registers->SetA(value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) > (old & 0xF));
+	this->_registers->SetFFlag(FFlag_PV, pvalue > 127 || pvalue < -128);
+	this->_registers->SetFFlag(FFlag_N, true);
+	this->_registers->SetFFlag(FFlag_C, value > old);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
@@ -337,12 +358,12 @@ void CPUInst::INCr(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
 	uint8_t value = old + 1;
 	this->_registers->SetRegm(reg, value);
-	this->_registers->IncPC();
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, value > 0xF);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) < (old & 0xF));
 	this->_registers->SetFFlag(FFlag_PV, old == 0x7F);
 	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->IncPC();
 	this->_cycles += 4;
 }
 
@@ -381,21 +402,23 @@ void CPUInst::INCHL() {
 	this->WriteMemory(this->_registers->GetHL(), value);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	// H is set if carry from bit 3; reset otherwise
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) < (old & 0xF));
 	this->_registers->SetFFlag(FFlag_PV, old == 0x7F);
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->IncPC();
 	this->_cycles += 11;
 }
 
+// |3|23| Adds one to the memory location pointed to by ix plus *.
 void CPUInst::INCXXd(uint8_t xx) {
 	uint16_t pc = this->_registers->GetPC();
 	uint16_t offset = this->_registers->GetRegss(xx) + this->ReadMemory(pc + 2);
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = old + 1;
+	this->WriteMemory(offset, value);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, value > 0xFF);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) < (old & 0xF));
 	this->_registers->SetFFlag(FFlag_PV, old == 0x7F);
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->IncPC(3);
@@ -565,69 +588,78 @@ void CPUInst::SCF() {
 
 // |1|11| The value of reg is added to hl.
 void CPUInst::ADDHLss(uint8_t reg) {
-	uint32_t value = this->_registers->GetHL() + this->_registers->GetRegss(reg);
-	this->_registers->SetHL((uint16_t) value);
+	uint16_t old = this->_registers->GetHL();
+	uint16_t value = old + this->_registers->GetRegss(reg);
+	this->_registers->SetHL(value);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xFFF) < (old & 0xFFF));
 	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_H, value > 0xFFF);
-	this->_registers->SetFFlag(FFlag_C, value > 0xFFFF);
+	this->_registers->SetFFlag(FFlag_C, value < old);
 	this->_registers->IncPC();
 	this->_cycles += 11;
 }
 
 // |2|15| Adds ss and the carry flag to hl.
 void CPUInst::ADCHLss(uint8_t reg) {
-	int32_t value = this->_registers->GetRegss(reg);
-	if (this->_registers->GetF() & FFlag_C)
+	uint16_t old = this->_registers->GetHL();
+	uint16_t b = this->_registers->GetRegss(reg);
+	uint16_t value = old + b;
+	int32_t pvalue = ((int16_t) old) + ((int16_t) b);
+	if (this->_registers->GetF() & FFlag_C) {
 		value++;
+		pvalue++;
+	}
 
-	value += this->_registers->GetHL();
-	this->_registers->SetHL((uint16_t) value);
-	this->_registers->SetFFlag(FFlag_S, value < 0);
+	this->_registers->SetHL(value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x8000);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, value > 0xFFF);
-	// P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_H, (value & 0xFFF) < (old & 0xFFF));
+	this->_registers->SetFFlag(FFlag_PV, pvalue > 32767 || pvalue < -32768);
 	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_C, value > 0xFFFF);
+	this->_registers->SetFFlag(FFlag_C, value < old);
 	this->_registers->IncPC(2);
 	this->_cycles += 15;
 }
 
 // |2|15| Subtracts reg and the carry flag from hl.
 void CPUInst::SBCHLss(uint8_t reg) {
-	int32_t value = this->_registers->GetHL() - (this->_registers->GetRegss(reg) + bool(this->_registers->GetF() & FFlag_C));
-	this->_registers->SetHL((uint16_t) value);
-	this->_registers->SetFFlag(FFlag_S, value < 0);
+	uint16_t old = this->_registers->GetHL();
+	uint16_t b = this->_registers->GetRegss(reg);
+	uint16_t value = old - b;
+	int32_t pvalue = ((int16_t) old) - ((int16_t) b);
+
+	if (this->_registers->GetF() & FFlag_C) {
+		value--;
+		pvalue--;
+	}
+
+	this->_registers->SetHL(value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x8000);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	this->_registers->SetFFlag(FFlag_H, value > 0xFFF);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xFFF) > (old & 0xFFF));
+	this->_registers->SetFFlag(FFlag_PV, pvalue > 32767 || pvalue < -32768);
 	this->_registers->SetFFlag(FFlag_N, true);
-	// TODO: C is set if borrow; reset otherwise
+	this->_registers->SetFFlag(FFlag_C, value > old);
 	this->_registers->IncPC(2);
 	this->_cycles += 15;
 }
 
 // |2|15| The value of pp is added to XX.
 void CPUInst::ADDXXpp(uint8_t XX, uint8_t pp) {
-	uint32_t value = this->_registers->GetRegss(XX) + this->_registers->GetRegss(pp);
-	this->_registers->SetRegss(XX, (uint16_t) value);
-	this->_registers->SetFFlag(FFlag_H, value > 0xFFF);
+	uint16_t old = this->_registers->GetRegss(XX);
+	uint16_t value = old + this->_registers->GetRegss(pp);
+	this->_registers->SetRegss(XX, value);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xFFF) < (old & 0xFFF));
 	this->_registers->SetFFlag(FFlag_N, false);
-	this->_registers->SetFFlag(FFlag_C, value > 0xFFFF);
+	this->_registers->SetFFlag(FFlag_C, value < old);
 	this->_registers->IncPC(2);
 	this->_cycles += 15;
 }
 
 // |1|6| Adds one to reg
-void CPUInst::INCss(uint8_t reg) {
+void CPUInst::INCss(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg) + 1);
-	this->_registers->IncPC();
-	this->_cycles += 6;
-}
-
-// |2|10| Adds one to ix.
-void CPUInst::INCXX(uint8_t reg) {
-	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg) + 1);
-	this->_registers->IncPC(2);
-	this->_cycles += 10;
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
 // |1|6| Subtracts one from ss

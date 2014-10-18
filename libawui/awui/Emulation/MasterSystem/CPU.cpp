@@ -14,6 +14,8 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
+#define SLOW
+
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
 
@@ -95,40 +97,53 @@ void CPU::RunOpcode() {
 	uint8_t opcode1 = this->ReadMemory(this->_registers->GetPC());
 	this->_opcode.SetByte1(opcode1);
 
+#ifdef SLOW
 	char logLine[255];
 	char logCode[255];
 	char logAux[255];
 
 	sprintf(logLine, "%.4X", this->_registers->GetPC());
 	sprintf(logCode, "%.2X ", opcode1);
+#endif
 
 	if ((opcode1 == 0xCB) || (opcode1 == 0xDD) || (opcode1 == 0xED) || (opcode1 == 0xFD)) {
 		uint8_t opcode2 = this->ReadMemory(this->_registers->GetPC() + 1);
 		this->_opcode.SetByte2(opcode2);
+
+#ifdef SLOW
 		sprintf(logAux, "%.2X ", opcode2);
 		strcat(logCode, logAux);
+#endif
+
 		if (((opcode1 == 0xDD) || (opcode1 == 0xFD)) && (opcode2 == 0xCB)) {
 			uint8_t opcode4 = this->ReadMemory(this->_registers->GetPC() + 3);
 			this->_opcode.SetByte4(opcode4);
+
+#ifdef SLOW
 			sprintf(logAux, "%.2X ", opcode4);
 			strcat(logCode, logAux);
 		} else {
 			sprintf(logAux, "   ");
 			strcat(logCode, logAux);
+#endif
 		}
 	} else {
+#ifdef SLOW
 		sprintf(logAux, "      ");
 		strcat(logCode, logAux);
+#endif
 	}
 
 	uint16_t opcodeEnum = this->_opcode.GetEnum();
 
+#ifdef SLOW
 	if (this->_showLog) {
 		printf("%s: %s", logLine, logCode);
 		this->_opcode.ShowLogOpcode(opcodeEnum);
 		printf("\n");
 		fflush(stdout);
 	}
+#endif
 
 	// http://clrhome.org/table/
 	switch (opcodeEnum) {
@@ -1025,7 +1040,7 @@ void CPU::RunOpcode() {
 
 		case OxDDE1: this->POP16(Reg_IX, 14, 2); break;
 		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
-		case OxDD23: this->INCXX(Reg_IX); break;
+		case OxDD23: this->INCss(Reg_IX); break;
 		case OxDD34: this->INCXXd(Reg_IX); break;
 		case OxDD36: this->LDXXdn(Reg_IX); break;
 
@@ -1155,7 +1170,7 @@ void CPU::RunOpcode() {
 
 		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
 		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;
-		case OxFD23: this->INCXX(Reg_IY); break;
+		case OxFD23: this->INCss(Reg_IY); break;
 		case OxFD34: this->INCXXd(Reg_IY); break;
 		case OxFD36: this->LDXXdn(Reg_IY); break;
 
@@ -1277,8 +1292,10 @@ void CPU::RunOpcode() {
 		default:
 			this->_cycles += 12; // 71400;
 			if (this->_showNotImplemented) {
+#ifdef SLOW
 				printf("%s (Not implemented)\n", logCode);
 				fflush(stdout);
+#endif
 				this->_showNotImplemented = false;
 			}
 

@@ -16,7 +16,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
-#define MULTIPLY 1
+#define MULTIPLY 2
 
 FormMasterGear::FormMasterGear() {
 	this->_games = new ArrayList();
@@ -65,7 +65,7 @@ void FormMasterGear::LoadRom(const awui::String file) {
 	ms->SetTabStop(true);
 	this->_games->Add(ms);
 	this->_slider->GetControls()->Add(ms);
-	
+
 	if (this->_games->GetCount() == 1)
 		ms->SetFocus();
 }

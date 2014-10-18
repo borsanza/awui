@@ -79,8 +79,7 @@ namespace awui {
 					void ADCHLss(uint8_t reg);
 					void SBCHLss(uint8_t reg);
 					void ADDXXpp(uint8_t XX, uint8_t pp);
-					void INCss(uint8_t reg);
-					void INCXX(uint8_t reg);
+					void INCss(uint8_t reg, uint8_t cycles = 6, uint8_t size = 1);
 					void DECss(uint8_t reg);
 
 					// Rotate and Shift Group
