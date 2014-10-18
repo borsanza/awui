@@ -66,6 +66,7 @@ namespace awui {
 					void DECHL();
 					void INCHL();
 					void INCXXd(uint8_t xx);
+					void DECXXd(uint8_t xx);
 
 					// General-Purpose Arithmetic and CPU Control Group
 					void DAA();

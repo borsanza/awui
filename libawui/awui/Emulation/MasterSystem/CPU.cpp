@@ -1031,6 +1031,7 @@ void CPU::RunOpcode() {
 		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
 		case OxDD23: this->INCss(Reg_IX); break;
 		case OxDD34: this->INCXXd(Reg_IX); break;
+		case OxDD35: this->DECXXd(Reg_IX); break;
 		case OxDD36: this->LDXXdn(Reg_IX); break;
 
 		case OxDD21: this->LDddnn(Reg_IX, 4); break;
@@ -1165,6 +1166,7 @@ void CPU::RunOpcode() {
 		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;
 		case OxFD23: this->INCss(Reg_IY); break;
 		case OxFD34: this->INCXXd(Reg_IY); break;
+		case OxFD35: this->DECXXd(Reg_IY); break;
 		case OxFD36: this->LDXXdn(Reg_IY); break;
 
 		case OxFD21: this->LDddnn(Reg_IY, 4); break;

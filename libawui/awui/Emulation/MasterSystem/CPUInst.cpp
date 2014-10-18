@@ -371,13 +371,13 @@ void CPUInst::INCr(uint8_t reg) {
 // |1|4| Subtracts one from m
 void CPUInst::DECm(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
-	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
 	uint8_t value = old - 1;
 	this->_registers->SetRegm(reg, value);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) > (old & 0xF));
+	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
 	this->_registers->SetFFlag(FFlag_N, true);
-	// TODO: H is set if borrow from bit 4, reset otherwise
 	this->_registers->IncPC();
 	this->_cycles += 4;
 }
@@ -385,13 +385,13 @@ void CPUInst::DECm(uint8_t reg) {
 // |1|11| Subtracts one from (hl)
 void CPUInst::DECHL() {
 	uint8_t old = this->ReadMemory(this->_registers->GetHL());
-	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
 	uint8_t value = old - 1;
 	this->WriteMemory(this->_registers->GetHL(), value);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) > (old & 0xF));
+	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
 	this->_registers->SetFFlag(FFlag_N, true);
-	// TODO: H is set if borrow from bit 4, reset otherwise
 	this->_registers->IncPC();
 	this->_cycles += 11;
 }
@@ -422,6 +422,22 @@ void CPUInst::INCXXd(uint8_t xx) {
 	this->_registers->SetFFlag(FFlag_H, (value & 0xF) < (old & 0xF));
 	this->_registers->SetFFlag(FFlag_PV, old == 0x7F);
 	this->_registers->SetFFlag(FFlag_N, false);
+	this->_registers->IncPC(3);
+	this->_cycles += 23;
+}
+
+// |3|23| Subtracts one from the memory location pointed to by ix plus *.
+void CPUInst::DECXXd(uint8_t xx) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t offset = this->_registers->GetRegss(xx) + this->ReadMemory(pc + 2);
+	uint8_t old = this->ReadMemory(offset);
+	uint8_t value = old - 1;
+	this->WriteMemory(offset, value);
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) > (old & 0xF));
+	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
+	this->_registers->SetFFlag(FFlag_N, true);
 	this->_registers->IncPC(3);
 	this->_cycles += 23;
 }
