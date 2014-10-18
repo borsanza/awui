@@ -213,21 +213,7 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		// 22: LD (**), HL
-		// |3|16| Stores hl into the memory location pointed to by **
-		case Ox22:
-			{
-				uint16_t pc = this->_registers->GetPC();
-				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				uint16_t hl = this->_registers->GetHL();
-				uint8_t h = hl >> 8;
-				uint8_t l = hl;
-				this->WriteMemory(offset, l);
-				this->WriteMemory(offset + 1, h);
-				this->_registers->IncPC(3);
-				this->_cycles += 16;
-			}
-			break;
+		case Ox22: this->LDnndd(Reg_HL, 16, 3); break;
 
 		// 36: LD (HL), *
 		// |2|10| Loads * into (hl).
@@ -1045,6 +1031,7 @@ void CPU::RunOpcode() {
 		case OxDD36: this->LDXXdn(Reg_IX); break;
 
 		case OxDD21: this->LDddnn(Reg_IX, 4); break;
+		case OxDD22: this->LDnndd(Reg_IX); break;
 		case OxDD2A: this->LDdd_nn(Reg_IX); break;
 
 		case OxDD46: this->LDrXXd(Reg_B, Reg_IX); break;
@@ -1175,6 +1162,7 @@ void CPU::RunOpcode() {
 		case OxFD36: this->LDXXdn(Reg_IY); break;
 
 		case OxFD21: this->LDddnn(Reg_IY, 4); break;
+		case OxFD22: this->LDnndd(Reg_IY); break;
 		case OxFD2A: this->LDdd_nn(Reg_IY); break;
 
 		case OxFD46: this->LDrXXd(Reg_B, Reg_IY); break;

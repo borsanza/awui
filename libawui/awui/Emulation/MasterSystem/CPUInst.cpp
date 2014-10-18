@@ -161,16 +161,16 @@ void CPUInst::LDdd_nn(uint8_t reg) {
 }
 
 // |4|20| Stores reg into the memory location pointed to by **
-void CPUInst::LDnndd(uint8_t reg) {
+void CPUInst::LDnndd(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint16_t pc = this->_registers->GetPC();
 	uint16_t word = this->_registers->GetRegss(reg);
 	uint8_t high = word >> 8;
 	uint8_t low = word;
-	uint16_t offset = (this->ReadMemory(pc + 3) << 8) | this->ReadMemory(pc + 2);
+	uint16_t offset = (this->ReadMemory(pc + size - 1) << 8) | this->ReadMemory(pc + size - 2);
 	this->WriteMemory(offset, low);
 	this->WriteMemory(offset + 1, high);
-	this->_registers->IncPC(4);
-	this->_cycles += 20;
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
 void CPUInst::PUSH16(uint8_t reg, uint8_t cycles, uint8_t size) {

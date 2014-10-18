@@ -44,7 +44,7 @@ namespace awui {
 					// 16-Bit Load Group
 					void LDddnn(uint8_t reg, uint8_t size = 3);
 					void LDdd_nn(uint8_t reg);
-					void LDnndd(uint8_t reg);
+					void LDnndd(uint8_t reg, uint8_t cycles = 20, uint8_t size = 4);
 					void PUSH16(uint8_t reg, uint8_t cycles, uint8_t size);
 					void POP16(uint8_t reg, uint8_t cycles, uint8_t size);
 					void LDSPr(uint8_t reg, uint8_t cycles = 6, uint8_t size = 1);
