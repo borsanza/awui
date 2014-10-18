@@ -256,7 +256,7 @@ bool VDP::IsVSYNC(uint16_t line) const {
 			// 240    Active display
 			case 240:
 				// Segun documentacion no funciona en maquinas reales
-				assert(0);
+				//assert(0);
 				return 240 == line;
 		}
 	} else {

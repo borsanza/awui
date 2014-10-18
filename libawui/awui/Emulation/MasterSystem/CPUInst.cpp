@@ -342,7 +342,7 @@ void CPUInst::INCr(uint8_t reg) {
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, value > 0xF);
 	this->_registers->SetFFlag(FFlag_PV, old == 0x7F);
-	this->_registers->SetFFlag(FFlag_N, 0);
+	this->_registers->SetFFlag(FFlag_N, false);
 	this->_cycles += 4;
 }
 
@@ -408,28 +408,107 @@ void CPUInst::INCXXd(uint8_t xx) {
 
 // |1|4| Adjusts a for BCD addition and subtraction operations.
 void CPUInst::DAA() {
-	uint8_t A = this->_registers->GetA();
+	bool N = this->_registers->GetF() & FFlag_N;
 	bool C = this->_registers->GetF() & FFlag_C;
 	bool H = this->_registers->GetF() & FFlag_H;
-	bool N = this->_registers->GetF() & FFlag_N;
+	uint8_t A = this->_registers->GetA();
+	uint8_t AH = A >> 4;
+	uint8_t AL = A & 0xF;
 	uint8_t correction = 0x00;
 
-	if (C || (A > 0x99)) {
-		correction |= 0x60;
-		this->_registers->SetFFlag(FFlag_C, true);
-	} else
-		this->_registers->SetFFlag(FFlag_C, false);
+	do {
+		if (!N) {
+			if (!C) {
+				if (!H) {
+					if ((AH <= 0x9) && (AL <= 0x9)) {
+						// correction = 0x00;
+						// C = false;
+						break;
+					}
+					if ((AH <= 0x8) && (AL >= 0xA)) {
+						correction = 0x06;
+						// C = false;
+						break;
+					}
+					if ((AH >= 0xA) && (AL <= 0x9)) {
+						correction = 0x60;
+						C = true;
+						break;
+					}
+					if ((AH >= 0x9) && (AL >= 0xA)) {
+						correction = 0x66;
+						C = true;
+						break;
+					}
+				} else {
+					if ((AH <= 0x9) && (AL <= 0x3)) {
+						correction = 0x06;
+						// C = false;
+						break;
+					}
+					if ((AH >= 0xA) && (AL <= 0x3)) {
+						correction = 0x66;
+						C = true;
+						break;
+					}
+				}
+			} else {
+				if (!H) {
+					if ((AH <= 0x2) && (AL <= 0x9)) {
+						correction = 0x60;
+						// C = true;
+						break;
+					}
+					if ((AH <= 0x2) && (AL >= 0xA)) {
+						correction = 0x66;
+						// C = true;
+						break;
+					}
+				} else {
+					if ((AH <= 0x3) && (AL <= 0x3)) {
+						correction = 0x66;
+						// C = true;
+						break;
+					}
+				}
+			}
+		} else {
+			if (!C) {
+				if (!H) {
+					if ((AH <= 0x9) && (AL <= 0x9)) {
+						// correction = 0x00;
+						// C = false;
+						break;
+					}
+				} else {
+					if ((AH <= 0x8) && (AL >= 0x6)) {
+						correction = 0xFA;
+						// C = false;
+						break;
+					}
+				}
+			} else {
+				if (!H) {
+					if ((AH >= 0x7) && (AL <= 0x9)) {
+						correction = 0xA0;
+						// C = true;
+						break;
+					}
+				} else {
+					if ((AH >= 0x6) && (AL >= 0x6)) {
+						correction = 0x9A;
+						// C = true;
+						break;
+					}
+				}
+			}
+		}
+	} while (false);
 
-	if (H || ((A & 0x0F) > 9))
-		correction |= 0x06;
-
-	uint8_t value;
-	if (!N)
-		value = A + C;
-	else
-		value = A - C;
-
+	this->_registers->SetFFlag(FFlag_C, C);
+	uint8_t value = A + correction;
 	this->_registers->SetA(value);
+
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_H, (A xor value) & 0x10);
