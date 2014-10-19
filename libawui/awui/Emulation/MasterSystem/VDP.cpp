@@ -443,7 +443,7 @@ bool VDP::OnTick(uint32_t counter) {
 		uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
 
 		// Blank Display
-		if (!(this->_registers[1] & 0x40))
+		if (!(this->_registers[1] & 0x40) || ((this->_registers[0] & 0x20) && (this->_col < 8)))
 			this->_data->WriteByte(pos, this->_cram[this->_registers[7] & 0x0F]);
 		else
 			this->_data->WriteByte(pos, this->GetSpritePixel(sprite, col & 0x7, line & 0x7, byte2 & 0x2, byte2 & 0x4, byte2 & 0x8));
