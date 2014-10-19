@@ -384,14 +384,14 @@ bool VDP::OnTick(uint32_t counter) {
 	bool ret = false;
 	bool hsync, vsync;
 
-	if (this->_line == 0 && this->_col == 0)
-		this->_verticalScroll = this->_registers[9];
-
 	this->CalcNextPixel(&this->_col, &this->_line, &hsync, &vsync);
 	if (vsync) {
 		this->_status |= 0x80;
 		ret = true;
 	}
+
+	if (this->_line == 0 && this->_col == 0)
+		this->_verticalScroll = this->_registers[9];
 
 	if (hsync)
 		this->_status |= 0x40;
