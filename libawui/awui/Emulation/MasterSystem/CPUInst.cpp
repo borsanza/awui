@@ -307,7 +307,7 @@ void CPUInst::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, true);
-	// TODO: P/V is reset if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, PARITYEVEN(value));
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, false);
 	this->_registers->SetA(value);
@@ -321,7 +321,7 @@ void CPUInst::OR(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, false);
-	// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, PARITYEVEN(value));
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, false);
 	this->_registers->SetA(value);
@@ -335,7 +335,7 @@ void CPUInst::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
 	this->_registers->SetFFlag(FFlag_H, false);
-	// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, PARITYEVEN(value));
 	this->_registers->SetFFlag(FFlag_N, false);
 	this->_registers->SetFFlag(FFlag_C, false);
 	this->_registers->SetA(value);
@@ -343,13 +343,17 @@ void CPUInst::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
 	this->_cycles += cycles;
 }
 
-void CPUInst::CP(uint8_t valueb, uint8_t cycles, uint8_t size) {
-	int16_t value = this->_registers->GetA() - valueb;
-	this->_registers->SetFFlag(FFlag_S, value < 0);
+void CPUInst::CP(uint8_t b, uint8_t cycles, uint8_t size) {
+	uint8_t old = this->_registers->GetA();
+	uint8_t value = old - b;
+	int16_t pvalue = ((int8_t) old) - ((int8_t) b);
+
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
-// TODO: P/V is set if overflow; reset otherwise
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) > (old & 0xF));
+	this->_registers->SetFFlag(FFlag_PV, pvalue > 127 || pvalue < -128);
 	this->_registers->SetFFlag(FFlag_N, true);
-// TODO: C is set if borrow; reset otherwise
+	this->_registers->SetFFlag(FFlag_C, value > old);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
