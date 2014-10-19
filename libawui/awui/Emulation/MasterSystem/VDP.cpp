@@ -390,26 +390,33 @@ bool VDP::OnTick(uint32_t counter) {
 		ret = true;
 	}
 
-	if (this->_line == 0 && this->_col == 0)
-		this->_verticalScroll = this->_registers[9];
-
 	if (hsync)
 		this->_status |= 0x40;
+
+	if (this->_line == 0 && this->_col == 0)
+		this->_verticalScroll = this->_registers[9];
 
 	if ((this->_col < this->_width) && (this->_line < this->_height)) {
 		int16_t col = this->_col;
 		int16_t line = this->_line;
 		bool vScroll = true;
 		bool hScroll = true;
+		bool black = false;
 
 		if (this->_registers[1] & 0x10)
 			line -= 32;
 
-		if (((col >> 3) >= 24) && (this->_registers[0] & 0x80))
-			vScroll = false;
-
 		if (((line >> 3) <= 1) && (this->_registers[0] & 0x40))
 			hScroll = false;
+
+		if ((((col - (this->_registers[8] & 0x7))>> 3) >= 24) && (this->_registers[0] & 0x80))
+			vScroll = false;
+		else
+			if ((((col >> 3) >= 24) && (this->_registers[0] & 0x80)) && !hScroll)
+				vScroll = false;
+
+		if (col < (this->_registers[8] & 0x7) && hScroll && ((this->_registers[8] & 0x7) != 0))
+			black = true;
 
 		if (hScroll) {
 			col = col - this->_registers[8];
@@ -427,26 +434,24 @@ bool VDP::OnTick(uint32_t counter) {
 		else
 			pos = this->_col + (this->_line * this->GetVisualWidth());
 
-		uint16_t base = (this->_registers[2] & 0x0E) << 10;
-		int32_t offset = base + ((line >> 3) * 64) + ((col >> 3) * 2);
-		uint8_t byte1 = this->_vram->ReadByte(offset);
-		uint8_t byte2 = this->_vram->ReadByte(offset + 1);
-		uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
-
 		// Blank Display
-		if (!(this->_registers[1] & 0x40) || ((this->_registers[0] & 0x20) && (this->_col < 8)))
+		if (black || !(this->_registers[1] & 0x40) || ((this->_registers[0] & 0x20) && (this->_col < 8))) {
 			this->_data->WriteByte(pos, this->_cram[this->_registers[7] & 0x0F]);
-		else
-			this->_data->WriteByte(pos, this->GetSpritePixel(sprite, col & 0x7, line & 0x7, byte2 & 0x2, byte2 & 0x4, byte2 & 0x8));
-//		this->_data->WriteByte(pos, counter & 0x01? 0xFF:0x00);
-//		this->_data->WriteByte(pos, this->_cram[10]);
+		} else {
+			uint16_t base = (this->_registers[2] & 0x0E) << 10;
+			int32_t offset = base + ((line >> 3) * 64) + ((col >> 3) * 2);
+			uint8_t byte1 = this->_vram->ReadByte(offset);
+			uint8_t byte2 = this->_vram->ReadByte(offset + 1);
+			uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
+			bool flipx = byte2 & 0x2;
+			bool flipy = byte2 & 0x4;
+			bool otherPalette = byte2 & 0x8;
+			this->_data->WriteByte(pos, this->GetSpritePixel(sprite, col & 0x7, line & 0x7, flipx, flipy, otherPalette));
+		}
 	} else {
 		if (this->_showBorder)
 			this->OnTickBorder();
 	}
-
-//	if (this->_line == 110)
-//		printf("%5d: %3dx%3d\n", counter, this->_col, this->_line);
 
 	return ret;
 }
