@@ -384,15 +384,6 @@ bool VDP::OnTick(uint32_t counter) {
 	bool ret = false;
 	bool hsync, vsync;
 
-/*
-	static bool a = true;
-	if (this->_line == 0 && this->_col == 0)
-		a = !a;
-	if (a)
-		this->_registers[8] = 0x71;
-	else
-		this->_registers[8] = 0x70;
-*/
 	if (this->_line == 0 && this->_col == 0)
 		this->_verticalScroll = this->_registers[9];
 
@@ -414,10 +405,10 @@ bool VDP::OnTick(uint32_t counter) {
 		if (this->_registers[1] & 0x10)
 			line -= 32;
 
-		if ((col >= 192) && (this->_registers[0] & 0x80))
+		if (((col >> 3) >= 24) && (this->_registers[0] & 0x80))
 			vScroll = false;
 
-		if ((line <= 15) && (this->_registers[0] & 0x40))
+		if (((line >> 3) <= 1) && (this->_registers[0] & 0x40))
 			hScroll = false;
 
 		if (hScroll) {
