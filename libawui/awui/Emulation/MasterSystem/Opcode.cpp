@@ -541,6 +541,7 @@ int Opcode::GetEnum() const {
 				case 0x4C: return OxDD4C;
 				case 0x4D: return OxDD4D;
 				case 0x4E: return OxDD4E;
+				case 0x50: return OxDD50; // Suposicion
 				case 0x54: return OxDD54;
 				case 0x55: return OxDD55;
 				case 0x56: return OxDD56;
@@ -1006,6 +1007,7 @@ int Opcode::GetEnum() const {
 				case 0x4C: return OxFD4C;
 				case 0x4D: return OxFD4D;
 				case 0x4E: return OxFD4E;
+				case 0x50: return OxFD50; // Suposicion
 				case 0x54: return OxFD54;
 				case 0x55: return OxFD55;
 				case 0x56: return OxFD56;

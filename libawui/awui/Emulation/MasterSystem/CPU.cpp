@@ -253,6 +253,8 @@ void CPU::RunOpcode() {
 		case Ox4D: this->LDrr(Reg_C, Reg_L); break;
 		case Ox4F: this->LDrr(Reg_C, Reg_A); break;
 		case Ox50: this->LDrr(Reg_D, Reg_B); break;
+		case OxDD50: this->LDrr(Reg_D, Reg_B, 2); break; // <- Suposicion
+		case OxFD50: this->LDrr(Reg_D, Reg_B, 2); break; // <- Suposicion
 		case Ox51: this->LDrr(Reg_D, Reg_C); break;
 		case Ox52: this->LDrr(Reg_D, Reg_D); break;
 		case Ox53: this->LDrr(Reg_D, Reg_E); break;
