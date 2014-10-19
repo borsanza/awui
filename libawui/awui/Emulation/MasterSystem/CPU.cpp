@@ -542,7 +542,10 @@ void CPU::RunOpcode() {
 		case OxFF: this->RSTp(0x38); break;
 
 		// D3 *: OUT (*), A
-		case OxD3: this->OUTnA(); break;
+		case OxD3:
+			this->OUTnA();
+			// printf("Address: %s\n", logLine);
+			break;
 
 		// D9: EXX
 		// |1|4| Exchanges the 16-bit contents of bc, de, and hl with bc', de', and hl'.
@@ -637,14 +640,13 @@ void CPU::RunOpcode() {
 /************************ Extended instructions (ED) **************************/
 /******************************************************************************/
 
-		// NEG
-		case OxED44: this->NEG(); break;
-		case OxED4C: this->NEG(); break;
-		case OxED54: this->NEG(); break;
-		case OxED5C: this->NEG(); break;
-		case OxED64: this->NEG(); break;
-		case OxED6C: this->NEG(); break;
-		case OxED74: this->NEG(); break;
+		case OxED44:
+		case OxED4C:
+		case OxED54:
+		case OxED5C:
+		case OxED64:
+		case OxED6C:
+		case OxED74:
 		case OxED7C: this->NEG(); break;
 
 		// OUT (C), r
@@ -757,7 +759,7 @@ void CPU::RunOpcode() {
 				this->_addressBus._l = c;
 				this->_addressBus._h = b;
 				this->_ports->WriteByte(c, this->ReadMemory(hl));
-				// printf("Address: %.4X\n", this->_addressBus._w);
+				//printf("Address: %.4X\n", this->_addressBus._w);
 				this->_registers->SetHL(hl + 1);
 				this->_registers->SetB(b);
 				this->_registers->SetFFlag(FFlag_N, true);

@@ -1,3 +1,4 @@
+
 /*
  * awui/Emulation/MasterSystem/VDP.cpp
  *
@@ -286,32 +287,34 @@ bool VDP::IsVSYNC(uint16_t line) const {
 }
 
 void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) {
-	(*col)++;
 	*hsync = false;
 	*vsync = false;
+
+	(*col)++;
+	if (*col == this->GetTotalWidth()) {
+		*col = 0;
+		(*line)++;
+		if (*line == this->GetTotalHeight())
+			*line = 0;
+	}
+
+	if (*col == 271) {
+		if (*line == this->GetTotalHeight() - 2)
+			this->_interrupt = true;
+
+		if (this->_registers[0] & 0x10)
+			if (((*line - 3) % (this->_registers[10] + 1)) == 0)
+				this->_interrupt = true;
+	}
 
 	// 256 Active Display +
 	// 15 Right Border +
 	// 8 Right Blank <- Suponemos que cambia al final del Right Blank
 	// 26 HSync
-
 	if (*col == 279) {
 		*hsync = true;
-		(*line)++;
 		*vsync = this->IsVSYNC(*line);
-		this->_interrupt = *vsync;
-
-		if (this->_registers[0] & 0x10) {
-			if ((*line % (this->_registers[10] + 1)) == 0)
-				this->_interrupt = true;
-		}
-
-		if (*line == this->GetTotalHeight())
-			*line = 0;
 	}
-
-	if (*col == this->GetTotalWidth())
-		*col = 0;
 }
 
 void VDP::OnTickBorder() {
@@ -542,7 +545,6 @@ void VDP::WriteControlByte(uint8_t value) {
 				uint8_t pos = value & 0xF;
 				if (pos < 11) {
 					this->_registers[pos] = this->_controlByte;
-					// printf("VReg[%X] = %.2X\n", value & 0xF, this->_controlByte);
 					this->UpdateAllRegisters();
 				}
 			}

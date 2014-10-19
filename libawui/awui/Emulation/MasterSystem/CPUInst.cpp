@@ -577,7 +577,7 @@ void CPUInst::NEG() {
 	this->_registers->SetA(value);
 	this->_registers->SetFFlag(FFlag_S, value & 0x80);
 	this->_registers->SetFFlag(FFlag_Z, value == 0);
-	// H is set if borrow from bit 4; reset otherwise
+	this->_registers->SetFFlag(FFlag_PV, (old & 0xF) != (value & 0xF));
 	this->_registers->SetFFlag(FFlag_PV, old == 0x80);
 	this->_registers->SetFFlag(FFlag_N, true);
 	this->_registers->SetFFlag(FFlag_C, old != 0);
