@@ -51,6 +51,7 @@ namespace awui {
 
 					// Exchange, Block Transfer, and Search Group
 					void LDI();
+					void CPI();
 
 					// 8-Bit Arithmetic Group
 					void ADD(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);

@@ -219,6 +219,27 @@ void CPUInst::LDI() {
 	this->_cycles += 16;
 }
 
+// |2|16| Compares the value of the memory location pointed to by hl with a. Then hl is incremented and bc is decremented.
+void CPUInst::CPI() {
+	uint16_t HL = this->_registers->GetHL();
+	uint8_t b = this->ReadMemory(HL);
+	uint8_t old = this->_registers->GetA();
+	uint8_t value = old - b;
+	int16_t pvalue = ((int8_t) old) - ((int8_t) b);
+	uint16_t BC = this->_registers->GetBC() - 1;
+
+	this->_registers->SetHL(HL + 1);
+	this->_registers->SetBC(BC);
+
+	this->_registers->SetFFlag(FFlag_S, value & 0x80);
+	this->_registers->SetFFlag(FFlag_Z, value == 0);
+	this->_registers->SetFFlag(FFlag_H, (value & 0xF) > (old & 0xF));
+	this->_registers->SetFFlag(FFlag_PV, BC != 0);
+	this->_registers->SetFFlag(FFlag_N, true);
+	this->_registers->IncPC(2);
+	this->_cycles += 16;
+}
+
 /******************************************************************************/
 /*************************** 8-Bit Arithmetic Group ***************************/
 /******************************************************************************/
