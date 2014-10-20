@@ -57,7 +57,7 @@ void CPU::OnTick() {
 	double fps = this->_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;
 	// Entiendo que debe ser 3.57
 	double speed = this->_vdp->GetNTSC() ? 3.579545f : 3.5468949f;
-	this->_frame += fps / 60.0f; // Refresco de awui
+	this->_frame += fps / 59.922743404f; // Refresco de awui
 
 	if ((int) this->_frame == (int) this->_oldFrame)
 		return;
