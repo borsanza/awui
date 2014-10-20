@@ -225,7 +225,6 @@ void CPUInst::CPI() {
 	uint8_t b = this->ReadMemory(HL);
 	uint8_t old = this->_registers->GetA();
 	uint8_t value = old - b;
-	int16_t pvalue = ((int8_t) old) - ((int8_t) b);
 	uint16_t BC = this->_registers->GetBC() - 1;
 
 	this->_registers->SetHL(HL + 1);
