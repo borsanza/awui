@@ -50,29 +50,32 @@ void CPU::CheckInterrupts() {
 	}
 }
 
+// http://www.smspower.org/forums/viewtopic.php?p=69680
+// 53693175 / (15 * 228 * 262) ~ 59.922743404 frames per second for NTSC
+// 53203424 / (15 * 228 * 313) ~ 49.7014591858 frames per second for PAL
 void CPU::OnTick() {
-	float fps = this->_vdp->GetNTSC() ? 60.0f : 50.0f;
-	float speed = this->_vdp->GetNTSC() ? 3.57f : 3.54f;
+	double fps = this->_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;
+	// Entiendo que debe ser 3.57
+	double speed = this->_vdp->GetNTSC() ? 3.579545f : 3.5468949f;
 	this->_frame += fps / 60.0f; // Refresco de awui
 
-	if ((int) this->_frame == (int) this->_oldFrame) {
+	if ((int) this->_frame == (int) this->_oldFrame)
 		return;
-	}
 
 	this->_oldFrame = this->_frame;
 
-	float iters = (speed * 1000000.0f) / fps;
-	float itersVDP = this->_vdp->GetTotalWidth() * this->_vdp->GetTotalHeight();
+	double iters = (speed * 1000000.0f) / fps;
+	double itersVDP = this->_vdp->GetTotalWidth() * this->_vdp->GetTotalHeight();
 
 	bool vsync = false;
 	int vdpCount = 0;
-	float vdpIters = 0;
+	double vdpIters = 0;
 
 	int realIters = 0;
 	for (int i = 0; i < iters; i++) {
 		int64_t oldCycles = this->_cycles;
 		this->RunOpcode();
-		float times = (this->_cycles - oldCycles);
+		double times = (this->_cycles - oldCycles);
 		i = i + times - 1;
 		vdpIters += times * (itersVDP / iters);
 		if (!vsync) {
