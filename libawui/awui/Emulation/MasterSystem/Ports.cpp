@@ -60,6 +60,12 @@ uint8_t Ports::ReadByte(uint8_t port) const {
 	if (port >= 0x40 && port <= 0xBF)
 		return this->_vdp->ReadByte(port);
 
+	if (port == 0xDC || port == 0xC0)
+		return 0xFF;
+
+	if (port == 0xDD || port == 0xC1)
+		return 0xFF;
+
 //	assert(false);
 	return 0;
 }
