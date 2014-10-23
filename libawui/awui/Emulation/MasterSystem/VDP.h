@@ -62,7 +62,10 @@ namespace awui {
 					void SetHeight(uint16_t height);
 					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync);
 					bool IsVSYNC(uint16_t line) const;
-					uint8_t GetSpritePixel(int sprite, int x, int y, bool flipx, bool flipy, bool otherPalete) const;
+
+					uint8_t GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete) const;
+					bool GetSpritePixel(int x, int y, uint8_t * color) const;
+					uint8_t GetBackgroundPixel(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete) const;
 
 				public:
 					VDP(CPU * cpu);
@@ -108,7 +111,7 @@ namespace awui {
 
 					uint16_t GetLine() const;
 					uint16_t GetColumn() const;
-					
+
 					uint8_t GetBackColor() const;
 			};
 		}
