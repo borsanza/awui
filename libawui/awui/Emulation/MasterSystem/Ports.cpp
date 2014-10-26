@@ -28,6 +28,12 @@ using namespace awui::Emulation::MasterSystem;
  */
 
 Ports::Ports() {
+	// 0: Japonesa
+	// 1: Japonesa
+	// 2: Japonesa
+	// 3: Japonesa
+	this->_region = 2;
+	this->_getRegion = false;
 }
 
 Ports::~Ports() {
@@ -49,6 +55,21 @@ void Ports::WriteByte(uint8_t port, uint8_t value) {
 	if (port == 0xFD) {
 		printf("%c", value);
 		fflush(stdout);
+		return;
+	}
+
+	if (port == 0x3F) {
+		if (value == 0xF5) {
+//			printf("Region: True\n");
+			this->_getRegion = true;
+		}
+
+		if (value == 0xF0) {
+//			printf("Region: False\n");
+			this->_getRegion = false;
+		}
+
+		return;
 	}
 
 //	assert(false);
@@ -63,8 +84,14 @@ uint8_t Ports::ReadByte(uint8_t port) const {
 	if (port == 0xDC || port == 0xC0)
 		return 0xFF;
 
-	if (port == 0xDD || port == 0xC1)
+	if (port == 0xDD || port == 0xC1) {
+		if (this->_getRegion) {
+//			printf("Region: %d\n", this->_region);
+			return 0x1F | ((this->_region & 0x3) << 6);
+		}
+
 		return 0xFF;
+	}
 
 //	assert(false);
 	return 0;

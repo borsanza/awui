@@ -11,6 +11,8 @@ namespace awui {
 			class Ports {
 				private:
 					VDP * _vdp;
+					uint8_t _region;
+					bool _getRegion;
 
 				public:
 					Ports();

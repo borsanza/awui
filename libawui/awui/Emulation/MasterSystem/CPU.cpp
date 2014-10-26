@@ -780,7 +780,14 @@ void CPU::RunOpcode() {
 /*************************** Bit instructions (CB) ****************************/
 /******************************************************************************/
 
-		// RL reg
+		case OxCB08: this->RRC(Reg_B); break;
+		case OxCB09: this->RRC(Reg_C); break;
+		case OxCB0A: this->RRC(Reg_D); break;
+		case OxCB0B: this->RRC(Reg_E); break;
+		case OxCB0C: this->RRC(Reg_H); break;
+		case OxCB0D: this->RRC(Reg_L); break;
+		case OxCB0F: this->RRC(Reg_A); break;
+
 		case OxCB10: this->RL(Reg_B); break;
 		case OxCB11: this->RL(Reg_C); break;
 		case OxCB12: this->RL(Reg_D); break;
@@ -789,7 +796,6 @@ void CPU::RunOpcode() {
 		case OxCB15: this->RL(Reg_L); break;
 		case OxCB17: this->RL(Reg_A); break;
 
-		// RR reg
 		case OxCB18: this->RR(Reg_B); break;
 		case OxCB19: this->RR(Reg_C); break;
 		case OxCB1A: this->RR(Reg_D); break;
@@ -798,7 +804,6 @@ void CPU::RunOpcode() {
 		case OxCB1D: this->RR(Reg_L); break;
 		case OxCB1F: this->RR(Reg_A); break;
 
-		// SLA reg
 		case OxCB20: this->SLA(Reg_B); break;
 		case OxCB21: this->SLA(Reg_C); break;
 		case OxCB22: this->SLA(Reg_D); break;
@@ -807,7 +812,6 @@ void CPU::RunOpcode() {
 		case OxCB25: this->SLA(Reg_L); break;
 		case OxCB27: this->SLA(Reg_A); break;
 
-		// SRA reg
 		case OxCB28: this->SRA(Reg_B); break;
 		case OxCB29: this->SRA(Reg_C); break;
 		case OxCB2A: this->SRA(Reg_D); break;
@@ -816,7 +820,14 @@ void CPU::RunOpcode() {
 		case OxCB2D: this->SRA(Reg_L); break;
 		case OxCB2F: this->SRA(Reg_A); break;
 
-		// SRL reg
+		case OxCB30: this->SLL(Reg_B); break;
+		case OxCB31: this->SLL(Reg_C); break;
+		case OxCB32: this->SLL(Reg_D); break;
+		case OxCB33: this->SLL(Reg_E); break;
+		case OxCB34: this->SLL(Reg_H); break;
+		case OxCB35: this->SLL(Reg_L); break;
+		case OxCB37: this->SLL(Reg_A); break;
+
 		case OxCB38: this->SRA(Reg_B); break;
 		case OxCB39: this->SRA(Reg_C); break;
 		case OxCB3A: this->SRA(Reg_D); break;
