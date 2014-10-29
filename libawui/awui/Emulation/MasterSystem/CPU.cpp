@@ -800,6 +800,7 @@ void CPU::RunOpcode() {
 		case OxCB1B: this->RR(Reg_E); break;
 		case OxCB1C: this->RR(Reg_H); break;
 		case OxCB1D: this->RR(Reg_L); break;
+		case OxCB1E: this->RR_HL(); break;
 		case OxCB1F: this->RR(Reg_A); break;
 
 		case OxCB20: this->SLA(Reg_B); break;
