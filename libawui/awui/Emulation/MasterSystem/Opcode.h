@@ -507,7 +507,6 @@ namespace awui {
 				OxDD4C,
 				OxDD4D,
 				OxDD4E,
-				OxDD50, // Suposicion
 				OxDD54,
 				OxDD55,
 				OxDD56,
@@ -543,7 +542,6 @@ namespace awui {
 				OxDD84,
 				OxDD85,
 				OxDD86,
-				OxDD88, // Suposicion
 				OxDD8C,
 				OxDD8D,
 				OxDD8E,
@@ -958,7 +956,6 @@ namespace awui {
 				OxFD4C,
 				OxFD4D,
 				OxFD4E,
-				OxFD50, // Suposicion
 				OxFD54,
 				OxFD55,
 				OxFD56,
@@ -994,7 +991,6 @@ namespace awui {
 				OxFD84,
 				OxFD85,
 				OxFD86,
-				OxFD88, // Suposicion
 				OxFD8C,
 				OxFD8D,
 				OxFD8E,

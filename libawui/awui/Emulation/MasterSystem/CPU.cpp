@@ -98,6 +98,8 @@ void CPU::OnTick() {
 
 void CPU::RunOpcode() {
 	uint8_t opcode1 = this->ReadMemory(this->_registers->GetPC());
+	uint8_t opcode2;
+
 	this->_opcode.SetByte1(opcode1);
 
 #ifdef SLOW
@@ -110,7 +112,7 @@ void CPU::RunOpcode() {
 #endif
 
 	if ((opcode1 == 0xCB) || (opcode1 == 0xDD) || (opcode1 == 0xED) || (opcode1 == 0xFD)) {
-		uint8_t opcode2 = this->ReadMemory(this->_registers->GetPC() + 1);
+		opcode2 = this->ReadMemory(this->_registers->GetPC() + 1);
 		this->_opcode.SetByte2(opcode2);
 
 #ifdef SLOW
@@ -141,6 +143,7 @@ void CPU::RunOpcode() {
 
 #ifdef SLOW
 	if (this->_showLog) {
+//		printf("(HL = %.4X) ", this->_registers->GetHL());
 		printf("%s: %s", logLine, logCode);
 		this->_opcode.ShowLogOpcode(opcodeEnum);
 		printf("\n");
@@ -256,8 +259,6 @@ void CPU::RunOpcode() {
 		case Ox4D: this->LDrr(Reg_C, Reg_L); break;
 		case Ox4F: this->LDrr(Reg_C, Reg_A); break;
 		case Ox50: this->LDrr(Reg_D, Reg_B); break;
-		case OxDD50: this->LDrr(Reg_D, Reg_B, 2); break; // <- Suposicion
-		case OxFD50: this->LDrr(Reg_D, Reg_B, 2); break; // <- Suposicion
 		case Ox51: this->LDrr(Reg_D, Reg_C); break;
 		case Ox52: this->LDrr(Reg_D, Reg_D); break;
 		case Ox53: this->LDrr(Reg_D, Reg_E); break;
@@ -308,10 +309,10 @@ void CPU::RunOpcode() {
 		// 28 nn: JR X, *
 		// |2|12/7| If condition X is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox18: this->JR(true); break;
-		case Ox20: this->JR(!(this->_registers->GetF() & FFlag_Z)); break;
-		case Ox28: this->JR(  this->_registers->GetF() & FFlag_Z);  break;
-		case Ox30: this->JR(!(this->_registers->GetF() & FFlag_C)); break;
-		case Ox38: this->JR(  this->_registers->GetF() & FFlag_C);  break;
+		case Ox20: this->JR(!(this->_registers->GetF() & Flag_Z)); break;
+		case Ox28: this->JR(  this->_registers->GetF() & Flag_Z);  break;
+		case Ox30: this->JR(!(this->_registers->GetF() & Flag_C)); break;
+		case Ox38: this->JR(  this->_registers->GetF() & Flag_C);  break;
 
 		// 32 nn: LD **, A
 		// |3|13| Stores a into the memory location pointed to by **.
@@ -424,8 +425,6 @@ void CPU::RunOpcode() {
 
 		// ADC s
 		case Ox88: this->ADC(this->_registers->GetB()); break;
-		case OxDD88: this->ADC(this->_registers->GetB(), 4, 2); break; // <- Suposicion
-		case OxFD88: this->ADC(this->_registers->GetB(), 4, 2); break; // <- Suposicion
 
 		case Ox89: this->ADC(this->_registers->GetC()); break;
 		case Ox8A: this->ADC(this->_registers->GetD()); break;
@@ -481,14 +480,14 @@ void CPU::RunOpcode() {
 		case OxE6: this->AND(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
 
 		// JP cc, nn
-		case OxC2: this->JPccnn(!(this->_registers->GetF() & FFlag_Z));  break;
-		case OxCA: this->JPccnn(  this->_registers->GetF() & FFlag_Z);   break;
-		case OxD2: this->JPccnn(!(this->_registers->GetF() & FFlag_C));  break;
-		case OxDA: this->JPccnn(  this->_registers->GetF() & FFlag_C);   break;
-		case OxE2: this->JPccnn(!(this->_registers->GetF() & FFlag_PV)); break;
-		case OxEA: this->JPccnn(  this->_registers->GetF() & FFlag_PV);  break;
-		case OxF2: this->JPccnn(!(this->_registers->GetF() & FFlag_S));  break;
-		case OxFA: this->JPccnn(  this->_registers->GetF() & FFlag_S);   break;
+		case OxC2: this->JPccnn(!(this->_registers->GetF() & Flag_Z));  break;
+		case OxCA: this->JPccnn(  this->_registers->GetF() & Flag_Z);   break;
+		case OxD2: this->JPccnn(!(this->_registers->GetF() & Flag_C));  break;
+		case OxDA: this->JPccnn(  this->_registers->GetF() & Flag_C);   break;
+		case OxE2: this->JPccnn(!(this->_registers->GetF() & Flag_V)); break;
+		case OxEA: this->JPccnn(  this->_registers->GetF() & Flag_V);  break;
+		case OxF2: this->JPccnn(!(this->_registers->GetF() & Flag_S));  break;
+		case OxFA: this->JPccnn(  this->_registers->GetF() & Flag_S);   break;
 
 		// C3 nn: JP **
 		// |3|10| ** is copied to pc.
@@ -513,26 +512,26 @@ void CPU::RunOpcode() {
 
 		// C9: RET
 		// |1|10| The top stack entry is popped into pc.
-		case OxC0: this->RET(!(this->_registers->GetF() & FFlag_Z)); break;
-		case OxC8: this->RET( (this->_registers->GetF() & FFlag_Z)); break;
+		case OxC0: this->RET(!(this->_registers->GetF() & Flag_Z)); break;
+		case OxC8: this->RET( (this->_registers->GetF() & Flag_Z)); break;
 		case OxC9: this->RET(true, 10); break;
-		case OxD0: this->RET(!(this->_registers->GetF() & FFlag_C)); break;
-		case OxD8: this->RET( (this->_registers->GetF() & FFlag_C)); break;
-		case OxE0: this->RET(!(this->_registers->GetF() & FFlag_PV)); break;
-		case OxE8: this->RET( (this->_registers->GetF() & FFlag_PV)); break;
-		case OxF0: this->RET(!(this->_registers->GetF() & FFlag_S)); break;
-		case OxF8: this->RET( (this->_registers->GetF() & FFlag_S)); break;
+		case OxD0: this->RET(!(this->_registers->GetF() & Flag_C)); break;
+		case OxD8: this->RET( (this->_registers->GetF() & Flag_C)); break;
+		case OxE0: this->RET(!(this->_registers->GetF() & Flag_V)); break;
+		case OxE8: this->RET( (this->_registers->GetF() & Flag_V)); break;
+		case OxF0: this->RET(!(this->_registers->GetF() & Flag_S)); break;
+		case OxF8: this->RET( (this->_registers->GetF() & Flag_S)); break;
 
 		// CD nn: CALL **
-		case OxC4: this->CALLccnn(!(this->_registers->GetF() & FFlag_Z)); break;
-		case OxCC: this->CALLccnn( (this->_registers->GetF() & FFlag_Z)); break;
+		case OxC4: this->CALLccnn(!(this->_registers->GetF() & Flag_Z)); break;
+		case OxCC: this->CALLccnn( (this->_registers->GetF() & Flag_Z)); break;
 		case OxCD: this->CALLnn(); break;
-		case OxD4: this->CALLccnn(!(this->_registers->GetF() & FFlag_C)); break;
-		case OxDC: this->CALLccnn( (this->_registers->GetF() & FFlag_C)); break;
-		case OxE4: this->CALLccnn(!(this->_registers->GetF() & FFlag_PV)); break;
-		case OxEC: this->CALLccnn( (this->_registers->GetF() & FFlag_PV)); break;
-		case OxF4: this->CALLccnn(!(this->_registers->GetF() & FFlag_S)); break;
-		case OxFC: this->CALLccnn( (this->_registers->GetF() & FFlag_S)); break;
+		case OxD4: this->CALLccnn(!(this->_registers->GetF() & Flag_C)); break;
+		case OxDC: this->CALLccnn( (this->_registers->GetF() & Flag_C)); break;
+		case OxE4: this->CALLccnn(!(this->_registers->GetF() & Flag_V)); break;
+		case OxEC: this->CALLccnn( (this->_registers->GetF() & Flag_V)); break;
+		case OxF4: this->CALLccnn(!(this->_registers->GetF() & Flag_S)); break;
+		case OxFC: this->CALLccnn( (this->_registers->GetF() & Flag_S)); break;
 
 		// RST p
 		case OxC7: this->RSTp(0x00); break;
@@ -576,9 +575,7 @@ void CPU::RunOpcode() {
 		// |1|4| Loads the value of hl into pc.
 		case OxE9:
 			{
-				uint16_t hl = this->_registers->GetHL();
-				uint16_t aux = this->ReadMemory(hl + 1) << 8 | this->ReadMemory(hl);
-			    this->_registers->SetPC(aux);
+			    this->_registers->SetPC(this->_registers->GetHL());
 				this->_cycles += 4;
 			}
 			break;
@@ -739,9 +736,9 @@ void CPU::RunOpcode() {
 				this->_registers->SetDE(de + 1);
 				this->_registers->SetBC(bc);
 
-				this->_registers->SetFFlag(FFlag_N, false);
-				this->_registers->SetFFlag(FFlag_PV, false);
-				this->_registers->SetFFlag(FFlag_H, false);
+				this->_registers->SetFFlag(Flag_N, false);
+				this->_registers->SetFFlag(Flag_V, false);
+				this->_registers->SetFFlag(Flag_H, false);
 
 				if (bc == 0) {
 					this->_registers->IncPC(2);
@@ -766,8 +763,8 @@ void CPU::RunOpcode() {
 				//printf("Address: %.4X\n", this->_addressBus._w);
 				this->_registers->SetHL(hl + 1);
 				this->_registers->SetB(b);
-				this->_registers->SetFFlag(FFlag_N, true);
-				this->_registers->SetFFlag(FFlag_Z, true);
+				this->_registers->SetFFlag(Flag_N, true);
+				this->_registers->SetFFlag(Flag_Z, true);
 				if (b == 0) {
 					this->_registers->IncPC(2);
 					this->_cycles += 16;
@@ -786,6 +783,7 @@ void CPU::RunOpcode() {
 		case OxCB0B: this->RRC(Reg_E); break;
 		case OxCB0C: this->RRC(Reg_H); break;
 		case OxCB0D: this->RRC(Reg_L); break;
+		case OxCB0E: this->RRC_HL(); break;
 		case OxCB0F: this->RRC(Reg_A); break;
 
 		case OxCB10: this->RL(Reg_B); break;
@@ -1320,18 +1318,39 @@ void CPU::RunOpcode() {
 		case OxFDCBnnFE: this->SETbssd(0x80, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
 
 		default:
-			this->_cycles += 12; // 71400;
-			if (this->_showNotImplemented) {
+		{
+			bool normal = false;
+			if ((opcode1 == 0xDD) || (opcode1 == 0xFD)) {
+/*
+				switch (opcode2) {
+					case 0x88:
+						normal = true;
+						printf("%s: %s (Not implemented: Executing opcode %.2X)\n", logLine, logCode, opcode2);
+						this->_registers->IncPC();
+						break;
+				}
+*/
+			}
+
+			if (!normal) {
+				this->_cycles += 12; // 71400;
+				if (this->_showNotImplemented) {
 #ifdef SLOW
-				printf("%s (Not implemented)\n", logCode);
-				fflush(stdout);
+//					printf("(HL = %.4X) ", this->_registers->GetHL());
+//					printf("%s: ", logLine);
+					printf("%s (Not implemented)\n", logCode);
+					fflush(stdout);
 #endif
-				this->_showNotImplemented = false;
+					this->_showNotImplemented = false;
+				}
 			}
 
 //			assert(0);
 			break;
+		}
 	}
+
+//	printf("%s\n", logCode);
 }
 
 uint16_t CPU::GetAddressBus() const {

@@ -6,7 +6,6 @@
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
-
 /*
  * Flags of F
  * 7  6  5  4  3  2   1  0
@@ -20,12 +19,21 @@ namespace awui {
  * C: Carry. Set if the result did not fit in the register
  */
 			enum {
-				FFlag_C  = 1,
-				FFlag_N  = 2,
-				FFlag_PV = 4,
-				FFlag_H  = 16,
-				FFlag_Z  = 64,
-				FFlag_S  = 128,
+				Flag_C = 0x01,
+				Flag_N = 0x02,
+				Flag_P = 0x04,
+				Flag_V = 0x04,
+				Flag_H = 0x10,
+				Flag_Z = 0x40,
+				Flag_S = 0x80,
+
+				Flag_i_C = 0xFE,
+				Flag_i_N = 0xFD,
+				Flag_i_P = 0xFB,
+				Flag_i_V = 0xFB,
+				Flag_i_H = 0xEF,
+				Flag_i_Z = 0xBF,
+				Flag_i_S = 0x7F,
 			};
 
 			enum {
@@ -48,6 +56,25 @@ namespace awui {
 				Reg_IX = 24,
 				Reg_IY = 25,
 				Reg_AF = 26,
+			};
+
+			static uint8_t ZS_Flags[256] = {
+				Flag_Z, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S,
+				Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S,
+				Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S,
+				Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S,
+				Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S,
+				Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S,
+				Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S,
+				Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S, Flag_S
 			};
 
 			class Registers {

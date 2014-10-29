@@ -302,9 +302,8 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 		if (*line == this->GetTotalHeight() - 2)
 			this->_interrupt = true;
 
-		if (this->_registers[0] & 0x10)
-			if (((*line - 3) % (this->_registers[10] + 1)) == 0)
-				this->_interrupt = true;
+		if ((this->_registers[0] & 0x10) && ((this->_registers[10] == 0) || (((*line - 3) % (this->_registers[10] + 1)) == 0)))
+			this->_interrupt = true;
 	}
 
 	// 256 Active Display +
