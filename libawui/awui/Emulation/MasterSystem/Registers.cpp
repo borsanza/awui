@@ -253,6 +253,10 @@ uint8_t Registers::GetRegm(uint8_t reg) {
 		case Reg_A: return this->_a;
 		case Reg_F: return this->_f;
 		case Reg_R: return this->_r;
+		case Reg_IXH: return *(((uint8_t *) &this->_ix) + 1);
+		case Reg_IXL: return this->_ix;
+		case Reg_IYH: return *(((uint8_t *) &this->_iy) + 1);
+		case Reg_IYL: return this->_iy;
 	}
 
 	assert(false);
@@ -270,6 +274,10 @@ void Registers::SetRegm(uint8_t reg, uint8_t value) {
 		case Reg_A: this->_a = value; break;
 		case Reg_F: this->_f = value; break;
 		case Reg_R: this->_r = value; break;
+		case Reg_IXH: *(((uint8_t *) &this->_ix) + 1) = value; break;
+		case Reg_IXL: *((uint8_t *) &this->_ix) = value; break;
+		case Reg_IYH: *(((uint8_t *) &this->_iy) + 1) = value; break;
+		case Reg_IYL: *((uint8_t *) &this->_iy) = value; break;
 		default: assert(0);
 	}
 }

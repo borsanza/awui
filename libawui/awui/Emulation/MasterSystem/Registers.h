@@ -46,16 +46,20 @@ namespace awui {
 				Reg_A = 17,
 				Reg_F = 18,
 				Reg_R = 19,
+				Reg_IXH = 20,
+				Reg_IXL = 21,
+				Reg_IYH = 22,
+				Reg_IYL = 23,
 			};
 
 			enum {
-				Reg_BC = 20,
-				Reg_DE = 21,
-				Reg_HL = 22,
-				Reg_SP = 23,
-				Reg_IX = 24,
-				Reg_IY = 25,
-				Reg_AF = 26,
+				Reg_BC = 30,
+				Reg_DE = 31,
+				Reg_HL = 32,
+				Reg_SP = 33,
+				Reg_IX = 34,
+				Reg_IY = 35,
+				Reg_AF = 36,
 			};
 
 			static uint8_t ZS_Flags[256] = {

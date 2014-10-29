@@ -62,8 +62,8 @@ namespace awui {
 					void OR(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
 					void XOR(uint8_t b, uint8_t cycles = 4, uint8_t size = 1);
 					void CP(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
-					void INCr(uint8_t reg);
-					void DECm(uint8_t reg);
+					void INCr(uint8_t reg, uint8_t cycles = 4, uint8_t size = 1);
+					void DECm(uint8_t reg, uint8_t cycles = 4, uint8_t size = 1);
 					void DECHL();
 					void INCHL();
 					void INCXXd(uint8_t xx);

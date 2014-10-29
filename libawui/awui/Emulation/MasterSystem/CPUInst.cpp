@@ -381,31 +381,41 @@ void CPUInst::CP(uint8_t b, uint8_t cycles, uint8_t size) {
 }
 
 // |1|4| Adds one to reg
-void CPUInst::INCr(uint8_t reg) {
+void CPUInst::INCr(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint8_t old = this->_registers->GetRegm(reg);
 	uint8_t value = old + 1;
+
 	this->_registers->SetRegm(reg, value);
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (value & 0xF) < (old & 0xF));
-	this->_registers->SetFFlag(Flag_V, old == 0x7F);
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->IncPC();
-	this->_cycles += 4;
+
+	// N = false
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(((value & 0xF) < (old & 0xF)) ? Flag_H : 0) |
+		((old == 0x7F) ? Flag_V : 0) |
+		(this->_registers->GetF() & Flag_C)
+	);
+
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
 // |1|4| Subtracts one from m
-void CPUInst::DECm(uint8_t reg) {
+void CPUInst::DECm(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint8_t old = this->_registers->GetRegm(reg);
 	uint8_t value = old - 1;
+
 	this->_registers->SetRegm(reg, value);
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (value & 0xF) > (old & 0xF));
-	this->_registers->SetFFlag(Flag_V, old == 0x80);
-	this->_registers->SetFFlag(Flag_N, true);
-	this->_registers->IncPC();
-	this->_cycles += 4;
+
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(((value & 0xF) > (old & 0xF)) ? Flag_H : 0) |
+		((old == 0x80) ? Flag_V : 0) |
+		Flag_N |
+		(this->_registers->GetF() & Flag_C)
+	);
+
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
 // |1|11| Subtracts one from (hl)
