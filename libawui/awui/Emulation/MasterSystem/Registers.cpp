@@ -32,7 +32,7 @@ void Registers::Clear() {
 	this->_ix = 0;
 	this->_iy = 0;
 	this->_pc = 0;
-	this->_sp = 0;
+	this->_sp = 0xDFF0;
 	this->_im = 0;
 	this->_iff1 = false;
 	this->_iff2 = false;

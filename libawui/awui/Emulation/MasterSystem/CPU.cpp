@@ -144,6 +144,9 @@ void CPU::RunOpcode() {
 #ifdef SLOW
 	if (this->_showLog) {
 //		printf("(HL = %.4X) ", this->_registers->GetHL());
+//		printf("(SP = %d) ", 0xDFF0 - this->_registers->GetSP());
+//		printf("(SP = %.4X) ", this->_registers->GetSP());
+//		printf("(IX = %.4X) ", this->_registers->GetIX());
 		printf("%s: %s", logLine, logCode);
 		this->_opcode.ShowLogOpcode(opcodeEnum);
 		printf("\n");
@@ -777,6 +780,15 @@ void CPU::RunOpcode() {
 /*************************** Bit instructions (CB) ****************************/
 /******************************************************************************/
 
+		case OxCB00: this->RLC(Reg_B); break;
+		case OxCB01: this->RLC(Reg_C); break;
+		case OxCB02: this->RLC(Reg_D); break;
+		case OxCB03: this->RLC(Reg_E); break;
+		case OxCB04: this->RLC(Reg_H); break;
+		case OxCB05: this->RLC(Reg_L); break;
+		case OxCB06: this->RLC_HL(); break;
+		case OxCB07: this->RLC(Reg_A); break;
+
 		case OxCB08: this->RRC(Reg_B); break;
 		case OxCB09: this->RRC(Reg_C); break;
 		case OxCB0A: this->RRC(Reg_D); break;
@@ -1339,7 +1351,7 @@ void CPU::RunOpcode() {
 				if (this->_showNotImplemented) {
 #ifdef SLOW
 //					printf("(HL = %.4X) ", this->_registers->GetHL());
-//					printf("%s: ", logLine);
+					printf("%s: ", logLine);
 					printf("%s (Not implemented)\n", logCode);
 					fflush(stdout);
 #endif

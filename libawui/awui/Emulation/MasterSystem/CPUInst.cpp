@@ -146,7 +146,7 @@ void CPUInst::LDXXdn(uint8_t xx) {
 // |3|10| Loads ** into reg
 void CPUInst::LDddnn(uint8_t reg, uint8_t size) {
 	uint16_t pc = this->_registers->GetPC();
-	this->_registers->SetRegss(reg, (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
+	this->_registers->SetRegss(reg, (this->ReadMemory(pc + size - 1) << 8) | this->ReadMemory(pc + size - 2));
 	this->_registers->IncPC(size);
 	this->_cycles += 10;
 }
@@ -764,6 +764,41 @@ void CPUInst::RRA() {
 	this->_registers->SetFFlag(Flag_C, old & 0x01);
 	this->_registers->IncPC();
 	this->_cycles += 4;
+}
+
+void CPUInst::RLC(uint8_t reg) {
+	uint8_t old = this->_registers->GetRegm(reg);
+	uint8_t value = (old << 1) | bool(old & 0x80);
+
+	this->_registers->SetRegm(reg, value);
+
+	// H = N = false
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0)
+	);
+
+	this->_registers->IncPC(2);
+	this->_cycles += 8;
+}
+
+void CPUInst::RLC_HL() {
+	uint16_t offset = this->_registers->GetHL();
+	uint8_t old = this->ReadMemory(offset);
+	uint8_t value = (old << 1) | bool(old & 0x80);
+
+	this->WriteMemory(offset, value);
+
+	// H = N = false
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0)
+	);
+
+	this->_registers->IncPC(2);
+	this->_cycles += 15;
 }
 
 // |2|8| The contents of b are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
