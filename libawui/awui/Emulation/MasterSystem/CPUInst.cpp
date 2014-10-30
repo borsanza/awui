@@ -37,6 +37,10 @@ static bool PARITYEVEN(uint8_t value) {
 }
 
 CPUInst::CPUInst() {
+	this->_controlbyte = 0;
+	this->_frame0 = 0;
+	this->_frame1 = 0;
+	this->_frame2 = 0;
 	this->_ports = new Ports();
 	this->_ram = new Ram(8192);
 	this->_registers = new Registers();
@@ -56,29 +60,84 @@ void CPUInst::Reset() {
 }
 
 void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
-	// RAM
-	if (pos >= 0xC000) {
-		// RAM or RAM (mirror)
-		if (pos < 0xE000)
-			this->_ram->WriteByte(pos - 0xC000, value);
-		else
-			this->_ram->WriteByte(pos - 0xE000, value);
-	} else {
-		this->_rom->WriteByte(pos, value);
+	if (pos < 0xC000) {
+		if (pos < 0x400) {
+			this->_rom->WriteByte(pos, value);
+			return;
+		}
+
+		if (pos < 0x4000) {
+			this->_rom->WriteByte((uint16_t(this->_frame0) << 14) + pos, value);
+			return;
+		}
+
+		if (pos < 0x8000) {
+			this->_rom->WriteByte((uint16_t(this->_frame1) << 14) + (pos - 0x4000), value);
+			return;
+		}
+
+		this->_rom->WriteByte((uint16_t(this->_frame2) << 14) + (pos - 0x8000), value);
+		return;
 	}
+
+	// RAM or RAM (mirror)
+	if (pos < 0xE000) {
+		this->_ram->WriteByte(pos - 0xC000, value);
+		return;
+	}
+
+	if (pos >= 0xFFFC) {
+		switch (pos) {
+			case 0xFFFC:
+				this->_controlbyte = value;
+				return;
+			case 0xFFFD:
+				this->_frame0 = value;
+				return;
+			case 0xFFFE:
+				this->_frame1 = value;
+				return;
+			case 0xFFFF:
+				this->_frame2 = value;
+				return;
+		}
+	}
+
+	this->_ram->WriteByte(pos - 0xE000, value);
 }
 
 uint8_t CPUInst::ReadMemory(uint16_t pos) {
-	// RAM
-	if (pos >= 0xC000) {
-		// RAM or RAM (mirror)
-		if (pos < 0xE000)
-			return this->_ram->ReadByte(pos - 0xC000);
-		else
-			return this->_ram->ReadByte(pos - 0xE000);
+	if (pos < 0xC000) {
+		if (pos < 0x400)
+			return this->_rom->ReadByte(pos);
+
+		if (pos < 0x4000)
+			return this->_rom->ReadByte((uint16_t(this->_frame0) << 14) + pos);
+
+		if (pos < 0x8000)
+			return this->_rom->ReadByte((uint16_t(this->_frame1) << 14) + (pos - 0x4000));
+
+		return this->_rom->ReadByte((uint16_t(this->_frame2) << 14) + (pos - 0x8000));
 	}
 
-	return this->_rom->ReadByte(pos);
+	// RAM or RAM (mirror)
+	if (pos < 0xE000)
+		return this->_ram->ReadByte(pos - 0xC000);
+
+	if (pos >=0xFFFC) {
+		switch (pos) {
+			case 0xFFFC:
+				return this->_controlbyte;
+			case 0xFFFD:
+				return this->_frame0;
+			case 0xFFFE:
+				return this->_frame1;
+			case 0xFFFF:
+				return this->_frame2;
+		}
+	}
+
+	return this->_ram->ReadByte(pos - 0xE000);
 }
 
 /******************************************************************************/

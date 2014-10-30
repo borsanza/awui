@@ -1364,6 +1364,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case Ox2F: printf("CPL"); break;
 		case Ox3F: printf("CCF"); break;
 		case Ox76: printf("HALT"); break;
+		case Ox79: printf("LD A,C"); break;
 		case OxBA: printf("CP D"); break;
 		case OxC1: printf("POP BC"); break;
 		case OxC5: printf("PUSH BC"); break;

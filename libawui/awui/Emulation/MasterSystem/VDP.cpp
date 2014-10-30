@@ -608,7 +608,7 @@ void VDP::WriteDataByte(uint8_t value) {
 		// TODO: Mirar que pasa y porque a veces se escribe en el espacio de colores fuera de rango
 		// assert(this->_address < 32);
 		this->_cram[this->_address & 0x1F] = value;
-//		printf("CRam[%.2X] = %.2X\n", this->_address, value);
+		// printf("CRam[%.2X] = %.2X\n", this->_address, value);
 	}
 
 	// printf("[%.4X] = %.2X\n", this->_address, value);

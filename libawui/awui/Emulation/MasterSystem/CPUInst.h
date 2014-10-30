@@ -27,6 +27,12 @@ namespace awui {
 					Ram * _ram;
 					Registers * _registers;
 					Rom * _rom;
+
+					uint8_t _controlbyte;
+					uint8_t _frame0;
+					uint8_t _frame1;
+					uint8_t _frame2;
+
 					int64_t _cycles;
 
 					void Reset();
