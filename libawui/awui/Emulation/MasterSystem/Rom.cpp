@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <awui/IO/FileStream.h>
-#include <awui/IO/MemoryStream.h>
 #include <awui/String.h>
 
 using namespace awui::Emulation::MasterSystem;
@@ -50,16 +49,6 @@ void Rom::Reload() {
 		this->LoadRom(this->_file);
 }
 
-uint8_t Rom::ReadByte(int64_t pos) {
-	this->_rom->SetPosition(pos);
-	return this->_rom->ReadByte();
-}
-
-void Rom::WriteByte(int64_t pos, uint8_t value) {
-	this->_rom->SetPosition(pos);
-	return this->_rom->WriteByte(value);
-}
-
-uint32_t Rom::GetCRC32() {
+uint32_t Rom::GetCRC32() const {
 	return this->_rom->GetCRC32();
 }

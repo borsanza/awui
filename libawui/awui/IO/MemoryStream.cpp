@@ -11,7 +11,7 @@
 
 using namespace awui::IO;
 
-MemoryStream::MemoryStream(int32_t capacity) {
+MemoryStream::MemoryStream(uint32_t capacity) {
 	this->_data = 0;
 	this->SetCapacity(capacity);
 	this->_position = 0;
@@ -26,28 +26,28 @@ MemoryStream::~MemoryStream() {
 void MemoryStream::Close() {
 }
 
-void MemoryStream::SetPosition(int64_t value) {
+void MemoryStream::SetPosition(uint32_t value) {
 	this->_position = value;
 }
 
-int64_t MemoryStream::GetPosition() {
+uint32_t MemoryStream::GetPosition() {
 	return this->_position;
 }
 
-int64_t MemoryStream::GetLength() {
+uint32_t MemoryStream::GetLength() {
 	return this->_length;
 }
 
-void MemoryStream::SetLength(int64_t value) {
+void MemoryStream::SetLength(uint32_t value) {
 	this->_length = value;
 }
 
 void MemoryStream::Clear() {
-	for (int32_t i = 0; i < this->_capacity; i++)
+	for (uint32_t i = 0; i < this->_capacity; i++)
 		this->_data[i] = 0;
 }
 
-void MemoryStream::SetCapacity(int32_t value) {
+void MemoryStream::SetCapacity(uint32_t value) {
 	if (this->_capacity == value)
 		return;
 
@@ -59,7 +59,7 @@ void MemoryStream::SetCapacity(int32_t value) {
 	this->Clear();
 }
 
-int32_t MemoryStream::GetCapacity() {
+uint32_t MemoryStream::GetCapacity() {
 	return this->_capacity;
 }
 

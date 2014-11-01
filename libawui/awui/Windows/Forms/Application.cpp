@@ -43,14 +43,11 @@ void Application::Run(Form * form = NULL) {
 
 	while (!Application::quit) {
 		form->ProcessEvents();
-
 		form->OnTickPre();
-		form->OnPaintForm();
-
 		stats->SetTimeBeforeVSync();
-		glFinish();
-		SDL_GL_SwapBuffers();
+		form->OnPaintForm();
 		stats->SetTimeAfterVSync();
+		SDL_GL_SwapBuffers();
 	}
 
 	if (Application::stick)

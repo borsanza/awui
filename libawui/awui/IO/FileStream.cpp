@@ -72,16 +72,16 @@ void FileStream::Close() {
 	fclose(this->_file);
 }
 
-void FileStream::SetPosition(int64_t value) {
+void FileStream::SetPosition(uint32_t value) {
 	this->_pos = value;
 	fseek(this->_file, this->_pos, SEEK_SET);
 }
 
-int64_t FileStream::GetPosition() {
+uint32_t FileStream::GetPosition() {
 	return this->_pos;
 }
 
-int64_t FileStream::GetLength() {
+uint32_t FileStream::GetLength() {
 	return _length;
 }
 

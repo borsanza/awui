@@ -2,12 +2,9 @@
 #define _AWUI_EMULATION_MASTERSYSTEM_ROM_H
 
 #include <awui/String.h>
+#include <awui/IO/MemoryStream.h>
 
 namespace awui {
-	namespace IO {
-		class MemoryStream;
-	}
-
 	namespace Emulation {
 		namespace MasterSystem {
 			class Rom {
@@ -21,11 +18,11 @@ namespace awui {
 
 					void LoadRom(const String file);
 
-					uint8_t ReadByte(int64_t pos);
-					void WriteByte(int64_t pos, uint8_t value);
+					inline uint8_t ReadByte(uint32_t pos) const { return this->_rom->ReadByte(pos); }
+					inline void WriteByte(uint32_t pos, uint8_t value) {	this->_rom->WriteByte(pos, value); }
 
 					void Reload();
-					uint32_t GetCRC32();
+					uint32_t GetCRC32() const;
 			};
 		}
 	}

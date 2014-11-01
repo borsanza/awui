@@ -23,10 +23,10 @@ namespace awui {
 
 				virtual void Close();
 
-				virtual int64_t GetPosition();
-				virtual void SetPosition(int64_t value);
+				virtual uint32_t GetPosition();
+				virtual void SetPosition(uint32_t value);
 
-				virtual int64_t GetLength();
+				virtual uint32_t GetLength();
 
 				virtual uint8_t ReadByte();
 				virtual void WriteByte(uint8_t value);

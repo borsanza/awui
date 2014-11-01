@@ -426,31 +426,6 @@ void Form::ProcessEvents() {
 	}
 }
 
-#include <GL/glx.h>
-//#include <GL/glxext.h>
-/*
-bool checkGLXExtension(const char* extName, SDL_Surface * screen)
-{
-	char* list = (char*) glXQueryExtensionsString(32, screen);
-	char* end;
-	int extNameLen;
-
-	extNameLen = strlen(extName);
-	end = list + strlen(list);
-
-	while (list < end)
-	{
-		int n = strcspn(list, " ");
-
-		if ((extNameLen == n) && (strncmp(extName, list, n) == 0))
-			return true;
-
-		list += (n + 1);
-	};
-	return false;
-};
-*/
-
 void Form::RefreshVideo() {
 	if (!initialized)
 		return;
@@ -477,13 +452,6 @@ void Form::RefreshVideo() {
 	}
 
 	SDL_SetVideoMode(width, height, 32, flags);
-
-	void (*swapInterval)(int);
-//	if (checkGLXExtension("GLX_MESA_swap_control", screen))
-//		swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
-//	else if (checkGLXExtension("GLX_SGI_swap_control", screen))
-	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-	swapInterval(1);
 }
 
 void Form::SetFullscreen(int mode) {
