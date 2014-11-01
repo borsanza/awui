@@ -2,6 +2,6 @@
 make clean
 rm CMakeCache.txt
 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release .
-make
+make -j8
 cd samples
 ./cleanRelease.sh
