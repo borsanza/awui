@@ -31,8 +31,9 @@ namespace awui {
 
 					virtual void OnPaint(OpenGL::GL * gl);
 					virtual bool OnKeyPress(Keys::Enum key);
-					
+
 					void SetRom(MasterSystem * rom);
+					uint32_t GetCRC32();
 			};
 		}
 	}

@@ -30,6 +30,8 @@ namespace awui {
 				virtual uint8_t ReadByte();
 				virtual void WriteByte(uint8_t value);
 
+				uint32_t GetCRC32() const;
+
 				void Clear();
 		};
 	}

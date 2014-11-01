@@ -25,6 +25,7 @@ namespace awui {
 					void WriteByte(int64_t pos, uint8_t value);
 
 					void Reload();
+					uint32_t GetCRC32();
 			};
 		}
 	}

@@ -59,3 +59,7 @@ void Rom::WriteByte(int64_t pos, uint8_t value) {
 	this->_rom->SetPosition(pos);
 	return this->_rom->WriteByte(value);
 }
+
+uint32_t Rom::GetCRC32() {
+	return this->_rom->GetCRC32();
+}

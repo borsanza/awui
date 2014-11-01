@@ -77,5 +77,6 @@ void FormMasterGear::OnTick() {
 		selected = (MasterSystem *) this->_slider->GetControlSelected();
 		this->_debugger->SetRom(selected);
 		this->SetText(selected->GetName());
+		printf("%.8x\n", this->_debugger->GetCRC32());
 	}
 }

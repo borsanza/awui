@@ -99,3 +99,7 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 void MasterSystem::SetMultiply(int multiply) {
 	this->_multiply = multiply;
 }
+
+uint32_t MasterSystem::GetCRC32() {
+	this->_cpu->GetCRC32();
+}

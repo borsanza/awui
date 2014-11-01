@@ -119,3 +119,7 @@ bool DebuggerSMS::OnKeyPress(Keys::Enum key) {
 void DebuggerSMS::SetRom(MasterSystem * rom) {
 	this->_rom = rom;
 }
+
+uint32_t DebuggerSMS::GetCRC32() {
+	return this->_rom->GetCRC32();
+}

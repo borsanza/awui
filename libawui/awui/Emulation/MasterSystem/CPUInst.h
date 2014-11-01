@@ -141,6 +141,8 @@ namespace awui {
 					~CPUInst();
 
 					uint8_t ReadMemory(uint16_t pos);
+
+					uint32_t GetCRC32();
 			};
 		}
 	}

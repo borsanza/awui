@@ -1272,3 +1272,7 @@ void CPUInst::OUTI() {
 	this->_registers->IncPC(2);
 	this->_cycles += 16;
 }
+
+uint32_t CPUInst::GetCRC32() {
+	return this->_rom->GetCRC32();
+}
