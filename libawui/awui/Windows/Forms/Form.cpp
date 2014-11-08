@@ -430,7 +430,7 @@ void Form::RefreshVideo() {
 	if (!initialized)
 		return;
 
-	int flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
+	int flags = SDL_ANYFORMAT | SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
 	int width = 0;
 	int height = 0;
 
