@@ -101,5 +101,5 @@ void MasterSystem::SetMultiply(int multiply) {
 }
 
 uint32_t MasterSystem::GetCRC32() {
-	this->_cpu->GetCRC32();
+	return this->_cpu->GetCRC32();
 }

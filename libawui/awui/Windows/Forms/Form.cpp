@@ -87,7 +87,7 @@ void Form::OnPaintForm() {
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 
-	int r = this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl);
+	int r = this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl, true);
 
 	Stats * stats = Stats::Instance();
 	stats->SetDrawedControls(r);

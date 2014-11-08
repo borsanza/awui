@@ -22,7 +22,7 @@ Button::Button() {
 	this->label.SetTextAlign(ContentAlignment::MiddleCenter);
 
 	this->SetSize(75,23);
-	this->SetBackColor(Color::FromArgb(0, 0, 0));
+	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->SetTabStop(true);
 }
 

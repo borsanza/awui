@@ -40,7 +40,6 @@ void FormMasterGear::InitializeComponent() {
 	this->_slider->SetMargin(25);
 
 	this->_debugger = new DebuggerSMS();
-	this->_debugger->SetBackColor(Color::FromArgb(255, 8, 8, 8));
 	this->_debugger->SetDock(DockStyle::Right);
 	this->_debugger->SetTabStop(false);
 	this->_debugger->SetWidth(194);

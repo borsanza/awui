@@ -47,12 +47,13 @@ void Application::Run(Form * form = NULL) {
 		form->OnTickPre();
 
 		stats->SetTimeBeforeIddle();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(form->GetBackColor().GetR() / 255.0f, form->GetBackColor().GetG() / 255.0f, form->GetBackColor().GetB() / 255.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		stats->SetTimeAfterIddle();
 
 		form->OnPaintForm();
 
-1		SDL_GL_SwapBuffers();
+		SDL_GL_SwapBuffers();
 	}
 
 	if (Application::stick)

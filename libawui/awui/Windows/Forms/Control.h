@@ -64,7 +64,7 @@ namespace awui {
 					String name;
 
 					void OnResizePre();
-					int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl);
+					int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl, bool first = false);
 					void ChangeControlOnMouseOver(Control * control);
 					bool IsVisible() const;
 

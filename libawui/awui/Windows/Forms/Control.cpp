@@ -261,7 +261,7 @@ void Control::Refresh() {
 	this->needRefresh = 1;
 }
 
-int Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
+int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-x, width - x, height - y, -y, -1.0f, 1.0f);
@@ -282,23 +282,24 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl) {
 		gl->SetClipping();
 	}
 
-	switch (this->backColor.GetA()) {
-		case 255:
-			if ((width == this->GetWidth()) && (height == this->GetHeight())) {
-				glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, 1.0f);
-				glClear(GL_COLOR_BUFFER_BIT);
-			} else {
-				glColor3f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f);
+	if (!first)
+		switch (this->backColor.GetA()) {
+			case 255:
+				if ((width == this->GetWidth()) && (height == this->GetHeight())) {
+					glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, 1.0f);
+					glClear(GL_COLOR_BUFFER_BIT);
+				} else {
+					glColor3f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f);
+					GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
+				}
+				break;
+			case 0:
+				break;
+			default:
+				glColor4f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
 				GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
-			}
-			break;
-		case 0:
-			break;
-		default:
-			glColor4f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
-			GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
-			break;
-	}
+				break;
+		}
 
 	int r = 0;
 

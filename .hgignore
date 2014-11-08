@@ -24,7 +24,7 @@ syntax: glob
 *.workspace
 *.sms
 *.rar
-*.kdev4
+*.kdev*
 libaw/*.c
 libaw/*.h
 libaw/aw/*.h
