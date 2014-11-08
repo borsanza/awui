@@ -41,8 +41,8 @@ namespace awui {
 					public:
 						static Stats* Instance();
 
-						void SetTimeBeforeVSync();
-						void SetTimeAfterVSync();
+						void SetTimeBeforeIddle();
+						void SetTimeAfterIddle();
 
 						virtual void OnRemoteHeartbeat();
 						void SetDrawedControls(int drawedControls);

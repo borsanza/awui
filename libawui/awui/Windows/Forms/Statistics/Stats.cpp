@@ -75,7 +75,7 @@ Stats::Stats() {
 Stats::~Stats() {
 }
 
-void Stats::SetTimeBeforeVSync() {
+void Stats::SetTimeBeforeIddle() {
 	DateTime beforeSync_last = this->beforeSync;
 	this->beforeSync = DateTime::GetNow();
 
@@ -88,7 +88,7 @@ awui::TimeSpan Stats::GetIdle() {
 	return this->idle;
 }
 
-void Stats::SetTimeAfterVSync() {
+void Stats::SetTimeAfterIddle() {
 	this->afterSync = DateTime::GetNow();
 
 	int second = this->afterSync.GetSecond();
