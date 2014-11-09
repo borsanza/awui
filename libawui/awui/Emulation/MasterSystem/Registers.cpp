@@ -127,6 +127,10 @@ void Registers::SetF(uint8_t value) {
 	this->_f = value;
 }
 
+uint16_t Registers::GetAF() const {
+	return (this->_a << 8) | this->_f;
+}
+
 uint8_t Registers::GetA() const {
 	return this->_a;
 }

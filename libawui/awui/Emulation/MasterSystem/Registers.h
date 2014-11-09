@@ -130,6 +130,7 @@ namespace awui {
 					bool GetIFF1() const;
 					bool GetIFF2() const;
 
+					uint16_t GetAF() const;
 					void SetA(uint8_t value);
 					void SetF(uint8_t value);
 					uint8_t GetA() const;
