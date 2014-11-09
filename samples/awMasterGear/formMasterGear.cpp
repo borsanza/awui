@@ -135,6 +135,7 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0xb0131d77: // Sega Tween (3D)
 		case 0xf97c47a0: // Sega Tween (Normal)
 		case 0x935dca5f: // Simple BIOS
+		case 0x5f40660d: // Simple Sprite Demo Release 2 by Nicolas Warren (PD)
 		case 0x350f7497: // SMS APA Demo V0.01 by Haroldo O. Pinheiro (PD)
 		case 0xad31c5ff: // SMS Boot Loader
 		case 0x357f000b: // SMSC Text Demo V2 by Super Majik Spiral Crew (PD)
@@ -146,7 +147,11 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0xea766665: // SMSPalette-SMS-1.00
 		case 0x297efb87: // SMSPower's 7th Anniversary Intro V1.00 by Nicolas Warren (PD)
 		case 0x1a15dfcc: // SMS Prototype M404 BIOS
+		case 0xbd274327: // SMS Sprite Test (PD)
+		case 0x4b3c7752: // Sonic 1 SpriteRemix (Sonic 1 Hack)
 		case 0x1b1efc66: // Sound Test by Nicolas Warren (PD)
+		case 0xd6a8dd98: // Sprite and Priority Test Program by Charles MacDonald (PD)
+		case 0xffcf390e: // Sprite Multiplex Demo (03012005) by Charles MacDonald (PD)
 		case 0x22525d51: // Super Magic Drive BIOS V4.1a [!]
 		case 0x409c9860: // supermariocloudscoryarcangel
 		case 0x983e17e4: // Tetracycline Release 2 by Nicolas Warren (PD)
