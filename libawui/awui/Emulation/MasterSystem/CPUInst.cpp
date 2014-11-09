@@ -245,7 +245,7 @@ void CPUInst::LDddnn(uint8_t reg, uint8_t size) {
 // |4|20| Loads the value pointed to by ** into reg.
 void CPUInst::LDdd_nn(uint8_t reg) {
 	uint16_t pc = this->_registers->GetPC();
-	uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
+	uint16_t offset = (this->ReadMemory(pc + 3) << 8) | this->ReadMemory(pc + 2);
 	this->_registers->SetRegss(reg, (this->ReadMemory(offset + 1) << 8) | this->ReadMemory(offset));
 	this->_registers->IncPC(4);
 	this->_cycles += 20;

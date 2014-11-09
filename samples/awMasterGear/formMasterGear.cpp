@@ -190,6 +190,6 @@ void FormMasterGear::OnTick() {
 		this->_debugger->SetRom(selected);
 		selected->SetDebugger(this->_debugger);
 		this->SetText(selected->GetName());
-		printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
+		// printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
 	}
 }

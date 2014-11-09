@@ -148,7 +148,7 @@ void CPU::RunOpcode() {
 	if ((this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
 //		printf("(HL = %.4X) ", this->_registers->GetHL());
 //		printf("(SP = %d) ", 0xDFF0 - this->_registers->GetSP());
-//		printf("(SP = %.4X) ", this->_registers->GetSP());
+		printf("(SP = %.4X) ", this->_registers->GetSP());
 //		printf("(IX = %.4X) ", this->_registers->GetIX());
 		printf("%s: %s", logLine, logCode);
 		this->_opcode.ShowLogOpcode(opcodeEnum);
@@ -1362,7 +1362,7 @@ void CPU::RunOpcode() {
 				this->_cycles += 12; // 71400;
 				if (this->_showNotImplemented) {
 #ifdef SLOW
-//					printf("(HL = %.4X) ", this->_registers->GetHL());
+//					printf("(SP = %.4X) ", this->_registers->GetSP());
 					printf("%s: ", logLine);
 					printf("%s (Not implemented)\n", logCode);
 					fflush(stdout);
