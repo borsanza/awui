@@ -415,12 +415,7 @@ void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
 // |1|4|Bitwise AND on a with valueb.
 void CPUInst::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	uint8_t value = this->_registers->GetA() & valueb;
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, true);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, false);
+	this->_registers->SetF(ZS_Flags[value] | Flag_H);
 	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -429,12 +424,7 @@ void CPUInst::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
 // |1|4| Bitwise OR on a with valueb
 void CPUInst::OR(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	uint8_t value = this->_registers->GetA() | valueb;
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, false);
+	this->_registers->SetF(ZS_Flags[value]);
 	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -443,12 +433,7 @@ void CPUInst::OR(uint8_t valueb, uint8_t cycles, uint8_t size) {
 // |1/2|4/7| Bitwise XOR on a with b.
 void CPUInst::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t value = this->_registers->GetA() ^ b;
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, false);
+	this->_registers->SetF(ZS_Flags[value]);
 	this->_registers->SetA(value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
