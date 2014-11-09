@@ -600,7 +600,7 @@ void CPU::RunOpcode() {
 			break;
 
 		// E3: EX (SP), HL
-		// |1|4| Exchanges the 16-bit contents of de and hl.
+		// |1|19| Exchanges (sp) with l, and (sp+1) with h.
 		case OxE3:
 			{
 				uint16_t sp = this->_registers->GetSP();
@@ -609,7 +609,7 @@ void CPU::RunOpcode() {
 				this->WriteMemory(sp, this->_registers->GetL());
 				this->_registers->SetHL(aux);
 				this->_registers->IncPC();
-				this->_cycles += 4;
+				this->_cycles += 19;
 			}
 			break;
 
