@@ -365,16 +365,7 @@ void CPU::RunOpcode() {
 			break;
 
 		// 2A: LD HL, (**)
-		// |3|16| Loads the value pointed to by ** into hl.
-		case Ox2A:
-			{
-				uint16_t pc = this->_registers->GetPC();
-				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				this->_registers->SetHL((this->ReadMemory(offset + 1) << 8) | this->ReadMemory(offset));
-				this->_registers->IncPC(3);
-				this->_cycles += 16;
-			}
-			break;
+		case Ox2A: this->LDdd_nn(Reg_HL, 16, 3); break;
 
 		// LD r, *
 		case Ox06: this->LDrn(Reg_B); break;
@@ -678,10 +669,10 @@ void CPU::RunOpcode() {
 		case OxED73: this->LDnndd(Reg_SP); break;
 
 		// LD dd, (nn)
-		case OxED4B: this->LDdd_nn(Reg_BC); break;
-		case OxED5B: this->LDdd_nn(Reg_DE); break;
-		case OxED6B: this->LDdd_nn(Reg_HL); break;
-		case OxED7B: this->LDdd_nn(Reg_SP); break;
+		case OxED4B: this->LDdd_nn(Reg_BC, 20, 4); break;
+		case OxED5B: this->LDdd_nn(Reg_DE, 20, 4); break;
+		case OxED6B: this->LDdd_nn(Reg_HL, 20, 4); break;
+		case OxED7B: this->LDdd_nn(Reg_SP, 20, 4); break;
 
 		case OxED4A: this->ADCHLss(Reg_BC); break;
 		case OxED5A: this->ADCHLss(Reg_DE); break;
@@ -1084,7 +1075,7 @@ void CPU::RunOpcode() {
 		case OxDD25: this->DECm(Reg_IXH, 8, 2); break;
 		case OxDD2C: this->INCr(Reg_IXL, 8, 2); break;
 		case OxDD2D: this->DECm(Reg_IXL, 8, 2); break;
-		case OxDD2A: this->LDdd_nn(Reg_IX); break;
+		case OxDD2A: this->LDdd_nn(Reg_IX, 20, 4); break;
 
 		case OxDD46: this->LDrXXd(Reg_B, Reg_IX); break;
 		case OxDD4E: this->LDrXXd(Reg_C, Reg_IX); break;
@@ -1229,7 +1220,7 @@ void CPU::RunOpcode() {
 		case OxFD25: this->DECm(Reg_IYH, 8, 2); break;
 		case OxFD2C: this->INCr(Reg_IYL, 8, 2); break;
 		case OxFD2D: this->DECm(Reg_IYL, 8, 2); break;
-		case OxFD2A: this->LDdd_nn(Reg_IY); break;
+		case OxFD2A: this->LDdd_nn(Reg_IY, 20, 4); break;
 
 		case OxFD46: this->LDrXXd(Reg_B, Reg_IY); break;
 		case OxFD4E: this->LDrXXd(Reg_C, Reg_IY); break;
