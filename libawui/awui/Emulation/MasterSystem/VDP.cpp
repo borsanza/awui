@@ -40,7 +40,7 @@ VDP::VDP(CPU * cpu) {
 	this->_data = NULL;
 	this->_width = 256;
 	this->_height = 192;
-	this->_ntsc = false;
+	this->_ntsc = true;
 	this->_showBorder = false;
 	this->ResetVideo();
 

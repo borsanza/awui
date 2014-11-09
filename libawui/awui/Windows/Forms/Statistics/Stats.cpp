@@ -113,7 +113,7 @@ void Stats::SetTimeAfterIddle() {
 		if (total != 0) {
 			float calc = Math::Round((this->timeUsed / 10000000.0f) / total * 10000.0f) / 100.0f;
 			if (calc != this->percent) {
-				this->percent = calc;
+				this->percent = (this->percent + calc) / 2.0f;
 				this->labelPercent->SetText(Convert::ToString(this->percent, 2) + String("%"));
 			}
 		}

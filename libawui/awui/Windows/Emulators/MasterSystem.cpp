@@ -10,6 +10,7 @@
 #include <awui/Emulation/MasterSystem/CPU.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/OpenGL/GL.h>
+#include <awui/Windows/Emulators/DebuggerSMS.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -90,6 +91,10 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 		VDP * screen = this->_cpu->GetVDP();
 		screen->SetShowBorder(!screen->GetShowBorder());
 		screen->Clear();;
+	}
+
+	if (key == Keys::Key_D) {
+		this->_debugger->SetShow(!this->_debugger->GetShow());
 	}
 
 //	Console::WriteLine("OnKeyPress");

@@ -45,6 +45,7 @@ CPUInst::CPUInst() {
 	this->_ram = new Ram(8192);
 	this->_registers = new Registers();
 	this->_rom = new Rom(4096);
+	this->_mapper = MAPPER_SEGA;
 }
 
 CPUInst::~CPUInst() {
@@ -60,84 +61,115 @@ void CPUInst::Reset() {
 }
 
 void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
-	if (pos < 0xC000) {
-		if (pos < 0x400) {
-			this->_rom->WriteByte(pos, value);
+	switch (this->_mapper) {
+		default:
+		case MAPPER_SEGA:
+			if (pos < 0xC000) {
+				if (pos < 0x400) {
+					this->_rom->WriteByte(pos, value);
+					return;
+				}
+
+				if (pos < 0x4000) {
+					this->_rom->WriteByte((uint16_t(this->_frame0) << 14) + pos, value);
+					return;
+				}
+
+				if (pos < 0x8000) {
+					this->_rom->WriteByte((uint16_t(this->_frame1) << 14) + (pos - 0x4000), value);
+					return;
+				}
+
+				this->_rom->WriteByte((uint16_t(this->_frame2) << 14) + (pos - 0x8000), value);
+				return;
+			}
+
+			// RAM or RAM (mirror)
+			if (pos < 0xE000) {
+				this->_ram->WriteByte(pos - 0xC000, value);
+				return;
+			}
+
+			if (pos >= 0xFFFC) {
+				switch (pos) {
+					case 0xFFFC:
+						this->_controlbyte = value;
+						return;
+					case 0xFFFD:
+						this->_frame0 = value;
+						return;
+					case 0xFFFE:
+						this->_frame1 = value;
+						return;
+					case 0xFFFF:
+						this->_frame2 = value;
+						return;
+				}
+			}
+
+			this->_ram->WriteByte(pos - 0xE000, value);
+
+		case MAPPER_NONE:
+			if (pos < 0xC000) {
+				this->_rom->WriteByte(pos, value);
+				return;
+			}
+
+			if (pos < 0xE000) {
+				this->_ram->WriteByte(pos - 0xC000, value);
+				return;
+			}
+
+			this->_ram->WriteByte(pos - 0xE000, value);
 			return;
-		}
-
-		if (pos < 0x4000) {
-			this->_rom->WriteByte((uint16_t(this->_frame0) << 14) + pos, value);
-			return;
-		}
-
-		if (pos < 0x8000) {
-			this->_rom->WriteByte((uint16_t(this->_frame1) << 14) + (pos - 0x4000), value);
-			return;
-		}
-
-		this->_rom->WriteByte((uint16_t(this->_frame2) << 14) + (pos - 0x8000), value);
-		return;
 	}
-
-	// RAM or RAM (mirror)
-	if (pos < 0xE000) {
-		this->_ram->WriteByte(pos - 0xC000, value);
-		return;
-	}
-
-	if (pos >= 0xFFFC) {
-		switch (pos) {
-			case 0xFFFC:
-				this->_controlbyte = value;
-				return;
-			case 0xFFFD:
-				this->_frame0 = value;
-				return;
-			case 0xFFFE:
-				this->_frame1 = value;
-				return;
-			case 0xFFFF:
-				this->_frame2 = value;
-				return;
-		}
-	}
-
-	this->_ram->WriteByte(pos - 0xE000, value);
 }
 
 uint8_t CPUInst::ReadMemory(uint16_t pos) {
-	if (pos < 0xC000) {
-		if (pos < 0x400)
-			return this->_rom->ReadByte(pos);
+	switch (this->_mapper) {
+		default:
+		case MAPPER_SEGA:
+			if (pos < 0xC000) {
+				if (pos < 0x400)
+					return this->_rom->ReadByte(pos);
 
-		if (pos < 0x4000)
-			return this->_rom->ReadByte((uint16_t(this->_frame0) << 14) + pos);
+				if (pos < 0x4000)
+					return this->_rom->ReadByte((uint16_t(this->_frame0) << 14) + pos);
 
-		if (pos < 0x8000)
-			return this->_rom->ReadByte((uint16_t(this->_frame1) << 14) + (pos - 0x4000));
+				if (pos < 0x8000)
+					return this->_rom->ReadByte((uint16_t(this->_frame1) << 14) + (pos - 0x4000));
 
-		return this->_rom->ReadByte((uint16_t(this->_frame2) << 14) + (pos - 0x8000));
+				return this->_rom->ReadByte((uint16_t(this->_frame2) << 14) + (pos - 0x8000));
+			}
+
+			// RAM or RAM (mirror)
+			if (pos < 0xE000)
+				return this->_ram->ReadByte(pos - 0xC000);
+
+			if (pos >=0xFFFC) {
+				switch (pos) {
+					case 0xFFFC:
+						return this->_controlbyte;
+					case 0xFFFD:
+						return this->_frame0;
+					case 0xFFFE:
+						return this->_frame1;
+					case 0xFFFF:
+						return this->_frame2;
+				}
+			}
+
+			return this->_ram->ReadByte(pos - 0xE000);
+
+		case MAPPER_NONE:
+			if (pos < 0xC000)
+				return this->_rom->ReadByte(pos);
+
+			if (pos < 0xE000)
+				return this->_ram->ReadByte(pos - 0xC000);
+
+			return this->_ram->ReadByte(pos - 0xE000);
 	}
-
-	// RAM or RAM (mirror)
-	if (pos < 0xE000)
-		return this->_ram->ReadByte(pos - 0xC000);
-
-	if (pos >=0xFFFC) {
-		switch (pos) {
-			case 0xFFFC:
-				return this->_controlbyte;
-			case 0xFFFD:
-				return this->_frame0;
-			case 0xFFFE:
-				return this->_frame1;
-			case 0xFFFF:
-				return this->_frame2;
-		}
-	}
-
-	return this->_ram->ReadByte(pos - 0xE000);
 }
 
 /******************************************************************************/
@@ -1275,4 +1307,8 @@ void CPUInst::OUTI() {
 
 uint32_t CPUInst::GetCRC32() {
 	return this->_rom->GetCRC32();
+}
+
+void CPUInst::SetMapper(uint8_t mapper) {
+	this->_mapper = mapper;
 }

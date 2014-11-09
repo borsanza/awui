@@ -23,10 +23,13 @@ namespace awui {
 
 	namespace Windows {
 		namespace Emulators {
+			class DebuggerSMS;
+
 			class MasterSystem : public Button {
 				private:
 					Drawing::Image * _image;
 					CPU * _cpu;
+					DebuggerSMS * _debugger;
 					int _multiply;
 
 				public:
@@ -46,6 +49,8 @@ namespace awui {
 
 					void SetMultiply(int multiply);
 					uint32_t GetCRC32();
+
+					void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };
 			};
 		}
 	}

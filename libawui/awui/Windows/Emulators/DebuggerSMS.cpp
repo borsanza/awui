@@ -108,14 +108,6 @@ void DebuggerSMS::OnPaint(OpenGL::GL * gl) {
 	GL::DrawImageGL(this->_tiles, left, top);
 }
 
-bool DebuggerSMS::OnKeyPress(Keys::Enum key) {
-	if (key == Keys::Key_D) {
-		this->_show = !this->_show;
-	}
-
-	return true;
-}
-
 void DebuggerSMS::SetRom(MasterSystem * rom) {
 	this->_rom = rom;
 }

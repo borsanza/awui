@@ -2,7 +2,6 @@
 #define _AWUI_EMULATION_MASTERSYSTEM_CPUINST_H
 
 #include <stdint.h>
-#include <awui/Emulation/MasterSystem/CPUInst.h>
 
 namespace awui {
 	namespace Emulation {
@@ -20,6 +19,11 @@ namespace awui {
 			class Registers;
 			class Rom;
 
+			enum {
+				MAPPER_NONE = 1,
+				MAPPER_SEGA = 2,
+			};
+
 			class CPUInst {
 				protected:
 					UINT16 _addressBus;
@@ -32,6 +36,7 @@ namespace awui {
 					uint8_t _frame0;
 					uint8_t _frame1;
 					uint8_t _frame2;
+					uint8_t _mapper;
 
 					int64_t _cycles;
 
@@ -143,6 +148,7 @@ namespace awui {
 					uint8_t ReadMemory(uint16_t pos);
 
 					uint32_t GetCRC32();
+					void SetMapper(uint8_t mapper);
 			};
 		}
 	}

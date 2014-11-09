@@ -30,9 +30,10 @@ namespace awui {
 					virtual void OnTick();
 
 					virtual void OnPaint(OpenGL::GL * gl);
-					virtual bool OnKeyPress(Keys::Enum key);
 
 					void SetRom(MasterSystem * rom);
+					bool GetShow() { return _show; }
+					void SetShow(bool show) { _show = show; }
 					uint32_t GetCRC32();
 			};
 		}

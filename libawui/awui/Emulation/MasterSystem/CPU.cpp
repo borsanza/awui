@@ -25,7 +25,9 @@ CPU::CPU() : _opcode(this) {
 	this->_frame = 0;
 	this->_oldFrame = 0;
 	this->_showLog = false;
+	this->_showLogInt = false;
 	this->_showNotImplemented = true;
+	this->_inInterrupt = false;
 
 	this->_ports->SetVDP(this->_vdp);
 
@@ -46,6 +48,7 @@ void CPU::CheckInterrupts() {
 
 	if (this->_vdp->GetInterrupt()) {
 //		printf("Entra %d\n", this->_vdp->GetLine());
+		this->_inInterrupt = true;
 		this->CallInterrupt();
 	}
 }
@@ -142,7 +145,7 @@ void CPU::RunOpcode() {
 	uint16_t opcodeEnum = this->_opcode.GetEnum();
 
 #ifdef SLOW
-	if (this->_showLog) {
+	if ((this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
 //		printf("(HL = %.4X) ", this->_registers->GetHL());
 //		printf("(SP = %d) ", 0xDFF0 - this->_registers->GetSP());
 //		printf("(SP = %.4X) ", this->_registers->GetSP());
@@ -717,6 +720,7 @@ void CPU::RunOpcode() {
 
 		case OxED4D:
 			this->RETI();
+			this->_inInterrupt = false;
 			// printf("Sale %d\n", this->_vdp->GetLine());
 			// this->_showLog = false;
 			break;

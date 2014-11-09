@@ -17,8 +17,10 @@ namespace awui {
 					float _frame;
 					float _oldFrame;
 					bool _showLog;
+					bool _showLogInt;
 					bool _showNotImplemented;
 					bool _enableInterrupts;
+					bool _inInterrupt;
 
 					void RunOpcode();
 					void Print(const char * str, ...);
