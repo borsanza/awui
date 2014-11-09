@@ -1069,7 +1069,6 @@ void CPUInst::BIT(uint8_t value, uint8_t compare, uint8_t cycles) {
 	this->_registers->SetFFlag(Flag_N, false);
 	this->_registers->IncPC(2);
 	this->_cycles += cycles;
-//	printf("%.2x: %.2x\n", value, this->_registers->GetF());
 }
 
 // |2|8| Sets bit X of reg.
