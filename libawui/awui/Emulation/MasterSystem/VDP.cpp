@@ -437,8 +437,8 @@ bool VDP::OnTick(uint32_t counter) {
 		ret = true;
 	}
 
-	if (hsync)
-		this->_status |= 0x40;
+//	if (hsync)
+//		this->_status |= 0x40;
 
 	if (this->_line == 0 && this->_col == 0)
 		this->_verticalScroll = this->_registers[9];
@@ -515,9 +515,9 @@ bool VDP::OnTick(uint32_t counter) {
 uint8_t VDP::GetStatus(bool resetStatus) {
 	uint8_t r = this->_status;
 
-	// Clear bits 6 and 7
+	// Clear bits 6, 7, 8
 	if (resetStatus)
-		this->_status &= 0x3F;
+		this->_status &= 0x1F;
 
 	return r;
 }
