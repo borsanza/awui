@@ -41,6 +41,8 @@ void Rom::LoadRom(const String file) {
 	fs->Close();
 
 	delete fs;
+
+	this->_numPages = this->_rom->GetLength() >> 14;
 }
 
 void Rom::Reload() {

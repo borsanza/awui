@@ -11,6 +11,7 @@ namespace awui {
 				private:
 					IO::MemoryStream * _rom;
 					String _file;
+					uint8_t _numPages;
 
 				public:
 					Rom(int32_t capacity);
@@ -23,6 +24,7 @@ namespace awui {
 
 					void Reload();
 					uint32_t GetCRC32() const;
+					uint8_t GetNumPages() const { return this->_numPages; }
 			};
 		}
 	}
