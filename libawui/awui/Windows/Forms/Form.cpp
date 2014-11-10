@@ -73,7 +73,6 @@ void Form::Init() {
 }
 
 void Form::OnPaintForm() {
-	glViewport(0, 0, this->GetWidth(), this->GetHeight());
 	GL gl;
 	Drawing::Rectangle rectangle;
 	rectangle.SetX(0);
@@ -426,11 +425,13 @@ void Form::ProcessEvents() {
 	}
 }
 
+#include <GL/glx.h>
+
 void Form::RefreshVideo() {
 	if (!initialized)
 		return;
 
-	int flags = SDL_ANYFORMAT | SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
+	int flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
 	int width = 0;
 	int height = 0;
 
@@ -452,6 +453,10 @@ void Form::RefreshVideo() {
 	}
 
 	SDL_SetVideoMode(width, height, 32, flags);
+
+	void (*swapInterval)(int);
+	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+	swapInterval(1);
 }
 
 void Form::SetFullscreen(int mode) {

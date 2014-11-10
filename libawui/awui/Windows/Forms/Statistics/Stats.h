@@ -21,7 +21,7 @@ namespace awui {
 
 						TimeSpan idle;
 
-						Label *labelPercent;
+						// Label *labelPercent;
 						Label *labelControls;
 						Label *labelFPS;
 						Spinner *spinner;
@@ -33,7 +33,7 @@ namespace awui {
 						int fps;
 						int drawedControls;
 						float fpsCalculated;
-						float percent;
+						// float percent;
 
 						Stats();
 						virtual ~Stats();

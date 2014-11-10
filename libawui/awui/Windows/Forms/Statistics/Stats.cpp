@@ -19,7 +19,7 @@ Stats::Stats() {
 	this->fps = 0;
 	this->fpsCalculated = 0;
 	this->lastSecond = -1;
-	this->percent = 0;
+	// this->percent = 0;
 	this->drawedControls = 0;
 
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
@@ -29,45 +29,45 @@ Stats::Stats() {
 
 	Font font = Font("Monospace", 14);
 
-	this->labelPercent = new Label();
+	// this->labelPercent = new Label();
 	this->labelControls = new Label();
 	this->labelFPS = new Label();
 	this->heartbeat = new Heartbeat();
 	this->spinner = new Spinner();
 
-	this->labelPercent->SetFont(&font);
+	// this->labelPercent->SetFont(&font);
 	this->labelControls->SetFont(&font);
 	this->labelFPS->SetFont(&font);
 
 	this->spinner->SetDock(DockStyle::Right);
 	this->heartbeat->SetDock(DockStyle::Left);
 	this->labelControls->SetDock(DockStyle::Right);
-	this->labelPercent->SetDock(DockStyle::Right);
+	// this->labelPercent->SetDock(DockStyle::Right);
 	this->labelFPS->SetDock(DockStyle::Right);
 	this->labelControls->SetTextAlign(ContentAlignment::MiddleRight);
-	this->labelPercent->SetTextAlign(ContentAlignment::MiddleRight);
+	// this->labelPercent->SetTextAlign(ContentAlignment::MiddleRight);
 	this->labelFPS->SetTextAlign(ContentAlignment::MiddleRight);
 	Color backColor = Color::FromArgb(0, 0, 0, 0);
 	Color foreColor = Color::FromArgb(255, 255, 255);
 	this->heartbeat->SetBackColor(backColor);
 	this->spinner->SetBackColor(backColor);
 	this->labelControls->SetBackColor(backColor);
-	this->labelPercent->SetBackColor(backColor);
+	// this->labelPercent->SetBackColor(backColor);
 	this->labelFPS->SetBackColor(backColor);
 	this->heartbeat->SetForeColor(foreColor);
 	this->spinner->SetForeColor(foreColor);
 	this->labelControls->SetForeColor(foreColor);
-	this->labelPercent->SetForeColor(foreColor);
+	// this->labelPercent->SetForeColor(foreColor);
 	this->labelFPS->SetForeColor(foreColor);
 
 	this->labelControls->SetWidth(150);
 	this->labelFPS->SetWidth(90);
-	this->labelPercent->SetWidth(70);
+	// this->labelPercent->SetWidth(70);
 
 	this->GetControls()->Add(this->heartbeat);
 	this->GetControls()->Add(this->spinner);
 	this->GetControls()->Add(this->labelFPS);
-	this->GetControls()->Add(this->labelPercent);
+	// this->GetControls()->Add(this->labelPercent);
 	this->GetControls()->Add(this->labelControls);
 	this->SetHeight(24);
 }
@@ -110,13 +110,15 @@ void Stats::SetTimeAfterIddle() {
 		this->fps = 0;
 		this->lastTime = this->afterSync;
 
+/*
 		if (total != 0) {
 			float calc = Math::Round((this->timeUsed / 10000000.0f) / total * 10000.0f) / 100.0f;
 			if (calc != this->percent) {
-				this->percent = (this->percent + calc) / 2.0f;
+				this->percent = calc;
 				this->labelPercent->SetText(Convert::ToString(this->percent, 2) + String("%"));
 			}
 		}
+*/
 
 		this->timeUsed = 0;
 	}

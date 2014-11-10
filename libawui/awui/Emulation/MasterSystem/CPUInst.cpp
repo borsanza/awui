@@ -61,6 +61,9 @@ void CPUInst::Reset() {
 }
 
 void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
+//	if (pos == 0xc092)
+//		printf("Writing: %.2X\n", value);
+
 	switch (this->_mapper) {
 		default:
 		case MAPPER_SEGA:
@@ -806,7 +809,10 @@ void CPUInst::DECss(uint8_t reg) {
 void CPUInst::RLCA() {
 	uint8_t old = this->_registers->GetA();
 	this->_registers->SetFFlag(Flag_C, old & 0x80);
-	uint8_t value = (old << 1) | bool(this->_registers->GetF() & Flag_C);
+	uint8_t value = (old << 1);
+	if (this->_registers->GetF() & Flag_C)
+		value |= 1;
+
 	this->_registers->SetA(value);
 	this->_registers->SetFFlag(Flag_H, false);
 	this->_registers->SetFFlag(Flag_N, false);
@@ -818,7 +824,10 @@ void CPUInst::RLCA() {
 // |1|4| The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
 void CPUInst::RLA() {
 	uint8_t old = this->_registers->GetA();
-	uint8_t value = (old << 1) | bool(this->_registers->GetF() & Flag_C);
+	uint8_t value = (old << 1);
+	if (this->_registers->GetF() & Flag_C)
+		value |= 1;
+
 	this->_registers->SetA(value);
 	this->_registers->SetFFlag(Flag_H, false);
 	this->_registers->SetFFlag(Flag_N, false);
@@ -831,7 +840,10 @@ void CPUInst::RLA() {
 void CPUInst::RRCA() {
 	uint8_t old = this->_registers->GetA();
 	this->_registers->SetFFlag(Flag_C, old & 0x01);
-	uint8_t value = (old >> 1) | (0x80 & bool(this->_registers->GetF() & Flag_C));
+	uint8_t value = (old >> 1);
+	if (old & 1)
+		value |= 0x80;
+
 	this->_registers->SetA(value);
 	this->_registers->SetFFlag(Flag_H, false);
 	this->_registers->SetFFlag(Flag_N, false);
@@ -843,7 +855,10 @@ void CPUInst::RRCA() {
 // |1|4| The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
 void CPUInst::RRA() {
 	uint8_t old = this->_registers->GetA();
-	uint8_t value = (old >> 1) | (0x80 & bool(this->_registers->GetF() & Flag_C));
+	uint8_t value = (old >> 1);
+	if (this->_registers->GetF() & Flag_C)
+		value |= 0x80;
+
 	this->_registers->SetA(value);
 	this->_registers->SetFFlag(Flag_H, false);
 	this->_registers->SetFFlag(Flag_N, false);
@@ -854,7 +869,9 @@ void CPUInst::RRA() {
 
 void CPUInst::RLC(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
-	uint8_t value = (old << 1) | bool(old & 0x80);
+	uint8_t value = (old << 1);
+	if (old & 0x80)
+		value |= 1;
 
 	this->_registers->SetRegm(reg, value);
 
@@ -872,7 +889,9 @@ void CPUInst::RLC(uint8_t reg) {
 void CPUInst::RLC_HL() {
 	uint16_t offset = this->_registers->GetHL();
 	uint8_t old = this->ReadMemory(offset);
-	uint8_t value = (old << 1) | bool(old & 0x80);
+	uint8_t value = (old << 1);
+	if (old & 0x80)
+		value |= 1;
 
 	this->WriteMemory(offset, value);
 
@@ -890,7 +909,9 @@ void CPUInst::RLC_HL() {
 // |2|8| The contents of b are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
 void CPUInst::RL(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
-	uint8_t value = (old << 1) | bool(this->_registers->GetF() & Flag_C);
+	uint8_t value = (old << 1);
+	if (this->_registers->GetF() & Flag_C)
+		value |= 1;
 
 	this->_registers->SetRegm(reg, value);
 
@@ -909,7 +930,9 @@ void CPUInst::RL(uint8_t reg) {
 void CPUInst::RL_HL() {
 	uint16_t offset = this->_registers->GetHL();
 	uint8_t old = this->ReadMemory(offset);
-	uint8_t value = (old << 1) | bool(this->_registers->GetF() & Flag_C);
+	uint8_t value = (old << 1);
+	if (this->_registers->GetF() & Flag_C)
+		value |= 1;
 
 	this->WriteMemory(offset, value);
 
@@ -964,7 +987,9 @@ void CPUInst::RRC_HL() {
 // |2|8| The contents of d are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
 void CPUInst::RR(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
-	uint8_t value = (old >> 1) | (bool(this->_registers->GetF() & Flag_C) * 0x80);
+	uint8_t value = (old >> 1);
+	if (this->_registers->GetF() & Flag_C)
+		value |= 0x80;
 
 	this->_registers->SetRegm(reg, value);
 
@@ -983,7 +1008,9 @@ void CPUInst::RR(uint8_t reg) {
 void CPUInst::RR_HL() {
 	uint16_t offset = this->_registers->GetHL();
 	uint8_t old = this->ReadMemory(offset);
-	uint8_t value = (old >> 1) | (bool(this->_registers->GetF() & Flag_C) * 0x80);
+	uint8_t value = (old >> 1);
+	if (this->_registers->GetF() & Flag_C)
+		value |= 0x80;
 
 	this->WriteMemory(offset, value);
 

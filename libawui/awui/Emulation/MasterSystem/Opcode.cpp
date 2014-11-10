@@ -1347,6 +1347,8 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case Ox00: printf("NOP"); break;
 		case Ox07: printf("RLCA"); break;
 		case Ox08: printf("EX AF, AF'"); break;
+		case Ox0D: printf("DEC C"); break;
+		case Ox13: printf("INC DE"); break;
 		case Ox17: printf("RLA"); break;
 		case Ox1F: printf("RRA"); break;
 		case Ox20:
@@ -1355,6 +1357,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 			else
 				printf("JR NZ, %.2dh (%.4Xh)", opcode2, (pc + (int8_t)opcode2 + 2));
 			break;
+		case Ox23: printf("INC HL"); break;
 		case Ox28:
 			if (opcode2 & 0x80)
 				printf("JR Z, -%.2Xh (%.4Xh)", -((int8_t) opcode2), (pc + (int8_t)opcode2 + 2));
