@@ -386,7 +386,7 @@ bool VDP::GetSpritePixel(int x, int y, uint8_t * color) const {
 	uint16_t base = uint16_t(this->_registers[5] & 0x7E) << 7;
 
 	for (int n = 0; n < 64; n++) {
-		int16_t sy = this->_vram->ReadByte(base + n);
+		int8_t sy = this->_vram->ReadByte(base + n);
 
 		if (sy == 0xD0)
 			return false;
@@ -397,7 +397,7 @@ bool VDP::GetSpritePixel(int x, int y, uint8_t * color) const {
 		if ((y <= sy) || (y > (sy + height)))
 			continue;
 
-		int16_t sx = this->_vram->ReadByte(base + 128 + (n * 2));
+		int8_t sx = this->_vram->ReadByte(base + 128 + (n * 2));
 
 		if ((x < sx) || (x >= (sx + 8)))
 			continue;
