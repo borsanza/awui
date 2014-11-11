@@ -64,7 +64,7 @@ namespace awui {
 					bool IsVSYNC(uint16_t line) const;
 
 					uint8_t GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete) const;
-					bool GetSpritePixel(int x, int y, uint8_t * color) const;
+					bool GetSpritePixel(uint8_t x, uint8_t y, uint8_t * color) const;
 					uint8_t GetBackgroundPixel(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete) const;
 
 				public:

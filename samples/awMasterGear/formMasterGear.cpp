@@ -17,7 +17,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
-#define MULTIPLY 2
+#define MULTIPLY 1
 
 FormMasterGear::FormMasterGear() {
 	this->_games = new ArrayList();
@@ -195,6 +195,6 @@ void FormMasterGear::OnTick() {
 		this->_debugger->SetRom(selected);
 		selected->SetDebugger(this->_debugger);
 		this->SetText(selected->GetName());
-		printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
+		// printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
 	}
 }

@@ -380,13 +380,15 @@ uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flip
 	return c;
 }
 
-bool VDP::GetSpritePixel(int x, int y, uint8_t * color) const {
+bool VDP::GetSpritePixel(uint8_t x, uint8_t y, uint8_t * color) const {
+	uint8_t sx, sy;
+	uint16_t pattern;
 	uint8_t height = (this->_registers[1] & 0x2) ? 16 : 8;
 
 	uint16_t base = uint16_t(this->_registers[5] & 0x7E) << 7;
 
 	for (int n = 0; n < 64; n++) {
-		int8_t sy = this->_vram->ReadByte(base + n);
+		sy = this->_vram->ReadByte(base + n);
 
 		if (sy == 0xD0)
 			return false;
@@ -397,12 +399,12 @@ bool VDP::GetSpritePixel(int x, int y, uint8_t * color) const {
 		if ((y <= sy) || (y > (sy + height)))
 			continue;
 
-		int8_t sx = this->_vram->ReadByte(base + 128 + (n * 2));
+		sx = this->_vram->ReadByte(base + 128 + (n * 2));
 
 		if ((x < sx) || (x >= (sx + 8)))
 			continue;
 
-		uint16_t pattern = this->_vram->ReadByte(base + 129 + (n * 2));
+		pattern = this->_vram->ReadByte(base + 129 + (n * 2));
 		if (this->_registers[6] & 0x4)
 			pattern |= 0x100;
 
