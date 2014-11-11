@@ -726,6 +726,8 @@ void CPU::RunOpcode() {
 		case OxEDA0: this->LDI(); break;
 		case OxEDA1: this->CPI(); break;
 		case OxEDA3: this->OUTI(); break;
+		case OxEDA8: this->LDD(); break;
+		case OxEDB8: this->LDDR(); break;
 
 		// EDB0: LDIR
 		// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de.
@@ -1101,6 +1103,8 @@ void CPU::RunOpcode() {
 		case OxDD77: this->LDXXdr(Reg_IX, Reg_A); break;
 
 		case OxDDF9: this->LDSPr(Reg_IX, 10, 2); break;
+		case OxDD26: this->LDrn(Reg_IXH, 11, 3); break;
+		case OxDD2E: this->LDrn(Reg_IXL, 11, 3); break;
 
 /******************************************************************************/
 /************************* IX bit instructions (DDCB) *************************/
@@ -1246,6 +1250,8 @@ void CPU::RunOpcode() {
 		case OxFD77: this->LDXXdr(Reg_IY, Reg_A); break;
 
 		case OxFDF9: this->LDSPr(Reg_IY, 10, 2); break;
+		case OxFD26: this->LDrn(Reg_IYH, 11, 3); break;
+		case OxFD2E: this->LDrn(Reg_IYL, 11, 3); break;
 
 /******************************************************************************/
 /************************* IY bit instructions (DDCB) *************************/

@@ -187,10 +187,10 @@ void CPUInst::LDrr(uint8_t reg1, uint8_t reg2, uint8_t size) {
 }
 
 // |2|7| Loads * into reg
-void CPUInst::LDrn(uint8_t reg) {
-	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetPC() + 1));
-	this->_registers->IncPC(2);
-	this->_cycles += 7;
+void CPUInst::LDrn(uint8_t reg, uint8_t cycles, uint8_t size) {
+	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetPC() + size - 1));
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
 // |1|7| The contents of (hl) are loaded into reg
@@ -311,6 +311,49 @@ void CPUInst::LDI() {
 	this->_registers->SetFFlag(Flag_N, false);
 	this->_registers->IncPC(2);
 	this->_cycles += 16;
+}
+
+// |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl, de, and bc are decremented.
+void CPUInst::LDD() {
+	uint16_t HL = this->_registers->GetHL();
+	uint16_t DE = this->_registers->GetDE();
+	uint16_t BC = this->_registers->GetBC() - 1;
+
+	this->WriteMemory(DE, this->ReadMemory(HL));
+
+	this->_registers->SetHL(HL - 1);
+	this->_registers->SetDE(DE - 1);
+	this->_registers->SetBC(BC);
+
+	this->_registers->SetFFlag(Flag_H, false);
+	this->_registers->SetFFlag(Flag_N, false);
+	this->_registers->SetFFlag(Flag_P, (BC != 0));
+	this->_registers->IncPC(2);
+	this->_cycles += 16;
+}
+
+// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl, de, and bc are decremented. If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
+void CPUInst::LDDR() {
+	uint16_t HL = this->_registers->GetHL();
+	uint16_t DE = this->_registers->GetDE();
+	uint16_t BC = this->_registers->GetBC() - 1;
+
+	this->WriteMemory(DE, this->ReadMemory(HL));
+
+	this->_registers->SetHL(HL - 1);
+	this->_registers->SetDE(DE - 1);
+	this->_registers->SetBC(BC);
+
+	this->_registers->SetFFlag(Flag_H, false);
+	this->_registers->SetFFlag(Flag_N, false);
+	this->_registers->SetFFlag(Flag_P, false);
+
+	if (BC != 0) {
+		this->_cycles += 21;
+	} else {
+		this->_registers->IncPC(2);
+		this->_cycles += 16;
+	}
 }
 
 // |2|16| Compares the value of the memory location pointed to by hl with a. Then hl is incremented and bc is decremented.
