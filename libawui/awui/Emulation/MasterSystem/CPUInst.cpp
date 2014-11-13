@@ -100,12 +100,15 @@ void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
 						return;
 					case 0xFFFD:
 						this->_frame0 = value % this->_rom->GetNumPages();
+						// printf("Frames: %.2X %.2X %.2X\n", this->_frame0, this->_frame1, this->_frame2);
 						return;
 					case 0xFFFE:
 						this->_frame1 = value % this->_rom->GetNumPages();
+						// printf("Frames: %.2X %.2X %.2X\n", this->_frame0, this->_frame1, this->_frame2);
 						return;
 					case 0xFFFF:
 						this->_frame2 = value % this->_rom->GetNumPages();
+						// printf("Frames: %.2X %.2X %.2X\n", this->_frame0, this->_frame1, this->_frame2);
 						return;
 				}
 			}
