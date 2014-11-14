@@ -26,6 +26,23 @@ using namespace awui::Emulation::MasterSystem;
 // Checking a bit:
 //   bit = number & (1 << x);
 
+// Binary     Unsigned  Two's Complement
+// 0111 1111     127         127
+// 0111 1110     126         126
+// 0000 0010       2           2
+// 0000 0001       1           1
+// 0000 0000       0           0
+// 1111 1111     255          −1
+// 1111 1110     254          −2
+// 1000 0010     130        −126
+// 1000 0001     129        −127
+// 1000 0000     128        −128
+//
+// Example:
+// uint8_t a = 130;
+// int8_t b = a;
+// b = -126
+
 static bool PARITYEVEN(uint8_t value) {
     bool parity = false;
     while (value) {
@@ -564,7 +581,7 @@ void CPUInst::INCHL() {
 	this->WriteMemory(this->_registers->GetHL(), value);
 	this->_registers->SetFFlag(Flag_S, value & 0x80);
 	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (value & 0xF) < (old & 0xF));
+	this->_registers->SetFFlag(Flag_H, !(value & 0xF));
 	this->_registers->SetFFlag(Flag_V, old == 0x7F);
 	this->_registers->SetFFlag(Flag_N, false);
 	this->_registers->IncPC();
@@ -574,13 +591,13 @@ void CPUInst::INCHL() {
 // |3|23| Adds one to the memory location pointed to by ix plus *.
 void CPUInst::INCXXd(uint8_t xx) {
 	uint16_t pc = this->_registers->GetPC();
-	uint16_t offset = this->_registers->GetRegss(xx) + this->ReadMemory(pc + 2);
+	uint16_t offset = this->_registers->GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = old + 1;
 	this->WriteMemory(offset, value);
 	this->_registers->SetFFlag(Flag_S, value & 0x80);
 	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (value & 0xF) < (old & 0xF));
+	this->_registers->SetFFlag(Flag_H, !(value & 0xF));
 	this->_registers->SetFFlag(Flag_V, old == 0x7F);
 	this->_registers->SetFFlag(Flag_N, false);
 	this->_registers->IncPC(3);
@@ -590,7 +607,7 @@ void CPUInst::INCXXd(uint8_t xx) {
 // |3|23| Subtracts one from the memory location pointed to by ix plus *.
 void CPUInst::DECXXd(uint8_t xx) {
 	uint16_t pc = this->_registers->GetPC();
-	uint16_t offset = this->_registers->GetRegss(xx) + this->ReadMemory(pc + 2);
+	uint16_t offset = this->_registers->GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = old - 1;
 	this->WriteMemory(offset, value);
@@ -842,7 +859,7 @@ void CPUInst::INCss(uint8_t reg, uint8_t cycles, uint8_t size) {
 
 // |1|6| Subtracts one from ss
 void CPUInst::DECss(uint8_t reg) {
-	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg)  - 1);
+	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg) - 1);
 	this->_registers->IncPC();
 	this->_cycles += 6;
 }
@@ -932,6 +949,31 @@ void CPUInst::RLC(uint8_t reg) {
 	this->_cycles += 8;
 }
 
+// |4|23| The contents of the memory location pointed to by ix plus * are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
+void CPUInst::RLCXXd(uint8_t reg) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t XX = this->_registers->GetRegss(reg);
+	int8_t offset = this->ReadMemory(pc + 2);
+	uint16_t finalOffset = XX + offset;
+	uint8_t old = this->ReadMemory(finalOffset);
+
+	uint8_t value = (old << 1);
+	if (old & 0x80)
+		value |= 1;
+
+	this->WriteMemory(finalOffset, value);
+
+	// H = N = false
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0)
+	);
+
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
+}
+
 void CPUInst::RLC_HL() {
 	uint16_t offset = this->_registers->GetHL();
 	uint8_t old = this->ReadMemory(offset);
@@ -970,6 +1012,31 @@ void CPUInst::RL(uint8_t reg) {
 
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
+}
+
+// |4|23| The contents of the memory location pointed to by ix plus * are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
+void CPUInst::RLXXd(uint8_t reg) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t XX = this->_registers->GetRegss(reg);
+	int8_t offset = this->ReadMemory(pc + 2);
+	uint16_t finalOffset = XX + offset;
+	uint8_t old = this->ReadMemory(finalOffset);
+
+	uint8_t value = (old << 1);
+	if (this->_registers->GetF() & Flag_C)
+		value |= 1;
+
+	this->WriteMemory(finalOffset, value);
+
+	// H = N = false
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0)
+	);
+
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
 }
 
 // |2|15| The contents of (hl) are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
@@ -1011,6 +1078,29 @@ void CPUInst::RRC(uint8_t reg) {
 	this->_cycles += 8;
 }
 
+// |4|23| The contents of the memory location pointed to by ix plus * are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
+void CPUInst::RRCXXd(uint8_t reg) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t XX = this->_registers->GetRegss(reg);
+	int8_t offset = this->ReadMemory(pc + 2);
+	uint16_t finalOffset = XX + offset;
+	uint8_t old = this->ReadMemory(finalOffset);
+
+	uint8_t value = (old >> 1) | ((old & 0x01) << 7);
+
+	this->WriteMemory(finalOffset, value);
+
+	// H = N = false
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0)
+	);
+
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
+}
+
 // |2|15| The contents of (hl) are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
 void CPUInst::RRC_HL() {
 	uint16_t offset = this->_registers->GetHL();
@@ -1050,6 +1140,30 @@ void CPUInst::RR(uint8_t reg) {
 	this->_cycles += 8;
 }
 
+// |4|23| The contents of the memory location pointed to by ix plus * are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
+void CPUInst::RRXXd(uint8_t reg) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t XX = this->_registers->GetRegss(reg);
+	int8_t offset = this->ReadMemory(pc + 2);
+	uint16_t finalOffset = XX + offset;
+	uint8_t old = this->ReadMemory(finalOffset);
+	uint8_t value = (old >> 1);
+	if (this->_registers->GetF() & Flag_C)
+		value |= 0x80;
+
+	this->WriteMemory(finalOffset, value);
+
+	// H = N = false
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x01) ? Flag_C : 0)
+	);
+
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
+}
+
 // |2|15| The contents of (hl) are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
 void CPUInst::RR_HL() {
 	uint16_t offset = this->_registers->GetHL();
@@ -1076,14 +1190,29 @@ void CPUInst::SLA(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
 	uint8_t value = old << 1;
 	this->_registers->SetRegm(reg, value);
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, old & 0x80);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0));
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
+}
+
+// |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
+void CPUInst::SLAXXd(uint8_t reg) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t XX = this->_registers->GetRegss(reg);
+	int8_t offset = this->ReadMemory(pc + 2);
+	uint16_t finalOffset = XX + offset;
+	uint8_t old = this->ReadMemory(finalOffset);
+	uint8_t value = old << 1;
+	this->WriteMemory(finalOffset, value);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0));
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
 }
 
 // |2|8| The contents of a are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
@@ -1091,14 +1220,29 @@ void CPUInst::SRA(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
 	uint8_t value =  (old & 0x80) | (old >> 1);
 	this->_registers->SetRegm(reg, value);
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, old & 0x01);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0));
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
+}
+
+// |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
+void CPUInst::SRAXXd(uint8_t reg) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t XX = this->_registers->GetRegss(reg);
+	int8_t offset = this->ReadMemory(pc + 2);
+	uint16_t finalOffset = XX + offset;
+	uint8_t old = this->ReadMemory(finalOffset);
+	uint8_t value =  (old & 0x80) | (old >> 1);
+	this->WriteMemory(finalOffset, value);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0));
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
 }
 
 // |2|8| The contents of b are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
@@ -1106,14 +1250,30 @@ void CPUInst::SRL(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
 	uint8_t value =  old >> 1;
 	this->_registers->SetRegm(reg, value);
-	this->_registers->SetFFlag(Flag_S, false);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, old & 0x01);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x01) ? Flag_C : 0));
+
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
+}
+
+// |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
+void CPUInst::SRLXXd(uint8_t reg) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t XX = this->_registers->GetRegss(reg);
+	int8_t offset = this->ReadMemory(pc + 2);
+	uint16_t finalOffset = XX + offset;
+	uint8_t old = this->ReadMemory(finalOffset);
+	uint8_t value =  old >> 1;
+	this->WriteMemory(finalOffset, value);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x01) ? Flag_C : 0));
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
 }
 
 // |2|8| The contents of b are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
@@ -1121,14 +1281,29 @@ void CPUInst::SLL(uint8_t reg) {
 	uint8_t old = this->_registers->GetRegm(reg);
 	uint8_t value = (old << 1) | 1;
 	this->_registers->SetRegm(reg, value);
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, old & 0x80);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0));
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
+}
+
+// |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+void CPUInst::SLLXXd(uint8_t reg) {
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t XX = this->_registers->GetRegss(reg);
+	int8_t offset = this->ReadMemory(pc + 2);
+	uint16_t finalOffset = XX + offset;
+	uint8_t old = this->ReadMemory(finalOffset);
+	uint8_t value = (old << 1) | 1;
+	this->WriteMemory(finalOffset, value);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(PARITYEVEN(value) ? Flag_P : 0) |
+		((old & 0x80) ? Flag_C : 0));
+	this->_registers->IncPC(4);
+	this->_cycles += 23;
 }
 
 /******************************************************************************/

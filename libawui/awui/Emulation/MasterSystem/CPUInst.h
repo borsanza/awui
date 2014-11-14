@@ -103,17 +103,25 @@ namespace awui {
 					void RRCA();
 					void RRA();
 					void RLC(uint8_t reg);
+					void RLCXXd(uint8_t reg);
 					void RLC_HL();
 					void RL(uint8_t reg);
+					void RLXXd(uint8_t reg);
 					void RL_HL();
 					void RRC(uint8_t reg);
+					void RRCXXd(uint8_t reg);
 					void RRC_HL();
 					void RR(uint8_t reg);
+					void RRXXd(uint8_t reg);
 					void RR_HL();
 					void SLA(uint8_t reg);
+					void SLAXXd(uint8_t reg);
 					void SRA(uint8_t reg);
+					void SRAXXd(uint8_t reg);
 					void SRL(uint8_t reg);
+					void SRLXXd(uint8_t reg);
 					void SLL(uint8_t reg);
+					void SLLXXd(uint8_t reg);
 
 					// Bit Set, Reset, and Test Group
 					void BIT(uint8_t param, uint8_t compare, uint8_t cycles = 8);

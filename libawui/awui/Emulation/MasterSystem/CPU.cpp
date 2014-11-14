@@ -1110,6 +1110,15 @@ void CPU::RunOpcode() {
 /************************* IX bit instructions (DDCB) *************************/
 /******************************************************************************/
 
+		case OxDDCBnn06: this->RLCXXd(Reg_IX); break;
+		case OxDDCBnn0E: this->RRCXXd(Reg_IX); break;
+		case OxDDCBnn16: this->RLXXd(Reg_IX); break;
+		case OxDDCBnn1E: this->RRXXd(Reg_IX); break;
+		case OxDDCBnn26: this->SLAXXd(Reg_IX); break;
+		case OxDDCBnn2E: this->SRAXXd(Reg_IX); break;
+		case OxDDCBnn36: this->SLLXXd(Reg_IX); break;
+		case OxDDCBnn3E: this->SRLXXd(Reg_IX); break;
+
 		case OxDDCBnn40:
 		case OxDDCBnn41:
 		case OxDDCBnn42:
@@ -1254,8 +1263,17 @@ void CPU::RunOpcode() {
 		case OxFD2E: this->LDrn(Reg_IYL, 11, 3); break;
 
 /******************************************************************************/
-/************************* IY bit instructions (DDCB) *************************/
+/************************* IY bit instructions (FDCB) *************************/
 /******************************************************************************/
+
+		case OxFDCBnn06: this->RLCXXd(Reg_IY); break;
+		case OxFDCBnn0E: this->RRCXXd(Reg_IY); break;
+		case OxFDCBnn16: this->RLXXd(Reg_IY); break;
+		case OxFDCBnn1E: this->RRXXd(Reg_IY); break;
+		case OxFDCBnn26: this->SLAXXd(Reg_IY); break;
+		case OxFDCBnn2E: this->SRAXXd(Reg_IY); break;
+		case OxFDCBnn36: this->SLLXXd(Reg_IY); break;
+		case OxFDCBnn3E: this->SRLXXd(Reg_IY); break;
 
 		case OxFDCBnn40:
 		case OxFDCBnn41:
