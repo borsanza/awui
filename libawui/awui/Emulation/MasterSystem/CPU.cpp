@@ -191,10 +191,10 @@ void CPU::RunOpcode() {
 		case Ox31: this->LDddnn(Reg_SP); break;
 
 		// INC ss
-		case Ox03: this->INCss(Reg_BC); break;
-		case Ox13: this->INCss(Reg_DE); break;
-		case Ox23: this->INCss(Reg_HL); break;
-		case Ox33: this->INCss(Reg_SP); break;
+		case Ox03: this->INCss(Reg_BC, 6, 1); break;
+		case Ox13: this->INCss(Reg_DE, 6, 1); break;
+		case Ox23: this->INCss(Reg_HL, 6, 1); break;
+		case Ox33: this->INCss(Reg_SP, 6, 1); break;
 		case Ox34: this->INCHL();       break;
 
 		// INC r
@@ -243,17 +243,18 @@ void CPU::RunOpcode() {
 			break;
 
 		// DEC X
+		case Ox0B: this->DECss(Reg_BC, 6, 1); break;
+		case Ox1B: this->DECss(Reg_DE, 6, 1); break;
+		case Ox2B: this->DECss(Reg_HL, 6, 1); break;
+		case Ox3B: this->DECss(Reg_SP, 6, 1); break;
+
 		case Ox05: this->DECm (Reg_B);  break;
-		case Ox0B: this->DECss(Reg_BC); break;
 		case Ox0D: this->DECm (Reg_C);  break;
 		case Ox15: this->DECm (Reg_D);  break;
-		case Ox1B: this->DECss(Reg_DE); break;
 		case Ox1D: this->DECm (Reg_E);  break;
 		case Ox25: this->DECm (Reg_H);  break;
-		case Ox2B: this->DECss(Reg_HL); break;
 		case Ox2D: this->DECm (Reg_L);  break;
 		case Ox35: this->DECHL();       break;
-		case Ox3B: this->DECss(Reg_SP); break;
 		case Ox3D: this->DECm (Reg_A);  break;
 
 		// LD r, r'
@@ -1072,8 +1073,8 @@ void CPU::RunOpcode() {
 
 		case OxDDE1: this->POP16(Reg_IX, 14, 2); break;
 		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
-		case OxDD23: this->INCss(Reg_IX); break;
-		case OxDD2B: this->DECss(Reg_IX); break;
+		case OxDD23: this->INCss(Reg_IX, 10, 2); break;
+		case OxDD2B: this->DECss(Reg_IX, 10, 2); break;
 		case OxDD34: this->INCXXd(Reg_IX); break;
 		case OxDD35: this->DECXXd(Reg_IX); break;
 		case OxDD36: this->LDXXdn(Reg_IX); break;
@@ -1228,8 +1229,8 @@ void CPU::RunOpcode() {
 
 		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
 		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;
-		case OxFD23: this->INCss(Reg_IY); break;
-		case OxFD2B: this->DECss(Reg_IY); break;
+		case OxFD23: this->INCss(Reg_IY, 10, 2); break;
+		case OxFD2B: this->DECss(Reg_IY, 10, 2); break;
 		case OxFD34: this->INCXXd(Reg_IY); break;
 		case OxFD35: this->DECXXd(Reg_IY); break;
 		case OxFD36: this->LDXXdn(Reg_IY); break;

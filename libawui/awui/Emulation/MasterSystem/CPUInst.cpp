@@ -858,10 +858,10 @@ void CPUInst::INCss(uint8_t reg, uint8_t cycles, uint8_t size) {
 }
 
 // |1|6| Subtracts one from ss
-void CPUInst::DECss(uint8_t reg) {
+void CPUInst::DECss(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->_registers->SetRegss(reg, this->_registers->GetRegss(reg) - 1);
-	this->_registers->IncPC();
-	this->_cycles += 6;
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
 /******************************************************************************/
@@ -1351,7 +1351,7 @@ void CPUInst::RESHL(uint8_t bit) {
 
 // |4|20| Tests bit 'bit' of the memory location pointed to by ss plus *.
 void CPUInst::BITbssd(uint8_t bit, uint8_t reg, uint8_t d) {
-	uint16_t offset = this->_registers->GetRegss(reg) + d;
+	uint16_t offset = this->_registers->GetRegss(reg) + ((int8_t) d);
 	uint8_t value = this->ReadMemory(offset);
 	this->_registers->SetFFlag(Flag_Z, !(value & bit));
 	this->_registers->SetFFlag(Flag_H, true);
@@ -1362,7 +1362,7 @@ void CPUInst::BITbssd(uint8_t bit, uint8_t reg, uint8_t d) {
 
 // |4|23| Resets bit 'bit' of the memory location pointed to by ss plus *.
 void CPUInst::RESETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
-	uint16_t offset = this->_registers->GetRegss(reg) + d;
+	uint16_t offset = this->_registers->GetRegss(reg) + ((int8_t) d);
 	this->WriteMemory(offset, this->ReadMemory(offset) & ~bit);
 	this->_registers->IncPC(4);
 	this->_cycles += 23;
@@ -1370,7 +1370,7 @@ void CPUInst::RESETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
 
 // |4|23| Sets bit 'bit' of the memory location pointed to by ss plus *.
 void CPUInst::SETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
-	uint16_t offset = this->_registers->GetRegss(reg) + d;
+	uint16_t offset = this->_registers->GetRegss(reg) + ((int8_t) d);
 	this->WriteMemory(offset, this->ReadMemory(offset) | bit);
 	this->_registers->IncPC(4);
 	this->_cycles += 23;
