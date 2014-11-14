@@ -198,13 +198,13 @@ void CPU::RunOpcode() {
 		case Ox34: this->INCHL();       break;
 
 		// INC r
-		case Ox04: this->INCr(Reg_B); break;
-		case Ox0C: this->INCr(Reg_C); break;
-		case Ox14: this->INCr(Reg_D); break;
-		case Ox1C: this->INCr(Reg_E); break;
-		case Ox24: this->INCr(Reg_H); break;
-		case Ox2C: this->INCr(Reg_L); break;
-		case Ox3C: this->INCr(Reg_A); break;
+		case Ox04: this->INCr(Reg_B, 4, 1); break;
+		case Ox0C: this->INCr(Reg_C, 4, 1); break;
+		case Ox14: this->INCr(Reg_D, 4, 1); break;
+		case Ox1C: this->INCr(Reg_E, 4, 1); break;
+		case Ox24: this->INCr(Reg_H, 4, 1); break;
+		case Ox2C: this->INCr(Reg_L, 4, 1); break;
+		case Ox3C: this->INCr(Reg_A, 4, 1); break;
 
 		// ADD HL, s
 		case Ox09: this->ADDHLss(Reg_BC); break;
@@ -248,14 +248,14 @@ void CPU::RunOpcode() {
 		case Ox2B: this->DECss(Reg_HL, 6, 1); break;
 		case Ox3B: this->DECss(Reg_SP, 6, 1); break;
 
-		case Ox05: this->DECm (Reg_B);  break;
-		case Ox0D: this->DECm (Reg_C);  break;
-		case Ox15: this->DECm (Reg_D);  break;
-		case Ox1D: this->DECm (Reg_E);  break;
-		case Ox25: this->DECm (Reg_H);  break;
-		case Ox2D: this->DECm (Reg_L);  break;
+		case Ox05: this->DECm (Reg_B, 4, 1);  break;
+		case Ox0D: this->DECm (Reg_C, 4, 1);  break;
+		case Ox15: this->DECm (Reg_D, 4, 1);  break;
+		case Ox1D: this->DECm (Reg_E, 4, 1);  break;
+		case Ox25: this->DECm (Reg_H, 4, 1);  break;
+		case Ox2D: this->DECm (Reg_L, 4, 1);  break;
 		case Ox35: this->DECHL();       break;
-		case Ox3D: this->DECm (Reg_A);  break;
+		case Ox3D: this->DECm (Reg_A, 4, 1);  break;
 
 		// LD r, r'
 		case Ox40: this->LDrr(Reg_B, Reg_B); break;

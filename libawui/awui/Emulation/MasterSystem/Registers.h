@@ -19,13 +19,15 @@ namespace awui {
  * C: Carry. Set if the result did not fit in the register
  */
 			enum {
-				Flag_C = 0x01,
-				Flag_N = 0x02,
-				Flag_P = 0x04,
-				Flag_V = 0x04,
-				Flag_H = 0x10,
-				Flag_Z = 0x40,
-				Flag_S = 0x80,
+				Flag_C  = 0x01,
+				Flag_N  = 0x02,
+				Flag_P  = 0x04,
+				Flag_V  = 0x04,
+				Flag_F3 = 0x08, // <- Undocumented
+				Flag_H  = 0x10,
+				Flag_F5 = 0x20, // <- Undocumented
+				Flag_Z  = 0x40,
+				Flag_S  = 0x80,
 
 				Flag_i_C = 0xFE,
 				Flag_i_N = 0xFD,

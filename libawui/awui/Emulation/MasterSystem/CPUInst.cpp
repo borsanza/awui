@@ -529,10 +529,11 @@ void CPUInst::INCr(uint8_t reg, uint8_t cycles, uint8_t size) {
 
 	this->_registers->SetRegm(reg, value);
 
-	// N = false
 	this->_registers->SetF(
+		((value & Flag_F3) ? Flag_F3 : 0) |
+		((value & Flag_F5) ? Flag_F5 : 0) |
 		ZS_Flags[value] |
-		(((value & 0xF) < (old & 0xF)) ? Flag_H : 0) |
+		((value & 0xF) ? 0 : Flag_H) |
 		((old == 0x7F) ? Flag_V : 0) |
 		(this->_registers->GetF() & Flag_C)
 	);
@@ -549,8 +550,10 @@ void CPUInst::DECm(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->_registers->SetRegm(reg, value);
 
 	this->_registers->SetF(
+		((value & Flag_F3) ? Flag_F3 : 0) |
+		((value & Flag_F5) ? Flag_F5 : 0) |
 		ZS_Flags[value] |
-		(((value & 0xF) > (old & 0xF)) ? Flag_H : 0) |
+		(((value & 0xF) == 0xF) ? Flag_H : 0) |
 		((old == 0x80) ? Flag_V : 0) |
 		Flag_N |
 		(this->_registers->GetF() & Flag_C)
