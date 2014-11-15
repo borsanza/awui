@@ -741,11 +741,16 @@ void CPUInst::INCXXd(uint8_t xx) {
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = old + 1;
 	this->WriteMemory(offset, value);
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, !(value & 0xF));
-	this->_registers->SetFFlag(Flag_V, old == 0x7F);
-	this->_registers->SetFFlag(Flag_N, false);
+
+	this->_registers->SetF(
+		((value & Flag_F3) ? Flag_F3 : 0) |
+		((value & Flag_F5) ? Flag_F5 : 0) |
+		ZS_Flags[value] |
+		((value & 0xF) ? 0 : Flag_H) |
+		((old == 0x7F) ? Flag_V : 0) |
+		(this->_registers->GetF() & Flag_C)
+	);
+
 	this->_registers->IncPC(3);
 	this->_cycles += 23;
 }
@@ -757,11 +762,17 @@ void CPUInst::DECXXd(uint8_t xx) {
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = old - 1;
 	this->WriteMemory(offset, value);
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (value & 0xF) > (old & 0xF));
-	this->_registers->SetFFlag(Flag_V, old == 0x80);
-	this->_registers->SetFFlag(Flag_N, true);
+
+	this->_registers->SetF(
+		((value & Flag_F3) ? Flag_F3 : 0) |
+		((value & Flag_F5) ? Flag_F5 : 0) |
+		ZS_Flags[value] |
+		(((value & 0xF) == 0xF) ? Flag_H : 0) |
+		((old == 0x80) ? Flag_V : 0) |
+		Flag_N |
+		(this->_registers->GetF() & Flag_C)
+	);
+
 	this->_registers->IncPC(3);
 	this->_cycles += 23;
 }
