@@ -122,10 +122,10 @@ namespace awui {
 					void SetSP(uint16_t value);
 					uint16_t GetSP() const;
 
-					uint16_t GetPC() const;
-					void IncPC();
-					void IncPC(int16_t value);
-					void SetPC(uint16_t value);
+					inline uint16_t GetPC() const     { return this->_pc; }
+					inline void IncPC()               { this->_pc++; }
+					inline void IncPC(int16_t value)  { this->_pc += value; }
+					inline void SetPC(uint16_t value) { this->_pc = value; }
 
 					void SetIFF1(bool mode);
 					void SetIFF2(bool mode);

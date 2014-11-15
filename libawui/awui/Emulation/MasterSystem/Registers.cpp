@@ -83,22 +83,6 @@ uint16_t Registers::GetSP() const {
 	return this->_sp;
 }
 
-uint16_t Registers::GetPC() const {
-	return this->_pc;
-}
-
-void Registers::IncPC() {
-	this->_pc++;
-}
-
-void Registers::IncPC(int16_t value) {
-	this->_pc += value;
-}
-
-void Registers::SetPC(uint16_t value) {
-	this->_pc = value;
-}
-
 void Registers::SetIFF1(bool mode) {
 	this->_iff1 = mode;
 }
