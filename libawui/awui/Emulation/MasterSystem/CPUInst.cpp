@@ -1407,9 +1407,14 @@ void CPUInst::RESHL(uint8_t bit) {
 void CPUInst::BITbssd(uint8_t bit, uint8_t reg, uint8_t d) {
 	uint16_t offset = this->_registers->GetRegss(reg) + ((int8_t) d);
 	uint8_t value = this->ReadMemory(offset);
-	this->_registers->SetFFlag(Flag_Z, !(value & bit));
-	this->_registers->SetFFlag(Flag_H, true);
-	this->_registers->SetFFlag(Flag_N, false);
+
+	this->_registers->SetF(
+		(((bit == 0x80) && (value & 0x80)) ? Flag_S : 0) |
+		((!(value & bit)) ? Flag_P | Flag_Z : 0) |
+		Flag_H |
+		(this->_registers->GetF() & (Flag_F3 | Flag_F5 | Flag_C))
+		);
+
 	this->_registers->IncPC(4);
 	this->_cycles += 20;
 }
