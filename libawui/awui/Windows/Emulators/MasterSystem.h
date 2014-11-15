@@ -41,6 +41,7 @@ namespace awui {
 					void LoadRom(const String file);
 
 					virtual void OnTick();
+					void RunOpcode();
 
 					CPU * GetCPU();
 

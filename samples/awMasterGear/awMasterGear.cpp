@@ -22,7 +22,7 @@ int main(int argc, char ** argv) {
 			MasterSystem * ms = new MasterSystem();
 			ms->LoadRom(argv[2]);
 			while (1)
-				ms->OnTick();
+				ms->RunOpcode();
 		}
 	}
 

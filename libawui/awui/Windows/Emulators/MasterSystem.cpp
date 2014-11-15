@@ -46,6 +46,10 @@ void MasterSystem::OnTick() {
 	this->_cpu->OnTick();
 }
 
+void MasterSystem::RunOpcode() {
+	this->_cpu->RunOpcode();
+}
+
 CPU * MasterSystem::GetCPU() {
 	return this->_cpu;
 }

@@ -22,7 +22,6 @@ namespace awui {
 					bool _enableInterrupts;
 					bool _inInterrupt;
 
-					void RunOpcode();
 					void Print(const char * str, ...);
 					void CheckInterrupts();
 
@@ -31,6 +30,7 @@ namespace awui {
 					~CPU();
 
 					void LoadRom(const String file);
+					void RunOpcode();
 					void OnTick();
 
 					uint16_t GetAddressBus() const;
