@@ -14,7 +14,7 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
-#define SLOW
+//#define SLOW
 
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
@@ -152,6 +152,7 @@ void CPU::RunOpcode() {
 
 #ifdef SLOW
 	if ((pc == 0xc418 && !opcodes[opcodeEnum]) || (this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
+//	if ((this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
 		opcodes[opcodeEnum] = true;
 		printf("\n");
 		// printf("%s: ", logLine);
