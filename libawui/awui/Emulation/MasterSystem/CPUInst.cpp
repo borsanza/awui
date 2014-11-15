@@ -245,9 +245,9 @@ void CPUInst::LDXXdr(uint8_t xx, uint8_t reg) {
 
 // |4|19| Stores * to the memory location pointed to by xx plus *.
 void CPUInst::LDXXdn(uint8_t xx) {
-	uint16_t x = this->_registers->GetRegss(xx);
-	uint16_t offset = x + this->ReadMemory(this->_registers->GetPC() + 2);
-	uint16_t n = this->ReadMemory(this->_registers->GetPC() + 3);
+	uint16_t pc = this->_registers->GetPC();
+	uint16_t offset = this->_registers->GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
+	uint16_t n = this->ReadMemory(pc + 3);
 	this->WriteMemory(offset, n);
 	this->_registers->IncPC(4);
 	this->_cycles += 19;

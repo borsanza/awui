@@ -19,6 +19,8 @@
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
 
+static bool opcodes[OxNOTIMPLEMENTED];
+
 CPU::CPU() : _opcode(this) {
 	this->_vdp = new VDP(this);
 	this->_addressBus._w = 0;
@@ -28,6 +30,8 @@ CPU::CPU() : _opcode(this) {
 	this->_showLogInt = false;
 	this->_showNotImplemented = true;
 	this->_inInterrupt = false;
+	for (int i = 0; i < OxNOTIMPLEMENTED; i++)
+		opcodes[i] = false;
 
 	this->_ports->SetVDP(this->_vdp);
 
@@ -100,7 +104,9 @@ void CPU::OnTick() {
 }
 
 void CPU::RunOpcode() {
-	uint8_t opcode1 = this->ReadMemory(this->_registers->GetPC());
+	uint16_t pc = this->_registers->GetPC();
+
+	uint8_t opcode1 = this->ReadMemory(pc);
 	uint8_t opcode2;
 
 	this->_opcode.SetByte1(opcode1);
@@ -110,12 +116,12 @@ void CPU::RunOpcode() {
 	char logCode[255];
 	char logAux[255];
 
-	sprintf(logLine, "%.4X", this->_registers->GetPC());
+	sprintf(logLine, "%.4X", pc);
 	sprintf(logCode, "%.2X ", opcode1);
 #endif
 
 	if ((opcode1 == 0xCB) || (opcode1 == 0xDD) || (opcode1 == 0xED) || (opcode1 == 0xFD)) {
-		opcode2 = this->ReadMemory(this->_registers->GetPC() + 1);
+		opcode2 = this->ReadMemory(pc + 1);
 		this->_opcode.SetByte2(opcode2);
 
 #ifdef SLOW
@@ -124,7 +130,7 @@ void CPU::RunOpcode() {
 #endif
 
 		if (((opcode1 == 0xDD) || (opcode1 == 0xFD)) && (opcode2 == 0xCB)) {
-			uint8_t opcode4 = this->ReadMemory(this->_registers->GetPC() + 3);
+			uint8_t opcode4 = this->ReadMemory(pc + 3);
 			this->_opcode.SetByte4(opcode4);
 
 #ifdef SLOW
@@ -145,22 +151,26 @@ void CPU::RunOpcode() {
 	uint16_t opcodeEnum = this->_opcode.GetEnum();
 
 #ifdef SLOW
-	if ((this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
-		printf("%s: %s", logLine, logCode);
+	if ((pc == 0xc418 && !opcodes[opcodeEnum]) || (this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
+		opcodes[opcodeEnum] = true;
+		printf("\n");
+		// printf("%s: ", logLine);
+		printf("%s", logCode);
 		this->_opcode.ShowLogOpcode(opcodeEnum);
-		printf("\n");
-		printf("AF: %.4X  ", this->_registers->GetAF());
-		printf("BC: %.4X  ", this->_registers->GetBC());
-		printf("DE: %.4X  ", this->_registers->GetDE());
-		printf("HL: %.4X  ", this->_registers->GetHL());
-		printf("IX: %.4X  ", this->_registers->GetIX());
-		printf("IY: %.4X  ", this->_registers->GetIY());
-		printf("\n");
-		printf("PC: %.4X  ", this->_registers->GetPC());
-		printf("SP: %.4X  ", this->_registers->GetSP());
-		printf("\n");
-		printf("\n");
-		fflush(stdout);
+		printf(" ");
+		// printf("\n");
+		// printf("AF: %.4X  ", this->_registers->GetAF());
+		// printf("BC: %.4X  ", this->_registers->GetBC());
+		// printf("DE: %.4X  ", this->_registers->GetDE());
+		// printf("HL: %.4X  ", this->_registers->GetHL());
+		// printf("IX: %.4X  ", this->_registers->GetIX());
+		// printf("IY: %.4X  ", this->_registers->GetIY());
+		// printf("\n");
+		// printf("PC: %.4X  ", pc);
+		// printf("SP: %.4X  ", this->_registers->GetSP());
+		// printf("\n");
+		// printf("\n");
+		// fflush(stdout);
 	}
 #endif
 
@@ -237,7 +247,7 @@ void CPU::RunOpcode() {
 		// 36: LD (HL), *
 		// |2|10| Loads * into (hl).
 		case Ox36:
-			this->WriteMemory(this->_registers->GetHL() , this->ReadMemory(this->_registers->GetPC() + 1));
+			this->WriteMemory(this->_registers->GetHL() , this->ReadMemory(pc + 1));
 			this->_registers->IncPC(2);
 			this->_cycles += 10;
 			break;
@@ -332,7 +342,6 @@ void CPU::RunOpcode() {
 		// |3|13| Stores a into the memory location pointed to by **.
 		case Ox32:
 			{
-				uint16_t pc = this->_registers->GetPC();
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
 				this->WriteMemory(offset, this->_registers->GetA());
 				this->_registers->IncPC(3);
@@ -364,7 +373,6 @@ void CPU::RunOpcode() {
 		// |3|13| Loads the value pointed to by ** into a.
 		case Ox3A:
 			{
-				uint16_t pc = this->_registers->GetPC();
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
 				this->_registers->SetA(this->ReadMemory(offset));
 				this->_registers->IncPC(3);
@@ -404,7 +412,7 @@ void CPU::RunOpcode() {
 		case Ox85: this->ADD(this->_registers->GetL()); break;
 		case Ox86: this->ADD(this->ReadMemory(this->_registers->GetHL()), 7); break;
 		case Ox87: this->ADD(this->_registers->GetA()); break;
-		case OxC6: this->ADD(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+		case OxC6: this->ADD(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// CP s
 		case OxB8: this->CP(this->_registers->GetB()); break;
@@ -415,7 +423,7 @@ void CPU::RunOpcode() {
 		case OxBD: this->CP(this->_registers->GetL()); break;
 		case OxBE: this->CP(this->ReadMemory(this->_registers->GetHL()), 7); break;
 		case OxBF: this->CP(this->_registers->GetA()); break;
-		case OxFE: this->CP(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+		case OxFE: this->CP(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// XOR s
 		case OxA8: this->XOR(this->_registers->GetB()); break;
@@ -426,7 +434,7 @@ void CPU::RunOpcode() {
 		case OxAD: this->XOR(this->_registers->GetL()); break;
 		case OxAE: this->XOR(this->ReadMemory(this->_registers->GetHL()), 7); break;
 		case OxAF: this->XOR(this->_registers->GetA()); break;
-		case OxEE: this->XOR(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+		case OxEE: this->XOR(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// ADC s
 		case Ox88: this->ADC(this->_registers->GetB()); break;
@@ -438,7 +446,7 @@ void CPU::RunOpcode() {
 		case Ox8D: this->ADC(this->_registers->GetL()); break;
 		case Ox8E: this->ADC(this->ReadMemory(this->_registers->GetHL()), 7); break;
 		case Ox8F: this->ADC(this->_registers->GetA()); break;
-		case OxCE: this->ADC(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+		case OxCE: this->ADC(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// SUB s
 		case Ox90: this->SUB(this->_registers->GetB()); break;
@@ -449,7 +457,7 @@ void CPU::RunOpcode() {
 		case Ox95: this->SUB(this->_registers->GetL()); break;
 		case Ox96: this->SUB(this->ReadMemory(this->_registers->GetHL()), 7); break;
 		case Ox97: this->SUB(this->_registers->GetA()); break;
-		case OxD6: this->SUB(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+		case OxD6: this->SUB(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// SBC s
 		case Ox98: this->SBC(this->_registers->GetB()); break;
@@ -460,7 +468,7 @@ void CPU::RunOpcode() {
 		case Ox9D: this->SBC(this->_registers->GetL()); break;
 		case Ox9E: this->SBC(this->ReadMemory(this->_registers->GetHL()), 7); break;
 		case Ox9F: this->SBC(this->_registers->GetA()); break;
-		case OxDE: this->SBC(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+		case OxDE: this->SBC(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// OR s
 		case OxB0: this->OR(this->_registers->GetB()); break;
@@ -471,7 +479,7 @@ void CPU::RunOpcode() {
 		case OxB5: this->OR(this->_registers->GetL()); break;
 		case OxB6: this->OR(this->ReadMemory(this->_registers->GetHL()), 7); break;
 		case OxB7: this->OR(this->_registers->GetA()); break;
-		case OxF6: this->OR(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+		case OxF6: this->OR(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// AND s
 		case OxA0: this->AND(this->_registers->GetB()); break;
@@ -482,7 +490,7 @@ void CPU::RunOpcode() {
 		case OxA5: this->AND(this->_registers->GetL()); break;
 		case OxA6: this->AND(this->ReadMemory(this->_registers->GetHL()), 7); break;
 		case OxA7: this->AND(this->_registers->GetA()); break;
-		case OxE6: this->AND(this->ReadMemory(this->_registers->GetPC() + 1), 7, 2); break;
+		case OxE6: this->AND(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// JP cc, nn
 		case OxC2: this->JPccnn(!(this->_registers->GetF() & Flag_Z));  break;
@@ -498,7 +506,6 @@ void CPU::RunOpcode() {
 		// |3|10| ** is copied to pc.
 		case OxC3:
 			{
-				uint16_t pc = this->_registers->GetPC();
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
 				this->_registers->SetPC(offset);
 				this->_cycles += 10;
@@ -568,7 +575,6 @@ void CPU::RunOpcode() {
 		// |2|11| A byte from port * is written to a.
 		case OxDB:
 			{
-				uint16_t pc = this->_registers->GetPC();
 				this->_registers->SetA(this->_ports->ReadByte(this->ReadMemory(pc + 1)));
 //				printf("PORT: %d: %X\n", this->ReadMemory(pc + 1), this->ReadMemory(pc + 1));
 				this->_registers->IncPC(2);
@@ -1041,13 +1047,13 @@ void CPU::RunOpcode() {
 		case OxDD29: this->ADDXXpp(Reg_IX, Reg_IX); break;
 		case OxDD39: this->ADDXXpp(Reg_IX, Reg_SP); break;
 
-		case OxDD86: this->ADD(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxDD8E: this->ADC(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxDD96: this->SUB(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxDDA6: this->AND(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxDDAE: this->XOR(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxDDB6: this->OR(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxDDBE: this->CP(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
+		case OxDD86: this->ADD(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD8E: this->ADC(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD96: this->SUB(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDA6: this->AND(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDAE: this->XOR(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDB6: this->OR(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDBE: this->CP(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
 
 		case OxDDE1: this->POP16(Reg_IX, 14, 2); break;
 		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
@@ -1105,7 +1111,7 @@ void CPU::RunOpcode() {
 		case OxDDCBnn44:
 		case OxDDCBnn45:
 		case OxDDCBnn47:
-		case OxDDCBnn46: this->BITbssd(0x01, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnn46: this->BITbssd(0x01, Reg_IX, this->ReadMemory(pc + 2)); break;
 
 		case OxDDCBnn48:
 		case OxDDCBnn49:
@@ -1114,7 +1120,7 @@ void CPU::RunOpcode() {
 		case OxDDCBnn4C:
 		case OxDDCBnn4D:
 		case OxDDCBnn4F:
-		case OxDDCBnn4E: this->BITbssd(0x02, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnn4E: this->BITbssd(0x02, Reg_IX, this->ReadMemory(pc + 2)); break;
 
 		case OxDDCBnn50:
 		case OxDDCBnn51:
@@ -1123,7 +1129,7 @@ void CPU::RunOpcode() {
 		case OxDDCBnn54:
 		case OxDDCBnn55:
 		case OxDDCBnn57:
-		case OxDDCBnn56: this->BITbssd(0x04, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnn56: this->BITbssd(0x04, Reg_IX, this->ReadMemory(pc + 2)); break;
 
 		case OxDDCBnn58:
 		case OxDDCBnn59:
@@ -1132,7 +1138,7 @@ void CPU::RunOpcode() {
 		case OxDDCBnn5C:
 		case OxDDCBnn5D:
 		case OxDDCBnn5F:
-		case OxDDCBnn5E: this->BITbssd(0x08, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnn5E: this->BITbssd(0x08, Reg_IX, this->ReadMemory(pc + 2)); break;
 
 		case OxDDCBnn60:
 		case OxDDCBnn61:
@@ -1141,7 +1147,7 @@ void CPU::RunOpcode() {
 		case OxDDCBnn64:
 		case OxDDCBnn65:
 		case OxDDCBnn67:
-		case OxDDCBnn66: this->BITbssd(0x10, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnn66: this->BITbssd(0x10, Reg_IX, this->ReadMemory(pc + 2)); break;
 
 		case OxDDCBnn68:
 		case OxDDCBnn69:
@@ -1150,7 +1156,7 @@ void CPU::RunOpcode() {
 		case OxDDCBnn6C:
 		case OxDDCBnn6D:
 		case OxDDCBnn6F:
-		case OxDDCBnn6E: this->BITbssd(0x20, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnn6E: this->BITbssd(0x20, Reg_IX, this->ReadMemory(pc + 2)); break;
 
 		case OxDDCBnn70:
 		case OxDDCBnn71:
@@ -1159,7 +1165,7 @@ void CPU::RunOpcode() {
 		case OxDDCBnn74:
 		case OxDDCBnn75:
 		case OxDDCBnn77:
-		case OxDDCBnn76: this->BITbssd(0x40, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnn76: this->BITbssd(0x40, Reg_IX, this->ReadMemory(pc + 2)); break;
 
 		case OxDDCBnn78:
 		case OxDDCBnn79:
@@ -1168,25 +1174,25 @@ void CPU::RunOpcode() {
 		case OxDDCBnn7C:
 		case OxDDCBnn7D:
 		case OxDDCBnn7F:
-		case OxDDCBnn7E: this->BITbssd(0x80, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnn7E: this->BITbssd(0x80, Reg_IX, this->ReadMemory(pc + 2)); break;
 
-		case OxDDCBnn86: this->RESETbssd(0x01, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnn8E: this->RESETbssd(0x02, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnn96: this->RESETbssd(0x04, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnn9E: this->RESETbssd(0x08, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnA6: this->RESETbssd(0x10, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnAE: this->RESETbssd(0x20, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnB6: this->RESETbssd(0x40, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnBE: this->RESETbssd(0x80, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnn86: this->RESETbssd(0x01, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnn8E: this->RESETbssd(0x02, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnn96: this->RESETbssd(0x04, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnn9E: this->RESETbssd(0x08, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnA6: this->RESETbssd(0x10, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnAE: this->RESETbssd(0x20, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnB6: this->RESETbssd(0x40, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnBE: this->RESETbssd(0x80, Reg_IX, this->ReadMemory(pc + 2)); break;
 
-		case OxDDCBnnC6: this->SETbssd(0x01, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnCE: this->SETbssd(0x02, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnD6: this->SETbssd(0x04, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnDE: this->SETbssd(0x08, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnE6: this->SETbssd(0x10, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnEE: this->SETbssd(0x20, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnF6: this->SETbssd(0x40, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxDDCBnnFE: this->SETbssd(0x80, Reg_IX, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxDDCBnnC6: this->SETbssd(0x01, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnCE: this->SETbssd(0x02, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnD6: this->SETbssd(0x04, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnDE: this->SETbssd(0x08, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnE6: this->SETbssd(0x10, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnEE: this->SETbssd(0x20, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnF6: this->SETbssd(0x40, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnFE: this->SETbssd(0x80, Reg_IX, this->ReadMemory(pc + 2)); break;
 
 /******************************************************************************/
 /*************************** IY instructions (FD) *****************************/
@@ -1197,13 +1203,13 @@ void CPU::RunOpcode() {
 		case OxFD29: this->ADDXXpp(Reg_IY, Reg_IY); break;
 		case OxFD39: this->ADDXXpp(Reg_IY, Reg_SP); break;
 
-		case OxFD86: this->ADD(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxFD8E: this->ADC(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxFD96: this->SUB(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxFDA6: this->AND(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxFDAE: this->XOR(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxFDB6: this->OR(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
-		case OxFDBE: this->CP(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(this->_registers->GetPC() + 2)), 19, 3); break;
+		case OxFD86: this->ADD(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD8E: this->ADC(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD96: this->SUB(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDA6: this->AND(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDAE: this->XOR(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDB6: this->OR(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDBE: this->CP(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
 
 		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
 		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;
@@ -1261,7 +1267,7 @@ void CPU::RunOpcode() {
 		case OxFDCBnn44:
 		case OxFDCBnn45:
 		case OxFDCBnn47:
-		case OxFDCBnn46: this->BITbssd(0x01, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnn46: this->BITbssd(0x01, Reg_IY, this->ReadMemory(pc + 2)); break;
 
 		case OxFDCBnn48:
 		case OxFDCBnn49:
@@ -1270,7 +1276,7 @@ void CPU::RunOpcode() {
 		case OxFDCBnn4C:
 		case OxFDCBnn4D:
 		case OxFDCBnn4F:
-		case OxFDCBnn4E: this->BITbssd(0x02, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnn4E: this->BITbssd(0x02, Reg_IY, this->ReadMemory(pc + 2)); break;
 
 		case OxFDCBnn50:
 		case OxFDCBnn51:
@@ -1279,7 +1285,7 @@ void CPU::RunOpcode() {
 		case OxFDCBnn54:
 		case OxFDCBnn55:
 		case OxFDCBnn57:
-		case OxFDCBnn56: this->BITbssd(0x04, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnn56: this->BITbssd(0x04, Reg_IY, this->ReadMemory(pc + 2)); break;
 
 		case OxFDCBnn58:
 		case OxFDCBnn59:
@@ -1288,7 +1294,7 @@ void CPU::RunOpcode() {
 		case OxFDCBnn5C:
 		case OxFDCBnn5D:
 		case OxFDCBnn5F:
-		case OxFDCBnn5E: this->BITbssd(0x08, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnn5E: this->BITbssd(0x08, Reg_IY, this->ReadMemory(pc + 2)); break;
 
 		case OxFDCBnn60:
 		case OxFDCBnn61:
@@ -1297,7 +1303,7 @@ void CPU::RunOpcode() {
 		case OxFDCBnn64:
 		case OxFDCBnn65:
 		case OxFDCBnn67:
-		case OxFDCBnn66: this->BITbssd(0x10, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnn66: this->BITbssd(0x10, Reg_IY, this->ReadMemory(pc + 2)); break;
 
 		case OxFDCBnn68:
 		case OxFDCBnn69:
@@ -1306,7 +1312,7 @@ void CPU::RunOpcode() {
 		case OxFDCBnn6C:
 		case OxFDCBnn6D:
 		case OxFDCBnn6F:
-		case OxFDCBnn6E: this->BITbssd(0x20, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnn6E: this->BITbssd(0x20, Reg_IY, this->ReadMemory(pc + 2)); break;
 
 		case OxFDCBnn70:
 		case OxFDCBnn71:
@@ -1315,7 +1321,7 @@ void CPU::RunOpcode() {
 		case OxFDCBnn74:
 		case OxFDCBnn75:
 		case OxFDCBnn77:
-		case OxFDCBnn76: this->BITbssd(0x40, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnn76: this->BITbssd(0x40, Reg_IY, this->ReadMemory(pc + 2)); break;
 
 		case OxFDCBnn78:
 		case OxFDCBnn79:
@@ -1324,25 +1330,25 @@ void CPU::RunOpcode() {
 		case OxFDCBnn7C:
 		case OxFDCBnn7D:
 		case OxFDCBnn7F:
-		case OxFDCBnn7E: this->BITbssd(0x80, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnn7E: this->BITbssd(0x80, Reg_IY, this->ReadMemory(pc + 2)); break;
 
-		case OxFDCBnn86: this->RESETbssd(0x01, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnn8E: this->RESETbssd(0x02, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnn96: this->RESETbssd(0x04, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnn9E: this->RESETbssd(0x08, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnA6: this->RESETbssd(0x10, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnAE: this->RESETbssd(0x20, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnB6: this->RESETbssd(0x40, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnBE: this->RESETbssd(0x80, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnn86: this->RESETbssd(0x01, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnn8E: this->RESETbssd(0x02, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnn96: this->RESETbssd(0x04, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnn9E: this->RESETbssd(0x08, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnA6: this->RESETbssd(0x10, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnAE: this->RESETbssd(0x20, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnB6: this->RESETbssd(0x40, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnBE: this->RESETbssd(0x80, Reg_IY, this->ReadMemory(pc + 2)); break;
 
-		case OxFDCBnnC6: this->SETbssd(0x01, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnCE: this->SETbssd(0x02, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnD6: this->SETbssd(0x04, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnDE: this->SETbssd(0x08, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnE6: this->SETbssd(0x10, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnEE: this->SETbssd(0x20, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnF6: this->SETbssd(0x40, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
-		case OxFDCBnnFE: this->SETbssd(0x80, Reg_IY, this->ReadMemory(this->_registers->GetPC() + 2)); break;
+		case OxFDCBnnC6: this->SETbssd(0x01, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnCE: this->SETbssd(0x02, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnD6: this->SETbssd(0x04, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnDE: this->SETbssd(0x08, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnE6: this->SETbssd(0x10, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnEE: this->SETbssd(0x20, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnF6: this->SETbssd(0x40, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnFE: this->SETbssd(0x80, Reg_IY, this->ReadMemory(pc + 2)); break;
 
 		default:
 		{

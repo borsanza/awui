@@ -1338,33 +1338,42 @@ int Opcode::GetEnum() const {
 }
 
 void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
-	printf(" %3d x %3d ", this->_cpu->GetVDP()->GetLine(), this->_cpu->GetVDP()->GetColumn());
+//	printf(" %3d x %3d ", this->_cpu->GetVDP()->GetLine(), this->_cpu->GetVDP()->GetColumn());
 	uint16_t pc = this->_cpu->GetRegisters()->GetPC();
 	uint8_t opcode2 = this->_cpu->ReadMemory(pc + 1);
 	uint8_t opcode3 = this->_cpu->ReadMemory(pc + 2);
+	uint8_t opcode4 = this->_cpu->ReadMemory(pc + 3);
 
 	switch (enumOpcode) {
 		case Ox00: printf("NOP"); break;
+		case Ox01: printf("LD BC, %.4Xh", ((opcode3 << 8) | opcode2)); break;
+		case Ox06: printf("LD B, %.2Xh", opcode2); break;
 		case Ox07: printf("RLCA"); break;
 		case Ox08: printf("EX AF, AF'"); break;
+		case Ox0E: printf("LD C, %.2Xh", opcode2); break;
+		case Ox0A: printf("LD A, (BC)"); break;
 		case Ox0D: printf("DEC C"); break;
+		case Ox11: printf("LD DE, %.4Xh", ((opcode3 << 8) | opcode2)); break;
 		case Ox13: printf("INC DE"); break;
+		case Ox16: printf("LD D, %.2Xh", opcode2); break;
 		case Ox17: printf("RLA"); break;
+		case Ox1A: printf("LD A, (DE)"); break;
+		case Ox1E: printf("LD E, %.2Xh", opcode2); break;
 		case Ox1F: printf("RRA"); break;
-		case Ox20:
-			if (opcode2 & 0x80)
-				printf("JR NZ, -%.2dh (%.4Xh)", -((int8_t) opcode2), (pc + (int8_t)opcode2 + 2));
-			else
-				printf("JR NZ, %.2dh (%.4Xh)", opcode2, (pc + (int8_t)opcode2 + 2));
-			break;
+		case Ox20: printf("JR NZ, %.2dh (%.4Xh)", (int8_t) opcode2, (pc + (int8_t)opcode2 + 2)); break;
+		case Ox21: printf("LD HL, %.4Xh", ((opcode3 << 8) | opcode2)); break;
+		case Ox22: printf("LD (%.4Xh), HL", ((opcode3 << 8) | opcode2)); break;
 		case Ox23: printf("INC HL"); break;
-		case Ox28:
-			if (opcode2 & 0x80)
-				printf("JR Z, -%.2Xh (%.4Xh)", -((int8_t) opcode2), (pc + (int8_t)opcode2 + 2));
-			else
-				printf("JR Z, +%.2Xh (%.4Xh)", opcode2, (pc + (int8_t)opcode2 + 2));
-			break;
+		case Ox26: printf("LD H, %.2Xh", opcode2); break;
+		case Ox28: printf("JR Z, %.2Xh (%.4Xh)", (int8_t) opcode2, (pc + (int8_t)opcode2 + 2)); break;
+		case Ox2A: printf("LD HL, (%.4Xh)", ((opcode3 << 8) | opcode2)); break;
+		case Ox2E: printf("LD L, %.2Xh", opcode2); break;
 		case Ox2F: printf("CPL"); break;
+		case Ox31: printf("LD SP, %.4Xh", ((opcode3 << 8) | opcode2)); break;
+		case Ox32: printf("LD (%.4Xh), A", ((opcode3 << 8) | opcode2)); break;
+		case Ox36: printf("LD (HL), %.2Xh", opcode2); break;
+		case Ox3A: printf("LD A, (%.4Xh)", ((opcode3 << 8) | opcode2)); break;
+		case Ox3E: printf("LD A, %.2Xh", opcode2); break;
 		case Ox3F: printf("CCF"); break;
 		case Ox76: printf("HALT"); break;
 		case Ox79: printf("LD A,C"); break;
@@ -1378,14 +1387,46 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxD5: printf("PUSH DE"); break;
 		case OxD9: printf("EXX"); break;
 		case OxDB: printf("INA (%.2Xh)", opcode2); break;
+		case OxDD21: printf("LD IX, %.4Xh", ((opcode4 << 8) | opcode3)); break;
+		case OxDD22: printf("LD (%.4Xh), IX", ((opcode4 << 8) | opcode3)); break;
+		case OxDD26: printf("LD IXh, %.2Xh", opcode3); break;
+		case OxDD2A: printf("LD IX, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
+		case OxDD2E: printf("LD IXl, %.2Xh", opcode3); break;
+		case OxDD36: printf("LD (IX + %.2Xh), %.2Xh", (int8_t) opcode3,  opcode4); break;
 		case OxE1: printf("POP HL"); break;
 		case OxE5: printf("PUSH HL"); break;
 		case OxE6: printf("AND %.2Xh", opcode2); break;
+		case OxED4B: printf("LD BC, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
 		case OxED4D: printf("RETI"); break;
+		case OxED5B: printf("LD DE, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
+		case OxED73: printf("LD (%.4Xh), HL", ((opcode4 << 8) | opcode3)); break;
+		case OxED7B: printf("LD SP, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
+		case OxEDA0: printf("LDI"); break;
+		case OxEDA1: printf("CPI"); break;
+		case OxEDA2: printf("INI"); break;
+		case OxEDA3: printf("OUTI"); break;
+		case OxEDA8: printf("LDD"); break;
+		case OxEDA9: printf("CPD"); break;
+		case OxEDAA: printf("IND"); break;
+		case OxEDAB: printf("OUTD"); break;
+		case OxEDB0: printf("LDIR"); break;
+		case OxEDB1: printf("CPIR"); break;
+		case OxEDB2: printf("INIR"); break;
 		case OxEDB3: printf("OTIR"); break;
+		case OxEDB8: printf("LDDR"); break;
+		case OxEDB9: printf("CPDR"); break;
+		case OxEDBA: printf("INDR"); break;
+		case OxEDBB: printf("OTDR"); break;
+		case OxFD21: printf("LD IY, %.4Xh", ((opcode4 << 8) | opcode3)); break;
+		case OxFD22: printf("LD (%.4Xh), IY", ((opcode4 << 8) | opcode3)); break;
+		case OxFD26: printf("LD IYh, %.2Xh", opcode3); break;
+		case OxFD2A: printf("LD IY, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
+		case OxFD2E: printf("LD IYl, %.2Xh", opcode3); break;
+		case OxFD36: printf("LD (IY + %.2Xh), %.2Xh", (int8_t) opcode3,  opcode4); break;
 		case OxF1: printf("POP AF"); break;
 		case OxF3: printf("DI"); break;
 		case OxF5: printf("PUSH AF"); break;
 		case OxFB: printf("EI"); break;
+		default: printf("<--------------------------------------------------"); break;
 	}
 }
