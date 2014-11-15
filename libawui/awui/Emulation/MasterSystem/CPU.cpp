@@ -725,36 +725,11 @@ void CPU::RunOpcode() {
 			break;
 
 		case OxEDA0: this->LDI(); break;
+		case OxEDB0: this->LDIR(); break;
 		case OxEDA1: this->CPI(); break;
 		case OxEDA3: this->OUTI(); break;
 		case OxEDA8: this->LDD(); break;
 		case OxEDB8: this->LDDR(); break;
-
-		// EDB0: LDIR
-		// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de.
-		// Then hl and de are incremented and bc is decremented.
-		// If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
-		case OxEDB0:
-			{
-				uint16_t hl = this->_registers->GetHL();
-				uint16_t de = this->_registers->GetDE();
-				uint16_t bc = this->_registers->GetBC() - 1;
-				this->WriteMemory(de, this->ReadMemory(hl));
-				this->_registers->SetHL(hl + 1);
-				this->_registers->SetDE(de + 1);
-				this->_registers->SetBC(bc);
-
-				this->_registers->SetFFlag(Flag_N, false);
-				this->_registers->SetFFlag(Flag_V, false);
-				this->_registers->SetFFlag(Flag_H, false);
-
-				if (bc == 0) {
-					this->_registers->IncPC(2);
-					this->_cycles += 16;
-				} else
-					this->_cycles += 21;
-			}
-			break;
 
 		// EDB3: OTIR
 		// |2|21/16| A byte from the memory location pointed to by hl is written to port c.

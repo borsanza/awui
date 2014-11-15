@@ -321,16 +321,50 @@ void CPUInst::LDSPr(uint8_t reg, uint8_t cycles, uint8_t size) {
 // |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented.
 void CPUInst::LDI() {
 	uint8_t dataHL = this->ReadMemory(this->_registers->GetHL());
+	uint8_t valueFlag = dataHL + this->_registers->GetA();
+
 	this->WriteMemory(this->_registers->GetDE(), dataHL);
+
 	this->_registers->SetHL(this->_registers->GetHL() + 1);
 	this->_registers->SetDE(this->_registers->GetDE() + 1);
 	uint16_t value = this->_registers->GetBC() - 1;
 	this->_registers->SetBC(value);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_V, value != 0);
-	this->_registers->SetFFlag(Flag_N, false);
+
+	this->_registers->SetF(
+		((valueFlag & 2) ? Flag_F5 : 0) |
+		((valueFlag & 8) ? Flag_F3 : 0) |
+		((value != 0) ? Flag_V : 0) |
+		(this->_registers->GetF() & (Flag_S | Flag_Z | Flag_C))
+	);
+
 	this->_registers->IncPC(2);
 	this->_cycles += 16;
+}
+
+// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented. If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
+void CPUInst::LDIR() {
+	uint16_t hl = this->_registers->GetHL();
+	uint16_t de = this->_registers->GetDE();
+	uint16_t bc = this->_registers->GetBC() - 1;
+	uint8_t value = this->ReadMemory(hl);
+	uint8_t valueFlag = value + this->_registers->GetA();
+
+	this->WriteMemory(de, value);
+	this->_registers->SetHL(hl + 1);
+	this->_registers->SetDE(de + 1);
+	this->_registers->SetBC(bc);
+
+	this->_registers->SetF(
+		((valueFlag & 2) ? Flag_F5 : 0) |
+		((valueFlag & 8) ? Flag_F3 : 0) |
+		(this->_registers->GetF() & (Flag_S | Flag_Z | Flag_C))
+	);
+
+	if (bc == 0) {
+		this->_registers->IncPC(2);
+		this->_cycles += 16;
+	} else
+		this->_cycles += 21;
 }
 
 // |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl, de, and bc are decremented.

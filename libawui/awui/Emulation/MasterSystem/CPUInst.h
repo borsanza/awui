@@ -62,6 +62,7 @@ namespace awui {
 
 					// Exchange, Block Transfer, and Search Group
 					void LDI();
+					void LDIR();
 					void LDD();
 					void LDDR();
 					void CPI();
