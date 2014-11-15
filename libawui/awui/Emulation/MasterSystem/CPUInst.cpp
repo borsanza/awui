@@ -431,13 +431,49 @@ void CPUInst::CPI() {
 	this->_registers->SetHL(HL + 1);
 	this->_registers->SetBC(BC);
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (value & 0xF) > (old & 0xF));
-	this->_registers->SetFFlag(Flag_V, BC != 0);
-	this->_registers->SetFFlag(Flag_N, true);
+	int newH = (value & 0xF) > (old & 0xF);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(newH ? Flag_H : 0) |
+		(((value - newH) & 2) ? Flag_F5 : 0) |
+		(((value - newH) & 8) ? Flag_F3 : 0) |
+		((BC != 0) ? Flag_V : 0) |
+		Flag_N |
+		(this->_registers->GetF() & Flag_C)
+	);
+
 	this->_registers->IncPC(2);
 	this->_cycles += 16;
+}
+
+// |2|21/16| Compares the value of the memory location pointed to by hl with a. Then hl is incremented and bc is decremented. If bc is not zero and z is not set, this operation is repeated. Interrupts can trigger while this instruction is processing.
+void CPUInst::CPIR() {
+	uint16_t HL = this->_registers->GetHL();
+	uint8_t b = this->ReadMemory(HL);
+	uint8_t old = this->_registers->GetA();
+	uint8_t value = old - b;
+	uint16_t BC = this->_registers->GetBC() - 1;
+
+	this->_registers->SetHL(HL + 1);
+	this->_registers->SetBC(BC);
+
+	int newH = (value & 0xF) > (old & 0xF);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(newH ? Flag_H : 0) |
+		(((value - newH) & 2) ? Flag_F5 : 0) |
+		(((value - newH) & 8) ? Flag_F3 : 0) |
+		((BC != 0) ? Flag_V : 0) |
+		Flag_N |
+		(this->_registers->GetF() & Flag_C)
+	);
+
+	if ((BC != 0) && (value != 0)) {
+		this->_cycles += 21;
+	} else {
+		this->_registers->IncPC(2);
+		this->_cycles += 16;
+	}
 }
 
 // |2|16| Compares the value of the memory location pointed to by hl with a. Then hl and bc are decremented.

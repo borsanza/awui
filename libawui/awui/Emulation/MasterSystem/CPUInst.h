@@ -66,6 +66,7 @@ namespace awui {
 					void LDD();
 					void LDDR();
 					void CPI();
+					void CPIR();
 					void CPD();
 					void CPDR();
 

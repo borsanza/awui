@@ -727,6 +727,7 @@ void CPU::RunOpcode() {
 		case OxEDA0: this->LDI(); break;
 		case OxEDB0: this->LDIR(); break;
 		case OxEDA1: this->CPI(); break;
+		case OxEDB1: this->CPIR(); break;
 		case OxEDA3: this->OUTI(); break;
 		case OxEDA8: this->LDD(); break;
 		case OxEDB8: this->LDDR(); break;
