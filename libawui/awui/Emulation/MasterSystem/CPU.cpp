@@ -730,6 +730,8 @@ void CPU::RunOpcode() {
 		case OxEDA3: this->OUTI(); break;
 		case OxEDA8: this->LDD(); break;
 		case OxEDB8: this->LDDR(); break;
+		case OxEDA9: this->CPD(); break;
+		case OxEDB9: this->CPDR(); break;
 
 		// EDB3: OTIR
 		// |2|21/16| A byte from the memory location pointed to by hl is written to port c.

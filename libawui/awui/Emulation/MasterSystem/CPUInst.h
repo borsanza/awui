@@ -66,6 +66,8 @@ namespace awui {
 					void LDD();
 					void LDDR();
 					void CPI();
+					void CPD();
+					void CPDR();
 
 					// 8-Bit Arithmetic Group
 					void ADD(uint8_t value, uint8_t cycles = 4, uint8_t size = 1);
