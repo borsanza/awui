@@ -338,16 +338,22 @@ void CPUInst::LDD() {
 	uint16_t HL = this->_registers->GetHL();
 	uint16_t DE = this->_registers->GetDE();
 	uint16_t BC = this->_registers->GetBC() - 1;
+	uint8_t value = this->ReadMemory(HL);
+	uint8_t valueFlag = value + this->_registers->GetA();
 
-	this->WriteMemory(DE, this->ReadMemory(HL));
+	this->WriteMemory(DE, value);
 
 	this->_registers->SetHL(HL - 1);
 	this->_registers->SetDE(DE - 1);
 	this->_registers->SetBC(BC);
 
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_P, (BC != 0));
+	this->_registers->SetF(
+		((valueFlag & 2) ? Flag_F5 : 0) |
+		((valueFlag & 8) ? Flag_F3 : 0) |
+		((BC != 0) ? Flag_P : 0) |
+		(this->_registers->GetF() & (Flag_S | Flag_Z | Flag_C))
+	);
+
 	this->_registers->IncPC(2);
 	this->_cycles += 16;
 }
@@ -357,16 +363,20 @@ void CPUInst::LDDR() {
 	uint16_t HL = this->_registers->GetHL();
 	uint16_t DE = this->_registers->GetDE();
 	uint16_t BC = this->_registers->GetBC() - 1;
+	uint8_t value = this->ReadMemory(HL);
+	uint8_t valueFlag = value + this->_registers->GetA();
 
-	this->WriteMemory(DE, this->ReadMemory(HL));
+	this->WriteMemory(DE, value);
 
 	this->_registers->SetHL(HL - 1);
 	this->_registers->SetDE(DE - 1);
 	this->_registers->SetBC(BC);
 
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_P, false);
+	this->_registers->SetF(
+		((valueFlag & 2) ? Flag_F5 : 0) |
+		((valueFlag & 8) ? Flag_F3 : 0) |
+		(this->_registers->GetF() & (Flag_S | Flag_Z | Flag_C))
+	);
 
 	if (BC != 0) {
 		this->_cycles += 21;
