@@ -838,8 +838,6 @@ void CPU::RunOpcode() {
 		case OxCB3D: this->SRA(Reg_L); break;
 		case OxCB3F: this->SRA(Reg_A); break;
 
-		// CB40-CB7F: BIT X, Y
-		// |2|8| Tests bit X of Y.
 		case OxCB40: this->BIT(this->_registers->GetB(), 0x01); break;
 		case OxCB41: this->BIT(this->_registers->GetC(), 0x01); break;
 		case OxCB42: this->BIT(this->_registers->GetD(), 0x01); break;
@@ -905,8 +903,6 @@ void CPU::RunOpcode() {
 		case OxCB7E: this->BIT(this->ReadMemory(this->_registers->GetHL()), 0x80, 12); break;
 		case OxCB7F: this->BIT(this->_registers->GetA(), 0x80); break;
 
-		// CB80-CBBF: RES X, Y
-		// |2|8| Resets bit X of Y.
 		case OxCB80: this->RES(Reg_B, 0x01); break;
 		case OxCB81: this->RES(Reg_C, 0x01); break;
 		case OxCB82: this->RES(Reg_D, 0x01); break;
@@ -972,8 +968,6 @@ void CPU::RunOpcode() {
 		case OxCBBE: this->RESHL(0x80); break;
 		case OxCBBF: this->RES(Reg_A, 0x80); break;
 
-		// CBC0-CBFF: SET X, Y
-		// |2|8| Sets bit X of Y.
 		case OxCBC0: this->SET(Reg_B, 0x01); break;
 		case OxCBC1: this->SET(Reg_C, 0x01); break;
 		case OxCBC2: this->SET(Reg_D, 0x01); break;
