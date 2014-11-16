@@ -44,7 +44,7 @@ namespace awui {
 					void WriteMemory(uint16_t pos, uint8_t value);
 
 					// 8-Bit Load Group
-					void LDrr(uint8_t reg1, uint8_t reg2, uint8_t size = 1);
+					void LDrr(uint8_t reg1, uint8_t reg2, uint8_t cycles, uint8_t size);
 					void LDrn(uint8_t reg, uint8_t cycles = 7, uint8_t size = 2);
 					void LDrHL(uint8_t reg);
 					void LDrXXd(uint8_t reg, uint8_t reg2);

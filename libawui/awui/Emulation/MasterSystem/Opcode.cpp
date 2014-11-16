@@ -15,6 +15,7 @@ using namespace awui::Emulation::MasterSystem;
 
 Opcode::Opcode(CPU * cpu) {
 	this->_cpu = cpu;
+	this->_advance = 0;
 }
 
 Opcode::~Opcode() {
@@ -32,7 +33,8 @@ void Opcode::SetByte4(uint8_t byte4) {
 	this->_byte4 = byte4;
 }
 
-int Opcode::GetEnum() const {
+int Opcode::GetEnum() {
+	this->_advance = 0;
 	switch (this->_byte1) {
 		case 0x00: return Ox00;
 		case 0x01: return Ox01;
@@ -517,6 +519,35 @@ int Opcode::GetEnum() const {
 		case 0xDC: return OxDC;
 		case 0xDD:
 			switch (this->_byte2) {
+				case 0x40:
+				case 0x41:
+				case 0x42:
+				case 0x43:
+				case 0x47:
+				case 0x48:
+				case 0x49:
+				case 0x4A:
+				case 0x4B:
+				case 0x4F:
+				case 0x50:
+				case 0x51:
+				case 0x52:
+				case 0x53:
+				case 0x57:
+				case 0x58:
+				case 0x59:
+				case 0x5A:
+				case 0x5B:
+				case 0x5F:
+				case 0x76:
+				case 0x78:
+				case 0x79:
+				case 0x7A:
+				case 0x7B:
+				case 0x7F:
+					this->_advance = 1;
+					return 0;
+
 				case 0x09: return OxDD09;
 				case 0x19: return OxDD19;
 				case 0x21: return OxDD21;
@@ -981,6 +1012,35 @@ int Opcode::GetEnum() const {
 		case 0xFC: return OxFC;
 		case 0xFD:
 			switch (this->_byte2) {
+				case 0x40:
+				case 0x41:
+				case 0x42:
+				case 0x43:
+				case 0x47:
+				case 0x48:
+				case 0x49:
+				case 0x4A:
+				case 0x4B:
+				case 0x4F:
+				case 0x50:
+				case 0x51:
+				case 0x52:
+				case 0x53:
+				case 0x57:
+				case 0x58:
+				case 0x59:
+				case 0x5A:
+				case 0x5B:
+				case 0x5F:
+				case 0x76:
+				case 0x78:
+				case 0x79:
+				case 0x7A:
+				case 0x7B:
+				case 0x7F:
+					this->_advance = 1;
+					return 0;
+
 				case 0x09: return OxFD09;
 				case 0x19: return OxFD19;
 				case 0x21: return OxFD21;
@@ -1611,12 +1671,34 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxDD34: printf("INC (IX + %.2Xh)", (int8_t) opcode3); break;
 		case OxDD35: printf("DEC (IX + %.2Xh)", (int8_t) opcode3); break;
 		case OxDD36: printf("LD (IX + %.2Xh), %.2Xh", (int8_t) opcode3,  opcode4); break;
+		case OxDD44: printf("LD B, IXh"); break;
+		case OxDD45: printf("LD B, IXl"); break;
 		case OxDD46: printf("LD B, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD4C: printf("LD C, IXh"); break;
+		case OxDD4D: printf("LD C, IXl"); break;
 		case OxDD4E: printf("LD C, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD54: printf("LD D, IXh"); break;
+		case OxDD55: printf("LD D, IXl"); break;
 		case OxDD56: printf("LD D, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD5C: printf("LD E, IXh"); break;
+		case OxDD5D: printf("LD E, IXl"); break;
 		case OxDD5E: printf("LD E, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD60: printf("LD IXh, B"); break;
+		case OxDD61: printf("LD IXh, C"); break;
+		case OxDD62: printf("LD IXh, D"); break;
+		case OxDD63: printf("LD IXh, E"); break;
+		case OxDD64: printf("LD IXh, IXh"); break;
+		case OxDD65: printf("LD IXh, IXl"); break;
 		case OxDD66: printf("LD H, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD67: printf("LD IXh, A"); break;
+		case OxDD68: printf("LD IXl, B"); break;
+		case OxDD69: printf("LD IXl, C"); break;
+		case OxDD6A: printf("LD IXl, D"); break;
+		case OxDD6B: printf("LD IXl, E"); break;
+		case OxDD6C: printf("LD IXl, IXh"); break;
+		case OxDD6D: printf("LD IXl, IXl"); break;
 		case OxDD6E: printf("LD L, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD6F: printf("LD IXl, A"); break;
 		case OxDD70: printf("LD (IX + %.2Xh), B", (int8_t) opcode3); break;
 		case OxDD71: printf("LD (IX + %.2Xh), C", (int8_t) opcode3); break;
 		case OxDD72: printf("LD (IX + %.2Xh), D", (int8_t) opcode3); break;
@@ -1624,6 +1706,8 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxDD74: printf("LD (IX + %.2Xh), H", (int8_t) opcode3); break;
 		case OxDD75: printf("LD (IX + %.2Xh), L", (int8_t) opcode3); break;
 		case OxDD77: printf("LD (IX + %.2Xh), A", (int8_t) opcode3); break;
+		case OxDD7C: printf("LD A, IXh"); break;
+		case OxDD7D: printf("LD A, IXl"); break;
 		case OxDD7E: printf("LD A, (IX + %.2Xh)", (int8_t) opcode3); break;
 
 /******************************************************************************/
@@ -1849,12 +1933,34 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxFD34: printf("INC (IY + %.2Xh)", (int8_t) opcode3); break;
 		case OxFD35: printf("DEC (IY + %.2Xh)", (int8_t) opcode3); break;
 		case OxFD36: printf("LD (IY + %.2Xh), %.2Xh", (int8_t) opcode3,  opcode4); break;
+		case OxFD44: printf("LD B, IYh"); break;
+		case OxFD45: printf("LD B, IYl"); break;
 		case OxFD46: printf("LD B, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD4C: printf("LD C, IYh"); break;
+		case OxFD4D: printf("LD C, IYl"); break;
 		case OxFD4E: printf("LD C, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD54: printf("LD D, IYh"); break;
+		case OxFD55: printf("LD D, IYl"); break;
 		case OxFD56: printf("LD D, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD5C: printf("LD E, IYh"); break;
+		case OxFD5D: printf("LD E, IYl"); break;
 		case OxFD5E: printf("LD E, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD60: printf("LD IYh, B"); break;
+		case OxFD61: printf("LD IYh, C"); break;
+		case OxFD62: printf("LD IYh, D"); break;
+		case OxFD63: printf("LD IYh, E"); break;
+		case OxFD64: printf("LD IYh, IYh"); break;
+		case OxFD65: printf("LD IYh, IYl"); break;
 		case OxFD66: printf("LD H, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD67: printf("LD IYh, A"); break;
+		case OxFD68: printf("LD IYl, B"); break;
+		case OxFD69: printf("LD IYl, C"); break;
+		case OxFD6A: printf("LD IYl, D"); break;
+		case OxFD6B: printf("LD IYl, E"); break;
+		case OxFD6C: printf("LD IYl, IYh"); break;
+		case OxFD6D: printf("LD IYl, IYl"); break;
 		case OxFD6E: printf("LD L, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD6F: printf("LD IYl, A"); break;
 		case OxFD70: printf("LD (IY + %.2Xh), B", (int8_t) opcode3); break;
 		case OxFD71: printf("LD (IY + %.2Xh), C", (int8_t) opcode3); break;
 		case OxFD72: printf("LD (IY + %.2Xh), D", (int8_t) opcode3); break;
@@ -1862,6 +1968,8 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxFD74: printf("LD (IY + %.2Xh), H", (int8_t) opcode3); break;
 		case OxFD75: printf("LD (IY + %.2Xh), L", (int8_t) opcode3); break;
 		case OxFD77: printf("LD (IY + %.2Xh), A", (int8_t) opcode3); break;
+		case OxFD7C: printf("LD A, IYh"); break;
+		case OxFD7D: printf("LD A, IYl"); break;
 		case OxFD7E: printf("LD A, (IY + %.2Xh)", (int8_t) opcode3); break;
 
 /******************************************************************************/

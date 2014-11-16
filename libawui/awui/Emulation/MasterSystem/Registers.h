@@ -64,7 +64,7 @@ namespace awui {
 				Reg_AF = 36,
 			};
 
-			static uint8_t ZS_Flags[256] = {
+			constexpr static uint8_t ZS_Flags[256] = {
 				Flag_Z, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
