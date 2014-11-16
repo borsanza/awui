@@ -2302,6 +2302,14 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxFD7C: printf("LD A, IYh"); break;
 		case OxFD7D: printf("LD A, IYl"); break;
 		case OxFD7E: printf("LD A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD86: printf("ADD A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD8E: printf("ADC A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD96: printf("SUB A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD9E: printf("SBC A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFDA6: printf("AND A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFDAE: printf("XOR A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFDB6: printf("OR A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFDBE: printf("CP A, (IY + %.2Xh)", (int8_t) opcode3); break;
 
 /******************************************************************************/
 /************************* IY bit instructions (FDCB) *************************/
