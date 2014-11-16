@@ -14,7 +14,7 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
-#define SLOW
+//#define SLOW
 
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
@@ -151,8 +151,8 @@ void CPU::RunOpcode() {
 	uint16_t opcodeEnum = this->_opcode.GetEnum();
 
 #ifdef SLOW
-	if ((pc == 0xc418 && !opcodes[opcodeEnum]) || (this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
-//	if ((this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
+//	if ((pc == 0xc418 && !opcodes[opcodeEnum]) || (this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
+	if ((this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
 		opcodes[opcodeEnum] = true;
 		printf("\n");
 		printf("%s: ", logLine);
@@ -812,6 +812,7 @@ void CPU::RunOpcode() {
 		case OxCB23: this->SLA(Reg_E); break;
 		case OxCB24: this->SLA(Reg_H); break;
 		case OxCB25: this->SLA(Reg_L); break;
+		case OxCB26: this->SLA_HL(); break;
 		case OxCB27: this->SLA(Reg_A); break;
 
 		case OxCB28: this->SRA(Reg_B); break;
@@ -820,6 +821,7 @@ void CPU::RunOpcode() {
 		case OxCB2B: this->SRA(Reg_E); break;
 		case OxCB2C: this->SRA(Reg_H); break;
 		case OxCB2D: this->SRA(Reg_L); break;
+		case OxCB2E: this->SRA_HL(); break;
 		case OxCB2F: this->SRA(Reg_A); break;
 
 		case OxCB30: this->SLL(Reg_B); break;
@@ -828,15 +830,17 @@ void CPU::RunOpcode() {
 		case OxCB33: this->SLL(Reg_E); break;
 		case OxCB34: this->SLL(Reg_H); break;
 		case OxCB35: this->SLL(Reg_L); break;
+		case OxCB36: this->SLL_HL(); break;
 		case OxCB37: this->SLL(Reg_A); break;
 
-		case OxCB38: this->SRA(Reg_B); break;
-		case OxCB39: this->SRA(Reg_C); break;
-		case OxCB3A: this->SRA(Reg_D); break;
-		case OxCB3B: this->SRA(Reg_E); break;
-		case OxCB3C: this->SRA(Reg_H); break;
-		case OxCB3D: this->SRA(Reg_L); break;
-		case OxCB3F: this->SRA(Reg_A); break;
+		case OxCB38: this->SRL(Reg_B); break;
+		case OxCB39: this->SRL(Reg_C); break;
+		case OxCB3A: this->SRL(Reg_D); break;
+		case OxCB3B: this->SRL(Reg_E); break;
+		case OxCB3C: this->SRL(Reg_H); break;
+		case OxCB3D: this->SRL(Reg_L); break;
+		case OxCB3E: this->SRL_HL(); break;
+		case OxCB3F: this->SRL(Reg_A); break;
 
 		case OxCB40: this->BIT(this->_registers->GetB(), 0x01); break;
 		case OxCB41: this->BIT(this->_registers->GetC(), 0x01); break;
