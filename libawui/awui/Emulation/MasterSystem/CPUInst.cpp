@@ -1317,6 +1317,7 @@ void CPUInst::RLCXXd(uint8_t reg) {
 	if (old & 0x80)
 		value |= 1;
 
+	if (offset == 1) this->_registers->SetB(value);
 	this->WriteMemory(finalOffset, value);
 
 	this->_registers->SetF(
@@ -1367,7 +1368,6 @@ void CPUInst::RLXXd(uint8_t reg) {
 
 	this->WriteMemory(finalOffset, value);
 
-	// H = N = false
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
@@ -1392,7 +1392,6 @@ void CPUInst::RRXXd(uint8_t reg) {
 
 	this->WriteMemory(finalOffset, value);
 
-	// H = N = false
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
@@ -1414,6 +1413,7 @@ void CPUInst::SLAXXd(uint8_t reg) {
 	uint8_t value = old << 1;
 
 	this->WriteMemory(finalOffset, value);
+
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
@@ -1436,11 +1436,13 @@ void CPUInst::SRAXXd(uint8_t reg) {
 		value |= 0x80;
 
 	this->WriteMemory(finalOffset, value);
+
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
 		(PARITYEVEN(value) ? Flag_P : 0) |
 		((old & 0x01) ? Flag_C : 0));
+
 	this->_registers->IncPC(4);
 	this->_cycles += 23;
 }
