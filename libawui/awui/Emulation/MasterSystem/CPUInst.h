@@ -133,6 +133,9 @@ namespace awui {
 					void SLLXXd(uint8_t reg);
 					void SRLXXd(uint8_t reg);
 
+					void RLD();
+					void RRD();
+
 					// Bit Set, Reset, and Test Group
 					void BIT(uint8_t param, uint8_t compare, uint8_t cycles = 8);
 					void SET(uint8_t reg, uint8_t bit);

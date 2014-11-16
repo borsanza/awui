@@ -1582,6 +1582,48 @@ void CPUInst::SRLXXd(uint8_t reg) {
 	this->_cycles += 23;
 }
 
+void CPUInst::RLD() {
+	uint16_t offset = this->_registers->GetHL();
+	uint8_t HL = this->ReadMemory(offset);
+	uint8_t A = this->_registers->GetA();
+	uint8_t valueA = (A & 0xF0) | (HL >> 4);
+	uint8_t valueHL = (HL << 4) | (A & 0x0F);
+
+	this->_registers->SetA(valueA);
+	this->WriteMemory(offset, valueHL);
+
+	this->_registers->SetF(
+		(valueA & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[valueA] |
+		(PARITYEVEN(valueA) ? Flag_P : 0) |
+		(this->_registers->GetF() & Flag_C)
+	);
+
+	this->_registers->IncPC(2);
+	this->_cycles += 18;
+}
+
+void CPUInst::RRD() {
+	uint16_t offset = this->_registers->GetHL();
+	uint8_t HL = this->ReadMemory(offset);
+	uint8_t A = this->_registers->GetA();
+	uint8_t valueA = (A & 0xF0) | (HL & 0x0F);
+	uint8_t valueHL = (A << 4) | (HL >> 4);
+
+	this->_registers->SetA(valueA);
+	this->WriteMemory(offset, valueHL);
+
+	this->_registers->SetF(
+		(valueA & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[valueA] |
+		(PARITYEVEN(valueA) ? Flag_P : 0) |
+		(this->_registers->GetF() & Flag_C)
+	);
+
+	this->_registers->IncPC(2);
+	this->_cycles += 18;
+}
+
 /******************************************************************************/
 /*********************** Bit Set, Reset, and Test Group ***********************/
 /******************************************************************************/
