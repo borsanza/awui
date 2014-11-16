@@ -1528,6 +1528,71 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 /*************************** Bit instructions (CB) ****************************/
 /******************************************************************************/
 
+		case OxCB00: printf("RLC B"); break;
+		case OxCB01: printf("RLC C"); break;
+		case OxCB02: printf("RLC D"); break;
+		case OxCB03: printf("RLC E"); break;
+		case OxCB04: printf("RLC H"); break;
+		case OxCB05: printf("RLC L"); break;
+		case OxCB06: printf("RLC (HL)"); break;
+		case OxCB07: printf("RLC A"); break;
+		case OxCB08: printf("RRC B"); break;
+		case OxCB09: printf("RRC C"); break;
+		case OxCB0A: printf("RRC D"); break;
+		case OxCB0B: printf("RRC E"); break;
+		case OxCB0C: printf("RRC H"); break;
+		case OxCB0D: printf("RRC L"); break;
+		case OxCB0E: printf("RRC (HL)"); break;
+		case OxCB0F: printf("RRC A"); break;
+		case OxCB10: printf("RL B"); break;
+		case OxCB11: printf("RL C"); break;
+		case OxCB12: printf("RL D"); break;
+		case OxCB13: printf("RL E"); break;
+		case OxCB14: printf("RL H"); break;
+		case OxCB15: printf("RL L"); break;
+		case OxCB16: printf("RL (HL)"); break;
+		case OxCB17: printf("RL A"); break;
+		case OxCB18: printf("RR B"); break;
+		case OxCB19: printf("RR C"); break;
+		case OxCB1A: printf("RR D"); break;
+		case OxCB1B: printf("RR E"); break;
+		case OxCB1C: printf("RR H"); break;
+		case OxCB1D: printf("RR L"); break;
+		case OxCB1E: printf("RR (HL)"); break;
+		case OxCB1F: printf("RR A"); break;
+		case OxCB20: printf("SLA B"); break;
+		case OxCB21: printf("SLA C"); break;
+		case OxCB22: printf("SLA D"); break;
+		case OxCB23: printf("SLA E"); break;
+		case OxCB24: printf("SLA H"); break;
+		case OxCB25: printf("SLA L"); break;
+		case OxCB26: printf("SLA (HL)"); break;
+		case OxCB27: printf("SLA A"); break;
+		case OxCB28: printf("SRA B"); break;
+		case OxCB29: printf("SRA C"); break;
+		case OxCB2A: printf("SRA D"); break;
+		case OxCB2B: printf("SRA E"); break;
+		case OxCB2C: printf("SRA H"); break;
+		case OxCB2D: printf("SRA L"); break;
+		case OxCB2E: printf("SRA (HL)"); break;
+		case OxCB2F: printf("SRA A"); break;
+		case OxCB30: printf("SLL B"); break;
+		case OxCB31: printf("SLL C"); break;
+		case OxCB32: printf("SLL D"); break;
+		case OxCB33: printf("SLL E"); break;
+		case OxCB34: printf("SLL H"); break;
+		case OxCB35: printf("SLL L"); break;
+		case OxCB36: printf("SLL (HL)"); break;
+		case OxCB37: printf("SLL A"); break;
+		case OxCB38: printf("SRL B"); break;
+		case OxCB39: printf("SRL C"); break;
+		case OxCB3A: printf("SRL D"); break;
+		case OxCB3B: printf("SRL E"); break;
+		case OxCB3C: printf("SRL H"); break;
+		case OxCB3D: printf("SRL L"); break;
+		case OxCB3E: printf("SRL (HL)"); break;
+		case OxCB3F: printf("SRL A"); break;
+
 /******************************************************************************/
 /*************************** IX instructions (DD) *****************************/
 /******************************************************************************/
