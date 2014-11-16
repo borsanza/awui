@@ -164,9 +164,13 @@ namespace awui {
 
 					void SetIX(uint16_t value);
 					uint16_t GetIX() const;
+					uint8_t GetIXH() const;
+					uint8_t GetIXL() const;
 
 					void SetIY(uint16_t value);
 					uint16_t GetIY() const;
+					uint8_t GetIYH() const;
+					uint8_t GetIYL() const;
 
 					void SetIM(uint8_t mode);
 					uint8_t GetIM();

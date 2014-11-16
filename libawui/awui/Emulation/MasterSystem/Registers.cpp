@@ -207,11 +207,27 @@ uint16_t Registers::GetIX() const {
 	return this->_ix;
 }
 
+uint8_t Registers::GetIXH() const {
+	return *(((uint8_t *) &this->_ix) + 1);
+}
+
+uint8_t Registers::GetIXL() const {
+	return this->_ix;
+}
+
 void Registers::SetIY(uint16_t value) {
 	this->_iy = value;
 }
 
 uint16_t Registers::GetIY() const {
+	return this->_iy;
+}
+
+uint8_t Registers::GetIYH() const {
+	return *(((uint8_t *) &this->_iy) + 1);
+}
+
+uint8_t Registers::GetIYL() const {
 	return this->_iy;
 }
 

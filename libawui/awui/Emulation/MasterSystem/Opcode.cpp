@@ -2028,13 +2028,29 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxDD7C: printf("LD A, IXh"); break;
 		case OxDD7D: printf("LD A, IXl"); break;
 		case OxDD7E: printf("LD A, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD84: printf("ADD A, IXh"); break;
+		case OxDD85: printf("ADD A, IXl"); break;
 		case OxDD86: printf("ADD A, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD8C: printf("ADC A, IXh"); break;
+		case OxDD8D: printf("ADC A, IXl"); break;
 		case OxDD8E: printf("ADC A, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD94: printf("SUB A, IXh"); break;
+		case OxDD95: printf("SUB A, IXl"); break;
 		case OxDD96: printf("SUB A, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDD9C: printf("SBC A, IXh"); break;
+		case OxDD9D: printf("SBC A, IXl"); break;
 		case OxDD9E: printf("SBC A, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDDA4: printf("AND A, IXh"); break;
+		case OxDDA5: printf("AND A, IXl"); break;
 		case OxDDA6: printf("AND A, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDDAC: printf("XOR A, IXh"); break;
+		case OxDDAD: printf("XOR A, IXl"); break;
 		case OxDDAE: printf("XOR A, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDDB4: printf("OR A, IXh"); break;
+		case OxDDB5: printf("OR A, IXl"); break;
 		case OxDDB6: printf("OR A, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDDBC: printf("CP A, IXh"); break;
+		case OxDDBD: printf("CP A, IXl"); break;
 		case OxDDBE: printf("CP A, (IX + %.2Xh)", (int8_t) opcode3); break;
 
 /******************************************************************************/
@@ -2302,13 +2318,29 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxFD7C: printf("LD A, IYh"); break;
 		case OxFD7D: printf("LD A, IYl"); break;
 		case OxFD7E: printf("LD A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD84: printf("ADD A, IYh"); break;
+		case OxFD85: printf("ADD A, IYl"); break;
 		case OxFD86: printf("ADD A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD8C: printf("ADC A, IYh"); break;
+		case OxFD8D: printf("ADC A, IYl"); break;
 		case OxFD8E: printf("ADC A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD94: printf("SUB A, IYh"); break;
+		case OxFD95: printf("SUB A, IYl"); break;
 		case OxFD96: printf("SUB A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFD9C: printf("SBC A, IYh"); break;
+		case OxFD9D: printf("SBC A, IYl"); break;
 		case OxFD9E: printf("SBC A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFDA4: printf("AND A, IYh"); break;
+		case OxFDA5: printf("AND A, IYl"); break;
 		case OxFDA6: printf("AND A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFDAC: printf("XOR A, IYh"); break;
+		case OxFDAD: printf("XOR A, IYl"); break;
 		case OxFDAE: printf("XOR A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFDB4: printf("OR A, IYh"); break;
+		case OxFDB5: printf("OR A, IYl"); break;
 		case OxFDB6: printf("OR A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFDBC: printf("CP A, IYh"); break;
+		case OxFDBD: printf("CP A, IYl"); break;
 		case OxFDBE: printf("CP A, (IY + %.2Xh)", (int8_t) opcode3); break;
 
 /******************************************************************************/

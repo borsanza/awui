@@ -1,0 +1,762 @@
+Z80 instruction exerciser
+
+ld hl,(nnnn).................
+C418: 2A       LD HL, (C070h) OK
+ld sp,(nnnn).................
+C418: ED 7B    LD SP, (C070h) OK
+ld (nnnn),hl.................
+C418: 22       LD (C070h), HL OK
+ld (nnnn),sp.................
+C418: ED 73    LD (C070h), HL OK
+ld <bc,de>,(nnnn)............
+C418: ED 4B    LD BC, (C070h) 
+C418: ED 5B    LD DE, (C070h) OK
+ld <ix,iy>,(nnnn)............
+C418: DD 2A    LD IX, (C070h) 
+C418: FD 2A    LD IY, (C070h) OK
+ld <ix,iy>,nnnn..............
+C418: DD 21    LD IX, 0000h 
+C418: FD 21    LD IY, 0001h OK
+ld (<ix,iy>+1),nn............
+C418: DD 36    LD (IX + 01h), 00h 
+C418: FD 36    LD (IY + 01h), 01h OK
+ld <ixh,ixl,iyh,iyl>,nn......
+C418: DD 26    LD IXh, 00h 
+C418: FD 26    LD IYh, 00h 
+C418: DD 2E    LD IXl, 00h 
+C418: FD 2E    LD IYl, 00h OK
+ld a,(nnnn) / ld (nnnn),a....
+C418: 32       LD (C070h), A 
+C418: 3A       LD A, (C070h) OK
+ldd<r> (1)...................
+C418: ED A8    LDD 
+C418: ED B8    LDDR OK
+ldd<r> (2)...................OK
+ldi<r> (1)...................
+C418: ED A0    LDI 
+C418: ED B0    LDIR OK
+ldi<r> (2)...................OK
+ld a,<(bc),(de)>.............
+C418: 0A       LD A, (BC) 
+C418: 1A       LD A, (DE) OK
+ld (nnnn),<ix,iy>............
+C418: DD 22    LD (C070h), IX 
+C418: FD 22    LD (C070h), IY OK
+ld <bc,de,hl,sp>,nnnn........
+C418: 01       LD BC, 0000h 
+C418: 11       LD DE, 0001h 
+C418: 21       LD HL, 0001h 
+C418: 31       LD SP, 0001h OK
+ld <b,c,d,e,h,l,(hl),a>,nn...
+C418: 06       LD B, 00h 
+C418: 0E       LD C, 00h 
+C418: 16       LD D, 00h 
+C418: 1E       LD E, 00h 
+C418: 26       LD H, 00h 
+C418: 2E       LD L, 00h 
+C418: 36       LD (HL), 00h 
+C418: 3E       LD A, 00h OK
+ld (nnnn),<bc,de>............
+C418: ED 43    LD (C070h), BC 
+C418: ED 53    LD (C070h), DE OK
+ld (<bc,de>),a...............
+C418: 02       LD (BC), A 
+C418: 12       LD (DE), A OK
+ld (<ix,iy>+1),a.............
+C418: DD 77    LD (IX + 00h), A 
+C418: FD 77    LD (IY + 00h), A OK
+ld a,(<ix,iy>+1).............
+C418: DD 7E    LD A, (IX + 00h) 
+C418: FD 7E    LD A, (IY + 00h) OK
+shf/rot (<ix,iy>+1)..........
+C418: DD CB 06 RLC (IX + 01h) 
+C418: FD CB 06 RLC (IY + 01h) 
+C418: DD CB 0E RRC (IX + 01h) 
+C418: FD CB 0E RRC (IY + 01h) 
+C418: DD CB 16 RL (IX + 01h) 
+C418: FD CB 16 RL (IY + 01h) 
+C418: DD CB 1E RR (IX + 01h) 
+C418: FD CB 1E RR (IY + 01h) 
+C418: DD CB 26 SLA (IX + 01h) 
+C418: FD CB 26 SLA (IY + 01h) 
+C418: DD CB 2E SRA (IX + 01h) 
+C418: FD CB 2E SRA (IY + 01h) 
+C418: DD CB 36 SLL (IX + 01h) 
+C418: FD CB 36 SLL (IY + 01h) 
+C418: DD CB 3E SRL (IX + 01h) 
+C418: FD CB 3E SRL (IY + 01h)    CRC:42eb5fe2 expected:b4347c81
+ld <h,l>,(<ix,iy>+1).........
+C418: DD 66    LD H, (IX + 00h) 
+C418: FD 66    LD H, (IY + 00h) 
+C418: DD 6E    LD L, (IX + 00h) 
+C418: FD 6E    LD L, (IY + 00h) OK
+ld (<ix,iy>+1),<h,l>.........
+C418: DD 74    LD (IX + 00h), H 
+C418: FD 74    LD (IY + 00h), H 
+C418: DD 75    LD (IX + 00h), L 
+C418: FD 75    LD (IY + 00h), L OK
+ld <b,c,d,e>,(<ix,iy>+1).....
+C418: DD 46    LD B, (IX + 00h) 
+C418: FD 46    LD B, (IY + 00h) 
+C418: DD 4E    LD C, (IX + 00h) 
+C418: FD 4E    LD C, (IY + 00h) 
+C418: DD 56    LD D, (IX + 00h) 
+C418: FD 56    LD D, (IY + 00h) 
+C418: DD 5E    LD E, (IX + 00h) 
+C418: FD 5E    LD E, (IY + 00h) OK
+ld (<ix,iy>+1),<b,c,d,e>.....
+C418: DD 70    LD (IX + 00h), B 
+C418: FD 70    LD (IY + 00h), B 
+C418: DD 71    LD (IX + 00h), C 
+C418: FD 71    LD (IY + 00h), C 
+C418: DD 72    LD (IX + 00h), D 
+C418: FD 72    LD (IY + 00h), D 
+C418: DD 73    LD (IX + 00h), E 
+C418: FD 73    LD (IY + 00h), E OK
+<inc,dec> c..................
+C418: 0C       INC C 
+C418: 0D       DEC C OK
+<inc,dec> de.................
+C418: 13       INC DE 
+C418: 1B       DEC DE OK
+<inc,dec> hl.................
+C418: 23       INC HL 
+C418: 2B       DEC HL OK
+<inc,dec> ix.................
+C418: DD 23    INC IX 
+C418: DD 2B    DEC IX OK
+<inc,dec> iy.................
+C418: FD 23    INC IY 
+C418: FD 2B    DEC IY OK
+<inc,dec> sp.................
+C418: 33       INC SP 
+C418: 3B       DEC SP OK
+<set,res> n,(<ix,iy>+1)......
+C418: DD CB 86 RES 0, (IX + 01h) 
+C418: FD CB 86 RES 0, (IY + 01h) 
+C418: DD CB 8E RES 1, (IX + 01h) 
+C418: FD CB 8E RES 1, (IY + 01h) 
+C418: DD CB 96 RES 2, (IX + 01h) 
+C418: FD CB 96 RES 2, (IY + 01h) 
+C418: DD CB 9E RES 3, (IX + 01h) 
+C418: FD CB 9E RES 3, (IY + 01h) 
+C418: DD CB A6 RES 4, (IX + 01h) 
+C418: FD CB A6 RES 4, (IY + 01h) 
+C418: DD CB AE RES 5, (IX + 01h) 
+C418: FD CB AE RES 5, (IY + 01h) 
+C418: DD CB B6 RES 6, (IX + 01h) 
+C418: FD CB B6 RES 6, (IY + 01h) 
+C418: DD CB BE RES 7, (IX + 01h) 
+C418: FD CB BE RES 7, (IY + 01h) 
+C418: DD CB C6 SET 0, (IX + 01h) 
+C418: FD CB C6 SET 0, (IY + 01h) 
+C418: DD CB CE SET 1, (IX + 01h) 
+C418: FD CB CE SET 1, (IY + 01h) 
+C418: DD CB D6 SET 2, (IX + 01h) 
+C418: FD CB D6 SET 2, (IY + 01h) 
+C418: DD CB DE SET 3, (IX + 01h) 
+C418: FD CB DE SET 3, (IY + 01h) 
+C418: DD CB E6 SET 4, (IX + 01h) 
+C418: FD CB E6 SET 4, (IY + 01h) 
+C418: DD CB EE SET 5, (IX + 01h) 
+C418: FD CB EE SET 5, (IY + 01h) 
+C418: DD CB F6 SET 6, (IX + 01h) 
+C418: FD CB F6 SET 6, (IY + 01h) 
+C418: DD CB FE SET 7, (IX + 01h) 
+C418: FD CB FE SET 7, (IY + 01h) OK
+bit n,(<ix,iy>+1)............
+C418: DD CB 46 BIT 0, (IX + 01h) 
+C418: FD CB 46 BIT 0, (IY + 01h) 
+C418: DD CB 4E BIT 1, (IX + 01h) 
+C418: FD CB 4E BIT 1, (IY + 01h) 
+C418: DD CB 56 BIT 2, (IX + 01h) 
+C418: FD CB 56 BIT 2, (IY + 01h) 
+C418: DD CB 5E BIT 3, (IX + 01h) 
+C418: FD CB 5E BIT 3, (IY + 01h) 
+C418: DD CB 66 BIT 4, (IX + 01h) 
+C418: FD CB 66 BIT 4, (IY + 01h) 
+C418: DD CB 6E BIT 5, (IX + 01h) 
+C418: FD CB 6E BIT 5, (IY + 01h) 
+C418: DD CB 76 BIT 6, (IX + 01h) 
+C418: FD CB 76 BIT 6, (IY + 01h) 
+C418: DD CB 7E BIT 7, (IX + 01h) 
+C418: FD CB 7E BIT 7, (IY + 01h) OK
+<inc,dec> a..................
+C418: 3C       INC A 
+C418: 3D       DEC A OK
+<inc,dec> b..................
+C418: 04       INC B 
+C418: 05       DEC B OK
+<inc,dec> bc.................
+C418: 03       INC BC 
+C418: 0B       DEC BC OK
+<inc,dec> d..................
+C418: 14       INC D 
+C418: 15       DEC D OK
+<inc,dec> e..................
+C418: 1C       INC E 
+C418: 1D       DEC E OK
+<inc,dec> h..................
+C418: 24       INC H 
+C418: 25       DEC H OK
+<inc,dec> l..................
+C418: 2C       INC L 
+C418: 2D       DEC L OK
+<inc,dec> (hl)...............
+C418: 34       INC (HL) 
+C418: 35       DEC (HL) OK
+<inc,dec> ixh................
+C418: DD 24    INC IXh 
+C418: DD 25    DEC IXh OK
+<inc,dec> ixl................
+C418: DD 2C    INC IXl 
+C418: DD 2D    DEC IXl OK
+<inc,dec> iyh................OK
+<inc,dec> iyl................OK
+ld <bcdehla>,<bcdehla>.......
+C418: 40       LD B, B 
+C418: 41       LD B, C 
+C418: 42       LD B, D 
+C418: 43       LD B, E 
+C418: 44       LD B, H 
+C418: 45       LD B, L 
+C418: 46       LD B, (HL) 
+C418: 47       LD B, A 
+C418: 48       LD C, B 
+C418: 49       LD C, C 
+C418: 4A       LD C, D 
+C418: 4B       LD C, E 
+C418: 4C       LD C, H 
+C418: 4D       LD C, L 
+C418: 4E       LD C, (HL) 
+C418: 4F       LD C, A 
+C418: 50       LD D, B 
+C418: 51       LD D, C 
+C418: 52       LD D, D 
+C418: 53       LD D, E 
+C418: 54       LD D, H 
+C418: 55       LD D, L 
+C418: 56       LD D, (HL) 
+C418: 57       LD D, A 
+C418: 58       LD E, B 
+C418: 59       LD E, C 
+C418: 5A       LD E, D 
+C418: 5B       LD E, E 
+C418: 5C       LD E, H 
+C418: 5D       LD E, L 
+C418: 5E       LD E, (HL) 
+C418: 5F       LD E, A 
+C418: 60       LD H, B 
+C418: 61       LD H, C 
+C418: 62       LD H, D 
+C418: 63       LD H, E 
+C418: 64       LD H, H 
+C418: 65       LD H, L 
+C418: 66       LD H, (HL) 
+C418: 67       LD H, A 
+C418: 68       LD L, B 
+C418: 69       LD L, C 
+C418: 6A       LD L, D 
+C418: 6B       LD L, E 
+C418: 6C       LD L, H 
+C418: 6D       LD L, L 
+C418: 6E       LD L, (HL) 
+C418: 6F       LD L, A 
+C418: 70       LD (HL), B 
+C418: 71       LD (HL), C 
+C418: 72       LD (HL), D 
+C418: 73       LD (HL), E 
+C418: 74       LD (HL), H 
+C418: 75       LD (HL), L 
+C418: 77       LD (HL), A 
+C418: 78       LD A, B 
+C418: 79       LD A, C 
+C418: 7A       LD A, D 
+C418: 7B       LD A, E 
+C418: 7C       LD A, H 
+C418: 7D       LD A, L 
+C418: 7E       LD A, (HL) 
+C418: 7F       LD A, A OK
+cpd<r>.......................
+C418: ED A9    CPD 
+C418: ED B9    CPDR OK
+cpi<r>.......................
+C418: ED A1    CPI 
+C418: ED B1    CPIR OK
+<inc,dec> (<ix,iy>+1)........
+C418: DD 34    INC (IX + 01h) 
+C418: FD 34    INC (IY + 01h) 
+C418: DD 35    DEC (IX + 01h) 
+C418: FD 35    DEC (IY + 01h) OK
+<rlca,rrca,rla,rra>..........
+C418: 07       RLCA 
+C418: 0F       RRCA 
+C418: 17       RLA 
+C418: 1F       RRA OK
+shf/rot <b,c,d,e,h,l,(hl),a>.
+C418: CB 00    RLC B 
+C418: CB 01    RLC C 
+C418: CB 02    RLC D 
+C418: CB 03    RLC E 
+C418: CB 04    RLC H 
+C418: CB 05    RLC L 
+C418: CB 06    RLC (HL) 
+C418: CB 07    RLC A 
+C418: CB 08    RRC B 
+C418: CB 09    RRC C 
+C418: CB 0A    RRC D 
+C418: CB 0B    RRC E 
+C418: CB 0C    RRC H 
+C418: CB 0D    RRC L 
+C418: CB 0E    RRC (HL) 
+C418: CB 0F    RRC A 
+C418: CB 10    RL B 
+C418: CB 11    RL C 
+C418: CB 12    RL D 
+C418: CB 13    RL E 
+C418: CB 14    RL H 
+C418: CB 15    RL L 
+C418: CB 16    RL (HL) 
+C418: CB 17    RL A 
+C418: CB 18    RR B 
+C418: CB 19    RR C 
+C418: CB 1A    RR D 
+C418: CB 1B    RR E 
+C418: CB 1C    RR H 
+C418: CB 1D    RR L 
+C418: CB 1E    RR (HL) 
+C418: CB 1F    RR A 
+C418: CB 20    SLA B 
+C418: CB 21    SLA C 
+C418: CB 22    SLA D 
+C418: CB 23    SLA E 
+C418: CB 24    SLA H 
+C418: CB 25    SLA L 
+C418: CB 26    SLA (HL) 
+C418: CB 27    SLA A 
+C418: CB 28    SRA B 
+C418: CB 29    SRA C 
+C418: CB 2A    SRA D 
+C418: CB 2B    SRA E 
+C418: CB 2C    SRA H 
+C418: CB 2D    SRA L 
+C418: CB 2E    SRA (HL) 
+C418: CB 2F    SRA A 
+C418: CB 30    SLL B 
+C418: CB 31    SLL C 
+C418: CB 32    SLL D 
+C418: CB 33    SLL E 
+C418: CB 34    SLL H 
+C418: CB 35    SLL L 
+C418: CB 36    SLL (HL) 
+C418: CB 37    SLL A 
+C418: CB 38    SRL B 
+C418: CB 39    SRL C 
+C418: CB 3A    SRL D 
+C418: CB 3B    SRL E 
+C418: CB 3C    SRL H 
+C418: CB 3D    SRL L 
+C418: CB 3E    SRL (HL) 
+C418: CB 3F    SRL A    CRC:6139d9a8 expected:150c42ed
+ld <bcdexya>,<bcdexya>.......
+C418: DD 44    LD B, IXh 
+C418: FD 44    LD B, IYh 
+C418: DD 45    LD B, IXl 
+C418: FD 45    LD B, IYl 
+C418: DD 4C    LD C, IXh 
+C418: FD 4C    LD C, IYh 
+C418: DD 4D    LD C, IXl 
+C418: FD 4D    LD C, IYl 
+C418: DD 54    LD D, IXh 
+C418: FD 54    LD D, IYh 
+C418: DD 55    LD D, IXl 
+C418: FD 55    LD D, IYl 
+C418: DD 5C    LD E, IXh 
+C418: FD 5C    LD E, IYh 
+C418: DD 5D    LD E, IXl 
+C418: FD 5D    LD E, IYl 
+C418: DD 60    LD IXh, B 
+C418: FD 60    LD IYh, B 
+C418: DD 61    LD IXh, C 
+C418: FD 61    LD IYh, C 
+C418: DD 62    LD IXh, D 
+C418: FD 62    LD IYh, D 
+C418: DD 63    LD IXh, E 
+C418: FD 63    LD IYh, E 
+C418: DD 64    LD IXh, IXh 
+C418: FD 64    LD IYh, IYh 
+C418: DD 65    LD IXh, IXl 
+C418: FD 65    LD IYh, IYl 
+C418: DD 67    LD IXh, A 
+C418: FD 67    LD IYh, A 
+C418: DD 68    LD IXl, B 
+C418: FD 68    LD IYl, B 
+C418: DD 69    LD IXl, C 
+C418: FD 69    LD IYl, C 
+C418: DD 6A    LD IXl, D 
+C418: FD 6A    LD IYl, D 
+C418: DD 6B    LD IXl, E 
+C418: FD 6B    LD IYl, E 
+C418: DD 6C    LD IXl, IXh 
+C418: FD 6C    LD IYl, IYh 
+C418: DD 6D    LD IXl, IXl 
+C418: FD 6D    LD IYl, IYl 
+C418: DD 6F    LD IXl, A 
+C418: FD 6F    LD IYl, A 
+C418: DD 7C    LD A, IXh 
+C418: FD 7C    LD A, IYh 
+C418: DD 7D    LD A, IXl 
+C418: FD 7D    LD A, IYl OK
+<rrd,rld>....................
+C418: ED 67    RRD 
+C418: ED 6F    RLD    CRC:127b7824 expected:9d030f06
+<set,res> n,<bcdehl(hl)a>....
+C418: CB 80    RES 0, B 
+C418: CB 81    RES 0, C 
+C418: CB 82    RES 0, D 
+C418: CB 83    RES 0, E 
+C418: CB 84    RES 0, H 
+C418: CB 85    RES 0, L 
+C418: CB 86    RES 0, (HL) 
+C418: CB 87    RES 0, A 
+C418: CB 88    RES 1, B 
+C418: CB 89    RES 1, C 
+C418: CB 8A    RES 1, D 
+C418: CB 8B    RES 1, E 
+C418: CB 8C    RES 1, H 
+C418: CB 8D    RES 1, L 
+C418: CB 8E    RES 1, (HL) 
+C418: CB 8F    RES 1, A 
+C418: CB 90    RES 2, B 
+C418: CB 91    RES 2, C 
+C418: CB 92    RES 2, D 
+C418: CB 93    RES 2, E 
+C418: CB 94    RES 2, H 
+C418: CB 95    RES 2, L 
+C418: CB 96    RES 2, (HL) 
+C418: CB 97    RES 2, A 
+C418: CB 98    RES 3, B 
+C418: CB 99    RES 3, C 
+C418: CB 9A    RES 3, D 
+C418: CB 9B    RES 3, E 
+C418: CB 9C    RES 3, H 
+C418: CB 9D    RES 3, L 
+C418: CB 9E    RES 3, (HL) 
+C418: CB 9F    RES 3, A 
+C418: CB A0    RES 4, B 
+C418: CB A1    RES 4, C 
+C418: CB A2    RES 4, D 
+C418: CB A3    RES 4, E 
+C418: CB A4    RES 4, H 
+C418: CB A5    RES 4, L 
+C418: CB A6    RES 4, (HL) 
+C418: CB A7    RES 4, A 
+C418: CB A8    RES 5, B 
+C418: CB A9    RES 5, C 
+C418: CB AA    RES 5, D 
+C418: CB AB    RES 5, E 
+C418: CB AC    RES 5, H 
+C418: CB AD    RES 5, L 
+C418: CB AE    RES 5, (HL) 
+C418: CB AF    RES 5, A 
+C418: CB B0    RES 6, B 
+C418: CB B1    RES 6, C 
+C418: CB B2    RES 6, D 
+C418: CB B3    RES 6, E 
+C418: CB B4    RES 6, H 
+C418: CB B5    RES 6, L 
+C418: CB B6    RES 6, (HL) 
+C418: CB B7    RES 6, A 
+C418: CB B8    RES 7, B 
+C418: CB B9    RES 7, C 
+C418: CB BA    RES 7, D 
+C418: CB BB    RES 7, E 
+C418: CB BC    RES 7, H 
+C418: CB BD    RES 7, L 
+C418: CB BE    RES 7, (HL) 
+C418: CB BF    RES 7, A 
+C418: CB C0    SET 0, B 
+C418: CB C1    SET 0, C 
+C418: CB C2    SET 0, D 
+C418: CB C3    SET 0, E 
+C418: CB C4    SET 0, H 
+C418: CB C5    SET 0, L 
+C418: CB C6    SET 0, (HL) 
+C418: CB C7    SET 0, A 
+C418: CB C8    SET 1, B 
+C418: CB C9    SET 1, C 
+C418: CB CA    SET 1, D 
+C418: CB CB    SET 1, E 
+C418: CB CC    SET 1, H 
+C418: CB CD    SET 1, L 
+C418: CB CE    SET 1, (HL) 
+C418: CB CF    SET 1, A 
+C418: CB D0    SET 2, B 
+C418: CB D1    SET 2, C 
+C418: CB D2    SET 2, D 
+C418: CB D3    SET 2, E 
+C418: CB D4    SET 2, H 
+C418: CB D5    SET 2, L 
+C418: CB D6    SET 2, (HL) 
+C418: CB D7    SET 2, A 
+C418: CB D8    SET 3, B 
+C418: CB D9    SET 3, C 
+C418: CB DA    SET 3, D 
+C418: CB DB    SET 3, E 
+C418: CB DC    SET 3, H 
+C418: CB DD    SET 3, L 
+C418: CB DE    SET 3, (HL) 
+C418: CB DF    SET 3, A 
+C418: CB E0    SET 4, B 
+C418: CB E1    SET 4, C 
+C418: CB E2    SET 4, D 
+C418: CB E3    SET 4, E 
+C418: CB E4    SET 4, H 
+C418: CB E5    SET 4, L 
+C418: CB E6    SET 4, (HL) 
+C418: CB E7    SET 4, A 
+C418: CB E8    SET 5, B 
+C418: CB E9    SET 5, C 
+C418: CB EA    SET 5, D 
+C418: CB EB    SET 5, E 
+C418: CB EC    SET 5, H 
+C418: CB ED    SET 5, L 
+C418: CB EE    SET 5, (HL) 
+C418: CB EF    SET 5, A 
+C418: CB F0    SET 6, B 
+C418: CB F1    SET 6, C 
+C418: CB F2    SET 6, D 
+C418: CB F3    SET 6, E 
+C418: CB F4    SET 6, H 
+C418: CB F5    SET 6, L 
+C418: CB F6    SET 6, (HL) 
+C418: CB F7    SET 6, A 
+C418: CB F8    SET 7, B 
+C418: CB F9    SET 7, C 
+C418: CB FA    SET 7, D 
+C418: CB FB    SET 7, E 
+C418: CB FC    SET 7, H 
+C418: CB FD    SET 7, L 
+C418: CB FE    SET 7, (HL) 
+C418: CB FF    SET 7, A OK
+neg..........................
+C418: ED 44    NEG    CRC:bbc3d922 expected:d638dd6a
+add hl,<bc,de,hl,sp>.........
+C418: 09       ADD HL, BC 
+C418: 19       ADD HL, DE 
+C418: 29       ADD HL, HL 
+C418: 39       ADD HL, SP    CRC:1165fc90 expected:d9a4ca05
+add ix,<bc,de,ix,sp>.........
+C418: DD 09    ADD IX, BC 
+C418: DD 19    ADD IX, DE 
+C418: DD 29    ADD IX, IX 
+C418: DD 39    ADD IX, SP    CRC:c359f7a2 expected:b1df8ec0
+add iy,<bc,de,iy,sp>.........
+C418: FD 09    ADD IY, BC 
+C418: FD 19    ADD IY, DE 
+C418: FD 29    ADD IY, IY 
+C418: FD 39    ADD IY, SP    CRC:5fc828e9 expected:39c8589b
+aluop a,nn...................
+C418: C6       ADD A, 00h 
+C418: CE       ADC A, 01h 
+C418: D6       SUB 01h 
+C418: DE       SBC A, 01h 
+C418: E6       AND 01h 
+C418: EE       XOR 01h 
+C418: F6       OR 01h 
+C418: FE       CP 01h    CRC:0225fc48 expected:51c19c2e
+<adc,sbc> hl,<bc,de,hl,sp>...
+C418: ED 42    SBC HL, BC 
+C418: ED 4A    ADC HL, BC 
+C418: ED 52    SBC HL, DE 
+C418: ED 5A    ADC HL, DE 
+C418: ED 62    SBC HL, HL 
+C418: ED 6A    ADC HL, HL 
+C418: ED 72    SBC HL, SP 
+C418: ED 7A    ADC HL, SP    CRC:f39089a0 expected:d48ad519
+bit n,<b,c,d,e,h,l,(hl),a>...
+C418: CB 40    BIT 0, B 
+C418: CB 41    BIT 0, C 
+C418: CB 42    BIT 0, D 
+C418: CB 43    BIT 0, E 
+C418: CB 44    BIT 0, H 
+C418: CB 45    BIT 0, L 
+C418: CB 46    BIT 0, (HL) 
+C418: CB 47    BIT 0, A 
+C418: CB 48    BIT 1, B 
+C418: CB 49    BIT 1, C 
+C418: CB 4A    BIT 1, D 
+C418: CB 4B    BIT 1, E 
+C418: CB 4C    BIT 1, H 
+C418: CB 4D    BIT 1, L 
+C418: CB 4E    BIT 1, (HL) 
+C418: CB 4F    BIT 1, A 
+C418: CB 50    BIT 2, B 
+C418: CB 51    BIT 2, C 
+C418: CB 52    BIT 2, D 
+C418: CB 53    BIT 2, E 
+C418: CB 54    BIT 2, H 
+C418: CB 55    BIT 2, L 
+C418: CB 56    BIT 2, (HL) 
+C418: CB 57    BIT 2, A 
+C418: CB 58    BIT 3, B 
+C418: CB 59    BIT 3, C 
+C418: CB 5A    BIT 3, D 
+C418: CB 5B    BIT 3, E 
+C418: CB 5C    BIT 3, H 
+C418: CB 5D    BIT 3, L 
+C418: CB 5E    BIT 3, (HL) 
+C418: CB 5F    BIT 3, A 
+C418: CB 60    BIT 4, B 
+C418: CB 61    BIT 4, C 
+C418: CB 62    BIT 4, D 
+C418: CB 63    BIT 4, E 
+C418: CB 64    BIT 4, H 
+C418: CB 65    BIT 4, L 
+C418: CB 66    BIT 4, (HL) 
+C418: CB 67    BIT 4, A 
+C418: CB 68    BIT 5, B 
+C418: CB 69    BIT 5, C 
+C418: CB 6A    BIT 5, D 
+C418: CB 6B    BIT 5, E 
+C418: CB 6C    BIT 5, H 
+C418: CB 6D    BIT 5, L 
+C418: CB 6E    BIT 5, (HL) 
+C418: CB 6F    BIT 5, A 
+C418: CB 70    BIT 6, B 
+C418: CB 71    BIT 6, C 
+C418: CB 72    BIT 6, D 
+C418: CB 73    BIT 6, E 
+C418: CB 74    BIT 6, H 
+C418: CB 75    BIT 6, L 
+C418: CB 76    BIT 6, (HL) 
+C418: CB 77    BIT 6, A 
+C418: CB 78    BIT 7, B 
+C418: CB 79    BIT 7, C 
+C418: CB 7A    BIT 7, D 
+C418: CB 7B    BIT 7, E 
+C418: CB 7C    BIT 7, H 
+C418: CB 7D    BIT 7, L 
+C418: CB 7E    BIT 7, (HL) 
+C418: CB 7F    BIT 7, A    CRC:71aea11b expected:a937a161
+<daa,cpl,scf,ccf>............
+C418: 27       DAA 
+C418: 2F       CPL 
+C418: 37       SCF 
+C418: 3F       CCF    CRC:cc599a0b expected:6d2dd213
+aluop a,(<ix,iy>+1)..........
+C418: DD 86    ADD A, (IX + 01h) 
+C418: FD 86    ADD A, (IY + 01h) 
+C418: DD 8E    ADC A, (IX + 01h) 
+C418: FD 8E    ADC A, (IY + 01h) 
+C418: DD 96    SUB A, (IX + 01h) 
+C418: FD 96    SUB A, (IY + 01h) 
+C418: DD 9E    SBC A, (IX + 01h) 
+C418: FD 9E    SBC A, (IY + 01h) 
+C418: DD A6    AND A, (IX + 01h) 
+C418: FD A6    AND A, (IY + 01h) 
+C418: DD AE    XOR A, (IX + 01h) 
+C418: FD AE    XOR A, (IY + 01h) 
+C418: DD B6    OR A, (IX + 01h) 
+C418: FD B6    OR A, (IY + 01h) 
+C418: DD BE    CP A, (IX + 01h) 
+C418: FD BE    CP A, (IY + 01h)    CRC:b4aa3982 expected:e334341a
+aluop a,<ixh,ixl,iyh,iyl>....
+C418: DD 84    ADD A, IXh 
+C418: FD 84    ADD A, IYh 
+C418: DD 85    ADD A, IXl 
+C418: FD 85    ADD A, IYl 
+C418: DD 8C    ADC A, IXh 
+C418: FD 8C    ADC A, IYh 
+C418: DD 8D    ADC A, IXl 
+C418: FD 8D    ADC A, IYl 
+C418: DD 94    SUB A, IXh 
+C418: FD 94    SUB A, IYh 
+C418: DD 95    SUB A, IXl 
+C418: FD 95    SUB A, IYl 
+C418: DD 9C    SBC A, IXh 
+C418: FD 9C    SBC A, IYh 
+C418: DD 9D    SBC A, IXl 
+C418: FD 9D    SBC A, IYl 
+C418: DD A4    AND A, IXh 
+C418: FD A4    AND A, IYh 
+C418: DD A5    AND A, IXl 
+C418: FD A5    AND A, IYl 
+C418: DD AC    XOR A, IXh 
+C418: FD AC    XOR A, IYh 
+C418: DD AD    XOR A, IXl 
+C418: FD AD    XOR A, IYl 
+C418: DD B4    OR A, IXh 
+C418: FD B4    OR A, IYh 
+C418: DD B5    OR A, IXl 
+C418: FD B5    OR A, IYl 
+C418: DD BC    CP A, IXh 
+C418: FD BC    CP A, IYh 
+C418: DD BD    CP A, IXl 
+C418: FD BD    CP A, IYl    CRC:14ff1f15 expected:a886cc44
+aluop a,<b,c,d,e,h,l,(hl),a>.
+C418: 80       ADD A, B 
+C418: 81       ADD A, C 
+C418: 82       ADD A, D 
+C418: 83       ADD A, E 
+C418: 84       ADD A, H 
+C418: 85       ADD A, L 
+C418: 86       ADD A, (HL) 
+C418: 87       ADD A, A 
+C418: 88       ADC A, B 
+C418: 89       ADC A, C 
+C418: 8A       ADC A, D 
+C418: 8B       ADC A, E 
+C418: 8C       ADC A, H 
+C418: 8D       ADC A, L 
+C418: 8E       ADC A, (HL) 
+C418: 8F       ADC A, A 
+C418: 90       SUB A, B 
+C418: 91       SUB A, C 
+C418: 92       SUB A, D 
+C418: 93       SUB A, E 
+C418: 94       SUB A, H 
+C418: 95       SUB A, L 
+C418: 96       SUB A, (HL) 
+C418: 97       SUB A, A 
+C418: 98       SBC A, B 
+C418: 99       SBC A, C 
+C418: 9A       SBC A, D 
+C418: 9B       SBC A, E 
+C418: 9C       SBC A, H 
+C418: 9D       SBC A, L 
+C418: 9E       SBC A, (HL) 
+C418: 9F       SBC A, A 
+C418: A0       AND A, B 
+C418: A1       AND A, C 
+C418: A2       AND A, D 
+C418: A3       AND A, E 
+C418: A4       AND A, H 
+C418: A5       AND A, L 
+C418: A6       AND A, (HL) 
+C418: A7       AND A, A 
+C418: A8       XOR A, B 
+C418: A9       XOR A, C 
+C418: AA       XOR A, D 
+C418: AB       XOR A, E 
+C418: AC       XOR A, H 
+C418: AD       XOR A, L 
+C418: AE       XOR A, (HL) 
+C418: AF       XOR A, A 
+C418: B0       OR A, B 
+C418: B1       OR A, C 
+C418: B2       OR A, D 
+C418: B3       OR A, E 
+C418: B4       OR A, H 
+C418: B5       OR A, L 
+C418: B6       OR A, (HL) 
+C418: B7       OR A, A 
+C418: B8       CP A, B 
+C418: B9       CP A, C 
+C418: BA       CP A, D 
+C418: BB       CP A, E 
+C418: BC       CP A, H 
+C418: BD       CP A, L 
+C418: BE       CP A, (HL) 
+C418: BF       CP A, A    CRC:1ef0f01f expected:1ec10a46
+Tests complete

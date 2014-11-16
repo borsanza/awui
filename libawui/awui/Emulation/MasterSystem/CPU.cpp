@@ -14,7 +14,7 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
-#define SLOW
+//#define SLOW
 
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
@@ -1056,6 +1056,7 @@ void CPU::RunOpcode() {
 		case OxDD86: this->ADD(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxDD8E: this->ADC(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxDD96: this->SUB(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD9E: this->SBC(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxDDA6: this->AND(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxDDAE: this->XOR(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxDDB6: this->OR(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
@@ -1121,6 +1122,23 @@ void CPU::RunOpcode() {
 		case OxDDF9: this->LDSPr(Reg_IX, 10, 2); break;
 		case OxDD26: this->LDrn(Reg_IXH, 11, 3); break;
 		case OxDD2E: this->LDrn(Reg_IXL, 11, 3); break;
+
+		case OxDD84: this->ADD(this->_registers->GetIXH(), 8, 2); break;
+		case OxDD85: this->ADD(this->_registers->GetIXL(), 8, 2); break;
+		case OxDD8C: this->ADC(this->_registers->GetIXH(), 8, 2); break;
+		case OxDD8D: this->ADC(this->_registers->GetIXL(), 8, 2); break;
+		case OxDD94: this->SUB(this->_registers->GetIXH(), 8, 2); break;
+		case OxDD95: this->SUB(this->_registers->GetIXL(), 8, 2); break;
+		case OxDD9C: this->SBC(this->_registers->GetIXH(), 8, 2); break;
+		case OxDD9D: this->SBC(this->_registers->GetIXL(), 8, 2); break;
+		case OxDDA4: this->AND(this->_registers->GetIXH(), 8, 2); break;
+		case OxDDA5: this->AND(this->_registers->GetIXL(), 8, 2); break;
+		case OxDDAC: this->XOR(this->_registers->GetIXH(), 8, 2); break;
+		case OxDDAD: this->XOR(this->_registers->GetIXL(), 8, 2); break;
+		case OxDDB4: this->OR(this->_registers->GetIXH(), 8, 2); break;
+		case OxDDB5: this->OR(this->_registers->GetIXL(), 8, 2); break;
+		case OxDDBC: this->CP(this->_registers->GetIXH(), 8, 2); break;
+		case OxDDBD: this->CP(this->_registers->GetIXL(), 8, 2); break;
 
 /******************************************************************************/
 /************************* IX bit instructions (DDCB) *************************/
@@ -1237,6 +1255,7 @@ void CPU::RunOpcode() {
 		case OxFD86: this->ADD(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxFD8E: this->ADC(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxFD96: this->SUB(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD9E: this->SBC(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxFDA6: this->AND(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxFDAE: this->XOR(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxFDB6: this->OR(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
@@ -1302,6 +1321,23 @@ void CPU::RunOpcode() {
 		case OxFDF9: this->LDSPr(Reg_IY, 10, 2); break;
 		case OxFD26: this->LDrn(Reg_IYH, 11, 3); break;
 		case OxFD2E: this->LDrn(Reg_IYL, 11, 3); break;
+
+		case OxFD84: this->ADD(this->_registers->GetIYH(), 8, 2); break;
+		case OxFD85: this->ADD(this->_registers->GetIYL(), 8, 2); break;
+		case OxFD8C: this->ADC(this->_registers->GetIYH(), 8, 2); break;
+		case OxFD8D: this->ADC(this->_registers->GetIYL(), 8, 2); break;
+		case OxFD94: this->SUB(this->_registers->GetIYH(), 8, 2); break;
+		case OxFD95: this->SUB(this->_registers->GetIYL(), 8, 2); break;
+		case OxFD9C: this->SBC(this->_registers->GetIYH(), 8, 2); break;
+		case OxFD9D: this->SBC(this->_registers->GetIYL(), 8, 2); break;
+		case OxFDA4: this->AND(this->_registers->GetIYH(), 8, 2); break;
+		case OxFDA5: this->AND(this->_registers->GetIYL(), 8, 2); break;
+		case OxFDAC: this->XOR(this->_registers->GetIYH(), 8, 2); break;
+		case OxFDAD: this->XOR(this->_registers->GetIYL(), 8, 2); break;
+		case OxFDB4: this->OR(this->_registers->GetIYH(), 8, 2); break;
+		case OxFDB5: this->OR(this->_registers->GetIYL(), 8, 2); break;
+		case OxFDBC: this->CP(this->_registers->GetIYH(), 8, 2); break;
+		case OxFDBD: this->CP(this->_registers->GetIYL(), 8, 2); break;
 
 /******************************************************************************/
 /************************* IY bit instructions (FDCB) *************************/
