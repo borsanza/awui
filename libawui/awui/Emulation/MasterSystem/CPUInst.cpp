@@ -880,7 +880,7 @@ void CPUInst::DAA() {
 
 	this->_registers->SetFFlag(Flag_Z, value == 0);
 	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_H, (A xor value) & 0x10);
+	this->_registers->SetFFlag(Flag_H, (A ^ value) & 0x10);
 	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
 	this->_registers->IncPC();
 	this->_cycles += 4;
@@ -897,17 +897,17 @@ void CPUInst::CPL() {
 
 // |2|8| The contents of a are negated (two's complement). Operation is the same as subtracting a from zero.
 void CPUInst::NEG() {
-	uint8_t old = this->_registers->GetA();
-	uint8_t value = 0 - old;
+	uint8_t A = this->_registers->GetA();
+	uint8_t value = 0 - A;
 	this->_registers->SetA(value);
 	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
 	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
 	this->_registers->SetFFlag(Flag_S, value & 0x80);
 	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (old ^ value) & Flag_H);
-	this->_registers->SetFFlag(Flag_V, old == 0x80);
+	this->_registers->SetFFlag(Flag_H, (A ^ value) & 0x10);
+	this->_registers->SetFFlag(Flag_V, A == 0x80);
 	this->_registers->SetFFlag(Flag_N, true);
-	this->_registers->SetFFlag(Flag_C, old != 0);
+	this->_registers->SetFFlag(Flag_C, A != 0);
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
 }
@@ -935,13 +935,16 @@ void CPUInst::SCF() {
 /******************************************************************************/
 
 // |1|11| The value of reg is added to hl.
-void CPUInst::ADDHLss(uint8_t reg) {
-	uint16_t old = this->_registers->GetHL();
-	uint16_t value = old + this->_registers->GetRegss(reg);
+void CPUInst::ADDHLss(uint8_t ss) {
+	uint16_t HL = this->_registers->GetHL();
+	uint16_t reg = this->_registers->GetRegss(ss);
+	uint32_t value = HL + reg;
 	this->_registers->SetHL(value);
-	this->_registers->SetFFlag(Flag_H, (value & 0xFFF) < (old & 0xFFF));
+	this->_registers->SetFFlag(Flag_F3, value & 0x0800);
+	this->_registers->SetFFlag(Flag_F5, value & 0x2000);
+	this->_registers->SetFFlag(Flag_H, (HL ^ reg ^ ((uint16_t) value)) & 0x1000);
 	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, value < old);
+	this->_registers->SetFFlag(Flag_C, value > 0xFFFF);
 	this->_registers->IncPC();
 	this->_cycles += 11;
 }
