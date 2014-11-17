@@ -94,10 +94,9 @@ namespace awui {
 					void SCF();
 
 					// 16-Bit Arithmetic Group
-					void ADDHLss(uint8_t reg);
 					void ADCHLss(uint8_t reg);
 					void SBCHLss(uint8_t reg);
-					void ADDXXpp(uint8_t XX, uint8_t pp);
+					void ADDXXpp(uint8_t XX, uint8_t pp, uint8_t cycles, uint8_t size);
 					void INCss(uint8_t reg, uint8_t cycles, uint8_t size);
 					void DECss(uint8_t reg, uint8_t cycles, uint8_t size);
 

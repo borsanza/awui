@@ -934,21 +934,6 @@ void CPUInst::SCF() {
 /*************************** 16-Bit Arithmetic Group **************************/
 /******************************************************************************/
 
-// |1|11| The value of reg is added to hl.
-void CPUInst::ADDHLss(uint8_t ss) {
-	uint16_t HL = this->_registers->GetHL();
-	uint16_t reg = this->_registers->GetRegss(ss);
-	uint32_t value = HL + reg;
-	this->_registers->SetHL(value);
-	this->_registers->SetFFlag(Flag_F3, value & 0x0800);
-	this->_registers->SetFFlag(Flag_F5, value & 0x2000);
-	this->_registers->SetFFlag(Flag_H, (HL ^ reg ^ ((uint16_t) value)) & 0x1000);
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, value > 0xFFFF);
-	this->_registers->IncPC();
-	this->_cycles += 11;
-}
-
 // |2|15| Adds ss and the carry flag to hl.
 void CPUInst::ADCHLss(uint8_t reg) {
 	uint16_t old = this->_registers->GetHL();
@@ -995,15 +980,18 @@ void CPUInst::SBCHLss(uint8_t reg) {
 }
 
 // |2|15| The value of pp is added to XX.
-void CPUInst::ADDXXpp(uint8_t XX, uint8_t pp) {
-	uint16_t old = this->_registers->GetRegss(XX);
-	uint16_t value = old + this->_registers->GetRegss(pp);
+void CPUInst::ADDXXpp(uint8_t XX, uint8_t pp, uint8_t cycles, uint8_t size) {
+	uint16_t reg1 = this->_registers->GetRegss(XX);
+	uint16_t reg2 = this->_registers->GetRegss(pp);
+	uint32_t value = reg1 + reg2;
 	this->_registers->SetRegss(XX, value);
-	this->_registers->SetFFlag(Flag_H, (value & 0xFFF) < (old & 0xFFF));
+	this->_registers->SetFFlag(Flag_F3, value & 0x0800);
+	this->_registers->SetFFlag(Flag_F5, value & 0x2000);
+	this->_registers->SetFFlag(Flag_H, (reg1 ^ reg2 ^ ((uint16_t) value)) & 0x1000);
 	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, value < old);
-	this->_registers->IncPC(2);
-	this->_cycles += 15;
+	this->_registers->SetFFlag(Flag_C, value > 0xFFFF);
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
 }
 
 // |1|6| Adds one to reg
@@ -1634,10 +1622,17 @@ void CPUInst::RRD() {
 /******************************************************************************/
 
 // |2|8| Tests bit compare of value.
-void CPUInst::BIT(uint8_t value, uint8_t compare, uint8_t cycles) {
-	this->_registers->SetFFlag(Flag_Z, !(value & compare));
+void CPUInst::BIT(uint8_t valueb, uint8_t compare, uint8_t cycles) {
+	uint8_t value = valueb & compare;
+
+	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
+	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
+	this->_registers->SetFFlag(Flag_S, value & 0x80);
+	this->_registers->SetFFlag(Flag_Z, value == 0);
+	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
 	this->_registers->SetFFlag(Flag_H, true);
 	this->_registers->SetFFlag(Flag_N, false);
+
 	this->_registers->IncPC(2);
 	this->_cycles += cycles;
 }

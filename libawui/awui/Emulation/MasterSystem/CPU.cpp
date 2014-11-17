@@ -226,10 +226,10 @@ void CPU::RunOpcode() {
 		case Ox3C: this->INCr(Reg_A, 4, 1); break;
 
 		// ADD HL, s
-		case Ox09: this->ADDHLss(Reg_BC); break;
-		case Ox19: this->ADDHLss(Reg_DE); break;
-		case Ox29: this->ADDHLss(Reg_HL); break;
-		case Ox39: this->ADDHLss(Reg_SP); break;
+		case Ox09: this->ADDXXpp(Reg_HL, Reg_BC, 11, 1); break;
+		case Ox19: this->ADDXXpp(Reg_HL, Reg_DE, 11, 1); break;
+		case Ox29: this->ADDXXpp(Reg_HL, Reg_HL, 11, 1); break;
+		case Ox39: this->ADDXXpp(Reg_HL, Reg_SP, 11, 1); break;
 
 		case Ox07: this->RLCA(); break;
 		case Ox0F: this->RRCA(); break;
@@ -1054,10 +1054,10 @@ void CPU::RunOpcode() {
 /*************************** IX instructions (DD) *****************************/
 /******************************************************************************/
 
-		case OxDD09: this->ADDXXpp(Reg_IX, Reg_BC); break;
-		case OxDD19: this->ADDXXpp(Reg_IX, Reg_DE); break;
-		case OxDD29: this->ADDXXpp(Reg_IX, Reg_IX); break;
-		case OxDD39: this->ADDXXpp(Reg_IX, Reg_SP); break;
+		case OxDD09: this->ADDXXpp(Reg_IX, Reg_BC, 15, 2); break;
+		case OxDD19: this->ADDXXpp(Reg_IX, Reg_DE, 15, 2); break;
+		case OxDD29: this->ADDXXpp(Reg_IX, Reg_IX, 15, 2); break;
+		case OxDD39: this->ADDXXpp(Reg_IX, Reg_SP, 15, 2); break;
 
 		case OxDD86: this->ADD(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxDD8E: this->ADC(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
@@ -1253,10 +1253,10 @@ void CPU::RunOpcode() {
 /*************************** IY instructions (FD) *****************************/
 /******************************************************************************/
 
-		case OxFD09: this->ADDXXpp(Reg_IY, Reg_BC); break;
-		case OxFD19: this->ADDXXpp(Reg_IY, Reg_DE); break;
-		case OxFD29: this->ADDXXpp(Reg_IY, Reg_IY); break;
-		case OxFD39: this->ADDXXpp(Reg_IY, Reg_SP); break;
+		case OxFD09: this->ADDXXpp(Reg_IY, Reg_BC, 15, 2); break;
+		case OxFD19: this->ADDXXpp(Reg_IY, Reg_DE, 15, 2); break;
+		case OxFD29: this->ADDXXpp(Reg_IY, Reg_IY, 15, 2); break;
+		case OxFD39: this->ADDXXpp(Reg_IY, Reg_SP, 15, 2); break;
 
 		case OxFD86: this->ADD(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxFD8E: this->ADC(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
