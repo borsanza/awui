@@ -1404,7 +1404,6 @@ void CPUInst::RLCXXd(uint8_t reg) {
 	if (old & 0x80)
 		value |= 1;
 
-	if (offset == 1) this->_registers->SetB(value);
 	this->WriteMemory(finalOffset, value);
 
 	this->_registers->SetF(
