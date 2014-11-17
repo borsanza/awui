@@ -411,7 +411,6 @@ void CPU::RunOpcode() {
 		case Ox75: this->LDssr(Reg_L, Reg_HL); break;
 		case Ox77: this->LDssr(Reg_A, Reg_HL); break;
 
-		// ADD s
 		case Ox80: this->ADD(this->_registers->GetB()); break;
 		case Ox81: this->ADD(this->_registers->GetC()); break;
 		case Ox82: this->ADD(this->_registers->GetD()); break;
@@ -422,31 +421,7 @@ void CPU::RunOpcode() {
 		case Ox87: this->ADD(this->_registers->GetA()); break;
 		case OxC6: this->ADD(this->ReadMemory(pc + 1), 7, 2); break;
 
-		// CP s
-		case OxB8: this->CP(this->_registers->GetB()); break;
-		case OxB9: this->CP(this->_registers->GetC()); break;
-		case OxBA: this->CP(this->_registers->GetD()); break;
-		case OxBB: this->CP(this->_registers->GetE()); break;
-		case OxBC: this->CP(this->_registers->GetH()); break;
-		case OxBD: this->CP(this->_registers->GetL()); break;
-		case OxBE: this->CP(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case OxBF: this->CP(this->_registers->GetA()); break;
-		case OxFE: this->CP(this->ReadMemory(pc + 1), 7, 2); break;
-
-		// XOR s
-		case OxA8: this->XOR(this->_registers->GetB()); break;
-		case OxA9: this->XOR(this->_registers->GetC()); break;
-		case OxAA: this->XOR(this->_registers->GetD()); break;
-		case OxAB: this->XOR(this->_registers->GetE()); break;
-		case OxAC: this->XOR(this->_registers->GetH()); break;
-		case OxAD: this->XOR(this->_registers->GetL()); break;
-		case OxAE: this->XOR(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case OxAF: this->XOR(this->_registers->GetA()); break;
-		case OxEE: this->XOR(this->ReadMemory(pc + 1), 7, 2); break;
-
-		// ADC s
 		case Ox88: this->ADC(this->_registers->GetB()); break;
-
 		case Ox89: this->ADC(this->_registers->GetC()); break;
 		case Ox8A: this->ADC(this->_registers->GetD()); break;
 		case Ox8B: this->ADC(this->_registers->GetE()); break;
@@ -456,7 +431,6 @@ void CPU::RunOpcode() {
 		case Ox8F: this->ADC(this->_registers->GetA()); break;
 		case OxCE: this->ADC(this->ReadMemory(pc + 1), 7, 2); break;
 
-		// SUB s
 		case Ox90: this->SUB(this->_registers->GetB()); break;
 		case Ox91: this->SUB(this->_registers->GetC()); break;
 		case Ox92: this->SUB(this->_registers->GetD()); break;
@@ -467,7 +441,6 @@ void CPU::RunOpcode() {
 		case Ox97: this->SUB(this->_registers->GetA()); break;
 		case OxD6: this->SUB(this->ReadMemory(pc + 1), 7, 2); break;
 
-		// SBC s
 		case Ox98: this->SBC(this->_registers->GetB()); break;
 		case Ox99: this->SBC(this->_registers->GetC()); break;
 		case Ox9A: this->SBC(this->_registers->GetD()); break;
@@ -478,7 +451,26 @@ void CPU::RunOpcode() {
 		case Ox9F: this->SBC(this->_registers->GetA()); break;
 		case OxDE: this->SBC(this->ReadMemory(pc + 1), 7, 2); break;
 
-		// OR s
+		case OxA0: this->AND(this->_registers->GetB()); break;
+		case OxA1: this->AND(this->_registers->GetC()); break;
+		case OxA2: this->AND(this->_registers->GetD()); break;
+		case OxA3: this->AND(this->_registers->GetE()); break;
+		case OxA4: this->AND(this->_registers->GetH()); break;
+		case OxA5: this->AND(this->_registers->GetL()); break;
+		case OxA6: this->AND(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case OxA7: this->AND(this->_registers->GetA()); break;
+		case OxE6: this->AND(this->ReadMemory(pc + 1), 7, 2); break;
+
+		case OxA8: this->XOR(this->_registers->GetB()); break;
+		case OxA9: this->XOR(this->_registers->GetC()); break;
+		case OxAA: this->XOR(this->_registers->GetD()); break;
+		case OxAB: this->XOR(this->_registers->GetE()); break;
+		case OxAC: this->XOR(this->_registers->GetH()); break;
+		case OxAD: this->XOR(this->_registers->GetL()); break;
+		case OxAE: this->XOR(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case OxAF: this->XOR(this->_registers->GetA()); break;
+		case OxEE: this->XOR(this->ReadMemory(pc + 1), 7, 2); break;
+
 		case OxB0: this->OR(this->_registers->GetB()); break;
 		case OxB1: this->OR(this->_registers->GetC()); break;
 		case OxB2: this->OR(this->_registers->GetD()); break;
@@ -489,16 +481,15 @@ void CPU::RunOpcode() {
 		case OxB7: this->OR(this->_registers->GetA()); break;
 		case OxF6: this->OR(this->ReadMemory(pc + 1), 7, 2); break;
 
-		// AND s
-		case OxA0: this->AND(this->_registers->GetB()); break;
-		case OxA1: this->AND(this->_registers->GetC()); break;
-		case OxA2: this->AND(this->_registers->GetD()); break;
-		case OxA3: this->AND(this->_registers->GetE()); break;
-		case OxA4: this->AND(this->_registers->GetH()); break;
-		case OxA5: this->AND(this->_registers->GetL()); break;
-		case OxA6: this->AND(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case OxA7: this->AND(this->_registers->GetA()); break;
-		case OxE6: this->AND(this->ReadMemory(pc + 1), 7, 2); break;
+		case OxB8: this->CP(this->_registers->GetB()); break;
+		case OxB9: this->CP(this->_registers->GetC()); break;
+		case OxBA: this->CP(this->_registers->GetD()); break;
+		case OxBB: this->CP(this->_registers->GetE()); break;
+		case OxBC: this->CP(this->_registers->GetH()); break;
+		case OxBD: this->CP(this->_registers->GetL()); break;
+		case OxBE: this->CP(this->ReadMemory(this->_registers->GetHL()), 7); break;
+		case OxBF: this->CP(this->_registers->GetA()); break;
+		case OxFE: this->CP(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// JP cc, nn
 		case OxC2: this->JPccnn(!(this->_registers->GetF() & Flag_Z));  break;
