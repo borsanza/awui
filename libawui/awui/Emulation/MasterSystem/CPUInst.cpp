@@ -1588,7 +1588,7 @@ void CPUInst::RLD() {
 	this->_registers->SetF(
 		(valueA & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[valueA] |
-		(PARITYEVEN(valueA) ? Flag_P : 0) |
+		(PARITYEVEN(valueA) ? 0 : Flag_P) |
 		(this->_registers->GetF() & Flag_C)
 	);
 
@@ -1609,7 +1609,7 @@ void CPUInst::RRD() {
 	this->_registers->SetF(
 		(valueA & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[valueA] |
-		(PARITYEVEN(valueA) ? Flag_P : 0) |
+		(PARITYEVEN(valueA) ? 0 : Flag_P) |
 		(this->_registers->GetF() & Flag_C)
 	);
 
