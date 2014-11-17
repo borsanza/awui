@@ -898,11 +898,13 @@ void CPUInst::CPL() {
 // |2|8| The contents of a are negated (two's complement). Operation is the same as subtracting a from zero.
 void CPUInst::NEG() {
 	uint8_t old = this->_registers->GetA();
-	uint8_t value = (0xFF - old) + 1;
+	uint8_t value = 0 - old;
 	this->_registers->SetA(value);
+	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
+	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
 	this->_registers->SetFFlag(Flag_S, value & 0x80);
 	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (old & 0xF) != (value & 0xF));
+	this->_registers->SetFFlag(Flag_H, (old ^ value) & Flag_H);
 	this->_registers->SetFFlag(Flag_V, old == 0x80);
 	this->_registers->SetFFlag(Flag_N, true);
 	this->_registers->SetFFlag(Flag_C, old != 0);

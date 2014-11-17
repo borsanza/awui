@@ -1,2 +1,2 @@
 #!/bin/sh
-./awMasterGear --test tests/ZEXALL\ V0.15SDSC\ by\ Maxim\ \&\ Eric\ Quinn\ \(PD\).sms
+./awMasterGear --test zex/ZEXALL\ V0.15SDSC\ by\ BorSanZa\ \(PD\).sms
