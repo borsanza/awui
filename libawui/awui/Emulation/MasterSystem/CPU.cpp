@@ -30,6 +30,7 @@ CPU::CPU() : _opcode(this) {
 	this->_showLogInt = false;
 	this->_showNotImplemented = true;
 	this->_inInterrupt = false;
+	this->_isHalted = false;
 	for (int i = 0; i < OxNOTIMPLEMENTED; i++)
 		opcodes[i] = false;
 
@@ -181,6 +182,7 @@ void CPU::RunOpcode() {
 #endif
 
 	// http://clrhome.org/table/
+	this->_isHalted = false;
 	switch (opcodeEnum) {
 
 /******************************************************************************/
@@ -197,6 +199,7 @@ void CPU::RunOpcode() {
 		// 76: HALT
 		// |1|4| Suspends CPU operation until an interrupt or reset occurs.
 		case Ox76:
+			this->_isHalted = true;
 			this->_cycles += 4;
 			break;
 
@@ -512,7 +515,10 @@ void CPU::RunOpcode() {
 		case OxC3:
 			{
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				this->_registers->SetPC(offset);
+				if (offset == pc)
+					this->_isHalted = true;
+				else
+					this->_registers->SetPC(offset);
 				this->_cycles += 10;
 			}
 			break;
@@ -1492,4 +1498,8 @@ VDP * CPU::GetVDP() {
 
 Registers * CPU::GetRegisters() {
 	return this->_registers;
+}
+
+bool CPU::IsHalted() const {
+	return this->_isHalted;
 }
