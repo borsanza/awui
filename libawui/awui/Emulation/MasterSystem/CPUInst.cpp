@@ -44,7 +44,7 @@ using namespace awui::Emulation::MasterSystem;
 // b = -126
 
 static bool PARITYEVEN(uint8_t value) {
-    bool parity = false;
+    bool parity = true;
     while (value) {
         parity = !parity;
         value = value & (value - 1);
@@ -874,13 +874,13 @@ void CPUInst::DAA() {
 		}
 	} while (false);
 
-	this->_registers->SetFFlag(Flag_C, C);
 	uint8_t value = A + correction;
 	this->_registers->SetA(value);
 
+	this->_registers->SetFFlag(Flag_C, C);
 	this->_registers->SetFFlag(Flag_Z, value == 0);
 	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_H, (A ^ value) & 0x10);
+	this->_registers->SetFFlag(Flag_H, (A ^ correction ^ value) & 0x10);
 	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
 	this->_registers->IncPC();
 	this->_cycles += 4;
@@ -914,9 +914,10 @@ void CPUInst::NEG() {
 
 // |1|4| Inverts the carry flag.
 void CPUInst::CCF() {
-	this->_registers->SetFFlag(Flag_H, this->_registers->GetF() & Flag_C);
+	bool carry = this->_registers->GetF() & Flag_C;
+	this->_registers->SetFFlag(Flag_H, carry);
 	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, !(this->_registers->GetF() & Flag_C));
+ 	this->_registers->SetFFlag(Flag_C, !carry);
 	this->_registers->IncPC();
 	this->_cycles += 4;
 }
@@ -1588,7 +1589,7 @@ void CPUInst::RLD() {
 	this->_registers->SetF(
 		(valueA & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[valueA] |
-		(PARITYEVEN(valueA) ? 0 : Flag_P) |
+		(PARITYEVEN(valueA) ? Flag_P : 0) |
 		(this->_registers->GetF() & Flag_C)
 	);
 
@@ -1609,7 +1610,7 @@ void CPUInst::RRD() {
 	this->_registers->SetF(
 		(valueA & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[valueA] |
-		(PARITYEVEN(valueA) ? 0 : Flag_P) |
+		(PARITYEVEN(valueA) ? Flag_P : 0) |
 		(this->_registers->GetF() & Flag_C)
 	);
 
