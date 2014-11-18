@@ -59,16 +59,18 @@ CPUInst::CPUInst() {
 	this->_frame1 = 0;
 	this->_frame2 = 0;
 	this->_ports = new Ports();
-	this->_ram = new Ram(8192);
 	this->_registers = new Registers();
-	this->_rom = new Rom(4096);
 	this->_mapper = MAPPER_SEGA;
+	this->_ram = new Ram(8192);
+	this->_rom = new Rom(4096);
+	this->_boardram = new Ram(32768);
 }
 
 CPUInst::~CPUInst() {
 	delete this->_rom;
 	delete this->_registers;
 	delete this->_ram;
+	delete this->_boardram;
 	delete this->_ports;
 }
 
@@ -85,22 +87,10 @@ void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
 		default:
 		case MAPPER_SEGA:
 			if (pos < 0xC000) {
-				if (pos < 0x400) {
-					this->_rom->WriteByte(pos, value);
-					return;
+				if ((pos >= 0x8000) && (this->_controlbyte & 0x08)) {
+					int offset = (this->_controlbyte & 0x04)? 0x4000 : 0x0000;
+					this->_boardram->WriteByte(offset + pos, value);
 				}
-
-				if (pos < 0x4000) {
-					this->_rom->WriteByte((uint16_t(this->_frame0) << 14) + pos, value);
-					return;
-				}
-
-				if (pos < 0x8000) {
-					this->_rom->WriteByte((uint16_t(this->_frame1) << 14) + (pos - 0x4000), value);
-					return;
-				}
-
-				this->_rom->WriteByte((uint16_t(this->_frame2) << 14) + (pos - 0x8000), value);
 				return;
 			}
 
@@ -133,10 +123,9 @@ void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
 			this->_ram->WriteByte(pos - 0xE000, value);
 
 		case MAPPER_NONE:
-			if (pos < 0xC000) {
-				this->_rom->WriteByte(pos, value);
+			// En la rom no se escribe
+			if (pos < 0xC000)
 				return;
-			}
 
 			if (pos < 0xE000) {
 				this->_ram->WriteByte(pos - 0xC000, value);
@@ -162,7 +151,13 @@ uint8_t CPUInst::ReadMemory(uint16_t pos) {
 				if (pos < 0x8000)
 					return this->_rom->ReadByte((uint16_t(this->_frame1) << 14) + (pos - 0x4000));
 
-				return this->_rom->ReadByte((uint16_t(this->_frame2) << 14) + (pos - 0x8000));
+
+				if (this->_controlbyte & 0x08) {
+					int offset = (this->_controlbyte & 0x04)? 0x4000 : 0x0000;
+					return this->_boardram->ReadByte(offset + pos);
+				} else {
+					return this->_rom->ReadByte((uint16_t(this->_frame2) << 14) + (pos - 0x8000));
+				}
 			}
 
 			// RAM or RAM (mirror)

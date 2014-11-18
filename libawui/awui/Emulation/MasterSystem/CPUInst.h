@@ -31,6 +31,7 @@ namespace awui {
 					Ram * _ram;
 					Registers * _registers;
 					Rom * _rom;
+					Ram * _boardram;
 
 					uint8_t _controlbyte;
 					uint8_t _frame0;
