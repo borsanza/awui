@@ -217,7 +217,7 @@ void CPUInst::LDrHL(uint8_t reg) {
 
 // |3|19| Loads the value pointed to by ix plus * into reg
 void CPUInst::LDrXXd(uint8_t reg, uint8_t reg2) {
-	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetRegss(reg2) + this->ReadMemory(this->_registers->GetPC() + 2)));
+	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetRegss(reg2) + (int8_t)this->ReadMemory(this->_registers->GetPC() + 2)));
 	this->_registers->IncPC(3);
 	this->_cycles += 19;
 }
@@ -232,7 +232,7 @@ void CPUInst::LDssr(uint8_t reg, uint8_t ss) {
 // |3|19| Stores reg to the memory location pointed to by xx plus *.
 void CPUInst::LDXXdr(uint8_t xx, uint8_t reg) {
 	uint16_t x = this->_registers->GetRegss(xx);
-	uint16_t offset = x + this->ReadMemory(this->_registers->GetPC() + 2);
+	uint16_t offset = x + ((int8_t) this->ReadMemory(this->_registers->GetPC() + 2));
 	this->WriteMemory(offset, this->_registers->GetRegm(reg));
 	this->_registers->IncPC(3);
 	this->_cycles += 19;
@@ -282,6 +282,7 @@ void CPUInst::LDnndd(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->_cycles += cycles;
 }
 
+// |2|15| sp is decremented and ixh is stored into the memory location pointed to by sp. sp is decremented again and ixl is stored into the memory location pointed to by sp.
 void CPUInst::PUSH16(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint16_t value = this->_registers->GetRegss(reg);
 	uint8_t high = value >> 8;
@@ -294,6 +295,7 @@ void CPUInst::PUSH16(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->_cycles += cycles;
 }
 
+// |2|14| The memory location pointed to by sp is stored into ixl and sp is incremented. The memory location pointed to by sp is stored into ixh and sp is incremented again.
 void CPUInst::POP16(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint16_t sp = this->_registers->GetSP();
 	uint16_t value = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
@@ -1361,8 +1363,7 @@ void CPUInst::SRL_HL() {
 // |4|23| The contents of the memory location pointed to by ix plus * are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
 void CPUInst::RLCXXd(uint8_t reg) {
 	uint16_t XX = this->_registers->GetRegss(reg);
-	int8_t offset = this->ReadMemory(this->_registers->GetPC() + 2);
-	uint16_t finalOffset = XX + offset;
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->_registers->GetPC() + 2));
 	uint8_t old = this->ReadMemory(finalOffset);
 
 	uint8_t value = (old << 1);
@@ -1385,8 +1386,7 @@ void CPUInst::RLCXXd(uint8_t reg) {
 // |4|23| The contents of the memory location pointed to by ix plus * are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
 void CPUInst::RRCXXd(uint8_t reg) {
 	uint16_t XX = this->_registers->GetRegss(reg);
-	int8_t offset = this->ReadMemory(this->_registers->GetPC() + 2);
-	uint16_t finalOffset = XX + offset;
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->_registers->GetPC() + 2));
 	uint8_t old = this->ReadMemory(finalOffset);
 
 	uint8_t value = (old >> 1);
@@ -1409,8 +1409,7 @@ void CPUInst::RRCXXd(uint8_t reg) {
 // |4|23| The contents of the memory location pointed to by ix plus * are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
 void CPUInst::RLXXd(uint8_t reg) {
 	uint16_t XX = this->_registers->GetRegss(reg);
-	int8_t offset = this->ReadMemory(this->_registers->GetPC() + 2);
-	uint16_t finalOffset = XX + offset;
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->_registers->GetPC() + 2));
 	uint8_t old = this->ReadMemory(finalOffset);
 
 	uint8_t value = (old << 1);
@@ -1433,8 +1432,7 @@ void CPUInst::RLXXd(uint8_t reg) {
 // |4|23| The contents of the memory location pointed to by ix plus * are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
 void CPUInst::RRXXd(uint8_t reg) {
 	uint16_t XX = this->_registers->GetRegss(reg);
-	int8_t offset = this->ReadMemory(this->_registers->GetPC() + 2);
-	uint16_t finalOffset = XX + offset;
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->_registers->GetPC() + 2));
 	uint8_t old = this->ReadMemory(finalOffset);
 
 	uint8_t value = (old >> 1);
@@ -1457,8 +1455,7 @@ void CPUInst::RRXXd(uint8_t reg) {
 // |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
 void CPUInst::SLAXXd(uint8_t reg) {
 	uint16_t XX = this->_registers->GetRegss(reg);
-	int8_t offset = this->ReadMemory(this->_registers->GetPC() + 2);
-	uint16_t finalOffset = XX + offset;
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->_registers->GetPC() + 2));
 	uint8_t old = this->ReadMemory(finalOffset);
 
 	uint8_t value = old << 1;
@@ -1478,8 +1475,7 @@ void CPUInst::SLAXXd(uint8_t reg) {
 // |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
 void CPUInst::SRAXXd(uint8_t reg) {
 	uint16_t XX = this->_registers->GetRegss(reg);
-	int8_t offset = this->ReadMemory(this->_registers->GetPC() + 2);
-	uint16_t finalOffset = XX + offset;
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->_registers->GetPC() + 2));
 	uint8_t old = this->ReadMemory(finalOffset);
 
 	uint8_t value =  (old >> 1);
@@ -1501,8 +1497,7 @@ void CPUInst::SRAXXd(uint8_t reg) {
 // |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
 void CPUInst::SLLXXd(uint8_t reg) {
 	uint16_t XX = this->_registers->GetRegss(reg);
-	int8_t offset = this->ReadMemory(this->_registers->GetPC() + 2);
-	uint16_t finalOffset = XX + offset;
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->_registers->GetPC() + 2));
 	uint8_t old = this->ReadMemory(finalOffset);
 
 	uint8_t value = (old << 1) | 1;
@@ -1522,8 +1517,7 @@ void CPUInst::SLLXXd(uint8_t reg) {
 // |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
 void CPUInst::SRLXXd(uint8_t reg) {
 	uint16_t XX = this->_registers->GetRegss(reg);
-	int8_t offset = this->ReadMemory(this->_registers->GetPC() + 2);
-	uint16_t finalOffset = XX + offset;
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->_registers->GetPC() + 2));
 	uint8_t old = this->ReadMemory(finalOffset);
 
 	uint8_t value =  old >> 1;

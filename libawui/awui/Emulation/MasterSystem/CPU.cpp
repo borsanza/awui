@@ -14,7 +14,7 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
-#define SLOW
+//#define SLOW
 
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
@@ -392,13 +392,13 @@ void CPU::RunOpcode() {
 		case Ox2A: this->LDdd_nn(Reg_HL, 16, 3); break;
 
 		// LD r, *
-		case Ox06: this->LDrn(Reg_B); break;
-		case Ox0E: this->LDrn(Reg_C); break;
-		case Ox16: this->LDrn(Reg_D); break;
-		case Ox1E: this->LDrn(Reg_E); break;
-		case Ox26: this->LDrn(Reg_H); break;
-		case Ox2E: this->LDrn(Reg_L); break;
-		case Ox3E: this->LDrn(Reg_A); break;
+		case Ox06: this->LDrn(Reg_B, 7, 2); break;
+		case Ox0E: this->LDrn(Reg_C, 7, 2); break;
+		case Ox16: this->LDrn(Reg_D, 7, 2); break;
+		case Ox1E: this->LDrn(Reg_E, 7, 2); break;
+		case Ox26: this->LDrn(Reg_H, 7, 2); break;
+		case Ox2E: this->LDrn(Reg_L, 7, 2); break;
+		case Ox3E: this->LDrn(Reg_A, 7, 2); break;
 
 		// LD (ss), r
 		case Ox02: this->LDssr(Reg_A, Reg_BC); break;
@@ -1050,14 +1050,14 @@ void CPU::RunOpcode() {
 		case OxDD29: this->ADDXXpp(Reg_IX, Reg_IX, 15, 2); break;
 		case OxDD39: this->ADDXXpp(Reg_IX, Reg_SP, 15, 2); break;
 
-		case OxDD86: this->ADD(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDD8E: this->ADC(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDD96: this->SUB(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDD9E: this->SBC(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDA6: this->AND(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDAE: this->XOR(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDB6: this->OR(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDBE: this->CP(this->ReadMemory(this->_registers->GetIX() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD86: this->ADD(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD8E: this->ADC(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD96: this->SUB(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD9E: this->SBC(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDA6: this->AND(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDAE: this->XOR(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDB6: this->OR(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDBE: this->CP(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 
 		case OxDDE1: this->POP16(Reg_IX, 14, 2); break;
 		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
@@ -1249,14 +1249,14 @@ void CPU::RunOpcode() {
 		case OxFD29: this->ADDXXpp(Reg_IY, Reg_IY, 15, 2); break;
 		case OxFD39: this->ADDXXpp(Reg_IY, Reg_SP, 15, 2); break;
 
-		case OxFD86: this->ADD(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFD8E: this->ADC(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFD96: this->SUB(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFD9E: this->SBC(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDA6: this->AND(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDAE: this->XOR(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDB6: this->OR(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDBE: this->CP(this->ReadMemory(this->_registers->GetIY() + this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD86: this->ADD(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD8E: this->ADC(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD96: this->SUB(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD9E: this->SBC(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDA6: this->AND(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDAE: this->XOR(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDB6: this->OR(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDBE: this->CP(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 
 		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
 		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;

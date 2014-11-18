@@ -23,6 +23,7 @@ syntax: glob
 *.vcproj.*user
 *.workspace
 *.sms
+*.sg
 *.rar
 *.kdev*
 libaw/*.c
