@@ -10,6 +10,7 @@
 #include <awui/Emulation/MasterSystem/Ram.h>
 #include <awui/Emulation/MasterSystem/Registers.h>
 #include <awui/Emulation/MasterSystem/Rom.h>
+#include <awui/Emulation/MasterSystem/VDP.h>
 #include <assert.h>
 
 using namespace awui::Emulation::MasterSystem;
@@ -54,16 +55,13 @@ static bool PARITYEVEN(uint8_t value) {
 }
 
 CPUInst::CPUInst() {
-	this->_controlbyte = 0;
-	this->_frame0 = 0;
-	this->_frame1 = 1;
-	this->_frame2 = 2;
 	this->_ports = new Ports();
 	this->_registers = new Registers();
 	this->_mapper = MAPPER_SEGA;
 	this->_ram = new Ram(8192);
 	this->_rom = new Rom(4096);
 	this->_boardram = new Ram(32768);
+	this->Reset();
 }
 
 CPUInst::~CPUInst() {
@@ -75,8 +73,13 @@ CPUInst::~CPUInst() {
 }
 
 void CPUInst::Reset() {
+	this->_controlbyte = 0;
+	this->_frame0 = 0;
+	this->_frame1 = 1;
+	this->_frame2 = 2;
 	this->_cycles = 0;
 	this->_registers->Clear();
+	this->_ram->Clear();
 }
 
 void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {

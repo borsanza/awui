@@ -43,6 +43,12 @@ CPU::~CPU() {
 	delete this->_vdp;
 }
 
+void CPU::Reset() {
+	this->_vdp->Reset();
+
+	CPUInst::Reset();
+}
+
 void CPU::LoadRom(const String file) {
 	this->_rom->LoadRom(file);
 }

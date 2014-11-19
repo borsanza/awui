@@ -13,7 +13,6 @@ namespace awui {
 			class CPU : public awui::Emulation::MasterSystem::CPUInst {
 				private:
 					Opcode _opcode;
-					VDP * _vdp;
 					float _frame;
 					float _oldFrame;
 					bool _showLog;
@@ -40,6 +39,8 @@ namespace awui {
 
 					VDP * GetVDP();
 					Registers * GetRegisters();
+
+					void Reset();
 			};
 		}
 	}

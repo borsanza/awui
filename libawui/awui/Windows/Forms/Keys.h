@@ -61,6 +61,8 @@ namespace awui {
 					Key_KP_MULTIPLY,
 					Key_KP_PERIOD,
 					Key_KP_PLUS,
+
+					Key_BACKSPACE,
 				};
 			};
 		}

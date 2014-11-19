@@ -101,6 +101,11 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 		this->_debugger->SetShow(!this->_debugger->GetShow());
 	}
 
+	if (key == Keys::Key_BACKSPACE) {
+		this->_cpu->Reset();
+	}
+
+
 //	Console::WriteLine("OnKeyPress");
 	return true;
 }

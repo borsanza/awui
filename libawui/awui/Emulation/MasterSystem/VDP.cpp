@@ -89,6 +89,24 @@ VDP::~VDP() {
 	delete this->_data;
 }
 
+void VDP::Reset() {
+	this->_data->Clear();
+	this->_vram->Clear();
+
+	uint8_t values[] = {0x36, 0x80, 0xFF, 0xFF, 0xFF, 0xFF, 0xFB, 0x00, 0x00, 0x00, 0xFF};
+	for (uint8_t i = 0; i<=10; i++)
+		this->_registers[i] = values[i];
+
+	for (uint8_t i = 0; i<32; i++)
+		this->_cram[i] = 0;
+
+	this->UpdateAllRegisters();
+}
+
+void VDP::Clear() {
+	this->_data->Clear();
+}
+
 const uint8_t * VDP::GetColors() const {
 	return this->_cram;
 }
@@ -114,10 +132,6 @@ void VDP::SetShowBorder(bool mode) {
 		this->_showBorder = mode;
 		this->ResetVideo();
 	}
-}
-
-void VDP::Clear() {
-	this->_data->Clear();
 }
 
 void VDP::ResetVideo() {
@@ -147,17 +161,6 @@ bool VDP::GetNTSC() const {
 
 bool VDP::GetPAL() const {
 	return !this->_ntsc;
-}
-
-void VDP::Reset() {
-	uint8_t values[] = {0x36, 0x80, 0xFF, 0xFF, 0xFF, 0xFF, 0xFB, 0x00, 0x00, 0x00, 0xFF};
-	for (uint8_t i = 0; i<=10; i++)
-		this->_registers[i] = values[i];
-
-	for (uint8_t i = 0; i<32; i++)
-		this->_cram[i] = 0;
-
-	this->UpdateAllRegisters();
 }
 
 uint16_t VDP::GetWidth() const {

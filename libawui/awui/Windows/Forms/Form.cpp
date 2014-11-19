@@ -211,6 +211,7 @@ void Form::ProcessEvents() {
 						OnRemoteKeyPressPre(RemoteButtons::Down);
 						break;
 
+					case SDLK_BACKSPACE: OnKeyPressPre(Keys::Key_BACKSPACE); break;
 					case SDLK_0: OnKeyPressPre(Keys::Key_0); break;
 					case SDLK_1: OnKeyPressPre(Keys::Key_1); break;
 					case SDLK_2: OnKeyPressPre(Keys::Key_2); break;

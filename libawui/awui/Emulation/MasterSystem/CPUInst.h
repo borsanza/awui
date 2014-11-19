@@ -18,6 +18,7 @@ namespace awui {
 			class Ram;
 			class Registers;
 			class Rom;
+			class VDP;
 
 			enum {
 				MAPPER_NONE = 1,
@@ -32,6 +33,7 @@ namespace awui {
 					Registers * _registers;
 					Rom * _rom;
 					Ram * _boardram;
+					VDP * _vdp;
 
 					uint8_t _controlbyte;
 					uint8_t _frame0;
@@ -41,7 +43,6 @@ namespace awui {
 
 					int64_t _cycles;
 
-					void Reset();
 					void WriteMemory(uint16_t pos, uint8_t value);
 
 					// 8-Bit Load Group
@@ -163,6 +164,7 @@ namespace awui {
 					void OUTCr(uint8_t reg);
 					void OUTC();
 					void OUTI();
+					void Reset();
 
 				public:
 					CPUInst();
