@@ -54,7 +54,7 @@ VDP::VDP(CPU * cpu) {
 	this->_goVram = true;
 	this->_baseAddress = 0;
 
-	this->_controlByte = -1;
+	this->_controlMode = false;
 
 	// 16Kb in Video Ram
 	this->_vram = new Ram(0x4000);
@@ -422,15 +422,25 @@ bool VDP::GetSpritePixel(uint8_t x, uint8_t y, uint8_t * color) const {
 	return false;
 }
 
-uint8_t VDP::GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete) const {
-
+uint8_t VDP::GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority) const {
 	uint8_t color;
-	if (this->GetSpritePixel(this->_col, this->_line, &color))
+
+	if (!bgPriority) {
+		if (this->GetSpritePixel(this->_col, this->_line, &color))
+			return this->_cram[color];
+
+		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete);
+
 		return this->_cram[color];
+	} else {
+		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete);
+		if ((color & 0xF) == 0) {
+			if (this->GetSpritePixel(this->_col, this->_line, &color))
+				return this->_cram[color];
+		}
 
-	color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete);
-
-	return this->_cram[color];
+		return this->_cram[color];
+	}
 }
 
 bool VDP::OnTick(uint32_t counter) {
@@ -496,10 +506,11 @@ bool VDP::OnTick(uint32_t counter) {
 			uint8_t byte1 = this->_vram->ReadByte(offset);
 			uint8_t byte2 = this->_vram->ReadByte(offset + 1);
 			uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
-			bool flipx = byte2 & 0x2;
-			bool flipy = byte2 & 0x4;
-			bool otherPalette = byte2 & 0x8;
-			this->_data->WriteByte(pos, this->GetBackgroundPixel(sprite, col & 0x7, line & 0x7, flipx, flipy, otherPalette));
+			bool flipx = byte2 & 2;
+			bool flipy = byte2 & 4;
+			bool otherPalette = byte2 & 8;
+			bool priority = byte2 & 16;
+			this->_data->WriteByte(pos, this->GetBackgroundPixel(sprite, col & 0x7, line & 0x7, flipx, flipy, otherPalette, priority));
 		}
 	} else {
 		if (this->_showBorder)
@@ -566,34 +577,28 @@ void VDP::UpdateAllRegisters() {
 }
 
 void VDP::WriteControlByte(uint8_t value) {
-	if (this->_controlByte == -1) {
-		this->_controlByte = value;
-//		this->_cpu->SetAddressBus((this->_cpu->GetAddressBus() & 0xFF00) | value);
+	if (!this->_controlMode) {
+		this->_controlMode = true;
 		this->_address = (this->_address & 0x3F00) | value;
-//		printf("VDP Address: %.4X\n", this->_cpu->GetAddressBus() & 0x03FF);
-
 		return;
 	}
 
+	this->_address = (value & 0x3F) << 8 | (this->_address & 0xFF);
+
 	uint8_t state = value >> 6;
-
-	this->_address = ((value & 0x3F) << 8) | this->_controlByte;
-//	this->_cpu->SetAddressBus((this->_cpu->GetAddressBus() & 0xC000) | this->_address);
-
-//	 printf("VDP Address: %.4X\n", _address);
-
 	switch (state) {
 		case 0:
 			this->_goVram = true;
 			break;
 		case 1:
-			this->_goVram = true;
+			this->_goVram = true; // Autoincrementa en lecturas y escrituras
 			break;
 		case 2:
 			{
+				this->_goVram = true;
 				uint8_t pos = value & 0xF;
 				if (pos < 11) {
-					this->_registers[pos] = this->_controlByte;
+					this->_registers[pos] = this->_address & 0xFF;
 					this->UpdateAllRegisters();
 				}
 			}
@@ -603,24 +608,17 @@ void VDP::WriteControlByte(uint8_t value) {
 			break;
 	}
 
-	this->_controlByte = -1;
+	this->_controlMode = false;
 }
 
 void VDP::WriteDataByte(uint8_t value) {
 	if (this->_goVram) {
 		this->_vram->WriteByte(this->_address, value);
-		// printf("VRam");
 	} else {
-		// TODO: Mirar que pasa y porque a veces se escribe en el espacio de colores fuera de rango
-		// assert(this->_address < 32);
 		this->_cram[this->_address & 0x1F] = value;
-		// printf("CRam[%.2X] = %.2X\n", this->_address, value);
 	}
 
-	// printf("[%.4X] = %.2X\n", this->_address, value);
-
 	this->_address = (this->_address + 1) & 0x3FFF;
-//	this->_cpu->SetAddressBus(this->_cpu->GetAddressBus() + 1);
 }
 
 void VDP::WriteByte(uint8_t port, uint8_t value) {
@@ -680,6 +678,15 @@ uint8_t VDP::ReadByte(uint8_t port) {
 	if (port >= 0x80 && port <= 0xBF) {
 		r = true;
 		if (even) {
+			uint8_t ret;
+			if (this->_goVram)
+				ret = this->_vram->ReadByte(this->_address);
+			else
+				ret = this->_cram[this->_address & 0x1F];
+
+			this->_address = (this->_address + 1) & 0x3FFF;
+
+			return ret;
 		} else {
 			return this->GetStatus();
 		}

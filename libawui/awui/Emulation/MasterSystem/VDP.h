@@ -40,7 +40,9 @@ namespace awui {
 
 					Ram * _data;
 
-					int16_t _controlByte;
+					bool _controlMode;
+
+
 					uint16_t _dataByte;
 					uint16_t _address;
 					bool _goVram;
@@ -65,7 +67,7 @@ namespace awui {
 
 					uint8_t GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete) const;
 					bool GetSpritePixel(uint8_t x, uint8_t y, uint8_t * color) const;
-					uint8_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete) const;
+					uint8_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority) const;
 
 				public:
 					VDP(CPU * cpu);
