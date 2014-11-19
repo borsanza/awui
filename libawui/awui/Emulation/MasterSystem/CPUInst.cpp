@@ -56,8 +56,8 @@ static bool PARITYEVEN(uint8_t value) {
 CPUInst::CPUInst() {
 	this->_controlbyte = 0;
 	this->_frame0 = 0;
-	this->_frame1 = 0;
-	this->_frame2 = 0;
+	this->_frame1 = 1;
+	this->_frame2 = 2;
 	this->_ports = new Ports();
 	this->_registers = new Registers();
 	this->_mapper = MAPPER_SEGA;

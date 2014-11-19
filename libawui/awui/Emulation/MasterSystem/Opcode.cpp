@@ -1687,6 +1687,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxED72: printf("SBC HL, SP"); break;
 		case OxED73: printf("LD (%.4Xh), HL", ((opcode4 << 8) | opcode3)); break;
 		case OxED74: printf("NEG"); break;
+		case OxED79: printf("OUT (C), A"); break;
 		case OxED7A: printf("ADC HL, SP"); break;
 		case OxED7B: printf("LD SP, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
 		case OxED7C: printf("NEG"); break;

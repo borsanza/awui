@@ -528,7 +528,10 @@ void CPU::RunOpcode() {
 		// |1|10| The top stack entry is popped into pc.
 		case OxC0: this->RET(!(this->_registers->GetF() & Flag_Z)); break;
 		case OxC8: this->RET( (this->_registers->GetF() & Flag_Z)); break;
-		case OxC9: this->RET(true, 10); break;
+		case OxC9:
+			this->RET(true, 10);
+			this->_inInterrupt = false;
+			break;
 		case OxD0: this->RET(!(this->_registers->GetF() & Flag_C)); break;
 		case OxD8: this->RET( (this->_registers->GetF() & Flag_C)); break;
 		case OxE0: this->RET(!(this->_registers->GetF() & Flag_V)); break;
