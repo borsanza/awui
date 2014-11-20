@@ -858,7 +858,10 @@ void CPUInst::DAA() {
 
 // |1|4| The contents of a are inverted (one's complement).
 void CPUInst::CPL() {
-	this->_registers->SetA(~this->_registers->GetA());
+	uint8_t A = ~this->_registers->GetA();
+	this->_registers->SetFFlag(Flag_F3, A & Flag_F3);
+	this->_registers->SetFFlag(Flag_F5, A & Flag_F5);
+	this->_registers->SetA(A);
 	this->_registers->SetFFlag(Flag_H, true);
 	this->_registers->SetFFlag(Flag_N, true);
 	this->_registers->IncPC();
@@ -885,6 +888,9 @@ void CPUInst::NEG() {
 // |1|4| Inverts the carry flag.
 void CPUInst::CCF() {
 	bool carry = this->_registers->GetF() & Flag_C;
+	uint8_t A = this->_registers->GetA();
+	this->_registers->SetFFlag(Flag_F3, A & Flag_F3);
+	this->_registers->SetFFlag(Flag_F5, A & Flag_F5);
 	this->_registers->SetFFlag(Flag_H, carry);
 	this->_registers->SetFFlag(Flag_N, false);
  	this->_registers->SetFFlag(Flag_C, !carry);
@@ -894,6 +900,9 @@ void CPUInst::CCF() {
 
 // |1|4| Sets the carry flag.
 void CPUInst::SCF() {
+	uint8_t A = this->_registers->GetA();
+	this->_registers->SetFFlag(Flag_F3, A & Flag_F3);
+	this->_registers->SetFFlag(Flag_F5, A & Flag_F5);
 	this->_registers->SetFFlag(Flag_H, false);
 	this->_registers->SetFFlag(Flag_N, false);
 	this->_registers->SetFFlag(Flag_C, true);
