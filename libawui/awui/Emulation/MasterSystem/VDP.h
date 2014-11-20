@@ -45,7 +45,8 @@ namespace awui {
 
 					uint16_t _dataByte;
 					uint16_t _address;
-					bool _goVram;
+					uint8_t _portState;
+					uint8_t _readbuffer;
 
 					Ram * _vram;
 

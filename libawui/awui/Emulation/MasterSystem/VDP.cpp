@@ -51,7 +51,7 @@ VDP::VDP(CPU * cpu) {
 
 	this->_status = 0x1F;
 	this->_address = 0;
-	this->_goVram = true;
+	this->_portState = 0xFF;
 	this->_baseAddress = 0;
 
 	this->_controlMode = false;
@@ -585,17 +585,26 @@ void VDP::WriteControlByte(uint8_t value) {
 
 	this->_address = (value & 0x3F) << 8 | (this->_address & 0xFF);
 
-	uint8_t state = value >> 6;
-	switch (state) {
+	this->_portState = value >> 6;
+
+	switch (this->_portState) {
+		// A byte of VRAM is read from the location defined by the
+		// address register and is stored in the read buffer. The
+		// address register is incremented by one. Writes to the
+		// data port go to VRAM.
 		case 0:
-			this->_goVram = true;
+			this->_readbuffer = this->_vram->ReadByte(this->_address);
+			this->_address = (this->_address + 1) & 0x3FFF;
 			break;
+
+		// Writes to the data port go to VRAM.
 		case 1:
-			this->_goVram = true; // Autoincrementa en lecturas y escrituras
 			break;
+
+		// This value signifies a VDP register write, explained
+		// below. Writes to the data port go to VRAM.
 		case 2:
 			{
-				this->_goVram = true;
 				uint8_t pos = value & 0xF;
 				if (pos < 11) {
 					this->_registers[pos] = this->_address & 0xFF;
@@ -603,8 +612,9 @@ void VDP::WriteControlByte(uint8_t value) {
 				}
 			}
 			break;
+
+		// Writes to the data port go to CRAM.
 		case 3:
-			this->_goVram = false;
 			break;
 	}
 
@@ -612,10 +622,16 @@ void VDP::WriteControlByte(uint8_t value) {
 }
 
 void VDP::WriteDataByte(uint8_t value) {
-	if (this->_goVram) {
-		this->_vram->WriteByte(this->_address, value);
-	} else {
-		this->_cram[this->_address & 0x1F] = value;
+	switch (_portState) {
+		case 0:
+		case 1:
+		case 2:
+			this->_vram->WriteByte(this->_address, value);
+			this->_readbuffer = value;
+			break;
+		case 3:
+			this->_cram[this->_address & 0x1F] = value;
+			break;
 	}
 
 	this->_address = (this->_address + 1) & 0x3FFF;
@@ -679,10 +695,21 @@ uint8_t VDP::ReadByte(uint8_t port) {
 		r = true;
 		if (even) {
 			uint8_t ret;
-			if (this->_goVram)
-				ret = this->_vram->ReadByte(this->_address);
-			else
-				ret = this->_cram[this->_address & 0x1F];
+
+			switch (this->_portState) {
+				default:
+				case 0:
+					ret = this->_readbuffer;
+					this->_readbuffer = this->_vram->ReadByte(this->_address);
+					break;
+				case 1:
+				case 2:
+					ret = this->_vram->ReadByte(this->_address);
+					break;
+				case 3:
+					ret = this->_cram[this->_address & 0x1F];
+					break;
+			}
 
 			this->_address = (this->_address + 1) & 0x3FFF;
 
