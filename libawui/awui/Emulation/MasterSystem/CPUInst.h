@@ -138,7 +138,8 @@ namespace awui {
 					void RRD();
 
 					// Bit Set, Reset, and Test Group
-					void BIT(uint8_t param, uint8_t compare, uint8_t cycles = 8);
+					void BIT(uint8_t param, uint8_t compare);
+					void BITHL(uint8_t compare);
 					void SET(uint8_t reg, uint8_t bit);
 					void SETHL(uint8_t bit);
 					void RES(uint8_t reg, uint8_t bit);

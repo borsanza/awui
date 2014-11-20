@@ -1593,19 +1593,36 @@ void CPUInst::RRD() {
 /******************************************************************************/
 
 // |2|8| Tests bit compare of value.
-void CPUInst::BIT(uint8_t valueb, uint8_t compare, uint8_t cycles) {
+void CPUInst::BIT(uint8_t valueb, uint8_t compare) {
 	uint8_t value = valueb & compare;
 
 	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
 	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
 	this->_registers->SetFFlag(Flag_S, value & 0x80);
 	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
+	this->_registers->SetFFlag(Flag_P, value == 0);
 	this->_registers->SetFFlag(Flag_H, true);
 	this->_registers->SetFFlag(Flag_N, false);
 
 	this->_registers->IncPC(2);
-	this->_cycles += cycles;
+	this->_cycles += 8;
+}
+
+void CPUInst::BITHL(uint8_t compare) {
+	uint16_t HL = this->_registers->GetHL();
+	uint8_t valueb = this->ReadMemory(HL);
+	uint8_t value = valueb & compare;
+
+	this->_registers->SetFFlag(Flag_F3, HL & 0x0800);
+	this->_registers->SetFFlag(Flag_F5, HL & 0x2000);
+	this->_registers->SetFFlag(Flag_S, value & 0x80);
+	this->_registers->SetFFlag(Flag_Z, value == 0);
+	this->_registers->SetFFlag(Flag_P, value == 0);
+	this->_registers->SetFFlag(Flag_H, true);
+	this->_registers->SetFFlag(Flag_N, false);
+
+	this->_registers->IncPC(2);
+	this->_cycles += 12;
 }
 
 // |2|8| Sets bit X of reg.
