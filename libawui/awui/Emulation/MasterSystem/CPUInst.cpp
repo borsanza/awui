@@ -926,6 +926,8 @@ void CPUInst::ADCHLss(uint8_t reg) {
 	}
 
 	this->_registers->SetHL(value);
+	this->_registers->SetFFlag(Flag_F3, value & 0x0800);
+	this->_registers->SetFFlag(Flag_F5, value & 0x2000);
 	this->_registers->SetFFlag(Flag_S, value & 0x8000);
 	this->_registers->SetFFlag(Flag_Z, value == 0);
 	this->_registers->SetFFlag(Flag_H, (value & 0xFFF) < (old & 0xFFF));
@@ -949,6 +951,8 @@ void CPUInst::SBCHLss(uint8_t reg) {
 	}
 
 	this->_registers->SetHL(value);
+	this->_registers->SetFFlag(Flag_F3, value & 0x0800);
+	this->_registers->SetFFlag(Flag_F5, value & 0x2000);
 	this->_registers->SetFFlag(Flag_S, value & 0x8000);
 	this->_registers->SetFFlag(Flag_Z, value == 0);
 	this->_registers->SetFFlag(Flag_H, (value & 0xFFF) > (old & 0xFFF));
