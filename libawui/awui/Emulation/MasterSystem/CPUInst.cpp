@@ -1600,13 +1600,14 @@ void CPUInst::RRD() {
 void CPUInst::BIT(uint8_t valueb, uint8_t compare) {
 	uint8_t value = valueb & compare;
 
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
 	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_P, value == 0);
+	this->_registers->SetFFlag(Flag_Z, !value);
+	this->_registers->SetFFlag(Flag_P, !value);
 	this->_registers->SetFFlag(Flag_H, true);
 	this->_registers->SetFFlag(Flag_N, false);
+
+	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
+	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
 
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
@@ -1617,16 +1618,35 @@ void CPUInst::BITHL(uint8_t compare) {
 	uint8_t valueb = this->ReadMemory(HL);
 	uint8_t value = valueb & compare;
 
-	this->_registers->SetFFlag(Flag_F3, HL & 0x0800);
-	this->_registers->SetFFlag(Flag_F5, HL & 0x2000);
 	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_P, value == 0);
+	this->_registers->SetFFlag(Flag_Z, !value);
+	this->_registers->SetFFlag(Flag_P, !value);
 	this->_registers->SetFFlag(Flag_H, true);
 	this->_registers->SetFFlag(Flag_N, false);
 
+	this->_registers->SetFFlag(Flag_F3, HL & 0x0800);
+	this->_registers->SetFFlag(Flag_F5, HL & 0x2000);
+
 	this->_registers->IncPC(2);
 	this->_cycles += 12;
+}
+
+// |4|20| Tests bit 'bit' of the memory location pointed to by ss plus *.
+void CPUInst::BITbssd(uint8_t bit, uint8_t reg, uint8_t d) {
+	uint16_t offset = this->_registers->GetRegss(reg) + ((int8_t) d);
+	uint8_t value = this->ReadMemory(offset) & bit;
+
+	this->_registers->SetF(
+		((value & 0x80) ? Flag_S : 0) |
+		(!value ? Flag_P | Flag_Z : 0) |
+		Flag_H |
+		((offset & 0x0800) ? Flag_F3 : 0) |
+		((offset & 0x2000) ? Flag_F5 : 0) |
+		(this->_registers->GetF() & Flag_C)
+	);
+
+	this->_registers->IncPC(4);
+	this->_cycles += 20;
 }
 
 // |2|8| Sets bit X of reg.
@@ -1657,22 +1677,6 @@ void CPUInst::RESHL(uint8_t bit) {
 	this->WriteMemory(offset, this->ReadMemory(offset) & ~bit);
 	this->_registers->IncPC(2);
 	this->_cycles += 15;
-}
-
-// |4|20| Tests bit 'bit' of the memory location pointed to by ss plus *.
-void CPUInst::BITbssd(uint8_t bit, uint8_t reg, uint8_t d) {
-	uint16_t offset = this->_registers->GetRegss(reg) + ((int8_t) d);
-	uint8_t value = this->ReadMemory(offset);
-
-	this->_registers->SetF(
-		(((bit == 0x80) && (value & 0x80)) ? Flag_S : 0) |
-		((!(value & bit)) ? Flag_P | Flag_Z : 0) |
-		Flag_H |
-		(this->_registers->GetF() & (Flag_F3 | Flag_F5 | Flag_C))
-		);
-
-	this->_registers->IncPC(4);
-	this->_cycles += 20;
 }
 
 // |4|23| Resets bit 'bit' of the memory location pointed to by ss plus *.
