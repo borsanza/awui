@@ -15,11 +15,16 @@
 #include <awui/Emulation/MasterSystem/VDP.h>
 
 //#define SLOW
+//#define NUMOPCODES
 
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
 
 static bool opcodes[OxNOTIMPLEMENTED];
+
+#ifdef NUMOPCODES
+static uint64_t opcodesT[OxNOTIMPLEMENTED];
+#endif
 
 CPU::CPU() : _opcode(this) {
 	this->_vdp = new VDP(this);
@@ -31,8 +36,12 @@ CPU::CPU() : _opcode(this) {
 	this->_showNotImplemented = true;
 	this->_inInterrupt = false;
 	this->_isHalted = false;
-	for (int i = 0; i < OxNOTIMPLEMENTED; i++)
+	for (int i = 0; i < OxNOTIMPLEMENTED; i++) {
 		opcodes[i] = false;
+#ifdef NUMOPCODES
+		opcodesT[i] = 0;
+#endif
+	}
 
 	this->_ports->SetVDP(this->_vdp);
 
@@ -187,6 +196,10 @@ void CPU::RunOpcode() {
 	}
 #endif
 
+#ifdef NUMOPCODES
+	opcodesT[opcodeEnum]++;
+#endif
+
 	// http://clrhome.org/table/
 	this->_isHalted = false;
 	switch (opcodeEnum) {
@@ -282,55 +295,55 @@ void CPU::RunOpcode() {
 		case Ox35: this->DECHL();       break;
 		case Ox3D: this->DECm (Reg_A, 4, 1);  break;
 
-		case Ox40: this->LDrr(Reg_B, Reg_B, 4, 1); break;
-		case Ox41: this->LDrr(Reg_B, Reg_C, 4, 1); break;
-		case Ox42: this->LDrr(Reg_B, Reg_D, 4, 1); break;
-		case Ox43: this->LDrr(Reg_B, Reg_E, 4, 1); break;
-		case Ox44: this->LDrr(Reg_B, Reg_H, 4, 1); break;
-		case Ox45: this->LDrr(Reg_B, Reg_L, 4, 1); break;
-		case Ox47: this->LDrr(Reg_B, Reg_A, 4, 1); break;
-		case Ox48: this->LDrr(Reg_C, Reg_B, 4, 1); break;
-		case Ox49: this->LDrr(Reg_C, Reg_C, 4, 1); break;
-		case Ox4A: this->LDrr(Reg_C, Reg_D, 4, 1); break;
-		case Ox4B: this->LDrr(Reg_C, Reg_E, 4, 1); break;
-		case Ox4C: this->LDrr(Reg_C, Reg_H, 4, 1); break;
-		case Ox4D: this->LDrr(Reg_C, Reg_L, 4, 1); break;
-		case Ox4F: this->LDrr(Reg_C, Reg_A, 4, 1); break;
-		case Ox50: this->LDrr(Reg_D, Reg_B, 4, 1); break;
-		case Ox51: this->LDrr(Reg_D, Reg_C, 4, 1); break;
-		case Ox52: this->LDrr(Reg_D, Reg_D, 4, 1); break;
-		case Ox53: this->LDrr(Reg_D, Reg_E, 4, 1); break;
-		case Ox54: this->LDrr(Reg_D, Reg_H, 4, 1); break;
-		case Ox55: this->LDrr(Reg_D, Reg_L, 4, 1); break;
-		case Ox57: this->LDrr(Reg_D, Reg_A, 4, 1); break;
-		case Ox58: this->LDrr(Reg_E, Reg_B, 4, 1); break;
-		case Ox59: this->LDrr(Reg_E, Reg_C, 4, 1); break;
-		case Ox5A: this->LDrr(Reg_E, Reg_D, 4, 1); break;
-		case Ox5B: this->LDrr(Reg_E, Reg_E, 4, 1); break;
-		case Ox5C: this->LDrr(Reg_E, Reg_H, 4, 1); break;
-		case Ox5D: this->LDrr(Reg_E, Reg_L, 4, 1); break;
-		case Ox5F: this->LDrr(Reg_E, Reg_A, 4, 1); break;
-		case Ox60: this->LDrr(Reg_H, Reg_B, 4, 1); break;
-		case Ox61: this->LDrr(Reg_H, Reg_C, 4, 1); break;
-		case Ox62: this->LDrr(Reg_H, Reg_D, 4, 1); break;
-		case Ox63: this->LDrr(Reg_H, Reg_E, 4, 1); break;
-		case Ox64: this->LDrr(Reg_H, Reg_H, 4, 1); break;
-		case Ox65: this->LDrr(Reg_H, Reg_L, 4, 1); break;
-		case Ox67: this->LDrr(Reg_H, Reg_A, 4, 1); break;
-		case Ox68: this->LDrr(Reg_L, Reg_B, 4, 1); break;
-		case Ox69: this->LDrr(Reg_L, Reg_C, 4, 1); break;
-		case Ox6A: this->LDrr(Reg_L, Reg_D, 4, 1); break;
-		case Ox6B: this->LDrr(Reg_L, Reg_E, 4, 1); break;
-		case Ox6C: this->LDrr(Reg_L, Reg_H, 4, 1); break;
-		case Ox6D: this->LDrr(Reg_L, Reg_L, 4, 1); break;
-		case Ox6F: this->LDrr(Reg_L, Reg_A, 4, 1); break;
-		case Ox78: this->LDrr(Reg_A, Reg_B, 4, 1); break;
-		case Ox79: this->LDrr(Reg_A, Reg_C, 4, 1); break;
-		case Ox7A: this->LDrr(Reg_A, Reg_D, 4, 1); break;
-		case Ox7B: this->LDrr(Reg_A, Reg_E, 4, 1); break;
-		case Ox7C: this->LDrr(Reg_A, Reg_H, 4, 1); break;
-		case Ox7D: this->LDrr(Reg_A, Reg_L, 4, 1); break;
-		case Ox7F: this->LDrr(Reg_A, Reg_A, 4, 1); break;
+		case Ox40: this->LDrr(Reg_B, this->_registers->GetB(), 4, 1); break;
+		case Ox41: this->LDrr(Reg_B, this->_registers->GetC(), 4, 1); break;
+		case Ox42: this->LDrr(Reg_B, this->_registers->GetD(), 4, 1); break;
+		case Ox43: this->LDrr(Reg_B, this->_registers->GetE(), 4, 1); break;
+		case Ox44: this->LDrr(Reg_B, this->_registers->GetH(), 4, 1); break;
+		case Ox45: this->LDrr(Reg_B, this->_registers->GetL(), 4, 1); break;
+		case Ox47: this->LDrr(Reg_B, this->_registers->GetA(), 4, 1); break;
+		case Ox48: this->LDrr(Reg_C, this->_registers->GetB(), 4, 1); break;
+		case Ox49: this->LDrr(Reg_C, this->_registers->GetC(), 4, 1); break;
+		case Ox4A: this->LDrr(Reg_C, this->_registers->GetD(), 4, 1); break;
+		case Ox4B: this->LDrr(Reg_C, this->_registers->GetE(), 4, 1); break;
+		case Ox4C: this->LDrr(Reg_C, this->_registers->GetH(), 4, 1); break;
+		case Ox4D: this->LDrr(Reg_C, this->_registers->GetL(), 4, 1); break;
+		case Ox4F: this->LDrr(Reg_C, this->_registers->GetA(), 4, 1); break;
+		case Ox50: this->LDrr(Reg_D, this->_registers->GetB(), 4, 1); break;
+		case Ox51: this->LDrr(Reg_D, this->_registers->GetC(), 4, 1); break;
+		case Ox52: this->LDrr(Reg_D, this->_registers->GetD(), 4, 1); break;
+		case Ox53: this->LDrr(Reg_D, this->_registers->GetE(), 4, 1); break;
+		case Ox54: this->LDrr(Reg_D, this->_registers->GetH(), 4, 1); break;
+		case Ox55: this->LDrr(Reg_D, this->_registers->GetL(), 4, 1); break;
+		case Ox57: this->LDrr(Reg_D, this->_registers->GetA(), 4, 1); break;
+		case Ox58: this->LDrr(Reg_E, this->_registers->GetB(), 4, 1); break;
+		case Ox59: this->LDrr(Reg_E, this->_registers->GetC(), 4, 1); break;
+		case Ox5A: this->LDrr(Reg_E, this->_registers->GetD(), 4, 1); break;
+		case Ox5B: this->LDrr(Reg_E, this->_registers->GetE(), 4, 1); break;
+		case Ox5C: this->LDrr(Reg_E, this->_registers->GetH(), 4, 1); break;
+		case Ox5D: this->LDrr(Reg_E, this->_registers->GetL(), 4, 1); break;
+		case Ox5F: this->LDrr(Reg_E, this->_registers->GetA(), 4, 1); break;
+		case Ox60: this->LDrr(Reg_H, this->_registers->GetB(), 4, 1); break;
+		case Ox61: this->LDrr(Reg_H, this->_registers->GetC(), 4, 1); break;
+		case Ox62: this->LDrr(Reg_H, this->_registers->GetD(), 4, 1); break;
+		case Ox63: this->LDrr(Reg_H, this->_registers->GetE(), 4, 1); break;
+		case Ox64: this->LDrr(Reg_H, this->_registers->GetH(), 4, 1); break;
+		case Ox65: this->LDrr(Reg_H, this->_registers->GetL(), 4, 1); break;
+		case Ox67: this->LDrr(Reg_H, this->_registers->GetA(), 4, 1); break;
+		case Ox68: this->LDrr(Reg_L, this->_registers->GetB(), 4, 1); break;
+		case Ox69: this->LDrr(Reg_L, this->_registers->GetC(), 4, 1); break;
+		case Ox6A: this->LDrr(Reg_L, this->_registers->GetD(), 4, 1); break;
+		case Ox6B: this->LDrr(Reg_L, this->_registers->GetE(), 4, 1); break;
+		case Ox6C: this->LDrr(Reg_L, this->_registers->GetH(), 4, 1); break;
+		case Ox6D: this->LDrr(Reg_L, this->_registers->GetL(), 4, 1); break;
+		case Ox6F: this->LDrr(Reg_L, this->_registers->GetA(), 4, 1); break;
+		case Ox78: this->LDrr(Reg_A, this->_registers->GetB(), 4, 1); break;
+		case Ox79: this->LDrr(Reg_A, this->_registers->GetC(), 4, 1); break;
+		case Ox7A: this->LDrr(Reg_A, this->_registers->GetD(), 4, 1); break;
+		case Ox7B: this->LDrr(Reg_A, this->_registers->GetE(), 4, 1); break;
+		case Ox7C: this->LDrr(Reg_A, this->_registers->GetH(), 4, 1); break;
+		case Ox7D: this->LDrr(Reg_A, this->_registers->GetL(), 4, 1); break;
+		case Ox7F: this->LDrr(Reg_A, this->_registers->GetA(), 4, 1); break;
 
 		// LD r, (HL)
 		case Ox46: this->LDrHL(Reg_B); break;
@@ -407,15 +420,15 @@ void CPU::RunOpcode() {
 		case Ox3E: this->LDrn(Reg_A, 7, 2); break;
 
 		// LD (ss), r
-		case Ox02: this->LDssr(Reg_A, Reg_BC); break;
-		case Ox12: this->LDssr(Reg_A, Reg_DE); break;
-		case Ox70: this->LDssr(Reg_B, Reg_HL); break;
-		case Ox71: this->LDssr(Reg_C, Reg_HL); break;
-		case Ox72: this->LDssr(Reg_D, Reg_HL); break;
-		case Ox73: this->LDssr(Reg_E, Reg_HL); break;
-		case Ox74: this->LDssr(Reg_H, Reg_HL); break;
-		case Ox75: this->LDssr(Reg_L, Reg_HL); break;
-		case Ox77: this->LDssr(Reg_A, Reg_HL); break;
+		case Ox02: this->LDssr(this->_registers->GetBC(), this->_registers->GetA()); break;
+		case Ox12: this->LDssr(this->_registers->GetDE(), this->_registers->GetA()); break;
+		case Ox70: this->LDssr(this->_registers->GetHL(), this->_registers->GetB()); break;
+		case Ox71: this->LDssr(this->_registers->GetHL(), this->_registers->GetC()); break;
+		case Ox72: this->LDssr(this->_registers->GetHL(), this->_registers->GetD()); break;
+		case Ox73: this->LDssr(this->_registers->GetHL(), this->_registers->GetE()); break;
+		case Ox74: this->LDssr(this->_registers->GetHL(), this->_registers->GetH()); break;
+		case Ox75: this->LDssr(this->_registers->GetHL(), this->_registers->GetL()); break;
+		case Ox77: this->LDssr(this->_registers->GetHL(), this->_registers->GetA()); break;
 
 		case Ox80: this->ADD(this->_registers->GetB()); break;
 		case Ox81: this->ADD(this->_registers->GetC()); break;
@@ -1092,30 +1105,30 @@ void CPU::RunOpcode() {
 		case OxDD6E: this->LDrXXd(Reg_L, Reg_IX); break;
 		case OxDD7E: this->LDrXXd(Reg_A, Reg_IX); break;
 
-		case OxDD44: this->LDrr(Reg_B,   Reg_IXH, 8, 2); break;
-		case OxDD45: this->LDrr(Reg_B,   Reg_IXL, 8, 2); break;
-		case OxDD4C: this->LDrr(Reg_C,   Reg_IXH, 8, 2); break;
-		case OxDD4D: this->LDrr(Reg_C,   Reg_IXL, 8, 2); break;
-		case OxDD54: this->LDrr(Reg_D,   Reg_IXH, 8, 2); break;
-		case OxDD55: this->LDrr(Reg_D,   Reg_IXL, 8, 2); break;
-		case OxDD5C: this->LDrr(Reg_E,   Reg_IXH, 8, 2); break;
-		case OxDD5D: this->LDrr(Reg_E,   Reg_IXL, 8, 2); break;
-		case OxDD60: this->LDrr(Reg_IXH, Reg_B,   8, 2); break;
-		case OxDD61: this->LDrr(Reg_IXH, Reg_C,   8, 2); break;
-		case OxDD62: this->LDrr(Reg_IXH, Reg_D,   8, 2); break;
-		case OxDD63: this->LDrr(Reg_IXH, Reg_E,   8, 2); break;
-		case OxDD64: this->LDrr(Reg_IXH, Reg_IXH, 8, 2); break;
-		case OxDD65: this->LDrr(Reg_IXH, Reg_IXL, 8, 2); break;
-		case OxDD67: this->LDrr(Reg_IXH, Reg_A,   8, 2); break;
-		case OxDD68: this->LDrr(Reg_IXL, Reg_B,   8, 2); break;
-		case OxDD69: this->LDrr(Reg_IXL, Reg_C,   8, 2); break;
-		case OxDD6A: this->LDrr(Reg_IXL, Reg_D,   8, 2); break;
-		case OxDD6B: this->LDrr(Reg_IXL, Reg_E,   8, 2); break;
-		case OxDD6C: this->LDrr(Reg_IXL, Reg_IXH, 8, 2); break;
-		case OxDD6D: this->LDrr(Reg_IXL, Reg_IXL, 8, 2); break;
-		case OxDD6F: this->LDrr(Reg_IXL, Reg_A,   8, 2); break;
-		case OxDD7C: this->LDrr(Reg_A,   Reg_IXH, 8, 2); break;
-		case OxDD7D: this->LDrr(Reg_A,   Reg_IXL, 8, 2); break;
+		case OxDD44: this->LDrr(Reg_B,   this->_registers->GetIXH(), 8, 2); break;
+		case OxDD45: this->LDrr(Reg_B,   this->_registers->GetIXL(), 8, 2); break;
+		case OxDD4C: this->LDrr(Reg_C,   this->_registers->GetIXH(), 8, 2); break;
+		case OxDD4D: this->LDrr(Reg_C,   this->_registers->GetIXL(), 8, 2); break;
+		case OxDD54: this->LDrr(Reg_D,   this->_registers->GetIXH(), 8, 2); break;
+		case OxDD55: this->LDrr(Reg_D,   this->_registers->GetIXL(), 8, 2); break;
+		case OxDD5C: this->LDrr(Reg_E,   this->_registers->GetIXH(), 8, 2); break;
+		case OxDD5D: this->LDrr(Reg_E,   this->_registers->GetIXL(), 8, 2); break;
+		case OxDD60: this->LDrr(Reg_IXH, this->_registers->GetB(),   8, 2); break;
+		case OxDD61: this->LDrr(Reg_IXH, this->_registers->GetC(),   8, 2); break;
+		case OxDD62: this->LDrr(Reg_IXH, this->_registers->GetD(),   8, 2); break;
+		case OxDD63: this->LDrr(Reg_IXH, this->_registers->GetE(),   8, 2); break;
+		case OxDD64: this->LDrr(Reg_IXH, this->_registers->GetIXH(), 8, 2); break;
+		case OxDD65: this->LDrr(Reg_IXH, this->_registers->GetIXL(), 8, 2); break;
+		case OxDD67: this->LDrr(Reg_IXH, this->_registers->GetA(),   8, 2); break;
+		case OxDD68: this->LDrr(Reg_IXL, this->_registers->GetB(),   8, 2); break;
+		case OxDD69: this->LDrr(Reg_IXL, this->_registers->GetC(),   8, 2); break;
+		case OxDD6A: this->LDrr(Reg_IXL, this->_registers->GetD(),   8, 2); break;
+		case OxDD6B: this->LDrr(Reg_IXL, this->_registers->GetE(),   8, 2); break;
+		case OxDD6C: this->LDrr(Reg_IXL, this->_registers->GetIXH(), 8, 2); break;
+		case OxDD6D: this->LDrr(Reg_IXL, this->_registers->GetIXL(), 8, 2); break;
+		case OxDD6F: this->LDrr(Reg_IXL, this->_registers->GetA(),   8, 2); break;
+		case OxDD7C: this->LDrr(Reg_A,   this->_registers->GetIXH(), 8, 2); break;
+		case OxDD7D: this->LDrr(Reg_A,   this->_registers->GetIXL(), 8, 2); break;
 
 		case OxDD70: this->LDXXdr(Reg_IX, Reg_B); break;
 		case OxDD71: this->LDXXdr(Reg_IX, Reg_C); break;
@@ -1291,30 +1304,30 @@ void CPU::RunOpcode() {
 		case OxFD6E: this->LDrXXd(Reg_L, Reg_IY); break;
 		case OxFD7E: this->LDrXXd(Reg_A, Reg_IY); break;
 
-		case OxFD44: this->LDrr(Reg_B,   Reg_IYH, 8, 2); break;
-		case OxFD45: this->LDrr(Reg_B,   Reg_IYL, 8, 2); break;
-		case OxFD4C: this->LDrr(Reg_C,   Reg_IYH, 8, 2); break;
-		case OxFD4D: this->LDrr(Reg_C,   Reg_IYL, 8, 2); break;
-		case OxFD54: this->LDrr(Reg_D,   Reg_IYH, 8, 2); break;
-		case OxFD55: this->LDrr(Reg_D,   Reg_IYL, 8, 2); break;
-		case OxFD5C: this->LDrr(Reg_E,   Reg_IYH, 8, 2); break;
-		case OxFD5D: this->LDrr(Reg_E,   Reg_IYL, 8, 2); break;
-		case OxFD60: this->LDrr(Reg_IYH, Reg_B,   8, 2); break;
-		case OxFD61: this->LDrr(Reg_IYH, Reg_C,   8, 2); break;
-		case OxFD62: this->LDrr(Reg_IYH, Reg_D,   8, 2); break;
-		case OxFD63: this->LDrr(Reg_IYH, Reg_E,   8, 2); break;
-		case OxFD64: this->LDrr(Reg_IYH, Reg_IYH, 8, 2); break;
-		case OxFD65: this->LDrr(Reg_IYH, Reg_IYL, 8, 2); break;
-		case OxFD67: this->LDrr(Reg_IYH, Reg_A,   8, 2); break;
-		case OxFD68: this->LDrr(Reg_IYL, Reg_B,   8, 2); break;
-		case OxFD69: this->LDrr(Reg_IYL, Reg_C,   8, 2); break;
-		case OxFD6A: this->LDrr(Reg_IYL, Reg_D,   8, 2); break;
-		case OxFD6B: this->LDrr(Reg_IYL, Reg_E,   8, 2); break;
-		case OxFD6C: this->LDrr(Reg_IYL, Reg_IYH, 8, 2); break;
-		case OxFD6D: this->LDrr(Reg_IYL, Reg_IYL, 8, 2); break;
-		case OxFD6F: this->LDrr(Reg_IYL, Reg_A,   8, 2); break;
-		case OxFD7C: this->LDrr(Reg_A,   Reg_IYH, 8, 2); break;
-		case OxFD7D: this->LDrr(Reg_A,   Reg_IYL, 8, 2); break;
+		case OxFD44: this->LDrr(Reg_B,   this->_registers->GetIYH(), 8, 2); break;
+		case OxFD45: this->LDrr(Reg_B,   this->_registers->GetIYL(), 8, 2); break;
+		case OxFD4C: this->LDrr(Reg_C,   this->_registers->GetIYH(), 8, 2); break;
+		case OxFD4D: this->LDrr(Reg_C,   this->_registers->GetIYL(), 8, 2); break;
+		case OxFD54: this->LDrr(Reg_D,   this->_registers->GetIYH(), 8, 2); break;
+		case OxFD55: this->LDrr(Reg_D,   this->_registers->GetIYL(), 8, 2); break;
+		case OxFD5C: this->LDrr(Reg_E,   this->_registers->GetIYH(), 8, 2); break;
+		case OxFD5D: this->LDrr(Reg_E,   this->_registers->GetIYL(), 8, 2); break;
+		case OxFD60: this->LDrr(Reg_IYH, this->_registers->GetB(),   8, 2); break;
+		case OxFD61: this->LDrr(Reg_IYH, this->_registers->GetC(),   8, 2); break;
+		case OxFD62: this->LDrr(Reg_IYH, this->_registers->GetD(),   8, 2); break;
+		case OxFD63: this->LDrr(Reg_IYH, this->_registers->GetE(),   8, 2); break;
+		case OxFD64: this->LDrr(Reg_IYH, this->_registers->GetIYH(), 8, 2); break;
+		case OxFD65: this->LDrr(Reg_IYH, this->_registers->GetIYL(), 8, 2); break;
+		case OxFD67: this->LDrr(Reg_IYH, this->_registers->GetA(),   8, 2); break;
+		case OxFD68: this->LDrr(Reg_IYL, this->_registers->GetB(),   8, 2); break;
+		case OxFD69: this->LDrr(Reg_IYL, this->_registers->GetC(),   8, 2); break;
+		case OxFD6A: this->LDrr(Reg_IYL, this->_registers->GetD(),   8, 2); break;
+		case OxFD6B: this->LDrr(Reg_IYL, this->_registers->GetE(),   8, 2); break;
+		case OxFD6C: this->LDrr(Reg_IYL, this->_registers->GetIYH(), 8, 2); break;
+		case OxFD6D: this->LDrr(Reg_IYL, this->_registers->GetIYL(), 8, 2); break;
+		case OxFD6F: this->LDrr(Reg_IYL, this->_registers->GetA(),   8, 2); break;
+		case OxFD7C: this->LDrr(Reg_A,   this->_registers->GetIYH(), 8, 2); break;
+		case OxFD7D: this->LDrr(Reg_A,   this->_registers->GetIYL(), 8, 2); break;
 
 		case OxFD70: this->LDXXdr(Reg_IY, Reg_B); break;
 		case OxFD71: this->LDXXdr(Reg_IY, Reg_C); break;
@@ -1496,10 +1509,27 @@ VDP * CPU::GetVDP() {
 	return this->_vdp;
 }
 
-Registers * CPU::GetRegisters() {
-	return this->_registers;
-}
-
 bool CPU::IsHalted() const {
 	return this->_isHalted;
+}
+
+void CPU::PrintLog() {
+#ifdef NUMOPCODES
+	printf("\n");
+	for (int i = 0; i < OxNOTIMPLEMENTED; i++) {
+//		if (opcodesT[i] == 0)
+//			continue;
+
+		this->_registers->SetPC(0);
+		this->_opcode.SetByte1(0);
+		this->_opcode.SetByte2(0);
+		this->_opcode.SetByte4(0);
+		printf("%ld : ", opcodesT[i]);
+		printf("%d : ", i);
+		this->_opcode.ShowLogOpcode(i);
+		printf("\n");
+	}
+
+	printf("\n");
+#endif
 }

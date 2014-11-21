@@ -25,6 +25,8 @@ int main(int argc, char ** argv) {
 			while (!ms->GetCPU()->IsHalted())
 				ms->RunOpcode();
 
+			ms->GetCPU()->PrintLog();
+
 			return 0;
 		}
 	}

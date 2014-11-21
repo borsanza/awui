@@ -1612,6 +1612,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxC7: printf("RST 00h"); break;
 		case OxC8: printf("RET Z"); break;
 		case OxC9: printf("RET"); break;
+		case OxCA: printf("JP Z, %.4Xh", ((opcode3 << 8) | opcode2)); break;
 		case OxCD: printf("CALL %.4Xh", ((opcode3 << 8) | opcode2)); break;
 		case OxCE: printf("ADC A, %.2Xh", opcode2); break;
 		case OxCF: printf("RST 08h"); break;
@@ -1668,6 +1669,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxED42: printf("SBC HL, BC"); break;
 		case OxED43: printf("LD (%.4Xh), BC", ((opcode4 << 8) | opcode3)); break;
 		case OxED44: printf("NEG"); break;
+		case OxED46: printf("IM 0"); break;
 		case OxED4A: printf("ADC HL, BC"); break;
 		case OxED4B: printf("LD BC, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
 		case OxED4C: printf("NEG"); break;
@@ -1675,11 +1677,13 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxED52: printf("SBC HL, DE"); break;
 		case OxED53: printf("LD (%.4Xh), DE", ((opcode4 << 8) | opcode3)); break;
 		case OxED54: printf("NEG"); break;
+		case OxED56: printf("IM 1"); break;
 		case OxED5A: printf("ADC HL, DE"); break;
 		case OxED5B: printf("LD DE, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
 		case OxED5C: printf("NEG"); break;
 		case OxED62: printf("SBC HL, HL"); break;
 		case OxED64: printf("NEG"); break;
+		case OxED66: printf("IM 0"); break;
 		case OxED67: printf("RRD"); break;
 		case OxED6A: printf("ADC HL, HL"); break;
 		case OxED6C: printf("NEG"); break;
@@ -1687,6 +1691,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxED72: printf("SBC HL, SP"); break;
 		case OxED73: printf("LD (%.4Xh), HL", ((opcode4 << 8) | opcode3)); break;
 		case OxED74: printf("NEG"); break;
+		case OxED76: printf("IM 1"); break;
 		case OxED79: printf("OUT (C), A"); break;
 		case OxED7A: printf("ADC HL, SP"); break;
 		case OxED7B: printf("LD SP, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
@@ -2053,6 +2058,8 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxDDBC: printf("CP A, IXh"); break;
 		case OxDDBD: printf("CP A, IXl"); break;
 		case OxDDBE: printf("CP A, (IX + %.2Xh)", (int8_t) opcode3); break;
+		case OxDDE1: printf("POP IX"); break;
+		case OxDDE5: printf("PUSH IX"); break;
 
 /******************************************************************************/
 /************************* IX bit instructions (DDCB) *************************/
@@ -2343,6 +2350,8 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxFDBC: printf("CP A, IYh"); break;
 		case OxFDBD: printf("CP A, IYl"); break;
 		case OxFDBE: printf("CP A, (IY + %.2Xh)", (int8_t) opcode3); break;
+		case OxFDE1: printf("POP IY"); break;
+		case OxFDE5: printf("PUSH IY"); break;
 
 /******************************************************************************/
 /************************* IY bit instructions (FDCB) *************************/

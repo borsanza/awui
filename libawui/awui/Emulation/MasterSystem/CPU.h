@@ -38,9 +38,11 @@ namespace awui {
 					void SetAddressBus(uint16_t);
 
 					VDP * GetVDP();
-					Registers * GetRegisters();
+					inline Registers * GetRegisters() const { return this->_registers; }
 
 					void Reset();
+
+					void PrintLog();
 			};
 		}
 	}

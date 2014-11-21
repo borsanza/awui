@@ -140,7 +140,7 @@ void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
 	}
 }
 
-uint8_t CPUInst::ReadMemory(uint16_t pos) {
+uint8_t CPUInst::ReadMemory(uint16_t pos) const {
 	switch (this->_mapper) {
 		default:
 		case MAPPER_SEGA:
@@ -198,8 +198,8 @@ uint8_t CPUInst::ReadMemory(uint16_t pos) {
 /******************************************************************************/
 
 // |1|4| The contents of reg2 are loaded into reg1
-void CPUInst::LDrr(uint8_t reg1, uint8_t reg2, uint8_t cycles, uint8_t size) {
-	this->_registers->SetRegm(reg1, this->_registers->GetRegm(reg2));
+void CPUInst::LDrr(uint8_t reg1, uint8_t value, uint8_t cycles, uint8_t size) {
+	this->_registers->SetRegm(reg1, value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
@@ -226,8 +226,8 @@ void CPUInst::LDrXXd(uint8_t reg, uint8_t reg2) {
 }
 
 // |1|7| The contents of reg are loaded into (ss).
-void CPUInst::LDssr(uint8_t reg, uint8_t ss) {
-	this->WriteMemory(this->_registers->GetRegss(ss), this->_registers->GetRegm(reg));
+void CPUInst::LDssr(uint16_t offset, uint8_t value) {
+	this->WriteMemory(offset, value);
 	this->_registers->IncPC();
 	this->_cycles += 7;
 }

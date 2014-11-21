@@ -177,8 +177,8 @@ namespace awui {
 
 					void SetFFlag(uint8_t flag, bool value);
 
-					uint8_t GetRegm(uint8_t reg);
-					uint16_t GetRegss(uint8_t reg);
+					uint8_t GetRegm(uint8_t reg) const;
+					uint16_t GetRegss(uint8_t reg) const;
 					void SetRegm(uint8_t reg, uint8_t value);
 					void SetRegss(uint8_t reg, uint16_t value);
 			};

@@ -1286,7 +1286,7 @@ namespace awui {
 					uint8_t _byte2;
 					uint8_t _byte4;
 					CPU * _cpu;
-					uint8_t _advance;
+					uint16_t _advance;
 
 				public:
 					Opcode(CPU * cpu);
@@ -1297,7 +1297,7 @@ namespace awui {
 					void SetByte4(uint8_t byte2);
 
 					int GetEnum();
-					inline uint8_t GetAdvance() const { return this->_advance; }
+					inline uint16_t GetAdvance() const { return this->_advance; }
 
 					void ShowLogOpcode(uint16_t enumOpcode);
 			};

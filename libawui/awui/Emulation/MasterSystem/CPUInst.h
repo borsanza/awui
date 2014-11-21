@@ -50,7 +50,7 @@ namespace awui {
 					void LDrn(uint8_t reg, uint8_t cycles, uint8_t size);
 					void LDrHL(uint8_t reg);
 					void LDrXXd(uint8_t reg, uint8_t reg2);
-					void LDssr(uint8_t reg, uint8_t ss);
+					void LDssr(uint16_t offset, uint8_t value);
 					void LDXXdr(uint8_t xx, uint8_t reg);
 					void LDXXdn(uint8_t xx);
 
@@ -171,7 +171,7 @@ namespace awui {
 					CPUInst();
 					~CPUInst();
 
-					uint8_t ReadMemory(uint16_t pos);
+					uint8_t ReadMemory(uint16_t pos) const;
 
 					uint32_t GetCRC32();
 					void SetMapper(uint8_t mapper);

@@ -246,7 +246,7 @@ void Registers::SetFFlag(uint8_t flag, bool value) {
 		this->_f &= ~flag;
 }
 
-uint8_t Registers::GetRegm(uint8_t reg) {
+uint8_t Registers::GetRegm(uint8_t reg) const {
 	switch (reg) {
 		case Reg_B: return *(((uint8_t *) &this->_bc) + 1);
 		case Reg_C: return this->_bc;
@@ -286,7 +286,7 @@ void Registers::SetRegm(uint8_t reg, uint8_t value) {
 	}
 }
 
-uint16_t Registers::GetRegss(uint8_t reg) {
+uint16_t Registers::GetRegss(uint8_t reg) const {
 	switch (reg) {
 		case Reg_BC: return this->_bc;
 		case Reg_DE: return this->_de;
