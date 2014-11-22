@@ -23,6 +23,7 @@ MasterSystem::MasterSystem() {
 	this->_cpu = new CPU();
 	this->SetTabStop(true);
 	this->_multiply = 1;
+	this->_canChangeControl = true;
 }
 
 MasterSystem::~MasterSystem() {
@@ -116,4 +117,24 @@ void MasterSystem::SetMultiply(int multiply) {
 
 uint32_t MasterSystem::GetCRC32() {
 	return this->_cpu->GetCRC32();
+}
+
+bool MasterSystem::OnRemoteKeyPress(RemoteButtons::Enum button) {
+	if (this->_canChangeControl)
+		return Control::OnRemoteKeyPress(button);
+
+	return true;
+}
+
+bool MasterSystem::OnRemoteKeyUp(RemoteButtons::Enum button) {
+	if ((button & RemoteButtons::Pause) || (button & RemoteButtons::Ok))
+		this->_canChangeControl = false;
+
+	if (button & RemoteButtons::Menu)
+		this->_canChangeControl = true;
+
+	if (this->_canChangeControl)
+		return Control::OnRemoteKeyUp(button);
+
+	return true;
 }

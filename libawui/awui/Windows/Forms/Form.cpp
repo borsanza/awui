@@ -579,14 +579,14 @@ Bitmap * Form::GetSelectedBitmap() {
 	return Form::selectedBitmap;
 }
 
-void Form::OnRemoteKeyPressPre(RemoteButtons::Enum button) {
+bool Form::OnRemoteKeyPress(RemoteButtons::Enum button) {
 	this->_buttons |= button;
-	Control::OnRemoteKeyPressPre(button);
 	// printf("0x%.4X\n", this->_buttons);
+	return Control::OnRemoteKeyPress(button);
 }
 
-void Form::OnRemoteKeyUpPre(RemoteButtons::Enum button) {
+bool Form::OnRemoteKeyUp(RemoteButtons::Enum button) {
 	this->_buttons &= ~button;
-	Control::OnRemoteKeyUpPre(button);
 	// printf("0x%.4X\n", this->_buttons);
+	return Control::OnRemoteKeyUp(button);
 }

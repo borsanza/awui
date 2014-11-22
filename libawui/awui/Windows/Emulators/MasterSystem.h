@@ -31,6 +31,7 @@ namespace awui {
 					CPU * _cpu;
 					DebuggerSMS * _debugger;
 					int _multiply;
+					bool _canChangeControl;
 
 				public:
 					MasterSystem();
@@ -52,6 +53,9 @@ namespace awui {
 					uint32_t GetCRC32();
 
 					void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };
+
+					bool OnRemoteKeyPress(RemoteButtons::Enum button);
+					bool OnRemoteKeyUp(RemoteButtons::Enum button);
 			};
 		}
 	}

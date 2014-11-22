@@ -132,8 +132,8 @@ namespace awui {
 					void OnMouseMovePre(int x, int y, int buttons);
 					void OnMouseUpPre(MouseButtons::Enum button, int buttons);
 					void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
-					virtual void OnRemoteKeyPressPre(RemoteButtons::Enum button);
-					virtual void OnRemoteKeyUpPre(RemoteButtons::Enum button);
+					void OnRemoteKeyPressPre(RemoteButtons::Enum button);
+					void OnRemoteKeyUpPre(RemoteButtons::Enum button);
 					void OnKeyPressPre(Keys::Enum key);
 					void OnKeyUpPre(Keys::Enum key);
 

@@ -55,8 +55,8 @@ namespace awui {
 
 					virtual void OnTick();
 
-					virtual void OnRemoteKeyPressPre(RemoteButtons::Enum button);
-					virtual void OnRemoteKeyUpPre(RemoteButtons::Enum button);
+					virtual bool OnRemoteKeyPress(RemoteButtons::Enum button);
+					virtual bool OnRemoteKeyUp(RemoteButtons::Enum button);
 			};
 		}
 	}
