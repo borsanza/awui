@@ -19,7 +19,6 @@
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Keys.h>
-#include <awui/Windows/Forms/RemoteButtons.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
@@ -46,6 +45,7 @@ Form::Form() {
 	this->initialized = 0;
 	this->fullscreenWidth = -1;
 	this->fullscreenHeight = -1;
+	this->_buttons = 0;
 
 	Stats * stats = Stats::Instance();
 	stats->SetDock(DockStyle::Bottom);
@@ -158,12 +158,73 @@ void Form::ProcessEvents() {
 	while (SDL_PollEvent(&event)) {
 		switch(event.type) {
 			case SDL_JOYBUTTONDOWN:
+				// printf("- %d\n", event.jbutton.button);
 				switch (event.jbutton.button) {
-					case 0:
+					case 2:
+						OnRemoteKeyPressPre(RemoteButtons::Play);
+						break;
+					case 3:
 						OnRemoteKeyPressPre(RemoteButtons::Ok);
 						break;
-					case 1:
+					case 8:
 						OnRemoteKeyPressPre(RemoteButtons::Menu);
+						break;
+					case 9:
+						OnRemoteKeyPressPre(RemoteButtons::Pause);
+						break;
+					case 0:
+						OnRemoteKeyPressPre(RemoteButtons::Button3);
+						break;
+					case 1:
+						OnRemoteKeyPressPre(RemoteButtons::Button4);
+						break;
+					case 4:
+						OnRemoteKeyPressPre(RemoteButtons::Button5);
+						break;
+					case 5:
+						OnRemoteKeyPressPre(RemoteButtons::Button6);
+						break;
+					case 6:
+						OnRemoteKeyPressPre(RemoteButtons::Button7);
+						break;
+					case 7:
+						OnRemoteKeyPressPre(RemoteButtons::Button8);
+						break;
+					default:
+						break;
+				}
+				break;
+			case SDL_JOYBUTTONUP:
+				switch (event.jbutton.button) {
+					case 2:
+						OnRemoteKeyUpPre(RemoteButtons::Play);
+						break;
+					case 3:
+						OnRemoteKeyUpPre(RemoteButtons::Ok);
+						break;
+					case 8:
+						OnRemoteKeyUpPre(RemoteButtons::Menu);
+						break;
+					case 9:
+						OnRemoteKeyUpPre(RemoteButtons::Pause);
+						break;
+					case 0:
+						OnRemoteKeyUpPre(RemoteButtons::Button3);
+						break;
+					case 1:
+						OnRemoteKeyUpPre(RemoteButtons::Button4);
+						break;
+					case 4:
+						OnRemoteKeyUpPre(RemoteButtons::Button5);
+						break;
+					case 5:
+						OnRemoteKeyUpPre(RemoteButtons::Button6);
+						break;
+					case 6:
+						OnRemoteKeyUpPre(RemoteButtons::Button7);
+						break;
+					case 7:
+						OnRemoteKeyUpPre(RemoteButtons::Button8);
 						break;
 					default:
 						break;
@@ -173,16 +234,30 @@ void Form::ProcessEvents() {
 			case SDL_JOYAXISMOTION:
 				if (event.jaxis.axis == 0) {
 					if (event.jaxis.value < -16000)
-							OnRemoteKeyPressPre(RemoteButtons::Left);
+						OnRemoteKeyPressPre(RemoteButtons::Left);
+					else
+						if (this->_buttons & RemoteButtons::Left)
+							OnRemoteKeyUpPre(RemoteButtons::Left);
+
 					if (event.jaxis.value > 16000)
-							OnRemoteKeyPressPre(RemoteButtons::Right);
+						OnRemoteKeyPressPre(RemoteButtons::Right);
+					else
+						if (this->_buttons & RemoteButtons::Right)
+							OnRemoteKeyUpPre(RemoteButtons::Right);
 				}
 
 				if (event.jaxis.axis == 1) {
 					if (event.jaxis.value < -16000)
-							OnRemoteKeyPressPre(RemoteButtons::Up);
+						OnRemoteKeyPressPre(RemoteButtons::Up);
+					else
+						if (this->_buttons & RemoteButtons::Up)
+							OnRemoteKeyUpPre(RemoteButtons::Up);
+
 					if (event.jaxis.value > 16000)
-							OnRemoteKeyPressPre(RemoteButtons::Down);
+						OnRemoteKeyPressPre(RemoteButtons::Down);
+					else
+						if (this->_buttons & RemoteButtons::Down)
+							OnRemoteKeyUpPre(RemoteButtons::Down);
 				}
 				break;
 
@@ -502,4 +577,16 @@ Bitmap * Form::GetSelectedBitmap() {
 	}
 
 	return Form::selectedBitmap;
+}
+
+void Form::OnRemoteKeyPressPre(RemoteButtons::Enum button) {
+	this->_buttons |= button;
+	Control::OnRemoteKeyPressPre(button);
+	// printf("0x%.4X\n", this->_buttons);
+}
+
+void Form::OnRemoteKeyUpPre(RemoteButtons::Enum button) {
+	this->_buttons &= ~button;
+	Control::OnRemoteKeyUpPre(button);
+	// printf("0x%.4X\n", this->_buttons);
 }

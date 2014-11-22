@@ -3,6 +3,7 @@
 
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/RemoteButtons.h>
 
 namespace awui {
 	namespace Diagnostics {
@@ -22,6 +23,7 @@ namespace awui {
 					Control * mouseControlOver;
 					awui::Diagnostics::Process* remoteProcess;
 					String text;
+					uint32_t _buttons;
 
 					int mouseX;
 					int mouseY;
@@ -52,6 +54,9 @@ namespace awui {
 					virtual void OnRemoteHeartbeat();
 
 					virtual void OnTick();
+
+					virtual void OnRemoteKeyPressPre(RemoteButtons::Enum button);
+					virtual void OnRemoteKeyUpPre(RemoteButtons::Enum button);
 			};
 		}
 	}
