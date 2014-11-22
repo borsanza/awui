@@ -66,7 +66,7 @@ namespace awui {
 					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync);
 					bool IsVSYNC(uint16_t line) const;
 
-					uint8_t GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete) const;
+					uint8_t GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete, bool doble) const;
 					bool GetSpritePixel(uint8_t x, uint8_t y, uint8_t * color) const;
 					uint8_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority) const;
 

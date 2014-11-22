@@ -349,7 +349,14 @@ void VDP::OnTickBorder() {
 		this->_data->WriteByte(x + (y * this->GetVisualWidth()), this->_cram[this->_registers[7] & 0x0F]);
 }
 
-uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete) const {
+// Background
+uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete, bool doble) const {
+	if (doble) {
+		x = x >> 1;
+		y = y >> 1;
+	}
+
+
 	int64_t offset;
 	if (flipy)
 		offset = sprite * 32 + ((7 - y) * 4);
@@ -383,11 +390,19 @@ uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flip
 	return c;
 }
 
+// Sprite
 bool VDP::GetSpritePixel(uint8_t x, uint8_t y, uint8_t * color) const {
 	uint8_t sx;
 	int16_t sy;
 	uint16_t pattern;
 	uint8_t height = (this->_registers[1] & 0x2) ? 16 : 8;
+	uint8_t width = 8;
+
+	bool doble = (this->_registers[1] & 0x1);
+	if (doble) {
+		height = height << 1;
+		width = width << 1;
+	}
 
 	uint16_t base = ((uint16_t) this->_registers[5] & 0x7E) << 7;
 
@@ -405,14 +420,14 @@ bool VDP::GetSpritePixel(uint8_t x, uint8_t y, uint8_t * color) const {
 
 		sx = this->_vram->ReadByte(base + 128 + (n * 2));
 
-		if ((x < sx) || (x >= (sx + 8)))
+		if ((x < sx) || (x >= (sx + width)))
 			continue;
 
 		pattern = this->_vram->ReadByte(base + 129 + (n * 2));
 		if (this->_registers[6] & 0x4)
 			pattern |= 0x100;
 
-		* color = this->GetSpriteColor(pattern, x - sx, y - sy - 1, false, false, true);
+		* color = this->GetSpriteColor(pattern, x - sx, y - sy - 1, false, false, true, doble);
 		if ((*color & 0xF) == 0)
 			continue;
 
@@ -429,11 +444,11 @@ uint8_t VDP::GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flip
 		if (this->GetSpritePixel(this->_col, this->_line, &color))
 			return this->_cram[color];
 
-		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete);
+		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete, false);
 
 		return this->_cram[color];
 	} else {
-		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete);
+		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete, false);
 		if ((color & 0xF) == 0) {
 			if (this->GetSpritePixel(this->_col, this->_line, &color))
 				return this->_cram[color];
