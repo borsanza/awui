@@ -681,13 +681,13 @@ bool Control::OnRemoteKeyPress(RemoteButtons::Enum button) {
 				}
 				break;
 			case RemoteButtons::Play:
-				Console::WriteLine("Play");
+//				Console::WriteLine("Play");
 				break;
 			case RemoteButtons::Ok:
-				Console::WriteLine("Ok");
+//				Console::WriteLine("Ok");
 				break;
 			case RemoteButtons::Menu:
-				Console::WriteLine("Menu");
+//				Console::WriteLine("Menu");
 				break;
 			default:
 				break;
