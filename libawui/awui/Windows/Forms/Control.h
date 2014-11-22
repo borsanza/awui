@@ -132,8 +132,8 @@ namespace awui {
 					void OnMouseMovePre(int x, int y, int buttons);
 					void OnMouseUpPre(MouseButtons::Enum button, int buttons);
 					void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
-					void OnRemoteKeyPressPre(RemoteButtons::Enum button);
-					void OnRemoteKeyUpPre(RemoteButtons::Enum button);
+					void OnRemoteKeyPressPre(int which, RemoteButtons::Enum button);
+					void OnRemoteKeyUpPre(int which, RemoteButtons::Enum button);
 					void OnKeyPressPre(Keys::Enum key);
 					void OnKeyUpPre(Keys::Enum key);
 
@@ -141,8 +141,8 @@ namespace awui {
 					virtual void OnMouseDown(MouseEventArgs* e) {}
 					virtual void OnMouseMove(MouseEventArgs* e) {}
 					virtual void OnMouseUp(MouseEventArgs* e) {}
-					virtual bool OnRemoteKeyPress(RemoteButtons::Enum button);
-					virtual bool OnRemoteKeyUp(RemoteButtons::Enum button);
+					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
+					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 					virtual bool OnKeyPress(Keys::Enum key);
 					virtual bool OnKeyUp(Keys::Enum key);
 					virtual void OnRemoteHeartbeat() {}

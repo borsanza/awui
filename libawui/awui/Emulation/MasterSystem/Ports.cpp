@@ -87,12 +87,12 @@ uint8_t Ports::ReadByte(uint8_t port) const {
 		return this->_cpu->GetVDP()->ReadByte(port);
 
 	if (port == 0xDC || port == 0xC0)
-		return (0xC0 | this->_cpu->GetPad1());
+		return ((this->_cpu->GetPad2() << 6) | ((this->_cpu->GetPad1() & 0x3F)));
 
 	if (port == 0xDD || port == 0xC1) {
 		if (this->_getRegion) {
 //			printf("Region: %d\n", this->_region);
-			return 0x1F | ((this->_region & 0x3) << 6);
+			return ((this->_region & 0x3) << 6) | 0x30 | ((this->_cpu->GetPad2() & 0x3F) >> 2);
 		}
 
 		return 0xFF;

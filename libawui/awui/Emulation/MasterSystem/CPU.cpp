@@ -14,7 +14,7 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
-//#define SLOW
+#define SLOW
 //#define NUMOPCODES
 
 using namespace awui::Emulation;
@@ -36,7 +36,9 @@ CPU::CPU() : _opcode(this) {
 	this->_showNotImplemented = true;
 	this->_inInterrupt = false;
 	this->_isHalted = false;
+	this->_wantPause = false;
 	this->_pad1 = 0xFF;
+	this->_pad2 = 0xFF;
 
 	for (int i = 0; i < OxNOTIMPLEMENTED; i++) {
 		opcodes[i] = false;
@@ -71,7 +73,7 @@ void CPU::CheckInterrupts() {
 	if (this->_vdp->GetInterrupt()) {
 //		printf("Entra %d\n", this->_vdp->GetLine());
 		this->_inInterrupt = true;
-		this->CallInterrupt();
+		this->CallInterrupt(0x0038);
 	}
 }
 
@@ -100,6 +102,12 @@ void CPU::OnTick() {
 	for (int i = 0; i < iters; i++) {
 		int64_t oldCycles = this->_cycles;
 		this->RunOpcode();
+
+		if (this->_wantPause & !this->_inInterrupt) {
+			this->CallInterrupt(0x0066);
+			this->_wantPause = false;
+		}
+
 		double times = (this->_cycles - oldCycles);
 		i = i + times - 1;
 		vdpIters += times * (itersVDP / iters);
@@ -684,7 +692,19 @@ void CPU::RunOpcode() {
 		case OxED64:
 		case OxED6C:
 		case OxED74:
-		case OxED7C: this->NEG(); break;
+		case OxED7C:
+			this->NEG();
+			break;
+
+		case OxED45:
+		case OxED55:
+		case OxED5D:
+		case OxED65:
+		case OxED6D:
+		case OxED75:
+		case OxED7D:
+			this->RETN();
+			break;
 
 		case OxED67: this->RRD(); break;
 		case OxED6F: this->RLD(); break;
@@ -1484,7 +1504,9 @@ void CPU::RunOpcode() {
 #ifdef SLOW
 //					printf("(SP = %.4X) ", this->_registers->GetSP());
 					printf("%s: ", logLine);
-					printf("%s (Not implemented)\n", logCode);
+					printf("%s ", logCode);
+					this->_opcode.ShowLogOpcode(opcodeEnum);
+					printf(" (Not implemented)\n");
 					fflush(stdout);
 #endif
 					this->_showNotImplemented = false;
@@ -1530,4 +1552,8 @@ void CPU::PrintLog() {
 
 	printf("\n");
 #endif
+}
+
+void CPU::CallPaused() {
+	this->_wantPause = true;
 }

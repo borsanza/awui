@@ -12,7 +12,8 @@ namespace awui {
 
 			class Application : public Object {
 				static int quit;
-				static SDL_Joystick *stick;
+				static SDL_Joystick *stick1;
+				static SDL_Joystick *stick2;
 
 				public:
 					static void Run(Form * form);

@@ -157,8 +157,9 @@ namespace awui {
 					void RSTp(uint8_t p);
 					void CALLnn();
 					void CALLccnn(bool cc);
-					void CallInterrupt();
+					void CallInterrupt(uint16_t offset);
 					void RETI();
+					void RETN();
 
 					// Input and Output Group
 					void OUTnA();

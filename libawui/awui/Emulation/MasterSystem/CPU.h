@@ -22,6 +22,8 @@ namespace awui {
 					bool _inInterrupt;
 					bool _isHalted;
 					uint8_t _pad1;
+					uint8_t _pad2;
+					bool _wantPause;
 
 					void Print(const char * str, ...);
 					void CheckInterrupts();
@@ -32,7 +34,9 @@ namespace awui {
 
 					inline VDP * GetVDP() const { return this->_vdp; }
 					inline void SetPad1(uint8_t pad1) { this->_pad1 = pad1; }
+					inline void SetPad2(uint8_t pad2) { this->_pad2 = pad2; }
 					inline uint8_t GetPad1() const { return this->_pad1; }
+					inline uint8_t GetPad2() const { return this->_pad2; }
 
 					void LoadRom(const String file);
 					void RunOpcode();
@@ -47,6 +51,8 @@ namespace awui {
 					void Reset();
 
 					void PrintLog();
+
+					void CallPaused();
 			};
 		}
 	}

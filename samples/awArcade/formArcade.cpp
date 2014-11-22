@@ -19,7 +19,7 @@ FormArcade::FormArcade() {
 FormArcade::~FormArcade() {
 }
 
-bool FormArcade::OnRemoteKeyPress(RemoteButtons::Enum button) {
+bool FormArcade::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	buttonPressed = button;
 
 	if (buttonPressed == RemoteButtons::Enum::Ok)
@@ -28,7 +28,7 @@ bool FormArcade::OnRemoteKeyPress(RemoteButtons::Enum button) {
 	return 0;
 }
 
-bool FormArcade::OnRemoteKeyUp(RemoteButtons::Enum button) {
+bool FormArcade::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	buttonPressed = RemoteButtons::Enum::None;
 	return 0;
 }

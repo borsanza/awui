@@ -552,8 +552,8 @@ void Control::SetTabStop(bool tabStop) {
 	this->tabStop = tabStop;
 }
 
-void Control::OnRemoteKeyPressPre(RemoteButtons::Enum button) {
-	bool mustStop = this->OnRemoteKeyPress(button);
+void Control::OnRemoteKeyPressPre(int which, RemoteButtons::Enum button) {
+	bool mustStop = this->OnRemoteKeyPress(which, button);
 	if (mustStop)
 		return;
 
@@ -561,11 +561,11 @@ void Control::OnRemoteKeyPressPre(RemoteButtons::Enum button) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnRemoteKeyPressPre(button);
+		focused->OnRemoteKeyPressPre(which, button);
 }
 
-void Control::OnRemoteKeyUpPre(RemoteButtons::Enum button) {
-	bool mustStop = this->OnRemoteKeyUp(button);
+void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
+	bool mustStop = this->OnRemoteKeyUp(which, button);
 	if (mustStop)
 		return;
 
@@ -573,7 +573,7 @@ void Control::OnRemoteKeyUpPre(RemoteButtons::Enum button) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnRemoteKeyUpPre(button);
+		focused->OnRemoteKeyUpPre(which, button);
 }
 
 void Control::OnKeyPressPre(Keys::Enum key) {
@@ -618,7 +618,7 @@ Control * Control::GetTopParent() {
 	return this;
 }
 
-bool Control::OnRemoteKeyUp(RemoteButtons::Enum button) {
+bool Control::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	return false;
 }
 
@@ -626,7 +626,7 @@ bool Control::OnKeyUp(Keys::Enum button) {
 	return false;
 }
 
-bool Control::OnRemoteKeyPress(RemoteButtons::Enum button) {
+bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	if (Form::GetControlSelected() == this) {
 		Point pCenter(Math::Round((this->GetWidth() / 2.0f) + this->GetAbsoluteLeft()), Math::Round((this->GetHeight() / 2.0f) + this->GetAbsoluteTop()));
 		Point p1;

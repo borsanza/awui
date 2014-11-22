@@ -15,7 +15,8 @@ using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;
 
 int Application::quit = 0;
-SDL_Joystick * Application::stick = NULL;
+SDL_Joystick * Application::stick1 = NULL;
+SDL_Joystick * Application::stick2 = NULL;
 
 int Application::IsClass(Classes::Enum objectClass) const {
 	if (objectClass == Classes::Application)
@@ -33,7 +34,10 @@ void Application::Run(Form * form = NULL) {
 		return;
 
 	if (SDL_NumJoysticks() > 0)
-		Application::stick = SDL_JoystickOpen(0);
+		Application::stick1 = SDL_JoystickOpen(0);
+
+	if (SDL_NumJoysticks() > 1)
+		Application::stick2 = SDL_JoystickOpen(1);
 
 	form->Init();
 
@@ -56,8 +60,11 @@ void Application::Run(Form * form = NULL) {
 		stats->SetTimeAfterIddle();
 	}
 
-	if (Application::stick)
-		SDL_JoystickClose(stick);
+	if (Application::stick1)
+		SDL_JoystickClose(stick1);
+
+	if (Application::stick2)
+		SDL_JoystickClose(stick2);
 
 	SDL_Quit();
 }

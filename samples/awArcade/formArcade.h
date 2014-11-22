@@ -26,7 +26,7 @@ class FormArcade : public awui::Windows::Forms::Form {
 		FormArcade();
 		virtual ~FormArcade();
 
-		virtual bool OnRemoteKeyPress(RemoteButtons::Enum button);
-		virtual bool OnRemoteKeyUp(RemoteButtons::Enum button);
+		virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
+		virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 		virtual void OnTick();
 };

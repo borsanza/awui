@@ -1669,6 +1669,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxED42: printf("SBC HL, BC"); break;
 		case OxED43: printf("LD (%.4Xh), BC", ((opcode4 << 8) | opcode3)); break;
 		case OxED44: printf("NEG"); break;
+		case OxED45: printf("RETN"); break;
 		case OxED46: printf("IM 0"); break;
 		case OxED4A: printf("ADC HL, BC"); break;
 		case OxED4B: printf("LD BC, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
@@ -1677,12 +1678,14 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxED52: printf("SBC HL, DE"); break;
 		case OxED53: printf("LD (%.4Xh), DE", ((opcode4 << 8) | opcode3)); break;
 		case OxED54: printf("NEG"); break;
+		case OxED55: printf("RETN"); break;
 		case OxED56: printf("IM 1"); break;
 		case OxED5A: printf("ADC HL, DE"); break;
 		case OxED5B: printf("LD DE, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
 		case OxED5C: printf("NEG"); break;
 		case OxED62: printf("SBC HL, HL"); break;
 		case OxED64: printf("NEG"); break;
+		case OxED65: printf("RETN"); break;
 		case OxED66: printf("IM 0"); break;
 		case OxED67: printf("RRD"); break;
 		case OxED6A: printf("ADC HL, HL"); break;
@@ -1691,6 +1694,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxED72: printf("SBC HL, SP"); break;
 		case OxED73: printf("LD (%.4Xh), HL", ((opcode4 << 8) | opcode3)); break;
 		case OxED74: printf("NEG"); break;
+		case OxED75: printf("RETN"); break;
 		case OxED76: printf("IM 1"); break;
 		case OxED79: printf("OUT (C), A"); break;
 		case OxED7A: printf("ADC HL, SP"); break;

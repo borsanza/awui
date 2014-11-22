@@ -25,6 +25,7 @@ MasterSystem::MasterSystem() {
 	this->SetTabStop(true);
 	this->_multiply = 1;
 	this->_canChangeControl = true;
+	this->_pause = false;
 }
 
 MasterSystem::~MasterSystem() {
@@ -120,55 +121,84 @@ uint32_t MasterSystem::GetCRC32() {
 	return this->_cpu->GetCRC32();
 }
 
-uint8_t MasterSystem::GetPad1() const {
+uint8_t MasterSystem::GetPad(int which) const {
 	if (this->_canChangeControl)
 		return 0xFF;
 
-	uint32_t buttons = Form::GetButtons();
+	uint32_t buttons;
+	switch (which) {
+		default:
+		case 0:
+			buttons = Form::GetButtonsPad1();
+			break;
+		case 1:
+			buttons = Form::GetButtonsPad2();
+			break;
+	}
 
-	uint8_t pad1 = 0x00;
+	uint8_t pad = 0x00;
 
 	if (!(buttons & RemoteButtons::Up))
-		pad1 |= 0x01;
+		pad |= 0x01;
 
 	if (!(buttons & RemoteButtons::Down))
-		pad1 |= 0x02;
+		pad |= 0x02;
 
 	if (!(buttons & RemoteButtons::Left))
-		pad1 |= 0x04;
+		pad |= 0x04;
 
 	if (!(buttons & RemoteButtons::Right))
-		pad1 |= 0x08;
+		pad |= 0x08;
 
 	if (!(buttons & RemoteButtons::Ok))
-		pad1 |= 0x10;
+		pad |= 0x10;
 
 	if (!(buttons & RemoteButtons::Play))
-		pad1 |= 0x20;
+		pad |= 0x20;
 
-	return pad1;
+	if (!(buttons & RemoteButtons::Pause))
+		pad |= 0x40;
+
+	return pad;
 }
 
-bool MasterSystem::OnRemoteKeyPress(RemoteButtons::Enum button) {
-	this->_cpu->SetPad1(this->GetPad1());
+bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
+	uint8_t pad1 = this->GetPad(0);
+	uint8_t pad2 = this->GetPad(1);
+	this->_cpu->SetPad1(pad1);
+	this->_cpu->SetPad2(pad2);
+
+	bool paused = (((pad1 & 0x40) == 0) | ((pad2 & 0x40) == 0));
+	if (paused) {
+		if (!this->_pause) {
+			this->_pause = true;
+			this->_cpu->CallPaused();
+		}
+	}
 
 	if (this->_canChangeControl)
-		return Control::OnRemoteKeyPress(button);
+		return Control::OnRemoteKeyPress(which, button);
 
 	return true;
 }
 
-bool MasterSystem::OnRemoteKeyUp(RemoteButtons::Enum button) {
+bool MasterSystem::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	if ((button & RemoteButtons::Pause) || (button & RemoteButtons::Ok))
 		this->_canChangeControl = false;
 
 	if (button & RemoteButtons::Menu)
 		this->_canChangeControl = true;
 
-	this->_cpu->SetPad1(this->GetPad1());
+	uint8_t pad1 = this->GetPad(0);
+	uint8_t pad2 = this->GetPad(1);
+	this->_cpu->SetPad1(pad1);
+	this->_cpu->SetPad2(pad2);
+	bool paused = (((pad1 & 0x40) == 0) | ((pad2 & 0x40) == 0));
+	if (!paused)
+		this->_pause = false;
 
 	if (this->_canChangeControl)
-		return Control::OnRemoteKeyUp(button);
+		return Control::OnRemoteKeyUp(which, button);
 
 	return true;
 }

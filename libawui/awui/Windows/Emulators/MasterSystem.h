@@ -32,8 +32,9 @@ namespace awui {
 					DebuggerSMS * _debugger;
 					int _multiply;
 					bool _canChangeControl;
+					bool _pause;
 
-					uint8_t GetPad1() const;
+					uint8_t GetPad(int which) const;
 
 				public:
 					MasterSystem();
@@ -56,8 +57,8 @@ namespace awui {
 
 					void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };
 
-					bool OnRemoteKeyPress(RemoteButtons::Enum button);
-					bool OnRemoteKeyUp(RemoteButtons::Enum button);
+					bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
+					bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 			};
 		}
 	}

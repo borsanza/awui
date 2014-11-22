@@ -1775,7 +1775,7 @@ void CPUInst::CALLccnn(bool cc) {
 	}
 }
 
-void CPUInst::CallInterrupt() {
+void CPUInst::CallInterrupt(uint16_t offset) {
 	this->_registers->SetInterruptsEnabled(false);
 	uint16_t pc = this->_registers->GetPC();
 	uint16_t sp = this->_registers->GetSP() - 2;
@@ -1783,17 +1783,25 @@ void CPUInst::CallInterrupt() {
 	this->WriteMemory(sp, pc & 0xFF);
 	this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
 	this->_cycles += 11;
-	this->_registers->SetPC(0x0038);
+	this->_registers->SetPC(offset);
 }
 
 void CPUInst::RETI() {
 	uint16_t sp = this->_registers->GetSP();
-	uint16_t pc = this->ReadMemory(sp);
-	pc |= (this->ReadMemory(sp + 1) << 8);
+	uint16_t pc = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
 	this->_registers->SetSP(sp + 2);
 	this->_registers->SetPC(pc);
 	this->_cycles += 10;
 	this->_registers->SetInterruptsEnabled(true);
+}
+
+void CPUInst::RETN() {
+	uint16_t sp = this->_registers->GetSP();
+	uint16_t pc = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
+	this->_registers->SetSP(sp + 2);
+	this->_registers->SetPC(pc);
+	this->_cycles += 14;
+	this->_registers->SetIFF1(this->_registers->GetIFF2());
 }
 
 /******************************************************************************/

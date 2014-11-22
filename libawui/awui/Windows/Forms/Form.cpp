@@ -33,7 +33,8 @@ using namespace awui::Windows::Forms::Statistics;
 
 Control * Form::controlSelected = NULL;
 Bitmap * Form::selectedBitmap = NULL;
-uint32_t Form::_buttons = 0;
+uint32_t Form::_buttonsPad1 = 0;
+uint32_t Form::_buttonsPad2 = 0;
 
 Form::Form() {
 	this->text = "";
@@ -123,34 +124,34 @@ void Form::ProcessEvents() {
 			OnRemoteHeartbeat();
 
 		if (line == "12:1")
-			OnRemoteKeyPressPre(RemoteButtons::Right);
+			OnRemoteKeyPressPre(0, RemoteButtons::Right);
 		if (line == "13:1")
-			OnRemoteKeyPressPre(RemoteButtons::Left);
+			OnRemoteKeyPressPre(0, RemoteButtons::Left);
 		if (line == "14:1")
-			OnRemoteKeyPressPre(RemoteButtons::Up);
+			OnRemoteKeyPressPre(0, RemoteButtons::Up);
 		if (line == "15:1")
-			OnRemoteKeyPressPre(RemoteButtons::Down);
+			OnRemoteKeyPressPre(0, RemoteButtons::Down);
 		if ((line == "16:1") || (line == "11:1"))
-			OnRemoteKeyPressPre(RemoteButtons::Ok);
+			OnRemoteKeyPressPre(0, RemoteButtons::Ok);
 		if (line == "10:1")
-			OnRemoteKeyPressPre(RemoteButtons::Menu);
+			OnRemoteKeyPressPre(0, RemoteButtons::Menu);
 		if (line == "31:1")
 			SetFullscreen(!this->fullscreen);
 		if (line == "32:1")
 			Application::Quit();
 
 		if (line == "12:0")
-			OnRemoteKeyUpPre(RemoteButtons::Right);
+			OnRemoteKeyUpPre(0, RemoteButtons::Right);
 		if (line == "13:0")
-			OnRemoteKeyUpPre(RemoteButtons::Left);
+			OnRemoteKeyUpPre(0, RemoteButtons::Left);
 		if (line == "14:0")
-			OnRemoteKeyUpPre(RemoteButtons::Up);
+			OnRemoteKeyUpPre(0, RemoteButtons::Up);
 		if (line == "15:0")
-			OnRemoteKeyUpPre(RemoteButtons::Down);
+			OnRemoteKeyUpPre(0, RemoteButtons::Down);
 		if ((line == "16:0") || (line == "11:0"))
-			OnRemoteKeyUpPre(RemoteButtons::Ok);
+			OnRemoteKeyUpPre(0, RemoteButtons::Ok);
 		if (line == "10:0")
-			OnRemoteKeyUpPre(RemoteButtons::Menu);
+			OnRemoteKeyUpPre(0, RemoteButtons::Menu);
 		if (line == "32:0")
 			Application::Quit();
 	}
@@ -158,106 +159,126 @@ void Form::ProcessEvents() {
 	while (SDL_PollEvent(&event)) {
 		switch(event.type) {
 			case SDL_JOYBUTTONDOWN:
-				// printf("- %d\n", event.jbutton.button);
-				switch (event.jbutton.button) {
-					case 2:
-						OnRemoteKeyPressPre(RemoteButtons::Play);
-						break;
-					case 3:
-						OnRemoteKeyPressPre(RemoteButtons::Ok);
-						break;
-					case 8:
-						OnRemoteKeyPressPre(RemoteButtons::Menu);
-						break;
-					case 9:
-						OnRemoteKeyPressPre(RemoteButtons::Pause);
-						break;
-					case 0:
-						OnRemoteKeyPressPre(RemoteButtons::Button3);
-						break;
-					case 1:
-						OnRemoteKeyPressPre(RemoteButtons::Button4);
-						break;
-					case 4:
-						OnRemoteKeyPressPre(RemoteButtons::Button5);
-						break;
-					case 5:
-						OnRemoteKeyPressPre(RemoteButtons::Button6);
-						break;
-					case 6:
-						OnRemoteKeyPressPre(RemoteButtons::Button7);
-						break;
-					case 7:
-						OnRemoteKeyPressPre(RemoteButtons::Button8);
-						break;
-					default:
-						break;
+				{
+					// printf("- %d\n", event.jbutton.button);
+					int which = event.jbutton.which;
+					switch (event.jbutton.button) {
+						case 2:
+							OnRemoteKeyPressPre(which, RemoteButtons::Play);
+							break;
+						case 3:
+							OnRemoteKeyPressPre(which, RemoteButtons::Ok);
+							break;
+						case 8:
+							OnRemoteKeyPressPre(which, RemoteButtons::Menu);
+							break;
+						case 9:
+							OnRemoteKeyPressPre(which, RemoteButtons::Pause);
+							break;
+						case 0:
+							OnRemoteKeyPressPre(which, RemoteButtons::Button3);
+							break;
+						case 1:
+							OnRemoteKeyPressPre(which, RemoteButtons::Button4);
+							break;
+						case 4:
+							OnRemoteKeyPressPre(which, RemoteButtons::Button5);
+							break;
+						case 5:
+							OnRemoteKeyPressPre(which, RemoteButtons::Button6);
+							break;
+						case 6:
+							OnRemoteKeyPressPre(which, RemoteButtons::Button7);
+							break;
+						case 7:
+							OnRemoteKeyPressPre(which, RemoteButtons::Button8);
+							break;
+						default:
+							break;
+					}
 				}
 				break;
 			case SDL_JOYBUTTONUP:
-				switch (event.jbutton.button) {
-					case 2:
-						OnRemoteKeyUpPre(RemoteButtons::Play);
-						break;
-					case 3:
-						OnRemoteKeyUpPre(RemoteButtons::Ok);
-						break;
-					case 8:
-						OnRemoteKeyUpPre(RemoteButtons::Menu);
-						break;
-					case 9:
-						OnRemoteKeyUpPre(RemoteButtons::Pause);
-						break;
-					case 0:
-						OnRemoteKeyUpPre(RemoteButtons::Button3);
-						break;
-					case 1:
-						OnRemoteKeyUpPre(RemoteButtons::Button4);
-						break;
-					case 4:
-						OnRemoteKeyUpPre(RemoteButtons::Button5);
-						break;
-					case 5:
-						OnRemoteKeyUpPre(RemoteButtons::Button6);
-						break;
-					case 6:
-						OnRemoteKeyUpPre(RemoteButtons::Button7);
-						break;
-					case 7:
-						OnRemoteKeyUpPre(RemoteButtons::Button8);
-						break;
-					default:
-						break;
+				{
+					int which = event.jbutton.which;
+					switch (event.jbutton.button) {
+						case 2:
+							OnRemoteKeyUpPre(which, RemoteButtons::Play);
+							break;
+						case 3:
+							OnRemoteKeyUpPre(which, RemoteButtons::Ok);
+							break;
+						case 8:
+							OnRemoteKeyUpPre(which, RemoteButtons::Menu);
+							break;
+						case 9:
+							OnRemoteKeyUpPre(which, RemoteButtons::Pause);
+							break;
+						case 0:
+							OnRemoteKeyUpPre(which, RemoteButtons::Button3);
+							break;
+						case 1:
+							OnRemoteKeyUpPre(which, RemoteButtons::Button4);
+							break;
+						case 4:
+							OnRemoteKeyUpPre(which, RemoteButtons::Button5);
+							break;
+						case 5:
+							OnRemoteKeyUpPre(which, RemoteButtons::Button6);
+							break;
+						case 6:
+							OnRemoteKeyUpPre(which, RemoteButtons::Button7);
+							break;
+						case 7:
+							OnRemoteKeyUpPre(which, RemoteButtons::Button8);
+							break;
+						default:
+							break;
+					}
 				}
 				break;
 
 			case SDL_JOYAXISMOTION:
-				if (event.jaxis.axis == 0) {
-					if (event.jaxis.value < -16000)
-						OnRemoteKeyPressPre(RemoteButtons::Left);
-					else
-						if (Form::_buttons & RemoteButtons::Left)
-							OnRemoteKeyUpPre(RemoteButtons::Left);
+				{
+					int which = event.jaxis.which;
+					int buttons;
+					switch (which) {
+						default:
+						case 0:
+							buttons = Form::_buttonsPad1;
+							break;
+						case 1:
+							buttons = Form::_buttonsPad2;
+							break;
+					}
 
-					if (event.jaxis.value > 16000)
-						OnRemoteKeyPressPre(RemoteButtons::Right);
-					else
-						if (Form::_buttons & RemoteButtons::Right)
-							OnRemoteKeyUpPre(RemoteButtons::Right);
-				}
+					if (event.jaxis.axis == 0) {
+						if (event.jaxis.value < -16000)
+							OnRemoteKeyPressPre(which, RemoteButtons::Left);
+						else
+							if (buttons & RemoteButtons::Left)
+								OnRemoteKeyUpPre(which, RemoteButtons::Left);
 
-				if (event.jaxis.axis == 1) {
-					if (event.jaxis.value < -16000)
-						OnRemoteKeyPressPre(RemoteButtons::Up);
-					else
-						if (Form::_buttons & RemoteButtons::Up)
-							OnRemoteKeyUpPre(RemoteButtons::Up);
+						if (event.jaxis.value > 16000)
+							OnRemoteKeyPressPre(which, RemoteButtons::Right);
+						else
+							if (buttons & RemoteButtons::Right)
+								OnRemoteKeyUpPre(which, RemoteButtons::Right);
+					}
 
-					if (event.jaxis.value > 16000)
-						OnRemoteKeyPressPre(RemoteButtons::Down);
-					else
-						if (Form::_buttons & RemoteButtons::Down)
-							OnRemoteKeyUpPre(RemoteButtons::Down);
+					if (event.jaxis.axis == 1) {
+						if (event.jaxis.value < -16000)
+							OnRemoteKeyPressPre(which, RemoteButtons::Up);
+						else
+							if (buttons & RemoteButtons::Up)
+								OnRemoteKeyUpPre(which, RemoteButtons::Up);
+
+						if (event.jaxis.value > 16000)
+							OnRemoteKeyPressPre(which, RemoteButtons::Down);
+						else
+							if (buttons & RemoteButtons::Down)
+								OnRemoteKeyUpPre(which, RemoteButtons::Down);
+					}
 				}
 				break;
 
@@ -267,23 +288,23 @@ void Form::ProcessEvents() {
 						if (event.key.keysym.mod & KMOD_LCTRL)
 							Application::Quit();
 						else
-							OnRemoteKeyPressPre(RemoteButtons::Menu);
+							OnRemoteKeyPressPre(0, RemoteButtons::Menu);
 						break;
 					case SDLK_RETURN:
 					case SDLK_KP_ENTER:
-						OnRemoteKeyPressPre(RemoteButtons::Ok);
+						OnRemoteKeyPressPre(0, RemoteButtons::Ok);
 						break;
 					case SDLK_LEFT:
-						OnRemoteKeyPressPre(RemoteButtons::Left);
+						OnRemoteKeyPressPre(0, RemoteButtons::Left);
 						break;
 					case SDLK_RIGHT:
-						OnRemoteKeyPressPre(RemoteButtons::Right);
+						OnRemoteKeyPressPre(0, RemoteButtons::Right);
 						break;
 					case SDLK_UP:
-						OnRemoteKeyPressPre(RemoteButtons::Up);
+						OnRemoteKeyPressPre(0, RemoteButtons::Up);
 						break;
 					case SDLK_DOWN:
-						OnRemoteKeyPressPre(RemoteButtons::Down);
+						OnRemoteKeyPressPre(0, RemoteButtons::Down);
 						break;
 
 					case SDLK_BACKSPACE: OnKeyPressPre(Keys::Key_BACKSPACE); break;
@@ -579,14 +600,36 @@ Bitmap * Form::GetSelectedBitmap() {
 	return Form::selectedBitmap;
 }
 
-bool Form::OnRemoteKeyPress(RemoteButtons::Enum button) {
-	Form::_buttons |= button;
-	// printf("0x%.4X\n", Form::_buttons);
-	return Control::OnRemoteKeyPress(button);
+bool Form::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
+	uint32_t * buttons;
+	switch (which) {
+		default:
+		case 0:
+			buttons = &Form::_buttonsPad1;
+			break;
+		case 1:
+			buttons = &Form::_buttonsPad2;
+			break;
+	}
+
+	*buttons |= button;
+	// printf("0x%.4X\n", *buttons);
+	return Control::OnRemoteKeyPress(which, button);
 }
 
-bool Form::OnRemoteKeyUp(RemoteButtons::Enum button) {
-	Form::_buttons &= ~button;
-	// printf("0x%.4X\n", Form::_buttons);
-	return Control::OnRemoteKeyUp(button);
+bool Form::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
+	uint32_t * buttons;
+	switch (which) {
+		default:
+		case 0:
+			buttons = &Form::_buttonsPad1;
+			break;
+		case 1:
+			buttons = &Form::_buttonsPad2;
+			break;
+	}
+
+	*buttons &= ~button;
+	// printf("0x%.4X\n", *buttons);
+	return Control::OnRemoteKeyUp(which, button);
 }
