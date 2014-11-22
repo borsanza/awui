@@ -6,11 +6,11 @@
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
-			class VDP;
+			class CPU;
 
 			class Ports {
 				private:
-					VDP * _vdp;
+					CPU * _cpu;
 					uint8_t _region;
 					bool _getRegion;
 
@@ -18,7 +18,7 @@ namespace awui {
 					Ports();
 					~Ports();
 
-					void SetVDP(VDP * vdp);
+					void SetCPU(CPU * cpu);
 					void WriteByte(uint8_t port, uint8_t value);
 					uint8_t ReadByte(uint8_t port) const;
 			};

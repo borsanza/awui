@@ -33,6 +33,8 @@ namespace awui {
 					int _multiply;
 					bool _canChangeControl;
 
+					uint8_t GetPad1() const;
+
 				public:
 					MasterSystem();
 					virtual ~MasterSystem();

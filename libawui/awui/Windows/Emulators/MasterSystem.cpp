@@ -9,6 +9,7 @@
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/MasterSystem/CPU.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
+#include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
 
@@ -119,7 +120,38 @@ uint32_t MasterSystem::GetCRC32() {
 	return this->_cpu->GetCRC32();
 }
 
+uint8_t MasterSystem::GetPad1() const {
+	if (this->_canChangeControl)
+		return 0xFF;
+
+	uint32_t buttons = Form::GetButtons();
+
+	uint8_t pad1 = 0x00;
+
+	if (!(buttons & RemoteButtons::Up))
+		pad1 |= 0x01;
+
+	if (!(buttons & RemoteButtons::Down))
+		pad1 |= 0x02;
+
+	if (!(buttons & RemoteButtons::Left))
+		pad1 |= 0x04;
+
+	if (!(buttons & RemoteButtons::Right))
+		pad1 |= 0x08;
+
+	if (!(buttons & RemoteButtons::Ok))
+		pad1 |= 0x10;
+
+	if (!(buttons & RemoteButtons::Play))
+		pad1 |= 0x20;
+
+	return pad1;
+}
+
 bool MasterSystem::OnRemoteKeyPress(RemoteButtons::Enum button) {
+	this->_cpu->SetPad1(this->GetPad1());
+
 	if (this->_canChangeControl)
 		return Control::OnRemoteKeyPress(button);
 
@@ -132,6 +164,8 @@ bool MasterSystem::OnRemoteKeyUp(RemoteButtons::Enum button) {
 
 	if (button & RemoteButtons::Menu)
 		this->_canChangeControl = true;
+
+	this->_cpu->SetPad1(this->GetPad1());
 
 	if (this->_canChangeControl)
 		return Control::OnRemoteKeyUp(button);

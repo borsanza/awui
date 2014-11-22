@@ -10,6 +10,7 @@ using namespace awui::Emulation::MasterSystem;
 
 #include <assert.h>
 #include <stdio.h>
+#include <awui/Emulation/MasterSystem/CPU.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
 /*
@@ -22,12 +23,16 @@ using namespace awui::Emulation::MasterSystem;
  *| 0x7F | H counter |       PSG      |
  *| 0xBE |           |   VDP (data)   |
  *| 0xBF |           |  VDP (control) |
+ *| 0xC0 |         Controllers        |
+ *| 0xC1 |         Controllers        |
  *| 0xDC |         Controllers        |
  *| 0xDD |         Controllers        |
  *|-----------------------------------|
  */
 
 Ports::Ports() {
+	this->_cpu = NULL;
+
 	// 0: Japonesa
 	// 1: Japonesa
 	// 2: Japonesa
@@ -39,15 +44,15 @@ Ports::Ports() {
 Ports::~Ports() {
 }
 
-void Ports::SetVDP(VDP * vdp) {
-	this->_vdp = vdp;
+void Ports::SetCPU(CPU * cpu) {
+	this->_cpu = cpu;
 }
 
 void Ports::WriteByte(uint8_t port, uint8_t value) {
 //	printf("Write Port: %.2X    Value: %.2X\n", port, value);
 
 	if (port >= 0x40 && port <= 0xBF) {
-		this->_vdp->WriteByte(port, value);
+		this->_cpu->GetVDP()->WriteByte(port, value);
 		return;
 	}
 
@@ -79,10 +84,10 @@ uint8_t Ports::ReadByte(uint8_t port) const {
 //	printf("Read Port: %.2X\n", port);
 
 	if (port >= 0x40 && port <= 0xBF)
-		return this->_vdp->ReadByte(port);
+		return this->_cpu->GetVDP()->ReadByte(port);
 
 	if (port == 0xDC || port == 0xC0)
-		return 0xFF;
+		return (0xC0 | this->_cpu->GetPad1());
 
 	if (port == 0xDD || port == 0xC1) {
 		if (this->_getRegion) {

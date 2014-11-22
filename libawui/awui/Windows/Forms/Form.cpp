@@ -33,6 +33,7 @@ using namespace awui::Windows::Forms::Statistics;
 
 Control * Form::controlSelected = NULL;
 Bitmap * Form::selectedBitmap = NULL;
+uint32_t Form::_buttons = 0;
 
 Form::Form() {
 	this->text = "";
@@ -45,7 +46,6 @@ Form::Form() {
 	this->initialized = 0;
 	this->fullscreenWidth = -1;
 	this->fullscreenHeight = -1;
-	this->_buttons = 0;
 
 	Stats * stats = Stats::Instance();
 	stats->SetDock(DockStyle::Bottom);
@@ -236,13 +236,13 @@ void Form::ProcessEvents() {
 					if (event.jaxis.value < -16000)
 						OnRemoteKeyPressPre(RemoteButtons::Left);
 					else
-						if (this->_buttons & RemoteButtons::Left)
+						if (Form::_buttons & RemoteButtons::Left)
 							OnRemoteKeyUpPre(RemoteButtons::Left);
 
 					if (event.jaxis.value > 16000)
 						OnRemoteKeyPressPre(RemoteButtons::Right);
 					else
-						if (this->_buttons & RemoteButtons::Right)
+						if (Form::_buttons & RemoteButtons::Right)
 							OnRemoteKeyUpPre(RemoteButtons::Right);
 				}
 
@@ -250,13 +250,13 @@ void Form::ProcessEvents() {
 					if (event.jaxis.value < -16000)
 						OnRemoteKeyPressPre(RemoteButtons::Up);
 					else
-						if (this->_buttons & RemoteButtons::Up)
+						if (Form::_buttons & RemoteButtons::Up)
 							OnRemoteKeyUpPre(RemoteButtons::Up);
 
 					if (event.jaxis.value > 16000)
 						OnRemoteKeyPressPre(RemoteButtons::Down);
 					else
-						if (this->_buttons & RemoteButtons::Down)
+						if (Form::_buttons & RemoteButtons::Down)
 							OnRemoteKeyUpPre(RemoteButtons::Down);
 				}
 				break;
@@ -580,13 +580,13 @@ Bitmap * Form::GetSelectedBitmap() {
 }
 
 bool Form::OnRemoteKeyPress(RemoteButtons::Enum button) {
-	this->_buttons |= button;
-	// printf("0x%.4X\n", this->_buttons);
+	Form::_buttons |= button;
+	// printf("0x%.4X\n", Form::_buttons);
 	return Control::OnRemoteKeyPress(button);
 }
 
 bool Form::OnRemoteKeyUp(RemoteButtons::Enum button) {
-	this->_buttons &= ~button;
-	// printf("0x%.4X\n", this->_buttons);
+	Form::_buttons &= ~button;
+	// printf("0x%.4X\n", Form::_buttons);
 	return Control::OnRemoteKeyUp(button);
 }

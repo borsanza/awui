@@ -36,6 +36,8 @@ CPU::CPU() : _opcode(this) {
 	this->_showNotImplemented = true;
 	this->_inInterrupt = false;
 	this->_isHalted = false;
+	this->_pad1 = 0xFF;
+
 	for (int i = 0; i < OxNOTIMPLEMENTED; i++) {
 		opcodes[i] = false;
 #ifdef NUMOPCODES
@@ -43,7 +45,7 @@ CPU::CPU() : _opcode(this) {
 #endif
 	}
 
-	this->_ports->SetVDP(this->_vdp);
+	this->_ports->SetCPU(this);
 
 	this->Reset();
 }
@@ -1503,10 +1505,6 @@ uint16_t CPU::GetAddressBus() const {
 
 void CPU::SetAddressBus(uint16_t data) {
 	this->_addressBus._w = data;
-}
-
-VDP * CPU::GetVDP() {
-	return this->_vdp;
 }
 
 bool CPU::IsHalted() const {

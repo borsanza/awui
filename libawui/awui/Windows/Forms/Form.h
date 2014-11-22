@@ -20,10 +20,10 @@ namespace awui {
 				private:
 					static Bitmap * selectedBitmap;
 					static Control * controlSelected;
+					static uint32_t _buttons;
 					Control * mouseControlOver;
 					awui::Diagnostics::Process* remoteProcess;
 					String text;
-					uint32_t _buttons;
 
 					int mouseX;
 					int mouseY;
@@ -57,6 +57,8 @@ namespace awui {
 
 					virtual bool OnRemoteKeyPress(RemoteButtons::Enum button);
 					virtual bool OnRemoteKeyUp(RemoteButtons::Enum button);
+
+					inline static uint32_t GetButtons() { return Form::_buttons; }
 			};
 		}
 	}

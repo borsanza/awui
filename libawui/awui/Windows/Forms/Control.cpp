@@ -698,9 +698,6 @@ bool Control::OnRemoteKeyPress(RemoteButtons::Enum button) {
 }
 
 bool Control::OnKeyPress(Keys::Enum key) {
-	if (Form::GetControlSelected() == this) {
-	}
-
 	return false;
 }
 
