@@ -100,16 +100,12 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 		screen->Clear();;
 	}
 
-	if (key == Keys::Key_D) {
+	if (key == Keys::Key_D)
 		this->_debugger->SetShow(!this->_debugger->GetShow());
-	}
 
-	if (key == Keys::Key_BACKSPACE) {
+	if (key == Keys::Key_BACKSPACE)
 		this->_cpu->Reset();
-	}
 
-
-//	Console::WriteLine("OnKeyPress");
 	return true;
 }
 
@@ -175,6 +171,12 @@ bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 			this->_cpu->CallPaused();
 		}
 	}
+
+	if ((Form::GetButtonsPad1() & RemoteButtons::Button5) && (Form::GetButtonsPad1() & RemoteButtons::Button6))
+		this->_cpu->Reset();
+	else
+		if (Form::GetButtonsPad1() & RemoteButtons::Button6)
+			this->_debugger->SetShow(!this->_debugger->GetShow());
 
 	if (this->_canChangeControl)
 		return Control::OnRemoteKeyPress(which, button);
