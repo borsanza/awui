@@ -15,7 +15,7 @@
 #include <awui/Emulation/MasterSystem/VDP.h>
 
 //#define SLOW
-//#define NUMOPCODES
+#define NUMOPCODES
 
 using namespace awui::Emulation;
 using namespace awui::Emulation::MasterSystem;
@@ -1541,14 +1541,17 @@ bool CPU::IsHalted() const {
 void CPU::PrintLog() {
 #ifdef NUMOPCODES
 	printf("\n");
+
+	this->_rom->WriteByte(0, 0);
+	this->_rom->WriteByte(1, 0);
+	this->_rom->WriteByte(2, 0);
+	this->_rom->WriteByte(3, 0);
+
 	for (int i = 0; i < OxNOTIMPLEMENTED; i++) {
 //		if (opcodesT[i] == 0)
 //			continue;
 
 		this->_registers->SetPC(0);
-		this->_opcode.SetByte1(0);
-		this->_opcode.SetByte2(0);
-		this->_opcode.SetByte4(0);
 		printf("%ld : ", opcodesT[i]);
 		printf("%d : ", i);
 		this->_opcode.ShowLogOpcode(i);
