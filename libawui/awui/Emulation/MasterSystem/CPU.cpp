@@ -14,7 +14,7 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
-//#define SLOW
+#define SLOW
 //#define NUMOPCODES
 
 using namespace awui::Emulation;
@@ -106,6 +106,9 @@ void CPU::OnTick() {
 	for (int i = 0; i < iters; i++) {
 		int64_t oldCycles = this->_cycles;
 		this->RunOpcode();
+		uint8_t r = this->_registers->GetR();
+		r = (r & 0x80) | ((r + 1) & 0x7F);
+		this->_registers->SetR(r);
 
 		if (this->_wantPause & !this->_inInterrupt) {
 			this->_registers->SetIFF1(false);
@@ -711,6 +714,9 @@ void CPU::RunOpcode() {
 			this->RETN();
 			break;
 
+		case OxED4F: this->LDrr(Reg_R, this->_registers->GetA(), 9, 2); break;
+		case OxED5F: this->LDAri(this->_registers->GetR()); break;
+
 		case OxED67: this->RRD(); break;
 		case OxED6F: this->RLD(); break;
 
@@ -793,6 +799,7 @@ void CPU::RunOpcode() {
 		case OxEDB8: this->LDDR(); break;
 		case OxEDA9: this->CPD(); break;
 		case OxEDB9: this->CPDR(); break;
+		case OxEDAB: this->OUTD(); break;
 
 		// EDB3: OTIR
 		// |2|21/16| A byte from the memory location pointed to by hl is written to port c.

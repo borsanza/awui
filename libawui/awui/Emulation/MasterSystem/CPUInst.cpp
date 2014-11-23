@@ -204,6 +204,20 @@ void CPUInst::LDrr(uint8_t reg1, uint8_t value, uint8_t cycles, uint8_t size) {
 	this->_cycles += cycles;
 }
 
+// |1|4| The contents of reg2 are loaded into reg1
+void CPUInst::LDAri(uint8_t value) {
+	this->_registers->SetA(value);
+
+	this->_registers->SetFFlag(Flag_S, value & 0x80);
+	this->_registers->SetFFlag(Flag_Z, value == 0);
+	this->_registers->SetFFlag(Flag_H, false);
+	this->_registers->SetFFlag(Flag_P, this->_registers->GetIFF2());
+	this->_registers->SetFFlag(Flag_N, false);
+
+	this->_registers->IncPC(2);
+	this->_cycles += 9;
+}
+
 // |2|7| Loads * into reg
 void CPUInst::LDrn(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->_registers->SetRegm(reg, this->ReadMemory(this->_registers->GetPC() + size - 1));
@@ -1849,14 +1863,34 @@ void CPUInst::OUTC() {
 // |2|16| A byte from the memory location pointed to by hl is written to port c. Then hl is incremented and b is decremented.
 void CPUInst::OUTI() {
 	uint8_t C = this->_registers->GetC();
-	uint8_t B = this->_registers->GetB();
+	uint8_t B = this->_registers->GetB() - 1;
 	uint16_t HL = this->_registers->GetHL();
 	uint8_t value = this->ReadMemory(HL);
 	this->_ports->WriteByte(C, value);
 	this->_registers->SetHL(HL + 1);
-	this->_registers->SetB(B - 1);
+	this->_registers->SetB(B);
 	this->_registers->SetFFlag(Flag_N, true);
-	this->_registers->SetFFlag(Flag_Z, ((B - 1) == 0));
+	this->_registers->SetFFlag(Flag_Z, B == 0);
+
+	this->_registers->IncPC(2);
+	this->_cycles += 16;
+}
+
+// |2|16| A byte from the memory location pointed to by hl is written to port c. Then hl and b are decremented.
+void CPUInst::OUTD() {
+	uint8_t B = this->_registers->GetB() - 1;
+	uint8_t C = this->_registers->GetC();
+	uint16_t HL = this->_registers->GetHL();
+	this->_ports->WriteByte(C, this->ReadMemory(HL));
+
+	this->_addressBus._l = C;
+	this->_addressBus._h = B;
+
+	this->_registers->SetB(B);
+	this->_registers->SetHL(HL - 1);
+
+	this->_registers->SetFFlag(Flag_N, true);
+	this->_registers->SetFFlag(Flag_Z, B == 0);
 
 	this->_registers->IncPC(2);
 	this->_cycles += 16;

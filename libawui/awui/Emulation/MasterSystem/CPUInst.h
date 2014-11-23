@@ -6,11 +6,11 @@
 namespace awui {
 	namespace Emulation {
 		union UINT16 {
-				uint16_t _w;
-				struct {
-						uint8_t _l;
-						uint8_t _h;
-				};
+			uint16_t _w;
+			struct {
+				uint8_t _l;
+				uint8_t _h;
+			};
 		};
 
 		namespace MasterSystem {
@@ -47,6 +47,7 @@ namespace awui {
 
 					// 8-Bit Load Group
 					void LDrr(uint8_t reg1, uint8_t reg2, uint8_t cycles, uint8_t size);
+					void LDAri(uint8_t value);
 					void LDrn(uint8_t reg, uint8_t cycles, uint8_t size);
 					void LDrHL(uint8_t reg);
 					void LDrXXd(uint8_t reg, uint8_t reg2);
@@ -166,6 +167,7 @@ namespace awui {
 					void OUTCr(uint8_t reg);
 					void OUTC();
 					void OUTI();
+					void OUTD();
 					void Reset();
 
 				public:
