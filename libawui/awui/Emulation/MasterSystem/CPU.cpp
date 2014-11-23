@@ -14,7 +14,7 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
-#define SLOW
+//#define SLOW
 //#define NUMOPCODES
 
 using namespace awui::Emulation;
@@ -31,9 +31,11 @@ CPU::CPU() : _opcode(this) {
 	this->_addressBus._w = 0;
 	this->_frame = 0;
 	this->_oldFrame = 0;
+
 	this->_showLog = false;
 	this->_showLogInt = false;
 	this->_showNotImplemented = true;
+
 	this->_inInterrupt = false;
 	this->_isHalted = false;
 	this->_wantPause = false;
@@ -67,12 +69,14 @@ void CPU::LoadRom(const String file) {
 }
 
 void CPU::CheckInterrupts() {
-	if (!this->_registers->GetIFF1() || !this->_registers->GetIFF2() || !this->_registers->GetInterruptsEnabled())
+	if (!this->_registers->GetIFF1())
 		return;
 
 	if (this->_vdp->GetInterrupt()) {
 //		printf("Entra %d\n", this->_vdp->GetLine());
 		this->_inInterrupt = true;
+		this->_registers->SetIFF1(false);
+		this->_registers->SetIFF2(false);
 		this->CallInterrupt(0x0038);
 	}
 }
@@ -104,6 +108,7 @@ void CPU::OnTick() {
 		this->RunOpcode();
 
 		if (this->_wantPause & !this->_inInterrupt) {
+			this->_registers->SetIFF1(false);
 			this->CallInterrupt(0x0066);
 			this->_wantPause = false;
 		}

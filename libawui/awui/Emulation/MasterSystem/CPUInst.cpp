@@ -1736,7 +1736,6 @@ void CPUInst::RET(bool cc, uint8_t cycles) {
 		this->_registers->SetSP(sp + 2);
 		this->_registers->SetPC(pc);
 		this->_cycles += cycles;
-		this->_registers->SetInterruptsEnabled(true);
 	} else {
 		this->_registers->IncPC();
 		this->_cycles += 5;
@@ -1776,7 +1775,6 @@ void CPUInst::CALLccnn(bool cc) {
 }
 
 void CPUInst::CallInterrupt(uint16_t offset) {
-	this->_registers->SetInterruptsEnabled(false);
 	uint16_t pc = this->_registers->GetPC();
 	uint16_t sp = this->_registers->GetSP() - 2;
 	this->_registers->SetSP(sp);
@@ -1791,8 +1789,8 @@ void CPUInst::RETI() {
 	uint16_t pc = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
 	this->_registers->SetSP(sp + 2);
 	this->_registers->SetPC(pc);
-	this->_cycles += 10;
-	this->_registers->SetInterruptsEnabled(true);
+	this->_cycles += 14;
+	this->_registers->SetIFF1(this->_registers->GetIFF2());
 }
 
 void CPUInst::RETN() {

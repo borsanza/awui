@@ -103,7 +103,6 @@ namespace awui {
 					uint8_t _r;
 					bool _iff1;
 					bool _iff2;
-					bool _interruptsEnabled;
 
 				public:
 					Registers();
@@ -115,9 +114,6 @@ namespace awui {
 					void AlternateBC();
 					void AlternateDE();
 					void AlternateHL();
-
-					void SetInterruptsEnabled(bool mode);
-					bool GetInterruptsEnabled() const;
 
 					void SetSP(uint16_t value);
 					uint16_t GetSP() const;
