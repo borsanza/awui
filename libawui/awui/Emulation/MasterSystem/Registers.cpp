@@ -7,7 +7,6 @@
 #include "Registers.h"
 
 #include <assert.h>
-#include <stdio.h>
 
 using namespace awui::Emulation::MasterSystem;
 
@@ -19,20 +18,18 @@ Registers::~Registers() {
 }
 
 void Registers::Clear() {
-	this->_a = 0;
-	this->_f = 0;
-	this->_bc = 0;
-	this->_de = 0;
-	this->_hl = 0;
-	this->_a_ = 0;
-	this->_f_ = 0;
-	this->_bc_ = 0;
-	this->_de_ = 0;
-	this->_hl_ = 0;
-	this->_ix = 0;
-	this->_iy = 0;
-	this->_pc = 0;
-	this->_sp = 0xDFF0;
+	this->_af.W = 0;
+	this->_bc.W = 0;
+	this->_de.W = 0;
+	this->_hl.W = 0;
+	this->_af_.W = 0;
+	this->_bc_.W = 0;
+	this->_de_.W = 0;
+	this->_hl_.W = 0;
+	this->_ix.W = 0;
+	this->_iy.W = 0;
+	this->_pc.W = 0;
+	this->_sp.W = 0xDFF0;
 	this->_im = 0;
 	this->_iff1 = false;
 	this->_iff2 = false;
@@ -46,272 +43,100 @@ void Registers::Alternate() {
 }
 
 void Registers::AlternateAF() {
-	uint8_t aux1;
-	aux1 = this->_a;
-	this->_a = this->_a_;
-	this->_a_ = aux1;
-
-	aux1 = this->_f;
-	this->_f = this->_f_;
-	this->_f_ = aux1;
+	uint16_t aux = this->_af.W;
+	this->_af.W = this->_af_.W;
+	this->_af_.W = aux;
 }
 
 void Registers::AlternateBC() {
-	uint8_t aux = this->_bc;
-	this->_bc = this->_bc_;
-	this->_bc_ = aux;
+	uint16_t aux = this->_bc.W;
+	this->_bc.W = this->_bc_.W;
+	this->_bc_.W = aux;
 }
 
 void Registers::AlternateDE() {
-	uint8_t aux = this->_de;
-	this->_de = this->_de_;
-	this->_de_ = aux;
+	uint16_t aux = this->_de.W;
+	this->_de.W = this->_de_.W;
+	this->_de_.W = aux;
 }
 
 void Registers::AlternateHL() {
-	uint8_t aux = this->_hl;
-	this->_hl = this->_hl_;
-	this->_hl_ = aux;
-}
-
-void Registers::SetSP(uint16_t value) {
-	this->_sp = value;
-}
-
-uint16_t Registers::GetSP() const {
-	return this->_sp;
-}
-
-void Registers::SetIFF1(bool mode) {
-	this->_iff1 = mode;
-}
-
-void Registers::SetIFF2(bool mode) {
-	this->_iff2 = mode;
-}
-
-bool Registers::GetIFF1() const {
-	return this->_iff1;
-}
-
-bool Registers::GetIFF2() const {
-	return this->_iff2;
-}
-
-void Registers::SetA(uint8_t value) {
-	this->_a = value;
-}
-
-void Registers::SetR(uint8_t value) {
-	this->_r = value;
-}
-
-void Registers::SetF(uint8_t value) {
-	this->_f = value;
-}
-
-uint16_t Registers::GetAF() const {
-	return (this->_a << 8) | this->_f;
-}
-
-uint8_t Registers::GetA() const {
-	return this->_a;
-}
-
-uint8_t Registers::GetR() const {
-	return this->_r;
-}
-
-uint8_t Registers::GetF() const {
-	return this->_f;
-}
-
-void Registers::SetBC(uint16_t value) {
-	this->_bc = value;
-}
-
-void Registers::SetB(uint8_t value) {
-	*(((uint8_t *) &this->_bc) + 1) = value;
-}
-
-void Registers::SetC(uint8_t value) {
-	*((uint8_t *) &this->_bc) = value;
-}
-
-uint16_t Registers::GetBC() const {
-	return this->_bc;
-}
-
-uint8_t Registers::GetB() const {
-	return *(((uint8_t *) &this->_bc) + 1);
-}
-
-uint8_t Registers::GetC() const {
-	return this->_bc;
-}
-
-void Registers::SetDE(uint16_t value) {
-	this->_de = value;
-}
-
-void Registers::SetD(uint8_t value) {
-	*(((uint8_t *) &this->_de) + 1) = value;
-}
-
-void Registers::SetE(uint8_t value) {
-	*((uint8_t *) &this->_de) = value;
-}
-
-uint16_t Registers::GetDE() const {
-	return this->_de;
-}
-
-uint8_t Registers::GetD() const {
-	return *(((uint8_t *) &this->_de) + 1);
-}
-
-uint8_t Registers::GetE() const {
-	return this->_de;
-}
-
-void Registers::SetHL(uint16_t value) {
-	this->_hl = value;
-}
-
-void Registers::SetH(uint8_t value) {
-	*(((uint8_t *) &this->_hl) + 1) = value;
-}
-
-void Registers::SetL(uint8_t value) {
-	*((uint8_t *) &this->_hl) = value;
-}
-
-uint16_t Registers::GetHL() const {
-	return this->_hl;
-}
-
-uint8_t Registers::GetH() const {
-	return *(((uint8_t *) &this->_hl) + 1);
-}
-
-uint8_t Registers::GetL() const {
-	return this->_hl;
-}
-
-void Registers::SetIX(uint16_t value) {
-	this->_ix = value;
-}
-
-uint16_t Registers::GetIX() const {
-	return this->_ix;
-}
-
-uint8_t Registers::GetIXH() const {
-	return *(((uint8_t *) &this->_ix) + 1);
-}
-
-uint8_t Registers::GetIXL() const {
-	return this->_ix;
-}
-
-void Registers::SetIY(uint16_t value) {
-	this->_iy = value;
-}
-
-uint16_t Registers::GetIY() const {
-	return this->_iy;
-}
-
-uint8_t Registers::GetIYH() const {
-	return *(((uint8_t *) &this->_iy) + 1);
-}
-
-uint8_t Registers::GetIYL() const {
-	return this->_iy;
-}
-
-void Registers::SetIM(uint8_t mode) {
-	this->_im = mode;
-}
-
-uint8_t Registers::GetIM() {
-	return this->_im;
+	uint16_t aux = this->_hl.W;
+	this->_hl.W = this->_hl_.W;
+	this->_hl_.W = aux;
 }
 
 void Registers::SetFFlag(uint8_t flag, bool value) {
 	if (value)
-		this->_f |= flag;
+		this->_af.L |= flag;
 	else
-		this->_f &= ~flag;
+		this->_af.L &= ~flag;
 }
 
 uint8_t Registers::GetRegm(uint8_t reg) const {
 	switch (reg) {
-		case Reg_B: return *(((uint8_t *) &this->_bc) + 1);
-		case Reg_C: return this->_bc;
-		case Reg_D: return *(((uint8_t *) &this->_de) + 1);
-		case Reg_E: return this->_de;
-		case Reg_H: return *(((uint8_t *) &this->_hl) + 1);
-		case Reg_L: return this->_hl;
-		case Reg_A: return this->_a;
-		case Reg_F: return this->_f;
-		case Reg_R: return this->_r;
-		case Reg_IXH: return *(((uint8_t *) &this->_ix) + 1);
-		case Reg_IXL: return this->_ix;
-		case Reg_IYH: return *(((uint8_t *) &this->_iy) + 1);
-		case Reg_IYL: return this->_iy;
+		case Reg_B: return this->_bc.H; break;
+		case Reg_C: return this->_bc.L; break;
+		case Reg_D: return this->_de.H; break;
+		case Reg_E: return this->_de.L; break;
+		case Reg_H: return this->_hl.H; break;
+		case Reg_L: return this->_hl.L; break;
+		case Reg_A: return this->_af.H; break;
+		case Reg_F: return this->_af.L; break;
+		case Reg_R: return this->_r; break;
+		case Reg_IXH: return this->_ix.H; break;
+		case Reg_IXL: return this->_ix.L; break;
+		case Reg_IYH: return this->_iy.H; break;
+		case Reg_IYL: return this->_iy.L; break;
+		default: assert(0); break;
 	}
 
-	assert(false);
 	return 0;
 }
 
 void Registers::SetRegm(uint8_t reg, uint8_t value) {
 	switch (reg) {
-		case Reg_B: *(((uint8_t *) &this->_bc) + 1) = value; break;
-		case Reg_C: *((uint8_t *) &this->_bc) = value; break;
-		case Reg_D: *(((uint8_t *) &this->_de) + 1) = value; break;
-		case Reg_E: *((uint8_t *) &this->_de) = value; break;
-		case Reg_H: *(((uint8_t *) &this->_hl) + 1) = value; break;
-		case Reg_L: *((uint8_t *) &this->_hl) = value; break;
-		case Reg_A: this->_a = value; break;
-		case Reg_F: this->_f = value; break;
+		case Reg_B: this->_bc.H = value; break;
+		case Reg_C: this->_bc.L = value; break;
+		case Reg_D: this->_de.H = value; break;
+		case Reg_E: this->_de.L = value; break;
+		case Reg_H: this->_hl.H = value; break;
+		case Reg_L: this->_hl.L = value; break;
+		case Reg_A: this->_af.H = value; break;
+		case Reg_F: this->_af.L = value; break;
 		case Reg_R: this->_r = value; break;
-		case Reg_IXH: *(((uint8_t *) &this->_ix) + 1) = value; break;
-		case Reg_IXL: *((uint8_t *) &this->_ix) = value; break;
-		case Reg_IYH: *(((uint8_t *) &this->_iy) + 1) = value; break;
-		case Reg_IYL: *((uint8_t *) &this->_iy) = value; break;
-		default: assert(0);
+		case Reg_IXH: this->_ix.H = value; break;
+		case Reg_IXL: this->_ix.L = value; break;
+		case Reg_IYH: this->_iy.H = value; break;
+		case Reg_IYL: this->_iy.L = value; break;
+		default: assert(0); break;
 	}
 }
 
 uint16_t Registers::GetRegss(uint8_t reg) const {
 	switch (reg) {
-		case Reg_BC: return this->_bc;
-		case Reg_DE: return this->_de;
-		case Reg_HL: return this->_hl;
-		case Reg_SP: return this->_sp;
-		case Reg_IX: return this->_ix;
-		case Reg_IY: return this->_iy;
-		case Reg_AF: return ((this->_a << 8) | this->_f);
+		case Reg_BC: return this->_bc.W;
+		case Reg_DE: return this->_de.W;
+		case Reg_HL: return this->_hl.W;
+		case Reg_SP: return this->_sp.W;
+		case Reg_IX: return this->_ix.W;
+		case Reg_IY: return this->_iy.W;
+		case Reg_AF: return this->_af.W;
+		default: assert(0);
 	}
 
-	assert(false);
 	return 0;
 }
 
 void Registers::SetRegss(uint8_t reg, uint16_t value) {
 	switch (reg) {
-		case Reg_BC: this->_bc = value; break;
-		case Reg_DE: this->_de = value; break;
-		case Reg_HL: this->_hl = value; break;
-		case Reg_SP: this->_sp = value; break;
-		case Reg_IX: this->_ix = value; break;
-		case Reg_IY: this->_iy = value; break;
-		case Reg_AF:
-			this->_a = value >> 8;
-			this->_f = value & 0xFF;
-			break;
-		default: assert(0);
+		case Reg_BC: this->_bc.W = value; break;
+		case Reg_DE: this->_de.W = value; break;
+		case Reg_HL: this->_hl.W = value; break;
+		case Reg_SP: this->_sp.W = value; break;
+		case Reg_IX: this->_ix.W = value; break;
+		case Reg_IY: this->_iy.W = value; break;
+		case Reg_AF: this->_af.W = value; break;
+		default: assert(0); break;
 	}
 }
