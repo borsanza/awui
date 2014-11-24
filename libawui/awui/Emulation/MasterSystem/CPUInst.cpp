@@ -322,8 +322,8 @@ void CPUInst::POP16(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->_cycles += cycles;
 }
 
-void CPUInst::LDSPr(uint8_t reg, uint8_t cycles, uint8_t size) {
-	this->_registers->SetSP(this->_registers->GetRegss(reg));
+void CPUInst::LDtofrom(uint8_t to, uint16_t value, uint8_t cycles, uint8_t size) {
+	this->_registers->SetRegss(to, value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }

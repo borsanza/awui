@@ -372,8 +372,7 @@ void CPU::RunOpcode() {
 		case Ox6E: this->LDrHL(Reg_L); break;
 		case Ox7E: this->LDrHL(Reg_A); break;
 
-		// F9: LD SP, HL
-		case OxF9: this->LDSPr(Reg_HL); break;
+		case OxF9: this->LDtofrom(Reg_SP, this->_registers->GetHL(), 6, 1); break;
 
 		// 28 nn: JR X, *
 		// |2|12/7| If condition X is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
@@ -624,14 +623,7 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		// E9: JP (HL)
-		// |1|4| Loads the value of hl into pc.
-		case OxE9:
-			{
-			    this->_registers->SetPC(this->_registers->GetHL());
-				this->_cycles += 4;
-			}
-			break;
+		case OxE9: this->LDtofrom(Reg_PC, this->_registers->GetHL(), 4, 0); break; // No aumenta el PC
 
 		// 08: EX AF, AF'
 		// |1|4| Exchanges the 16-bit contents of af and af'.
@@ -1172,7 +1164,7 @@ void CPU::RunOpcode() {
 		case OxDD75: this->LDXXdr(Reg_IX, Reg_L); break;
 		case OxDD77: this->LDXXdr(Reg_IX, Reg_A); break;
 
-		case OxDDF9: this->LDSPr(Reg_IX, 10, 2); break;
+		case OxDDF9: this->LDtofrom(Reg_SP, this->_registers->GetIX(), 10, 2); break;
 		case OxDD26: this->LDrn(Reg_IXH, 11, 3); break;
 		case OxDD2E: this->LDrn(Reg_IXL, 11, 3); break;
 
@@ -1192,6 +1184,8 @@ void CPU::RunOpcode() {
 		case OxDDB5: this->OR(this->_registers->GetIXL(), 8, 2); break;
 		case OxDDBC: this->CP(this->_registers->GetIXH(), 8, 2); break;
 		case OxDDBD: this->CP(this->_registers->GetIXL(), 8, 2); break;
+
+		case OxDDE9: this->LDtofrom(Reg_PC, this->_registers->GetIX(), 8, 0); break; // No aumenta el PC
 
 /******************************************************************************/
 /************************* IX bit instructions (DDCB) *************************/
@@ -1371,7 +1365,7 @@ void CPU::RunOpcode() {
 		case OxFD75: this->LDXXdr(Reg_IY, Reg_L); break;
 		case OxFD77: this->LDXXdr(Reg_IY, Reg_A); break;
 
-		case OxFDF9: this->LDSPr(Reg_IY, 10, 2); break;
+		case OxFDF9: this->LDtofrom(Reg_SP, this->_registers->GetIY(), 10, 2); break;
 		case OxFD26: this->LDrn(Reg_IYH, 11, 3); break;
 		case OxFD2E: this->LDrn(Reg_IYL, 11, 3); break;
 
@@ -1391,6 +1385,8 @@ void CPU::RunOpcode() {
 		case OxFDB5: this->OR(this->_registers->GetIYL(), 8, 2); break;
 		case OxFDBC: this->CP(this->_registers->GetIYH(), 8, 2); break;
 		case OxFDBD: this->CP(this->_registers->GetIYL(), 8, 2); break;
+
+		case OxFDE9: this->LDtofrom(Reg_PC, this->_registers->GetIY(), 8, 0); break; // No aumenta el PC
 
 /******************************************************************************/
 /************************* IY bit instructions (FDCB) *************************/

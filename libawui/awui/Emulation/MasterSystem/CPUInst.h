@@ -61,7 +61,7 @@ namespace awui {
 					void LDnndd(uint8_t reg, uint8_t cycles = 20, uint8_t size = 4);
 					void PUSH16(uint8_t reg, uint8_t cycles, uint8_t size);
 					void POP16(uint8_t reg, uint8_t cycles, uint8_t size);
-					void LDSPr(uint8_t reg, uint8_t cycles = 6, uint8_t size = 1);
+					void LDtofrom(uint8_t to, uint16_t value, uint8_t cycles, uint8_t size);
 
 					// Exchange, Block Transfer, and Search Group
 					void LDI();

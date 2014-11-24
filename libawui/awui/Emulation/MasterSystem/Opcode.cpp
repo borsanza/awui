@@ -1641,7 +1641,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxE6: printf("AND %.2Xh", opcode2); break;
 		case OxE7: printf("RST 20h"); break;
 		case OxE8: printf("RET PE"); break;
-		case OxE9: printf("JP (HL)"); break;
+		case OxE9: printf("JP HL"); break;
 		case OxEA: printf("JP PE, %.4Xh", ((opcode3 << 8) | opcode2)); break;
 		case OxEB: printf("EX DE, HL"); break;
 		case OxEC: printf("CALL PE, %.4Xh", ((opcode3 << 8) | opcode2)); break;
@@ -2094,7 +2094,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxDDE1: printf("POP IX"); break;
 		case OxDDE3: printf("EX (SP), IX"); break;
 		case OxDDE5: printf("PUSH IX"); break;
-		case OxDDE9: printf("JP (IX)"); break;
+		case OxDDE9: printf("JP IX"); break;
 		case OxDDF9: printf("LD SP, IX"); break;
 
 /******************************************************************************/
@@ -2445,7 +2445,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case OxFDE1: printf("POP IY"); break;
 		case OxFDE3: printf("EX (SP), IY"); break;
 		case OxFDE5: printf("PUSH IY"); break;
-		case OxFDE9: printf("JP (IY)"); break;
+		case OxFDE9: printf("JP IY"); break;
 		case OxFDF9: printf("LD SP, IY"); break;
 
 /******************************************************************************/

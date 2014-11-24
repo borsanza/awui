@@ -122,6 +122,7 @@ uint16_t Registers::GetRegss(uint8_t reg) const {
 		case Reg_IX: return this->_ix.W;
 		case Reg_IY: return this->_iy.W;
 		case Reg_AF: return this->_af.W;
+		case Reg_PC: return this->_pc.W;
 		default: assert(0);
 	}
 
@@ -137,6 +138,7 @@ void Registers::SetRegss(uint8_t reg, uint16_t value) {
 		case Reg_IX: this->_ix.W = value; break;
 		case Reg_IY: this->_iy.W = value; break;
 		case Reg_AF: this->_af.W = value; break;
+		case Reg_PC: this->_pc.W = value; break;
 		default: assert(0); break;
 	}
 }

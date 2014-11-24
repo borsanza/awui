@@ -70,6 +70,7 @@ namespace awui {
 				Reg_IX = 34,
 				Reg_IY = 35,
 				Reg_AF = 36,
+				Reg_PC = 37,
 			};
 
 			constexpr static uint8_t ZS_Flags[256] = {
