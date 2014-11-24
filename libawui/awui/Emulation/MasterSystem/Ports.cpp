@@ -64,6 +64,7 @@ void Ports::WriteByte(uint8_t port, uint8_t value) {
 	}
 
 	if (port == 0x3F) {
+//		printf("Region value: %.4X\n", value);
 		if (value == 0xF5) {
 //			printf("Region: True\n");
 			this->_getRegion = true;
@@ -86,16 +87,16 @@ uint8_t Ports::ReadByte(uint8_t port) const {
 	if (port >= 0x40 && port <= 0xBF)
 		return this->_cpu->GetVDP()->ReadByte(port);
 
-	if (port == 0xDC || port == 0xC0)
+	if (port == 0xC0 || port == 0xDC)
 		return ((this->_cpu->GetPad2() << 6) | ((this->_cpu->GetPad1() & 0x3F)));
 
-	if (port == 0xDD || port == 0xC1) {
+	if (port == 0xC1 || port == 0xDD) {
 		if (this->_getRegion) {
 //			printf("Region: %d\n", this->_region);
 			return ((this->_region & 0x3) << 6) | 0x30 | ((this->_cpu->GetPad2() & 0x3F) >> 2);
 		}
 
-		return 0xFF;
+		return 0xF0 | ((this->_cpu->GetPad2() & 0x3F) >> 2);
 	}
 
 //	assert(false);

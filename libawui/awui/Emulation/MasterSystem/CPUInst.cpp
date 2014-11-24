@@ -1836,42 +1836,46 @@ void CPUInst::RETN() {
 /*************************** Input and Output Group ***************************/
 /******************************************************************************/
 
+// |2|16| A byte from port c is written to the memory location pointed to by hl. Then hl is incremented and b is decremented.
+void CPUInst::INI() {
+	uint16_t HL = this->_registers->GetHL();
+	uint8_t B = this->_registers->GetB() - 1;
+	uint8_t C = this->_registers->GetC();
+
+	this->_addressBus._w = HL;
+	this->WriteMemory(HL, this->_ports->ReadByte(C));
+
+	this->_registers->SetHL(HL + 1);
+	this->_registers->SetB(B);
+	this->_registers->SetFFlag(Flag_Z, B == 0);
+	this->_registers->SetFFlag(Flag_N, true);
+
+	this->_registers->IncPC(2);
+	this->_cycles += 16;
+}
+
 // |2|11| The value of a is written to port *.
 void CPUInst::OUTnA() {
-	uint8_t port = this->ReadMemory(this->_registers->GetPC() + 1);
+	uint8_t n = this->ReadMemory(this->_registers->GetPC() + 1);
 	uint8_t data = this->_registers->GetA();
-	this->_addressBus._l = port;
+
+	this->_addressBus._l = n;
 	this->_addressBus._h = data;
-	// printf("Address: %.4X\n", this->_addressBus._w);
-	this->_ports->WriteByte(port, data);
+	this->_ports->WriteByte(n, data);
+
 	this->_registers->IncPC(2);
 	this->_cycles += 11;
 }
 
 // |2|12| The value of reg is written to port c.
-void CPUInst::OUTCr(uint8_t reg) {
+void CPUInst::OUTC(uint8_t value) {
 	uint8_t C = this->_registers->GetC();
 	uint8_t B = this->_registers->GetB();
-	uint8_t r = this->_registers->GetRegm(reg);
-	this->_addressBus._l = C;
-	this->_addressBus._h = B;
-	// printf("Address: %.4X\n", this->_addressBus._w);
-	this->_ports->WriteByte(C, r);
-	this->_registers->IncPC(2);
-	this->_cycles += 12;
-}
 
-// |2|12| Outputs a zero to port c.
-void CPUInst::OUTC() {
-	uint8_t C = this->_registers->GetC();
-/*
-	uint8_t C = this->_registers->GetC();
-	uint8_t B = this->_registers->GetB();
 	this->_addressBus._l = C;
 	this->_addressBus._h = B;
-	// printf("Address: %.4X\n", this->_addressBus._w);
-*/
-	this->_ports->WriteByte(C, 0);
+	this->_ports->WriteByte(C, value);
+
 	this->_registers->IncPC(2);
 	this->_cycles += 12;
 }
@@ -1882,11 +1886,15 @@ void CPUInst::OUTI() {
 	uint8_t B = this->_registers->GetB() - 1;
 	uint16_t HL = this->_registers->GetHL();
 	uint8_t value = this->ReadMemory(HL);
+
 	this->_ports->WriteByte(C, value);
+	this->_addressBus._l = C;
+	this->_addressBus._h = B;
+
 	this->_registers->SetHL(HL + 1);
 	this->_registers->SetB(B);
-	this->_registers->SetFFlag(Flag_N, true);
 	this->_registers->SetFFlag(Flag_Z, B == 0);
+	this->_registers->SetFFlag(Flag_N, true);
 
 	this->_registers->IncPC(2);
 	this->_cycles += 16;
@@ -1897,16 +1905,15 @@ void CPUInst::OUTD() {
 	uint8_t B = this->_registers->GetB() - 1;
 	uint8_t C = this->_registers->GetC();
 	uint16_t HL = this->_registers->GetHL();
-	this->_ports->WriteByte(C, this->ReadMemory(HL));
 
+	this->_ports->WriteByte(C, this->ReadMemory(HL));
 	this->_addressBus._l = C;
 	this->_addressBus._h = B;
 
-	this->_registers->SetB(B);
 	this->_registers->SetHL(HL - 1);
-
-	this->_registers->SetFFlag(Flag_N, true);
+	this->_registers->SetB(B);
 	this->_registers->SetFFlag(Flag_Z, B == 0);
+	this->_registers->SetFFlag(Flag_N, true);
 
 	this->_registers->IncPC(2);
 	this->_cycles += 16;

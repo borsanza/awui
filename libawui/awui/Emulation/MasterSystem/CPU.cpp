@@ -700,15 +700,14 @@ void CPU::RunOpcode() {
 		case OxED67: this->RRD(); break;
 		case OxED6F: this->RLD(); break;
 
-		// OUT (C), r
-		case OxED41: this->OUTCr(Reg_B); break;
-		case OxED49: this->OUTCr(Reg_C); break;
-		case OxED51: this->OUTCr(Reg_D); break;
-		case OxED59: this->OUTCr(Reg_E); break;
-		case OxED61: this->OUTCr(Reg_H); break;
-		case OxED69: this->OUTCr(Reg_L); break;
-		case OxED71: this->OUTC(); break;
-		case OxED79: this->OUTCr(Reg_A); break;
+		case OxED41: this->OUTC(this->_registers->GetB()); break;
+		case OxED49: this->OUTC(this->_registers->GetC()); break;
+		case OxED51: this->OUTC(this->_registers->GetD()); break;
+		case OxED59: this->OUTC(this->_registers->GetE()); break;
+		case OxED61: this->OUTC(this->_registers->GetH()); break;
+		case OxED69: this->OUTC(this->_registers->GetL()); break;
+		case OxED71: this->OUTC(0); break;
+		case OxED79: this->OUTC(this->_registers->GetA()); break;
 
 		// SBC HL, ss
 		case OxED42: this->SBCHLss(Reg_BC); break;
@@ -780,6 +779,7 @@ void CPU::RunOpcode() {
 		case OxEDA9: this->CPD(); break;
 		case OxEDB9: this->CPDR(); break;
 		case OxEDAB: this->OUTD(); break;
+		case OxEDA2: this->INI(); break;
 
 		// EDB3: OTIR
 		// |2|21/16| A byte from the memory location pointed to by hl is written to port c.

@@ -164,11 +164,13 @@ namespace awui {
 					void RETN();
 
 					// Input and Output Group
+					void INI();
 					void OUTnA();
-					void OUTCr(uint8_t reg);
-					void OUTC();
+					void OUTC(uint8_t value);
 					void OUTI();
 					void OUTD();
+
+					// Other
 					void Reset();
 
 				public:
