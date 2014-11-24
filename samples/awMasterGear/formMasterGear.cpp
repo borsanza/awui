@@ -17,7 +17,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
-#define MULTIPLY 4
+#define MULTIPLY 2
 
 FormMasterGear::FormMasterGear() {
 	this->_games = new ArrayList();
@@ -66,7 +66,8 @@ void FormMasterGear::LoadRom(const awui::String file) {
 	uint32_t crc = ms->GetCRC32();
 	switch (crc) {
 		case 0xd87316f6: // #gscept Intro by blindio (PD)
-		case 0xa581402e: // 64 Color Palette Test Program
+		case 0xa581402e: // 64 Color Palette Test Program by Charles MacDonald V1.00 (PD)
+		case 0x6d165047: // 64 Color Palette Test Program by Charles MacDonald Vbeta (PD)
 		case 0xb3e5986e: // AntiISDA Warrior by Ventzislav Tzvetkov (V1.02) (PD)
 		case 0xb4dfb825: // Bank Panic (E) [p1][!]
 		case 0xa957b2f8: // Battleships by Killer Bean 2 V1.00 (PD)
@@ -103,6 +104,7 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0x30165ac2: // Hello, World Test 1 (PD)
 		case 0x191c3113: // Interactive Sprite Test (PD)
 		case 0x6887900e: // Interrupt Test (PD)
+		case 0x52d3ce1f: // JJ's SMS OS - Keyboard Test (PD)
 		case 0x783c99ea: // Joust V0.05 Alpha (PD)
 		case 0x1074e6d4: // King Kong by drHirudo V1.0 (PD)
 		case 0x7e15a103: // KunKun & KokoKun by Bock (PD)
@@ -114,7 +116,11 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0x5bbb64da: // Maze3D V2008-01-14 (PD)
 		case 0x261587b8: // Not Only Words by Maxim (V1.00) (PD)
 		case 0x580293ee: // Only Words by Mike Gordon (v0.1) (PD)
-		case 0x592b8297: // Pause Test
+		case 0x592b8297: // Pause Test by FluBBa (PD)
+		case 0xe54af03b: // Platform Game Test by Haroldo O. Pinheiro V0.1 (PD)
+		case 0x1da46851: // Platform Game Test by Haroldo O. Pinheiro V0.2 (PD)
+		case 0xe1c4a4c3: // Platform Game Test by Haroldo O. Pinheiro V0.3 (PD)
+		case 0xbfa31c6f: // PSG Sample Test by Haroldo O. Pinheiro (2006) (PD)
 		case 0xef3d4c50: // Pongmaster by Haroldo O. Pinheiro (PD) [a1]
 		case 0x3879ac1b: // Pongmaster by Haroldo O. Pinheiro (PD)
 		case 0x0652b785: // Pretty Photo by Maxim v1.00 (PD)
@@ -129,10 +135,10 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0xefba05fc: // Robot Finds Kitten by thematrixeatsyou v1.00 (PD)
 		case 0x7cbd4432: // SALY V1.00 by Marc Klemp (PD)
 		case 0x16249e19: // Satellite 7 (J) [!]
-		case 0x6841ce1d: // Scroll Test Program
+		case 0x6841ce1d: // Scroll Test Program by Charles MacDonald V1.00 (PD)
 		case 0x0bb99157: // Sega Genesis 6-Button Controller v2 by Charles MacDonald & pooraussie (PD)
-		case 0x5f1120c8: // Sega Mark III BG Test
-		case 0x49790a5a: // Sega Mark III Port Test
+		case 0x5f1120c8: // Sega Mark III BG Test v0.01 by Enri (PD)
+		case 0x49790a5a: // Sega Mark III Port Test by Enri v0.1 (PD
 		case 0x4fcc473b: // Sega Mega Drive & Genesis 6 Button Controller Test V1.0 by Charles MacDonald (PD)
 		case 0xb0131d77: // Sega Tween (3D)
 		case 0xf97c47a0: // Sega Tween (Normal)
@@ -144,6 +150,9 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0xa8ef4c54: // SMS Dump 1.00 WIP by Omar Cornut (PD)
 		case 0x1a15dfcc: // SMS Prototype M404 BIOS
 		case 0xbd274327: // SMS Sprite Test (PD)
+		case 0x2f7d2cea: // SMS VDP Test by FluBBa v1.31 (PD)
+		case 0xdf0bd4b8: // SMS VDP Test by FluBBa v2008-02-22 (PD)
+		case 0x0e463253: // SMS VDP Test by FluBBa v2008-03-27 (PD)
 		case 0x370d2403: // SMS_demo_muy_simple_ASCII
 		case 0x15181f9f: // SMS_demo_scroll
 		case 0xc9c8363f: // SMS_demo_scroll_sprite
@@ -155,13 +164,15 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0xffcf390e: // Sprite Multiplex Demo (03012005) by Charles MacDonald (PD)
 		case 0x22525d51: // Super Magic Drive BIOS V4.1a [!]
 		case 0x409c9860: // supermariocloudscoryarcangel
+		case 0x8cd057a3: // Test Old (PD)
+		case 0x47b6499e: // Test (PD)
+		case 0x7f930360: // Testsnd (PD)
 		case 0x983e17e4: // Tetracycline Release 2 by Nicolas Warren (PD)
 		case 0xa0bf829b: // Tetracycline Release 4 by Nicolas Warren (PD)
 		case 0x949348fb: // Tower of Sokoban by Killer Bean 2 (PD)
 		case 0x58b99750: // TransBot (Prototype)
 		case 0xdfe369fa: // TRG by Sebastian v1.20_2011-05-02 (PD)
 		case 0x4e9cc98f: // Ultima III V2006-05-13prealpha (PD)
-		case 0x2f7d2cea: // VDPTEST
 		case 0x0b177200: // Video Poker v0.7 by Sket (PD)
 		case 0x49007fd6: // Video Poker v0.8 by Sket (PD)
 		case 0xad300bd9: // VIK 01 by L.i.N. (PD)
@@ -204,6 +215,6 @@ void FormMasterGear::OnTick() {
 		this->_debugger->SetRom(selected);
 		selected->SetDebugger(this->_debugger);
 		this->SetText(selected->GetName());
-		// printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
+		printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
 	}
 }
