@@ -12,6 +12,7 @@ namespace awui {
 				private:
 					CPU * _cpu;
 					uint8_t _region;
+					uint8_t _maskRegion;
 					bool _getRegion;
 
 				public:

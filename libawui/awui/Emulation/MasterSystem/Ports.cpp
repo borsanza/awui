@@ -30,15 +30,19 @@ using namespace awui::Emulation::MasterSystem;
  *|-----------------------------------|
  */
 
+// 0: USA-EUR (default)
+// 1: USA-EUR
+// 2: USA-EUR
+// 3: Japonesa
+
+#define DEFAULTREGION 0
+
 Ports::Ports() {
 	this->_cpu = NULL;
 
-	// 0: Japonesa
-	// 1: Japonesa
-	// 2: Japonesa
-	// 3: Japonesa
-	this->_region = 2;
+	this->_region = DEFAULTREGION;
 	this->_getRegion = false;
+	this->_maskRegion = 0x00;
 }
 
 Ports::~Ports() {
@@ -64,16 +68,20 @@ void Ports::WriteByte(uint8_t port, uint8_t value) {
 	}
 
 	if (port == 0x3F) {
-//		printf("Region value: %.4X\n", value);
-		if (value == 0xF5) {
-//			printf("Region: True\n");
-			this->_getRegion = true;
-		}
+		if (value & 0x01)
+			this->_region = (this->_region & 0x02) | ((value >> 5) & 0x01);
+		else
+			this->_region = (this->_region & 0x02) | (DEFAULTREGION & 0x01);
 
-		if (value == 0xF0) {
-//			printf("Region: False\n");
-			this->_getRegion = false;
-		}
+		if (value & 0x04)
+			this->_region = (this->_region & 0x01) | ((value >> 6) & 0x02);
+		else
+			this->_region = (this->_region & 0x01) | (DEFAULTREGION & 0x02);
+
+		if (DEFAULTREGION == 3)
+			this->_region = 3;
+
+		this->_maskRegion = value;
 
 		return;
 	}
@@ -91,14 +99,20 @@ uint8_t Ports::ReadByte(uint8_t port) const {
 		return ((this->_cpu->GetPad2() << 6) | ((this->_cpu->GetPad1() & 0x3F)));
 
 	if (port == 0xC1 || port == 0xDD) {
-		if (this->_getRegion) {
-//			printf("Region: %d\n", this->_region);
-			return ((this->_region & 0x3) << 6) | 0x30 | ((this->_cpu->GetPad2() & 0x3F) >> 2);
-		}
+		uint8_t data =  0x30 | ((this->_cpu->GetPad2() & 0x3F) >> 2);
+		if (this->_maskRegion & 0x01)
+			data |= (this->_region & 0x01) << 6;
+		else
+			data |= 0x40;
 
-		return 0xF0 | ((this->_cpu->GetPad2() & 0x3F) >> 2);
+		if (this->_maskRegion & 0x04)
+			data |= (this->_region & 0x02) << 6;
+		else
+			data |= 0x80;
+
+		return data;
 	}
 
 //	assert(false);
-	return 0;
+	return 0xFF;
 }
