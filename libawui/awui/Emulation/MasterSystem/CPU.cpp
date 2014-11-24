@@ -673,6 +673,15 @@ void CPU::RunOpcode() {
 /************************ Extended instructions (ED) **************************/
 /******************************************************************************/
 
+		case OxED40: this->INrC(Reg_B); break;
+		case OxED48: this->INrC(Reg_C); break;
+		case OxED50: this->INrC(Reg_D); break;
+		case OxED58: this->INrC(Reg_E); break;
+		case OxED60: this->INrC(Reg_H); break;
+		case OxED68: this->INrC(Reg_L); break;
+		case OxED70: this->INrC(Reg_UNDEFINED); break;
+		case OxED78: this->INrC(Reg_A); break;
+
 		case OxED44:
 		case OxED4C:
 		case OxED54:

@@ -60,6 +60,7 @@ namespace awui {
 				Reg_IXL = 21,
 				Reg_IYH = 22,
 				Reg_IYL = 23,
+				Reg_UNDEFINED = 99,
 			};
 
 			enum {

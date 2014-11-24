@@ -1836,6 +1836,27 @@ void CPUInst::RETN() {
 /*************************** Input and Output Group ***************************/
 /******************************************************************************/
 
+// |2|12| A byte from port c is written to reg.
+void CPUInst::INrC(uint8_t reg) {
+	uint8_t C = this->_registers->GetC();
+	uint8_t data = this->_ports->ReadByte(C);
+
+	if (reg != Reg_UNDEFINED) {
+		this->_addressBus._l = C;
+		this->_addressBus._h = this->_registers->GetB();
+		this->_registers->SetRegm(reg, data);
+	}
+
+	this->_registers->SetFFlag(Flag_S, data & 0x80);
+	this->_registers->SetFFlag(Flag_Z, data == 0);
+	this->_registers->SetFFlag(Flag_H, false);
+	this->_registers->SetFFlag(Flag_P, PARITYEVEN(data));
+	this->_registers->SetFFlag(Flag_N, false);
+
+	this->_registers->IncPC(2);
+	this->_cycles += 12;
+}
+
 // |2|16| A byte from port c is written to the memory location pointed to by hl. Then hl is incremented and b is decremented.
 void CPUInst::INI() {
 	uint16_t HL = this->_registers->GetHL();

@@ -164,6 +164,7 @@ namespace awui {
 					void RETN();
 
 					// Input and Output Group
+					void INrC(uint8_t reg);
 					void INI();
 					void OUTnA();
 					void OUTC(uint8_t value);
