@@ -64,6 +64,7 @@ void FormMasterGear::LoadRom(const awui::String file) {
 	ms->LoadRom(file);
 
 	switch (ms->GetCRC32()) {
+		case 0xd87316f6: // #gscept Intro by blindio (PD)
 		case 0xa581402e: // 64 Color Palette Test Program
 		case 0xb3e5986e: // AntiISDA Warrior by Ventzislav Tzvetkov (V1.02) (PD)
 		case 0xb4dfb825: // Bank Panic (E) [p1][!]
@@ -82,10 +83,11 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0x7d2280a5: // Cavelon by Timo Brueggmann V2 (PD)
 		case 0x9d19b99c: // Chicken Demo (PD)
 		case 0xbfee193c: // Code 38 - Volume I by Furrtek & L.i.N. (PD)
-		case 0x5c19e8a5: // Color Check
 		case 0x7253c3ec: // Color & Switch Test (U)
+		case 0x5c19e8a5: // Color Check
 		case 0x9d549e08: // Comical Machine Gun Joe (J) [!]
 		case 0x8f0e826a: // CWP_20110508
+		case 0xfcefd481: // Damiana by Heliophobe (PD)
 		case 0x7cc2a20b: // DCEvolution.net Intro by Ventzislav Tzvetkov, Maze & Apathy V1.00 (PD)
 		case 0xc4ca6878: // Digger Chan by Aypok (PD)
 		case 0xdddb3dd8: // Draw Poker by Mike Beaver (PD)
@@ -95,7 +97,6 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0x27b87fad: // Fullscreen Palette Test Program
 		case 0x96ca6902: // Ghouls 'n Ghosts Demo (U)
 		case 0x5ab72491: // Great Soccer (T) [!]
-		case 0xd87316f6: // #gscept Intro by blindio (PD)
 		case 0xc256921a: // Hang-On (J) [!]
 		case 0xed169d59: // Headbreak For a Scroller by Furrtek & L.i.N. (PD)
 		case 0x30165ac2: // Hello, World Test 1 (PD)
@@ -138,17 +139,16 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0x5f40660d: // Simple Sprite Demo Release 2 by Nicolas Warren (PD)
 		case 0x350f7497: // SMS APA Demo V0.01 by Haroldo O. Pinheiro (PD)
 		case 0xad31c5ff: // SMS Boot Loader
-		case 0x357f000b: // SMSC Text Demo V2 by Super Majik Spiral Crew (PD)
 		case 0x7694ed1c: // SMS Cycle Counter Demo by Maxim (PD)
+		case 0xa8ef4c54: // SMS Dump 1.00 WIP by Omar Cornut (PD)
+		case 0x1a15dfcc: // SMS Prototype M404 BIOS
+		case 0xbd274327: // SMS Sprite Test (PD)
 		case 0x370d2403: // SMS_demo_muy_simple_ASCII
 		case 0x15181f9f: // SMS_demo_scroll
 		case 0xc9c8363f: // SMS_demo_scroll_sprite
-		case 0xa8ef4c54: // SMS Dump 1.00 WIP by Omar Cornut (PD)
+		case 0x357f000b: // SMSC Text Demo V2 by Super Majik Spiral Crew (PD)
 		case 0xea766665: // SMSPalette-SMS-1.00
 		case 0x297efb87: // SMSPower's 7th Anniversary Intro V1.00 by Nicolas Warren (PD)
-		case 0x1a15dfcc: // SMS Prototype M404 BIOS
-		case 0xbd274327: // SMS Sprite Test (PD)
-		case 0x4b3c7752: // Sonic 1 SpriteRemix (Sonic 1 Hack)
 		case 0x1b1efc66: // Sound Test by Nicolas Warren (PD)
 		case 0xd6a8dd98: // Sprite and Priority Test Program by Charles MacDonald (PD)
 		case 0xffcf390e: // Sprite Multiplex Demo (03012005) by Charles MacDonald (PD)
@@ -172,6 +172,8 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0x39078689: // ZEXALL V0.13VDP by Maxim & Eric Quinn (PD)
 		case 0xcbe40c4c: // ZEXALL V0.15SDSC by Maxim & Eric Quinn (PD)
 		case 0x7ce4ceda: // ZEXALL V0.15VDP by Maxim & Eric Quinn (PD)
+		case 0x7e38a5db: // ZEXALL V0.15.1SDSC by BorSanZa (PD)
+		case 0xc938674d: // ZEXALL V0.15.1VDP by BorSanZa (PD)
 		case 0xa463ddfa: // Zoom Effect #1_1 by Charles MacDonald (PD)
 		case 0xb97e110a: // Zoom Effect #1_2 by Charles MacDonald (PD)
 		case 0x980fdc4b: // Zoom Effect #1_3 by Charles MacDonald (PD)
