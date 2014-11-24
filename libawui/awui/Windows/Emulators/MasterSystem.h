@@ -33,6 +33,7 @@ namespace awui {
 					int _multiply;
 					bool _canChangeControl;
 					bool _pause;
+					bool _invertKeys;
 
 					uint8_t GetPad(int which) const;
 
@@ -55,7 +56,8 @@ namespace awui {
 					void SetMultiply(int multiply);
 					uint32_t GetCRC32();
 
-					void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };
+					inline void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };
+					inline void SetInvertKeys(bool mode) { this->_invertKeys = mode; }
 
 					bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 					bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);

@@ -63,7 +63,8 @@ void FormMasterGear::LoadRom(const awui::String file) {
 	ms->SetSize(256 * MULTIPLY, 262 * MULTIPLY);
 	ms->LoadRom(file);
 
-	switch (ms->GetCRC32()) {
+	uint32_t crc = ms->GetCRC32();
+	switch (crc) {
 		case 0xd87316f6: // #gscept Intro by blindio (PD)
 		case 0xa581402e: // 64 Color Palette Test Program
 		case 0xb3e5986e: // AntiISDA Warrior by Ventzislav Tzvetkov (V1.02) (PD)
@@ -178,6 +179,12 @@ void FormMasterGear::LoadRom(const awui::String file) {
 		case 0xb97e110a: // Zoom Effect #1_2 by Charles MacDonald (PD)
 		case 0x980fdc4b: // Zoom Effect #1_3 by Charles MacDonald (PD)
 			ms->GetCPU()->SetMapper(awui::Emulation::MasterSystem::MAPPER_NONE);
+			break;
+	}
+
+	switch (crc) {
+		case 0xaed9aac4: // Alex Kidd in Miracle World (UEB) (V1.1) [!]
+			ms->SetInvertKeys(true);
 			break;
 	}
 

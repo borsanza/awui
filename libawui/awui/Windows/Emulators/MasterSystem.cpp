@@ -147,10 +147,10 @@ uint8_t MasterSystem::GetPad(int which) const {
 		pad |= 0x08;
 
 	if (!(buttons & RemoteButtons::Ok))
-		pad |= 0x10;
+		pad |= _invertKeys ? 0x20 : 0x10;
 
 	if (!(buttons & RemoteButtons::Play))
-		pad |= 0x20;
+		pad |= _invertKeys ? 0x10 : 0x20;
 
 	if (!(buttons & RemoteButtons::Pause))
 		pad |= 0x40;
@@ -185,7 +185,7 @@ bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 }
 
 bool MasterSystem::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	if ((button & RemoteButtons::Pause) || (button & RemoteButtons::Ok))
+	if ((button & RemoteButtons::Pause) || (button & RemoteButtons::Ok) || (button & RemoteButtons::Play))
 		this->_canChangeControl = false;
 
 	if (button & RemoteButtons::Menu)

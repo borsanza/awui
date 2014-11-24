@@ -647,19 +647,7 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		// E3: EX (SP), HL
-		// |1|19| Exchanges (sp) with l, and (sp+1) with h.
-		case OxE3:
-			{
-				uint16_t sp = this->_registers->GetSP();
-				uint16_t aux = this->ReadMemory(sp + 1) << 8 | this->ReadMemory(sp);
-				this->WriteMemory(sp + 1, this->_registers->GetH());
-				this->WriteMemory(sp, this->_registers->GetL());
-				this->_registers->SetHL(aux);
-				this->_registers->IncPC();
-				this->_cycles += 19;
-			}
-			break;
+		case OxE3: this->EX_ss(Reg_SP, Reg_HL, 19, 1); break;
 
 		// F3 DI
 		// |1|4| Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
@@ -1186,6 +1174,7 @@ void CPU::RunOpcode() {
 		case OxDDBD: this->CP(this->_registers->GetIXL(), 8, 2); break;
 
 		case OxDDE9: this->LDtofrom(Reg_PC, this->_registers->GetIX(), 8, 0); break; // No aumenta el PC
+		case OxDDE3: this->EX_ss(Reg_SP, Reg_IX, 23, 2); break;
 
 /******************************************************************************/
 /************************* IX bit instructions (DDCB) *************************/
@@ -1387,6 +1376,7 @@ void CPU::RunOpcode() {
 		case OxFDBD: this->CP(this->_registers->GetIYL(), 8, 2); break;
 
 		case OxFDE9: this->LDtofrom(Reg_PC, this->_registers->GetIY(), 8, 0); break; // No aumenta el PC
+		case OxFDE3: this->EX_ss(Reg_SP, Reg_IY, 23, 2); break;
 
 /******************************************************************************/
 /************************* IY bit instructions (FDCB) *************************/

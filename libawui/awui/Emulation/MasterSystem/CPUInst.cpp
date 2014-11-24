@@ -332,6 +332,22 @@ void CPUInst::LDtofrom(uint8_t to, uint16_t value, uint8_t cycles, uint8_t size)
 /***************** Exchange, Block Transfer, and Search Group *****************/
 /******************************************************************************/
 
+// EX (ss1), ss2
+// |1|19| Exchanges (ss1) with l, and (ss1+1) with h.
+void CPUInst::EX_ss(uint8_t ss1, uint8_t ss2, uint8_t cycles, uint8_t size) {
+	uint16_t ss = this->_registers->GetRegss(ss1);
+	uint16_t aux = this->ReadMemory(ss + 1) << 8 | this->ReadMemory(ss);
+
+	uint16_t value2 = this->_registers->GetRegss(ss2);
+
+	this->WriteMemory(ss + 1, value2 >> 8);
+	this->WriteMemory(ss, value2 & 0xFF);
+	this->_registers->SetRegss(ss2, aux);
+
+	this->_registers->IncPC(size);
+	this->_cycles += cycles;
+}
+
 // |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented.
 void CPUInst::LDI() {
 	uint8_t dataHL = this->ReadMemory(this->_registers->GetHL());

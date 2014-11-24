@@ -64,6 +64,7 @@ namespace awui {
 					void LDtofrom(uint8_t to, uint16_t value, uint8_t cycles, uint8_t size);
 
 					// Exchange, Block Transfer, and Search Group
+					void EX_ss(uint8_t ss1, uint8_t ss2, uint8_t cycles, uint8_t size);
 					void LDI();
 					void LDIR();
 					void LDD();
