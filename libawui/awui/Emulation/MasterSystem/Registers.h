@@ -53,25 +53,26 @@ namespace awui {
 				Reg_E = 13,
 				Reg_H = 14,
 				Reg_L = 15,
-				Reg_A = 17,
-				Reg_F = 18,
+				Reg_A = 16,
+				Reg_F = 17,
+				Reg_I = 18,
 				Reg_R = 19,
-				Reg_IXH = 20,
-				Reg_IXL = 21,
-				Reg_IYH = 22,
-				Reg_IYL = 23,
+				Reg_IXH = 30,
+				Reg_IXL = 31,
+				Reg_IYH = 32,
+				Reg_IYL = 33,
 				Reg_UNDEFINED = 99,
 			};
 
 			enum {
-				Reg_BC = 30,
-				Reg_DE = 31,
-				Reg_HL = 32,
-				Reg_SP = 33,
-				Reg_IX = 34,
-				Reg_IY = 35,
-				Reg_AF = 36,
-				Reg_PC = 37,
+				Reg_BC = 40,
+				Reg_DE = 41,
+				Reg_HL = 42,
+				Reg_SP = 43,
+				Reg_IX = 44,
+				Reg_IY = 45,
+				Reg_AF = 46,
+				Reg_PC = 47,
 			};
 
 			constexpr static uint8_t ZS_Flags[256] = {
@@ -107,8 +108,8 @@ namespace awui {
 					Word _iy;
 					Word _pc;
 					Word _sp;
+					Word _ir;
 					uint8_t _im;
-					uint8_t _r;
 					bool _iff1;
 					bool _iff2;
 
@@ -123,8 +124,10 @@ namespace awui {
 					void AlternateDE();
 					void AlternateHL();
 
-					inline uint8_t GetR() const       { return this->_r; }
-					inline void SetR(uint8_t value)   { this->_r = value; }
+					inline uint8_t GetI() const       { return this->_ir.H; }
+					inline uint8_t GetR() const       { return this->_ir.L; }
+					inline void SetI(uint8_t value)   { this->_ir.H = value; }
+					inline void SetR(uint8_t value)   { this->_ir.L = value; }
 
 					inline uint8_t GetIM() const      { return this->_im; }
 					inline void SetIM(uint8_t value)  { this->_im = value; }

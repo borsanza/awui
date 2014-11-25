@@ -703,7 +703,9 @@ void CPU::RunOpcode() {
 			this->RETN();
 			break;
 
+		case OxED47: this->LDrr(Reg_I, this->_registers->GetA(), 9, 2); break;
 		case OxED4F: this->LDrr(Reg_R, this->_registers->GetA(), 9, 2); break;
+		case OxED57: this->LDAri(this->_registers->GetI()); break;
 		case OxED5F: this->LDAri(this->_registers->GetR()); break;
 
 		case OxED67: this->RRD(); break;

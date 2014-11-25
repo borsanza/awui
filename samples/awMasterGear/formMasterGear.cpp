@@ -17,7 +17,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
-#define MULTIPLY 2
+#define MULTIPLY 4
 
 FormMasterGear::FormMasterGear() {
 	this->_games = new ArrayList();

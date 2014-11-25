@@ -83,7 +83,8 @@ uint8_t Registers::GetRegm(uint8_t reg) const {
 		case Reg_L: return this->_hl.L; break;
 		case Reg_A: return this->_af.H; break;
 		case Reg_F: return this->_af.L; break;
-		case Reg_R: return this->_r; break;
+		case Reg_I: return this->_ir.H; break;
+		case Reg_R: return this->_ir.L; break;
 		case Reg_IXH: return this->_ix.H; break;
 		case Reg_IXL: return this->_ix.L; break;
 		case Reg_IYH: return this->_iy.H; break;
@@ -104,7 +105,8 @@ void Registers::SetRegm(uint8_t reg, uint8_t value) {
 		case Reg_L: this->_hl.L = value; break;
 		case Reg_A: this->_af.H = value; break;
 		case Reg_F: this->_af.L = value; break;
-		case Reg_R: this->_r = value; break;
+		case Reg_I: this->_ir.H = value; break;
+		case Reg_R: this->_ir.L = value; break;
 		case Reg_IXH: this->_ix.H = value; break;
 		case Reg_IXL: this->_ix.L = value; break;
 		case Reg_IYH: this->_iy.H = value; break;

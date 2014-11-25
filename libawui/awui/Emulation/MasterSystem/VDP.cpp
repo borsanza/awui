@@ -40,7 +40,7 @@ VDP::VDP(CPU * cpu) {
 	this->_data = NULL;
 	this->_width = 256;
 	this->_height = 192;
-	this->_ntsc = true;
+	this->_ntsc = false;
 	this->_showBorder = false;
 	this->ResetVideo();
 
@@ -67,9 +67,9 @@ VDP::VDP(CPU * cpu) {
 	}
 
 	for (int i = 0; i < 313; i++) {
-		this->PALx192[i] = i <= 0xF2 ? i : i - 0xF2 + 0xBA - 1; // 00-F2, BA-FF
-		this->PALx224[i] = i <= 0xFF ? i : ((i <= 0x100 + 0x02)? i - 0xFF - 1 : i - 0xFF - 0x02 + 0xCA - 2); // 00-FF, 00-02, CA-FF
-		this->PALx240[i] = i <= 0xFF ? i : ((i <= 0x100 + 0x0A)? i - 0xFF - 1 : i - 0xFF - 0x0A + 0xD2 - 2); // 00-FF, 00-0A, D2-FF
+		this->PALx192[i] = (i <= 0xF2) ? i : i - 0x39; // 00-F2, BA-FF
+		this->PALx224[i] = (i <= 0xFF) ? i : ((i <= 0x102)? i - 0x100 : i - 0x39); // 00-FF, 00-02, CA-FF
+		this->PALx240[i] = (i <= 0xFF) ? i : ((i <= 0x10A)? i - 0x100 : i - 0x39); // 00-FF, 00-0A, D2-FF
 	}
 
 	for (int i = 0; i < 256; i++) this->HORSYNC[i]       =    0 + ((i / 255.0f) * 0x7F); // 256 : 00-7F : Active display
@@ -269,19 +269,19 @@ bool VDP::IsVSYNC(uint16_t line) const {
 			// 48     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 192: return 243 == line;
+			case 192: return 249 == line; // Confirmado con la Master System
 
 			// 224    Active display
 			// 32     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 224: return 259 == line;
+			case 224: return 281 == line;
 
 			// 240    Active display
 			// 24     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 240: return 267 == line;
+			case 240: return 297 == line;
 		}
 	}
 
@@ -416,6 +416,7 @@ bool VDP::GetSpritePixel(uint8_t * color) const {
 
 	uint16_t base = ((uint16_t) this->_registers[5] & 0x7E) << 7;
 
+	int cont = 0;
 	for (int n = 0; n < 64; n++) {
 		sy = this->_vram->ReadByte(base + n);
 
@@ -427,6 +428,10 @@ bool VDP::GetSpritePixel(uint8_t * color) const {
 
 		if ((y <= sy) || (y > (sy + height)))
 			continue;
+
+		cont++;
+		if (cont > 8)
+			break;
 
 		sx = this->_vram->ReadByte(base + 128 + (n * 2));
 		sx -= offset;
