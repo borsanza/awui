@@ -133,6 +133,8 @@ void Form::ProcessEvents() {
 			OnRemoteKeyPressPre(0, RemoteButtons::Down);
 		if ((line == "16:1") || (line == "11:1"))
 			OnRemoteKeyPressPre(0, RemoteButtons::Ok);
+		if (line == "17:1")
+			OnRemoteKeyPressPre(0, RemoteButtons::Play);
 		if (line == "10:1")
 			OnRemoteKeyPressPre(0, RemoteButtons::Menu);
 		if (line == "31:1")
@@ -150,6 +152,8 @@ void Form::ProcessEvents() {
 			OnRemoteKeyUpPre(0, RemoteButtons::Down);
 		if ((line == "16:0") || (line == "11:0"))
 			OnRemoteKeyUpPre(0, RemoteButtons::Ok);
+		if (line == "17:0")
+			OnRemoteKeyUpPre(0, RemoteButtons::Play);
 		if (line == "10:0")
 			OnRemoteKeyUpPre(0, RemoteButtons::Menu);
 		if (line == "32:0")
