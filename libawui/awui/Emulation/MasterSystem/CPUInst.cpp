@@ -107,19 +107,22 @@ void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
 				switch (pos) {
 					case 0xFFFC:
 						this->_controlbyte = value;
-						return;
+						break;
 					case 0xFFFD:
-						this->_frame0 = value % this->_rom->GetNumPages();
-						// printf("Frames: %.2X %.2X %.2X\n", this->_frame0, this->_frame1, this->_frame2);
-						return;
+						value = value % this->_rom->GetNumPages();
+						this->_frame0 = value;
+//						printf("Frames: %.2X %.2X %.2X\n", this->_frame0, this->_frame1, this->_frame2);
+						break;
 					case 0xFFFE:
-						this->_frame1 = value % this->_rom->GetNumPages();
-						// printf("Frames: %.2X %.2X %.2X\n", this->_frame0, this->_frame1, this->_frame2);
-						return;
+						value = value % this->_rom->GetNumPages();
+						this->_frame1 = value;
+//						printf("Frames: %.2X %.2X %.2X\n", this->_frame0, this->_frame1, this->_frame2);
+						break;
 					case 0xFFFF:
-						this->_frame2 = value % this->_rom->GetNumPages();
-						// printf("Frames: %.2X %.2X %.2X\n", this->_frame0, this->_frame1, this->_frame2);
-						return;
+						value = value % this->_rom->GetNumPages();
+						this->_frame2 = value;
+//						printf("Frames: %.2X %.2X %.2X\n", this->_frame0, this->_frame1, this->_frame2);
+						break;
 				}
 			}
 
@@ -166,19 +169,6 @@ uint8_t CPUInst::ReadMemory(uint16_t pos) const {
 			// RAM or RAM (mirror)
 			if (pos < 0xE000)
 				return this->_ram->ReadByte(pos - 0xC000);
-
-			if (pos >=0xFFFC) {
-				switch (pos) {
-					case 0xFFFC:
-						return this->_controlbyte;
-					case 0xFFFD:
-						return this->_frame0;
-					case 0xFFFE:
-						return this->_frame1;
-					case 0xFFFF:
-						return this->_frame2;
-				}
-			}
 
 			return this->_ram->ReadByte(pos - 0xE000);
 
