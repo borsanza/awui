@@ -14,7 +14,7 @@
 #include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
-#define SLOW
+//#define SLOW
 //#define NUMOPCODES
 
 using namespace awui::Emulation;
