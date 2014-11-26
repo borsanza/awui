@@ -1648,9 +1648,8 @@ void CPUInst::BIT(uint8_t valueb, uint8_t compare) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		(!value ? Flag_P : 0) |
 		Flag_H |
-		ZS_Flags[value] |
+		PZS_Flags[value] |
 		(this->_registers->GetF() & Flag_C)
 	);
 
@@ -1666,9 +1665,8 @@ void CPUInst::BITHL(uint8_t compare) {
 	this->_registers->SetF(
 		((HL & Flag_F3H) ? Flag_F3 : 0) |
 		((HL & Flag_F5H) ? Flag_F5 : 0) |
-		(!value ? Flag_P : 0) |
 		Flag_H |
-		ZS_Flags[value] |
+		PZS_Flags[value] |
 		(this->_registers->GetF() & Flag_C)
 	);
 
