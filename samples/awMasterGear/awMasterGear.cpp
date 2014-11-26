@@ -7,6 +7,7 @@
 #include "formMasterGear.h"
 
 #include <awui/Emulation/MasterSystem/CPU.h>
+#include <awui/Emulation/MasterSystem/Registers.h>
 #include <awui/Windows/Forms/Application.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
 
@@ -22,6 +23,12 @@ int main(int argc, char ** argv) {
 		if (name == "--test") {
 			MasterSystem * ms = new MasterSystem();
 			ms->LoadRom(argv[2]);
+/*
+			for (int i = 0; i<508000000; i++) {
+				ms->GetCPU()->CP(10, 10, 0);
+			}
+			return 0;
+*/
 			while (!ms->GetCPU()->IsHalted())
 				ms->RunOpcode();
 

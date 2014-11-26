@@ -43,7 +43,7 @@ using namespace awui::Emulation::MasterSystem;
 // uint8_t a = 130;
 // int8_t b = a;
 // b = -126
-
+/*
 static bool PARITYEVEN(uint8_t value) {
     bool parity = true;
     while (value) {
@@ -53,8 +53,40 @@ static bool PARITYEVEN(uint8_t value) {
 
     return parity;
 }
-
+*/
 CPUInst::CPUInst() {
+/*
+	bool printed;
+
+	for (int i=0; i<=255; i++) {
+		uint8_t v = (uint8_t) i;
+		printed = false;
+
+		if (PARITYEVEN(v)) {
+			if (printed) printf("|");
+			printf("Flag_P");
+			printed = true;
+		}
+
+		if (v == 0) {
+			if (printed) printf("|");
+			printf("Flag_Z");
+			printed = true;
+		}
+
+		if (v & 0x80) {
+			if (printed) printf("|");
+			printf("Flag_S");
+			printed = true;
+		}
+
+		if (!printed) printf("0");
+
+		printf(",");
+		if (((i+1) % 16) == 0) printf("\n");
+	}
+*/
+
 	this->_ports = new Ports();
 	this->_registers = new Registers();
 	this->_mapper = MAPPER_SEGA;
@@ -187,9 +219,9 @@ uint8_t CPUInst::ReadMemory(uint16_t pos) const {
 /****************************** 8-Bit Load Group ******************************/
 /******************************************************************************/
 
-// |1|4| The contents of reg2 are loaded into reg1
-void CPUInst::LDrr(uint8_t reg1, uint8_t value, uint8_t cycles, uint8_t size) {
-	this->_registers->SetRegm(reg1, value);
+// |1|4| The value are loaded into reg
+void CPUInst::LDrr(uint8_t reg, uint8_t value, uint8_t cycles, uint8_t size) {
+	this->_registers->SetRegm(reg, value);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
@@ -291,12 +323,11 @@ void CPUInst::LDnndd(uint8_t reg, uint8_t cycles, uint8_t size) {
 
 // |2|15| sp is decremented and ixh is stored into the memory location pointed to by sp. sp is decremented again and ixl is stored into the memory location pointed to by sp.
 void CPUInst::PUSH16(uint8_t reg, uint8_t cycles, uint8_t size) {
-	uint16_t value = this->_registers->GetRegss(reg);
-	uint8_t high = value >> 8;
-	uint8_t low = (uint8_t) value;
+	Word value;
+	value.W = this->_registers->GetRegss(reg);
 	uint16_t sp = this->_registers->GetSP();
-	this->WriteMemory(sp - 1, high);
-	this->WriteMemory(sp - 2, low);
+	this->WriteMemory(sp - 1, value.H);
+	this->WriteMemory(sp - 2, value.L);
 	this->_registers->SetSP(sp - 2);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -305,8 +336,10 @@ void CPUInst::PUSH16(uint8_t reg, uint8_t cycles, uint8_t size) {
 // |2|14| The memory location pointed to by sp is stored into ixl and sp is incremented. The memory location pointed to by sp is stored into ixh and sp is incremented again.
 void CPUInst::POP16(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint16_t sp = this->_registers->GetSP();
-	uint16_t value = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
-	this->_registers->SetRegss(reg, value);
+	Word value;
+	value.H = this->ReadMemory(sp + 1);
+	value.L = this->ReadMemory(sp);
+	this->_registers->SetRegss(reg, value.W);
 	this->_registers->SetSP(sp + 2);
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -656,14 +689,11 @@ void CPUInst::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
 
 	this->_registers->SetA(value);
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, true);
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, false);
+	this->_registers->SetF(
+		(value & (Flag_F3 | Flag_F5)) |
+		PZS_Flags[value] |
+		Flag_H
+	);
 
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -675,14 +705,10 @@ void CPUInst::OR(uint8_t valueb, uint8_t cycles, uint8_t size) {
 
 	this->_registers->SetA(value);
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, false);
+	this->_registers->SetF(
+		(value & (Flag_F3 | Flag_F5)) |
+		PZS_Flags[value]
+	);
 
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -694,14 +720,10 @@ void CPUInst::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
 
 	this->_registers->SetA(value);
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(value));
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, false);
+	this->_registers->SetF(
+		(value & (Flag_F3 | Flag_F5)) |
+		PZS_Flags[value]
+	);
 
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -712,14 +734,14 @@ void CPUInst::CP(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t value = A - b;
 	uint16_t pvalue = (uint16_t) A - (uint16_t) b;
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_F5, b & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, (A ^ b ^ value) & 0x10);
-	this->_registers->SetFFlag(Flag_F3, b & Flag_F3);
-	this->_registers->SetFFlag(Flag_V, ((A ^ b) & (A ^ value)) & 0x80);
-	this->_registers->SetFFlag(Flag_N, true);
-	this->_registers->SetFFlag(Flag_C, pvalue & 0x100);
+	this->_registers->SetF(
+		(b & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[value] |
+		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
+		Flag_N |
+		((pvalue & 0x100) ? Flag_C : 0) |
+		((((A ^ b) & (A ^ value)) & 0x80) ? Flag_V : 0)
+	);
 
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -768,7 +790,9 @@ void CPUInst::DECm(uint8_t reg, uint8_t cycles, uint8_t size) {
 void CPUInst::DECHL() {
 	uint8_t old = this->ReadMemory(this->_registers->GetHL());
 	uint8_t value = old - 1;
+
 	this->WriteMemory(this->_registers->GetHL(), value);
+
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
@@ -777,6 +801,7 @@ void CPUInst::DECHL() {
 		Flag_N |
 		(this->_registers->GetF() & Flag_C)
 	);
+
 	this->_registers->IncPC();
 	this->_cycles += 11;
 }
@@ -785,7 +810,9 @@ void CPUInst::DECHL() {
 void CPUInst::INCHL() {
 	uint8_t old = this->ReadMemory(this->_registers->GetHL());
 	uint8_t value = old + 1;
+
 	this->WriteMemory(this->_registers->GetHL(), value);
+
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
@@ -793,6 +820,7 @@ void CPUInst::INCHL() {
 		((old == 0x7F) ? Flag_V : 0) |
 		(this->_registers->GetF() & Flag_C)
 	);
+
 	this->_registers->IncPC();
 	this->_cycles += 11;
 }
@@ -803,6 +831,7 @@ void CPUInst::INCXXd(uint8_t xx) {
 	uint16_t offset = this->_registers->GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = old + 1;
+
 	this->WriteMemory(offset, value);
 
 	this->_registers->SetF(
@@ -823,6 +852,7 @@ void CPUInst::DECXXd(uint8_t xx) {
 	uint16_t offset = this->_registers->GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = old - 1;
+
 	this->WriteMemory(offset, value);
 
 	this->_registers->SetF(
@@ -864,13 +894,13 @@ void CPUInst::DAA() {
 
 	this->_registers->SetA(tmp);
 
-	this->_registers->SetFFlag(Flag_S, tmp & 0x80);
-	this->_registers->SetFFlag(Flag_Z, tmp == 0);
-	this->_registers->SetFFlag(Flag_F5, tmp & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, (A ^ tmp) & 0x10);
-	this->_registers->SetFFlag(Flag_F3, tmp & Flag_F3);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(tmp));
-	this->_registers->SetFFlag(Flag_C, C || A > 0x99);
+	this->_registers->SetF(
+		(tmp & (Flag_F3 | Flag_F5)) |
+		(((A ^ tmp) & 0x10) ? Flag_H : 0) |
+		PZS_Flags[tmp] |
+		((C || A > 0x99)? Flag_C : 0) |
+		(this->_registers->GetF() & Flag_N)
+	);
 
 	this->_registers->IncPC();
 	this->_cycles += 4;
@@ -1103,8 +1133,7 @@ void CPUInst::RLC(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0)
 	);
 
@@ -1124,8 +1153,7 @@ void CPUInst::RLC_HL() {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0)
 	);
 
@@ -1144,8 +1172,7 @@ void CPUInst::RRC(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0)
 	);
 
@@ -1165,8 +1192,7 @@ void CPUInst::RRC_HL() {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0)
 	);
 
@@ -1185,8 +1211,7 @@ void CPUInst::RL(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0)
 	);
 
@@ -1206,8 +1231,7 @@ void CPUInst::RL_HL() {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0)
 	);
 
@@ -1226,8 +1250,7 @@ void CPUInst::RR(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0)
 	);
 
@@ -1247,8 +1270,7 @@ void CPUInst::RR_HL() {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0)
 	);
 
@@ -1265,8 +1287,7 @@ void CPUInst::SLA(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0));
 
 	this->_registers->IncPC(2);
@@ -1283,8 +1304,7 @@ void CPUInst::SLA_HL() {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0));
 
 	this->_registers->IncPC(2);
@@ -1300,8 +1320,7 @@ void CPUInst::SRA(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
 
 	this->_registers->IncPC(2);
@@ -1318,8 +1337,7 @@ void CPUInst::SRA_HL() {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
 
 	this->_registers->IncPC(2);
@@ -1335,8 +1353,7 @@ void CPUInst::SLL(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0));
 
 	this->_registers->IncPC(2);
@@ -1353,8 +1370,7 @@ void CPUInst::SLL_HL() {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0));
 
 	this->_registers->IncPC(2);
@@ -1370,8 +1386,7 @@ void CPUInst::SRL(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
 
 	this->_registers->IncPC(2);
@@ -1388,8 +1403,7 @@ void CPUInst::SRL_HL() {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
 
 	this->_registers->IncPC(2);
@@ -1410,8 +1424,7 @@ void CPUInst::RLCXXd(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0)
 	);
 
@@ -1433,8 +1446,7 @@ void CPUInst::RRCXXd(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0)
 	);
 
@@ -1456,8 +1468,7 @@ void CPUInst::RLXXd(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0)
 	);
 
@@ -1479,8 +1490,7 @@ void CPUInst::RRXXd(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0)
 	);
 
@@ -1500,8 +1510,7 @@ void CPUInst::SLAXXd(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0));
 
 	this->_registers->IncPC(4);
@@ -1522,8 +1531,7 @@ void CPUInst::SRAXXd(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
 
 	this->_registers->IncPC(4);
@@ -1542,8 +1550,7 @@ void CPUInst::SLLXXd(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0));
 
 	this->_registers->IncPC(4);
@@ -1562,8 +1569,7 @@ void CPUInst::SRLXXd(uint8_t reg) {
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(PARITYEVEN(value) ? Flag_P : 0) |
+		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
 
 	this->_registers->IncPC(4);
@@ -1582,8 +1588,7 @@ void CPUInst::RLD() {
 
 	this->_registers->SetF(
 		(valueA & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[valueA] |
-		(PARITYEVEN(valueA) ? Flag_P : 0) |
+		PZS_Flags[valueA] |
 		(this->_registers->GetF() & Flag_C)
 	);
 
@@ -1603,8 +1608,7 @@ void CPUInst::RRD() {
 
 	this->_registers->SetF(
 		(valueA & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[valueA] |
-		(PARITYEVEN(valueA) ? Flag_P : 0) |
+		PZS_Flags[valueA] |
 		(this->_registers->GetF() & Flag_C)
 	);
 
@@ -1837,11 +1841,9 @@ void CPUInst::INrC(uint8_t reg) {
 		this->_registers->SetRegm(reg, data);
 	}
 
-	this->_registers->SetFFlag(Flag_S, data & 0x80);
-	this->_registers->SetFFlag(Flag_Z, data == 0);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_P, PARITYEVEN(data));
-	this->_registers->SetFFlag(Flag_N, false);
+	this->_registers->SetF(PZS_Flags[data] |
+		(this->_registers->GetF() & Flag_C)
+	);
 
 	this->_registers->IncPC(2);
 	this->_cycles += 12;

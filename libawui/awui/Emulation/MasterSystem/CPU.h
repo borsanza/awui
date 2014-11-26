@@ -10,7 +10,7 @@ namespace awui {
 		namespace MasterSystem {
 			class VDP;
 
-			class CPU : public awui::Emulation::MasterSystem::CPUInst {
+			class CPU : public CPUInst {
 				private:
 					Opcode _opcode;
 					float _frame;
