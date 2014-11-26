@@ -230,11 +230,11 @@ void CPUInst::LDrr(uint8_t reg, uint8_t value, uint8_t cycles, uint8_t size) {
 void CPUInst::LDAri(uint8_t value) {
 	this->_registers->SetA(value);
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_P, this->_registers->GetIFF2());
-	this->_registers->SetFFlag(Flag_N, false);
+	this->_registers->SetF(
+		ZS_Flags[value] |
+		(this->_registers->GetIFF2() ? Flag_P : 0) |
+		(this->_registers->GetF() & Flag_C)
+	);
 
 	this->_registers->IncPC(2);
 	this->_cycles += 9;
@@ -597,14 +597,13 @@ void CPUInst::ADD(uint8_t b, uint8_t cycles, uint8_t size) {
 
 	this->_registers->SetA(value);
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, (A ^ b ^ value) & 0x10);
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_V, (~(A ^ b) & (b ^ value)) & 0x80);
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, pvalue > 0xFF);
+	this->_registers->SetF(
+		(value & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[value] |
+		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
+		(((~(A ^ b) & (b ^ value)) & 0x80) ? Flag_V : 0) |
+		((pvalue > 0xFF) ? Flag_C : 0)
+	);
 
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -623,14 +622,13 @@ void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
 
 	this->_registers->SetA(value);
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, (A ^ b ^ value) & 0x10);
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_V, (~(A ^ b) & (b ^ value)) & 0x80);
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, pvalue > 0xFF);
+	this->_registers->SetF(
+		(value & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[value] |
+		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
+		(((~(A ^ b) & (b ^ value)) & 0x80) ? Flag_V : 0) |
+		((pvalue > 0xFF) ? Flag_C : 0)
+	);
 
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -644,14 +642,14 @@ void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
 
 	this->_registers->SetA(value);
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, (A ^ b ^ value) & 0x10);
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_V, ((A ^ b) & (A ^ value)) & 0x80);
-	this->_registers->SetFFlag(Flag_N, true);
-	this->_registers->SetFFlag(Flag_C, pvalue < 0);
+	this->_registers->SetF(
+		(value & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[value] |
+		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
+		((((A ^ b) & (A ^ value)) & 0x80) ? Flag_V : 0) |
+		((pvalue < 0) ? Flag_C : 0) |
+		Flag_N
+	);
 
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -670,14 +668,14 @@ void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
 
 	this->_registers->SetA(value);
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, (A ^ b ^ value) & 0x10);
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_V, ((A ^ b) & (A ^ value)) & 0x80);
-	this->_registers->SetFFlag(Flag_N, true);
-	this->_registers->SetFFlag(Flag_C, pvalue < 0);
+	this->_registers->SetF(
+		(value & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[value] |
+		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
+		((((A ^ b) & (A ^ value)) & 0x80) ? Flag_V : 0) |
+		((pvalue < 0) ? Flag_C : 0) |
+		Flag_N
+	);
 
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
@@ -910,11 +908,15 @@ void CPUInst::DAA() {
 // |1|4| The contents of a are inverted (one's complement).
 void CPUInst::CPL() {
 	uint8_t A = ~this->_registers->GetA();
-	this->_registers->SetFFlag(Flag_F3, A & Flag_F3);
-	this->_registers->SetFFlag(Flag_F5, A & Flag_F5);
 	this->_registers->SetA(A);
-	this->_registers->SetFFlag(Flag_H, true);
-	this->_registers->SetFFlag(Flag_N, true);
+
+	this->_registers->SetF(
+		(A & (Flag_F3 | Flag_F5)) |
+		Flag_N |
+		Flag_H |
+		(this->_registers->GetF() & (Flag_C | Flag_P | Flag_Z | Flag_S))
+	);
+
 	this->_registers->IncPC();
 	this->_cycles += 4;
 }
@@ -924,14 +926,16 @@ void CPUInst::NEG() {
 	uint8_t A = this->_registers->GetA();
 	uint8_t value = 0 - A;
 	this->_registers->SetA(value);
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (A ^ value) & 0x10);
-	this->_registers->SetFFlag(Flag_V, A == 0x80);
-	this->_registers->SetFFlag(Flag_N, true);
-	this->_registers->SetFFlag(Flag_C, A != 0);
+
+	this->_registers->SetF(
+		(value & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[value] |
+		(((A ^ value) & 0x10) ? Flag_H : 0) |
+		((A == 0x80) ? Flag_V : 0) |
+		((A != 0) ? Flag_C : 0) |
+		Flag_N
+	);
+
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
 }
@@ -940,11 +944,14 @@ void CPUInst::NEG() {
 void CPUInst::CCF() {
 	bool carry = this->_registers->GetF() & Flag_C;
 	uint8_t A = this->_registers->GetA();
-	this->_registers->SetFFlag(Flag_F3, A & Flag_F3);
-	this->_registers->SetFFlag(Flag_F5, A & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, carry);
-	this->_registers->SetFFlag(Flag_N, false);
- 	this->_registers->SetFFlag(Flag_C, !carry);
+
+	this->_registers->SetF(
+		(A & (Flag_F3 | Flag_F5)) |
+		(carry ? Flag_H : 0) |
+		(!carry ? Flag_C : 0) |
+		(this->_registers->GetF() & (Flag_P | Flag_Z | Flag_S))
+	);
+
 	this->_registers->IncPC();
 	this->_cycles += 4;
 }
@@ -952,11 +959,13 @@ void CPUInst::CCF() {
 // |1|4| Sets the carry flag.
 void CPUInst::SCF() {
 	uint8_t A = this->_registers->GetA();
-	this->_registers->SetFFlag(Flag_F3, A & Flag_F3);
-	this->_registers->SetFFlag(Flag_F5, A & Flag_F5);
-	this->_registers->SetFFlag(Flag_H, false);
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, true);
+
+	this->_registers->SetF(
+		(A & (Flag_F3 | Flag_F5)) |
+		Flag_C |
+		(this->_registers->GetF() & (Flag_P | Flag_Z | Flag_S))
+	);
+
 	this->_registers->IncPC();
 	this->_cycles += 4;
 }
@@ -971,20 +980,24 @@ void CPUInst::ADCHLss(uint8_t reg) {
 	uint16_t b = this->_registers->GetRegss(reg);
 	uint16_t value = old + b;
 	int32_t pvalue = ((int16_t) old) + ((int16_t) b);
+
 	if (this->_registers->GetF() & Flag_C) {
 		value++;
 		pvalue++;
 	}
 
 	this->_registers->SetHL(value);
-	this->_registers->SetFFlag(Flag_F3, value & 0x0800);
-	this->_registers->SetFFlag(Flag_F5, value & 0x2000);
-	this->_registers->SetFFlag(Flag_S, value & 0x8000);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (value & 0xFFF) < (old & 0xFFF));
-	this->_registers->SetFFlag(Flag_V, pvalue > 32767 || pvalue < -32768);
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, value < old);
+
+	this->_registers->SetF(
+		((value & Flag_F3H) ? Flag_F3 : 0) |
+		((value & Flag_F5H) ? Flag_F5 : 0) |
+		((value & 0x8000) ? Flag_S : 0) |
+		((value == 0) ? Flag_Z : 0) |
+		(((value & 0xFFF) < (old & 0xFFF)) ? Flag_H : 0) |
+		((pvalue > 32767 || pvalue < -32768) ? Flag_V : 0) |
+		((value < old) ? Flag_C : 0)
+	);
+
 	this->_registers->IncPC(2);
 	this->_cycles += 15;
 }
@@ -1002,14 +1015,18 @@ void CPUInst::SBCHLss(uint8_t reg) {
 	}
 
 	this->_registers->SetHL(value);
-	this->_registers->SetFFlag(Flag_F3, value & 0x0800);
-	this->_registers->SetFFlag(Flag_F5, value & 0x2000);
-	this->_registers->SetFFlag(Flag_S, value & 0x8000);
-	this->_registers->SetFFlag(Flag_Z, value == 0);
-	this->_registers->SetFFlag(Flag_H, (value & 0xFFF) > (old & 0xFFF));
-	this->_registers->SetFFlag(Flag_V, pvalue > 32767 || pvalue < -32768);
-	this->_registers->SetFFlag(Flag_N, true);
-	this->_registers->SetFFlag(Flag_C, value > old);
+
+	this->_registers->SetF(
+		((value & Flag_F3H) ? Flag_F3 : 0) |
+		((value & Flag_F5H) ? Flag_F5 : 0) |
+		((value & 0x8000) ? Flag_S : 0) |
+		((value == 0) ? Flag_Z : 0) |
+		(((value & 0xFFF) > (old & 0xFFF)) ? Flag_H : 0) |
+		((pvalue > 32767 || pvalue < -32768) ? Flag_V : 0) |
+		Flag_N |
+		((value > old) ? Flag_C : 0)
+	);
+
 	this->_registers->IncPC(2);
 	this->_cycles += 15;
 }
@@ -1629,14 +1646,13 @@ void CPUInst::RRD() {
 void CPUInst::BIT(uint8_t valueb, uint8_t compare) {
 	uint8_t value = valueb & compare;
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, !value);
-	this->_registers->SetFFlag(Flag_P, !value);
-	this->_registers->SetFFlag(Flag_H, true);
-	this->_registers->SetFFlag(Flag_N, false);
-
-	this->_registers->SetFFlag(Flag_F3, value & Flag_F3);
-	this->_registers->SetFFlag(Flag_F5, value & Flag_F5);
+	this->_registers->SetF(
+		(value & (Flag_F3 | Flag_F5)) |
+		(!value ? Flag_P : 0) |
+		Flag_H |
+		ZS_Flags[value] |
+		(this->_registers->GetF() & Flag_C)
+	);
 
 	this->_registers->IncPC(2);
 	this->_cycles += 8;
@@ -1647,14 +1663,14 @@ void CPUInst::BITHL(uint8_t compare) {
 	uint8_t valueb = this->ReadMemory(HL);
 	uint8_t value = valueb & compare;
 
-	this->_registers->SetFFlag(Flag_S, value & 0x80);
-	this->_registers->SetFFlag(Flag_Z, !value);
-	this->_registers->SetFFlag(Flag_P, !value);
-	this->_registers->SetFFlag(Flag_H, true);
-	this->_registers->SetFFlag(Flag_N, false);
-
-	this->_registers->SetFFlag(Flag_F3, HL & 0x0800);
-	this->_registers->SetFFlag(Flag_F5, HL & 0x2000);
+	this->_registers->SetF(
+		((HL & Flag_F3H) ? Flag_F3 : 0) |
+		((HL & Flag_F5H) ? Flag_F5 : 0) |
+		(!value ? Flag_P : 0) |
+		Flag_H |
+		ZS_Flags[value] |
+		(this->_registers->GetF() & Flag_C)
+	);
 
 	this->_registers->IncPC(2);
 	this->_cycles += 12;

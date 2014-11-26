@@ -84,7 +84,7 @@ C418: FD CB 2E SRA (IY + 01h)
 C418: DD CB 36 SLL (IX + 01h) 
 C418: FD CB 36 SLL (IY + 01h) 
 C418: DD CB 3E SRL (IX + 01h) 
-C418: FD CB 3E SRL (IY + 01h)    CRC:42eb5fe2 expected:b4347c81
+C418: FD CB 3E SRL (IY + 01h) OK
 ld <h,l>,(<ix,iy>+1).........
 C418: DD 66    LD H, (IX + 00h) 
 C418: FD 66    LD H, (IY + 00h) 
@@ -357,7 +357,7 @@ C418: CB 3B    SRL E
 C418: CB 3C    SRL H 
 C418: CB 3D    SRL L 
 C418: CB 3E    SRL (HL) 
-C418: CB 3F    SRL A    CRC:6139d9a8 expected:150c42ed
+C418: CB 3F    SRL A OK
 ld <bcdexya>,<bcdexya>.......
 C418: DD 44    LD B, IXh 
 C418: FD 44    LD B, IYh 
@@ -409,7 +409,7 @@ C418: DD 7D    LD A, IXl
 C418: FD 7D    LD A, IYl OK
 <rrd,rld>....................
 C418: ED 67    RRD 
-C418: ED 6F    RLD    CRC:127b7824 expected:9d030f06
+C418: ED 6F    RLD OK
 <set,res> n,<bcdehl(hl)a>....
 C418: CB 80    RES 0, B 
 C418: CB 81    RES 0, C 
@@ -540,22 +540,22 @@ C418: CB FD    SET 7, L
 C418: CB FE    SET 7, (HL) 
 C418: CB FF    SET 7, A OK
 neg..........................
-C418: ED 44    NEG    CRC:bbc3d922 expected:d638dd6a
+C418: ED 44    NEG OK
 add hl,<bc,de,hl,sp>.........
 C418: 09       ADD HL, BC 
 C418: 19       ADD HL, DE 
 C418: 29       ADD HL, HL 
-C418: 39       ADD HL, SP    CRC:1165fc90 expected:d9a4ca05
+C418: 39       ADD HL, SP OK
 add ix,<bc,de,ix,sp>.........
 C418: DD 09    ADD IX, BC 
 C418: DD 19    ADD IX, DE 
 C418: DD 29    ADD IX, IX 
-C418: DD 39    ADD IX, SP    CRC:c359f7a2 expected:b1df8ec0
+C418: DD 39    ADD IX, SP OK
 add iy,<bc,de,iy,sp>.........
 C418: FD 09    ADD IY, BC 
 C418: FD 19    ADD IY, DE 
 C418: FD 29    ADD IY, IY 
-C418: FD 39    ADD IY, SP    CRC:5fc828e9 expected:39c8589b
+C418: FD 39    ADD IY, SP OK
 aluop a,nn...................
 C418: C6       ADD A, 00h 
 C418: CE       ADC A, 01h 
@@ -564,7 +564,7 @@ C418: DE       SBC A, 01h
 C418: E6       AND 01h 
 C418: EE       XOR 01h 
 C418: F6       OR 01h 
-C418: FE       CP 01h    CRC:0225fc48 expected:51c19c2e
+C418: FE       CP 01h OK
 <adc,sbc> hl,<bc,de,hl,sp>...
 C418: ED 42    SBC HL, BC 
 C418: ED 4A    ADC HL, BC 
@@ -573,7 +573,7 @@ C418: ED 5A    ADC HL, DE
 C418: ED 62    SBC HL, HL 
 C418: ED 6A    ADC HL, HL 
 C418: ED 72    SBC HL, SP 
-C418: ED 7A    ADC HL, SP    CRC:f39089a0 expected:d48ad519
+C418: ED 7A    ADC HL, SP OK
 bit n,<b,c,d,e,h,l,(hl),a>...
 C418: CB 40    BIT 0, B 
 C418: CB 41    BIT 0, C 
@@ -638,12 +638,12 @@ C418: CB 7B    BIT 7, E
 C418: CB 7C    BIT 7, H 
 C418: CB 7D    BIT 7, L 
 C418: CB 7E    BIT 7, (HL) 
-C418: CB 7F    BIT 7, A    CRC:71aea11b expected:a937a161
+C418: CB 7F    BIT 7, A    CRC:e283c214 expected:a937a161
 <daa,cpl,scf,ccf>............
 C418: 27       DAA 
 C418: 2F       CPL 
 C418: 37       SCF 
-C418: 3F       CCF    CRC:cc599a0b expected:6d2dd213
+C418: 3F       CCF OK
 aluop a,(<ix,iy>+1)..........
 C418: DD 86    ADD A, (IX + 01h) 
 C418: FD 86    ADD A, (IY + 01h) 
@@ -660,7 +660,7 @@ C418: FD AE    XOR A, (IY + 01h)
 C418: DD B6    OR A, (IX + 01h) 
 C418: FD B6    OR A, (IY + 01h) 
 C418: DD BE    CP A, (IX + 01h) 
-C418: FD BE    CP A, (IY + 01h)    CRC:b4aa3982 expected:e334341a
+C418: FD BE    CP A, (IY + 01h) OK
 aluop a,<ixh,ixl,iyh,iyl>....
 C418: DD 84    ADD A, IXh 
 C418: FD 84    ADD A, IYh 
@@ -693,7 +693,7 @@ C418: FD B5    OR A, IYl
 C418: DD BC    CP A, IXh 
 C418: FD BC    CP A, IYh 
 C418: DD BD    CP A, IXl 
-C418: FD BD    CP A, IYl    CRC:14ff1f15 expected:a886cc44
+C418: FD BD    CP A, IYl OK
 aluop a,<b,c,d,e,h,l,(hl),a>.
 C418: 80       ADD A, B 
 C418: 81       ADD A, C 
@@ -758,5 +758,5 @@ C418: BB       CP A, E
 C418: BC       CP A, H 
 C418: BD       CP A, L 
 C418: BE       CP A, (HL) 
-C418: BF       CP A, A    CRC:1ef0f01f expected:1ec10a46
+C418: BF       CP A, A OK
 Tests complete

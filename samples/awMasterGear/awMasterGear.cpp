@@ -24,11 +24,11 @@ int main(int argc, char ** argv) {
 			MasterSystem * ms = new MasterSystem();
 			ms->LoadRom(argv[2]);
 /*
-			for (int i = 0; i<508000000; i++) {
-				ms->GetCPU()->CP(10, 10, 0);
+			for (int i = 0; i<137476075; i++) {
+				ms->GetCPU()->ADDXXpp(Reg_HL, 15, 11, 0);
 			}
-			return 0;
-*/
+			return 0;*/
+
 			while (!ms->GetCPU()->IsHalted())
 				ms->RunOpcode();
 
