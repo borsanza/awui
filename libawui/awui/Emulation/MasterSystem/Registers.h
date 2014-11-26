@@ -37,13 +37,8 @@ namespace awui {
 				Flag_Z  = 0x40,
 				Flag_S  = 0x80,
 
-// 				Flag_i_C = 0xFE,
-// 				Flag_i_N = 0xFD,
-// 				Flag_i_P = 0xFB,
-// 				Flag_i_V = 0xFB,
-// 				Flag_i_H = 0xEF,
-// 				Flag_i_Z = 0xBF,
-// 				Flag_i_S = 0x7F,
+				Flag_F3H = 0x0800, // <- Undocumented
+				Flag_F5H = 0x2000, // <- Undocumented
 			};
 
 			enum {

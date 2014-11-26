@@ -263,10 +263,10 @@ void CPU::RunOpcode() {
 		case Ox3C: this->INCr(Reg_A, 4, 1); break;
 
 		// ADD HL, s
-		case Ox09: this->ADDXXpp(Reg_HL, Reg_BC, 11, 1); break;
-		case Ox19: this->ADDXXpp(Reg_HL, Reg_DE, 11, 1); break;
-		case Ox29: this->ADDXXpp(Reg_HL, Reg_HL, 11, 1); break;
-		case Ox39: this->ADDXXpp(Reg_HL, Reg_SP, 11, 1); break;
+		case Ox09: this->ADDXXpp(Reg_HL, this->_registers->GetBC(), 11, 1); break;
+		case Ox19: this->ADDXXpp(Reg_HL, this->_registers->GetDE(), 11, 1); break;
+		case Ox29: this->ADDXXpp(Reg_HL, this->_registers->GetHL(), 11, 1); break;
+		case Ox39: this->ADDXXpp(Reg_HL, this->_registers->GetSP(), 11, 1); break;
 
 		case Ox07: this->RLCA(); break;
 		case Ox0F: this->RRCA(); break;
@@ -396,21 +396,17 @@ void CPU::RunOpcode() {
 		// 0A: LD A, (BC)
 		// |1|7| Loads the value pointed to by bc into a.
 		case Ox0A:
-			{
-				this->_registers->SetA(this->ReadMemory(this->_registers->GetBC()));
-				this->_registers->IncPC();
-				this->_cycles += 7;
-			}
+			this->_registers->SetA(this->ReadMemory(this->_registers->GetBC()));
+			this->_registers->IncPC();
+			this->_cycles += 7;
 			break;
 
 		// 1A: LD A, (DE)
 		// |1|7| Loads the value pointed to by de into a.
 		case Ox1A:
-			{
-				this->_registers->SetA(this->ReadMemory(this->_registers->GetDE()));
-				this->_registers->IncPC();
-				this->_cycles += 7;
-			}
+			this->_registers->SetA(this->ReadMemory(this->_registers->GetDE()));
+			this->_registers->IncPC();
+			this->_cycles += 7;
 			break;
 
 		// 3A: LD A, (**)
@@ -1092,10 +1088,10 @@ void CPU::RunOpcode() {
 /*************************** IX instructions (DD) *****************************/
 /******************************************************************************/
 
-		case OxDD09: this->ADDXXpp(Reg_IX, Reg_BC, 15, 2); break;
-		case OxDD19: this->ADDXXpp(Reg_IX, Reg_DE, 15, 2); break;
-		case OxDD29: this->ADDXXpp(Reg_IX, Reg_IX, 15, 2); break;
-		case OxDD39: this->ADDXXpp(Reg_IX, Reg_SP, 15, 2); break;
+		case OxDD09: this->ADDXXpp(Reg_IX, this->_registers->GetBC(), 15, 2); break;
+		case OxDD19: this->ADDXXpp(Reg_IX, this->_registers->GetDE(), 15, 2); break;
+		case OxDD29: this->ADDXXpp(Reg_IX, this->_registers->GetIX(), 15, 2); break;
+		case OxDD39: this->ADDXXpp(Reg_IX, this->_registers->GetSP(), 15, 2); break;
 
 		case OxDD86: this->ADD(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxDD8E: this->ADC(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
@@ -1294,10 +1290,10 @@ void CPU::RunOpcode() {
 /*************************** IY instructions (FD) *****************************/
 /******************************************************************************/
 
-		case OxFD09: this->ADDXXpp(Reg_IY, Reg_BC, 15, 2); break;
-		case OxFD19: this->ADDXXpp(Reg_IY, Reg_DE, 15, 2); break;
-		case OxFD29: this->ADDXXpp(Reg_IY, Reg_IY, 15, 2); break;
-		case OxFD39: this->ADDXXpp(Reg_IY, Reg_SP, 15, 2); break;
+		case OxFD09: this->ADDXXpp(Reg_IY, this->_registers->GetBC(), 15, 2); break;
+		case OxFD19: this->ADDXXpp(Reg_IY, this->_registers->GetDE(), 15, 2); break;
+		case OxFD29: this->ADDXXpp(Reg_IY, this->_registers->GetIY(), 15, 2); break;
+		case OxFD39: this->ADDXXpp(Reg_IY, this->_registers->GetSP(), 15, 2); break;
 
 		case OxFD86: this->ADD(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxFD8E: this->ADC(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;

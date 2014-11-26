@@ -788,10 +788,11 @@ void CPUInst::DECm(uint8_t reg, uint8_t cycles, uint8_t size) {
 
 // |1|11| Subtracts one from (hl)
 void CPUInst::DECHL() {
-	uint8_t old = this->ReadMemory(this->_registers->GetHL());
+	uint16_t HL = this->_registers->GetHL();
+	uint8_t old = this->ReadMemory(HL);
 	uint8_t value = old - 1;
 
-	this->WriteMemory(this->_registers->GetHL(), value);
+ 	this->WriteMemory(HL, value);
 
 	this->_registers->SetF(
 		(value & (Flag_F3 | Flag_F5)) |
@@ -1014,16 +1015,20 @@ void CPUInst::SBCHLss(uint8_t reg) {
 }
 
 // |2|15| The value of pp is added to XX.
-void CPUInst::ADDXXpp(uint8_t XX, uint8_t pp, uint8_t cycles, uint8_t size) {
+void CPUInst::ADDXXpp(uint8_t XX, uint16_t reg2, uint8_t cycles, uint8_t size) {
 	uint16_t reg1 = this->_registers->GetRegss(XX);
-	uint16_t reg2 = this->_registers->GetRegss(pp);
 	uint32_t value = reg1 + reg2;
+
 	this->_registers->SetRegss(XX, value);
-	this->_registers->SetFFlag(Flag_F3, value & 0x0800);
-	this->_registers->SetFFlag(Flag_F5, value & 0x2000);
-	this->_registers->SetFFlag(Flag_H, (reg1 ^ reg2 ^ ((uint16_t) value)) & 0x1000);
-	this->_registers->SetFFlag(Flag_N, false);
-	this->_registers->SetFFlag(Flag_C, value > 0xFFFF);
+
+	this->_registers->SetF(
+		(value & Flag_F3H ? Flag_F3 : 0) |
+		(value & Flag_F5H ? Flag_F5 : 0) |
+		(((reg1 ^ reg2 ^ ((uint16_t) value)) & 0x1000) ? Flag_H : 0) |
+		((value > 0xFFFF) ? Flag_C : 0) |
+		(this->_registers->GetF() & (Flag_Z | Flag_S | Flag_P))
+	);
+
 	this->_registers->IncPC(size);
 	this->_cycles += cycles;
 }
