@@ -430,8 +430,10 @@ bool VDP::GetSpritePixel(uint8_t * color) const {
 			continue;
 
 		cont++;
-		if (cont > 8)
-			break;
+		if (cont > 8) {
+			// Descomentar o ponerlo como una opcion en el futuro. Flickering
+//			break;
+		}
 
 		sx = this->_vram->ReadByte(base + 128 + (n * 2));
 		sx -= offset;

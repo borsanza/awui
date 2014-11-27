@@ -17,7 +17,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
-#define MULTIPLY 4
+#define MULTIPLY 3
 
 FormMasterGear::FormMasterGear() {
 	this->_games = new ArrayList();
@@ -43,7 +43,8 @@ void FormMasterGear::InitializeComponent() {
 	this->_debugger = new DebuggerSMS();
 	this->_debugger->SetDock(DockStyle::Right);
 	this->_debugger->SetTabStop(false);
-	this->_debugger->SetWidth(194);
+	this->_debugger->SetWidth(1);
+	this->_debugger->SetShow(false);
 
 	this->GetControls()->Add(this->_debugger);
 	this->GetControls()->Add(this->_slider);
@@ -51,7 +52,7 @@ void FormMasterGear::InitializeComponent() {
 	int height = 262 * MULTIPLY;
 	if (height < 480)
 		height = 480;
-	this->SetSize((256 * MULTIPLY) + 50 + 194, height);
+	this->SetSize((256 * MULTIPLY) + 50, height);
 	this->SetFullscreen(0);
 	this->SetText("awMasterGear");
 }

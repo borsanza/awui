@@ -37,7 +37,27 @@ int DebuggerSMS::IsClass(Classes::Enum objectClass) const {
 }
 
 void DebuggerSMS::OnTick() {
-	if (!this->_show || !this->_rom)
+	if (!this->_rom)
+		return;
+
+	int newWidth = this->GetWidth();
+	if (!this->_show) {
+		if (this->_width != 1) {
+			this->_width = this->_width + ((0.0f - this->_width) * 0.25f);
+			if (this->_width < 1) this->_width = 1;
+			newWidth = this->_width;
+		}
+	} else {
+		this->_width = this->_width + ((194.0f - this->_width) * 0.25f);
+		newWidth = this->_width;
+	}
+
+	if (newWidth != this->GetWidth()) {
+		this->SetWidth(newWidth);
+		this->GetParent()->Layout();
+	}
+
+	if (this->_width == 1)
 		return;
 
 	uint8_t c, r, g, b;
@@ -94,7 +114,7 @@ void DebuggerSMS::OnTick() {
 }
 
 void DebuggerSMS::OnPaint(OpenGL::GL * gl) {
-	if (!this->_show)
+	if (this->_width == 1)
 		return;
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

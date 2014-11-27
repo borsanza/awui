@@ -20,6 +20,7 @@ namespace awui {
 					Drawing::Image * _tiles;
 					Drawing::Image * _colors;
 					bool _show;
+					float _width;
 
 				public:
 					DebuggerSMS();
