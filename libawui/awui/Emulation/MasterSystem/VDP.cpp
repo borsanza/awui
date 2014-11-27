@@ -302,7 +302,8 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 	}
 
 	if (*col == 271) {
-		if (*line == this->GetTotalHeight() - 2)
+		// Esto es una chapuza, tengo que revisar al milimetro todo el tema de interrupciones de hsync y vsync
+		if (*line == this->GetTotalHeight() - 43)
 			this->_interrupt = true;
 
 		if ((this->_registers[0] & 0x10) && ((this->_registers[10] == 0) || (((*line - 3) % (this->_registers[10] + 1)) == 0)))
