@@ -172,10 +172,10 @@ bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		}
 	}
 
-	if ((Form::GetButtonsPad1() & RemoteButtons::Button5) && (Form::GetButtonsPad1() & RemoteButtons::Button6))
+	if ((Form::GetButtonsPad1() & RemoteButtons::Button5) && (button & RemoteButtons::Button6))
 		this->_cpu->Reset();
 
-	if (Form::GetButtonsPad1() & RemoteButtons::Button4)
+	if (button & RemoteButtons::Button4)
 		this->_debugger->SetShow(!this->_debugger->GetShow());
 
 	if (this->_canChangeControl)

@@ -69,10 +69,11 @@ void CPU::LoadRom(const String file) {
 }
 
 void CPU::CheckInterrupts() {
+	bool interrupt = this->_vdp->GetInterrupt();
 	if (!this->_registers->GetIFF1())
 		return;
 
-	if (this->_vdp->GetInterrupt()) {
+	if (interrupt) {
 //		printf("Entra %d\n", this->_vdp->GetLine());
 		this->_inInterrupt = true;
 		this->_registers->SetIFF1(false);
@@ -198,19 +199,21 @@ void CPU::RunOpcode() {
 		printf("%s", logCode);
 		this->_opcode.ShowLogOpcode(opcodeEnum);
 		printf(" ");
-		// printf("\n");
-		// printf("AF: %.4X  ", this->_registers->GetAF());
-		// printf("BC: %.4X  ", this->_registers->GetBC());
-		// printf("DE: %.4X  ", this->_registers->GetDE());
-		// printf("HL: %.4X  ", this->_registers->GetHL());
-		// printf("IX: %.4X  ", this->_registers->GetIX());
-		// printf("IY: %.4X  ", this->_registers->GetIY());
-		// printf("\n");
-		// printf("PC: %.4X  ", pc);
-		// printf("SP: %.4X  ", this->_registers->GetSP());
-		// printf("\n");
-		// printf("\n");
-		// fflush(stdout);
+		printf("\n");
+		printf("AF: %.4X  ", this->_registers->GetAF());
+		printf("BC: %.4X  ", this->_registers->GetBC());
+		printf("DE: %.4X  ", this->_registers->GetDE());
+		printf("HL: %.4X  ", this->_registers->GetHL());
+		printf("IX: %.4X  ", this->_registers->GetIX());
+		printf("IY: %.4X  ", this->_registers->GetIY());
+		printf("\n");
+		printf("PC: %.4X  ", pc);
+		printf("SP: %.4X  ", this->_registers->GetSP());
+		printf("Column: %.3d  ", this->_vdp->GetColumn());
+		printf("Line: %.3d  ", this->_vdp->GetLine());
+		printf("\n");
+		printf("\n");
+		fflush(stdout);
 	}
 #endif
 

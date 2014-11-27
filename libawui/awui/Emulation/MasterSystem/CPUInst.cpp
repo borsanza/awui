@@ -1787,11 +1787,13 @@ void CPUInst::RET(bool cc, uint8_t cycles) {
 
 // |1|11| The current pc value plus one is pushed onto the stack, then is loaded with ph.
 void CPUInst::RSTp(uint8_t p) {
-	uint16_t pc = this->_registers->GetPC() + 1;
+	Word pc;
+	pc.W = this->_registers->GetPC() + 1;
 	uint16_t sp = this->_registers->GetSP() - 2;
 	this->_registers->SetSP(sp);
-	this->WriteMemory(sp, pc & 0xFF);
-	this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
+	this->WriteMemory(sp + 1, pc.H);
+	this->WriteMemory(sp, pc.L);
+
 	this->_cycles += 11;
 	this->_registers->SetPC(p);
 }
