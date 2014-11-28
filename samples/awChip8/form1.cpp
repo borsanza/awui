@@ -27,7 +27,7 @@ void Form1::InitializeComponent() {
 	this->_chip8 = new Chip8();
 	this->GetControls()->Add(this->_chip8);
 
-	this->SetSize(460, 460);
+	this->SetSize(120, 10);
 	this->SetFullscreen(0);
 }
 

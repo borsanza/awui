@@ -1,55 +1,45 @@
-/*
- * awui/Emulation/Chip8/Processor.cpp
- *
- * Copyright (C) 2014 Borja Sánchez Zamorano
- */
-
 #include "Processor.h"
-
-#include <assert.h>
-#include <awui/Console.h>
-#include <awui/Convert.h>
-#include <awui/Random.h>
-#include <awui/Emulation/Chip8/Screen.h>
-#include <awui/Emulation/Chip8/Memory.h>
-#include <awui/Emulation/Chip8/Registers.h>
-#include <awui/String.h>
+#include <awui/IO/FileStream.h>
 
 using namespace awui::Emulation::Chip8;
+using namespace awui::IO;
 
 Processor::Processor() {
-	this->_screen = new Screen(64, 32);
-	this->_memory = new Memory(4096);
-	this->_registers = new Registers(16);
-	this->_random = new Random();
-	this->_pc = 0x200;
+	for (int i = 0; i < 16  ; i++) _registers[i] = 0;
+	for (int i = 0; i < 4096; i++) _memory[i] = 0;
+	ClearScreen();
 }
 
-Processor::~Processor() {
-	delete this->_random;
-	delete this->_screen;
-	delete this->_memory;
-	delete this->_registers;
+void Processor::ClearScreen() {
+	for (int i = 0; i < WIDTH * HEIGHT; i++)
+		_screen[i] = 0;
 }
 
 void Processor::LoadRom(const String file) {
-	this->_memory->LoadRom(file);
+	_pc = 0x200;
+	FileStream fs(file, FileMode::Open, FileAccess::Read);
+
+	while (fs.GetPosition() < fs.GetLength())
+		_memory[_pc++] = fs.ReadByte();
+
+	fs.Close();
+	_pc = 0x200;
 }
 
 void Processor::OnTick() {
 	// Intentando 400Hz, similar a 60Hz * 7
 	bool draw = 0;
 	for (int i = 0; i < 7; i++)
-		draw += this->RunOpcode();
+		draw += RunOpcode();
 
 	if (draw)
-		this->_screen->WriteConsole();
+		PrintScreen();
 }
 
 bool Processor::RunOpcode() {
 	bool drawed = 0;
-	int opcode1 = this->_memory->ReadByte(this->_pc);
-	int opcode2 = this->_memory->ReadByte(this->_pc + 1);
+	int opcode1 = _memory[_pc];
+	int opcode2 = _memory[_pc + 1];
 	int op1 = opcode1 >> 4;
 	int op2 = opcode1 & 0xf;
 	int op3 = opcode2 >> 4;
@@ -63,12 +53,8 @@ bool Processor::RunOpcode() {
 				switch (offset) {
 					// 00E0: Clears the screen.
 					case 0x0e0:
-						this->_screen->Clear();
-						this->_pc += 2;
-						break;
-					case 0x0ee:
-						break;
-					default:
+						ClearScreen();
+						_pc += 2;
 						break;
 				}
 			}
@@ -76,58 +62,47 @@ bool Processor::RunOpcode() {
 
 		// 1NNN: Jumps to address NNN.
 		case 0x1:
-			this->_pc = op2 << 8 | opcode2;
-			break;
-		case 0x2:
+			_pc = op2 << 8 | opcode2;
 			break;
 
 		// 3XNN: Skips the next instruction if VX equals NN.
 		case 0x3:
-			if (this->_registers->GetV(op2) == opcode2)
-				this->_pc += 2;
+			if (_registers[op2] == opcode2)
+				_pc += 2;
 
-			this->_pc += 2;
-			break;
-		case 0x4:
+			_pc += 2;
 			break;
 
 		// 5XY0: Skips the next instruction if VX equals VY.
 		case 0x5:
-			assert(op4 == 0);
-			if (this->_registers->GetV(op2) == this->_registers->GetV(op3))
-				this->_pc += 2;
+			if (_registers[op2] == _registers[op3])
+				_pc += 2;
 
-			this->_pc += 2;
+			_pc += 2;
 			break;
 
 		// 6XNN: Sets VX to NN.
 		case 0x6:
-			this->_registers->SetV(op2, opcode2);
-			this->_pc += 2;
+			_registers[op2] = opcode2;
+			_pc += 2;
 			break;
 
 		// 7XNN: Adds NN to VX.
 		case 0x7:
-			this->_registers->SetV(op2, this->_registers->GetV(op2) + opcode2);
-			this->_pc += 2;
-			break;
-		case 0x8:
-			break;
-		case 0x9:
+			_registers[op2] = _registers[op2] + opcode2;
+			_pc += 2;
 			break;
 
 		// ANNN: Sets I to the address NNN.
 		case 0xa:
-			this->_registers->SetI(op2 << 8 | opcode2);
-			this->_pc += 2;
-			break;
-		case 0xb:
+			_i = op2 << 8 | opcode2;
+			_pc += 2;
 			break;
 
 		// CXKK: Sets VX to a random number and NN.
 		case 0xc:
-			this->_registers->SetV(op2, this->_random->Next(0, 256) & opcode2);
-			this->_pc += 2;
+			_registers[op2] = _random.Next(0, 256) & opcode2;
+			_pc += 2;
 			break;
 
 		// DXYN: Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels
@@ -138,46 +113,70 @@ bool Processor::RunOpcode() {
 		// screen pixels are flipped from set to unset when the sprite is drawn,
 		// and to 0 if that doesn't happen.
 		case 0xd: {
-			int x = this->_registers->GetV(op2);
-			int y = this->_registers->GetV(op3);
+			int x = _registers[op2];
+			int y = _registers[op3];
 			int height = op4;
 
 			int changed = 0;
 			for (int y1 = 0; y1 < height; y1++) {
-				uint8_t p = this->_memory->ReadByte(this->_registers->GetI() + y1);
+				uint8_t p = _memory[_i + y1];
 				int bit = 1;
 				for (int x1 = 7; x1 >= 0; x1--) {
 					int val = (p & bit)? 1 : 0;
-					if (this->_screen->SetPixelXOR(x + x1, y + y1, val))
+					if (SetPixelXOR(x + x1, y + y1, val))
 						changed = 1;
 					bit  = bit << 1;
 				}
 			}
 
-			this->_registers->SetV(0xF, changed);
+			_registers[0xF] = changed;
 
-			this->_pc += 2;
+			_pc += 2;
 			drawed = 1;
 			}
 			break;
-		case 0xe:
-			break;
-		case 0xf:
-			break;
 	}
-/*
-	Console::WriteLine("");
-	Console::Write(Convert::ToString(this->_pc));
-	Console::Write(" : ");
-	Console::Write(Convert::ToString(op1));
-	Console::Write("-");
-	Console::Write(Convert::ToString(op2));
-	Console::Write("-");
-	Console::Write(Convert::ToString(op3));
-	Console::Write("-");
-	Console::Write(Convert::ToString(op4));
-	Console::Write("-");
-	Console::Write(Convert::ToString(drawed));
-*/
+
 	return drawed;
 }
+
+bool Processor::SetPixelXOR(int x, int y, bool value) {
+	bool ret = false;
+	int offset = (y * WIDTH) + x;
+
+	int oldValue = _screen[offset];
+	int newValue = oldValue ^ value;
+
+	if (oldValue != newValue) {
+		ret = true;
+		_screen[offset] = newValue;
+	}
+
+	return ret;
+}
+
+void Processor::PrintScreen() {
+	printf("\n ");
+	for (int j = 0; j < WIDTH + 2; j++)
+		printf("-");
+
+	printf("\n");
+	for (int i = 0; i < HEIGHT; i++) {
+		printf(" |");
+		for (int j = 0; j < WIDTH; j++) {
+			if (_screen[(i * WIDTH) + j] == 1)
+				printf("0");
+			else
+				printf(" ");
+		}
+
+		printf("|\n");
+	}
+
+	printf(" ");
+	for (int j = 0; j < WIDTH + 2; j++)
+		printf("-");
+
+	printf("\n");
+}
+
