@@ -5,23 +5,16 @@
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
 
-// Segun documentacion
-#define LEFTBORDER 13
-#define RIGHTBORDER 15
-
-// Comparado con la Master System
-//#define LEFTBORDER 1
-//#define RIGHTBORDER 12
-
 #include "VDP.h"
 
+#include <awui/Emulation/Common/Ram.h>
 #include <awui/Emulation/MasterSystem/CPU.h>
-#include <awui/Emulation/MasterSystem/Ram.h>
 #include <awui/Emulation/MasterSystem/Registers.h>
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
+using namespace awui::Emulation::Common;
 using namespace awui::Emulation::MasterSystem;
 
 /*
@@ -37,27 +30,23 @@ using namespace awui::Emulation::MasterSystem;
  */
 
 VDP::VDP(CPU * cpu) {
-	this->_data = NULL;
-	this->_width = 256;
-	this->_height = 192;
-	this->_ntsc = true;
-	this->_showBorder = false;
+	this->d._width = 256;
+	this->d._height = 192;
+	this->d._ntsc = true;
+	this->d._showBorder = false;
 	this->ResetVideo();
 
 	this->_cpu = cpu;
-	this->_line = 0;
-	this->_col = 0;
-	this->_interrupt = false;
+	this->d._line = 0;
+	this->d._col = 0;
+	this->d._interrupt = false;
 
-	this->_status = 0x1F;
-	this->_address = 0;
-	this->_portState = 0xFF;
-	this->_baseAddress = 0;
+	this->d._status = 0x1F;
+	this->d._address = 0;
+	this->d._portState = 0xFF;
+	this->d._baseAddress = 0;
 
-	this->_controlMode = false;
-
-	// 16Kb in Video Ram
-	this->_vram = new Ram(0x4000);
+	this->d._controlMode = false;
 
 	// Rellenando array de valores para el vertical
 	for (int i = 0; i < 262; i++) {
@@ -85,95 +74,90 @@ VDP::VDP(CPU * cpu) {
 }
 
 VDP::~VDP() {
-	delete this->_vram;
-	delete this->_data;
 }
 
 void VDP::Reset() {
-	this->_data->Clear();
-	this->_vram->Clear();
+	this->Clear();
+	memset(this->d._vram, 0, 16384 * sizeof(uint8_t));
 
 	uint8_t values[] = {0x36, 0x80, 0xFF, 0xFF, 0xFF, 0xFF, 0xFB, 0x00, 0x00, 0x00, 0xFF};
 	for (uint8_t i = 0; i<=10; i++)
-		this->_registers[i] = values[i];
+		this->d._registers[i] = values[i];
 
 	for (uint8_t i = 0; i<32; i++)
-		this->_cram[i] = 0;
+		this->d._cram[i] = 0;
 
 	this->UpdateAllRegisters();
 }
 
 void VDP::Clear() {
-	this->_data->Clear();
+	memset(this->d._data, 0, this->d._sizeData * sizeof(uint8_t));
 }
 
 const uint8_t * VDP::GetColors() const {
-	return this->_cram;
+	return this->d._cram;
 }
 
-Ram * VDP::GetVram() const {
-	return this->_vram;
+uint8_t * VDP::GetVram() {
+	return this->d._vram;
 }
 
 bool VDP::GetShowBorder() const {
-	return this->_showBorder;
+	return this->d._showBorder;
 }
 
 uint16_t VDP::GetLine() const {
-	return this->_line;
+	return this->d._line;
 }
 
 uint16_t VDP::GetColumn() const {
-	return this->_col;
+	return this->d._col;
 }
 
 void VDP::SetShowBorder(bool mode) {
-	if (this->_showBorder != mode) {
-		this->_showBorder = mode;
+	if (this->d._showBorder != mode) {
+		this->d._showBorder = mode;
 		this->ResetVideo();
 	}
 }
 
 void VDP::ResetVideo() {
-	if (!this->_data)
-		this->_data = new Ram(this->GetVisualWidth() * this->GetVisualHeight());
-	else
-		this->_data->Resize(this->GetVisualWidth() * this->GetVisualHeight());
+	this->d._sizeData = this->GetVisualWidth() * this->GetVisualHeight();
 }
 
 void VDP::SetNTSC() {
-	if (!this->_ntsc) {
-		this->_ntsc = true;
+	if (!this->d._ntsc) {
+		this->d._ntsc = true;
 		this->ResetVideo();
 	}
 }
 
 void VDP::SetPAL() {
-	if (this->_ntsc) {
-		this->_ntsc = false;
+	if (this->d._ntsc) {
+		this->d._ntsc = false;
 		this->ResetVideo();
 	}
 }
 
 bool VDP::GetNTSC() const {
-	return this->_ntsc;
+	return this->d._ntsc;
 }
 
 bool VDP::GetPAL() const {
-	return !this->_ntsc;
+	return !this->d._ntsc;
 }
 
 uint16_t VDP::GetWidth() const {
-	return this->_width;
+	return this->d._width;
 }
 
 uint16_t VDP::GetHeight() const {
-	return this->_height;
+	return this->d._height;
 }
 
 void VDP::SetHeight(uint16_t height) {
-	if (height != this->_height) {
-		this->_height = height;
+	if (height != this->d._height) {
+		this->d._height = height;
 		this->ResetVideo();
 	}
 }
@@ -183,14 +167,14 @@ uint16_t VDP::GetTotalWidth() const {
 }
 
 uint16_t VDP::GetVisualWidth() const {
-	if (this->_showBorder)
+	if (this->d._showBorder)
 		return 256 + LEFTBORDER + RIGHTBORDER;
 
 	return this->GetWidth();
 }
 
 uint16_t VDP::GetVisualHeight() const {
-	if (this->_showBorder) {
+	if (this->d._showBorder) {
 		if (this->GetNTSC())
 			return 243;
 		else
@@ -201,29 +185,29 @@ uint16_t VDP::GetVisualHeight() const {
 }
 
 uint16_t VDP::GetActiveLeft() const {
-	if (this->_showBorder)
+	if (this->d._showBorder)
 		return LEFTBORDER;
 
 	return 0;
 }
 
 uint16_t VDP::GetBorderBottom() const {
-	if (this->_showBorder)
+	if (this->d._showBorder)
 		return this->GetVisualHeight() - (this->GetHeight() + this->GetActiveTop());
 
 	return 0;
 }
 
 uint16_t VDP::GetActiveTop() const {
-	if (this->_showBorder) {
+	if (this->d._showBorder) {
 		if (this->GetNTSC()) {
-			switch (this->_height) {
+			switch (this->d._height) {
 				case 192: return 27;
 				case 224: return 11;
 				case 240: return 2;
 			}
 		} else {
-			switch (this->_height) {
+			switch (this->d._height) {
 				case 192: return 54;
 				case 224: return 38;
 				case 240: return 30;
@@ -235,16 +219,16 @@ uint16_t VDP::GetActiveTop() const {
 }
 
 uint16_t VDP::GetTotalHeight() const {
-	return (this->_ntsc ? 262 : 313);
+	return (this->d._ntsc ? 262 : 313);
 }
 
 uint8_t VDP::GetPixel(uint16_t x, uint16_t y) const {
-	return this->_data->ReadByte((y * this->GetVisualWidth()) + x);
+	return this->d._data[(y * this->GetVisualWidth()) + x];
 }
 
 bool VDP::IsVSYNC(uint16_t line) const {
 	if (this->GetNTSC()) {
-		switch (this->_height) {
+		switch (this->d._height) {
 			// 192    Active display
 			// 24     Bottom border
 			// 3      Bottom blanking
@@ -264,7 +248,7 @@ bool VDP::IsVSYNC(uint16_t line) const {
 				return 240 == line;
 		}
 	} else {
-		switch (this->_height) {
+		switch (this->d._height) {
 			// 192    Active display
 			// 48     Bottom border
 			// 3      Bottom blanking
@@ -304,10 +288,10 @@ void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 	if (*col == 271) {
 		// Esto es una chapuza, tengo que revisar al milimetro todo el tema de interrupciones de hsync y vsync
 		if (*line == this->GetTotalHeight() - 43)
-			this->_interrupt = true;
+			this->d._interrupt = true;
 
-		if ((this->_registers[0] & 0x10) && ((this->_registers[10] == 0) || (((*line - 3) % (this->_registers[10] + 1)) == 0)))
-			this->_interrupt = true;
+		if ((this->d._registers[0] & 0x10) && ((this->d._registers[10] == 0) || (((*line - 3) % (this->d._registers[10] + 1)) == 0)))
+			this->d._interrupt = true;
 	}
 
 	// 256 Active Display +
@@ -324,30 +308,30 @@ void VDP::OnTickBorder() {
 	int x = 0;
 	int y = 0;
 	bool draw = false;
-	if ((this->_col >= this->GetWidth()) || (this->_line >= this->GetHeight())) {
-		if (this->_col >= (this->GetTotalWidth() - LEFTBORDER)) {
+	if ((this->d._col >= this->GetWidth()) || (this->d._line >= this->GetHeight())) {
+		if (this->d._col >= (this->GetTotalWidth() - LEFTBORDER)) {
 			draw = true;
-			x = this->_col - (this->GetTotalWidth() - LEFTBORDER);
+			x = this->d._col - (this->GetTotalWidth() - LEFTBORDER);
 		} else {
-			if (this->_col < this->GetWidth() + RIGHTBORDER) {
+			if (this->d._col < this->GetWidth() + RIGHTBORDER) {
 				draw = true;
-				x = LEFTBORDER + this->_col;
+				x = LEFTBORDER + this->d._col;
 			}
 		}
 
-		if (this->_line >= (this->GetTotalHeight() - this->GetActiveTop())) {
+		if (this->d._line >= (this->GetTotalHeight() - this->GetActiveTop())) {
 			draw = true;
-			y = this->_line - (this->GetTotalHeight() - this->GetActiveTop());
+			y = this->d._line - (this->GetTotalHeight() - this->GetActiveTop());
 		} else {
-			if (this->_line < (this->GetHeight() + this->GetBorderBottom())) {
+			if (this->d._line < (this->GetHeight() + this->GetBorderBottom())) {
 				draw = true;
-				y = this->GetActiveTop() + this->_line;
+				y = this->GetActiveTop() + this->d._line;
 			}
 		}
 	}
 
 	if (draw)
-		this->_data->WriteByte(x + (y * this->GetVisualWidth()), this->_cram[this->_registers[7] & 0x0F]);
+		this->d._data[x + (y * this->GetVisualWidth())] = this->d._cram[this->d._registers[7] & 0x0F];
 }
 
 // Background
@@ -364,10 +348,10 @@ uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flip
 	else
 		offset = sprite * 32 + (y * 4);
 
-	uint8_t byte1 = this->_vram->ReadByte(offset);
-	uint8_t byte2 = this->_vram->ReadByte(offset + 1);
-	uint8_t byte3 = this->_vram->ReadByte(offset + 2);
-	uint8_t byte4 = this->_vram->ReadByte(offset + 3);
+	uint8_t byte1 = this->d._vram[offset];
+	uint8_t byte2 = this->d._vram[offset + 1];
+	uint8_t byte3 = this->d._vram[offset + 2];
+	uint8_t byte4 = this->d._vram[offset + 3];
 	uint8_t mask, realX;
 
 	if (flipx) {
@@ -393,12 +377,12 @@ uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flip
 
 // Sprite
 bool VDP::GetSpritePixel(uint8_t * color) const {
-	uint8_t x = this->_col;
-	uint8_t y = this->_line;
+	uint8_t x = this->d._col;
+	uint8_t y = this->d._line;
 
 
 	int offset = 0;
-	if (this->_registers[0] & 0x8) {
+	if (this->d._registers[0] & 0x8) {
 		offset = 8;
 //		x += 8;
 	}
@@ -406,20 +390,20 @@ bool VDP::GetSpritePixel(uint8_t * color) const {
 	int16_t sx;
 	int16_t sy;
 	uint16_t pattern;
-	uint8_t height = (this->_registers[1] & 0x2) ? 16 : 8;
+	uint8_t height = (this->d._registers[1] & 0x2) ? 16 : 8;
 	uint8_t width = 8;
 
-	bool doble = (this->_registers[1] & 0x1);
+	bool doble = (this->d._registers[1] & 0x1);
 	if (doble) {
 		height = height << 1;
 		width = width << 1;
 	}
 
-	uint16_t base = ((uint16_t) this->_registers[5] & 0x7E) << 7;
+	uint16_t base = ((uint16_t) this->d._registers[5] & 0x7E) << 7;
 
 	int cont = 0;
 	for (int n = 0; n < 64; n++) {
-		sy = this->_vram->ReadByte(base + n);
+		sy = this->d._vram[base + n];
 
 		if (sy == 0xD0)
 			return false;
@@ -436,14 +420,14 @@ bool VDP::GetSpritePixel(uint8_t * color) const {
 //			break;
 		}
 
-		sx = this->_vram->ReadByte(base + 128 + (n * 2));
+		sx = this->d._vram[base + 128 + (n * 2)];
 		sx -= offset;
 
 		if ((x < sx) || (x >= (sx + width)))
 			continue;
 
-		pattern = this->_vram->ReadByte(base + 129 + (n * 2));
-		if (this->_registers[6] & 0x4)
+		pattern = this->d._vram[base + 129 + (n * 2)];
+		if (this->d._registers[6] & 0x4)
 			pattern |= 0x100;
 
 		* color = this->GetSpriteColor(pattern, x - sx, y - sy - 1, false, false, true, doble);
@@ -461,19 +445,19 @@ uint8_t VDP::GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flip
 
 	if (!bgPriority) {
 		if (this->GetSpritePixel(&color))
-			return this->_cram[color];
+			return this->d._cram[color];
 
 		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete, false);
 
-		return this->_cram[color];
+		return this->d._cram[color];
 	} else {
 		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete, false);
 		if ((color & 0xF) == 0) {
 			if (this->GetSpritePixel(&color))
-				return this->_cram[color];
+				return this->d._cram[color];
 		}
 
-		return this->_cram[color];
+		return this->d._cram[color];
 	}
 }
 
@@ -481,73 +465,73 @@ bool VDP::OnTick(uint32_t counter) {
 	bool ret = false;
 	bool hsync, vsync;
 
-	this->CalcNextPixel(&this->_col, &this->_line, &hsync, &vsync);
+	this->CalcNextPixel(&this->d._col, &this->d._line, &hsync, &vsync);
 	if (vsync) {
-		this->_status |= 0x80;
+		this->d._status |= 0x80;
 		ret = true;
 	}
 
 //	if (hsync)
 //		this->_status |= 0x40;
 
-	if (this->_line == 0 && this->_col == 0)
-		this->_verticalScroll = this->_registers[9];
+	if (this->d._line == 0 && this->d._col == 0)
+		this->d._verticalScroll = this->d._registers[9];
 
-	if ((this->_col < this->_width) && (this->_line < this->_height)) {
-		int16_t col = this->_col;
-		int16_t line = this->_line;
+	if ((this->d._col < this->d._width) && (this->d._line < this->d._height)) {
+		int16_t col = this->d._col;
+		int16_t line = this->d._line;
 		bool vScroll = true;
 		bool hScroll = true;
 		bool black = false;
 
-		if (this->_registers[1] & 0x10)
+		if (this->d._registers[1] & 0x10)
 			line -= 32;
 
-		if (((line >> 3) <= 1) && (this->_registers[0] & 0x40))
+		if (((line >> 3) <= 1) && (this->d._registers[0] & 0x40))
 			hScroll = false;
 
-		if ((((col - (this->_registers[8] & 0x7))>> 3) >= 24) && (this->_registers[0] & 0x80))
+		if ((((col - (this->d._registers[8] & 0x7))>> 3) >= 24) && (this->d._registers[0] & 0x80))
 			vScroll = false;
 		else
-			if ((((col >> 3) >= 24) && (this->_registers[0] & 0x80)) && !hScroll)
+			if ((((col >> 3) >= 24) && (this->d._registers[0] & 0x80)) && !hScroll)
 				vScroll = false;
 
-		if (col < (this->_registers[8] & 0x7) && hScroll && ((this->_registers[8] & 0x7) != 0))
+		if (col < (this->d._registers[8] & 0x7) && hScroll && ((this->d._registers[8] & 0x7) != 0))
 			black = true;
 
 		if (hScroll) {
-			col = col - this->_registers[8];
+			col = col - this->d._registers[8];
 			while (col < 0) col += 256;
 		}
 
 		if (vScroll) {
-			line = line + this->_verticalScroll;
+			line = line + this->d._verticalScroll;
 			while (line >= 0xe0) line -= 0xe0;
 		}
 
 		int32_t pos;
-		if (this->_showBorder)
-			pos = this->_col + this->GetActiveLeft() + ((this->_line + this->GetActiveTop()) * this->GetVisualWidth());
+		if (this->d._showBorder)
+			pos = this->d._col + this->GetActiveLeft() + ((this->d._line + this->GetActiveTop()) * this->GetVisualWidth());
 		else
-			pos = this->_col + (this->_line * this->GetVisualWidth());
+			pos = this->d._col + (this->d._line * this->GetVisualWidth());
 
 		// Blank Display
-		if (black || !(this->_registers[1] & 0x40) || ((this->_registers[0] & 0x20) && (this->_col < 8))) {
-			this->_data->WriteByte(pos, this->_cram[this->_registers[7] & 0x0F]);
+		if (black || !(this->d._registers[1] & 0x40) || ((this->d._registers[0] & 0x20) && (this->d._col < 8))) {
+			this->d._data[pos] = this->d._cram[this->d._registers[7] & 0x0F];
 		} else {
-			uint16_t base = (this->_registers[2] & 0x0E) << 10;
+			uint16_t base = (this->d._registers[2] & 0x0E) << 10;
 			int32_t offset = base + ((line >> 3) * 64) + ((col >> 3) * 2);
-			uint8_t byte1 = this->_vram->ReadByte(offset);
-			uint8_t byte2 = this->_vram->ReadByte(offset + 1);
+			uint8_t byte1 = this->d._vram[offset];
+			uint8_t byte2 = this->d._vram[offset + 1];
 			uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
 			bool flipx = byte2 & 2;
 			bool flipy = byte2 & 4;
 			bool otherPalette = byte2 & 8;
 			bool priority = byte2 & 16;
-			this->_data->WriteByte(pos, this->GetBackgroundPixel(sprite, col & 0x7, line & 0x7, flipx, flipy, otherPalette, priority));
+			this->d._data[pos] = this->GetBackgroundPixel(sprite, col & 0x7, line & 0x7, flipx, flipy, otherPalette, priority);
 		}
 	} else {
-		if (this->_showBorder)
+		if (this->d._showBorder)
 			this->OnTickBorder();
 	}
 
@@ -564,11 +548,11 @@ bool VDP::OnTick(uint32_t counter) {
  */
 
 uint8_t VDP::GetStatus(bool resetStatus) {
-	uint8_t r = this->_status;
+	uint8_t r = this->d._status;
 
 	// Clear bits 6, 7, 8
 	if (resetStatus)
-		this->_status &= 0x1F;
+		this->d._status &= 0x1F;
 
 	return r;
 }
@@ -577,58 +561,58 @@ void VDP::UpdateAllRegisters() {
 	// Register #0
 
 	// Register #1
-	this->_visible = this->_registers[0] & 0x40;
+	this->d._visible = this->d._registers[0] & 0x40;
 
-	if (this->_registers[0] & 0x04) {
+	if (this->d._registers[0] & 0x04) {
 		uint16_t height = 192;
-		if (this->_registers[0] & 0x02) {
-			if (this->_registers[1] & 0x10)
+		if (this->d._registers[0] & 0x02) {
+			if (this->d._registers[1] & 0x10)
 				height = 224;
 			else
-				if (this->_registers[1] & 0x08)
+				if (this->d._registers[1] & 0x08)
 					height = 240;
 		}
 
 		this->SetHeight(height);
 	}
 
-	if (this->_registers[1] & 0x01) {
-		if (this->_registers[0] & 0x04)
-			this->_spriteSize = SPRITE_8x16;
+	if (this->d._registers[1] & 0x01) {
+		if (this->d._registers[0] & 0x04)
+			this->d._spriteSize = SPRITE_8x16;
 		else
-			this->_spriteSize = SPRITE_16x16;
+			this->d._spriteSize = SPRITE_16x16;
 	} else
-		this->_spriteSize = SPRITE_8x8;
+		this->d._spriteSize = SPRITE_8x8;
 
 	// Register #2
-	uint8_t code = (this->_registers[2] >> 1) & 0x7;
-	if ((this->_height == 224) || (this->_height == 240)) {
+	uint8_t code = (this->d._registers[2] >> 1) & 0x7;
+	if ((this->d._height == 224) || (this->d._height == 240)) {
 		code = code >> 1;
-		this->_baseAddress = (code * 0x1000) + 0x0700;
+		this->d._baseAddress = (code * 0x1000) + 0x0700;
 	} else {
-		this->_baseAddress = code * 0x0800;
+		this->d._baseAddress = code * 0x0800;
 	}
 }
 
 void VDP::WriteControlByte(uint8_t value) {
-	if (!this->_controlMode) {
-		this->_controlMode = true;
-		this->_address = (this->_address & 0x3F00) | value;
+	if (!this->d._controlMode) {
+		this->d._controlMode = true;
+		this->d._address = (this->d._address & 0x3F00) | value;
 		return;
 	}
 
-	this->_address = (value & 0x3F) << 8 | (this->_address & 0xFF);
+	this->d._address = (value & 0x3F) << 8 | (this->d._address & 0xFF);
 
-	this->_portState = value >> 6;
+	this->d._portState = value >> 6;
 
-	switch (this->_portState) {
+	switch (this->d._portState) {
 		// A byte of VRAM is read from the location defined by the
 		// address register and is stored in the read buffer. The
 		// address register is incremented by one. Writes to the
 		// data port go to VRAM.
 		case 0:
-			this->_readbuffer = this->_vram->ReadByte(this->_address);
-			this->_address = (this->_address + 1) & 0x3FFF;
+			this->d._readbuffer = this->d._vram[this->d._address];
+			this->d._address = (this->d._address + 1) & 0x3FFF;
 			break;
 
 		// Writes to the data port go to VRAM.
@@ -641,7 +625,7 @@ void VDP::WriteControlByte(uint8_t value) {
 			{
 				uint8_t pos = value & 0xF;
 				if (pos < 11) {
-					this->_registers[pos] = this->_address & 0xFF;
+					this->d._registers[pos] = this->d._address & 0xFF;
 					this->UpdateAllRegisters();
 				}
 			}
@@ -652,23 +636,23 @@ void VDP::WriteControlByte(uint8_t value) {
 			break;
 	}
 
-	this->_controlMode = false;
+	this->d._controlMode = false;
 }
 
 void VDP::WriteDataByte(uint8_t value) {
-	switch (_portState) {
+	switch (d._portState) {
 		case 0:
 		case 1:
 		case 2:
-			this->_vram->WriteByte(this->_address, value);
-			this->_readbuffer = value;
+			this->d._vram[this->d._address] = value;
+			this->d._readbuffer = value;
 			break;
 		case 3:
-			this->_cram[this->_address & 0x1F] = value;
+			this->d._cram[this->d._address & 0x1F] = value;
 			break;
 	}
 
-	this->_address = (this->_address + 1) & 0x3FFF;
+	this->d._address = (this->d._address + 1) & 0x3FFF;
 }
 
 void VDP::WriteByte(uint8_t port, uint8_t value) {
@@ -696,33 +680,33 @@ uint8_t VDP::ReadByte(uint8_t port) {
 	if (port >= 0x40 && port <= 0x7F) {
 		r = true;
 		if (even) {
-			if (this->_ntsc) {
-				switch (this->_height) {
+			if (this->d._ntsc) {
+				switch (this->d._height) {
 					case 192:
-						return this->NTSCx192[this->_line];
+						return this->NTSCx192[this->d._line];
 						break;
 					case 224:
-						return this->NTSCx224[this->_line];
+						return this->NTSCx224[this->d._line];
 						break;
 					case 240:
-						return this->NTSCx240[this->_line];
+						return this->NTSCx240[this->d._line];
 						break;
 				}
 			} else {
-				switch (this->_height) {
+				switch (this->d._height) {
 					case 192:
-						return this->PALx192[this->_line];
+						return this->PALx192[this->d._line];
 						break;
 					case 224:
-						return this->PALx224[this->_line];
+						return this->PALx224[this->d._line];
 						break;
 					case 240:
-						return this->PALx240[this->_line];
+						return this->PALx240[this->d._line];
 						break;
 				}
 			}
 		} else
-			return this->HORSYNC[this->_col];
+			return this->HORSYNC[this->d._col];
 	}
 
 	if (port >= 0x80 && port <= 0xBF) {
@@ -730,22 +714,22 @@ uint8_t VDP::ReadByte(uint8_t port) {
 		if (even) {
 			uint8_t ret;
 
-			switch (this->_portState) {
+			switch (this->d._portState) {
 				default:
 				case 0:
-					ret = this->_readbuffer;
-					this->_readbuffer = this->_vram->ReadByte(this->_address);
+					ret = this->d._readbuffer;
+					this->d._readbuffer = this->d._vram[this->d._address];
 					break;
 				case 1:
 				case 2:
-					ret = this->_vram->ReadByte(this->_address);
+					ret = this->d._vram[this->d._address];
 					break;
 				case 3:
-					ret = this->_cram[this->_address & 0x1F];
+					ret = this->d._cram[this->d._address & 0x1F];
 					break;
 			}
 
-			this->_address = (this->_address + 1) & 0x3FFF;
+			this->d._address = (this->d._address + 1) & 0x3FFF;
 
 			return ret;
 		} else {
@@ -762,8 +746,8 @@ uint8_t VDP::ReadByte(uint8_t port) {
 }
 
 bool VDP::GetInterrupt() {
-	if (this->_interrupt) {
-		this->_interrupt = false;
+	if (this->d._interrupt) {
+		this->d._interrupt = false;
 		return true;
 	}
 
@@ -771,5 +755,17 @@ bool VDP::GetInterrupt() {
 }
 
 uint8_t VDP::GetBackColor() const {
-	return this->_cram[this->_registers[7] & 0x0F];
+	return this->d._cram[this->d._registers[7] & 0x0F];
+}
+
+int VDP::GetSaveSize() {
+	return sizeof(VDP::saveData);
+}
+
+void VDP::LoadState(uint8_t * data) {
+	memcpy (&this->d, data, sizeof(VDP::saveData));
+}
+
+void VDP::SaveState(uint8_t * data) {
+	memcpy (data, &this->d, sizeof(VDP::saveData));
 }

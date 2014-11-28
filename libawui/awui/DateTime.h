@@ -1,9 +1,8 @@
 // (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
 // feedback: borsanza AT gmail DOT com
 
-#pragma once
-#ifndef __AWUIDATETIME_H__
-#define __AWUIDATETIME_H__
+#ifndef _AWUI_DATETIME_H
+#define _AWUI_DATETIME_H
 
 #include <awui/Object.h>
 

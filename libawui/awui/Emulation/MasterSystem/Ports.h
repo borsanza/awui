@@ -6,22 +6,20 @@
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
-			class CPU;
+			class CPUInst;
 
 			class Ports {
 				private:
-					CPU * _cpu;
 					uint8_t _region;
 					uint8_t _maskRegion;
-					bool _getRegion;
+					bool _getRegion:1;
 
 				public:
 					Ports();
 					~Ports();
 
-					void SetCPU(CPU * cpu);
-					void WriteByte(uint8_t port, uint8_t value);
-					uint8_t ReadByte(uint8_t port) const;
+					void WriteByte(CPUInst * cpu, uint8_t port, uint8_t value);
+					uint8_t ReadByte(CPUInst * cpu, uint8_t port) const;
 			};
 		}
 	}

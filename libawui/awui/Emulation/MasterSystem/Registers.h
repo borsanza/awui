@@ -1,18 +1,11 @@
 #ifndef _AWUI_EMULATION_MASTERSYSTEM_REGISTERS_H
 #define _AWUI_EMULATION_MASTERSYSTEM_REGISTERS_H
 
+#include <awui/Emulation/Common/Word.h>
 #include <stdint.h>
 
 namespace awui {
 	namespace Emulation {
-		union Word {
-			uint16_t W;
-			struct {
-				uint8_t L;
-				uint8_t H;
-			};
-		};
-
 		namespace MasterSystem {
 /*
  * Flags of F

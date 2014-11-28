@@ -7,13 +7,13 @@
 #include "Opcode.h"
 
 #include <stdio.h>
-#include <awui/Emulation/MasterSystem/CPU.h>
+#include <awui/Emulation/MasterSystem/CPUInst.h>
 #include <awui/Emulation/MasterSystem/Registers.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
 using namespace awui::Emulation::MasterSystem;
 
-Opcode::Opcode(CPU * cpu) {
+Opcode::Opcode(CPUInst * cpu) {
 	this->_cpu = cpu;
 	this->_advance = 0;
 }
@@ -1399,7 +1399,7 @@ int Opcode::GetEnum() {
 
 void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 //	printf(" %3d x %3d ", this->_cpu->GetVDP()->GetLine(), this->_cpu->GetVDP()->GetColumn());
-	uint16_t pc = this->_cpu->GetRegisters()->GetPC();
+	uint16_t pc = this->_cpu->GetPC();
 	uint8_t opcode2 = this->_cpu->ReadMemory(pc + 1);
 	uint8_t opcode3 = this->_cpu->ReadMemory(pc + 2);
 	uint8_t opcode4 = this->_cpu->ReadMemory(pc + 3);

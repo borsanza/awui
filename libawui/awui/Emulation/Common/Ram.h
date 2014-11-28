@@ -1,12 +1,12 @@
-#ifndef _AWUI_EMULATION_MASTERSYSTEM_RAM_H
-#define _AWUI_EMULATION_MASTERSYSTEM_RAM_H
+#ifndef _AWUI_EMULATION_COMMON_RAM_H
+#define _AWUI_EMULATION_COMMON_RAM_H
 
 #include <stdint.h>
 #include <assert.h>
 
 namespace awui {
 	namespace Emulation {
-		namespace MasterSystem {
+		namespace Common {
 			class Ram {
 				private:
 					uint8_t * _data;

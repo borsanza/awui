@@ -7,12 +7,14 @@
 #include "MasterSystem.h"
 
 #include <awui/Drawing/Image.h>
+#include <awui/DateTime.h>
 #include <awui/Emulation/MasterSystem/CPU.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
 
+using namespace awui;
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
@@ -26,9 +28,20 @@ MasterSystem::MasterSystem() {
 	this->_multiply = 1;
 	this->_canChangeControl = true;
 	this->_pause = false;
+
+	this->_first = -1;
+	this->_last = -1;
+	this->_actual = -1;
+	this->_lastTick = 0;
+
+	for (int i = 0; i < TOTALSAVED; i++)
+		this->_savedData[i] = (uint8_t *) calloc (CPUInst::GetSaveSize(), sizeof(uint8_t));
 }
 
 MasterSystem::~MasterSystem() {
+	for (int i = 0; i < TOTALSAVED; i++)
+		free(this->_savedData[i]);
+
 	delete this->_cpu;
 	delete this->_image;
 }
@@ -43,9 +56,26 @@ int MasterSystem::IsClass(Classes::Enum objectClass) const {
 void MasterSystem::LoadRom(const String file) {
 	this->SetName(file);
 	this->_cpu->LoadRom(file);
+	this->_first = 0;
+	this->_last = 0;
+	this->_actual = 0;
+	this->_lastTick = DateTime::GetNow().GetTicks();
+	this->_cpu->SaveState(this->_savedData[this->_actual]);
+}
+
+void MasterSystem::CheckLimits() {
 }
 
 void MasterSystem::OnTick() {
+	long long now = DateTime::GetNow().GetTicks();
+	if ((now - this->_lastTick) > 10000000) {
+		this->_lastTick = now;
+		this->_actual++;
+		if (this->_last < this->_actual)
+			this->_last = this->_actual;
+		this->_cpu->SaveState(this->_savedData[this->_actual % TOTALSAVED]);
+	}
+
 	this->_cpu->OnTick();
 }
 
@@ -174,6 +204,22 @@ bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 	if ((Form::GetButtonsPad1() & RemoteButtons::Button5) && (button & RemoteButtons::Button6))
 		this->_cpu->Reset();
+
+	if ((button & RemoteButtons::Button5) && (Form::GetButtonsPad1() == RemoteButtons::Button5)) {
+		this->_lastTick = DateTime::GetNow().GetTicks();
+		this->_actual--;
+		if (this->_actual < this->_first)
+			this->_actual = this->_first;
+		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
+	}
+
+	if ((button & RemoteButtons::Button6) && (Form::GetButtonsPad1() == RemoteButtons::Button6)) {
+		this->_lastTick = DateTime::GetNow().GetTicks();
+		this->_actual++;
+		if (this->_actual > this->_last)
+			this->_actual = this->_last;
+		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
+	}
 
 	if (button & RemoteButtons::Button4)
 		this->_debugger->SetShow(!this->_debugger->GetShow());

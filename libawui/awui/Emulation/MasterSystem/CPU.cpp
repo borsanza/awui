@@ -26,21 +26,21 @@ static bool opcodes[OxNOTIMPLEMENTED];
 static uint64_t opcodesT[OxNOTIMPLEMENTED];
 #endif
 
-CPU::CPU() : _opcode(this) {
+CPU::CPU() {
 	this->_vdp = new VDP(this);
-	this->_addressBus._w = 0;
-	this->_frame = 0;
-	this->_oldFrame = 0;
+	this->d._addressBus.W = 0;
+	this->d._frame = 0;
+	this->d._oldFrame = 0;
 
 	this->_showLog = false;
 	this->_showLogInt = false;
 	this->_showNotImplemented = true;
 
-	this->_inInterrupt = false;
-	this->_isHalted = false;
-	this->_wantPause = false;
-	this->_pad1 = 0xFF;
-	this->_pad2 = 0xFF;
+	this->d._inInterrupt = false;
+	this->d._isHalted = false;
+	this->d._wantPause = false;
+	this->d._pad1 = 0xFF;
+	this->d._pad2 = 0xFF;
 
 	for (int i = 0; i < OxNOTIMPLEMENTED; i++) {
 		opcodes[i] = false;
@@ -48,8 +48,6 @@ CPU::CPU() : _opcode(this) {
 		opcodesT[i] = 0;
 #endif
 	}
-
-	this->_ports->SetCPU(this);
 
 	this->Reset();
 }
@@ -70,14 +68,14 @@ void CPU::LoadRom(const String file) {
 
 void CPU::CheckInterrupts() {
 	bool interrupt = this->_vdp->GetInterrupt();
-	if (!this->_registers->GetIFF1())
+	if (!this->d._registers.GetIFF1())
 		return;
 
 	if (interrupt) {
 //		printf("Entra %d\n", this->_vdp->GetLine());
-		this->_inInterrupt = true;
-		this->_registers->SetIFF1(false);
-		this->_registers->SetIFF2(false);
+		this->d._inInterrupt = true;
+		this->d._registers.SetIFF1(false);
+		this->d._registers.SetIFF2(false);
 		this->CallInterrupt(0x0038);
 	}
 }
@@ -89,12 +87,12 @@ void CPU::OnTick() {
 	double fps = this->_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;
 	// Entiendo que debe ser 3.57
 	double speed = this->_vdp->GetNTSC() ? 3.579545f : 3.5468949f;
-	this->_frame += fps / 59.922743404f; // Refresco de awui
+	this->d._frame += fps / 59.922743404f; // Refresco de awui
 
-	if ((int) this->_frame == (int) this->_oldFrame)
+	if ((int) this->d._frame == (int) this->d._oldFrame)
 		return;
 
-	this->_oldFrame = this->_frame;
+	this->d._oldFrame = this->d._frame;
 
 	double iters = (speed * 1000000.0f) / fps;
 	double itersVDP = this->_vdp->GetTotalWidth() * this->_vdp->GetTotalHeight();
@@ -105,19 +103,19 @@ void CPU::OnTick() {
 
 	int realIters = 0;
 	for (int i = 0; i < iters; i++) {
-		int64_t oldCycles = this->_cycles;
+		int64_t oldCycles = this->d._cycles;
 		this->RunOpcode();
-		uint8_t r = this->_registers->GetR();
+		uint8_t r = this->d._registers.GetR();
 		r = (r & 0x80) | ((r + 1) & 0x7F);
-		this->_registers->SetR(r);
+		this->d._registers.SetR(r);
 
-		if (this->_wantPause & !this->_inInterrupt) {
-			this->_registers->SetIFF1(false);
+		if (this->d._wantPause & !this->d._inInterrupt) {
+			this->d._registers.SetIFF1(false);
 			this->CallInterrupt(0x0066);
-			this->_wantPause = false;
+			this->d._wantPause = false;
 		}
 
-		double times = (this->_cycles - oldCycles);
+		double times = (this->d._cycles - oldCycles);
 		i = i + times - 1;
 		vdpIters += times * (itersVDP / iters);
 		if (!vsync) {
@@ -139,7 +137,7 @@ void CPU::OnTick() {
 }
 
 void CPU::RunOpcode() {
-	uint16_t pc = this->_registers->GetPC();
+	uint16_t pc = this->d._registers.GetPC();
 
 	uint8_t opcode1 = this->ReadMemory(pc);
 	uint8_t opcode2;
@@ -186,7 +184,7 @@ void CPU::RunOpcode() {
 	uint16_t opcodeEnum = this->_opcode.GetEnum();
 	uint8_t advance = this->_opcode.GetAdvance();
 	if (advance != 0) {
-		this->_registers->IncPC(advance);
+		this->d._registers.IncPC(advance);
 		return;
 	}
 
@@ -200,15 +198,15 @@ void CPU::RunOpcode() {
 		this->_opcode.ShowLogOpcode(opcodeEnum);
 		printf(" ");
 		printf("\n");
-		printf("AF: %.4X  ", this->_registers->GetAF());
-		printf("BC: %.4X  ", this->_registers->GetBC());
-		printf("DE: %.4X  ", this->_registers->GetDE());
-		printf("HL: %.4X  ", this->_registers->GetHL());
-		printf("IX: %.4X  ", this->_registers->GetIX());
-		printf("IY: %.4X  ", this->_registers->GetIY());
+		printf("AF: %.4X  ", this->d._registers.GetAF());
+		printf("BC: %.4X  ", this->d._registers.GetBC());
+		printf("DE: %.4X  ", this->d._registers.GetDE());
+		printf("HL: %.4X  ", this->d._registers.GetHL());
+		printf("IX: %.4X  ", this->d._registers.GetIX());
+		printf("IY: %.4X  ", this->d._registers.GetIY());
 		printf("\n");
 		printf("PC: %.4X  ", pc);
-		printf("SP: %.4X  ", this->_registers->GetSP());
+		printf("SP: %.4X  ", this->d._registers.GetSP());
 		printf("Column: %.3d  ", this->_vdp->GetColumn());
 		printf("Line: %.3d  ", this->_vdp->GetLine());
 		printf("\n");
@@ -222,7 +220,7 @@ void CPU::RunOpcode() {
 #endif
 
 	// http://clrhome.org/table/
-	this->_isHalted = false;
+	this->d._isHalted = false;
 	switch (opcodeEnum) {
 
 /******************************************************************************/
@@ -232,15 +230,15 @@ void CPU::RunOpcode() {
 		// 00: NOP
 		// |1|4| No operation is performed.
 		case Ox00:
-			this->_registers->IncPC();
-			this->_cycles += 4;
+			this->d._registers.IncPC();
+			this->d._cycles += 4;
 			break;
 
 		// 76: HALT
 		// |1|4| Suspends CPU operation until an interrupt or reset occurs.
 		case Ox76:
-			this->_isHalted = true;
-			this->_cycles += 4;
+			this->d._isHalted = true;
+			this->d._cycles += 4;
 			break;
 
 		// LD dd, nn
@@ -266,10 +264,10 @@ void CPU::RunOpcode() {
 		case Ox3C: this->INCr(Reg_A, 4, 1); break;
 
 		// ADD HL, s
-		case Ox09: this->ADDXXpp(Reg_HL, this->_registers->GetBC(), 11, 1); break;
-		case Ox19: this->ADDXXpp(Reg_HL, this->_registers->GetDE(), 11, 1); break;
-		case Ox29: this->ADDXXpp(Reg_HL, this->_registers->GetHL(), 11, 1); break;
-		case Ox39: this->ADDXXpp(Reg_HL, this->_registers->GetSP(), 11, 1); break;
+		case Ox09: this->ADDXXpp(Reg_HL, this->d._registers.GetBC(), 11, 1); break;
+		case Ox19: this->ADDXXpp(Reg_HL, this->d._registers.GetDE(), 11, 1); break;
+		case Ox29: this->ADDXXpp(Reg_HL, this->d._registers.GetHL(), 11, 1); break;
+		case Ox39: this->ADDXXpp(Reg_HL, this->d._registers.GetSP(), 11, 1); break;
 
 		case Ox07: this->RLCA(); break;
 		case Ox0F: this->RRCA(); break;
@@ -284,10 +282,10 @@ void CPU::RunOpcode() {
 		// |2|13/8| The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox10:
 			{
-				uint8_t bDec = this->_registers->GetB() - 1;
-				this->_registers->SetB(bDec);
+				uint8_t bDec = this->d._registers.GetB() - 1;
+				this->d._registers.SetB(bDec);
 				this->JR(bDec != 0);
-				this->_cycles++;
+				this->d._cycles++;
 			}
 			break;
 
@@ -296,9 +294,9 @@ void CPU::RunOpcode() {
 		// 36: LD (HL), *
 		// |2|10| Loads * into (hl).
 		case Ox36:
-			this->WriteMemory(this->_registers->GetHL() , this->ReadMemory(pc + 1));
-			this->_registers->IncPC(2);
-			this->_cycles += 10;
+			this->WriteMemory(this->d._registers.GetHL() , this->ReadMemory(pc + 1));
+			this->d._registers.IncPC(2);
+			this->d._cycles += 10;
 			break;
 
 		// DEC X
@@ -316,55 +314,55 @@ void CPU::RunOpcode() {
 		case Ox35: this->DECHL();       break;
 		case Ox3D: this->DECm (Reg_A, 4, 1);  break;
 
-		case Ox40: this->LDrr(Reg_B, this->_registers->GetB(), 4, 1); break;
-		case Ox41: this->LDrr(Reg_B, this->_registers->GetC(), 4, 1); break;
-		case Ox42: this->LDrr(Reg_B, this->_registers->GetD(), 4, 1); break;
-		case Ox43: this->LDrr(Reg_B, this->_registers->GetE(), 4, 1); break;
-		case Ox44: this->LDrr(Reg_B, this->_registers->GetH(), 4, 1); break;
-		case Ox45: this->LDrr(Reg_B, this->_registers->GetL(), 4, 1); break;
-		case Ox47: this->LDrr(Reg_B, this->_registers->GetA(), 4, 1); break;
-		case Ox48: this->LDrr(Reg_C, this->_registers->GetB(), 4, 1); break;
-		case Ox49: this->LDrr(Reg_C, this->_registers->GetC(), 4, 1); break;
-		case Ox4A: this->LDrr(Reg_C, this->_registers->GetD(), 4, 1); break;
-		case Ox4B: this->LDrr(Reg_C, this->_registers->GetE(), 4, 1); break;
-		case Ox4C: this->LDrr(Reg_C, this->_registers->GetH(), 4, 1); break;
-		case Ox4D: this->LDrr(Reg_C, this->_registers->GetL(), 4, 1); break;
-		case Ox4F: this->LDrr(Reg_C, this->_registers->GetA(), 4, 1); break;
-		case Ox50: this->LDrr(Reg_D, this->_registers->GetB(), 4, 1); break;
-		case Ox51: this->LDrr(Reg_D, this->_registers->GetC(), 4, 1); break;
-		case Ox52: this->LDrr(Reg_D, this->_registers->GetD(), 4, 1); break;
-		case Ox53: this->LDrr(Reg_D, this->_registers->GetE(), 4, 1); break;
-		case Ox54: this->LDrr(Reg_D, this->_registers->GetH(), 4, 1); break;
-		case Ox55: this->LDrr(Reg_D, this->_registers->GetL(), 4, 1); break;
-		case Ox57: this->LDrr(Reg_D, this->_registers->GetA(), 4, 1); break;
-		case Ox58: this->LDrr(Reg_E, this->_registers->GetB(), 4, 1); break;
-		case Ox59: this->LDrr(Reg_E, this->_registers->GetC(), 4, 1); break;
-		case Ox5A: this->LDrr(Reg_E, this->_registers->GetD(), 4, 1); break;
-		case Ox5B: this->LDrr(Reg_E, this->_registers->GetE(), 4, 1); break;
-		case Ox5C: this->LDrr(Reg_E, this->_registers->GetH(), 4, 1); break;
-		case Ox5D: this->LDrr(Reg_E, this->_registers->GetL(), 4, 1); break;
-		case Ox5F: this->LDrr(Reg_E, this->_registers->GetA(), 4, 1); break;
-		case Ox60: this->LDrr(Reg_H, this->_registers->GetB(), 4, 1); break;
-		case Ox61: this->LDrr(Reg_H, this->_registers->GetC(), 4, 1); break;
-		case Ox62: this->LDrr(Reg_H, this->_registers->GetD(), 4, 1); break;
-		case Ox63: this->LDrr(Reg_H, this->_registers->GetE(), 4, 1); break;
-		case Ox64: this->LDrr(Reg_H, this->_registers->GetH(), 4, 1); break;
-		case Ox65: this->LDrr(Reg_H, this->_registers->GetL(), 4, 1); break;
-		case Ox67: this->LDrr(Reg_H, this->_registers->GetA(), 4, 1); break;
-		case Ox68: this->LDrr(Reg_L, this->_registers->GetB(), 4, 1); break;
-		case Ox69: this->LDrr(Reg_L, this->_registers->GetC(), 4, 1); break;
-		case Ox6A: this->LDrr(Reg_L, this->_registers->GetD(), 4, 1); break;
-		case Ox6B: this->LDrr(Reg_L, this->_registers->GetE(), 4, 1); break;
-		case Ox6C: this->LDrr(Reg_L, this->_registers->GetH(), 4, 1); break;
-		case Ox6D: this->LDrr(Reg_L, this->_registers->GetL(), 4, 1); break;
-		case Ox6F: this->LDrr(Reg_L, this->_registers->GetA(), 4, 1); break;
-		case Ox78: this->LDrr(Reg_A, this->_registers->GetB(), 4, 1); break;
-		case Ox79: this->LDrr(Reg_A, this->_registers->GetC(), 4, 1); break;
-		case Ox7A: this->LDrr(Reg_A, this->_registers->GetD(), 4, 1); break;
-		case Ox7B: this->LDrr(Reg_A, this->_registers->GetE(), 4, 1); break;
-		case Ox7C: this->LDrr(Reg_A, this->_registers->GetH(), 4, 1); break;
-		case Ox7D: this->LDrr(Reg_A, this->_registers->GetL(), 4, 1); break;
-		case Ox7F: this->LDrr(Reg_A, this->_registers->GetA(), 4, 1); break;
+		case Ox40: this->LDrr(Reg_B, this->d._registers.GetB(), 4, 1); break;
+		case Ox41: this->LDrr(Reg_B, this->d._registers.GetC(), 4, 1); break;
+		case Ox42: this->LDrr(Reg_B, this->d._registers.GetD(), 4, 1); break;
+		case Ox43: this->LDrr(Reg_B, this->d._registers.GetE(), 4, 1); break;
+		case Ox44: this->LDrr(Reg_B, this->d._registers.GetH(), 4, 1); break;
+		case Ox45: this->LDrr(Reg_B, this->d._registers.GetL(), 4, 1); break;
+		case Ox47: this->LDrr(Reg_B, this->d._registers.GetA(), 4, 1); break;
+		case Ox48: this->LDrr(Reg_C, this->d._registers.GetB(), 4, 1); break;
+		case Ox49: this->LDrr(Reg_C, this->d._registers.GetC(), 4, 1); break;
+		case Ox4A: this->LDrr(Reg_C, this->d._registers.GetD(), 4, 1); break;
+		case Ox4B: this->LDrr(Reg_C, this->d._registers.GetE(), 4, 1); break;
+		case Ox4C: this->LDrr(Reg_C, this->d._registers.GetH(), 4, 1); break;
+		case Ox4D: this->LDrr(Reg_C, this->d._registers.GetL(), 4, 1); break;
+		case Ox4F: this->LDrr(Reg_C, this->d._registers.GetA(), 4, 1); break;
+		case Ox50: this->LDrr(Reg_D, this->d._registers.GetB(), 4, 1); break;
+		case Ox51: this->LDrr(Reg_D, this->d._registers.GetC(), 4, 1); break;
+		case Ox52: this->LDrr(Reg_D, this->d._registers.GetD(), 4, 1); break;
+		case Ox53: this->LDrr(Reg_D, this->d._registers.GetE(), 4, 1); break;
+		case Ox54: this->LDrr(Reg_D, this->d._registers.GetH(), 4, 1); break;
+		case Ox55: this->LDrr(Reg_D, this->d._registers.GetL(), 4, 1); break;
+		case Ox57: this->LDrr(Reg_D, this->d._registers.GetA(), 4, 1); break;
+		case Ox58: this->LDrr(Reg_E, this->d._registers.GetB(), 4, 1); break;
+		case Ox59: this->LDrr(Reg_E, this->d._registers.GetC(), 4, 1); break;
+		case Ox5A: this->LDrr(Reg_E, this->d._registers.GetD(), 4, 1); break;
+		case Ox5B: this->LDrr(Reg_E, this->d._registers.GetE(), 4, 1); break;
+		case Ox5C: this->LDrr(Reg_E, this->d._registers.GetH(), 4, 1); break;
+		case Ox5D: this->LDrr(Reg_E, this->d._registers.GetL(), 4, 1); break;
+		case Ox5F: this->LDrr(Reg_E, this->d._registers.GetA(), 4, 1); break;
+		case Ox60: this->LDrr(Reg_H, this->d._registers.GetB(), 4, 1); break;
+		case Ox61: this->LDrr(Reg_H, this->d._registers.GetC(), 4, 1); break;
+		case Ox62: this->LDrr(Reg_H, this->d._registers.GetD(), 4, 1); break;
+		case Ox63: this->LDrr(Reg_H, this->d._registers.GetE(), 4, 1); break;
+		case Ox64: this->LDrr(Reg_H, this->d._registers.GetH(), 4, 1); break;
+		case Ox65: this->LDrr(Reg_H, this->d._registers.GetL(), 4, 1); break;
+		case Ox67: this->LDrr(Reg_H, this->d._registers.GetA(), 4, 1); break;
+		case Ox68: this->LDrr(Reg_L, this->d._registers.GetB(), 4, 1); break;
+		case Ox69: this->LDrr(Reg_L, this->d._registers.GetC(), 4, 1); break;
+		case Ox6A: this->LDrr(Reg_L, this->d._registers.GetD(), 4, 1); break;
+		case Ox6B: this->LDrr(Reg_L, this->d._registers.GetE(), 4, 1); break;
+		case Ox6C: this->LDrr(Reg_L, this->d._registers.GetH(), 4, 1); break;
+		case Ox6D: this->LDrr(Reg_L, this->d._registers.GetL(), 4, 1); break;
+		case Ox6F: this->LDrr(Reg_L, this->d._registers.GetA(), 4, 1); break;
+		case Ox78: this->LDrr(Reg_A, this->d._registers.GetB(), 4, 1); break;
+		case Ox79: this->LDrr(Reg_A, this->d._registers.GetC(), 4, 1); break;
+		case Ox7A: this->LDrr(Reg_A, this->d._registers.GetD(), 4, 1); break;
+		case Ox7B: this->LDrr(Reg_A, this->d._registers.GetE(), 4, 1); break;
+		case Ox7C: this->LDrr(Reg_A, this->d._registers.GetH(), 4, 1); break;
+		case Ox7D: this->LDrr(Reg_A, this->d._registers.GetL(), 4, 1); break;
+		case Ox7F: this->LDrr(Reg_A, this->d._registers.GetA(), 4, 1); break;
 
 		// LD r, (HL)
 		case Ox46: this->LDrHL(Reg_B); break;
@@ -375,41 +373,41 @@ void CPU::RunOpcode() {
 		case Ox6E: this->LDrHL(Reg_L); break;
 		case Ox7E: this->LDrHL(Reg_A); break;
 
-		case OxF9: this->LDtofrom(Reg_SP, this->_registers->GetHL(), 6, 1); break;
+		case OxF9: this->LDtofrom(Reg_SP, this->d._registers.GetHL(), 6, 1); break;
 
 		// 28 nn: JR X, *
 		// |2|12/7| If condition X is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox18: this->JR(true); break;
-		case Ox20: this->JR(!(this->_registers->GetF() & Flag_Z)); break;
-		case Ox28: this->JR(  this->_registers->GetF() & Flag_Z);  break;
-		case Ox30: this->JR(!(this->_registers->GetF() & Flag_C)); break;
-		case Ox38: this->JR(  this->_registers->GetF() & Flag_C);  break;
+		case Ox20: this->JR(!(this->d._registers.GetF() & Flag_Z)); break;
+		case Ox28: this->JR(  this->d._registers.GetF() & Flag_Z);  break;
+		case Ox30: this->JR(!(this->d._registers.GetF() & Flag_C)); break;
+		case Ox38: this->JR(  this->d._registers.GetF() & Flag_C);  break;
 
 		// 32 nn: LD **, A
 		// |3|13| Stores a into the memory location pointed to by **.
 		case Ox32:
 			{
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				this->WriteMemory(offset, this->_registers->GetA());
-				this->_registers->IncPC(3);
-				this->_cycles += 13;
+				this->WriteMemory(offset, this->d._registers.GetA());
+				this->d._registers.IncPC(3);
+				this->d._cycles += 13;
 			}
 			break;
 
 		// 0A: LD A, (BC)
 		// |1|7| Loads the value pointed to by bc into a.
 		case Ox0A:
-			this->_registers->SetA(this->ReadMemory(this->_registers->GetBC()));
-			this->_registers->IncPC();
-			this->_cycles += 7;
+			this->d._registers.SetA(this->ReadMemory(this->d._registers.GetBC()));
+			this->d._registers.IncPC();
+			this->d._cycles += 7;
 			break;
 
 		// 1A: LD A, (DE)
 		// |1|7| Loads the value pointed to by de into a.
 		case Ox1A:
-			this->_registers->SetA(this->ReadMemory(this->_registers->GetDE()));
-			this->_registers->IncPC();
-			this->_cycles += 7;
+			this->d._registers.SetA(this->ReadMemory(this->d._registers.GetDE()));
+			this->d._registers.IncPC();
+			this->d._cycles += 7;
 			break;
 
 		// 3A: LD A, (**)
@@ -417,9 +415,9 @@ void CPU::RunOpcode() {
 		case Ox3A:
 			{
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				this->_registers->SetA(this->ReadMemory(offset));
-				this->_registers->IncPC(3);
-				this->_cycles += 13;
+				this->d._registers.SetA(this->ReadMemory(offset));
+				this->d._registers.IncPC(3);
+				this->d._cycles += 13;
 			}
 			break;
 
@@ -436,105 +434,105 @@ void CPU::RunOpcode() {
 		case Ox3E: this->LDrn(Reg_A, 7, 2); break;
 
 		// LD (ss), r
-		case Ox02: this->LDssr(this->_registers->GetBC(), this->_registers->GetA()); break;
-		case Ox12: this->LDssr(this->_registers->GetDE(), this->_registers->GetA()); break;
-		case Ox70: this->LDssr(this->_registers->GetHL(), this->_registers->GetB()); break;
-		case Ox71: this->LDssr(this->_registers->GetHL(), this->_registers->GetC()); break;
-		case Ox72: this->LDssr(this->_registers->GetHL(), this->_registers->GetD()); break;
-		case Ox73: this->LDssr(this->_registers->GetHL(), this->_registers->GetE()); break;
-		case Ox74: this->LDssr(this->_registers->GetHL(), this->_registers->GetH()); break;
-		case Ox75: this->LDssr(this->_registers->GetHL(), this->_registers->GetL()); break;
-		case Ox77: this->LDssr(this->_registers->GetHL(), this->_registers->GetA()); break;
+		case Ox02: this->LDssr(this->d._registers.GetBC(), this->d._registers.GetA()); break;
+		case Ox12: this->LDssr(this->d._registers.GetDE(), this->d._registers.GetA()); break;
+		case Ox70: this->LDssr(this->d._registers.GetHL(), this->d._registers.GetB()); break;
+		case Ox71: this->LDssr(this->d._registers.GetHL(), this->d._registers.GetC()); break;
+		case Ox72: this->LDssr(this->d._registers.GetHL(), this->d._registers.GetD()); break;
+		case Ox73: this->LDssr(this->d._registers.GetHL(), this->d._registers.GetE()); break;
+		case Ox74: this->LDssr(this->d._registers.GetHL(), this->d._registers.GetH()); break;
+		case Ox75: this->LDssr(this->d._registers.GetHL(), this->d._registers.GetL()); break;
+		case Ox77: this->LDssr(this->d._registers.GetHL(), this->d._registers.GetA()); break;
 
-		case Ox80: this->ADD(this->_registers->GetB()); break;
-		case Ox81: this->ADD(this->_registers->GetC()); break;
-		case Ox82: this->ADD(this->_registers->GetD()); break;
-		case Ox83: this->ADD(this->_registers->GetE()); break;
-		case Ox84: this->ADD(this->_registers->GetH()); break;
-		case Ox85: this->ADD(this->_registers->GetL()); break;
-		case Ox86: this->ADD(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case Ox87: this->ADD(this->_registers->GetA()); break;
+		case Ox80: this->ADD(this->d._registers.GetB()); break;
+		case Ox81: this->ADD(this->d._registers.GetC()); break;
+		case Ox82: this->ADD(this->d._registers.GetD()); break;
+		case Ox83: this->ADD(this->d._registers.GetE()); break;
+		case Ox84: this->ADD(this->d._registers.GetH()); break;
+		case Ox85: this->ADD(this->d._registers.GetL()); break;
+		case Ox86: this->ADD(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case Ox87: this->ADD(this->d._registers.GetA()); break;
 		case OxC6: this->ADD(this->ReadMemory(pc + 1), 7, 2); break;
 
-		case Ox88: this->ADC(this->_registers->GetB()); break;
-		case Ox89: this->ADC(this->_registers->GetC()); break;
-		case Ox8A: this->ADC(this->_registers->GetD()); break;
-		case Ox8B: this->ADC(this->_registers->GetE()); break;
-		case Ox8C: this->ADC(this->_registers->GetH()); break;
-		case Ox8D: this->ADC(this->_registers->GetL()); break;
-		case Ox8E: this->ADC(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case Ox8F: this->ADC(this->_registers->GetA()); break;
+		case Ox88: this->ADC(this->d._registers.GetB()); break;
+		case Ox89: this->ADC(this->d._registers.GetC()); break;
+		case Ox8A: this->ADC(this->d._registers.GetD()); break;
+		case Ox8B: this->ADC(this->d._registers.GetE()); break;
+		case Ox8C: this->ADC(this->d._registers.GetH()); break;
+		case Ox8D: this->ADC(this->d._registers.GetL()); break;
+		case Ox8E: this->ADC(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case Ox8F: this->ADC(this->d._registers.GetA()); break;
 		case OxCE: this->ADC(this->ReadMemory(pc + 1), 7, 2); break;
 
-		case Ox90: this->SUB(this->_registers->GetB()); break;
-		case Ox91: this->SUB(this->_registers->GetC()); break;
-		case Ox92: this->SUB(this->_registers->GetD()); break;
-		case Ox93: this->SUB(this->_registers->GetE()); break;
-		case Ox94: this->SUB(this->_registers->GetH()); break;
-		case Ox95: this->SUB(this->_registers->GetL()); break;
-		case Ox96: this->SUB(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case Ox97: this->SUB(this->_registers->GetA()); break;
+		case Ox90: this->SUB(this->d._registers.GetB()); break;
+		case Ox91: this->SUB(this->d._registers.GetC()); break;
+		case Ox92: this->SUB(this->d._registers.GetD()); break;
+		case Ox93: this->SUB(this->d._registers.GetE()); break;
+		case Ox94: this->SUB(this->d._registers.GetH()); break;
+		case Ox95: this->SUB(this->d._registers.GetL()); break;
+		case Ox96: this->SUB(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case Ox97: this->SUB(this->d._registers.GetA()); break;
 		case OxD6: this->SUB(this->ReadMemory(pc + 1), 7, 2); break;
 
-		case Ox98: this->SBC(this->_registers->GetB()); break;
-		case Ox99: this->SBC(this->_registers->GetC()); break;
-		case Ox9A: this->SBC(this->_registers->GetD()); break;
-		case Ox9B: this->SBC(this->_registers->GetE()); break;
-		case Ox9C: this->SBC(this->_registers->GetH()); break;
-		case Ox9D: this->SBC(this->_registers->GetL()); break;
-		case Ox9E: this->SBC(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case Ox9F: this->SBC(this->_registers->GetA()); break;
+		case Ox98: this->SBC(this->d._registers.GetB()); break;
+		case Ox99: this->SBC(this->d._registers.GetC()); break;
+		case Ox9A: this->SBC(this->d._registers.GetD()); break;
+		case Ox9B: this->SBC(this->d._registers.GetE()); break;
+		case Ox9C: this->SBC(this->d._registers.GetH()); break;
+		case Ox9D: this->SBC(this->d._registers.GetL()); break;
+		case Ox9E: this->SBC(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case Ox9F: this->SBC(this->d._registers.GetA()); break;
 		case OxDE: this->SBC(this->ReadMemory(pc + 1), 7, 2); break;
 
-		case OxA0: this->AND(this->_registers->GetB()); break;
-		case OxA1: this->AND(this->_registers->GetC()); break;
-		case OxA2: this->AND(this->_registers->GetD()); break;
-		case OxA3: this->AND(this->_registers->GetE()); break;
-		case OxA4: this->AND(this->_registers->GetH()); break;
-		case OxA5: this->AND(this->_registers->GetL()); break;
-		case OxA6: this->AND(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case OxA7: this->AND(this->_registers->GetA()); break;
+		case OxA0: this->AND(this->d._registers.GetB()); break;
+		case OxA1: this->AND(this->d._registers.GetC()); break;
+		case OxA2: this->AND(this->d._registers.GetD()); break;
+		case OxA3: this->AND(this->d._registers.GetE()); break;
+		case OxA4: this->AND(this->d._registers.GetH()); break;
+		case OxA5: this->AND(this->d._registers.GetL()); break;
+		case OxA6: this->AND(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case OxA7: this->AND(this->d._registers.GetA()); break;
 		case OxE6: this->AND(this->ReadMemory(pc + 1), 7, 2); break;
 
-		case OxA8: this->XOR(this->_registers->GetB()); break;
-		case OxA9: this->XOR(this->_registers->GetC()); break;
-		case OxAA: this->XOR(this->_registers->GetD()); break;
-		case OxAB: this->XOR(this->_registers->GetE()); break;
-		case OxAC: this->XOR(this->_registers->GetH()); break;
-		case OxAD: this->XOR(this->_registers->GetL()); break;
-		case OxAE: this->XOR(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case OxAF: this->XOR(this->_registers->GetA()); break;
+		case OxA8: this->XOR(this->d._registers.GetB()); break;
+		case OxA9: this->XOR(this->d._registers.GetC()); break;
+		case OxAA: this->XOR(this->d._registers.GetD()); break;
+		case OxAB: this->XOR(this->d._registers.GetE()); break;
+		case OxAC: this->XOR(this->d._registers.GetH()); break;
+		case OxAD: this->XOR(this->d._registers.GetL()); break;
+		case OxAE: this->XOR(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case OxAF: this->XOR(this->d._registers.GetA()); break;
 		case OxEE: this->XOR(this->ReadMemory(pc + 1), 7, 2); break;
 
-		case OxB0: this->OR(this->_registers->GetB()); break;
-		case OxB1: this->OR(this->_registers->GetC()); break;
-		case OxB2: this->OR(this->_registers->GetD()); break;
-		case OxB3: this->OR(this->_registers->GetE()); break;
-		case OxB4: this->OR(this->_registers->GetH()); break;
-		case OxB5: this->OR(this->_registers->GetL()); break;
-		case OxB6: this->OR(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case OxB7: this->OR(this->_registers->GetA()); break;
+		case OxB0: this->OR(this->d._registers.GetB()); break;
+		case OxB1: this->OR(this->d._registers.GetC()); break;
+		case OxB2: this->OR(this->d._registers.GetD()); break;
+		case OxB3: this->OR(this->d._registers.GetE()); break;
+		case OxB4: this->OR(this->d._registers.GetH()); break;
+		case OxB5: this->OR(this->d._registers.GetL()); break;
+		case OxB6: this->OR(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case OxB7: this->OR(this->d._registers.GetA()); break;
 		case OxF6: this->OR(this->ReadMemory(pc + 1), 7, 2); break;
 
-		case OxB8: this->CP(this->_registers->GetB()); break;
-		case OxB9: this->CP(this->_registers->GetC()); break;
-		case OxBA: this->CP(this->_registers->GetD()); break;
-		case OxBB: this->CP(this->_registers->GetE()); break;
-		case OxBC: this->CP(this->_registers->GetH()); break;
-		case OxBD: this->CP(this->_registers->GetL()); break;
-		case OxBE: this->CP(this->ReadMemory(this->_registers->GetHL()), 7); break;
-		case OxBF: this->CP(this->_registers->GetA()); break;
+		case OxB8: this->CP(this->d._registers.GetB()); break;
+		case OxB9: this->CP(this->d._registers.GetC()); break;
+		case OxBA: this->CP(this->d._registers.GetD()); break;
+		case OxBB: this->CP(this->d._registers.GetE()); break;
+		case OxBC: this->CP(this->d._registers.GetH()); break;
+		case OxBD: this->CP(this->d._registers.GetL()); break;
+		case OxBE: this->CP(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case OxBF: this->CP(this->d._registers.GetA()); break;
 		case OxFE: this->CP(this->ReadMemory(pc + 1), 7, 2); break;
 
 		// JP cc, nn
-		case OxC2: this->JPccnn(!(this->_registers->GetF() & Flag_Z));  break;
-		case OxCA: this->JPccnn(  this->_registers->GetF() & Flag_Z);   break;
-		case OxD2: this->JPccnn(!(this->_registers->GetF() & Flag_C));  break;
-		case OxDA: this->JPccnn(  this->_registers->GetF() & Flag_C);   break;
-		case OxE2: this->JPccnn(!(this->_registers->GetF() & Flag_V)); break;
-		case OxEA: this->JPccnn(  this->_registers->GetF() & Flag_V);  break;
-		case OxF2: this->JPccnn(!(this->_registers->GetF() & Flag_S));  break;
-		case OxFA: this->JPccnn(  this->_registers->GetF() & Flag_S);   break;
+		case OxC2: this->JPccnn(!(this->d._registers.GetF() & Flag_Z));  break;
+		case OxCA: this->JPccnn(  this->d._registers.GetF() & Flag_Z);   break;
+		case OxD2: this->JPccnn(!(this->d._registers.GetF() & Flag_C));  break;
+		case OxDA: this->JPccnn(  this->d._registers.GetF() & Flag_C);   break;
+		case OxE2: this->JPccnn(!(this->d._registers.GetF() & Flag_V)); break;
+		case OxEA: this->JPccnn(  this->d._registers.GetF() & Flag_V);  break;
+		case OxF2: this->JPccnn(!(this->d._registers.GetF() & Flag_S));  break;
+		case OxFA: this->JPccnn(  this->d._registers.GetF() & Flag_S);   break;
 
 		// C3 nn: JP **
 		// |3|10| ** is copied to pc.
@@ -542,10 +540,10 @@ void CPU::RunOpcode() {
 			{
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
 				if (offset == pc)
-					this->_isHalted = true;
+					this->d._isHalted = true;
 				else
-					this->_registers->SetPC(offset);
-				this->_cycles += 10;
+					this->d._registers.SetPC(offset);
+				this->d._cycles += 10;
 			}
 			break;
 
@@ -561,29 +559,29 @@ void CPU::RunOpcode() {
 
 		// C9: RET
 		// |1|10| The top stack entry is popped into pc.
-		case OxC0: this->RET(!(this->_registers->GetF() & Flag_Z)); break;
-		case OxC8: this->RET( (this->_registers->GetF() & Flag_Z)); break;
+		case OxC0: this->RET(!(this->d._registers.GetF() & Flag_Z)); break;
+		case OxC8: this->RET( (this->d._registers.GetF() & Flag_Z)); break;
 		case OxC9:
 			this->RET(true, 10);
-			this->_inInterrupt = false;
+			this->d._inInterrupt = false;
 			break;
-		case OxD0: this->RET(!(this->_registers->GetF() & Flag_C)); break;
-		case OxD8: this->RET( (this->_registers->GetF() & Flag_C)); break;
-		case OxE0: this->RET(!(this->_registers->GetF() & Flag_V)); break;
-		case OxE8: this->RET( (this->_registers->GetF() & Flag_V)); break;
-		case OxF0: this->RET(!(this->_registers->GetF() & Flag_S)); break;
-		case OxF8: this->RET( (this->_registers->GetF() & Flag_S)); break;
+		case OxD0: this->RET(!(this->d._registers.GetF() & Flag_C)); break;
+		case OxD8: this->RET( (this->d._registers.GetF() & Flag_C)); break;
+		case OxE0: this->RET(!(this->d._registers.GetF() & Flag_V)); break;
+		case OxE8: this->RET( (this->d._registers.GetF() & Flag_V)); break;
+		case OxF0: this->RET(!(this->d._registers.GetF() & Flag_S)); break;
+		case OxF8: this->RET( (this->d._registers.GetF() & Flag_S)); break;
 
 		// CD nn: CALL **
-		case OxC4: this->CALLccnn(!(this->_registers->GetF() & Flag_Z)); break;
-		case OxCC: this->CALLccnn( (this->_registers->GetF() & Flag_Z)); break;
+		case OxC4: this->CALLccnn(!(this->d._registers.GetF() & Flag_Z)); break;
+		case OxCC: this->CALLccnn( (this->d._registers.GetF() & Flag_Z)); break;
 		case OxCD: this->CALLnn(); break;
-		case OxD4: this->CALLccnn(!(this->_registers->GetF() & Flag_C)); break;
-		case OxDC: this->CALLccnn( (this->_registers->GetF() & Flag_C)); break;
-		case OxE4: this->CALLccnn(!(this->_registers->GetF() & Flag_V)); break;
-		case OxEC: this->CALLccnn( (this->_registers->GetF() & Flag_V)); break;
-		case OxF4: this->CALLccnn(!(this->_registers->GetF() & Flag_S)); break;
-		case OxFC: this->CALLccnn( (this->_registers->GetF() & Flag_S)); break;
+		case OxD4: this->CALLccnn(!(this->d._registers.GetF() & Flag_C)); break;
+		case OxDC: this->CALLccnn( (this->d._registers.GetF() & Flag_C)); break;
+		case OxE4: this->CALLccnn(!(this->d._registers.GetF() & Flag_V)); break;
+		case OxEC: this->CALLccnn( (this->d._registers.GetF() & Flag_V)); break;
+		case OxF4: this->CALLccnn(!(this->d._registers.GetF() & Flag_S)); break;
+		case OxFC: this->CALLccnn( (this->d._registers.GetF() & Flag_S)); break;
 
 		// RST p
 		case OxC7: this->RSTp(0x00); break;
@@ -604,33 +602,33 @@ void CPU::RunOpcode() {
 		// D9: EXX
 		// |1|4| Exchanges the 16-bit contents of bc, de, and hl with bc', de', and hl'.
 		case OxD9:
-			this->_registers->AlternateBC();
-			this->_registers->AlternateDE();
-			this->_registers->AlternateHL();
-			this->_registers->IncPC();
-			this->_cycles += 4;
+			this->d._registers.AlternateBC();
+			this->d._registers.AlternateDE();
+			this->d._registers.AlternateHL();
+			this->d._registers.IncPC();
+			this->d._cycles += 4;
 			break;
 
 		// DB n: IN A, *
 		// |2|11| A byte from port * is written to a.
 		case OxDB:
 			{
-				this->_registers->SetA(this->_ports->ReadByte(this->ReadMemory(pc + 1)));
+				this->d._registers.SetA(this->d._ports.ReadByte(this, this->ReadMemory(pc + 1)));
 //				printf("PORT: %d: %X\n", this->ReadMemory(pc + 1), this->ReadMemory(pc + 1));
-				this->_registers->IncPC(2);
-				this->_cycles += 11;
+				this->d._registers.IncPC(2);
+				this->d._cycles += 11;
 			}
 			break;
 
-		case OxE9: this->LDtofrom(Reg_PC, this->_registers->GetHL(), 4, 0); break; // No aumenta el PC
+		case OxE9: this->LDtofrom(Reg_PC, this->d._registers.GetHL(), 4, 0); break; // No aumenta el PC
 
 		// 08: EX AF, AF'
 		// |1|4| Exchanges the 16-bit contents of af and af'.
 		case Ox08:
 			{
-				this->_registers->AlternateAF();
-				this->_registers->IncPC();
-				this->_cycles += 4;
+				this->d._registers.AlternateAF();
+				this->d._registers.IncPC();
+				this->d._cycles += 4;
 			}
 			break;
 
@@ -638,11 +636,11 @@ void CPU::RunOpcode() {
 		// |1|4| Exchanges the 16-bit contents of de and hl.
 		case OxEB:
 			{
-				uint16_t aux = this->_registers->GetDE();
-				this->_registers->SetDE(this->_registers->GetHL());
-				this->_registers->SetHL(aux);
-				this->_registers->IncPC();
-				this->_cycles += 4;
+				uint16_t aux = this->d._registers.GetDE();
+				this->d._registers.SetDE(this->d._registers.GetHL());
+				this->d._registers.SetHL(aux);
+				this->d._registers.IncPC();
+				this->d._cycles += 4;
 			}
 			break;
 
@@ -652,20 +650,20 @@ void CPU::RunOpcode() {
 		// |1|4| Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
 		// I dont know if is completed
 		case OxF3:
-			this->_registers->IncPC();
-			this->_registers->SetIFF1(false);
-			this->_registers->SetIFF2(false);
-			this->_cycles += 4;
+			this->d._registers.IncPC();
+			this->d._registers.SetIFF1(false);
+			this->d._registers.SetIFF2(false);
+			this->d._cycles += 4;
 			break;
 
 		// FB EI
 		// |1|4| Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
 		// I dont know if is completed
 		case OxFB:
-			this->_registers->IncPC();
-			this->_registers->SetIFF1(true);
-			this->_registers->SetIFF2(true);
-			this->_cycles += 4;
+			this->d._registers.IncPC();
+			this->d._registers.SetIFF1(true);
+			this->d._registers.SetIFF2(true);
+			this->d._cycles += 4;
 			break;
 
 /******************************************************************************/
@@ -702,22 +700,22 @@ void CPU::RunOpcode() {
 			this->RETN();
 			break;
 
-		case OxED47: this->LDrr(Reg_I, this->_registers->GetA(), 9, 2); break;
-		case OxED4F: this->LDrr(Reg_R, this->_registers->GetA(), 9, 2); break;
-		case OxED57: this->LDAri(this->_registers->GetI()); break;
-		case OxED5F: this->LDAri(this->_registers->GetR()); break;
+		case OxED47: this->LDrr(Reg_I, this->d._registers.GetA(), 9, 2); break;
+		case OxED4F: this->LDrr(Reg_R, this->d._registers.GetA(), 9, 2); break;
+		case OxED57: this->LDAri(this->d._registers.GetI()); break;
+		case OxED5F: this->LDAri(this->d._registers.GetR()); break;
 
 		case OxED67: this->RRD(); break;
 		case OxED6F: this->RLD(); break;
 
-		case OxED41: this->OUTC(this->_registers->GetB()); break;
-		case OxED49: this->OUTC(this->_registers->GetC()); break;
-		case OxED51: this->OUTC(this->_registers->GetD()); break;
-		case OxED59: this->OUTC(this->_registers->GetE()); break;
-		case OxED61: this->OUTC(this->_registers->GetH()); break;
-		case OxED69: this->OUTC(this->_registers->GetL()); break;
+		case OxED41: this->OUTC(this->d._registers.GetB()); break;
+		case OxED49: this->OUTC(this->d._registers.GetC()); break;
+		case OxED51: this->OUTC(this->d._registers.GetD()); break;
+		case OxED59: this->OUTC(this->d._registers.GetE()); break;
+		case OxED61: this->OUTC(this->d._registers.GetH()); break;
+		case OxED69: this->OUTC(this->d._registers.GetL()); break;
 		case OxED71: this->OUTC(0); break;
-		case OxED79: this->OUTC(this->_registers->GetA()); break;
+		case OxED79: this->OUTC(this->d._registers.GetA()); break;
 
 		// SBC HL, ss
 		case OxED42: this->SBCHLss(Reg_BC); break;
@@ -747,9 +745,9 @@ void CPU::RunOpcode() {
 		// |2|8| Sets interrupt mode 0.
 		case OxED46:
 		case OxED66:
-			this->_registers->SetIM(0);
-			this->_registers->IncPC(2);
-			this->_cycles += 8;
+			this->d._registers.SetIM(0);
+			this->d._registers.IncPC(2);
+			this->d._cycles += 8;
 			break;
 
 		// ED56: IM 1
@@ -757,9 +755,9 @@ void CPU::RunOpcode() {
 		// |2|8| Sets interrupt mode 1.
 		case OxED56:
 		case OxED76:
-			this->_registers->SetIM(1);
-			this->_registers->IncPC(2);
-			this->_cycles += 8;
+			this->d._registers.SetIM(1);
+			this->d._registers.IncPC(2);
+			this->d._cycles += 8;
 			break;
 
 		// ED5E: IM 2
@@ -767,14 +765,14 @@ void CPU::RunOpcode() {
 		// |2|8| Sets interrupt mode 1.
 		case OxED5E:
 		case OxED7E:
-			this->_registers->SetIM(2);
-			this->_registers->IncPC(2);
-			this->_cycles += 8;
+			this->d._registers.SetIM(2);
+			this->d._registers.IncPC(2);
+			this->d._cycles += 8;
 			break;
 
 		case OxED4D:
 			this->RETI();
-			this->_inInterrupt = false;
+			this->d._inInterrupt = false;
 			// printf("Sale %d\n", this->_vdp->GetLine());
 			// this->_showLog = false;
 			break;
@@ -797,22 +795,22 @@ void CPU::RunOpcode() {
 		// Interrupts can trigger while this instruction is processing.
 		case OxEDB3:
 			{
-				uint16_t hl = this->_registers->GetHL();
-				uint8_t b = this->_registers->GetB() - 1;
-				uint8_t c = this->_registers->GetC();
-				this->_addressBus._l = c;
-				this->_addressBus._h = b;
-				this->_ports->WriteByte(c, this->ReadMemory(hl));
-				//printf("Address: %.4X\n", this->_addressBus._w);
-				this->_registers->SetHL(hl + 1);
-				this->_registers->SetB(b);
-				this->_registers->SetFFlag(Flag_N, true);
-				this->_registers->SetFFlag(Flag_Z, true);
+				uint16_t hl = this->d._registers.GetHL();
+				uint8_t b = this->d._registers.GetB() - 1;
+				uint8_t c = this->d._registers.GetC();
+				this->d._addressBus.L = c;
+				this->d._addressBus.H = b;
+				this->d._ports.WriteByte(this, c, this->ReadMemory(hl));
+				//printf("Address: %.4X\n", this->d._addressBus._w);
+				this->d._registers.SetHL(hl + 1);
+				this->d._registers.SetB(b);
+				this->d._registers.SetFFlag(Flag_N, true);
+				this->d._registers.SetFFlag(Flag_Z, true);
 				if (b == 0) {
-					this->_registers->IncPC(2);
-					this->_cycles += 16;
+					this->d._registers.IncPC(2);
+					this->d._cycles += 16;
 				} else
-					this->_cycles += 21;
+					this->d._cycles += 21;
 			}
 			break;
 
@@ -892,70 +890,70 @@ void CPU::RunOpcode() {
 		case OxCB3E: this->SRL_HL(); break;
 		case OxCB3F: this->SRL(Reg_A); break;
 
-		case OxCB40: this->BIT(this->_registers->GetB(), 0x01); break;
-		case OxCB41: this->BIT(this->_registers->GetC(), 0x01); break;
-		case OxCB42: this->BIT(this->_registers->GetD(), 0x01); break;
-		case OxCB43: this->BIT(this->_registers->GetE(), 0x01); break;
-		case OxCB44: this->BIT(this->_registers->GetH(), 0x01); break;
-		case OxCB45: this->BIT(this->_registers->GetL(), 0x01); break;
+		case OxCB40: this->BIT(this->d._registers.GetB(), 0x01); break;
+		case OxCB41: this->BIT(this->d._registers.GetC(), 0x01); break;
+		case OxCB42: this->BIT(this->d._registers.GetD(), 0x01); break;
+		case OxCB43: this->BIT(this->d._registers.GetE(), 0x01); break;
+		case OxCB44: this->BIT(this->d._registers.GetH(), 0x01); break;
+		case OxCB45: this->BIT(this->d._registers.GetL(), 0x01); break;
 		case OxCB46: this->BITHL(0x01); break;
-		case OxCB47: this->BIT(this->_registers->GetA(), 0x01); break;
-		case OxCB48: this->BIT(this->_registers->GetB(), 0x02); break;
-		case OxCB49: this->BIT(this->_registers->GetC(), 0x02); break;
-		case OxCB4A: this->BIT(this->_registers->GetD(), 0x02); break;
-		case OxCB4B: this->BIT(this->_registers->GetE(), 0x02); break;
-		case OxCB4C: this->BIT(this->_registers->GetH(), 0x02); break;
-		case OxCB4D: this->BIT(this->_registers->GetL(), 0x02); break;
+		case OxCB47: this->BIT(this->d._registers.GetA(), 0x01); break;
+		case OxCB48: this->BIT(this->d._registers.GetB(), 0x02); break;
+		case OxCB49: this->BIT(this->d._registers.GetC(), 0x02); break;
+		case OxCB4A: this->BIT(this->d._registers.GetD(), 0x02); break;
+		case OxCB4B: this->BIT(this->d._registers.GetE(), 0x02); break;
+		case OxCB4C: this->BIT(this->d._registers.GetH(), 0x02); break;
+		case OxCB4D: this->BIT(this->d._registers.GetL(), 0x02); break;
 		case OxCB4E: this->BITHL(0x02); break;
-		case OxCB4F: this->BIT(this->_registers->GetA(), 0x02); break;
-		case OxCB50: this->BIT(this->_registers->GetB(), 0x04); break;
-		case OxCB51: this->BIT(this->_registers->GetC(), 0x04); break;
-		case OxCB52: this->BIT(this->_registers->GetD(), 0x04); break;
-		case OxCB53: this->BIT(this->_registers->GetE(), 0x04); break;
-		case OxCB54: this->BIT(this->_registers->GetH(), 0x04); break;
-		case OxCB55: this->BIT(this->_registers->GetL(), 0x04); break;
+		case OxCB4F: this->BIT(this->d._registers.GetA(), 0x02); break;
+		case OxCB50: this->BIT(this->d._registers.GetB(), 0x04); break;
+		case OxCB51: this->BIT(this->d._registers.GetC(), 0x04); break;
+		case OxCB52: this->BIT(this->d._registers.GetD(), 0x04); break;
+		case OxCB53: this->BIT(this->d._registers.GetE(), 0x04); break;
+		case OxCB54: this->BIT(this->d._registers.GetH(), 0x04); break;
+		case OxCB55: this->BIT(this->d._registers.GetL(), 0x04); break;
 		case OxCB56: this->BITHL(0x04); break;
-		case OxCB57: this->BIT(this->_registers->GetA(), 0x04); break;
-		case OxCB58: this->BIT(this->_registers->GetB(), 0x08); break;
-		case OxCB59: this->BIT(this->_registers->GetC(), 0x08); break;
-		case OxCB5A: this->BIT(this->_registers->GetD(), 0x08); break;
-		case OxCB5B: this->BIT(this->_registers->GetE(), 0x08); break;
-		case OxCB5C: this->BIT(this->_registers->GetH(), 0x08); break;
-		case OxCB5D: this->BIT(this->_registers->GetL(), 0x08); break;
+		case OxCB57: this->BIT(this->d._registers.GetA(), 0x04); break;
+		case OxCB58: this->BIT(this->d._registers.GetB(), 0x08); break;
+		case OxCB59: this->BIT(this->d._registers.GetC(), 0x08); break;
+		case OxCB5A: this->BIT(this->d._registers.GetD(), 0x08); break;
+		case OxCB5B: this->BIT(this->d._registers.GetE(), 0x08); break;
+		case OxCB5C: this->BIT(this->d._registers.GetH(), 0x08); break;
+		case OxCB5D: this->BIT(this->d._registers.GetL(), 0x08); break;
 		case OxCB5E: this->BITHL(0x08); break;
-		case OxCB5F: this->BIT(this->_registers->GetA(), 0x08); break;
-		case OxCB60: this->BIT(this->_registers->GetB(), 0x10); break;
-		case OxCB61: this->BIT(this->_registers->GetC(), 0x10); break;
-		case OxCB62: this->BIT(this->_registers->GetD(), 0x10); break;
-		case OxCB63: this->BIT(this->_registers->GetE(), 0x10); break;
-		case OxCB64: this->BIT(this->_registers->GetH(), 0x10); break;
-		case OxCB65: this->BIT(this->_registers->GetL(), 0x10); break;
+		case OxCB5F: this->BIT(this->d._registers.GetA(), 0x08); break;
+		case OxCB60: this->BIT(this->d._registers.GetB(), 0x10); break;
+		case OxCB61: this->BIT(this->d._registers.GetC(), 0x10); break;
+		case OxCB62: this->BIT(this->d._registers.GetD(), 0x10); break;
+		case OxCB63: this->BIT(this->d._registers.GetE(), 0x10); break;
+		case OxCB64: this->BIT(this->d._registers.GetH(), 0x10); break;
+		case OxCB65: this->BIT(this->d._registers.GetL(), 0x10); break;
 		case OxCB66: this->BITHL(0x10); break;
-		case OxCB67: this->BIT(this->_registers->GetA(), 0x10); break;
-		case OxCB68: this->BIT(this->_registers->GetB(), 0x20); break;
-		case OxCB69: this->BIT(this->_registers->GetC(), 0x20); break;
-		case OxCB6A: this->BIT(this->_registers->GetD(), 0x20); break;
-		case OxCB6B: this->BIT(this->_registers->GetE(), 0x20); break;
-		case OxCB6C: this->BIT(this->_registers->GetH(), 0x20); break;
-		case OxCB6D: this->BIT(this->_registers->GetL(), 0x20); break;
+		case OxCB67: this->BIT(this->d._registers.GetA(), 0x10); break;
+		case OxCB68: this->BIT(this->d._registers.GetB(), 0x20); break;
+		case OxCB69: this->BIT(this->d._registers.GetC(), 0x20); break;
+		case OxCB6A: this->BIT(this->d._registers.GetD(), 0x20); break;
+		case OxCB6B: this->BIT(this->d._registers.GetE(), 0x20); break;
+		case OxCB6C: this->BIT(this->d._registers.GetH(), 0x20); break;
+		case OxCB6D: this->BIT(this->d._registers.GetL(), 0x20); break;
 		case OxCB6E: this->BITHL(0x20); break;
-		case OxCB6F: this->BIT(this->_registers->GetA(), 0x20); break;
-		case OxCB70: this->BIT(this->_registers->GetB(), 0x40); break;
-		case OxCB71: this->BIT(this->_registers->GetC(), 0x40); break;
-		case OxCB72: this->BIT(this->_registers->GetD(), 0x40); break;
-		case OxCB73: this->BIT(this->_registers->GetE(), 0x40); break;
-		case OxCB74: this->BIT(this->_registers->GetH(), 0x40); break;
-		case OxCB75: this->BIT(this->_registers->GetL(), 0x40); break;
+		case OxCB6F: this->BIT(this->d._registers.GetA(), 0x20); break;
+		case OxCB70: this->BIT(this->d._registers.GetB(), 0x40); break;
+		case OxCB71: this->BIT(this->d._registers.GetC(), 0x40); break;
+		case OxCB72: this->BIT(this->d._registers.GetD(), 0x40); break;
+		case OxCB73: this->BIT(this->d._registers.GetE(), 0x40); break;
+		case OxCB74: this->BIT(this->d._registers.GetH(), 0x40); break;
+		case OxCB75: this->BIT(this->d._registers.GetL(), 0x40); break;
 		case OxCB76: this->BITHL(0x40); break;
-		case OxCB77: this->BIT(this->_registers->GetA(), 0x40); break;
-		case OxCB78: this->BIT(this->_registers->GetB(), 0x80); break;
-		case OxCB79: this->BIT(this->_registers->GetC(), 0x80); break;
-		case OxCB7A: this->BIT(this->_registers->GetD(), 0x80); break;
-		case OxCB7B: this->BIT(this->_registers->GetE(), 0x80); break;
-		case OxCB7C: this->BIT(this->_registers->GetH(), 0x80); break;
-		case OxCB7D: this->BIT(this->_registers->GetL(), 0x80); break;
+		case OxCB77: this->BIT(this->d._registers.GetA(), 0x40); break;
+		case OxCB78: this->BIT(this->d._registers.GetB(), 0x80); break;
+		case OxCB79: this->BIT(this->d._registers.GetC(), 0x80); break;
+		case OxCB7A: this->BIT(this->d._registers.GetD(), 0x80); break;
+		case OxCB7B: this->BIT(this->d._registers.GetE(), 0x80); break;
+		case OxCB7C: this->BIT(this->d._registers.GetH(), 0x80); break;
+		case OxCB7D: this->BIT(this->d._registers.GetL(), 0x80); break;
 		case OxCB7E: this->BITHL(0x80); break;
-		case OxCB7F: this->BIT(this->_registers->GetA(), 0x80); break;
+		case OxCB7F: this->BIT(this->d._registers.GetA(), 0x80); break;
 
 		case OxCB80: this->RES(Reg_B, 0x01); break;
 		case OxCB81: this->RES(Reg_C, 0x01); break;
@@ -1091,19 +1089,19 @@ void CPU::RunOpcode() {
 /*************************** IX instructions (DD) *****************************/
 /******************************************************************************/
 
-		case OxDD09: this->ADDXXpp(Reg_IX, this->_registers->GetBC(), 15, 2); break;
-		case OxDD19: this->ADDXXpp(Reg_IX, this->_registers->GetDE(), 15, 2); break;
-		case OxDD29: this->ADDXXpp(Reg_IX, this->_registers->GetIX(), 15, 2); break;
-		case OxDD39: this->ADDXXpp(Reg_IX, this->_registers->GetSP(), 15, 2); break;
+		case OxDD09: this->ADDXXpp(Reg_IX, this->d._registers.GetBC(), 15, 2); break;
+		case OxDD19: this->ADDXXpp(Reg_IX, this->d._registers.GetDE(), 15, 2); break;
+		case OxDD29: this->ADDXXpp(Reg_IX, this->d._registers.GetIX(), 15, 2); break;
+		case OxDD39: this->ADDXXpp(Reg_IX, this->d._registers.GetSP(), 15, 2); break;
 
-		case OxDD86: this->ADD(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDD8E: this->ADC(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDD96: this->SUB(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDD9E: this->SBC(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDA6: this->AND(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDAE: this->XOR(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDB6: this->OR(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDBE: this->CP(this->ReadMemory(this->_registers->GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD86: this->ADD(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD8E: this->ADC(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD96: this->SUB(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD9E: this->SBC(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDA6: this->AND(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDAE: this->XOR(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDB6: this->OR(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDDBE: this->CP(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 
 		case OxDDE1: this->POP16(Reg_IX, 14, 2); break;
 		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
@@ -1129,30 +1127,30 @@ void CPU::RunOpcode() {
 		case OxDD6E: this->LDrXXd(Reg_L, Reg_IX); break;
 		case OxDD7E: this->LDrXXd(Reg_A, Reg_IX); break;
 
-		case OxDD44: this->LDrr(Reg_B,   this->_registers->GetIXH(), 8, 2); break;
-		case OxDD45: this->LDrr(Reg_B,   this->_registers->GetIXL(), 8, 2); break;
-		case OxDD4C: this->LDrr(Reg_C,   this->_registers->GetIXH(), 8, 2); break;
-		case OxDD4D: this->LDrr(Reg_C,   this->_registers->GetIXL(), 8, 2); break;
-		case OxDD54: this->LDrr(Reg_D,   this->_registers->GetIXH(), 8, 2); break;
-		case OxDD55: this->LDrr(Reg_D,   this->_registers->GetIXL(), 8, 2); break;
-		case OxDD5C: this->LDrr(Reg_E,   this->_registers->GetIXH(), 8, 2); break;
-		case OxDD5D: this->LDrr(Reg_E,   this->_registers->GetIXL(), 8, 2); break;
-		case OxDD60: this->LDrr(Reg_IXH, this->_registers->GetB(),   8, 2); break;
-		case OxDD61: this->LDrr(Reg_IXH, this->_registers->GetC(),   8, 2); break;
-		case OxDD62: this->LDrr(Reg_IXH, this->_registers->GetD(),   8, 2); break;
-		case OxDD63: this->LDrr(Reg_IXH, this->_registers->GetE(),   8, 2); break;
-		case OxDD64: this->LDrr(Reg_IXH, this->_registers->GetIXH(), 8, 2); break;
-		case OxDD65: this->LDrr(Reg_IXH, this->_registers->GetIXL(), 8, 2); break;
-		case OxDD67: this->LDrr(Reg_IXH, this->_registers->GetA(),   8, 2); break;
-		case OxDD68: this->LDrr(Reg_IXL, this->_registers->GetB(),   8, 2); break;
-		case OxDD69: this->LDrr(Reg_IXL, this->_registers->GetC(),   8, 2); break;
-		case OxDD6A: this->LDrr(Reg_IXL, this->_registers->GetD(),   8, 2); break;
-		case OxDD6B: this->LDrr(Reg_IXL, this->_registers->GetE(),   8, 2); break;
-		case OxDD6C: this->LDrr(Reg_IXL, this->_registers->GetIXH(), 8, 2); break;
-		case OxDD6D: this->LDrr(Reg_IXL, this->_registers->GetIXL(), 8, 2); break;
-		case OxDD6F: this->LDrr(Reg_IXL, this->_registers->GetA(),   8, 2); break;
-		case OxDD7C: this->LDrr(Reg_A,   this->_registers->GetIXH(), 8, 2); break;
-		case OxDD7D: this->LDrr(Reg_A,   this->_registers->GetIXL(), 8, 2); break;
+		case OxDD44: this->LDrr(Reg_B,   this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD45: this->LDrr(Reg_B,   this->d._registers.GetIXL(), 8, 2); break;
+		case OxDD4C: this->LDrr(Reg_C,   this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD4D: this->LDrr(Reg_C,   this->d._registers.GetIXL(), 8, 2); break;
+		case OxDD54: this->LDrr(Reg_D,   this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD55: this->LDrr(Reg_D,   this->d._registers.GetIXL(), 8, 2); break;
+		case OxDD5C: this->LDrr(Reg_E,   this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD5D: this->LDrr(Reg_E,   this->d._registers.GetIXL(), 8, 2); break;
+		case OxDD60: this->LDrr(Reg_IXH, this->d._registers.GetB(),   8, 2); break;
+		case OxDD61: this->LDrr(Reg_IXH, this->d._registers.GetC(),   8, 2); break;
+		case OxDD62: this->LDrr(Reg_IXH, this->d._registers.GetD(),   8, 2); break;
+		case OxDD63: this->LDrr(Reg_IXH, this->d._registers.GetE(),   8, 2); break;
+		case OxDD64: this->LDrr(Reg_IXH, this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD65: this->LDrr(Reg_IXH, this->d._registers.GetIXL(), 8, 2); break;
+		case OxDD67: this->LDrr(Reg_IXH, this->d._registers.GetA(),   8, 2); break;
+		case OxDD68: this->LDrr(Reg_IXL, this->d._registers.GetB(),   8, 2); break;
+		case OxDD69: this->LDrr(Reg_IXL, this->d._registers.GetC(),   8, 2); break;
+		case OxDD6A: this->LDrr(Reg_IXL, this->d._registers.GetD(),   8, 2); break;
+		case OxDD6B: this->LDrr(Reg_IXL, this->d._registers.GetE(),   8, 2); break;
+		case OxDD6C: this->LDrr(Reg_IXL, this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD6D: this->LDrr(Reg_IXL, this->d._registers.GetIXL(), 8, 2); break;
+		case OxDD6F: this->LDrr(Reg_IXL, this->d._registers.GetA(),   8, 2); break;
+		case OxDD7C: this->LDrr(Reg_A,   this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD7D: this->LDrr(Reg_A,   this->d._registers.GetIXL(), 8, 2); break;
 
 		case OxDD70: this->LDXXdr(Reg_IX, Reg_B); break;
 		case OxDD71: this->LDXXdr(Reg_IX, Reg_C); break;
@@ -1162,28 +1160,28 @@ void CPU::RunOpcode() {
 		case OxDD75: this->LDXXdr(Reg_IX, Reg_L); break;
 		case OxDD77: this->LDXXdr(Reg_IX, Reg_A); break;
 
-		case OxDDF9: this->LDtofrom(Reg_SP, this->_registers->GetIX(), 10, 2); break;
+		case OxDDF9: this->LDtofrom(Reg_SP, this->d._registers.GetIX(), 10, 2); break;
 		case OxDD26: this->LDrn(Reg_IXH, 11, 3); break;
 		case OxDD2E: this->LDrn(Reg_IXL, 11, 3); break;
 
-		case OxDD84: this->ADD(this->_registers->GetIXH(), 8, 2); break;
-		case OxDD85: this->ADD(this->_registers->GetIXL(), 8, 2); break;
-		case OxDD8C: this->ADC(this->_registers->GetIXH(), 8, 2); break;
-		case OxDD8D: this->ADC(this->_registers->GetIXL(), 8, 2); break;
-		case OxDD94: this->SUB(this->_registers->GetIXH(), 8, 2); break;
-		case OxDD95: this->SUB(this->_registers->GetIXL(), 8, 2); break;
-		case OxDD9C: this->SBC(this->_registers->GetIXH(), 8, 2); break;
-		case OxDD9D: this->SBC(this->_registers->GetIXL(), 8, 2); break;
-		case OxDDA4: this->AND(this->_registers->GetIXH(), 8, 2); break;
-		case OxDDA5: this->AND(this->_registers->GetIXL(), 8, 2); break;
-		case OxDDAC: this->XOR(this->_registers->GetIXH(), 8, 2); break;
-		case OxDDAD: this->XOR(this->_registers->GetIXL(), 8, 2); break;
-		case OxDDB4: this->OR(this->_registers->GetIXH(), 8, 2); break;
-		case OxDDB5: this->OR(this->_registers->GetIXL(), 8, 2); break;
-		case OxDDBC: this->CP(this->_registers->GetIXH(), 8, 2); break;
-		case OxDDBD: this->CP(this->_registers->GetIXL(), 8, 2); break;
+		case OxDD84: this->ADD(this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD85: this->ADD(this->d._registers.GetIXL(), 8, 2); break;
+		case OxDD8C: this->ADC(this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD8D: this->ADC(this->d._registers.GetIXL(), 8, 2); break;
+		case OxDD94: this->SUB(this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD95: this->SUB(this->d._registers.GetIXL(), 8, 2); break;
+		case OxDD9C: this->SBC(this->d._registers.GetIXH(), 8, 2); break;
+		case OxDD9D: this->SBC(this->d._registers.GetIXL(), 8, 2); break;
+		case OxDDA4: this->AND(this->d._registers.GetIXH(), 8, 2); break;
+		case OxDDA5: this->AND(this->d._registers.GetIXL(), 8, 2); break;
+		case OxDDAC: this->XOR(this->d._registers.GetIXH(), 8, 2); break;
+		case OxDDAD: this->XOR(this->d._registers.GetIXL(), 8, 2); break;
+		case OxDDB4: this->OR(this->d._registers.GetIXH(), 8, 2); break;
+		case OxDDB5: this->OR(this->d._registers.GetIXL(), 8, 2); break;
+		case OxDDBC: this->CP(this->d._registers.GetIXH(), 8, 2); break;
+		case OxDDBD: this->CP(this->d._registers.GetIXL(), 8, 2); break;
 
-		case OxDDE9: this->LDtofrom(Reg_PC, this->_registers->GetIX(), 8, 0); break; // No aumenta el PC
+		case OxDDE9: this->LDtofrom(Reg_PC, this->d._registers.GetIX(), 8, 0); break; // No aumenta el PC
 		case OxDDE3: this->EX_ss(Reg_SP, Reg_IX, 23, 2); break;
 
 /******************************************************************************/
@@ -1293,19 +1291,19 @@ void CPU::RunOpcode() {
 /*************************** IY instructions (FD) *****************************/
 /******************************************************************************/
 
-		case OxFD09: this->ADDXXpp(Reg_IY, this->_registers->GetBC(), 15, 2); break;
-		case OxFD19: this->ADDXXpp(Reg_IY, this->_registers->GetDE(), 15, 2); break;
-		case OxFD29: this->ADDXXpp(Reg_IY, this->_registers->GetIY(), 15, 2); break;
-		case OxFD39: this->ADDXXpp(Reg_IY, this->_registers->GetSP(), 15, 2); break;
+		case OxFD09: this->ADDXXpp(Reg_IY, this->d._registers.GetBC(), 15, 2); break;
+		case OxFD19: this->ADDXXpp(Reg_IY, this->d._registers.GetDE(), 15, 2); break;
+		case OxFD29: this->ADDXXpp(Reg_IY, this->d._registers.GetIY(), 15, 2); break;
+		case OxFD39: this->ADDXXpp(Reg_IY, this->d._registers.GetSP(), 15, 2); break;
 
-		case OxFD86: this->ADD(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFD8E: this->ADC(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFD96: this->SUB(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFD9E: this->SBC(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDA6: this->AND(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDAE: this->XOR(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDB6: this->OR(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDBE: this->CP(this->ReadMemory(this->_registers->GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD86: this->ADD(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD8E: this->ADC(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD96: this->SUB(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD9E: this->SBC(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDA6: this->AND(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDAE: this->XOR(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDB6: this->OR(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFDBE: this->CP(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 
 		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
 		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;
@@ -1331,30 +1329,30 @@ void CPU::RunOpcode() {
 		case OxFD6E: this->LDrXXd(Reg_L, Reg_IY); break;
 		case OxFD7E: this->LDrXXd(Reg_A, Reg_IY); break;
 
-		case OxFD44: this->LDrr(Reg_B,   this->_registers->GetIYH(), 8, 2); break;
-		case OxFD45: this->LDrr(Reg_B,   this->_registers->GetIYL(), 8, 2); break;
-		case OxFD4C: this->LDrr(Reg_C,   this->_registers->GetIYH(), 8, 2); break;
-		case OxFD4D: this->LDrr(Reg_C,   this->_registers->GetIYL(), 8, 2); break;
-		case OxFD54: this->LDrr(Reg_D,   this->_registers->GetIYH(), 8, 2); break;
-		case OxFD55: this->LDrr(Reg_D,   this->_registers->GetIYL(), 8, 2); break;
-		case OxFD5C: this->LDrr(Reg_E,   this->_registers->GetIYH(), 8, 2); break;
-		case OxFD5D: this->LDrr(Reg_E,   this->_registers->GetIYL(), 8, 2); break;
-		case OxFD60: this->LDrr(Reg_IYH, this->_registers->GetB(),   8, 2); break;
-		case OxFD61: this->LDrr(Reg_IYH, this->_registers->GetC(),   8, 2); break;
-		case OxFD62: this->LDrr(Reg_IYH, this->_registers->GetD(),   8, 2); break;
-		case OxFD63: this->LDrr(Reg_IYH, this->_registers->GetE(),   8, 2); break;
-		case OxFD64: this->LDrr(Reg_IYH, this->_registers->GetIYH(), 8, 2); break;
-		case OxFD65: this->LDrr(Reg_IYH, this->_registers->GetIYL(), 8, 2); break;
-		case OxFD67: this->LDrr(Reg_IYH, this->_registers->GetA(),   8, 2); break;
-		case OxFD68: this->LDrr(Reg_IYL, this->_registers->GetB(),   8, 2); break;
-		case OxFD69: this->LDrr(Reg_IYL, this->_registers->GetC(),   8, 2); break;
-		case OxFD6A: this->LDrr(Reg_IYL, this->_registers->GetD(),   8, 2); break;
-		case OxFD6B: this->LDrr(Reg_IYL, this->_registers->GetE(),   8, 2); break;
-		case OxFD6C: this->LDrr(Reg_IYL, this->_registers->GetIYH(), 8, 2); break;
-		case OxFD6D: this->LDrr(Reg_IYL, this->_registers->GetIYL(), 8, 2); break;
-		case OxFD6F: this->LDrr(Reg_IYL, this->_registers->GetA(),   8, 2); break;
-		case OxFD7C: this->LDrr(Reg_A,   this->_registers->GetIYH(), 8, 2); break;
-		case OxFD7D: this->LDrr(Reg_A,   this->_registers->GetIYL(), 8, 2); break;
+		case OxFD44: this->LDrr(Reg_B,   this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD45: this->LDrr(Reg_B,   this->d._registers.GetIYL(), 8, 2); break;
+		case OxFD4C: this->LDrr(Reg_C,   this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD4D: this->LDrr(Reg_C,   this->d._registers.GetIYL(), 8, 2); break;
+		case OxFD54: this->LDrr(Reg_D,   this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD55: this->LDrr(Reg_D,   this->d._registers.GetIYL(), 8, 2); break;
+		case OxFD5C: this->LDrr(Reg_E,   this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD5D: this->LDrr(Reg_E,   this->d._registers.GetIYL(), 8, 2); break;
+		case OxFD60: this->LDrr(Reg_IYH, this->d._registers.GetB(),   8, 2); break;
+		case OxFD61: this->LDrr(Reg_IYH, this->d._registers.GetC(),   8, 2); break;
+		case OxFD62: this->LDrr(Reg_IYH, this->d._registers.GetD(),   8, 2); break;
+		case OxFD63: this->LDrr(Reg_IYH, this->d._registers.GetE(),   8, 2); break;
+		case OxFD64: this->LDrr(Reg_IYH, this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD65: this->LDrr(Reg_IYH, this->d._registers.GetIYL(), 8, 2); break;
+		case OxFD67: this->LDrr(Reg_IYH, this->d._registers.GetA(),   8, 2); break;
+		case OxFD68: this->LDrr(Reg_IYL, this->d._registers.GetB(),   8, 2); break;
+		case OxFD69: this->LDrr(Reg_IYL, this->d._registers.GetC(),   8, 2); break;
+		case OxFD6A: this->LDrr(Reg_IYL, this->d._registers.GetD(),   8, 2); break;
+		case OxFD6B: this->LDrr(Reg_IYL, this->d._registers.GetE(),   8, 2); break;
+		case OxFD6C: this->LDrr(Reg_IYL, this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD6D: this->LDrr(Reg_IYL, this->d._registers.GetIYL(), 8, 2); break;
+		case OxFD6F: this->LDrr(Reg_IYL, this->d._registers.GetA(),   8, 2); break;
+		case OxFD7C: this->LDrr(Reg_A,   this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD7D: this->LDrr(Reg_A,   this->d._registers.GetIYL(), 8, 2); break;
 
 		case OxFD70: this->LDXXdr(Reg_IY, Reg_B); break;
 		case OxFD71: this->LDXXdr(Reg_IY, Reg_C); break;
@@ -1364,28 +1362,28 @@ void CPU::RunOpcode() {
 		case OxFD75: this->LDXXdr(Reg_IY, Reg_L); break;
 		case OxFD77: this->LDXXdr(Reg_IY, Reg_A); break;
 
-		case OxFDF9: this->LDtofrom(Reg_SP, this->_registers->GetIY(), 10, 2); break;
+		case OxFDF9: this->LDtofrom(Reg_SP, this->d._registers.GetIY(), 10, 2); break;
 		case OxFD26: this->LDrn(Reg_IYH, 11, 3); break;
 		case OxFD2E: this->LDrn(Reg_IYL, 11, 3); break;
 
-		case OxFD84: this->ADD(this->_registers->GetIYH(), 8, 2); break;
-		case OxFD85: this->ADD(this->_registers->GetIYL(), 8, 2); break;
-		case OxFD8C: this->ADC(this->_registers->GetIYH(), 8, 2); break;
-		case OxFD8D: this->ADC(this->_registers->GetIYL(), 8, 2); break;
-		case OxFD94: this->SUB(this->_registers->GetIYH(), 8, 2); break;
-		case OxFD95: this->SUB(this->_registers->GetIYL(), 8, 2); break;
-		case OxFD9C: this->SBC(this->_registers->GetIYH(), 8, 2); break;
-		case OxFD9D: this->SBC(this->_registers->GetIYL(), 8, 2); break;
-		case OxFDA4: this->AND(this->_registers->GetIYH(), 8, 2); break;
-		case OxFDA5: this->AND(this->_registers->GetIYL(), 8, 2); break;
-		case OxFDAC: this->XOR(this->_registers->GetIYH(), 8, 2); break;
-		case OxFDAD: this->XOR(this->_registers->GetIYL(), 8, 2); break;
-		case OxFDB4: this->OR(this->_registers->GetIYH(), 8, 2); break;
-		case OxFDB5: this->OR(this->_registers->GetIYL(), 8, 2); break;
-		case OxFDBC: this->CP(this->_registers->GetIYH(), 8, 2); break;
-		case OxFDBD: this->CP(this->_registers->GetIYL(), 8, 2); break;
+		case OxFD84: this->ADD(this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD85: this->ADD(this->d._registers.GetIYL(), 8, 2); break;
+		case OxFD8C: this->ADC(this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD8D: this->ADC(this->d._registers.GetIYL(), 8, 2); break;
+		case OxFD94: this->SUB(this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD95: this->SUB(this->d._registers.GetIYL(), 8, 2); break;
+		case OxFD9C: this->SBC(this->d._registers.GetIYH(), 8, 2); break;
+		case OxFD9D: this->SBC(this->d._registers.GetIYL(), 8, 2); break;
+		case OxFDA4: this->AND(this->d._registers.GetIYH(), 8, 2); break;
+		case OxFDA5: this->AND(this->d._registers.GetIYL(), 8, 2); break;
+		case OxFDAC: this->XOR(this->d._registers.GetIYH(), 8, 2); break;
+		case OxFDAD: this->XOR(this->d._registers.GetIYL(), 8, 2); break;
+		case OxFDB4: this->OR(this->d._registers.GetIYH(), 8, 2); break;
+		case OxFDB5: this->OR(this->d._registers.GetIYL(), 8, 2); break;
+		case OxFDBC: this->CP(this->d._registers.GetIYH(), 8, 2); break;
+		case OxFDBD: this->CP(this->d._registers.GetIYL(), 8, 2); break;
 
-		case OxFDE9: this->LDtofrom(Reg_PC, this->_registers->GetIY(), 8, 0); break; // No aumenta el PC
+		case OxFDE9: this->LDtofrom(Reg_PC, this->d._registers.GetIY(), 8, 0); break; // No aumenta el PC
 		case OxFDE3: this->EX_ss(Reg_SP, Reg_IY, 23, 2); break;
 
 /******************************************************************************/
@@ -1500,17 +1498,17 @@ void CPU::RunOpcode() {
 					case 0x88:
 						normal = true;
 						printf("%s: %s (Not implemented: Executing opcode %.2X)\n", logLine, logCode, opcode2);
-						this->_registers->IncPC();
+						this->d._registers.IncPC();
 						break;
 				}
 */
 			}
 
 			if (!normal) {
-				this->_cycles += 12; // 71400;
+				this->d._cycles += 12; // 71400;
 				if (this->_showNotImplemented) {
 #ifdef SLOW
-//					printf("(SP = %.4X) ", this->_registers->GetSP());
+//					printf("(SP = %.4X) ", this->d._registers.GetSP());
 					printf("%s: ", logLine);
 					printf("%s ", logCode);
 					this->_opcode.ShowLogOpcode(opcodeEnum);
@@ -1530,15 +1528,15 @@ void CPU::RunOpcode() {
 }
 
 uint16_t CPU::GetAddressBus() const {
-	return this->_addressBus._w;
+	return this->d._addressBus.W;
 }
 
 void CPU::SetAddressBus(uint16_t data) {
-	this->_addressBus._w = data;
+	this->d._addressBus.W = data;
 }
 
 bool CPU::IsHalted() const {
-	return this->_isHalted;
+	return this->d._isHalted;
 }
 
 void CPU::PrintLog() {
@@ -1554,7 +1552,7 @@ void CPU::PrintLog() {
 //		if (opcodesT[i] == 0)
 //			continue;
 
-		this->_registers->SetPC(0);
+		this->d._registers.SetPC(0);
 		printf("%ld : ", opcodesT[i]);
 		printf("%d : ", i);
 		this->_opcode.ShowLogOpcode(i);
@@ -1566,5 +1564,5 @@ void CPU::PrintLog() {
 }
 
 void CPU::CallPaused() {
-	this->_wantPause = true;
+	this->d._wantPause = true;
 }

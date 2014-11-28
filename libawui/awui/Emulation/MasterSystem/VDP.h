@@ -3,11 +3,22 @@
 
 #include <stdint.h>
 
+// Segun documentacion
+#define LEFTBORDER 13
+#define RIGHTBORDER 15
+
+// Comparado con la Master System
+//#define LEFTBORDER 1
+//#define RIGHTBORDER 12
+
 namespace awui {
 	namespace Emulation {
+		namespace Common {
+			class Ram;
+		};
+
 		namespace MasterSystem {
 			class CPU;
-			class Ram;
 			enum {
 				SPRITE_16x16 = 1,
 				SPRITE_8x16 = 2,
@@ -16,39 +27,33 @@ namespace awui {
 
 			class VDP {
 				private:
+					struct saveData {
+						uint16_t _width;
+						uint16_t _height;
+						uint16_t _line;
+						uint16_t _col;
+						uint16_t _baseAddress;
+						uint16_t _dataByte;
+						uint16_t _address;
+						uint8_t _portState;
+						uint8_t _readbuffer;
+						uint8_t _verticalScroll;
+						uint8_t _status;
+						uint8_t _spriteSize;
+						bool _controlMode:1;
+						bool _interrupt:1;
+						bool _ntsc:1;
+						bool _showBorder:1;
+						bool _visible:1;
+						uint8_t _cram[32];
+						uint8_t _registers[11];
+						uint8_t _vram[16384];
+						uint16_t _sizeData;
+						uint8_t _data[(256 + LEFTBORDER + RIGHTBORDER) * 294]; // 294 parece que es el maximo en alto
+					} d;
+
+					// No salvable
 					CPU * _cpu;
-					uint16_t _width;
-					uint16_t _height;
-					uint8_t _verticalScroll;
-
-					uint16_t _line;
-					uint16_t _col;
-					bool _interrupt;
-					bool _showBorder;
-
-					uint8_t _status;
-					bool _visible;
-					uint16_t _baseAddress;
-					uint8_t _spriteSize;
-					bool _ntsc;
-
-					// 32 Color Ram
-					uint8_t _cram[32];
-
-					// 11 Registers
-					uint8_t _registers[11];
-
-					Ram * _data;
-
-					bool _controlMode;
-
-
-					uint16_t _dataByte;
-					uint16_t _address;
-					uint8_t _portState;
-					uint8_t _readbuffer;
-
-					Ram * _vram;
 
 					uint8_t NTSCx192[262];
 					uint8_t NTSCx224[262];
@@ -89,7 +94,7 @@ namespace awui {
 					void Reset();
 
 					const uint8_t * GetColors() const;
-					Ram * GetVram() const;
+					uint8_t * GetVram();
 
 					void SetNTSC();
 					void SetPAL();
@@ -116,6 +121,11 @@ namespace awui {
 					uint16_t GetColumn() const;
 
 					uint8_t GetBackColor() const;
+
+					static int GetSaveSize();
+
+					void LoadState(uint8_t * data);
+					void SaveState(uint8_t * data);
 			};
 		}
 	}

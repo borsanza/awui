@@ -1,5 +1,5 @@
 /*
- * awui/Emulation/MasterSystem/Ram.cpp
+ * awui/Emulation/Common/Ram.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace awui::Emulation::MasterSystem;
+using namespace awui::Emulation::Common;
 
 Ram::Ram(uint32_t size) {
 	this->_data = (uint8_t *) calloc (size, sizeof(uint8_t));

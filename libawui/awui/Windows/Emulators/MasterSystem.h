@@ -3,6 +3,8 @@
 
 #include <awui/Windows/Forms/Button.h>
 
+#define TOTALSAVED 60
+
 namespace awui {
 	namespace Drawing {
 		class Image;
@@ -36,6 +38,13 @@ namespace awui {
 					bool _invertKeys;
 
 					uint8_t GetPad(int which) const;
+
+					int _first;
+					int _last;
+					int _actual;
+					long long _lastTick;
+					uint8_t * _savedData[TOTALSAVED];
+					void CheckLimits();
 
 				public:
 					MasterSystem();

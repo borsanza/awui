@@ -1,22 +1,14 @@
 #ifndef _AWUI_EMULATION_MASTERSYSTEM_CPUINST_H
 #define _AWUI_EMULATION_MASTERSYSTEM_CPUINST_H
 
+#include <awui/Emulation/MasterSystem/Opcode.h>
+#include <awui/Emulation/MasterSystem/Ports.h>
+#include <awui/Emulation/MasterSystem/Registers.h>
 #include <stdint.h>
 
 namespace awui {
 	namespace Emulation {
-		union UINT16 {
-			uint16_t _w;
-			struct {
-				uint8_t _l;
-				uint8_t _h;
-			};
-		};
-
 		namespace MasterSystem {
-			class Ports;
-			class Ram;
-			class Registers;
 			class Rom;
 			class VDP;
 
@@ -27,21 +19,35 @@ namespace awui {
 
 			class CPUInst {
 				protected:
-					UINT16 _addressBus;
-					Ports * _ports;
-					Ram * _ram;
-					Registers * _registers;
+					struct saveData {
+						int64_t _cycles;
+						float _frame;
+						float _oldFrame;
+						uint8_t _controlbyte;
+						uint8_t _frame0;
+						uint8_t _frame1;
+						uint8_t _frame2;
+						uint8_t _mapper;
+						uint8_t _pad1;
+						uint8_t _pad2;
+						bool _inInterrupt:1;
+						bool _isHalted:1;
+						bool _wantPause:1;
+						Word _addressBus;
+						Ports _ports;
+						Registers _registers;
+						uint8_t _boardram[32768];
+						uint8_t _ram[8192];
+					} d;
+
+					// No se guarda
+					bool _showLog;
+					bool _showLogInt;
+					bool _showNotImplemented;
+					Opcode _opcode;
 					Rom * _rom;
-					Ram * _boardram;
+
 					VDP * _vdp;
-
-					uint8_t _controlbyte;
-					uint8_t _frame0;
-					uint8_t _frame1;
-					uint8_t _frame2;
-					uint8_t _mapper;
-
-					int64_t _cycles;
 
 					void WriteMemory(uint16_t pos, uint8_t value);
 
@@ -178,10 +184,21 @@ namespace awui {
 					CPUInst();
 					~CPUInst();
 
-					uint8_t ReadMemory(uint16_t pos) const;
+					inline VDP * GetVDP() const { return this->_vdp; }
+					inline void SetPad1(uint8_t pad1) { this->d._pad1 = pad1; }
+					inline void SetPad2(uint8_t pad2) { this->d._pad2 = pad2; }
+					inline uint8_t GetPad1() const { return this->d._pad1; }
+					inline uint8_t GetPad2() const { return this->d._pad2; }
 
 					uint32_t GetCRC32();
 					void SetMapper(uint8_t mapper);
+					inline uint16_t GetPC() const { return this->d._registers.GetPC(); }
+
+					uint8_t ReadMemory(uint16_t pos) const;
+
+					static int GetSaveSize();
+					void LoadState(uint8_t * data);
+					void SaveState(uint8_t * data);
 			};
 		}
 	}

@@ -1278,18 +1278,18 @@ namespace awui {
 				OxNOTIMPLEMENTED,
 			};
 
-			class CPU;
+			class CPUInst;
 
 			class Opcode {
 				private:
 					uint8_t _byte1;
 					uint8_t _byte2;
 					uint8_t _byte4;
-					CPU * _cpu;
+					CPUInst * _cpu;
 					uint16_t _advance;
 
 				public:
-					Opcode(CPU * cpu);
+					Opcode(CPUInst * cpu);
 					~Opcode();
 
 					void SetByte1(uint8_t byte1);

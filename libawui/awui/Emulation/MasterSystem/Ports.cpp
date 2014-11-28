@@ -10,7 +10,7 @@ using namespace awui::Emulation::MasterSystem;
 
 #include <assert.h>
 #include <stdio.h>
-#include <awui/Emulation/MasterSystem/CPU.h>
+#include <awui/Emulation/MasterSystem/CPUInst.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
 /*
@@ -38,8 +38,6 @@ using namespace awui::Emulation::MasterSystem;
 #define DEFAULTREGION 0
 
 Ports::Ports() {
-	this->_cpu = NULL;
-
 	this->_region = DEFAULTREGION;
 	this->_getRegion = false;
 	this->_maskRegion = 0x00;
@@ -48,15 +46,11 @@ Ports::Ports() {
 Ports::~Ports() {
 }
 
-void Ports::SetCPU(CPU * cpu) {
-	this->_cpu = cpu;
-}
-
-void Ports::WriteByte(uint8_t port, uint8_t value) {
+void Ports::WriteByte(CPUInst * cpu, uint8_t port, uint8_t value) {
 //	printf("Write Port: %.2X    Value: %.2X\n", port, value);
 
 	if (port >= 0x40 && port <= 0xBF) {
-		this->_cpu->GetVDP()->WriteByte(port, value);
+		cpu->GetVDP()->WriteByte(port, value);
 		return;
 	}
 
@@ -89,17 +83,17 @@ void Ports::WriteByte(uint8_t port, uint8_t value) {
 //	assert(false);
 }
 
-uint8_t Ports::ReadByte(uint8_t port) const {
+uint8_t Ports::ReadByte(CPUInst * cpu, uint8_t port) const {
 //	printf("Read Port: %.2X\n", port);
 
 	if (port >= 0x40 && port <= 0xBF)
-		return this->_cpu->GetVDP()->ReadByte(port);
+		return cpu->GetVDP()->ReadByte(port);
 
 	if (port == 0xC0 || port == 0xDC)
-		return ((this->_cpu->GetPad2() << 6) | ((this->_cpu->GetPad1() & 0x3F)));
+		return ((cpu->GetPad2() << 6) | ((cpu->GetPad1() & 0x3F)));
 
 	if (port == 0xC1 || port == 0xDD) {
-		uint8_t data =  0x30 | ((this->_cpu->GetPad2() & 0x3F) >> 2);
+		uint8_t data =  0x30 | ((cpu->GetPad2() & 0x3F) >> 2);
 		if (this->_maskRegion & 0x01)
 			data |= (this->_region & 0x01) << 6;
 		else

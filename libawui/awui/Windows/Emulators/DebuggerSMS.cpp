@@ -7,14 +7,15 @@
 #include "DebuggerSMS.h"
 
 #include <awui/Drawing/Image.h>
+#include <awui/Emulation/Common/Ram.h>
 #include <awui/Emulation/MasterSystem/CPU.h>
-#include <awui/Emulation/MasterSystem/Ram.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <SDL_opengl.h>
 
 using namespace awui::Drawing;
+using namespace awui::Emulation::Common;
 using namespace awui::Emulation::MasterSystem;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
@@ -76,16 +77,16 @@ void DebuggerSMS::OnTick() {
 
 	this->_colors->Update();
 
-	Ram * ram = vdp->GetVram();
+	uint8_t * ram = vdp->GetVram();
 
 	for (int sprite = 0; sprite < 512; sprite++) {
 		int64_t offset2 = sprite * 32;
 		for (int y = 0; y < 8; y++) {
 			int64_t offset = offset2 + (y * 4);
-			uint8_t byte1 = ram->ReadByte(offset + 0);
-			uint8_t byte2 = ram->ReadByte(offset + 1);
-			uint8_t byte3 = ram->ReadByte(offset + 2);
-			uint8_t byte4 = ram->ReadByte(offset + 3);
+			uint8_t byte1 = ram[offset + 0];
+			uint8_t byte2 = ram[offset + 1];
+			uint8_t byte3 = ram[offset + 2];
+			uint8_t byte4 = ram[offset + 3];
 
 			//byte1 = byte2 = byte3 = byte4 = ((y == 0 || y == 7)? 0x81 : 0x00);
 			uint8_t mask = 0x80;
