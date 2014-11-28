@@ -41,10 +41,47 @@ int Chip8::IsClass(Classes::Enum objectClass) const {
 
 void Chip8::LoadRom(const String file) {
 	this->_cpu->LoadRom(file);
+	this->SetName(file);
+}
+
+void Chip8::AdjustSizeOfChip8() {
+	int width, height;
+
+	int multiply = 1;
+	int margin = 2;
+	switch (this->GetChip8Mode()) {
+		default:
+		case awui::Emulation::Chip8::CHIP8:
+			width = 64;
+			height = 32;
+			multiply = 8;
+			break;
+		case awui::Emulation::Chip8::SUPERCHIP8:
+			width = 128;
+			height = 64;
+			multiply = 4;
+			break;
+		case awui::Emulation::Chip8::CHIP8HIRES:
+			width = 64;
+			height = 64;
+			multiply = 6;
+			break;
+		case awui::Emulation::Chip8::MEGACHIP8:
+			width = 256;
+			height = 192;
+			multiply = 2;
+			margin = 0;
+			break;
+	}
+
+	multiply = 2;
+
+	this->SetSize(((width + margin) * multiply), ((height + margin) * multiply));
 }
 
 void Chip8::OnTick() {
 	this->_cpu->OnTick();
+	this->AdjustSizeOfChip8();
 }
 
 void Chip8::OnPaint(GL* gl) {
@@ -221,12 +258,6 @@ bool Chip8::OnKeyPress(Keys::Enum key) {
 	if (keypressed >= 0)
 		this->_cpu->KeyDown(keypressed);
 
-	if (key == Keys::Key_I) {
-		this->_invertedColors = !this->_invertedColors;
-		this->_cpu->SetImageUpdated(true);
-	}
-
-//	Console::WriteLine("OnKeyPress");
 	return true;
 }
 
@@ -235,11 +266,10 @@ bool Chip8::OnKeyUp(Keys::Enum key) {
 	if (keypressed >= 0)
 		this->_cpu->KeyUp(keypressed);
 
-//	Console::WriteLine("OnKeyUp");
 	return true;
-
 }
 
 void Chip8::SetInvertedColors(bool mode) {
 	this->_invertedColors = mode;
+	this->_cpu->SetImageUpdated(true);
 }

@@ -2,17 +2,34 @@
 #define _SAMPLES_AWCHIP8_FORM1_H
 
 #include <awui/String.h>
-#include <awui/Windows/Emulators/Chip8.h>
 #include <awui/Windows/Forms/Form.h>
 
-using namespace awui::Windows::Forms;
+namespace awui {
+	namespace Collections {
+		class ArrayList;
+	}
 
-#define TOTALCHIP8 2
+	namespace Windows {
+		namespace Emulators {
+			class Chip8;
+		}
+
+		namespace Forms {
+			class SliderBrowser;
+		}
+	}
+}
+
+using namespace awui::Collections;
+using namespace awui::Windows::Forms;
 
 class Form1 : public awui::Windows::Forms::Form {
 	private:
+		SliderBrowser * _slider;
+		ArrayList * _games;
+		bool _invertedColors;
+
 		void InitializeComponent();
-		awui::Windows::Emulators::Chip8 * _chip8[TOTALCHIP8];
 
 		void AdjustSizeOfChip8(awui::Windows::Emulators::Chip8 * _chip8);
 
@@ -23,6 +40,7 @@ class Form1 : public awui::Windows::Forms::Form {
 		void LoadRom(const awui::String file);
 
 		virtual void OnTick();
+		virtual bool OnKeyPress(Keys::Enum key);
 };
 
 #endif

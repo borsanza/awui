@@ -8,16 +8,13 @@
 
 #include <awui/Windows/Forms/Application.h>
 
-#include <awui/Console.h>
-#include <awui/IO/Directory.h>
-
-using namespace awui::IO;
 using namespace awui::Windows::Forms;
 
 int main(int argc, char ** argv) {
 	Form1 *form = new Form1();
-	Console::WriteLine(Directory::GetCurrentDirectory());
-	form->LoadRom(argv[1]);
+
+	for (int i = 1; i< argc; i++)
+		form->LoadRom(argv[i]);
 
 	Application::Run(form);
 

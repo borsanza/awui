@@ -189,10 +189,37 @@ uint8_t MasterSystem::GetPad(int which) const {
 }
 
 bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
+	bool ret = false;
+	if (button & RemoteButtons::Button5) {
+		this->_lastTick = DateTime::GetNow().GetTicks();
+		this->_actual--;
+		if (this->_actual < this->_first)
+			this->_actual = this->_first;
+		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
+		ret = true;
+	}
+
+	if (button & RemoteButtons::Button6) {
+		this->_lastTick = DateTime::GetNow().GetTicks();
+		this->_actual++;
+		if (this->_actual > this->_last)
+			this->_actual = this->_last;
+		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
+		ret = true;
+	}
+
+	if ((Form::GetButtonsPad1() & RemoteButtons::Button5) && (button & RemoteButtons::Button6)) {
+		this->_cpu->Reset();
+		ret = true;
+	}
+
 	uint8_t pad1 = this->GetPad(0);
 	uint8_t pad2 = this->GetPad(1);
 	this->_cpu->SetPad1(pad1);
 	this->_cpu->SetPad2(pad2);
+
+	if (ret)
+		return ret;
 
 	bool paused = (((pad1 & 0x40) == 0) | ((pad2 & 0x40) == 0));
 	if (paused) {
@@ -200,25 +227,6 @@ bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 			this->_pause = true;
 			this->_cpu->CallPaused();
 		}
-	}
-
-	if ((Form::GetButtonsPad1() & RemoteButtons::Button5) && (button & RemoteButtons::Button6))
-		this->_cpu->Reset();
-
-	if ((button & RemoteButtons::Button5) && (Form::GetButtonsPad1() == RemoteButtons::Button5)) {
-		this->_lastTick = DateTime::GetNow().GetTicks();
-		this->_actual--;
-		if (this->_actual < this->_first)
-			this->_actual = this->_first;
-		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
-	}
-
-	if ((button & RemoteButtons::Button6) && (Form::GetButtonsPad1() == RemoteButtons::Button6)) {
-		this->_lastTick = DateTime::GetNow().GetTicks();
-		this->_actual++;
-		if (this->_actual > this->_last)
-			this->_actual = this->_last;
-		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
 	}
 
 	if (button & RemoteButtons::Button4)

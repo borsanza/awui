@@ -10,37 +10,57 @@
 #include <awui/Convert.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Emulation/Chip8/CPU.h>
+#include <awui/Windows/Emulators/Chip8.h>
 #include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/SliderBrowser.h>
+
+#define MULTIPLY 1
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
 Form1::Form1() {
+	this->_invertedColors = true;
+	this->_games = new ArrayList();
 	this->InitializeComponent();
 }
 
 Form1::~Form1() {
+	for (int i = 0; i < this->_games->GetCount(); i++) {
+		Chip8 * c8 = (Chip8 *)this->_games->Get(i);
+		delete c8;
+	}
+
+	this->_games->Clear();
 }
 
 void Form1::InitializeComponent() {
-	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
+	this->SetBackColor(Color::FromArgb(255, 8, 8, 8));
 
-	for (int i = 0; i < TOTALCHIP8; i++) {
-		this->_chip8[i] = new Chip8();
-		this->GetControls()->Add(this->_chip8[i]);
-	}
+	this->_slider = new SliderBrowser();
+	this->_slider->SetDock(DockStyle::Fill);
+	this->_slider->SetMargin(25);
 
-	this->_chip8[0]->SetInvertedColors(true);
+	this->GetControls()->Add(this->_slider);
 
-	this->SetSize(((256 + 2) * 2), ((192 + 2) * 2) + 25);
-	this->SetFullscreen(1);
+	this->SetSize(600, 400);
+	this->SetFullscreen(0);
+	this->SetText("awChip8");
 }
 
 void Form1::LoadRom(const awui::String file) {
-	this->SetText(file);
-	for (int i = 0; i < TOTALCHIP8; i++)
-		this->_chip8[i]->LoadRom(file);
+	Chip8 * c8 = new Chip8();
+	c8->SetSize(256 * MULTIPLY, 192 * MULTIPLY);
+	c8->LoadRom(file);
+	c8->SetInvertedColors(this->_invertedColors);
+
+	c8->SetTabStop(true);
+	this->_games->Add(c8);
+	this->_slider->GetControls()->Add(c8);
+
+	if (this->_games->GetCount() == 1)
+		c8->SetFocus();
 }
 
 void Form1::AdjustSizeOfChip8(awui::Windows::Emulators::Chip8 * chip8) {
@@ -77,10 +97,22 @@ void Form1::AdjustSizeOfChip8(awui::Windows::Emulators::Chip8 * chip8) {
 }
 
 void Form1::OnTick() {
-	int x = 32;
-	for (int i = 0; i < TOTALCHIP8; i++) {
-		this->AdjustSizeOfChip8(this->_chip8[i]);
-		this->_chip8[i]->SetLocation(x, (this->GetHeight() - this->_chip8[i]->GetHeight()) / 3);
-		x += this->_chip8[i]->GetWidth() + 32;
+	static Chip8 * selected = NULL;
+
+	if (selected != this->_slider->GetControlSelected()) {
+		selected = (Chip8 *) this->_slider->GetControlSelected();
+		this->SetText(selected->GetName());
 	}
+}
+
+bool Form1::OnKeyPress(Keys::Enum key) {
+	if (key == Keys::Key_I) {
+		this->_invertedColors = !this->_invertedColors;
+		for (int i = 0; i < this->_games->GetCount(); i++) {
+			Chip8 * c8 = (Chip8 *)this->_games->Get(i);
+			c8->SetInvertedColors(this->_invertedColors);
+		}
+	}
+
+	return Form::OnKeyPress(key);
 }
