@@ -11,11 +11,11 @@ Processor::Processor() {
 }
 
 void Processor::LoadRom(const String file) {
-	_pc = 0x200;
+	int pos = 0x200;
 	FileStream fs(file, FileMode::Open, FileAccess::Read);
 
 	while (fs.GetPosition() < fs.GetLength())
-		_memory[_pc++] = fs.ReadByte();
+		_memory[pos++] = fs.ReadByte();
 
 	fs.Close();
 	_pc = 0x200;
