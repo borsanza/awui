@@ -23,7 +23,6 @@ namespace awui {
 					uint8_t _screen[WIDTH * HEIGHT];
 
 					bool RunOpcode();
-					void ClearScreen();
 					void PrintScreen();
 					bool SetPixelXOR(int x, int y, bool value);
 

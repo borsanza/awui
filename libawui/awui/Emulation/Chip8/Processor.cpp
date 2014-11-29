@@ -7,12 +7,7 @@ using namespace awui::IO;
 Processor::Processor() {
 	for (int i = 0; i < 16  ; i++) _registers[i] = 0;
 	for (int i = 0; i < 4096; i++) _memory[i] = 0;
-	ClearScreen();
-}
-
-void Processor::ClearScreen() {
-	for (int i = 0; i < WIDTH * HEIGHT; i++)
-		_screen[i] = 0;
+	for (int i = 0; i < WIDTH * HEIGHT; i++) _screen[i] = 0;
 }
 
 void Processor::LoadRom(const String file) {
@@ -47,19 +42,6 @@ bool Processor::RunOpcode() {
 
   // http://en.wikipedia.org/wiki/CHIP-8
 	switch (op1) {
-		case 0x0:
-			{
-				int offset = op2 << 8 | opcode2;
-				switch (offset) {
-					// 00E0: Clears the screen.
-					case 0x0e0:
-						ClearScreen();
-						_pc += 2;
-						break;
-				}
-			}
-			break;
-
 		// 1NNN: Jumps to address NNN.
 		case 0x1:
 			_pc = op2 << 8 | opcode2;
@@ -68,14 +50,6 @@ bool Processor::RunOpcode() {
 		// 3XNN: Skips the next instruction if VX equals NN.
 		case 0x3:
 			if (_registers[op2] == opcode2)
-				_pc += 2;
-
-			_pc += 2;
-			break;
-
-		// 5XY0: Skips the next instruction if VX equals VY.
-		case 0x5:
-			if (_registers[op2] == _registers[op3])
 				_pc += 2;
 
 			_pc += 2;
@@ -105,13 +79,7 @@ bool Processor::RunOpcode() {
 			_pc += 2;
 			break;
 
-		// DXYN: Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels
-		// and a height of N pixels. Each row of 8 pixels is read as bit-coded
-		// (with the most significant bit of each byte displayed on the left)
-		// starting from memory location I; I value doesn't change after the
-		// execution of this instruction. As described above, VF is set to 1 if any
-		// screen pixels are flipped from set to unset when the sprite is drawn,
-		// and to 0 if that doesn't happen.
+		// DXYN: Draws a sprite at coordinate (VX, VY)
 		case 0xd: {
 			int x = _registers[op2];
 			int y = _registers[op3];
