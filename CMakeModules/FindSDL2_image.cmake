@@ -1,0 +1,48 @@
+IF(SDL2IMAGE_INCLUDE_DIR AND SDL2IMAGE_LIBRARY)
+    SET(SDL2IMAGE_FOUND TRUE)
+ELSE(SDL2IMAGE_INCLUDE_DIR AND SDL2IMAGE_LIBRARY)
+    # Linux
+    FIND_PATH(
+        SDL2IMAGE_INCLUDE_DIR
+        SDL2/SDL_image.h
+    )
+
+    FIND_LIBRARY(SDL2IMAGE_LIBRARY
+        SDL2_image
+    )
+
+    # Windows
+    FIND_PATH(
+        SDL2IMAGE_INCLUDE_DIR
+        SDL2/SDL_image.h
+        PATHS
+        "C:/Program Files/SDL"
+        NO_DEFAULT_PATH
+    )
+
+    FIND_LIBRARY(SDL2IMAGE_LIBRARY
+        sdl2_image
+        "C:/Program Files/SDL/lib/x86"
+        NO_DEFAULT_PATH
+    )
+
+    # Mac
+    FIND_PATH(
+        SDL2IMAGE_INCLUDE_DIR
+        SDL2/SDL_image.h
+        PATHS
+        /opt/local/include/
+        NO_DEFAULT_PATH
+    )
+
+    FIND_LIBRARY(SDL2IMAGE_LIBRARY
+        sdl2_image
+        /opt/local/lib
+        NO_DEFAULT_PATH
+    )
+
+    INCLUDE(FindPackageHandleStandardArgs)
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(sdl2image DEFAULT_MSG SDL2IMAGE_INCLUDE_DIR SDL2IMAGE_LIBRARY)
+    MARK_AS_ADVANCED(SDL2IMAGE_INCLUDE_DIR SDL2IMAGE_LIBRARY)
+ENDIF(SDL2IMAGE_INCLUDE_DIR AND SDL2IMAGE_LIBRARY)
+
