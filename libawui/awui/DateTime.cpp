@@ -30,6 +30,13 @@ long long DateTime::GetTicks() {
 	return this->_time * 10;
 }
 
+double DateTime::GetTotalSeconds() {
+	struct timeval tv;
+	struct timezone tz;
+	gettimeofday(&tv, &tz);
+	return tv.tv_sec + (tv.tv_usec / 1000000.0d);
+}
+
 unsigned char DateTime::GetSecond() {
 	return (this->_time / 1000000) % 60;
 }

@@ -18,6 +18,7 @@ namespace awui {
 
 			static DateTime GetNow();
 			long long GetTicks();
+			static double GetTotalSeconds();
 
 			unsigned int GetMillisecond();
 			unsigned char GetSecond();

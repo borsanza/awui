@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <string.h>
 #include <awui/Console.h>
+#include <awui/DateTime.h>
 #include <awui/Emulation/MasterSystem/Ports.h>
 #include <awui/Emulation/MasterSystem/Registers.h>
 #include <awui/Emulation/MasterSystem/Rom.h>
@@ -84,8 +85,9 @@ void CPU::CheckInterrupts() {
 // 53693175 / (15 * 228 * 262) ~ 59.922743404 frames per second for NTSC
 // 53203424 / (15 * 228 * 313) ~ 49.7014591858 frames per second for PAL
 void CPU::OnTick() {
+	this->_initFrame = DateTime::GetTotalSeconds();
+
 	double fps = this->_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;
-	// Entiendo que debe ser 3.57
 	double speed = this->_vdp->GetNTSC() ? 3.579545f : 3.5468949f;
 	this->d._frame += fps / 59.922743404f; // Refresco de awui
 
@@ -102,6 +104,7 @@ void CPU::OnTick() {
 	double vdpIters = 0;
 
 	int realIters = 0;
+	this->_percFrame = 0;
 	for (int i = 0; i < iters; i++) {
 		int64_t oldCycles = this->d._cycles;
 		this->RunOpcode();
@@ -117,6 +120,8 @@ void CPU::OnTick() {
 
 		double times = (this->d._cycles - oldCycles);
 		i = i + times - 1;
+		this->_percFrame = i / iters;
+
 		vdpIters += times * (itersVDP / iters);
 		if (!vsync) {
 			for (; vdpCount < vdpIters; vdpCount++) {
@@ -127,8 +132,6 @@ void CPU::OnTick() {
 		}
 		realIters++;
 	}
-
-//	printf("%d %d\n", realIters, vsync);
 
 	while (!vsync) {
 		vsync = this->_vdp->OnTick(realIters);

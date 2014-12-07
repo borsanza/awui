@@ -11,6 +11,7 @@ namespace awui {
 		namespace MasterSystem {
 			class Rom;
 			class VDP;
+			class Sound;
 
 			enum {
 				MAPPER_NONE = 1,
@@ -47,7 +48,12 @@ namespace awui {
 					Opcode _opcode;
 					Rom * _rom;
 
+					double _initTime;
+					double _initFrame;
+					double _percFrame;
+
 					VDP * _vdp;
+					Sound * _sound;
 
 					void WriteMemory(uint16_t pos, uint8_t value);
 
@@ -185,6 +191,7 @@ namespace awui {
 					~CPUInst();
 
 					inline VDP * GetVDP() const { return this->_vdp; }
+					inline Sound * GetSound() const { return this->_sound; }
 					inline void SetPad1(uint8_t pad1) { this->d._pad1 = pad1; }
 					inline void SetPad2(uint8_t pad2) { this->d._pad2 = pad2; }
 					inline uint8_t GetPad1() const { return this->d._pad1; }
@@ -193,12 +200,16 @@ namespace awui {
 					uint32_t GetCRC32();
 					void SetMapper(uint8_t mapper);
 					inline uint16_t GetPC() const { return this->d._registers.GetPC(); }
+					inline int64_t GetCycles() const { return this->d._cycles; }
 
 					uint8_t ReadMemory(uint16_t pos) const;
 
 					static int GetSaveSize();
 					void LoadState(uint8_t * data);
 					void SaveState(uint8_t * data);
+
+					double GetVirtualTime();
+					double GetRealTime();
 			};
 		}
 	}

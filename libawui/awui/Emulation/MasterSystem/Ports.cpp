@@ -11,6 +11,7 @@ using namespace awui::Emulation::MasterSystem;
 #include <assert.h>
 #include <stdio.h>
 #include <awui/Emulation/MasterSystem/CPUInst.h>
+#include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
 /*
@@ -43,11 +44,12 @@ Ports::Ports() {
 	this->_maskRegion = 0x00;
 }
 
-Ports::~Ports() {
-}
-
 void Ports::WriteByte(CPUInst * cpu, uint8_t port, uint8_t value) {
 //	printf("Write Port: %.2X    Value: %.2X\n", port, value);
+	if (port == 0x7f || port == 0x7e) {
+		cpu->GetSound()->WriteByte(cpu, value);
+		return;
+	}
 
 	if (port >= 0x40 && port <= 0xBF) {
 		cpu->GetVDP()->WriteByte(port, value);
