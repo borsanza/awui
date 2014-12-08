@@ -59,7 +59,6 @@ void FormMasterGear::InitializeComponent() {
 
 void FormMasterGear::LoadRom(const awui::String file) {
 	MasterSystem * ms = new MasterSystem();
-	this->_debugger->SetRom(ms);
 	ms->SetMultiply(MULTIPLY);
 	ms->SetSize(256 * MULTIPLY, 262 * MULTIPLY);
 	ms->LoadRom(file);
@@ -212,7 +211,11 @@ void FormMasterGear::OnTick() {
 	static MasterSystem * selected = NULL;
 
 	if (selected != this->_slider->GetControlSelected()) {
+		if (selected != NULL)
+			selected->SetSoundEnabled(false);
+
 		selected = (MasterSystem *) this->_slider->GetControlSelected();
+		selected->SetSoundEnabled(true);
 		this->_debugger->SetRom(selected);
 		selected->SetDebugger(this->_debugger);
 		this->SetText(selected->GetName());

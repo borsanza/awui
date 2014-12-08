@@ -89,8 +89,7 @@ CPUInst::CPUInst() : _opcode(this) {
 	}
 */
 
-	this->_initTime = (int)DateTime::GetTotalSeconds();
-	this->_sound = new Sound(this);
+	this->_soundEnabled = false;
 	this->d._mapper = MAPPER_SEGA;
 	this->_rom = new Rom(4096);
 	this->Reset();
@@ -1990,11 +1989,7 @@ void CPUInst::SaveState(uint8_t * data) {
 }
 
 double CPUInst::GetVirtualTime() {
-	double begin = this->_initFrame - this->_initTime;
+	double begin = this->_initFrame;
 	double frameDuration = 1.0 / 59.922743404;
 	return begin + (frameDuration * this->_percFrame);
-}
-
-double CPUInst::GetRealTime() {
-	return DateTime::GetTotalSeconds() - this->_initTime;
 }

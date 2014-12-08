@@ -6,7 +6,7 @@
 
 // 48000, 44100, 22050, 11025
 #define SOUNDFREQ 44100
-#define SOUNDFORMAT 2
+#define SOUNDFORMAT 1
 #define SOUNDSAMPLES 1024
 //#define SOUNDSAMPLES 2048
 
@@ -21,7 +21,7 @@ namespace awui {
 
 			class Sound {
 				struct Channel {
-					float _data;     // 10 bits tono y 3 bits noise
+					uint16_t _tone;     // 10 bits tono y 3 bits noise
 					uint8_t _volume; // 4 bit
 					unsigned int _fase;
 					int _time;
@@ -29,9 +29,10 @@ namespace awui {
 				};
 
 				private:
-					uint8_t _data;
-					uint8_t _type;
+					static Sound* _instance;
 					uint16_t _channel;
+					uint8_t _type; // 1: Volumen, 0: Tone/Noise
+					uint8_t _data;
 					int _frame;
 					double _initTimeSound;
 					SDL_AudioSpec _wanted;
@@ -39,14 +40,20 @@ namespace awui {
 
 					int GetPosBuffer(CPUInst * cpu);
 
+					CPUInst * _cpu;
+
 //					double _lastTime, _actualTime;
 
 				public:
-					Sound(CPUInst * cpu);
+					Sound();
 					~Sound();
 
+					inline void SetCPU(CPUInst * cpu) { this->_cpu = cpu; }
+					inline CPUInst * GetCPU() { return this->_cpu; }
+
+					static Sound* Instance();
 					void WriteByte(CPUInst * cpu, uint8_t value);
-					void FillAudio(CPUInst * cpu, Uint8 *stream, int len);
+					void FillAudio(Uint8 *stream, int len);
 			};
 		}
 	}

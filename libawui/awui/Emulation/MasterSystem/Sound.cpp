@@ -20,13 +20,15 @@ const double pi = 3.1415926535897932384626433832795029L;
 
 extern void fill_audio(void *udata, Uint8 *stream, int len);
 
-Sound::Sound(CPUInst * cpu) {
+Sound* Sound::_instance = 0;
+
+Sound::Sound() {
 	this->_frame = 0;
 //	this->_lastTime = this->_actualTime = cpu->GetRealTime();
 
 	for (int i = 0; i <= 3; i++) {
 		this->_channels[i]._volume = 0xF;
-		this->_channels[i]._data = 0x0;
+		this->_channels[i]._tone = 0x0;
 		this->_channels[i]._fase = 0;
 		for (int j = 0; j < SOUNDBUFFER; j++)
 			this->_channels[i]._buffer[j] = 0;
@@ -38,19 +40,26 @@ Sound::Sound(CPUInst * cpu) {
     this->_wanted.channels = 1;
     this->_wanted.samples = SOUNDSAMPLES;
     this->_wanted.callback = fill_audio;
-    this->_wanted.userdata = cpu;
+    this->_wanted.userdata = 0;
 	SDL_OpenAudio(&this->_wanted, NULL);
-	this->_initTimeSound = cpu->GetRealTime();
+	this->_initTimeSound = DateTime::GetTotalSeconds();
 	SDL_PauseAudio(0);
 }
 
 Sound::~Sound() {
 }
 
+Sound* Sound::Instance() {
+	if (Sound::_instance == 0)
+		Sound::_instance = new Sound;
+
+	return Sound::_instance;
+}
+
 #define FIRSTCHANNEL 0
 #define LASTCHANNEL 3
 
-void Sound::FillAudio(CPUInst * cpu, Uint8 *stream, int len) {
+void Sound::FillAudio(Uint8 *stream, int len) {
 	int offset = this->_frame * SOUNDSIZEFRAME;
 	for (int i = 0; i < len; i++) {
 		int bufferPos = offset + i;
@@ -60,7 +69,11 @@ void Sound::FillAudio(CPUInst * cpu, Uint8 *stream, int len) {
 			if (_channels[j]._buffer[bufferPos] == 0)
 				continue;
 
-			int v = 40 * sin(_channels[j]._fase * pi * 2.0L / _channels[j]._buffer[bufferPos]);
+			int v = 0;
+			if (sin(_channels[j]._fase * pi * 2.0L / _channels[j]._buffer[bufferPos]) > 0)
+				v = 42;
+			else
+				v = -42;
 
 			outputValue += v;
 			_channels[j]._fase++;
@@ -124,9 +137,8 @@ void Sound::FillAudio(CPUInst * cpu, Uint8 *stream, int len) {
 }
 
 void fill_audio(void *userdata, Uint8 *stream, int len) {
-	CPUInst * cpu = (CPUInst *) userdata;
-	Sound * sound = cpu->GetSound();
-	sound->FillAudio(cpu, stream, len);
+	Sound * sound = Sound::Instance();
+	sound->FillAudio(stream, len);
     }
 
 int Sound::GetPosBuffer(CPUInst * cpu) {
@@ -146,38 +158,54 @@ int Sound::GetPosBuffer(CPUInst * cpu) {
 }
 
 void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
+	Channel * channel = &(this->_channels[this->_channel]);
+	bool mustSound = false;
+
 	if ((value & 0x80) == 0) {
-		Channel * channel = &(this->_channels[this->_channel]);
+		//printf("%d %d%d%d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
+		channel->_tone = ((value & 0x3F) << 4) | (channel->_tone & 0x0F);
 
-		if (this->_type == 0) {
-			uint16_t d = ((value & 0x3F) << 4) | this->_data;
-			if (d != 0) {
-				float speed = (cpu->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f) / (16.0f * SOUNDFORMAT);
-				speed = speed / d;
-				channel->_data = speed;
-				channel->_time = 1300;
+		if (this->_type == 0)
+			mustSound = true;
 
-				if (channel->_data != 0) {
-					unsigned int bytesPerPeriod = SOUNDFREQ / channel->_data;
-					if (bytesPerPeriod != 0) {
-						int pos = this->GetPosBuffer(cpu);
-						for (int i = pos; i < (pos + 9000); i++)
-							channel->_buffer[i % SOUNDBUFFER] = bytesPerPeriod;
-					}
-				}
-
-			}
-			else
-				channel->_data = 0;
-
-			if (channel->_volume == 0xF)
-				channel->_volume = 0;
-		} else
-			channel->_volume = this->_data & 0xF;
-//		if (this->_channel == 1) printf("%d %d\n", value, channel->_volume);
+		if (channel->_volume == 0xF)
+			channel->_volume = 0;
 	} else {
-		this->_data = value & 0x0F;
-		this->_type = (value & 0x10) >> 4;
+		//printf("%d %d%d %d %d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x40 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
+
 		this->_channel = (value & 0x60) >> 5;
+		this->_type = (value & 0x10) >> 4;
+		channel = &(this->_channels[this->_channel]);
+
+		channel->_tone = (channel->_tone & 0x3F0) | (value & 0x0F);
+		if (this->_type == 1)
+			channel->_volume = this->_data & 0xF;
+
+		this->_data = value & 0x0F;
+
+
+		if (this->_type == 0)
+			mustSound = true;
+		//printf("Channel: %d   Type: %d   Data: %.2X\n", this->_channel, this->_type, value & 0x0F);
+	}
+
+
+	if (!mustSound)
+		return;
+
+	if (channel->_volume == 0xF)
+		return;
+
+	if (channel->_tone != 0) {
+		float speed = (cpu->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f) / (16.0f * SOUNDFORMAT);
+		float data = speed / channel->_tone;
+		// printf("%f\n", data);
+
+		unsigned int bytesPerPeriod = SOUNDFREQ / data;
+		if (bytesPerPeriod != 0) {
+			int pos = this->GetPosBuffer(cpu);
+			for (int i = pos; i < (pos + 4096); i++)
+				channel->_buffer[i % SOUNDBUFFER] = SOUNDFREQ / data;
+		}
 	}
 }

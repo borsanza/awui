@@ -258,3 +258,7 @@ bool MasterSystem::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 
 	return true;
 }
+
+void MasterSystem::SetSoundEnabled(bool mode) {
+	this->_cpu->SetSoundEnabled(mode);
+}

@@ -70,6 +70,8 @@ namespace awui {
 
 					bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 					bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+
+					void SetSoundEnabled(bool mode);
 			};
 		}
 	}

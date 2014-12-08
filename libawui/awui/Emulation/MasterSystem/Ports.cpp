@@ -47,7 +47,10 @@ Ports::Ports() {
 void Ports::WriteByte(CPUInst * cpu, uint8_t port, uint8_t value) {
 //	printf("Write Port: %.2X    Value: %.2X\n", port, value);
 	if (port == 0x7f || port == 0x7e) {
-		cpu->GetSound()->WriteByte(cpu, value);
+		// printf("Write Port: %.2X    Value: %.2X\n", port, value);
+		if (cpu->IsSoundEnabled())
+			Sound::Instance()->WriteByte(cpu, value);
+
 		return;
 	}
 
