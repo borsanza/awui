@@ -20,12 +20,20 @@ namespace awui {
 			class CPUInst;
 
 			class Sound {
+
+				struct Sample {
+					uint8_t _volume;
+					uint16_t _tone;
+				};
+
 				struct Channel {
 					uint16_t _tone;     // 10 bits tono y 3 bits noise
 					uint8_t _volume; // 4 bit
 					unsigned int _fase;
-					int _time;
-					unsigned int _buffer[SOUNDBUFFER];
+
+					Sample _buffer[SOUNDBUFFER];
+					Sample _last;
+					int _count;
 				};
 
 				private:
@@ -41,8 +49,6 @@ namespace awui {
 					int GetPosBuffer(CPUInst * cpu);
 
 					CPUInst * _cpu;
-
-//					double _lastTime, _actualTime;
 
 				public:
 					Sound();

@@ -10,6 +10,7 @@
 #include <awui/DateTime.h>
 #include <awui/Emulation/MasterSystem/CPU.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
+#include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
@@ -261,4 +262,5 @@ bool MasterSystem::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 
 void MasterSystem::SetSoundEnabled(bool mode) {
 	this->_cpu->SetSoundEnabled(mode);
+	Sound::Instance()->SetCPU(this->_cpu);
 }
