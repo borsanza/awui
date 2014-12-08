@@ -33,6 +33,8 @@ Sound::Sound() {
 		for (int j = 0; j < SOUNDBUFFER; j++) {
 			this->_channels[i]._buffer[j]._tone = 0;
 			this->_channels[i]._buffer[j]._volume = 0xF;
+			this->_channels[i]._buffer[j]._changeTone = false;
+			this->_channels[i]._buffer[j]._changeVolume = false;
 		}
 	}
 
@@ -59,13 +61,13 @@ Sound* Sound::Instance() {
 }
 
 #define FIRSTCHANNEL 0
-#define LASTCHANNEL 3
+#define LASTCHANNEL 2
 
 void Sound::FillAudio(Uint8 *stream, int len) {
 	if (this->_cpu == NULL)
 		return;
 
-	float speed = (this->_cpu->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f) / (16.0f * SOUNDFORMAT); //
+	float speed = (this->_cpu->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f) / (32.0f * SOUNDFORMAT); //
 
 	int offset = this->_frame * SOUNDSIZEFRAME;
 	for (int i = 0; i < len; i++) {
@@ -73,23 +75,32 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 
 		int outputValue = 0;
 		for (int j = FIRSTCHANNEL; j <= LASTCHANNEL; j++) {
-			if (this->_channels[j]._buffer[bufferPos]._tone != 0) {
-				this->_channels[j]._last._tone = this->_channels[j]._buffer[bufferPos]._tone;
-				this->_channels[j]._last._volume = this->_channels[j]._buffer[bufferPos]._volume;
-				this->_channels[j]._buffer[bufferPos]._tone = 0;
-				this->_channels[j]._buffer[bufferPos]._volume = 0;
-				this->_channels[j]._count = 4096;
+			Channel * channel = &this->_channels[j];
+
+			if (channel->_buffer[bufferPos]._changeTone) {
+				channel->_buffer[bufferPos]._changeTone = false;
+				channel->_last._tone = channel->_buffer[bufferPos]._tone;
+				channel->_lastAmplitude = 0;
+				channel->_count = 4096;
 			}
 
-			if (this->_channels[j]._count == 0)
+			if (channel->_buffer[bufferPos]._changeVolume) {
+				channel->_buffer[bufferPos]._changeVolume = false;
+				channel->_last._volume = channel->_buffer[bufferPos]._volume;
+			}
+
+			if (channel->_last._volume == 0xF)
 				continue;
 
-			this->_channels[j]._count--;
-
-			if (this->_channels[j]._last._tone == 0)
+			if (channel->_count == 0)
 				continue;
 
-			float data = speed / this->_channels[j]._last._tone;
+			channel->_count--;
+
+			if (channel->_last._tone == 0)
+				continue;
+
+			float data = speed / channel->_last._tone;
 			if (data == 0)
 				continue;
 
@@ -98,15 +109,21 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 			if (bytesPerPeriod == 0)
 				continue;
 
-			int v = 0;
-			if (sin(this->_channels[j]._fase * pi * 2.0L / data) > 0)
-				v = 42;
-			else
-				v = -42;
+			if (sin(channel->_fase * pi * 2.0L / data) > 0) {
+				if (channel->_lastAmplitude <= 0) channel->_lastAmplitude = 32;
+				if (channel->_lastAmplitude > 0)  channel->_lastAmplitude -= 0.3f;
+				else channel->_lastAmplitude = 0;
+			} else {
+				if (channel->_lastAmplitude >= 0) channel->_lastAmplitude = -32;
+				if (channel->_lastAmplitude < 0)  channel->_lastAmplitude += 0.3f;
+				else channel->_lastAmplitude = 0;
+			}
 
-			outputValue += v;
-			this->_channels[j]._fase++;
-			this->_channels[j]._fase %= bytesPerPeriod;
+			float amplitude =  (channel->_lastAmplitude * (15 - channel->_last._volume)) / 15.0f;
+
+			outputValue += amplitude;
+			channel->_fase++;
+			channel->_fase %= bytesPerPeriod;
 		}
 
 		if (outputValue > 127) outputValue = 127;        // and clip the result
@@ -143,46 +160,49 @@ int Sound::GetPosBuffer(CPUInst * cpu) {
 }
 
 void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
+	bool changeTone = false;
+	bool changeVolume = false;
+
 	Channel * channel = &(this->_channels[this->_channel]);
-	bool mustSound = false;
 
 	if ((value & 0x80) == 0) {
-		//printf("%d %d%d%d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
+		// printf("%d %d%d%d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
 		channel->_tone = ((value & 0x3F) << 4) | (channel->_tone & 0x0F);
 
-		if (this->_type == 0)
-			mustSound = true;
-
-		if (channel->_volume == 0xF)
-			channel->_volume = 0;
+		if (this->_type == 0) {
+			changeTone = true;
+		} else {
+			changeVolume = true;
+			channel->_volume = value & 0xF;
+		}
 	} else {
-		//printf("%d %d%d %d %d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x40 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
+		// printf("%d %d%d %d %d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x40 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
 
 		this->_channel = (value & 0x60) >> 5;
 		this->_type = (value & 0x10) >> 4;
 		channel = &(this->_channels[this->_channel]);
-
 		channel->_tone = (channel->_tone & 0x3F0) | (value & 0x0F);
-		if (this->_type == 1)
-			channel->_volume = this->_data & 0xF;
 
-		this->_data = value & 0x0F;
-
-
-		if (this->_type == 0)
-			mustSound = true;
-		//printf("Channel: %d   Type: %d   Data: %.2X\n", this->_channel, this->_type, value & 0x0F);
+		if (this->_type == 1) {
+			channel->_volume = value & 0xF;
+			changeVolume = true;
+		} else
+			changeTone = true;
+		// printf("Channel: %d   Type: %d   Data: %.2X\n", this->_channel, this->_type, value & 0x0F);
 	}
 
-	if (!mustSound)
-		return;
-
-	if (channel->_volume == 0xF)
-		return;
-
-	if (channel->_tone != 0) {
+	if (changeTone || changeVolume) {
 		int pos = this->GetPosBuffer(cpu);
-		channel->_buffer[pos % SOUNDBUFFER]._tone = channel->_tone;
-		channel->_buffer[pos % SOUNDBUFFER]._volume = channel->_volume;
+		if (changeTone) {
+			channel->_buffer[pos % SOUNDBUFFER]._tone = channel->_tone;
+			channel->_buffer[pos % SOUNDBUFFER]._changeTone = true;
+		}
+
+		if (changeVolume) {
+			channel->_buffer[pos % SOUNDBUFFER]._volume = channel->_volume;
+			channel->_buffer[pos % SOUNDBUFFER]._changeVolume = true;
+		}
 	}
+
+	// printf("Channel: %d Volumen: %.2X\n", this->_channel, channel->_volume);
 }

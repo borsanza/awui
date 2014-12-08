@@ -24,6 +24,8 @@ namespace awui {
 				struct Sample {
 					uint8_t _volume;
 					uint16_t _tone;
+					bool _changeTone;
+					bool _changeVolume;
 				};
 
 				struct Channel {
@@ -33,6 +35,7 @@ namespace awui {
 
 					Sample _buffer[SOUNDBUFFER];
 					Sample _last;
+					float _lastAmplitude;
 					int _count;
 				};
 
@@ -40,7 +43,6 @@ namespace awui {
 					static Sound* _instance;
 					uint16_t _channel;
 					uint8_t _type; // 1: Volumen, 0: Tone/Noise
-					uint8_t _data;
 					int _frame;
 					double _initTimeSound;
 					SDL_AudioSpec _wanted;
