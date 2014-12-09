@@ -6,15 +6,14 @@
 
 #include "Sound.h"
 
-using namespace awui::Emulation::MasterSystem;
-
+#include <awui/DateTime.h>
 #include <awui/Emulation/MasterSystem/CPUInst.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
-#include <awui/DateTime.h>
 #include <math.h>
 #include <stdio.h>
 
 using namespace awui;
+using namespace awui::Emulation::MasterSystem;
 
 extern void fill_audio(void *udata, Uint8 *stream, int len);
 
@@ -78,7 +77,7 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 			if (channel->_buffer[bufferPos]._changeTone) {
 				channel->_buffer[bufferPos]._changeTone = false;
 				channel->_last._tone = channel->_buffer[bufferPos]._tone;
-				channel->_lastAmplitude = 0;
+				//channel->_lastAmplitude = 0;
 				channel->_count = 4096;
 			}
 
@@ -108,19 +107,22 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 				continue;
 
 			// bool up = sin(channel->_fase * pi * 2.0L / data) > 0;
-			bool up = (int((channel->_fase << 1) / data) % 2) == 0;
-
+			bool up = (int(floor((channel->_fase << 1) / data)) % 2) == 0;
+			float v = up ? 32 : -32;
+/*
 			if (up) {
 				if (channel->_lastAmplitude <= 0) channel->_lastAmplitude = 32;
-//				if (channel->_lastAmplitude > 0)  channel->_lastAmplitude -= 0.3f;
-//				else channel->_lastAmplitude = 0;
+				if (channel->_lastAmplitude > 0)  channel->_lastAmplitude -= 0.3f;
+				else channel->_lastAmplitude = 0;
 			} else {
 				if (channel->_lastAmplitude >= 0) channel->_lastAmplitude = -32;
-//				if (channel->_lastAmplitude < 0)  channel->_lastAmplitude += 0.3f;
-//				else channel->_lastAmplitude = 0;
+				if (channel->_lastAmplitude < 0)  channel->_lastAmplitude += 0.3f;
+				else channel->_lastAmplitude = 0;
 			}
+			v = channel->_lastAmplitude;
+*/
 
-			float amplitude =  (channel->_lastAmplitude * (15 - channel->_last._volume)) / 15.0f;
+			float amplitude =  (v * (15 - channel->_last._volume)) / 15.0f;
 
 			outputValue += amplitude;
 			channel->_fase++;

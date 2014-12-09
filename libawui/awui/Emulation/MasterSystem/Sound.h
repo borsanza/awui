@@ -37,7 +37,7 @@ namespace awui {
 
 					Sample _buffer[SOUNDBUFFER];
 					Sample _last;
-					float _lastAmplitude;
+//					float _lastAmplitude;
 					int _count;
 				};
 
