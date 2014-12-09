@@ -24,11 +24,12 @@ Sound* Sound::_instance = 0;
 
 Sound::Sound() {
 	this->_frame = 0;
+	this->_channel = 0;
 //	this->_lastTime = this->_actualTime = cpu->GetRealTime();
 
 	for (int i = 0; i <= 3; i++) {
 		this->_channels[i]._volume = 0xF;
-		this->_channels[i]._tone = 0x0;
+		this->_channels[i]._tone = 0x1;
 		this->_channels[i]._fase = 0;
 		for (int j = 0; j < SOUNDBUFFER; j++) {
 			this->_channels[i]._buffer[j]._tone = 0;
@@ -162,15 +163,17 @@ int Sound::GetPosBuffer(CPUInst * cpu) {
 void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
 	bool changeTone = false;
 	bool changeVolume = false;
+	bool useModulation = false;
 
 	Channel * channel = &(this->_channels[this->_channel]);
 
 	if ((value & 0x80) == 0) {
 		// printf("%d %d%d%d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
-		channel->_tone = ((value & 0x3F) << 4) | (channel->_tone & 0x0F);
+		channel->_register = ((value & 0x3F) << 4) | (channel->_register & 0x0F);
 
 		if (this->_type == 0) {
 			changeTone = true;
+			channel->_tone = channel->_register;
 		} else {
 			changeVolume = true;
 			channel->_volume = value & 0xF;
@@ -180,22 +183,38 @@ void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
 
 		this->_channel = (value & 0x60) >> 5;
 		this->_type = (value & 0x10) >> 4;
-		channel = &(this->_channels[this->_channel]);
-		channel->_tone = (channel->_tone & 0x3F0) | (value & 0x0F);
 
+		channel = &(this->_channels[this->_channel]);
+		channel->_register = (channel->_register & 0x3F0) | (value & 0x0F);
 		if (this->_type == 1) {
-			channel->_volume = value & 0xF;
-			changeVolume = true;
-		} else
+			if (channel->_tone == 0) {
+				useModulation = true;
+			} else {
+				channel->_volume = value & 0xF;
+				changeVolume = true;
+			}
+		} else {
+			channel->_tone = channel->_register;
 			changeTone = true;
+		}
 		// printf("Channel: %d   Type: %d   Data: %.2X\n", this->_channel, this->_type, value & 0x0F);
 	}
 
-	if (changeTone || changeVolume) {
+	if (changeTone || changeVolume || useModulation) {
 		int pos = this->GetPosBuffer(cpu);
 		if (changeTone) {
-			channel->_buffer[pos % SOUNDBUFFER]._tone = channel->_tone;
+			channel->_buffer[pos % SOUNDBUFFER]._tone = ((channel->_tone != 0) ? channel->_tone : 1);
 			channel->_buffer[pos % SOUNDBUFFER]._changeTone = true;
+		}
+
+		if (useModulation) {
+// Hasta mejorarlo omito la Modulacion
+/*
+			channel->_buffer[pos % SOUNDBUFFER]._tone = channel->_register;
+			channel->_buffer[pos % SOUNDBUFFER]._changeTone = true;
+			channel->_buffer[pos % SOUNDBUFFER]._changeVolume = true;
+			channel->_buffer[pos % SOUNDBUFFER]._volume = 0;
+*/
 		}
 
 		if (changeVolume) {

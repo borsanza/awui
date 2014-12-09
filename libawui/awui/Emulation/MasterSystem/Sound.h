@@ -29,6 +29,8 @@ namespace awui {
 				};
 
 				struct Channel {
+					uint16_t _register;
+
 					uint16_t _tone;     // 10 bits tono y 3 bits noise
 					uint8_t _volume; // 4 bit
 					unsigned int _fase;
