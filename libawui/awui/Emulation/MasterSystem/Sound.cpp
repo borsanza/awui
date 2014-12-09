@@ -110,14 +110,17 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 			if (bytesPerPeriod == 0)
 				continue;
 
-			if (sin(channel->_fase * pi * 2.0L / data) > 0) {
+			// bool up = sin(channel->_fase * pi * 2.0L / data) > 0;
+			bool up = (int((channel->_fase << 1) / data) % 2) == 0;
+
+			if (up) {
 				if (channel->_lastAmplitude <= 0) channel->_lastAmplitude = 32;
-				if (channel->_lastAmplitude > 0)  channel->_lastAmplitude -= 0.3f;
-				else channel->_lastAmplitude = 0;
+//				if (channel->_lastAmplitude > 0)  channel->_lastAmplitude -= 0.3f;
+//				else channel->_lastAmplitude = 0;
 			} else {
 				if (channel->_lastAmplitude >= 0) channel->_lastAmplitude = -32;
-				if (channel->_lastAmplitude < 0)  channel->_lastAmplitude += 0.3f;
-				else channel->_lastAmplitude = 0;
+//				if (channel->_lastAmplitude < 0)  channel->_lastAmplitude += 0.3f;
+//				else channel->_lastAmplitude = 0;
 			}
 
 			float amplitude =  (channel->_lastAmplitude * (15 - channel->_last._volume)) / 15.0f;
