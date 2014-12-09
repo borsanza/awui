@@ -16,8 +16,6 @@ using namespace awui::Emulation::MasterSystem;
 
 using namespace awui;
 
-const double pi = 3.1415926535897932384626433832795029L;
-
 extern void fill_audio(void *udata, Uint8 *stream, int len);
 
 Sound* Sound::_instance = 0;
@@ -25,7 +23,6 @@ Sound* Sound::_instance = 0;
 Sound::Sound() {
 	this->_frame = 0;
 	this->_channel = 0;
-//	this->_lastTime = this->_actualTime = cpu->GetRealTime();
 
 	for (int i = 0; i <= 3; i++) {
 		this->_channels[i]._volume = 0xF;
@@ -133,7 +130,7 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 		if (outputValue > 127) outputValue = 127;        // and clip the result
 		if (outputValue < -128) outputValue = -128;      // this seems a crude method, but works very well
 
-		//printf("%d\n", outputValue);
+		// printf("%d\n", outputValue);
         stream[i] = outputValue;
 	}
 
