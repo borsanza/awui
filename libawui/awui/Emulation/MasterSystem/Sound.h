@@ -22,7 +22,7 @@ namespace awui {
 			class Sound {
 
 				struct Sample {
-					uint8_t _volume;
+					int8_t _volume;
 					uint16_t _tone;
 					bool _changeTone;
 					bool _changeVolume;
@@ -37,7 +37,6 @@ namespace awui {
 
 					Sample _buffer[SOUNDBUFFER];
 					Sample _last;
-//					float _lastAmplitude;
 					int _count;
 				};
 

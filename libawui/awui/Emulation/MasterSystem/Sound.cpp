@@ -64,7 +64,7 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 	if (this->_cpu == NULL)
 		return;
 
-	float speed = (this->_cpu->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f) / (32.0f * SOUNDFORMAT); //
+	float speed = (SOUNDFREQ * 32.0f * SOUNDFORMAT) / (this->_cpu->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
 
 	int offset = this->_frame * SOUNDSIZEFRAME;
 	for (int i = 0; i < len; i++) {
@@ -86,59 +86,31 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 				channel->_last._volume = channel->_buffer[bufferPos]._volume;
 			}
 
-			if (channel->_last._volume == 0xF)
-				continue;
-
 			if (channel->_count == 0)
 				continue;
 
 			channel->_count--;
 
-			if (channel->_last._tone == 0)
+			if ((channel->_last._volume == 0) || (channel->_last._tone == 0))
 				continue;
 
-			float data = speed / channel->_last._tone;
-			if (data == 0)
-				continue;
-
-			data = SOUNDFREQ / data;
+			float data = channel->_last._tone * speed;
 			unsigned int bytesPerPeriod = data;
-			if (bytesPerPeriod == 0)
-				continue;
+			if (bytesPerPeriod != 0) {
+				if ((int((channel->_fase << 1) / data) % 2) == 0)
+					outputValue += channel->_last._volume;
+				else
+					outputValue -= channel->_last._volume;
 
-			// bool up = sin(channel->_fase * pi * 2.0L / data) > 0;
-			bool up = (int(floor((channel->_fase << 1) / data)) % 2) == 0;
-			float v = up ? 32 : -32;
-/*
-			if (up) {
-				if (channel->_lastAmplitude <= 0) channel->_lastAmplitude = 32;
-				if (channel->_lastAmplitude > 0)  channel->_lastAmplitude -= 0.3f;
-				else channel->_lastAmplitude = 0;
-			} else {
-				if (channel->_lastAmplitude >= 0) channel->_lastAmplitude = -32;
-				if (channel->_lastAmplitude < 0)  channel->_lastAmplitude += 0.3f;
-				else channel->_lastAmplitude = 0;
+				channel->_fase++;
+				channel->_fase %= bytesPerPeriod;
 			}
-			v = channel->_lastAmplitude;
-*/
-
-			float amplitude =  (v * (15 - channel->_last._volume)) / 15.0f;
-
-			outputValue += amplitude;
-			channel->_fase++;
-			channel->_fase %= bytesPerPeriod;
 		}
 
-		if (outputValue > 127) outputValue = 127;        // and clip the result
-		if (outputValue < -128) outputValue = -128;      // this seems a crude method, but works very well
-
-		// printf("%d\n", outputValue);
         stream[i] = outputValue;
 	}
 
 	this->_frame = (this->_frame + 1) % TOTALFRAMES;
-
-//	printf("<<<------ %d\n", this->_frame);
 }
 
 void fill_audio(void *userdata, Uint8 *stream, int len) {
@@ -220,7 +192,8 @@ void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
 		}
 
 		if (changeVolume) {
-			channel->_buffer[pos % SOUNDBUFFER]._volume = channel->_volume;
+			// 31 es un buen valor para no salirse del rango. 31 * 4 = 124/-124 (cabe en un int8)
+			channel->_buffer[pos % SOUNDBUFFER]._volume = (int8_t) (((15.0f - channel->_volume) / 15.0f) * 31.0f);
 			channel->_buffer[pos % SOUNDBUFFER]._changeVolume = true;
 		}
 	}
