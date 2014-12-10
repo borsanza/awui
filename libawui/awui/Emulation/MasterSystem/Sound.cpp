@@ -135,7 +135,7 @@ int Sound::GetPosBuffer(CPUInst * cpu) {
 //	printf("%d\n", (int)pos);
 //	printf("------>>>> %d\n", this->_frame);
 
-	return pos % SOUNDBUFFER;
+	return int(pos) % SOUNDBUFFER;
 }
 
 void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
