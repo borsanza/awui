@@ -94,6 +94,10 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 			if ((channel->_last._volume == 0) || (channel->_last._tone == 0))
 				continue;
 
+			// Modulacion
+			// outputValue += (int8_t)((channel->_last._tone * 4) - 30);
+			// continue;
+
 			float data = channel->_last._tone * speed;
 			unsigned int bytesPerPeriod = data;
 			if (bytesPerPeriod != 0) {
@@ -131,7 +135,7 @@ int Sound::GetPosBuffer(CPUInst * cpu) {
 //	printf("%d\n", (int)pos);
 //	printf("------>>>> %d\n", this->_frame);
 
-	return pos;
+	return pos % SOUNDBUFFER;
 }
 
 void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
@@ -177,24 +181,24 @@ void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
 	if (changeTone || changeVolume || useModulation) {
 		int pos = this->GetPosBuffer(cpu);
 		if (changeTone) {
-			channel->_buffer[pos % SOUNDBUFFER]._tone = ((channel->_tone != 0) ? channel->_tone : 1);
-			channel->_buffer[pos % SOUNDBUFFER]._changeTone = true;
+			channel->_buffer[pos]._tone = ((channel->_tone != 0) ? channel->_tone : 1);
+			channel->_buffer[pos]._changeTone = true;
 		}
 
 		if (useModulation) {
 // Hasta mejorarlo omito la Modulacion
 /*
-			channel->_buffer[pos % SOUNDBUFFER]._tone = channel->_register;
-			channel->_buffer[pos % SOUNDBUFFER]._changeTone = true;
-			channel->_buffer[pos % SOUNDBUFFER]._changeVolume = true;
-			channel->_buffer[pos % SOUNDBUFFER]._volume = 0;
+			channel->_buffer[pos]._tone = channel->_register & 0xF;
+			channel->_buffer[pos]._changeTone = true;
+			channel->_buffer[pos]._changeVolume = true;
+			channel->_buffer[pos]._volume = 31;
 */
 		}
 
 		if (changeVolume) {
 			// 31 es un buen valor para no salirse del rango. 31 * 4 = 124/-124 (cabe en un int8)
-			channel->_buffer[pos % SOUNDBUFFER]._volume = (int8_t) (((15.0f - channel->_volume) / 15.0f) * 31.0f);
-			channel->_buffer[pos % SOUNDBUFFER]._changeVolume = true;
+			channel->_buffer[pos]._volume = (int8_t) (((15.0f - channel->_volume) / 15.0f) * 31.0f);
+			channel->_buffer[pos]._changeVolume = true;
 		}
 	}
 
