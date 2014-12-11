@@ -57,9 +57,6 @@ Sound* Sound::Instance() {
 	return Sound::_instance;
 }
 
-#define FIRSTCHANNEL 0
-#define LASTCHANNEL 2
-
 void Sound::FillAudio(Uint8 *stream, int len) {
 	if (this->_cpu == NULL)
 		return;
@@ -71,13 +68,14 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 		int bufferPos = offset + i;
 
 		int outputValue = 0;
-		for (int j = FIRSTCHANNEL; j <= LASTCHANNEL; j++) {
+
+		// Tone
+		for (int j = 0; j <= 2; j++) {
 			Channel * channel = &this->_channels[j];
 
 			if (channel->_buffer[bufferPos]._changeTone) {
 				channel->_buffer[bufferPos]._changeTone = false;
 				channel->_last._tone = channel->_buffer[bufferPos]._tone;
-				//channel->_lastAmplitude = 0;
 				channel->_count = 4096;
 			}
 
@@ -91,7 +89,7 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 
 			channel->_count--;
 
-			if ((channel->_last._volume == 0) || (channel->_last._tone == 0))
+			if (channel->_last._volume == 0)
 				continue;
 
 			// Modulacion
@@ -108,6 +106,50 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 
 				channel->_fase++;
 				channel->_fase %= bytesPerPeriod;
+			}
+		}
+
+		// Noise
+		{
+			Channel * channel = &this->_channels[3];
+
+			if (channel->_buffer[bufferPos]._changeTone) {
+				channel->_buffer[bufferPos]._changeTone = false;
+				channel->_last._tone = channel->_buffer[bufferPos]._tone;
+				channel->_count = 0;
+				this->_noiseData = 0x8000;
+			}
+
+			if (channel->_buffer[bufferPos]._changeVolume) {
+				channel->_buffer[bufferPos]._changeVolume = false;
+				channel->_last._volume = channel->_buffer[bufferPos]._volume;
+			}
+
+			if (channel->_last._volume != 0) {
+				if (channel->_count == 0) {
+					switch (channel->_last._tone & 0x3) {
+						case 0: channel->_count = 0x10; break;
+						case 1: channel->_count = 0x20; break;
+						case 2: channel->_count = 0x40; break;
+						case 3: channel->_count = this->_channels[2]._last._tone; break;
+					}
+
+
+					bool carry = false;
+					if (channel->_last._tone & 0x4) {
+						uint8_t v = this->_noiseData & 0x9;
+						carry = (v == 0x1) || (v == 0x8);
+					} else
+						carry = this->_noiseData & 1;
+					this->_noiseData = (this->_noiseData >> 1) | (carry ? 0x8000 : 0);
+				}
+
+				channel->_count--;
+
+				if (this->_noiseData & 1)
+					outputValue += channel->_last._volume;
+				else
+					outputValue -= channel->_last._volume;
 			}
 		}
 
@@ -181,7 +223,7 @@ void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
 	if (changeTone || changeVolume || useModulation) {
 		int pos = this->GetPosBuffer(cpu);
 		if (changeTone) {
-			channel->_buffer[pos]._tone = ((channel->_tone != 0) ? channel->_tone : 1);
+			channel->_buffer[pos]._tone = (((channel->_tone != 0) || (this->_channel == 3)) ? channel->_tone : 1);
 			channel->_buffer[pos]._changeTone = true;
 		}
 

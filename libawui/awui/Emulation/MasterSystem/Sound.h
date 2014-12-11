@@ -42,6 +42,7 @@ namespace awui {
 
 				private:
 					static Sound* _instance;
+					uint16_t _noiseData;
 					uint16_t _channel;
 					uint8_t _type; // 1: Volumen, 0: Tone/Noise
 					int _frame;
