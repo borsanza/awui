@@ -134,7 +134,6 @@ void Sound::FillAudio(Uint8 *stream, int len) {
 						case 3: channel->_count = this->_channels[2]._last._tone; break;
 					}
 
-
 					bool carry = false;
 					if (channel->_last._tone & 0x4) {
 						uint8_t v = this->_noiseData & 0x9;
