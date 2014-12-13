@@ -45,7 +45,6 @@ namespace awui {
 					bool _showLog:1;
 					bool _showLogInt:1;
 					bool _showNotImplemented:1;
-					bool _soundEnabled:1;
 					Opcode _opcode;
 					Rom * _rom;
 
@@ -191,12 +190,11 @@ namespace awui {
 					~CPUInst();
 
 					inline VDP * GetVDP() const { return this->_vdp; }
+					inline Sound * GetSound() const { return this->_sound; }
 					inline void SetPad1(uint8_t pad1) { this->d._pad1 = pad1; }
 					inline void SetPad2(uint8_t pad2) { this->d._pad2 = pad2; }
 					inline uint8_t GetPad1() const { return this->d._pad1; }
 					inline uint8_t GetPad2() const { return this->d._pad2; }
-					inline bool IsSoundEnabled() const { return this->_soundEnabled; }
-					inline void SetSoundEnabled(bool mode) { this->_soundEnabled = mode; }
 
 					uint32_t GetCRC32();
 					void SetMapper(uint8_t mapper);

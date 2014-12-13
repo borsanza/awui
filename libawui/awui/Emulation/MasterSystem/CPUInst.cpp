@@ -89,15 +89,15 @@ CPUInst::CPUInst() : _opcode(this) {
 	}
 */
 
-	this->_soundEnabled = false;
 	this->d._mapper = MAPPER_SEGA;
 	this->_rom = new Rom(4096);
+	this->_sound = new Sound();
 	this->Reset();
 }
 
 CPUInst::~CPUInst() {
-	delete this->_rom;
 	delete this->_sound;
+	delete this->_rom;
 }
 
 void CPUInst::Reset() {
