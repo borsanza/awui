@@ -261,5 +261,5 @@ bool MasterSystem::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 }
 
 void MasterSystem::SetSoundEnabled(bool mode) {
-	SoundSDL::Instance()->SetCPU(this->_cpu);
+	SoundSDL::Instance()->SetPlayingSound(this->_cpu->GetSound());
 }

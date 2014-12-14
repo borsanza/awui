@@ -6,14 +6,9 @@
 
 #include "Sound.h"
 
-#include <awui/DateTime.h>
 #include <awui/Emulation/MasterSystem/CPUInst.h>
-#include <awui/Emulation/MasterSystem/VDP.h>
-#include "SoundSDL.h"
-#include <math.h>
-#include <stdio.h>
+#include <awui/Emulation/MasterSystem/SoundSDL.h>
 
-using namespace awui;
 using namespace awui::Emulation::MasterSystem;
 
 Sound::Sound() {
@@ -26,6 +21,7 @@ Sound::Sound() {
 		this->_channels[i]._volume = 0xF;
 		this->_channels[i]._tone = 0x1;
 		this->_channels[i]._fase = 0;
+		this->_channels[i]._useModulation = false;
 		for (int j = 0; j < SOUNDBUFFER; j++) {
 			this->_channels[i]._buffer[j]._tone = 0;
 			this->_channels[i]._buffer[j]._volume = 0xF;
@@ -40,7 +36,7 @@ int Sound::GetPosBuffer(CPUInst * cpu) {
 	double now = cpu->GetVirtualTime();
 	now = now - soundSDL->GetInitTimeSound();
 	float timeFrame = SOUNDSAMPLES / (SOUNDFREQ * 2.0f);
-	int frame = ((int)floor(now / timeFrame)) % TOTALFRAMES;
+	int frame = (int(now / timeFrame)) % TOTALFRAMES;
 
 	double pos = (double(SOUNDSIZEFRAME) * now) / timeFrame;
 	pos = int(pos) % SOUNDSIZEFRAME;
@@ -93,20 +89,21 @@ void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
 	}
 
 	if (changeTone || changeVolume || useModulation) {
+		SoundSDL * soundSDL = SoundSDL::Instance();
+
 		int pos = this->GetPosBuffer(cpu);
 		if (changeTone) {
 			channel->_buffer[pos]._tone = (((channel->_tone != 0) || (this->_channel == 3)) ? channel->_tone : 1);
 			channel->_buffer[pos]._changeTone = true;
+			channel->_useModulation = false;
 		}
 
 		if (useModulation) {
-// Hasta mejorarlo omito la Modulacion
-/*
 			channel->_buffer[pos]._tone = channel->_register & 0xF;
 			channel->_buffer[pos]._changeTone = true;
 			channel->_buffer[pos]._changeVolume = true;
 			channel->_buffer[pos]._volume = 31;
-*/
+			channel->_useModulation = true;
 		}
 
 		if (changeVolume) {
@@ -114,6 +111,8 @@ void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
 			channel->_buffer[pos]._volume = (int8_t) (((15.0f - channel->_volume) / 15.0f) * 31.0f);
 			channel->_buffer[pos]._changeVolume = true;
 		}
+
+		soundSDL->AddSound(this);
 	}
 
 	// printf("Channel: %d Volumen: %.2X\n", this->_channel, channel->_volume);

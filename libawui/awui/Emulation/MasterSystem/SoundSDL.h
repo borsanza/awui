@@ -14,10 +14,13 @@
 #define SOUNDSIZEFRAME ((SOUNDSAMPLES * SOUNDFORMAT) / 2)
 #define SOUNDBUFFER (SOUNDSIZEFRAME * TOTALFRAMES)
 
+#include <awui/Collections/ArrayList.h>
+
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
 			class CPUInst;
+			class Sound;
 
 			class SoundSDL {
 				private:
@@ -26,17 +29,20 @@ namespace awui {
 					double _initTimeSound;
 					SDL_AudioSpec _wanted;
 
-					CPUInst * _cpu;
+					awui::Collections::ArrayList _arraySound;
+					Sound * _playing;
 
 				public:
 					SoundSDL();
 
-					inline void SetCPU(CPUInst * cpu) { this->_cpu = cpu; }
-					inline CPUInst * GetCPU() { return this->_cpu; }
 					inline double GetInitTimeSound() { return this->_initTimeSound; }
 
 					static SoundSDL* Instance();
 					void FillAudio(Uint8 *stream, int len);
+					void FillAudioSDL(Sound * sound, Uint8 *stream, int len);
+					void AddSound(Sound * sound);
+
+					inline void SetPlayingSound(Sound * sound) { this->_playing = sound; }
 			};
 		}
 	}

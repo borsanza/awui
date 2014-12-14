@@ -92,6 +92,7 @@ CPUInst::CPUInst() : _opcode(this) {
 	this->d._mapper = MAPPER_SEGA;
 	this->_rom = new Rom(4096);
 	this->_sound = new Sound();
+	this->_sound->SetCPU(this);
 	this->Reset();
 }
 

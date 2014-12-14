@@ -7,21 +7,20 @@
 #include "SoundSDL.h"
 
 #include <awui/DateTime.h>
+#include <awui/Object.h>
 #include <awui/Emulation/MasterSystem/CPUInst.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
-#include <math.h>
-#include <stdio.h>
 
-using namespace awui;
 using namespace awui::Emulation::MasterSystem;
+using namespace awui::Collections;
 
 extern void FillAudioCB(void *udata, Uint8 *stream, int len);
 
 SoundSDL* SoundSDL::_instance = 0;
 
 SoundSDL::SoundSDL() {
-	this->_cpu = NULL;
+	this->_playing = NULL;
 	this->_frame = 0;
 
 	SDL_Init(SDL_INIT_AUDIO);
@@ -32,7 +31,7 @@ SoundSDL::SoundSDL() {
     this->_wanted.callback = FillAudioCB;
     this->_wanted.userdata = 0;
 	SDL_OpenAudio(&this->_wanted, NULL);
-	this->_initTimeSound = DateTime::GetTotalSeconds();
+	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
 	SDL_PauseAudio(0);
 }
 
@@ -44,17 +43,28 @@ SoundSDL* SoundSDL::Instance() {
 }
 
 void FillAudioCB(void *userdata, Uint8 *stream, int len) {
-	SoundSDL * sound = SoundSDL::Instance();
-	sound->FillAudio(stream, len);
-    }
+	SoundSDL::Instance()->FillAudio(stream, len);
+}
 
 void SoundSDL::FillAudio(Uint8 *stream, int len) {
-	if (this->_cpu == NULL)
-		return;
+	ArrayList copy;
+	for (int i = 0; i < this->_arraySound.GetCount(); i++)
+		copy.Add(this->_arraySound.Get(i));
+	this->_arraySound.Clear();
 
-	Sound * sound = this->_cpu->GetSound();
+	Sound * playing = this->_playing;
+	for (int i = 0; i < copy.GetCount(); i++) {
+		Sound * sound = (Sound *) copy.Get(i);
+		if (playing != sound)
+			this->FillAudioSDL(sound, 0, len);
+	}
 
-	float speed = (SOUNDFREQ * 32.0f * SOUNDFORMAT) / (this->_cpu->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
+	if (playing)
+		this->FillAudioSDL(playing, stream, len);
+}
+
+void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
+	float speed = (SOUNDFREQ * 32.0f * SOUNDFORMAT) / (sound->GetCPU()->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
 
 	int offset = this->_frame * SOUNDSIZEFRAME;
 	for (int i = 0; i < len; i++) {
@@ -77,6 +87,12 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 				channel->_last._volume = channel->_buffer[bufferPos]._volume;
 			}
 
+			// Modulacion
+			if (channel->_useModulation) {
+				outputValue += (int8_t)((channel->_last._tone * 4) - 30);
+				continue;
+			}
+
 			if (channel->_count == 0)
 				continue;
 
@@ -84,10 +100,6 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 
 			if (channel->_last._volume == 0)
 				continue;
-
-			// Modulacion
-			// outputValue += (int8_t)((channel->_last._tone * 4) - 30);
-			// continue;
 
 			float data = channel->_last._tone * speed;
 			unsigned int bytesPerPeriod = data;
@@ -145,8 +157,14 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 			}
 		}
 
-        stream[i] = outputValue;
+		if (stream)
+			stream[i] = outputValue;
 	}
 
 	this->_frame = (this->_frame + 1) % TOTALFRAMES;
+}
+
+void SoundSDL::AddSound(Sound * sound) {
+	if (this->_arraySound.IndexOf(sound) == -1)
+		this->_arraySound.Add(sound);
 }

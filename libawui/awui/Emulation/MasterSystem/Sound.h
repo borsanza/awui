@@ -13,6 +13,8 @@
 #define SOUNDSIZEFRAME ((SOUNDSAMPLES * SOUNDFORMAT) / 2)
 #define SOUNDBUFFER (SOUNDSIZEFRAME * TOTALFRAMES)
 
+#include <awui/Object.h>
+
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
@@ -24,6 +26,7 @@ namespace awui {
 			};
 
 			struct Channel {
+				bool _useModulation;
 				uint16_t _register;
 
 				uint16_t _tone;     // 10 bits tono y 3 bits noise
@@ -37,18 +40,22 @@ namespace awui {
 
 			class CPUInst;
 
-			class Sound {
+			class Sound : public Object {
 				private:
 					uint16_t _channel;
 					uint8_t _type; // 1: Volumen, 0: Tone/Noise
 
 					int GetPosBuffer(CPUInst * cpu);
+					CPUInst * _cpu;
 
 				public:
 					uint16_t _noiseData;
 					Channel _channels[4];
 
 					Sound();
+
+					inline void SetCPU(CPUInst * cpu) { this->_cpu = cpu; }
+					inline CPUInst * GetCPU() { return this->_cpu; }
 
 					void WriteByte(CPUInst * cpu, uint8_t value);
 			};
