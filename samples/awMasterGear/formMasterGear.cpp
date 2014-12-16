@@ -31,6 +31,7 @@ FormMasterGear::~FormMasterGear() {
 	}
 
 	this->_games->Clear();
+	delete this->_games;
 }
 
 void FormMasterGear::InitializeComponent() {

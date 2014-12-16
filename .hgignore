@@ -11,6 +11,7 @@ samples/awChip8/awChip8
 samples/awMasterGear/awMasterGear
 samples/awArcade/awArcade
 samples/awSlider/awSlider
+samples/awSpectrum/awSpectrum
 build/
 
 syntax: glob
@@ -26,6 +27,7 @@ syntax: glob
 *.sg
 *.rar
 *.kdev*
+*.rom
 libaw/*.c
 libaw/*.h
 libaw/aw/*.h

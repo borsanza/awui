@@ -30,6 +30,7 @@ namespace awui {
 			Chip8,
 			MasterSystem,
 			DebuggerSMS,
+			Spectrum,
 		};
 	};
 

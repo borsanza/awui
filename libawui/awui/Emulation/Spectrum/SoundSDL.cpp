@@ -15,7 +15,7 @@
 using namespace awui::Emulation::Spectrum;
 using namespace awui::Collections;
 
-extern void FillAudioCB(void *udata, Uint8 *stream, int len);
+extern void FillAudioSpectrumCB(void *udata, Uint8 *stream, int len);
 
 SoundSDL* SoundSDL::_instance = 0;
 
@@ -28,7 +28,7 @@ SoundSDL::SoundSDL() {
     this->_wanted.format = SOUNDFORMAT == 1 ? AUDIO_S8 : AUDIO_S16SYS;
     this->_wanted.channels = 1;
     this->_wanted.samples = SOUNDSAMPLES;
-    this->_wanted.callback = FillAudioCB;
+    this->_wanted.callback = FillAudioSpectrumCB;
     this->_wanted.userdata = 0;
 	SDL_OpenAudio(&this->_wanted, NULL);
 	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
@@ -42,7 +42,7 @@ SoundSDL* SoundSDL::Instance() {
 	return SoundSDL::_instance;
 }
 
-void FillAudioCB(void *userdata, Uint8 *stream, int len) {
+void FillAudioSpectrumCB(void *userdata, Uint8 *stream, int len) {
 	SoundSDL::Instance()->FillAudio(stream, len);
 }
 
