@@ -1,5 +1,5 @@
 /*
- * awui/Emulation/MasterSystem/SoundSDL.cpp
+ * awui/Emulation/Spectrum/SoundSDL.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
@@ -8,11 +8,11 @@
 
 #include <awui/DateTime.h>
 #include <awui/Object.h>
-#include <awui/Emulation/MasterSystem/CPUInst.h>
-#include <awui/Emulation/MasterSystem/Sound.h>
-#include <awui/Emulation/MasterSystem/VDP.h>
+#include <awui/Emulation/Spectrum/CPUInst.h>
+#include <awui/Emulation/Spectrum/Sound.h>
+#include <awui/Emulation/Spectrum/VDP.h>
 
-using namespace awui::Emulation::MasterSystem;
+using namespace awui::Emulation::Spectrum;
 using namespace awui::Collections;
 
 extern void FillAudioCB(void *udata, Uint8 *stream, int len);

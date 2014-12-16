@@ -1,15 +1,15 @@
 /*
- * awui/Emulation/MasterSystem/Sound.cpp
+ * awui/Emulation/Spectrum/Sound.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
 
 #include "Sound.h"
 
-#include <awui/Emulation/MasterSystem/CPUInst.h>
-#include <awui/Emulation/MasterSystem/SoundSDL.h>
+#include <awui/Emulation/Spectrum/CPUInst.h>
+#include <awui/Emulation/Spectrum/SoundSDL.h>
 
-using namespace awui::Emulation::MasterSystem;
+using namespace awui::Emulation::Spectrum;
 
 Sound::Sound() {
 	// Manera tonta de inicializar SoundSDL

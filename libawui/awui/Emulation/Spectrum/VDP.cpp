@@ -1,5 +1,5 @@
 /*
- * awui/Emulation/MasterSystem/VDP.cpp
+ * awui/Emulation/Spectrum/VDP.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
@@ -7,14 +7,14 @@
 #include "VDP.h"
 
 #include <awui/Emulation/Common/Ram.h>
-#include <awui/Emulation/MasterSystem/CPU.h>
-#include <awui/Emulation/MasterSystem/Registers.h>
+#include <awui/Emulation/Spectrum/CPU.h>
+#include <awui/Emulation/Spectrum/Registers.h>
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
 using namespace awui::Emulation::Common;
-using namespace awui::Emulation::MasterSystem;
+using namespace awui::Emulation::Spectrum;
 
 /*
  * bit 7: VSync flag, set at the beginning of each VSync impulse
