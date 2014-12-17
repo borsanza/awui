@@ -115,7 +115,6 @@ void CPUInst::Reset() {
 void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
 //	if (pos == 0xc092)
 //		printf("Writing: %.2X\n", value);
-
 	switch (this->d._mapper) {
 		default:
 		case MAPPER_SEGA:
@@ -162,11 +161,30 @@ void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
 			}
 
 			this->d._ram[pos - 0xE000] = value;
+			return;
 
 		case MAPPER_NONE:
 			// En la rom no se escribe
 			if (pos < 0xC000)
 				return;
+
+			if (pos < 0xE000) {
+				this->d._ram[pos - 0xC000] = value;
+				return;
+			}
+
+			this->d._ram[pos - 0xE000] = value;
+			return;
+
+		case MAPPER_SPECTRUM:
+			// En la rom no se escribe
+			if (pos < 0x4000)
+				return;
+
+			if (pos < 0x8000) {
+				this->d._ula[pos - 0x4000] = value;
+				return;
+			}
 
 			if (pos < 0xE000) {
 				this->d._ram[pos - 0xC000] = value;
@@ -215,6 +233,18 @@ uint8_t CPUInst::ReadMemory(uint16_t pos) const {
 		case MAPPER_NONE:
 			if (pos < 0xC000)
 				return this->_rom->ReadByte(pos);
+
+			if (pos < 0xE000)
+				return this->d._ram[pos - 0xC000];
+
+			return this->d._ram[pos - 0xE000];
+
+		case MAPPER_SPECTRUM:
+			if (pos < 0x4000)
+				return this->_rom->ReadByte(pos);
+
+			if (pos < 0x8000)
+				return this->d._ula[pos - 0x4000];
 
 			if (pos < 0xE000)
 				return this->d._ram[pos - 0xC000];

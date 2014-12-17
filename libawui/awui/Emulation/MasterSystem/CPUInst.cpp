@@ -163,6 +163,7 @@ void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
 			}
 
 			this->d._ram[pos - 0xE000] = value;
+			break;
 
 		case MAPPER_NONE:
 			// En la rom no se escribe

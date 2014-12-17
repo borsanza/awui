@@ -16,6 +16,7 @@ namespace awui {
 			enum {
 				MAPPER_NONE = 1,
 				MAPPER_SEGA = 2,
+				MAPPER_SPECTRUM = 3,
 			};
 
 			class CPUInst {
@@ -39,6 +40,7 @@ namespace awui {
 						Registers _registers;
 						uint8_t _boardram[32768];
 						uint8_t _ram[8192];
+						uint8_t _ula[16384];
 					} d;
 
 					// No se guarda

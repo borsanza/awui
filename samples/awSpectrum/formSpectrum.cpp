@@ -52,7 +52,7 @@ void FormSpectrum::InitializeComponent() {
 
 void FormSpectrum::LoadRom(const awui::String file) {
 	Spectrum * ms = new Spectrum();
-	ms->GetCPU()->SetMapper(awui::Emulation::Spectrum::MAPPER_NONE);
+	ms->GetCPU()->SetMapper(awui::Emulation::Spectrum::MAPPER_SPECTRUM);
 	ms->SetMultiply(MULTIPLY);
 	ms->SetSize(256 * MULTIPLY, 262 * MULTIPLY);
 	ms->LoadRom(file);

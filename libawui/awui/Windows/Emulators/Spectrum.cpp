@@ -89,27 +89,23 @@ CPU * Spectrum::GetCPU() {
 
 
 // Interface:
-// 192x176
+// 256x192: 1800 = 6144 bytes = (32 x 8) x 192 bits
+
 // 4000-57FF Spectrum bitmap
 // 5800-5AFF Spectrum attributes
 // 7000 attribute lookup: 256 bytes.  64 colors of (paper, ink)
 // 7100 pixel stretch, 16 bytes.
 
 void Spectrum::OnPaint(GL* gl) {
-/*
-	uint8_t c, r, g, b;
-	uint8_t color[4] {0, 85, 170, 255};
-	VDP * screen = this->_cpu->GetVDP();
-
 //	¿Lo rellenamos con el registro 7?
 //	c = screen->GetBackColor();
 //	r = color[c & 0x3];
 //	g = color[(c >> 2) & 0x3];
 //	b = color[(c >> 4) & 0x3];
 //	this->SetBackColor(Color::FromArgb(255, r, g, b));
-
-	int width = 256;
-	int height = 192;
+	int width = 320;
+	int height = 240;
+	int pos;
 
 	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
 		delete this->_image;
@@ -117,20 +113,35 @@ void Spectrum::OnPaint(GL* gl) {
 		this->SetSize(width * this->_multiply, height * this->_multiply);
 	}
 
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			c = screen->GetPixel(x, y);
-			r = color[c & 0x3];
-			g = color[(c >> 2) & 0x3];
-			b = color[(c >> 4) & 0x3];
-			this->_image->SetPixel(x, y, r, g, b);
+	for (uint16_t y = 0; y < 240; y++) {
+		for (int x = 0; x < 32; x++) {
+			this->_image->SetPixel(x, y, 255, 255, 255);
+			this->_image->SetPixel(x + 288, y, 255, 255, 255);
+		}
+	}
+
+	for (uint16_t y = 0; y < 24; y++) {
+		for (int x = 0; x < 320; x++) {
+			this->_image->SetPixel(x, y, 255, 255, 255);
+			this->_image->SetPixel(x, y + 216, 255, 255, 255);
+		}
+	}
+
+	for (uint16_t y = 0; y < 192; y++) {
+		for (int x = 0; x < 256; x++) {
+			uint8_t newY = (y & 0xC0) | ((y & 0x38) >> 3) | ((y & 0x7) << 3);
+			pos = 0x4000 + (x >> 3) + (newY * 32);
+			uint8_t v = this->_cpu->ReadMemory(pos);
+			int bit = 8 - (x & 0x7);
+			v = ((v & (1 << bit)) != 0) ? 0 : 255;
+			// printf("%.4X: %dx%d\n", pos, x, y);
+			this->_image->SetPixel(x + 32, y + 24, v, v, v);
 		}
 	}
 
 	this->_image->Update();
 
 	GL::DrawImageGL(this->_image, 0, 0, this->GetWidth(), this->GetHeight());
-*/
 }
 
 bool Spectrum::OnKeyPress(Keys::Enum key) {
