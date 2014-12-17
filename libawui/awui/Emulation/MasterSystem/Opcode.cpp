@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <awui/Emulation/MasterSystem/CPUInst.h>
 #include <awui/Emulation/MasterSystem/Registers.h>
-#include <awui/Emulation/MasterSystem/VDP.h>
 
 using namespace awui::Emulation::MasterSystem;
 

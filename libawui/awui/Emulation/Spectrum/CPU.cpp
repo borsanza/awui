@@ -13,7 +13,6 @@
 #include <awui/Emulation/Spectrum/Ports.h>
 #include <awui/Emulation/Spectrum/Registers.h>
 #include <awui/Emulation/Spectrum/Rom.h>
-#include <awui/Emulation/Spectrum/VDP.h>
 
 #define SLOW
 //#define NUMOPCODES
@@ -28,12 +27,11 @@ static uint64_t opcodesT[OxNOTIMPLEMENTED];
 #endif
 
 CPU::CPU() {
-	this->_vdp = new VDP(this);
 	this->d._addressBus.W = 0;
 	this->d._frame = 0;
 	this->d._oldFrame = 0;
 
-	this->_showLog = true;
+	this->_showLog = false;
 	this->_showNotImplemented = true;
 
 	this->d._inInterrupt = false;
@@ -53,12 +51,9 @@ CPU::CPU() {
 }
 
 CPU::~CPU() {
-	delete this->_vdp;
 }
 
 void CPU::Reset() {
-	this->_vdp->Reset();
-
 	CPUInst::Reset();
 }
 
@@ -82,14 +77,16 @@ void CPU::CheckInterrupts() {
 */
 }
 
+#define NTSC 1
 // http://www.smspower.org/forums/viewtopic.php?p=69680
 // 53693175 / (15 * 228 * 262) ~ 59.922743404 frames per second for NTSC
 // 53203424 / (15 * 228 * 313) ~ 49.7014591858 frames per second for PAL
 void CPU::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
 
-	double fps = this->_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;
-	double speed = this->_vdp->GetNTSC() ? 3.579545f : 3.5468949f;
+
+	double fps = NTSC ? 59.922743404f : 49.7014591858f;
+	double speed = NTSC ? 3.579545f : 3.5468949f;
 	this->d._frame += fps / 59.922743404f; // Refresco de awui
 
 	if ((int) this->d._frame == (int) this->d._oldFrame)
@@ -98,10 +95,8 @@ void CPU::OnTick() {
 	this->d._oldFrame = this->d._frame;
 
 	double iters = (speed * 1000000.0f) / fps;
-	double itersVDP = this->_vdp->GetTotalWidth() * this->_vdp->GetTotalHeight();
+	double itersVDP = 256*192;
 
-	bool vsync = false;
-	int vdpCount = 0;
 	double vdpIters = 0;
 
 	int realIters = 0;
@@ -124,19 +119,7 @@ void CPU::OnTick() {
 		this->_percFrame = i / iters;
 
 		vdpIters += times * (itersVDP / iters);
-		if (!vsync) {
-			for (; vdpCount < vdpIters; vdpCount++) {
-				if (vsync) continue;
-				vsync = this->_vdp->OnTick(realIters);
-				this->CheckInterrupts();
-			}
-		}
 		realIters++;
-	}
-
-	while (!vsync) {
-		vsync = this->_vdp->OnTick(realIters);
-		this->CheckInterrupts();
 	}
 }
 

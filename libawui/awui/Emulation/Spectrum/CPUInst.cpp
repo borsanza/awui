@@ -10,7 +10,6 @@
 #include <awui/Emulation/Spectrum/Ports.h>
 #include <awui/Emulation/Spectrum/Rom.h>
 #include <awui/Emulation/Spectrum/Sound.h>
-#include <awui/Emulation/Spectrum/VDP.h>
 #include <assert.h>
 #include <string.h>
 
@@ -1972,21 +1971,16 @@ void CPUInst::SetMapper(uint8_t mapper) {
 
 int CPUInst::GetSaveSize() {
 	int size = sizeof(CPUInst::saveData);
-	size += VDP::GetSaveSize();
 
 	return size;
 }
 
 void CPUInst::LoadState(uint8_t * data) {
 	memcpy (&this->d, data, sizeof(CPUInst::saveData));
-
-	this->_vdp->LoadState(&data[sizeof(CPUInst::saveData)]);
 }
 
 void CPUInst::SaveState(uint8_t * data) {
 	memcpy (data, &this->d, sizeof(CPUInst::saveData));
-
-	this->_vdp->SaveState(&data[sizeof(CPUInst::saveData)]);
 }
 
 double CPUInst::GetVirtualTime() {

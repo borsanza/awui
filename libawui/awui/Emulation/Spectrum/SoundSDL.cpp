@@ -10,7 +10,6 @@
 #include <awui/Object.h>
 #include <awui/Emulation/Spectrum/CPUInst.h>
 #include <awui/Emulation/Spectrum/Sound.h>
-#include <awui/Emulation/Spectrum/VDP.h>
 
 using namespace awui::Emulation::Spectrum;
 using namespace awui::Collections;
@@ -64,7 +63,7 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 }
 
 void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
-	float speed = (SOUNDFREQ * 32.0f * SOUNDFORMAT) / (sound->GetCPU()->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
+	float speed = (SOUNDFREQ * 32.0f * SOUNDFORMAT) / 3579545.0f;
 
 	int offset = this->_frame * SOUNDSIZEFRAME;
 	for (int i = 0; i < len; i++) {

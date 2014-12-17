@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <awui/Emulation/Spectrum/CPUInst.h>
 #include <awui/Emulation/Spectrum/Registers.h>
-#include <awui/Emulation/Spectrum/VDP.h>
 
 using namespace awui::Emulation::Spectrum;
 

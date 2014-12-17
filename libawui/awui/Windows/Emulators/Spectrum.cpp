@@ -9,7 +9,6 @@
 #include <awui/Drawing/Image.h>
 #include <awui/DateTime.h>
 #include <awui/Emulation/Spectrum/CPU.h>
-#include <awui/Emulation/Spectrum/VDP.h>
 #include <awui/Emulation/Spectrum/SoundSDL.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
@@ -88,7 +87,16 @@ CPU * Spectrum::GetCPU() {
 	return this->_cpu;
 }
 
+
+// Interface:
+// 192x176
+// 4000-57FF Spectrum bitmap
+// 5800-5AFF Spectrum attributes
+// 7000 attribute lookup: 256 bytes.  64 colors of (paper, ink)
+// 7100 pixel stretch, 16 bytes.
+
 void Spectrum::OnPaint(GL* gl) {
+/*
 	uint8_t c, r, g, b;
 	uint8_t color[4] {0, 85, 170, 255};
 	VDP * screen = this->_cpu->GetVDP();
@@ -100,8 +108,8 @@ void Spectrum::OnPaint(GL* gl) {
 //	b = color[(c >> 4) & 0x3];
 //	this->SetBackColor(Color::FromArgb(255, r, g, b));
 
-	int width = screen->GetVisualWidth();
-	int height = screen->GetVisualHeight();
+	int width = 256;
+	int height = 192;
 
 	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
 		delete this->_image;
@@ -122,13 +130,16 @@ void Spectrum::OnPaint(GL* gl) {
 	this->_image->Update();
 
 	GL::DrawImageGL(this->_image, 0, 0, this->GetWidth(), this->GetHeight());
+*/
 }
 
 bool Spectrum::OnKeyPress(Keys::Enum key) {
 	if (key == Keys::Key_B) {
+/*
 		VDP * screen = this->_cpu->GetVDP();
 		screen->SetShowBorder(!screen->GetShowBorder());
 		screen->Clear();;
+*/
 	}
 
 	if (key == Keys::Key_BACKSPACE)
