@@ -15,7 +15,7 @@
 #include <awui/Emulation/Spectrum/Rom.h>
 #include <awui/Emulation/Spectrum/VDP.h>
 
-//#define SLOW
+#define SLOW
 //#define NUMOPCODES
 
 using namespace awui::Emulation;
@@ -33,8 +33,7 @@ CPU::CPU() {
 	this->d._frame = 0;
 	this->d._oldFrame = 0;
 
-	this->_showLog = false;
-	this->_showLogInt = false;
+	this->_showLog = true;
 	this->_showNotImplemented = true;
 
 	this->d._inInterrupt = false;
@@ -68,6 +67,7 @@ void CPU::LoadRom(const String file) {
 }
 
 void CPU::CheckInterrupts() {
+/*
 	bool interrupt = this->_vdp->GetInterrupt();
 	if (!this->d._registers.GetIFF1())
 		return;
@@ -79,6 +79,7 @@ void CPU::CheckInterrupts() {
 		this->d._registers.SetIFF2(false);
 		this->CallInterrupt(0x0038);
 	}
+*/
 }
 
 // http://www.smspower.org/forums/viewtopic.php?p=69680
@@ -193,12 +194,13 @@ void CPU::RunOpcode() {
 
 #ifdef SLOW
 //	if ((pc == 0xc418 && !opcodes[opcodeEnum]) || (this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
-	if ((this->_showLog && !this->_inInterrupt) || (this->_showLogInt && this->_inInterrupt)) {
+	if (this->_showLog) {
 		opcodes[opcodeEnum] = true;
-		printf("\n");
+//		printf("\n");
 		printf("%s: ", logLine);
 		printf("%s", logCode);
 		this->_opcode.ShowLogOpcode(opcodeEnum);
+/*
 		printf(" ");
 		printf("\n");
 		printf("AF: %.4X  ", this->d._registers.GetAF());
@@ -213,7 +215,9 @@ void CPU::RunOpcode() {
 		printf("Column: %.3d  ", this->_vdp->GetColumn());
 		printf("Line: %.3d  ", this->_vdp->GetLine());
 		printf("\n");
+*/
 		printf("\n");
+
 		fflush(stdout);
 	}
 #endif

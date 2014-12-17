@@ -1426,7 +1426,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case Ox0D: printf("DEC C"); break;
 		case Ox0E: printf("LD C, %.2Xh", opcode2); break;
 		case Ox0F: printf("RRCA"); break;
-		case Ox10: printf("DJNZ %.2Xh", opcode2); break;
+		case Ox10: printf("DJNZ %.4Xh", pc + (int8_t(opcode2) + 2)); break;
 		case Ox11: printf("LD DE, %.4Xh", ((opcode3 << 8) | opcode2)); break;
 		case Ox12: printf("LD (DE), A"); break;
 		case Ox13: printf("INC DE"); break;
@@ -1442,7 +1442,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case Ox1D: printf("DEC E"); break;
 		case Ox1E: printf("LD E, %.2Xh", opcode2); break;
 		case Ox1F: printf("RRA"); break;
-		case Ox20: printf("JR NZ, %.2dh", opcode2); break;
+		case Ox20: printf("JR NZ, %.4Xh", pc + (int8_t(opcode2) + 2)); break;
 		case Ox21: printf("LD HL, %.4Xh", ((opcode3 << 8) | opcode2)); break;
 		case Ox22: printf("LD (%.4Xh), HL", ((opcode3 << 8) | opcode2)); break;
 		case Ox23: printf("INC HL"); break;
@@ -1450,7 +1450,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case Ox25: printf("DEC H"); break;
 		case Ox26: printf("LD H, %.2Xh", opcode2); break;
 		case Ox27: printf("DAA"); break;
-		case Ox28: printf("JR Z, %.2Xh", opcode2); break;
+		case Ox28: printf("JR Z, %.4Xh", pc + (int8_t(opcode2) + 2)); break;
 		case Ox29: printf("ADD HL, HL"); break;
 		case Ox2A: printf("LD HL, (%.4Xh)", ((opcode3 << 8) | opcode2)); break;
 		case Ox2B: printf("DEC HL"); break;
@@ -1458,7 +1458,7 @@ void Opcode::ShowLogOpcode(uint16_t enumOpcode) {
 		case Ox2D: printf("DEC L"); break;
 		case Ox2E: printf("LD L, %.2Xh", opcode2); break;
 		case Ox2F: printf("CPL"); break;
-		case Ox30: printf("JR NC, %.2Xh", opcode2); break;
+		case Ox30: printf("JR NC, %.4Xh", pc + (int8_t(opcode2) + 2)); break;
 		case Ox31: printf("LD SP, %.4Xh", ((opcode3 << 8) | opcode2)); break;
 		case Ox32: printf("LD (%.4Xh), A", ((opcode3 << 8) | opcode2)); break;
 		case Ox33: printf("INC SP"); break;

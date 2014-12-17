@@ -43,7 +43,6 @@ namespace awui {
 
 					// No se guarda
 					bool _showLog:1;
-					bool _showLogInt:1;
 					bool _showNotImplemented:1;
 					Opcode _opcode;
 					Rom * _rom;
