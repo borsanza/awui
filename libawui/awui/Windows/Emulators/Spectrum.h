@@ -43,6 +43,8 @@ namespace awui {
 					uint8_t * _savedData[TOTALSAVED];
 					void CheckLimits();
 
+					uint32_t _colors[16];
+
 				public:
 					Spectrum();
 					virtual ~Spectrum();

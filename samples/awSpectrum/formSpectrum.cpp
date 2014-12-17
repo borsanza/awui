@@ -42,10 +42,7 @@ void FormSpectrum::InitializeComponent() {
 
 	this->GetControls()->Add(this->_slider);
 
-	int height = 262 * MULTIPLY;
-	if (height < 480)
-		height = 480;
-	this->SetSize((256 * MULTIPLY) + 50, height);
+	this->SetSize((320 * MULTIPLY) + 50, 262 * MULTIPLY);
 	this->SetFullscreen(0);
 	this->SetText("awSpectrum");
 }

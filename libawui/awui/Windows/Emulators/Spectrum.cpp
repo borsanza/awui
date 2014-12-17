@@ -34,6 +34,23 @@ Spectrum::Spectrum() {
 	this->_actual = -1;
 	this->_lastTick = 0;
 
+	this->_colors[0]  = 0x000000;
+	this->_colors[1]  = 0x00007F;
+	this->_colors[2]  = 0x7F0000;
+	this->_colors[3]  = 0x7F007F;
+	this->_colors[4]  = 0x007F00;
+	this->_colors[5]  = 0x007F7F;
+	this->_colors[6]  = 0x7F7F00;
+	this->_colors[7]  = 0x7F7F7F;
+	this->_colors[8]  = 0x000000;
+	this->_colors[9]  = 0x0000FF;
+	this->_colors[10] = 0xFF0000;
+	this->_colors[11] = 0xFF00FF;
+	this->_colors[12] = 0x00FF00;
+	this->_colors[13] = 0x00FFFF;
+	this->_colors[14] = 0xFFFF00;
+	this->_colors[15] = 0xFFFFFF;
+
 	for (int i = 0; i < TOTALSAVED; i++)
 		this->_savedData[i] = (uint8_t *) calloc (CPUInst::GetSaveSize(), sizeof(uint8_t));
 }
@@ -90,19 +107,13 @@ CPU * Spectrum::GetCPU() {
 
 // Interface:
 // 256x192: 1800 = 6144 bytes = (32 x 8) x 192 bits
-
+// 300 = 768 bytes = 32 x 24 x 8 bits
 // 4000-57FF Spectrum bitmap
 // 5800-5AFF Spectrum attributes
 // 7000 attribute lookup: 256 bytes.  64 colors of (paper, ink)
 // 7100 pixel stretch, 16 bytes.
 
 void Spectrum::OnPaint(GL* gl) {
-//	¿Lo rellenamos con el registro 7?
-//	c = screen->GetBackColor();
-//	r = color[c & 0x3];
-//	g = color[(c >> 2) & 0x3];
-//	b = color[(c >> 4) & 0x3];
-//	this->SetBackColor(Color::FromArgb(255, r, g, b));
 	int width = 320;
 	int height = 240;
 	int pos;
@@ -134,7 +145,9 @@ void Spectrum::OnPaint(GL* gl) {
 			uint8_t v = this->_cpu->ReadMemory(pos);
 			int bit = 8 - (x & 0x7);
 			v = ((v & (1 << bit)) != 0) ? 0 : 255;
-			// printf("%.4X: %dx%d\n", pos, x, y);
+
+			uint8_t color = this->_cpu->ReadMemory(0x5800 + (x >> 3) + ((newY >> 3) * 32));
+
 			this->_image->SetPixel(x + 32, y + 24, v, v, v);
 		}
 	}
