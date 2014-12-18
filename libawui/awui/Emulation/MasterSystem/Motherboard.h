@@ -9,6 +9,10 @@
 
 namespace awui {
 	namespace Emulation {
+		namespace Common {
+			class Rom;
+		}
+
 		namespace Processors {
 			namespace Z80 {
 				class CPU;
@@ -16,7 +20,6 @@ namespace awui {
 		}
 
 		namespace MasterSystem {
-			class Rom;
 			class VDP;
 			class Sound;
 
@@ -48,14 +51,14 @@ namespace awui {
 					bool _showLog:1;
 					bool _showLogInt:1;
 					bool _showNotImplemented:1;
-					Rom * _rom;
+					Common::Rom * _rom;
 
 					double _initFrame;
 					double _percFrame;
 
 					VDP * _vdp;
 					Sound * _sound;
-					awui::Emulation::Processors::Z80::CPU _z80;
+					Processors::Z80::CPU _z80;
 
 					void Print(const char * str, ...);
 					void CheckInterrupts();

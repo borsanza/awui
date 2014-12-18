@@ -1,5 +1,5 @@
 /*
- * awui/Emulation/Spectrum/Rom.cpp
+ * awui/Emulation/Common/Rom.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
@@ -11,7 +11,7 @@
 #include <awui/IO/FileStream.h>
 #include <awui/String.h>
 
-using namespace awui::Emulation::Spectrum;
+using namespace awui::Emulation::Common;
 using namespace awui::IO;
 
 Rom::Rom(int32_t capacity) {

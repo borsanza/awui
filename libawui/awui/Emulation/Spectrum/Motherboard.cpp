@@ -10,11 +10,12 @@
 #include <string.h>
 #include <awui/Console.h>
 #include <awui/DateTime.h>
-#include <awui/Emulation/Spectrum/Rom.h>
+#include <awui/Emulation/Common/Rom.h>
 #include <awui/Emulation/Processors/Z80/CPU.h>
 
 using namespace awui;
 using namespace awui::Emulation;
+using namespace awui::Emulation::Common;
 using namespace awui::Emulation::Spectrum;
 
 void WriteMemoryCB(uint16_t pos, uint8_t value, void * data) { ((Motherboard *) data)->WriteMemory(pos, value); }
@@ -29,7 +30,7 @@ Motherboard::Motherboard() {
 	this->_z80->SetWritePortCB(WritePortCB, this);
 	this->_z80->SetReadPortCB(ReadPortCB, this);
 
-	this->_rom = new Rom(4096);
+	this->_rom = new Common::Rom(4096);
 	this->d._frame = 0;
 	this->d._oldFrame = 0;
 

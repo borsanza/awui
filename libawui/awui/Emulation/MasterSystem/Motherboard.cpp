@@ -8,14 +8,15 @@
 
 #include <awui/Console.h>
 #include <awui/DateTime.h>
+#include <awui/Emulation/Common/Rom.h>
 #include <awui/Emulation/MasterSystem/Ports.h>
-#include <awui/Emulation/MasterSystem/Rom.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <assert.h>
 #include <string.h>
 
 using namespace awui;
+using namespace awui::Emulation::Common;
 using namespace awui::Emulation::MasterSystem;
 
 void MasterGearWriteMemoryCB(uint16_t pos, uint8_t value, void * data) { ((Motherboard *) data)->WriteMemory(pos, value); }

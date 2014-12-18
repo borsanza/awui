@@ -5,6 +5,10 @@
 
 namespace awui {
 	namespace Emulation {
+		namespace Common {
+			class Rom;
+		}
+
 		namespace Processors {
 			namespace Z80 {
 				class CPU;
@@ -26,7 +30,7 @@ namespace awui {
 					} d;
 
 					// No se guarda
-					Rom * _rom;
+					Common::Rom * _rom;
 					Processors::Z80::CPU * _z80;
 
 					double _initFrame;

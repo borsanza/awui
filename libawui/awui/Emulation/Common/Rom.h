@@ -1,12 +1,12 @@
-#ifndef _AWUI_EMULATION_SPECTRUM_ROM_H
-#define _AWUI_EMULATION_SPECTRUM_ROM_H
+#ifndef _AWUI_EMULATION_COMMON_ROM_H
+#define _AWUI_EMULATION_COMMON_ROM_H
 
 #include <awui/String.h>
 #include <awui/IO/MemoryStream.h>
 
 namespace awui {
 	namespace Emulation {
-		namespace Spectrum {
+		namespace Common {
 			class Rom {
 				private:
 					IO::MemoryStream * _rom;
