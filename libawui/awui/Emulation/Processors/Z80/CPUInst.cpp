@@ -1679,13 +1679,16 @@ void CPUInst::RETN() {
 // |2|12| A byte from port c is written to reg.
 void CPUInst::INrC(uint8_t reg) {
 	uint8_t C = this->d._registers.GetC();
-	uint8_t data = this->ReadPort(C);
 
 	if (reg != Reg_UNDEFINED) {
 		this->d._addressBus.L = C;
 		this->d._addressBus.H = this->d._registers.GetB();
-		this->d._registers.SetRegm(reg, data);
 	}
+
+	uint8_t data = this->ReadPort(C);
+
+	if (reg != Reg_UNDEFINED)
+		this->d._registers.SetRegm(reg, data);
 
 	this->d._registers.SetF(PZS_Flags[data] |
 		(this->d._registers.GetF() & Flag_C)
@@ -1698,11 +1701,14 @@ void CPUInst::INrC(uint8_t reg) {
 // |2|16| A byte from port c is written to the memory location pointed to by hl. Then hl is incremented and b is decremented.
 void CPUInst::INI() {
 	uint16_t HL = this->d._registers.GetHL();
-	uint8_t B = this->d._registers.GetB() - 1;
+	uint8_t B = this->d._registers.GetB();
 	uint8_t C = this->d._registers.GetC();
 
-	this->d._addressBus.W = HL;
+	this->d._addressBus.L = C;
+	this->d._addressBus.H = B;
 	this->WriteMemory(HL, this->ReadPort(C));
+	this->d._addressBus.W = HL;
+	B = B - 1;
 
 	this->d._registers.SetHL(HL + 1);
 	this->d._registers.SetB(B);

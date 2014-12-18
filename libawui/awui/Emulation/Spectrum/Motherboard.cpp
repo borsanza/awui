@@ -54,6 +54,17 @@ void Motherboard::LoadRom(const String file) {
 	this->_rom->LoadRom(file);
 }
 
+void Motherboard::CheckInterrupts() {
+	if (!this->_z80->GetRegisters()->GetIFF1())
+		return;
+
+//		printf("Entra %d\n", this->_vdp->GetLine());
+	this->_z80->SetInInterrupt(true);
+	this->_z80->GetRegisters()->SetIFF1(false);
+	this->_z80->GetRegisters()->SetIFF2(false);
+	this->_z80->CallInterrupt(0x0038);
+}
+
 #define NTSC 1
 void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
@@ -86,6 +97,8 @@ void Motherboard::OnTick() {
 		vdpIters += times * (itersVDP / iters);
 		realIters++;
 	}
+
+	this->CheckInterrupts();
 }
 
 void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
@@ -129,7 +142,10 @@ void Motherboard::WritePort(uint8_t port, uint8_t value) {
 }
 
 uint8_t Motherboard::ReadPort(uint8_t port) const {
-	printf("%.2X\n", port);
+	if (port == 0xFE) {
+		printf("%.2X: %.2X\n", port, this->_z80->GetAddressBus() >> 8);
+	}
+
 	return 0xFF;
 }
 
