@@ -54,8 +54,6 @@ namespace awui {
 
 					void PrintLog();
 
-					void CallPaused();
-
 					uint32_t GetCRC32();
 					void SetMapper(uint8_t mapper);
 

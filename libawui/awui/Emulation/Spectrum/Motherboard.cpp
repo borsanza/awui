@@ -43,6 +43,10 @@ Motherboard::~Motherboard() {
 }
 
 void Motherboard::Reset() {
+	this->_z80->Reset();
+
+	memset(this->d._ram, 0, 8192 * sizeof(uint8_t));
+	memset(this->d._boardram, 0, 32768 * sizeof(uint8_t));
 }
 
 void Motherboard::LoadRom(const String file) {
