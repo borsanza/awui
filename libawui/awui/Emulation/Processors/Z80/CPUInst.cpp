@@ -19,6 +19,8 @@ CPUInst::~CPUInst() {
 
 void CPUInst::Reset() {
 	this->d._cycles = 0;
+	this->d._inInterrupt = false;
+	this->d._isHalted = false;
 	this->d._registers.Clear();
 }
 

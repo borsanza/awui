@@ -37,7 +37,6 @@ namespace awui {
 						uint8_t _mapper;
 						uint8_t _pad1;
 						uint8_t _pad2;
-						bool _inInterrupt:1;
 						bool _wantPause:1;
 						Word _addressBus;
 						Ports _ports;

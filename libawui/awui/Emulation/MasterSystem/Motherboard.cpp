@@ -43,7 +43,6 @@ Motherboard::Motherboard() {
 	this->_showLogInt = false;
 	this->_showNotImplemented = true;
 
-	this->d._inInterrupt = false;
 	this->d._wantPause = false;
 	this->d._pad1 = 0xFF;
 	this->d._pad2 = 0xFF;
@@ -80,7 +79,7 @@ void Motherboard::CheckInterrupts() {
 
 	if (interrupt) {
 //		printf("Entra %d\n", this->_vdp->GetLine());
-		this->d._inInterrupt = true;
+		this->_z80.SetInInterrupt(true);
 		this->_z80.GetRegisters()->SetIFF1(false);
 		this->_z80.GetRegisters()->SetIFF2(false);
 		this->_z80.CallInterrupt(0x0038);
@@ -120,7 +119,7 @@ void Motherboard::OnTick() {
 		int64_t oldCycles = this->_z80.GetCycles();
 		this->RunOpcode();
 
-		if (this->d._wantPause & !this->d._inInterrupt) {
+		if (this->d._wantPause & !this->_z80.IsInInterrupt()) {
 			this->_z80.GetRegisters()->SetIFF1(false);
 			this->_z80.CallInterrupt(0x0066);
 			this->d._wantPause = false;
@@ -294,6 +293,7 @@ void Motherboard::SetMapper(uint8_t mapper) {
 int Motherboard::GetSaveSize() {
 	int size = sizeof(Motherboard::saveData);
 	size += VDP::GetSaveSize();
+	size += awui::Emulation::Processors::Z80::CPU::GetSaveSize();
 
 	return size;
 }
@@ -302,12 +302,14 @@ void Motherboard::LoadState(uint8_t * data) {
 	memcpy (&this->d, data, sizeof(Motherboard::saveData));
 
 	this->_vdp->LoadState(&data[sizeof(Motherboard::saveData)]);
+	this->_z80.LoadState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
 }
 
 void Motherboard::SaveState(uint8_t * data) {
 	memcpy (data, &this->d, sizeof(Motherboard::saveData));
 
 	this->_vdp->SaveState(&data[sizeof(Motherboard::saveData)]);
+	this->_z80.SaveState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
 }
 
 double Motherboard::GetVirtualTime() {

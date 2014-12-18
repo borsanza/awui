@@ -44,7 +44,6 @@ namespace awui {
 					int _actual;
 					long long _lastTick;
 					uint8_t * _savedData[TOTALSAVED];
-					void CheckLimits();
 
 				public:
 					MasterSystem();

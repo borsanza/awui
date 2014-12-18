@@ -64,11 +64,7 @@ void MasterSystem::LoadRom(const String file) {
 	this->_cpu->SaveState(this->_savedData[this->_actual]);
 }
 
-void MasterSystem::CheckLimits() {
-}
-
 void MasterSystem::OnTick() {
-/*
 	long long now = DateTime::GetNow().GetTicks();
 	if ((now - this->_lastTick) > 10000000) {
 		this->_lastTick = now;
@@ -77,7 +73,7 @@ void MasterSystem::OnTick() {
 			this->_last = this->_actual;
 		this->_cpu->SaveState(this->_savedData[this->_actual % TOTALSAVED]);
 	}
-*/
+
 	this->_cpu->OnTick();
 }
 

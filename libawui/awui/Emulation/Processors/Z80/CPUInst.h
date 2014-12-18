@@ -184,6 +184,9 @@ namespace awui {
 						void SetReadMemoryCB(uint8_t (* fun)(uint16_t, void *), void * data);
 						void SetWritePortCB(void (* fun)(uint8_t, uint8_t, void *), void * data);
 						void SetReadPortCB(uint8_t (* fun)(uint8_t, void *), void * data);
+
+						inline void SetInInterrupt(bool mode) { this->d._inInterrupt = mode; }
+						inline bool IsInInterrupt() { return this->d._inInterrupt; }
 				};
 			}
 		}

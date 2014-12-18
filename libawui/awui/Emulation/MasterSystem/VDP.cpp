@@ -6,13 +6,10 @@
 
 #include "VDP.h"
 
-#include <awui/Emulation/Common/Ram.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <assert.h>
-#include <stdio.h>
 #include <string.h>
 
-using namespace awui::Emulation::Common;
 using namespace awui::Emulation::MasterSystem;
 
 /*

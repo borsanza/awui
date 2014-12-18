@@ -13,10 +13,6 @@
 
 namespace awui {
 	namespace Emulation {
-		namespace Common {
-			class Ram;
-		};
-
 		namespace MasterSystem {
 			class Motherboard;
 			enum {
@@ -75,21 +71,20 @@ namespace awui {
 					bool GetSpritePixel(uint8_t * color) const;
 					uint8_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority) const;
 
+					void OnTickBorder();
+					void WriteControlByte(uint8_t value);
+					void WriteDataByte(uint8_t value);
+					uint16_t GetWidth() const;
+					uint16_t GetHeight() const;
+
 				public:
 					VDP(Motherboard * cpu);
 					~VDP();
 
-					void OnTickBorder();
 					bool OnTick(uint32_t counter);
-
-					void WriteControlByte(uint8_t value);
-					void WriteDataByte(uint8_t value);
 
 					void WriteByte(uint8_t port, uint8_t value);
 					uint8_t ReadByte(uint8_t port);
-
-					uint16_t GetWidth() const;
-					uint16_t GetHeight() const;
 
 					void Reset();
 
