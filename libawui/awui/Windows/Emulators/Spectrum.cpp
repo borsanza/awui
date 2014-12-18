@@ -121,7 +121,7 @@ void Spectrum::OnPaint(GL* gl) {
 			uint8_t newY = (y & 0xC0) | ((y & 0x38) >> 3) | ((y & 0x7) << 3);
 			pos = 0x4000 + (x >> 3) + (newY * 32);
 			uint8_t v = this->_cpu->ReadMemory(pos);
-			int bit = 8 - (x & 0x7);
+			int bit = 7 - (x & 0x7);
 			bool active = ((v & (1 << bit)) != 0) ? true : false;
 
 			uint32_t color;
