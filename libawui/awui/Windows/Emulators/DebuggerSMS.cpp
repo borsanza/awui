@@ -8,7 +8,7 @@
 
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Common/Ram.h>
-#include <awui/Emulation/MasterSystem/CPU.h>
+#include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/MasterSystem.h>

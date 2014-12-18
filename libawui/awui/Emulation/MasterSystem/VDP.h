@@ -18,7 +18,7 @@ namespace awui {
 		};
 
 		namespace MasterSystem {
-			class CPU;
+			class Motherboard;
 			enum {
 				SPRITE_16x16 = 1,
 				SPRITE_8x16 = 2,
@@ -53,7 +53,7 @@ namespace awui {
 					} d;
 
 					// No salvable
-					CPU * _cpu;
+					Motherboard * _cpu;
 
 					uint8_t NTSCx192[262];
 					uint8_t NTSCx224[262];
@@ -76,7 +76,7 @@ namespace awui {
 					uint8_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority) const;
 
 				public:
-					VDP(CPU * cpu);
+					VDP(Motherboard * cpu);
 					~VDP();
 
 					void OnTickBorder();

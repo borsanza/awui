@@ -10,7 +10,7 @@ using namespace awui::Emulation::MasterSystem;
 
 #include <assert.h>
 #include <stdio.h>
-#include <awui/Emulation/MasterSystem/CPUInst.h>
+#include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 
@@ -44,7 +44,7 @@ Ports::Ports() {
 	this->_maskRegion = 0x00;
 }
 
-void Ports::WriteByte(CPUInst * cpu, uint8_t port, uint8_t value) {
+void Ports::WriteByte(Motherboard * cpu, uint8_t port, uint8_t value) {
 //	printf("Write Port: %.2X    Value: %.2X\n", port, value);
 	if (port == 0x7f || port == 0x7e) {
 		// printf("Write Port: %.2X    Value: %.2X\n", port, value);
@@ -86,7 +86,7 @@ void Ports::WriteByte(CPUInst * cpu, uint8_t port, uint8_t value) {
 //	assert(false);
 }
 
-uint8_t Ports::ReadByte(CPUInst * cpu, uint8_t port) const {
+uint8_t Ports::ReadByte(Motherboard * cpu, uint8_t port) const {
 //	printf("Read Port: %.2X\n", port);
 
 	if (port >= 0x40 && port <= 0xBF)

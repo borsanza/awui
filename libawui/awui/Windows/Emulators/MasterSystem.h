@@ -12,7 +12,7 @@ namespace awui {
 
 	namespace Emulation {
 		namespace MasterSystem {
-			class CPU;
+			class Motherboard;
 		}
 	}
 
@@ -30,7 +30,7 @@ namespace awui {
 			class MasterSystem : public Button {
 				private:
 					Drawing::Image * _image;
-					CPU * _cpu;
+					Motherboard * _cpu;
 					DebuggerSMS * _debugger;
 					int _multiply;
 					bool _canChangeControl;
@@ -57,7 +57,7 @@ namespace awui {
 					virtual void OnTick();
 					void RunOpcode();
 
-					CPU * GetCPU();
+					Motherboard * GetCPU();
 
 					virtual void OnPaint(OpenGL::GL* gl);
 					virtual bool OnKeyPress(Keys::Enum key);

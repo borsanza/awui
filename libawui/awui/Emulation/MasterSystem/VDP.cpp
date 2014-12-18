@@ -7,8 +7,7 @@
 #include "VDP.h"
 
 #include <awui/Emulation/Common/Ram.h>
-#include <awui/Emulation/MasterSystem/CPU.h>
-#include <awui/Emulation/MasterSystem/Registers.h>
+#include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -28,7 +27,7 @@ using namespace awui::Emulation::MasterSystem;
  *     0: ?
  */
 
-VDP::VDP(CPU * cpu) {
+VDP::VDP(Motherboard * cpu) {
 	this->d._width = 256;
 	this->d._height = 192;
 	this->d._ntsc = true;

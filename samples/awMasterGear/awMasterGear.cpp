@@ -6,8 +6,7 @@
 
 #include "formMasterGear.h"
 
-#include <awui/Emulation/MasterSystem/CPU.h>
-#include <awui/Emulation/MasterSystem/Registers.h>
+#include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Windows/Forms/Application.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
 
@@ -32,7 +31,7 @@ int main(int argc, char ** argv) {
 			while (!ms->GetCPU()->IsHalted())
 				ms->RunOpcode();
 
-			ms->GetCPU()->PrintLog();
+			//ms->GetCPU()->PrintLog();
 
 			return 0;
 		}

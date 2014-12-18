@@ -151,7 +151,6 @@ namespace awui {
 						void RSTp(uint8_t p);
 						void CALLnn();
 						void CALLccnn(bool cc);
-						void CallInterrupt(uint16_t offset);
 						void RETI();
 						void RETN();
 
@@ -172,8 +171,10 @@ namespace awui {
 
 						inline uint16_t GetPC() const { return this->d._registers.GetPC(); }
 						inline int64_t GetCycles() const { return this->d._cycles; }
+						inline Registers * GetRegisters() { return &(this->d._registers); }
 
 						uint8_t ReadMemory(uint16_t pos) const;
+						void CallInterrupt(uint16_t offset);
 
 						static int GetSaveSize();
 						void LoadState(uint8_t * data);

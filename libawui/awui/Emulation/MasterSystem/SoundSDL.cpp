@@ -8,7 +8,7 @@
 
 #include <awui/DateTime.h>
 #include <awui/Object.h>
-#include <awui/Emulation/MasterSystem/CPUInst.h>
+#include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 

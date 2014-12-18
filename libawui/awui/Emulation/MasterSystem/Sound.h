@@ -38,15 +38,15 @@ namespace awui {
 				int _count;
 			};
 
-			class CPUInst;
+			class Motherboard;
 
 			class Sound : public Object {
 				private:
 					uint16_t _channel;
 					uint8_t _type; // 1: Volumen, 0: Tone/Noise
 
-					int GetPosBuffer(CPUInst * cpu);
-					CPUInst * _cpu;
+					int GetPosBuffer(Motherboard * cpu);
+					Motherboard * _cpu;
 
 				public:
 					uint16_t _noiseData;
@@ -54,10 +54,10 @@ namespace awui {
 
 					Sound();
 
-					inline void SetCPU(CPUInst * cpu) { this->_cpu = cpu; }
-					inline CPUInst * GetCPU() { return this->_cpu; }
+					inline void SetCPU(Motherboard * cpu) { this->_cpu = cpu; }
+					inline Motherboard * GetCPU() { return this->_cpu; }
 
-					void WriteByte(CPUInst * cpu, uint8_t value);
+					void WriteByte(Motherboard * cpu, uint8_t value);
 			};
 		}
 	}

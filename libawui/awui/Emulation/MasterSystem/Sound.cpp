@@ -6,7 +6,7 @@
 
 #include "Sound.h"
 
-#include <awui/Emulation/MasterSystem/CPUInst.h>
+#include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/SoundSDL.h>
 
 using namespace awui::Emulation::MasterSystem;
@@ -31,7 +31,7 @@ Sound::Sound() {
 	}
 }
 
-int Sound::GetPosBuffer(CPUInst * cpu) {
+int Sound::GetPosBuffer(Motherboard * cpu) {
 	SoundSDL * soundSDL = SoundSDL::Instance();
 	double now = cpu->GetVirtualTime();
 	now = now - soundSDL->GetInitTimeSound();
@@ -48,7 +48,7 @@ int Sound::GetPosBuffer(CPUInst * cpu) {
 	return int(pos) % SOUNDBUFFER;
 }
 
-void Sound::WriteByte(CPUInst * cpu, uint8_t value) {
+void Sound::WriteByte(Motherboard * cpu, uint8_t value) {
 	bool changeTone = false;
 	bool changeVolume = false;
 	bool useModulation = false;

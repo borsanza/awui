@@ -19,7 +19,6 @@
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
-			class CPUInst;
 			class Sound;
 
 			class SoundSDL {

@@ -8,7 +8,7 @@
 
 #include <awui/Drawing/Image.h>
 #include <awui/DateTime.h>
-#include <awui/Emulation/MasterSystem/CPU.h>
+#include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/Emulation/MasterSystem/SoundSDL.h>
 #include <awui/Windows/Forms/Form.h>
@@ -24,7 +24,7 @@ using namespace awui::Emulation::MasterSystem;
 MasterSystem::MasterSystem() {
 	this->SetSize(1, 1);
 	this->_image = new Drawing::Image(1, 1);
-	this->_cpu = new CPU();
+	this->_cpu = new Motherboard();
 	this->SetTabStop(true);
 	this->_multiply = 1;
 	this->_canChangeControl = true;
@@ -36,7 +36,7 @@ MasterSystem::MasterSystem() {
 	this->_lastTick = 0;
 
 	for (int i = 0; i < TOTALSAVED; i++)
-		this->_savedData[i] = (uint8_t *) calloc (CPUInst::GetSaveSize(), sizeof(uint8_t));
+		this->_savedData[i] = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
 }
 
 MasterSystem::~MasterSystem() {
@@ -68,6 +68,7 @@ void MasterSystem::CheckLimits() {
 }
 
 void MasterSystem::OnTick() {
+/*
 	long long now = DateTime::GetNow().GetTicks();
 	if ((now - this->_lastTick) > 10000000) {
 		this->_lastTick = now;
@@ -76,7 +77,7 @@ void MasterSystem::OnTick() {
 			this->_last = this->_actual;
 		this->_cpu->SaveState(this->_savedData[this->_actual % TOTALSAVED]);
 	}
-
+*/
 	this->_cpu->OnTick();
 }
 
@@ -84,7 +85,7 @@ void MasterSystem::RunOpcode() {
 	this->_cpu->RunOpcode();
 }
 
-CPU * MasterSystem::GetCPU() {
+Motherboard * MasterSystem::GetCPU() {
 	return this->_cpu;
 }
 

@@ -113,10 +113,10 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 	return this->d._ram[pos - 0xE000];
 }
 
-void Motherboard::WritePort(uint8_t pos, uint8_t value) {
+void Motherboard::WritePort(uint8_t port, uint8_t value) {
 }
 
-uint8_t Motherboard::ReadPort(uint8_t pos) const {
+uint8_t Motherboard::ReadPort(uint8_t port) const {
 	return 0xFF;
 }
 

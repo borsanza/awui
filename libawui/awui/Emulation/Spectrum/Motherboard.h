@@ -20,7 +20,6 @@ namespace awui {
 					struct saveData {
 						float _frame;
 						float _oldFrame;
-//						Ports _ports;
 						uint8_t _boardram[32768];
 						uint8_t _ram[8192];
 						uint8_t _ula[16384];
