@@ -42,8 +42,11 @@ void SliderBrowser::OnTick() {
 	if (this->_selected == -1)
 		this->_selected = 0;
 
+	if (this->_selected >= this->GetControls()->GetCount())
+		return;
+
 	Control * w = (Control *)this->GetControls()->Get(this->_selected);
-	
+
 	bool leftOut = (w->GetLeft() - this->_margin) <= 0;
 	bool rightOut = (w->GetRight() + this->_margin) >= this->GetWidth();
 	if (leftOut || rightOut) {
@@ -58,18 +61,18 @@ void SliderBrowser::OnTick() {
 			this->_lastTime = 0;
 			this->_initPos = w->GetLeft();
 		}
-		
+
 		if (this->_lastTime < 10) {
 			this->_lastTime++;
 			float p = this->_effect->Calculate(this->_lastTime / 10.0f);
 			left = this->_initPos + ((left - this->_initPos) * p);
 		}
-	
+
 		w->SetLeft(left);
 	}
 
 	w->SetTop((this->GetHeight() - w->GetHeight()) >> 1);
-	
+
 	int x = w->GetLeft() + w->GetWidth() + this->_margin;
 	for (int i = this->_selected + 1; i< this->GetControls()->GetCount(); i++) {
 		x += this->_margin;
@@ -90,6 +93,6 @@ void SliderBrowser::OnTick() {
 Control * SliderBrowser::GetControlSelected() const {
 	if ((this->_selected >= 0) && (this->_selected < this->GetControls()->GetCount()))
 		return (Control *) this->GetControls()->Get(this->_selected);
-	
+
 	return NULL;
 }

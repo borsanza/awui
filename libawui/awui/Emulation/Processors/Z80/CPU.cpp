@@ -26,7 +26,6 @@ CPU::CPU() {
 
 	this->d._inInterrupt = false;
 	this->d._isHalted = false;
-	this->d._wantPause = false;
 
 #ifdef NUMOPCODES
 	for (int i = 0; i < OxNOTIMPLEMENTED; i++) {
@@ -1430,6 +1429,11 @@ void CPU::RunOpcode() {
 		}
 	}
 
+	// Actualizando R
+	uint8_t r = this->d._registers.GetR();
+	r = (r & 0x80) | ((r + 1) & 0x7F);
+	this->d._registers.SetR(r);
+
 //	printf("%s\n", logCode);
 }
 
@@ -1462,8 +1466,4 @@ void CPU::PrintLog() {
 
 	printf("\n");
 #endif
-}
-
-void CPU::CallPaused() {
-	this->d._wantPause = true;
 }

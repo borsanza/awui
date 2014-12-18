@@ -15,7 +15,6 @@ namespace awui {
 							int64_t _cycles;
 							bool _inInterrupt:1;
 							bool _isHalted:1;
-							bool _wantPause:1;
 							Word _addressBus;
 							Registers _registers;
 						} d;
@@ -179,6 +178,11 @@ namespace awui {
 						static int GetSaveSize();
 						void LoadState(uint8_t * data);
 						void SaveState(uint8_t * data);
+
+						void SetWriteMemoryCB(void (* fun)(uint16_t, uint8_t, void *), void * data);
+						void SetReadMemoryCB(uint8_t (* fun)(uint16_t, void *), void * data);
+						void SetWritePortCB(void (* fun)(uint8_t, uint8_t, void *), void * data);
+						void SetReadPortCB(uint8_t (* fun)(uint8_t, void *), void * data);
 				};
 			}
 		}

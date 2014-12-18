@@ -7,7 +7,6 @@
 #include "formSpectrum.h"
 
 #include <awui/Drawing/Color.h>
-#include <awui/Emulation/Spectrum/CPU.h>
 #include <awui/Windows/Emulators/Spectrum.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/SliderBrowser.h>
@@ -49,7 +48,6 @@ void FormSpectrum::InitializeComponent() {
 
 void FormSpectrum::LoadRom(const awui::String file) {
 	Spectrum * ms = new Spectrum();
-	ms->GetCPU()->SetMapper(awui::Emulation::Spectrum::MAPPER_SPECTRUM);
 	ms->SetMultiply(MULTIPLY);
 	ms->SetSize(256 * MULTIPLY, 262 * MULTIPLY);
 	ms->LoadRom(file);
@@ -65,11 +63,7 @@ void FormSpectrum::OnTick() {
 	static Spectrum * selected = NULL;
 
 	if (selected != this->_slider->GetControlSelected()) {
-		if (selected != NULL)
-			selected->SetSoundEnabled(false);
-
 		selected = (Spectrum *) this->_slider->GetControlSelected();
-		selected->SetSoundEnabled(true);
 		this->SetText(selected->GetName());
 		// printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
 	}

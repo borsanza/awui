@@ -24,8 +24,6 @@ namespace awui {
 						void Reset();
 
 						void PrintLog();
-
-						void CallPaused();
 				};
 			}
 		}

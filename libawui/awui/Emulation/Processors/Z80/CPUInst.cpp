@@ -1787,3 +1787,23 @@ void CPUInst::LoadState(uint8_t * data) {
 void CPUInst::SaveState(uint8_t * data) {
 	memcpy (data, &this->d, sizeof(CPUInst::saveData));
 }
+
+void CPUInst::SetWriteMemoryCB(void (* fun)(uint16_t, uint8_t, void *), void * data) {
+	this->_writeMemoryCB = fun;
+	this->_writeMemoryDataCB = data;
+}
+
+void CPUInst::SetReadMemoryCB(uint8_t (* fun)(uint16_t, void *), void * data) {
+	this->_readMemoryCB = fun;
+	this->_readMemoryDataCB = data;
+}
+
+void CPUInst::SetWritePortCB(void (* fun)(uint8_t, uint8_t, void *), void * data) {
+	this->_writePortCB = fun;
+	this->_writePortDataCB = data;
+}
+
+void CPUInst::SetReadPortCB(uint8_t (* fun)(uint8_t, void *), void * data) {
+	this->_readPortCB = fun;
+	this->_readPortDataCB = data;
+}

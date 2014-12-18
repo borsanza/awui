@@ -12,7 +12,7 @@ namespace awui {
 
 	namespace Emulation {
 		namespace Spectrum {
-			class CPU;
+			class Mainboard;
 		}
 	}
 
@@ -28,7 +28,7 @@ namespace awui {
 			class Spectrum : public Button {
 				private:
 					Drawing::Image * _image;
-					CPU * _cpu;
+					Mainboard * _cpu;
 					int _multiply;
 					bool _canChangeControl;
 					bool _pause;
@@ -54,22 +54,12 @@ namespace awui {
 					void LoadRom(const String file);
 
 					virtual void OnTick();
-					void RunOpcode();
 
-					CPU * GetCPU();
+					Mainboard * GetCPU();
 
 					virtual void OnPaint(OpenGL::GL* gl);
-					virtual bool OnKeyPress(Keys::Enum key);
 
 					void SetMultiply(int multiply);
-					uint32_t GetCRC32();
-
-					inline void SetInvertKeys(bool mode) { this->_invertKeys = mode; }
-
-					bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-					bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
-
-					void SetSoundEnabled(bool mode);
 			};
 		}
 	}
