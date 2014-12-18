@@ -117,17 +117,19 @@ void Spectrum::OnPaint(GL* gl) {
 		this->SetSize(width * this->_multiply, height * this->_multiply);
 	}
 
+	uint32_t color = this->_colors[this->_cpu->GetBackgroundColor()];
+
 	for (uint16_t y = 0; y < 240; y++) {
 		for (int x = 0; x < 32; x++) {
-			this->_image->SetPixel(x, y, 0xBF, 0xBF, 0xBF);
-			this->_image->SetPixel(x + 288, y, 0xBF, 0xBF, 0xBF);
+			this->_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
+			this->_image->SetPixel(x + 288, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
 		}
 	}
 
 	for (uint16_t y = 0; y < 24; y++) {
 		for (int x = 0; x < 320; x++) {
-			this->_image->SetPixel(x, y, 0xBF, 0xBF, 0xBF);
-			this->_image->SetPixel(x, y + 216, 0xBF, 0xBF, 0xBF);
+			this->_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
+			this->_image->SetPixel(x, y + 216, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
 		}
 	}
 
@@ -139,7 +141,6 @@ void Spectrum::OnPaint(GL* gl) {
 			int bit = 7 - (x & 0x7);
 			bool active = ((v & (1 << bit)) != 0) ? true : false;
 
-			uint32_t color;
 			uint8_t reg = this->_cpu->ReadMemory(0x5800 + (x >> 3) + ((y >> 3) * 32));
 			if (active) {
 				color = this->_colors[((reg & 0x40) >> 3) |  (reg & 0x07)];

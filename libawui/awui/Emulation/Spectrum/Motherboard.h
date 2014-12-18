@@ -27,6 +27,7 @@ namespace awui {
 						uint8_t _boardram[32768];
 						uint8_t _ram[8192];
 						uint8_t _ula[16384];
+						uint8_t _bgColor;
 					} d;
 
 					// No se guarda
@@ -67,6 +68,8 @@ namespace awui {
 					uint8_t ReadMemory(uint16_t pos) const;
 					void WritePort(uint8_t port, uint8_t value);
 					uint8_t ReadPort(uint8_t port) const;
+
+					uint8_t GetBackgroundColor() const { return this->d._bgColor; }
 			};
 		}
 	}

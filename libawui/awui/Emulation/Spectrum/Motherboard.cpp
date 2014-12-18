@@ -33,6 +33,7 @@ Motherboard::Motherboard() {
 	this->_rom = new Common::Rom(4096);
 	this->d._frame = 0;
 	this->d._oldFrame = 0;
+	this->d._bgColor = 0;
 
 	this->Reset();
 }
@@ -119,9 +120,16 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 }
 
 void Motherboard::WritePort(uint8_t port, uint8_t value) {
+	if (port == 0xFE) {
+		this->d._bgColor = value & 0x07;
+		return;
+	}
+
+	printf("%.2X: %.2X\n", port, value);
 }
 
 uint8_t Motherboard::ReadPort(uint8_t port) const {
+	printf("%.2X\n", port);
 	return 0xFF;
 }
 
