@@ -8,7 +8,7 @@
 
 #include <awui/Drawing/Image.h>
 #include <awui/DateTime.h>
-#include <awui/Emulation/Spectrum/Mainboard.h>
+#include <awui/Emulation/Spectrum/Motherboard.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
@@ -22,7 +22,7 @@ using namespace awui::Emulation::Spectrum;
 Spectrum::Spectrum() {
 	this->SetSize(1, 1);
 	this->_image = new Drawing::Image(1, 1);
-	this->_cpu = new Mainboard();
+	this->_cpu = new Motherboard();
 	this->SetTabStop(true);
 	this->_multiply = 1;
 	this->_canChangeControl = true;
@@ -79,10 +79,9 @@ void Spectrum::OnTick() {
 	this->_cpu->OnTick();
 }
 
-Mainboard * Spectrum::GetCPU() {
+Motherboard * Spectrum::GetCPU() {
 	return this->_cpu;
 }
-
 
 // Interface:
 // 256x192: 1800 = 6144 bytes = (32 x 8) x 192 bits

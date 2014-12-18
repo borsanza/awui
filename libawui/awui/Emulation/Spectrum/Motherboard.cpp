@@ -1,10 +1,10 @@
 /*
- * awui/Emulation/Spectrum/Mainboard.cpp
+ * awui/Emulation/Spectrum/Motherboard.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
 
-#include "Mainboard.h"
+#include "Motherboard.h"
 
 #include <assert.h>
 #include <string.h>
@@ -17,12 +17,12 @@ using namespace awui;
 using namespace awui::Emulation;
 using namespace awui::Emulation::Spectrum;
 
-void WriteMemoryCB(uint16_t pos, uint8_t value, void * data) { ((Mainboard *) data)->WriteMemory(pos, value); }
-uint8_t ReadMemoryCB(uint16_t pos, void * data) { return ((Mainboard *) data)->ReadMemory(pos); }
-void WritePortCB(uint8_t port, uint8_t value, void * data) { ((Mainboard *) data)->WritePort(port, value); }
-uint8_t ReadPortCB(uint8_t port, void * data) { return ((Mainboard *) data)->ReadPort(port); }
+void WriteMemoryCB(uint16_t pos, uint8_t value, void * data) { ((Motherboard *) data)->WriteMemory(pos, value); }
+uint8_t ReadMemoryCB(uint16_t pos, void * data) { return ((Motherboard *) data)->ReadMemory(pos); }
+void WritePortCB(uint8_t port, uint8_t value, void * data) { ((Motherboard *) data)->WritePort(port, value); }
+uint8_t ReadPortCB(uint8_t port, void * data) { return ((Motherboard *) data)->ReadPort(port); }
 
-Mainboard::Mainboard() {
+Motherboard::Motherboard() {
 	this->_z80 = new awui::Emulation::Processors::Z80::CPU();
 	this->_z80->SetWriteMemoryCB(WriteMemoryCB, this);
 	this->_z80->SetReadMemoryCB(ReadMemoryCB, this);
@@ -36,20 +36,20 @@ Mainboard::Mainboard() {
 	this->Reset();
 }
 
-Mainboard::~Mainboard() {
+Motherboard::~Motherboard() {
 	delete this->_rom;
 	delete this->_z80;
 }
 
-void Mainboard::Reset() {
+void Motherboard::Reset() {
 }
 
-void Mainboard::LoadRom(const String file) {
+void Motherboard::LoadRom(const String file) {
 	this->_rom->LoadRom(file);
 }
 
 #define NTSC 1
-void Mainboard::OnTick() {
+void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
 
 
@@ -82,7 +82,7 @@ void Mainboard::OnTick() {
 	}
 }
 
-void Mainboard::WriteMemory(uint16_t pos, uint8_t value) {
+void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 	// En la rom no se escribe
 	if (pos < 0x4000)
 		return;
@@ -100,7 +100,7 @@ void Mainboard::WriteMemory(uint16_t pos, uint8_t value) {
 	this->d._ram[pos - 0xE000] = value;
 }
 
-uint8_t Mainboard::ReadMemory(uint16_t pos) const {
+uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 	if (pos < 0x4000)
 		return this->_rom->ReadByte(pos);
 
@@ -113,32 +113,32 @@ uint8_t Mainboard::ReadMemory(uint16_t pos) const {
 	return this->d._ram[pos - 0xE000];
 }
 
-void Mainboard::WritePort(uint8_t pos, uint8_t value) {
+void Motherboard::WritePort(uint8_t pos, uint8_t value) {
 }
 
-uint8_t Mainboard::ReadPort(uint8_t pos) const {
+uint8_t Motherboard::ReadPort(uint8_t pos) const {
 	return 0xFF;
 }
 
-uint32_t Mainboard::GetCRC32() {
+uint32_t Motherboard::GetCRC32() {
 	return this->_rom->GetCRC32();
 }
 
-int Mainboard::GetSaveSize() {
-	int size = sizeof(Mainboard::saveData);
+int Motherboard::GetSaveSize() {
+	int size = sizeof(Motherboard::saveData);
 
 	return size;
 }
 
-void Mainboard::LoadState(uint8_t * data) {
-	memcpy (&this->d, data, sizeof(Mainboard::saveData));
+void Motherboard::LoadState(uint8_t * data) {
+	memcpy (&this->d, data, sizeof(Motherboard::saveData));
 }
 
-void Mainboard::SaveState(uint8_t * data) {
-	memcpy (data, &this->d, sizeof(Mainboard::saveData));
+void Motherboard::SaveState(uint8_t * data) {
+	memcpy (data, &this->d, sizeof(Motherboard::saveData));
 }
 
-double Mainboard::GetVirtualTime() {
+double Motherboard::GetVirtualTime() {
 	double begin = this->_initFrame;
 	double frameDuration = 1.0 / 59.922743404;
 	return begin + (frameDuration * this->_percFrame);

@@ -1,5 +1,5 @@
-#ifndef _AWUI_EMULATION_SPECTRUM_MAINBOARD_H
-#define _AWUI_EMULATION_SPECTRUM_MAINBOARD_H
+#ifndef _AWUI_EMULATION_SPECTRUM_MOTHERBOARD_H
+#define _AWUI_EMULATION_SPECTRUM_MOTHERBOARD_H
 
 #include <awui/String.h>
 
@@ -15,7 +15,7 @@ namespace awui {
 			class Rom;
 			class CPU;
 
-			class Mainboard {
+			class Motherboard {
 				private:
 					struct saveData {
 						float _frame;
@@ -37,8 +37,8 @@ namespace awui {
 					void CheckInterrupts();
 
 				public:
-					Mainboard();
-					~Mainboard();
+					Motherboard();
+					~Motherboard();
 
 					void LoadRom(const String file);
 					void OnTick();

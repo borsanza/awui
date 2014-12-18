@@ -12,7 +12,7 @@ namespace awui {
 
 	namespace Emulation {
 		namespace Spectrum {
-			class Mainboard;
+			class Motherboard;
 		}
 	}
 
@@ -28,7 +28,7 @@ namespace awui {
 			class Spectrum : public Button {
 				private:
 					Drawing::Image * _image;
-					Mainboard * _cpu;
+					Motherboard * _cpu;
 					int _multiply;
 					bool _canChangeControl;
 					bool _pause;
@@ -55,7 +55,7 @@ namespace awui {
 
 					virtual void OnTick();
 
-					Mainboard * GetCPU();
+					Motherboard * GetCPU();
 
 					virtual void OnPaint(OpenGL::GL* gl);
 
