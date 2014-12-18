@@ -127,16 +127,19 @@ uint32_t Motherboard::GetCRC32() {
 
 int Motherboard::GetSaveSize() {
 	int size = sizeof(Motherboard::saveData);
+	size += awui::Emulation::Processors::Z80::CPU::GetSaveSize();
 
 	return size;
 }
 
 void Motherboard::LoadState(uint8_t * data) {
 	memcpy (&this->d, data, sizeof(Motherboard::saveData));
+	this->_z80->LoadState(&data[sizeof(Motherboard::saveData)]);
 }
 
 void Motherboard::SaveState(uint8_t * data) {
 	memcpy (data, &this->d, sizeof(Motherboard::saveData));
+	this->_z80->SaveState(&data[sizeof(Motherboard::saveData)]);
 }
 
 double Motherboard::GetVirtualTime() {
