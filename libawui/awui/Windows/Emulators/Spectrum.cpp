@@ -34,13 +34,13 @@ Spectrum::Spectrum() {
 	this->_lastTick = 0;
 
 	this->_colors[0]  = 0x000000;
-	this->_colors[1]  = 0x00007F;
-	this->_colors[2]  = 0x7F0000;
-	this->_colors[3]  = 0x7F007F;
-	this->_colors[4]  = 0x007F00;
-	this->_colors[5]  = 0x007F7F;
-	this->_colors[6]  = 0x7F7F00;
-	this->_colors[7]  = 0x7F7F7F;
+	this->_colors[1]  = 0x0000BF;
+	this->_colors[2]  = 0xBF0000;
+	this->_colors[3]  = 0xBF00BF;
+	this->_colors[4]  = 0x00BF00;
+	this->_colors[5]  = 0x00BFBF;
+	this->_colors[6]  = 0xBFBF00;
+	this->_colors[7]  = 0xBFBFBF;
 	this->_colors[8]  = 0x000000;
 	this->_colors[9]  = 0x0000FF;
 	this->_colors[10] = 0xFF0000;
@@ -104,15 +104,15 @@ void Spectrum::OnPaint(GL* gl) {
 
 	for (uint16_t y = 0; y < 240; y++) {
 		for (int x = 0; x < 32; x++) {
-			this->_image->SetPixel(x, y, 255, 255, 255);
-			this->_image->SetPixel(x + 288, y, 255, 255, 255);
+			this->_image->SetPixel(x, y, 0xBF, 0xBF, 0xBF);
+			this->_image->SetPixel(x + 288, y, 0xBF, 0xBF, 0xBF);
 		}
 	}
 
 	for (uint16_t y = 0; y < 24; y++) {
 		for (int x = 0; x < 320; x++) {
-			this->_image->SetPixel(x, y, 255, 255, 255);
-			this->_image->SetPixel(x, y + 216, 255, 255, 255);
+			this->_image->SetPixel(x, y, 0xBF, 0xBF, 0xBF);
+			this->_image->SetPixel(x, y + 216, 0xBF, 0xBF, 0xBF);
 		}
 	}
 
@@ -122,11 +122,20 @@ void Spectrum::OnPaint(GL* gl) {
 			pos = 0x4000 + (x >> 3) + (newY * 32);
 			uint8_t v = this->_cpu->ReadMemory(pos);
 			int bit = 8 - (x & 0x7);
-			v = ((v & (1 << bit)) != 0) ? 0 : 255;
+			bool active = ((v & (1 << bit)) != 0) ? true : false;
 
-			uint8_t color = this->_cpu->ReadMemory(0x5800 + (x >> 3) + ((newY >> 3) * 32));
+			uint32_t color;
+			uint8_t reg = this->_cpu->ReadMemory(0x5800 + (x >> 3) + ((y >> 3) * 32));
+			if (active) {
+				color = this->_colors[((reg & 0x40) >> 3) |  (reg & 0x07)];
+			} else {
+				color = this->_colors[(reg & 0x78) >> 3];
+			}
 
-			this->_image->SetPixel(x + 32, y + 24, v, v, v);
+			if (color == 0xBF00BF)
+				printf("%.2X\n", reg);
+
+			this->_image->SetPixel(x + 32, y + 24, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
 		}
 	}
 
