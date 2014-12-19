@@ -165,8 +165,93 @@ void Spectrum::SetMultiply(int multiply) {
 }
 
 bool Spectrum::OnKeyPress(Keys::Enum key) {
-	if (key == Keys::Key_BACKSPACE)
-		this->_cpu->Reset();
+//	if (key == Keys::Key_BACKSPACE) this->_cpu->Reset();
+
+	switch (key) {
+		case Keys::Key_Z: this->_cpu->OnKeyPress(0, 0x02); break;
+		case Keys::Key_X: this->_cpu->OnKeyPress(0, 0x04); break;
+		case Keys::Key_C: this->_cpu->OnKeyPress(0, 0x08); break;
+		case Keys::Key_V: this->_cpu->OnKeyPress(0, 0x10); break;
+		case Keys::Key_A: this->_cpu->OnKeyPress(1, 0x01); break;
+		case Keys::Key_S: this->_cpu->OnKeyPress(1, 0x02); break;
+		case Keys::Key_D: this->_cpu->OnKeyPress(1, 0x04); break;
+		case Keys::Key_F: this->_cpu->OnKeyPress(1, 0x08); break;
+		case Keys::Key_G: this->_cpu->OnKeyPress(1, 0x10); break;
+		case Keys::Key_Q: this->_cpu->OnKeyPress(2, 0x01); break;
+		case Keys::Key_W: this->_cpu->OnKeyPress(2, 0x02); break;
+		case Keys::Key_E: this->_cpu->OnKeyPress(2, 0x04); break;
+		case Keys::Key_R: this->_cpu->OnKeyPress(2, 0x08); break;
+		case Keys::Key_T: this->_cpu->OnKeyPress(2, 0x10); break;
+		case Keys::Key_1: this->_cpu->OnKeyPress(3, 0x01); break;
+		case Keys::Key_2: this->_cpu->OnKeyPress(3, 0x02); break;
+		case Keys::Key_3: this->_cpu->OnKeyPress(3, 0x04); break;
+		case Keys::Key_4: this->_cpu->OnKeyPress(3, 0x08); break;
+		case Keys::Key_5: this->_cpu->OnKeyPress(3, 0x10); break;
+		case Keys::Key_0: this->_cpu->OnKeyPress(4, 0x01); break;
+		case Keys::Key_9: this->_cpu->OnKeyPress(4, 0x02); break;
+		case Keys::Key_8: this->_cpu->OnKeyPress(4, 0x04); break;
+		case Keys::Key_7: this->_cpu->OnKeyPress(4, 0x08); break;
+		case Keys::Key_6: this->_cpu->OnKeyPress(4, 0x10); break;
+		case Keys::Key_P: this->_cpu->OnKeyPress(5, 0x01); break;
+		case Keys::Key_O: this->_cpu->OnKeyPress(5, 0x02); break;
+		case Keys::Key_I: this->_cpu->OnKeyPress(5, 0x04); break;
+		case Keys::Key_U: this->_cpu->OnKeyPress(5, 0x08); break;
+		case Keys::Key_Y: this->_cpu->OnKeyPress(5, 0x10); break;
+		case Keys::Key_L: this->_cpu->OnKeyPress(6, 0x02); break;
+		case Keys::Key_K: this->_cpu->OnKeyPress(6, 0x04); break;
+		case Keys::Key_J: this->_cpu->OnKeyPress(6, 0x08); break;
+		case Keys::Key_H: this->_cpu->OnKeyPress(6, 0x10); break;
+		case Keys::Key_M: this->_cpu->OnKeyPress(7, 0x04); break;
+		case Keys::Key_N: this->_cpu->OnKeyPress(7, 0x08); break;
+		case Keys::Key_B: this->_cpu->OnKeyPress(7, 0x10); break;
+		default: break;
+	}
+
+	return true;
+}
+
+bool Spectrum::OnKeyUp(Keys::Enum key) {
+//	if (key == Keys::Key_BACKSPACE) this->_cpu->Reset();
+
+	switch (key) {
+		case Keys::Key_Z: this->_cpu->OnKeyUp(0, 0x02); break;
+		case Keys::Key_X: this->_cpu->OnKeyUp(0, 0x04); break;
+		case Keys::Key_C: this->_cpu->OnKeyUp(0, 0x08); break;
+		case Keys::Key_V: this->_cpu->OnKeyUp(0, 0x10); break;
+		case Keys::Key_A: this->_cpu->OnKeyUp(1, 0x01); break;
+		case Keys::Key_S: this->_cpu->OnKeyUp(1, 0x02); break;
+		case Keys::Key_D: this->_cpu->OnKeyUp(1, 0x04); break;
+		case Keys::Key_F: this->_cpu->OnKeyUp(1, 0x08); break;
+		case Keys::Key_G: this->_cpu->OnKeyUp(1, 0x10); break;
+		case Keys::Key_Q: this->_cpu->OnKeyUp(2, 0x01); break;
+		case Keys::Key_W: this->_cpu->OnKeyUp(2, 0x02); break;
+		case Keys::Key_E: this->_cpu->OnKeyUp(2, 0x04); break;
+		case Keys::Key_R: this->_cpu->OnKeyUp(2, 0x08); break;
+		case Keys::Key_T: this->_cpu->OnKeyUp(2, 0x10); break;
+		case Keys::Key_1: this->_cpu->OnKeyUp(3, 0x01); break;
+		case Keys::Key_2: this->_cpu->OnKeyUp(3, 0x02); break;
+		case Keys::Key_3: this->_cpu->OnKeyUp(3, 0x04); break;
+		case Keys::Key_4: this->_cpu->OnKeyUp(3, 0x08); break;
+		case Keys::Key_5: this->_cpu->OnKeyUp(3, 0x10); break;
+		case Keys::Key_0: this->_cpu->OnKeyUp(4, 0x01); break;
+		case Keys::Key_9: this->_cpu->OnKeyUp(4, 0x02); break;
+		case Keys::Key_8: this->_cpu->OnKeyUp(4, 0x04); break;
+		case Keys::Key_7: this->_cpu->OnKeyUp(4, 0x08); break;
+		case Keys::Key_6: this->_cpu->OnKeyUp(4, 0x10); break;
+		case Keys::Key_P: this->_cpu->OnKeyUp(5, 0x01); break;
+		case Keys::Key_O: this->_cpu->OnKeyUp(5, 0x02); break;
+		case Keys::Key_I: this->_cpu->OnKeyUp(5, 0x04); break;
+		case Keys::Key_U: this->_cpu->OnKeyUp(5, 0x08); break;
+		case Keys::Key_Y: this->_cpu->OnKeyUp(5, 0x10); break;
+		case Keys::Key_L: this->_cpu->OnKeyUp(6, 0x02); break;
+		case Keys::Key_K: this->_cpu->OnKeyUp(6, 0x04); break;
+		case Keys::Key_J: this->_cpu->OnKeyUp(6, 0x08); break;
+		case Keys::Key_H: this->_cpu->OnKeyUp(6, 0x10); break;
+		case Keys::Key_M: this->_cpu->OnKeyUp(7, 0x04); break;
+		case Keys::Key_N: this->_cpu->OnKeyUp(7, 0x08); break;
+		case Keys::Key_B: this->_cpu->OnKeyUp(7, 0x10); break;
+		default: break;
+	}
 
 	return true;
 }

@@ -35,6 +35,9 @@ Motherboard::Motherboard() {
 	this->d._oldFrame = 0;
 	this->d._bgColor = 0;
 
+	for (int i = 0; i < 8; i++)
+		this->d._keys[i] = 0xFF;
+
 	this->Reset();
 }
 
@@ -143,7 +146,10 @@ void Motherboard::WritePort(uint8_t port, uint8_t value) {
 
 uint8_t Motherboard::ReadPort(uint8_t port) const {
 	if (port == 0xFE) {
-		printf("%.2X: %.2X\n", port, this->_z80->GetAddressBus() >> 8);
+		uint8_t row = (this->_z80->GetAddressBus() >> 8);
+		for (int i = 0; i < 8; i++)
+			if ((row & (1 << i)) == 0)
+				return this->d._keys[i];
 	}
 
 	return 0xFF;
@@ -174,4 +180,12 @@ double Motherboard::GetVirtualTime() {
 	double begin = this->_initFrame;
 	double frameDuration = 1.0 / 59.922743404;
 	return begin + (frameDuration * this->_percFrame);
+}
+
+void Motherboard::OnKeyPress(uint8_t row, uint8_t key) {
+	this->d._keys[row] &= ~key;
+}
+
+void Motherboard::OnKeyUp(uint8_t row, uint8_t key) {
+	this->d._keys[row] |= key;
 }

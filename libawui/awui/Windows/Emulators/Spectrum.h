@@ -62,6 +62,7 @@ namespace awui {
 					void SetMultiply(int multiply);
 
 					virtual bool OnKeyPress(Keys::Enum key);
+					virtual bool OnKeyUp(Keys::Enum key);
 					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 			};

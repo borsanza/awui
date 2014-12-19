@@ -28,6 +28,7 @@ namespace awui {
 						uint8_t _ram[8192];
 						uint8_t _ula[16384];
 						uint8_t _bgColor;
+						uint8_t _keys[8];
 					} d;
 
 					// No se guarda
@@ -70,6 +71,9 @@ namespace awui {
 					uint8_t ReadPort(uint8_t port) const;
 
 					uint8_t GetBackgroundColor() const { return this->d._bgColor; }
+
+					void OnKeyPress(uint8_t row, uint8_t key);
+					void OnKeyUp(uint8_t row, uint8_t key);
 			};
 		}
 	}
