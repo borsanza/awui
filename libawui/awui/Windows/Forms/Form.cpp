@@ -383,6 +383,7 @@ void Form::ProcessEvents() {
 					case SDLK_UP: OnRemoteKeyUpPre(0, RemoteButtons::Up); break;
 					case SDLK_DOWN: OnRemoteKeyUpPre(0, RemoteButtons::Down); break;
 
+					case SDLK_BACKSPACE: OnKeyUpPre(Keys::Key_BACKSPACE); break;
 					case SDLK_0: OnKeyUpPre(Keys::Key_0); break;
 					case SDLK_1: OnKeyUpPre(Keys::Key_1); break;
 					case SDLK_2: OnKeyUpPre(Keys::Key_2); break;

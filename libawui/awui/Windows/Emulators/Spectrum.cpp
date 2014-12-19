@@ -204,6 +204,10 @@ bool Spectrum::OnKeyPress(Keys::Enum key) {
 		case Keys::Key_M: this->_cpu->OnKeyPress(7, 0x04); break;
 		case Keys::Key_N: this->_cpu->OnKeyPress(7, 0x08); break;
 		case Keys::Key_B: this->_cpu->OnKeyPress(7, 0x10); break;
+		case Keys::Key_BACKSPACE:
+			this->_cpu->OnKeyPress(0, 0x01);
+			this->_cpu->OnKeyPress(4, 0x01);
+			break;
 		default: break;
 	}
 
@@ -211,8 +215,6 @@ bool Spectrum::OnKeyPress(Keys::Enum key) {
 }
 
 bool Spectrum::OnKeyUp(Keys::Enum key) {
-//	if (key == Keys::Key_BACKSPACE) this->_cpu->Reset();
-
 	switch (key) {
 		case Keys::Key_Z: this->_cpu->OnKeyUp(0, 0x02); break;
 		case Keys::Key_X: this->_cpu->OnKeyUp(0, 0x04); break;
@@ -250,6 +252,10 @@ bool Spectrum::OnKeyUp(Keys::Enum key) {
 		case Keys::Key_M: this->_cpu->OnKeyUp(7, 0x04); break;
 		case Keys::Key_N: this->_cpu->OnKeyUp(7, 0x08); break;
 		case Keys::Key_B: this->_cpu->OnKeyUp(7, 0x10); break;
+		case Keys::Key_BACKSPACE:
+			this->_cpu->OnKeyUp(0, 0x01);
+			this->_cpu->OnKeyUp(4, 0x01);
+			break;
 		default: break;
 	}
 
@@ -299,6 +305,12 @@ uint8_t Spectrum::GetPad(int which) const {
 
 bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	bool ret = false;
+
+	switch (button) {
+		case RemoteButtons::Ok: this->_cpu->OnKeyPress(6, 0x01); break;
+		default: break;
+	}
+
 	if (button & RemoteButtons::Button5) {
 		this->_lastTick = DateTime::GetNow().GetTicks();
 		this->_actual--;
@@ -337,6 +349,11 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 }
 
 bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
+	switch (button) {
+		case RemoteButtons::Ok: this->_cpu->OnKeyUp(6, 0x01); break;
+		default: break;
+	}
+
 	if ((button & RemoteButtons::Pause) || (button & RemoteButtons::Ok) || (button & RemoteButtons::Play))
 		this->_canChangeControl = false;
 
