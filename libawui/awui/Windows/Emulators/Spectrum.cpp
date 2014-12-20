@@ -142,6 +142,10 @@ void Spectrum::OnPaint(GL* gl) {
 			bool active = ((v & (1 << bit)) != 0) ? true : false;
 
 			uint8_t reg = this->_cpu->ReadMemory(0x5800 + (x >> 3) + ((y >> 3) * 32));
+
+			if (reg & 0x80 && this->_cpu->GetBlink())
+				active = !active;
+
 			if (active) {
 				color = this->_colors[((reg & 0x40) >> 3) |  (reg & 0x07)];
 			} else {

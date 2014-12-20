@@ -29,6 +29,9 @@ namespace awui {
 						uint8_t _ula[16384];
 						uint8_t _bgColor;
 						uint8_t _keys[8];
+
+						int _blinkCount;
+						bool _blink;
 					} d;
 
 					// No se guarda
@@ -74,6 +77,10 @@ namespace awui {
 
 					void OnKeyPress(uint8_t row, uint8_t key);
 					void OnKeyUp(uint8_t row, uint8_t key);
+
+					inline bool GetBlink() const { return this->d._blink; }
+
+
 			};
 		}
 	}

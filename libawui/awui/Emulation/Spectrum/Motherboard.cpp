@@ -34,6 +34,8 @@ Motherboard::Motherboard() {
 	this->d._frame = 0;
 	this->d._oldFrame = 0;
 	this->d._bgColor = 0;
+	this->d._blinkCount = 0;
+	this->d._blink = false;
 
 	for (int i = 0; i < 8; i++)
 		this->d._keys[i] = 0xFF;
@@ -68,10 +70,14 @@ void Motherboard::CheckInterrupts() {
 	this->_z80->CallInterrupt(0x0038);
 }
 
-#define NTSC 1
+#define NTSC 0
 void Motherboard::OnTick() {
-	this->_initFrame = DateTime::GetTotalSeconds();
+	if (++(this->d._blinkCount) >= 16) {
+		this->d._blinkCount = 0;
+		this->d._blink = !this->d._blink;
+	}
 
+	this->_initFrame = DateTime::GetTotalSeconds();
 
 	double fps = NTSC ? 59.922743404f : 49.7014591858f;
 	double speed = NTSC ? 3.579545f : 3.5468949f;
