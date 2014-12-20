@@ -48,6 +48,7 @@ namespace awui {
 					void SetText(String title);
 					void RefreshVideo();
 					void SetFullscreen(int mode);
+					inline int GetFullscreen() { return this->fullscreen; }
 
 					static Control * GetControlSelected();
 					static void SetControlSelected(Control * selected);

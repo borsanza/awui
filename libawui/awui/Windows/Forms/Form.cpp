@@ -332,13 +332,8 @@ void Form::ProcessEvents() {
 					case SDLK_c: OnKeyPressPre(Keys::Key_C); break;
 					case SDLK_d: OnKeyPressPre(Keys::Key_D); break;
 					case SDLK_e: OnKeyPressPre(Keys::Key_E); break;
-					case SDLK_f:
-						if (event.key.keysym.mod & KMOD_LALT)
-							this->SetFullscreen(1);
-						else
-							OnKeyPressPre(Keys::Key_F);
-						break;
-
+					case SDLK_F11: this->SetFullscreen(!this->GetFullscreen()); break;
+					case SDLK_f: OnKeyPressPre(Keys::Key_F); break;
 					case SDLK_g: OnKeyPressPre(Keys::Key_G); break;
 					case SDLK_h: OnKeyPressPre(Keys::Key_H); break;
 					case SDLK_i: OnKeyPressPre(Keys::Key_I); break;
@@ -355,13 +350,7 @@ void Form::ProcessEvents() {
 					case SDLK_t: OnKeyPressPre(Keys::Key_T); break;
 					case SDLK_u: OnKeyPressPre(Keys::Key_U); break;
 					case SDLK_v: OnKeyPressPre(Keys::Key_V); break;
-					case SDLK_w:
-						if (event.key.keysym.mod & KMOD_LALT)
-							this->SetFullscreen(0);
-						else
-							OnKeyPressPre(Keys::Key_W);
-						break;
-
+					case SDLK_w: OnKeyPressPre(Keys::Key_W); break;
 					case SDLK_x: OnKeyPressPre(Keys::Key_X); break;
 					case SDLK_y: OnKeyPressPre(Keys::Key_Y); break;
 					case SDLK_z: OnKeyPressPre(Keys::Key_Z); break;
