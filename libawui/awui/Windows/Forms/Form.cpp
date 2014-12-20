@@ -287,6 +287,7 @@ void Form::ProcessEvents() {
 				break;
 
 			case SDL_KEYDOWN:
+				// printf("%d\n", event.key.keysym.sym);
 				switch (event.key.keysym.sym) {
 					case SDLK_ESCAPE:
 						if (event.key.keysym.mod & KMOD_LCTRL)
@@ -295,12 +296,26 @@ void Form::ProcessEvents() {
 							OnRemoteKeyPressPre(0, RemoteButtons::Menu);
 						break;
 					case SDLK_RETURN:
-					case SDLK_KP_ENTER: OnRemoteKeyPressPre(0, RemoteButtons::Ok); break;
+						OnRemoteKeyPressPre(0, RemoteButtons::Ok);
+						OnKeyPressPre(Keys::Key_ENTER);
+						break;
+					case SDLK_KP_ENTER:
+						OnRemoteKeyPressPre(0, RemoteButtons::Ok);
+						OnKeyPressPre(Keys::Key_KP_ENTER);
+						break;
 					case SDLK_LEFT: OnRemoteKeyPressPre(0, RemoteButtons::Left); break;
 					case SDLK_RIGHT: OnRemoteKeyPressPre(0, RemoteButtons::Right); break;
 					case SDLK_UP: OnRemoteKeyPressPre(0, RemoteButtons::Up); break;
 					case SDLK_DOWN: OnRemoteKeyPressPre(0, RemoteButtons::Down); break;
 
+					case SDLK_QUOTE: OnKeyPressPre(Keys::Key_QUOTE); break;
+					case SDLK_COMMA: OnKeyPressPre(Keys::Key_COMMA); break;
+					case SDLK_MINUS: OnKeyPressPre(Keys::Key_MINUS); break;
+					case SDLK_PERIOD: OnKeyPressPre(Keys::Key_PERIOD); break;
+					case SDLK_LALT: OnKeyPressPre(Keys::Key_LALT); break;
+					case SDLK_SPACE: OnKeyPressPre(Keys::Key_SPACE); break;
+					case SDLK_LSHIFT: OnKeyPressPre(Keys::Key_LSHIFT); break;
+					case SDLK_RSHIFT: OnKeyPressPre(Keys::Key_RSHIFT); break;
 					case SDLK_BACKSPACE: OnKeyPressPre(Keys::Key_BACKSPACE); break;
 					case SDLK_0: OnKeyPressPre(Keys::Key_0); break;
 					case SDLK_1: OnKeyPressPre(Keys::Key_1); break;
@@ -377,12 +392,26 @@ void Form::ProcessEvents() {
 				switch (event.key.keysym.sym) {
 					case SDLK_ESCAPE: OnRemoteKeyUpPre(0, RemoteButtons::Menu); break;
 					case SDLK_RETURN:
-					case SDLK_KP_ENTER: OnRemoteKeyUpPre(0, RemoteButtons::Ok); break;
+						OnRemoteKeyUpPre(0, RemoteButtons::Ok);
+						OnKeyUpPre(Keys::Key_ENTER);
+						break;
+					case SDLK_KP_ENTER:
+						OnRemoteKeyUpPre(0, RemoteButtons::Ok);
+						OnKeyUpPre(Keys::Key_KP_ENTER);
+						break;
 					case SDLK_LEFT: OnRemoteKeyUpPre(0, RemoteButtons::Left); break;
 					case SDLK_RIGHT: OnRemoteKeyUpPre(0, RemoteButtons::Right); break;
 					case SDLK_UP: OnRemoteKeyUpPre(0, RemoteButtons::Up); break;
 					case SDLK_DOWN: OnRemoteKeyUpPre(0, RemoteButtons::Down); break;
 
+					case SDLK_QUOTE: OnKeyUpPre(Keys::Key_QUOTE); break;
+					case SDLK_COMMA: OnKeyUpPre(Keys::Key_COMMA); break;
+					case SDLK_MINUS: OnKeyUpPre(Keys::Key_MINUS); break;
+					case SDLK_PERIOD: OnKeyUpPre(Keys::Key_PERIOD); break;
+					case SDLK_LALT: OnKeyUpPre(Keys::Key_LALT); break;
+					case SDLK_SPACE: OnKeyUpPre(Keys::Key_SPACE); break;
+					case SDLK_LSHIFT: OnKeyUpPre(Keys::Key_LSHIFT); break;
+					case SDLK_RSHIFT: OnKeyUpPre(Keys::Key_RSHIFT); break;
 					case SDLK_BACKSPACE: OnKeyUpPre(Keys::Key_BACKSPACE); break;
 					case SDLK_0: OnKeyUpPre(Keys::Key_0); break;
 					case SDLK_1: OnKeyUpPre(Keys::Key_1); break;

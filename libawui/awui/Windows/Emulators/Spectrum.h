@@ -45,6 +45,9 @@ namespace awui {
 
 					uint32_t _colors[16];
 
+					void CallKey(int key, bool pressed);
+					void DoKey(Keys::Enum key, bool pressed);
+
 				public:
 					Spectrum();
 					virtual ~Spectrum();

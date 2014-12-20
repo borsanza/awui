@@ -63,6 +63,15 @@ namespace awui {
 					Key_KP_PLUS,
 
 					Key_BACKSPACE,
+					Key_ENTER,
+					Key_LSHIFT,
+					Key_RSHIFT,
+					Key_SPACE,
+					Key_LALT,
+					Key_COMMA,
+					Key_PERIOD,
+					Key_MINUS,
+					Key_QUOTE,
 				};
 			};
 		}
