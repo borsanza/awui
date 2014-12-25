@@ -155,8 +155,8 @@ void Motherboard::SetAddressBus(uint16_t data) {
 	this->d._addressBus.W = data;
 }
 
-bool Motherboard::IsHalted() const {
-	return this->_z80.IsHalted();
+bool Motherboard::IsEndlessLoop() const {
+	return this->_z80.IsEndlessLoop();
 }
 
 void Motherboard::CallPaused() {

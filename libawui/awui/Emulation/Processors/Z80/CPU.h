@@ -16,7 +16,7 @@ namespace awui {
 						~CPU();
 
 						void RunOpcode();
-						bool IsHalted() const;
+						bool IsEndlessLoop() const;
 
 						uint16_t GetAddressBus() const;
 						void SetAddressBus(uint16_t);

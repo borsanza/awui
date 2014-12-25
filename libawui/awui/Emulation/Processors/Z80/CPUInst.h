@@ -14,7 +14,8 @@ namespace awui {
 						struct saveData {
 							int64_t _cycles;
 							bool _inInterrupt:1;
-							bool _isHalted:1;
+							bool _isSuspended:1;
+							bool _isEndlessLoop:1;
 							Word _addressBus;
 							Registers _registers;
 						} d;

@@ -20,7 +20,7 @@ CPUInst::~CPUInst() {
 void CPUInst::Reset() {
 	this->d._cycles = 0;
 	this->d._inInterrupt = false;
-	this->d._isHalted = false;
+	this->d._isSuspended = false;
 	this->d._registers.Clear();
 }
 
@@ -1645,6 +1645,11 @@ void CPUInst::CALLccnn(bool cc) {
 }
 
 void CPUInst::CallInterrupt(uint16_t offset) {
+	if (this->d._isSuspended) {
+		this->d._registers.IncPC();
+		this->d._isSuspended = false;
+	}
+
 	uint16_t pc = this->d._registers.GetPC();
 	uint16_t sp = this->d._registers.GetSP() - 2;
 	this->d._registers.SetSP(sp);

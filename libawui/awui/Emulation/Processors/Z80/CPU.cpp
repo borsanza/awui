@@ -7,8 +7,8 @@
 #include "CPU.h"
 
 //#define SLOW
-//#include <string>
-//#include <string.h>
+#include <string>
+// #include <string.h>
 //#define NUMOPCODES
 
 using namespace awui::Emulation::Processors::Z80;
@@ -25,7 +25,8 @@ CPU::CPU() {
 	this->_showNotImplemented = true;
 
 	this->d._inInterrupt = false;
-	this->d._isHalted = false;
+	this->d._isSuspended = false;
+	this->d._isEndlessLoop = false;
 
 #ifdef NUMOPCODES
 	for (int i = 0; i < OxNOTIMPLEMENTED; i++) {
@@ -98,11 +99,14 @@ void CPU::RunOpcode() {
 
 #ifdef SLOW
 	if (this->_showLog) {
+		#ifdef NUMOPCODES
 		opcodes[opcodeEnum] = true;
+		#endif
 		printf("\n");
 		printf("%s: ", logLine);
 		printf("%s", logCode);
 		this->_opcode.ShowLogOpcode(this, opcodeEnum);
+/*
 		printf(" ");
 		printf("\n");
 		printf("AF: %.4X  ", this->d._registers.GetAF());
@@ -116,6 +120,7 @@ void CPU::RunOpcode() {
 		printf("SP: %.4X  ", this->d._registers.GetSP());
 		printf("\n");
 		printf("\n");
+*/
 		fflush(stdout);
 	}
 #endif
@@ -125,7 +130,7 @@ void CPU::RunOpcode() {
 #endif
 
 	// http://clrhome.org/table/
-	this->d._isHalted = false;
+	this->d._isEndlessLoop = false;
 	switch (opcodeEnum) {
 
 /******************************************************************************/
@@ -142,7 +147,7 @@ void CPU::RunOpcode() {
 		// 76: HALT
 		// |1|4| Suspends CPU operation until an interrupt or reset occurs.
 		case Ox76:
-			this->d._isHalted = true;
+			this->d._isSuspended = true;
 			this->d._cycles += 4;
 			break;
 
@@ -445,7 +450,7 @@ void CPU::RunOpcode() {
 			{
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
 				if (offset == pc)
-					this->d._isHalted = true;
+					this->d._isEndlessLoop = true;
 				else
 					this->d._registers.SetPC(offset);
 				this->d._cycles += 10;
@@ -650,6 +655,7 @@ void CPU::RunOpcode() {
 		// |2|8| Sets interrupt mode 0.
 		case OxED46:
 		case OxED66:
+// 			printf("IM 0\n");
 			this->d._registers.SetIM(0);
 			this->d._registers.IncPC(2);
 			this->d._cycles += 8;
@@ -660,6 +666,7 @@ void CPU::RunOpcode() {
 		// |2|8| Sets interrupt mode 1.
 		case OxED56:
 		case OxED76:
+// 			printf("IM 1\n");
 			this->d._registers.SetIM(1);
 			this->d._registers.IncPC(2);
 			this->d._cycles += 8;
@@ -670,6 +677,7 @@ void CPU::RunOpcode() {
 		// |2|8| Sets interrupt mode 1.
 		case OxED5E:
 		case OxED7E:
+// 			printf("IM 2\n");
 			this->d._registers.SetIM(2);
 			this->d._registers.IncPC(2);
 			this->d._cycles += 8;
@@ -1445,8 +1453,8 @@ void CPU::SetAddressBus(uint16_t data) {
 	this->d._addressBus.W = data;
 }
 
-bool CPU::IsHalted() const {
-	return this->d._isHalted;
+bool CPU::IsEndlessLoop() const {
+	return this->d._isEndlessLoop;
 }
 
 void CPU::PrintLog() {

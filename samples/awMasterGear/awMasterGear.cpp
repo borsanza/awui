@@ -28,7 +28,7 @@ int main(int argc, char ** argv) {
 			}
 			return 0;*/
 
-			while (!ms->GetCPU()->IsHalted())
+			while (!ms->GetCPU()->IsEndlessLoop())
 				ms->RunOpcode();
 
 			//ms->GetCPU()->PrintLog();

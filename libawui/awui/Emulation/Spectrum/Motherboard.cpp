@@ -147,7 +147,7 @@ void Motherboard::WritePort(uint8_t port, uint8_t value) {
 		return;
 	}
 
-	printf("%.2X: %.2X\n", port, value);
+	printf("WritePort: %.2X: %.2X\n", port, value);
 }
 
 uint8_t Motherboard::ReadPort(uint8_t port) const {
@@ -157,6 +157,8 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 			if ((row & (1 << i)) == 0)
 				return this->d._keys[i];
 	}
+
+	printf("ReadPort: %.2X\n", port);
 
 	return 0xFF;
 }

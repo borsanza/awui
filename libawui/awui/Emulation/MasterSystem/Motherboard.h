@@ -69,7 +69,7 @@ namespace awui {
 
 					void LoadRom(const String file);
 					void OnTick();
-					bool IsHalted() const;
+					bool IsEndlessLoop() const;
 
 					uint16_t GetAddressBus() const;
 					void SetAddressBus(uint16_t);
