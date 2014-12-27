@@ -1,0 +1,70 @@
+#ifndef _AWUI_EMULATION_SPECTRUM_ULA_H
+#define _AWUI_EMULATION_SPECTRUM_ULA_H
+
+#include <stdint.h>
+
+namespace awui {
+	namespace Emulation {
+		namespace Spectrum {
+			class Motherboard;
+
+			class ULA {
+				private:
+					struct saveData {
+						uint16_t _width;
+						uint16_t _height;
+						uint16_t _line;
+						uint16_t _col;
+						bool _interrupt:1;
+						uint8_t _vram[16384];
+						uint8_t _data[320*240];
+						uint8_t _backcolor;
+					} d;
+
+					// No salvable
+					Motherboard * _cpu;
+
+					void SetHeight(uint16_t height);
+					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync);
+					bool IsVSYNC(uint16_t line) const;
+
+					void OnTickBorder();
+					uint16_t GetWidth() const;
+					uint16_t GetHeight() const;
+
+				public:
+					ULA(Motherboard * cpu);
+					~ULA();
+
+					bool OnTick(uint32_t counter);
+
+					void Reset();
+
+					uint8_t * GetVram();
+
+					uint16_t GetTotalWidth() const;
+					uint16_t GetTotalHeight() const;
+					uint16_t GetVisualWidth() const;
+					uint16_t GetVisualHeight() const;
+
+					uint8_t GetPixel(uint16_t x, uint16_t y) const;
+
+					void Clear();
+
+					bool GetInterrupt();
+
+					uint16_t GetLine() const;
+					uint16_t GetColumn() const;
+
+					uint8_t GetBackColor() const;
+
+					static int GetSaveSize();
+
+					void LoadState(uint8_t * data);
+					void SaveState(uint8_t * data);
+			};
+		}
+	}
+}
+
+#endif
