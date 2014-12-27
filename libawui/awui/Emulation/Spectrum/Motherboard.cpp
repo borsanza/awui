@@ -12,6 +12,7 @@
 #include <awui/DateTime.h>
 #include <awui/Emulation/Common/Rom.h>
 #include <awui/Emulation/Processors/Z80/CPU.h>
+#include <awui/Emulation/Spectrum/ULA.h>
 
 using namespace awui;
 using namespace awui::Emulation;
@@ -30,12 +31,11 @@ Motherboard::Motherboard() {
 	this->_z80->SetWritePortCB(WritePortCB, this);
 	this->_z80->SetReadPortCB(ReadPortCB, this);
 
+	this->_ula = new ULA();
+
 	this->_rom = new Common::Rom(4096);
 	this->d._frame = 0;
 	this->d._oldFrame = 0;
-	this->d._bgColor = 0;
-	this->d._blinkCount = 0;
-	this->d._blink = false;
 
 	for (int i = 0; i < 8; i++)
 		this->d._keys[i] = 0xFF;
@@ -46,6 +46,7 @@ Motherboard::Motherboard() {
 Motherboard::~Motherboard() {
 	delete this->_rom;
 	delete this->_z80;
+	delete this->_ula;
 }
 
 void Motherboard::Reset() {
@@ -72,11 +73,6 @@ void Motherboard::CheckInterrupts() {
 
 #define NTSC 0
 void Motherboard::OnTick() {
-	if (++(this->d._blinkCount) >= 16) {
-		this->d._blinkCount = 0;
-		this->d._blink = !this->d._blink;
-	}
-
 	this->_initFrame = DateTime::GetTotalSeconds();
 
 	double fps = NTSC ? 59.922743404f : 49.7014591858f;
@@ -89,8 +85,10 @@ void Motherboard::OnTick() {
 	this->d._oldFrame = this->d._frame;
 
 	double iters = (speed * 1000000.0f) / fps;
-	double itersVDP = 256*192;
+	double itersVDP = this->_ula->GetTotalWidth() * this->_ula->GetTotalHeight();
 
+	bool vsync = false;
+	int vdpCount = 0;
 	double vdpIters = 0;
 
 	int realIters = 0;
@@ -104,8 +102,17 @@ void Motherboard::OnTick() {
 		this->_percFrame = i / iters;
 
 		vdpIters += times * (itersVDP / iters);
+		if (!vsync) {
+			for (; vdpCount < vdpIters; vdpCount++) {
+				if (vsync) continue;
+				vsync = this->_ula->OnTick(realIters);
+			}
+		}
 		realIters++;
 	}
+
+	while (!vsync)
+		vsync = this->_ula->OnTick(realIters);
 
 	this->CheckInterrupts();
 }
@@ -116,7 +123,7 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 		return;
 
 	if (pos < 0x8000) {
-		this->d._ula[pos - 0x4000] = value;
+		this->_ula->WriteByte(pos - 0x4000, value);
 		return;
 	}
 
@@ -133,7 +140,7 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 		return this->_rom->ReadByte(pos);
 
 	if (pos < 0x8000)
-		return this->d._ula[pos - 0x4000];
+		return this->_ula->ReadByte(pos - 0x4000);
 
 	if (pos < 0xE000)
 		return this->d._ram[pos - 0xC000];
@@ -143,7 +150,7 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 
 void Motherboard::WritePort(uint8_t port, uint8_t value) {
 	if (port == 0xFE) {
-		this->d._bgColor = value & 0x07;
+		this->_ula->SetBackColor(value & 0x07);
 		return;
 	}
 

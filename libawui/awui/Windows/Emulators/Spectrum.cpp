@@ -9,6 +9,7 @@
 #include <awui/Drawing/Image.h>
 #include <awui/DateTime.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
+#include <awui/Emulation/Spectrum/ULA.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
@@ -107,9 +108,11 @@ Motherboard * Spectrum::GetCPU() {
 // 7100 pixel stretch, 16 bytes.
 
 void Spectrum::OnPaint(GL* gl) {
-	int width = 320;
-	int height = 240;
-	int pos;
+	uint8_t c;
+	ULA * screen = this->_cpu->GetULA();
+
+	int width = screen->GetTotalWidth();
+	int height = screen->GetTotalHeight();
 
 	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
 		delete this->_image;
@@ -117,45 +120,11 @@ void Spectrum::OnPaint(GL* gl) {
 		this->SetSize(width * this->_multiply, height * this->_multiply);
 	}
 
-	uint32_t color = this->_colors[this->_cpu->GetBackgroundColor()];
-
-	for (uint16_t y = 0; y < 240; y++) {
-		for (int x = 0; x < 32; x++) {
-			this->_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
-			this->_image->SetPixel(x + 288, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
-		}
-	}
-
-	for (uint16_t y = 0; y < 24; y++) {
-		for (int x = 0; x < 320; x++) {
-			this->_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
-			this->_image->SetPixel(x, y + 216, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
-		}
-	}
-
-	for (uint16_t y = 0; y < 192; y++) {
-		for (int x = 0; x < 256; x++) {
-			uint8_t newY = (y & 0xC0) | ((y & 0x38) >> 3) | ((y & 0x7) << 3);
-			pos = 0x4000 + (x >> 3) + (newY * 32);
-			uint8_t v = this->_cpu->ReadMemory(pos);
-			int bit = 7 - (x & 0x7);
-			bool active = ((v & (1 << bit)) != 0) ? true : false;
-
-			uint8_t reg = this->_cpu->ReadMemory(0x5800 + (x >> 3) + ((y >> 3) * 32));
-
-			if (reg & 0x80 && this->_cpu->GetBlink())
-				active = !active;
-
-			if (active) {
-				color = this->_colors[((reg & 0x40) >> 3) |  (reg & 0x07)];
-			} else {
-				color = this->_colors[(reg & 0x78) >> 3];
-			}
-
-			if (color == 0xBF00BF)
-				printf("%.2X\n", reg);
-
-			this->_image->SetPixel(x + 32, y + 24, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF);
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			c = screen->GetPixel(x, y);
+			uint32_t color = _colors[c];
+			this->_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
 		}
 	}
 

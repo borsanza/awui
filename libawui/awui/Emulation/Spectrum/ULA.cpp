@@ -12,14 +12,16 @@
 
 using namespace awui::Emulation::Spectrum;
 
-ULA::ULA(Motherboard * cpu) {
+ULA::ULA() {
 	this->d._width = 256;
 	this->d._height = 192;
 
-	this->_cpu = cpu;
 	this->d._line = 0;
 	this->d._col = 0;
 	this->d._interrupt = false;
+	this->d._backcolor = 0;
+	this->d._blinkCount = 0;
+	this->d._blink = false;
 
 	this->Reset();
 }
@@ -69,16 +71,8 @@ uint16_t ULA::GetTotalHeight() const {
 	return 240;
 }
 
-uint16_t ULA::GetVisualWidth() const {
-	return 320;
-}
-
-uint16_t ULA::GetVisualHeight() const {
-	return 240;
-}
-
 uint8_t ULA::GetPixel(uint16_t x, uint16_t y) const {
-	return this->d._data[(y * this->GetVisualWidth()) + x];
+	return this->d._data[(y * this->GetTotalWidth()) + x];
 }
 
 bool ULA::IsVSYNC(uint16_t line) const {
@@ -140,7 +134,7 @@ void ULA::OnTickBorder() {
 	}
 
 	if (draw)
-		this->d._data[x + (y * this->GetVisualWidth())] = this->d._backcolor;
+		this->d._data[x + (y * this->GetTotalWidth())] = this->d._backcolor;
 }
 
 bool ULA::OnTick(uint32_t counter) {
@@ -151,8 +145,35 @@ bool ULA::OnTick(uint32_t counter) {
 	if (vsync)
 		ret = true;
 
+	if ((this->d._col == 0) && (this->d._line == 0)) {
+		if (++(this->d._blinkCount) >= 16) {
+			this->d._blinkCount = 0;
+			this->d._blink = !this->d._blink;
+		}
+	}
+
 	if ((this->d._col < this->d._width) && (this->d._line < this->d._height)) {
-//		this->d._data[pos] = this->GetBackgroundPixel(sprite, col & 0x7, line & 0x7, flipx, flipy, otherPalette, priority);
+		uint16_t col = this->d._col;
+		uint16_t line = this->d._line;
+		uint8_t newY = (line & 0xC0) | ((line & 0x38) >> 3) | ((line & 0x7) << 3);
+		uint8_t v = this->d._vram[(col >> 3) + (newY * 32)];
+		int bit = 7 - (col & 0x7);
+		bool active = ((v & (1 << bit)) != 0) ? true : false;
+
+		uint8_t reg = this->d._vram[0x1800 + (col >> 3) + ((line >> 3) * 32)];
+
+		if (reg & 0x80 && this->d._blink)
+			active = !active;
+
+		uint8_t color;
+		if (active) {
+			color = ((reg & 0x40) >> 3) |  (reg & 0x07);
+		} else {
+			color = (reg & 0x78) >> 3;
+		}
+
+		uint32_t pos = col + 32 + ((line + 24) * this->GetTotalWidth());
+		this->d._data[pos] = color;
 	} else {
 		this->OnTickBorder();
 	}
@@ -167,10 +188,6 @@ bool ULA::GetInterrupt() {
 	}
 
 	return false;
-}
-
-uint8_t ULA::GetBackColor() const {
-	return this->d._backcolor;
 }
 
 int ULA::GetSaveSize() {

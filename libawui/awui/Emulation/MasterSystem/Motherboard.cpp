@@ -135,7 +135,8 @@ void Motherboard::OnTick() {
 			for (; vdpCount < vdpIters; vdpCount++) {
 				if (vsync) continue;
 				vsync = this->_vdp->OnTick(realIters);
-				this->CheckInterrupts();
+				if (vsync)
+					this->CheckInterrupts();
 			}
 		}
 		realIters++;
@@ -143,7 +144,8 @@ void Motherboard::OnTick() {
 
 	while (!vsync) {
 		vsync = this->_vdp->OnTick(realIters);
-		this->CheckInterrupts();
+		if (vsync)
+			this->CheckInterrupts();
 	}
 }
 

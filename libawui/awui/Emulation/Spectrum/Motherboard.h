@@ -16,8 +16,7 @@ namespace awui {
 		}
 
 		namespace Spectrum {
-			class Rom;
-			class CPU;
+			class ULA;
 
 			class Motherboard {
 				private:
@@ -26,17 +25,13 @@ namespace awui {
 						float _oldFrame;
 						uint8_t _boardram[32768];
 						uint8_t _ram[8192];
-						uint8_t _ula[16384];
-						uint8_t _bgColor;
 						uint8_t _keys[8];
-
-						int _blinkCount;
-						bool _blink;
 					} d;
 
 					// No se guarda
 					Common::Rom * _rom;
 					Processors::Z80::CPU * _z80;
+					ULA * _ula;
 
 					double _initFrame;
 					double _percFrame;
@@ -72,14 +67,10 @@ namespace awui {
 					void WritePort(uint8_t port, uint8_t value);
 					uint8_t ReadPort(uint8_t port) const;
 
-					uint8_t GetBackgroundColor() const { return this->d._bgColor; }
-
 					void OnKeyPress(uint8_t row, uint8_t key);
 					void OnKeyUp(uint8_t row, uint8_t key);
 
-					inline bool GetBlink() const { return this->d._blink; }
-
-
+					inline ULA * GetULA() const { return this->_ula; }
 			};
 		}
 	}

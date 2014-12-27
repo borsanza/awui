@@ -19,10 +19,9 @@ namespace awui {
 						uint8_t _vram[16384];
 						uint8_t _data[320*240];
 						uint8_t _backcolor;
+						int _blinkCount;
+						bool _blink;
 					} d;
-
-					// No salvable
-					Motherboard * _cpu;
 
 					void SetHeight(uint16_t height);
 					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync);
@@ -33,7 +32,7 @@ namespace awui {
 					uint16_t GetHeight() const;
 
 				public:
-					ULA(Motherboard * cpu);
+					ULA();
 					~ULA();
 
 					bool OnTick(uint32_t counter);
@@ -44,8 +43,6 @@ namespace awui {
 
 					uint16_t GetTotalWidth() const;
 					uint16_t GetTotalHeight() const;
-					uint16_t GetVisualWidth() const;
-					uint16_t GetVisualHeight() const;
 
 					uint8_t GetPixel(uint16_t x, uint16_t y) const;
 
@@ -56,12 +53,15 @@ namespace awui {
 					uint16_t GetLine() const;
 					uint16_t GetColumn() const;
 
-					uint8_t GetBackColor() const;
-
 					static int GetSaveSize();
 
 					void LoadState(uint8_t * data);
 					void SaveState(uint8_t * data);
+
+					inline uint8_t GetBackColor() const { return this->d._backcolor; }
+					inline void SetBackColor(uint8_t color) { this->d._backcolor = color; }
+					inline uint8_t ReadByte(uint32_t pos) const { return this->d._vram[pos]; }
+					inline void WriteByte(uint32_t pos, uint8_t value) { this->d._vram[pos] = value; }
 			};
 		}
 	}
