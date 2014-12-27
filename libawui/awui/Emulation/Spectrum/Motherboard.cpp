@@ -160,9 +160,37 @@ void Motherboard::WritePort(uint8_t port, uint8_t value) {
 uint8_t Motherboard::ReadPort(uint8_t port) const {
 	if (port == 0xFE) {
 		uint8_t row = (this->_z80->GetAddressBus() >> 8);
-		for (int i = 0; i < 8; i++)
-			if ((row & (1 << i)) == 0)
-				return this->d._keys[i];
+
+		uint8_t value = 0xFF;
+		switch (row) {
+			case 0xFE: value = this->d._keys[0]; break;
+			case 0xFD: value = this->d._keys[1]; break;
+			case 0xFB: value = this->d._keys[2]; break;
+			case 0xF7: value = this->d._keys[3]; break;
+			case 0xEF: value = this->d._keys[4]; break;
+			case 0xDF: value = this->d._keys[5]; break;
+			case 0xBF: value = this->d._keys[6]; break;
+			case 0x7F: value = this->d._keys[7]; break;
+			default:
+				if ((this->d._keys[7] & 1) == 0)
+					value = 0;
+
+				if (((this->d._keys[0] & 1) == 0) &&    // Shift
+					((this->d._keys[0] & 0x10) == 0) && // V
+					((this->d._keys[7] & 0x10) == 0))   // B
+					value = 0;
+
+//				printf("ReadPort: %.2X, %.2X: %.2X\n", row, port, value);
+				break;
+		}
+
+/*
+		static bool a = false;
+		a = !a;
+		value &= a?0xBF:0xFF;
+*/
+
+		return value;
 	}
 
 	printf("ReadPort: %.2X\n", port);
