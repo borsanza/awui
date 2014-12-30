@@ -159,30 +159,44 @@ void Motherboard::WritePort(uint8_t port, uint8_t value) {
 
 uint8_t Motherboard::ReadPort(uint8_t port) const {
 	if (port == 0xFE) {
-		uint8_t row = (this->_z80->GetAddressBus() >> 8);
+		if ((this->_z80->GetAddressBus() & 0x01) == 0) {
+			uint8_t row = (this->_z80->GetAddressBus() >> 8);
 
-		uint8_t value = 0xFF;
-		switch (row) {
-			case 0xFE: value = this->d._keys[0]; break;
-			case 0xFD: value = this->d._keys[1]; break;
-			case 0xFB: value = this->d._keys[2]; break;
-			case 0xF7: value = this->d._keys[3]; break;
-			case 0xEF: value = this->d._keys[4]; break;
-			case 0xDF: value = this->d._keys[5]; break;
-			case 0xBF: value = this->d._keys[6]; break;
-			case 0x7F: value = this->d._keys[7]; break;
-			default:
-				if ((this->d._keys[7] & 1) == 0)
-					value = 0;
+			uint8_t value = 0xFF;
+/*
+			if ((row & 0x01) == 0) value &= this->d._keys[0];
+			if ((row & 0x02) == 0) value &= this->d._keys[1];
+			if ((row & 0x04) == 0) value &= this->d._keys[2];
+			if ((row & 0x08) == 0) value &= this->d._keys[3];
+			if ((row & 0x10) == 0) value &= this->d._keys[4];
+			if ((row & 0x20) == 0) value &= this->d._keys[5];
+			if ((row & 0x40) == 0) value &= this->d._keys[6];
+			if ((row & 0x80) == 0) value &= this->d._keys[7];
+			if (value != 0xFF)
+				printf("%.2X\n", value);
+*/
 
-				if (((this->d._keys[0] & 1) == 0) &&    // Shift
-					((this->d._keys[0] & 0x10) == 0) && // V
-					((this->d._keys[7] & 0x10) == 0))   // B
-					value = 0;
+			switch (row) {
+				case 0xFE: value = this->d._keys[0]; break;
+				case 0xFD: value = this->d._keys[1]; break;
+				case 0xFB: value = this->d._keys[2]; break;
+				case 0xF7: value = this->d._keys[3]; break;
+				case 0xEF: value = this->d._keys[4]; break;
+				case 0xDF: value = this->d._keys[5]; break;
+				case 0xBF: value = this->d._keys[6]; break;
+				case 0x7F: value = this->d._keys[7]; break;
+				default:
+					if ((this->d._keys[7] & 1) == 0)
+						value = 0;
 
-//				printf("ReadPort: %.2X, %.2X: %.2X\n", row, port, value);
-				break;
-		}
+					if (((this->d._keys[0] & 1) == 0) &&    // Shift
+						((this->d._keys[0] & 0x10) == 0) && // V
+						((this->d._keys[7] & 0x10) == 0))   // B
+						value = 0;
+
+//					printf("ReadPort: %.2X, %.2X: %.2X\n", row, port, value);
+					break;
+			}
 
 /*
 		static bool a = false;
@@ -190,7 +204,8 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 		value &= a?0xBF:0xFF;
 */
 
-		return value;
+			return value;
+		}
 	}
 
 	printf("ReadPort: %.2X\n", port);
