@@ -50,6 +50,7 @@ void FormSpectrum::LoadRom(const awui::String file) {
 	Spectrum * ms = new Spectrum();
 	ms->SetMultiply(MULTIPLY);
 	ms->SetSize(256 * MULTIPLY, 262 * MULTIPLY);
+//	ms->LoadOS("");
 	ms->LoadRom(file);
 	ms->SetTabStop(true);
 	this->_games->Add(ms);

@@ -287,7 +287,7 @@ void Form::ProcessEvents() {
 				break;
 
 			case SDL_KEYDOWN:
-				// printf("%d\n", event.key.keysym.sym);
+				 printf("%d\n", event.key.keysym.sym);
 				switch (event.key.keysym.sym) {
 					case SDLK_ESCAPE:
 						if (event.key.keysym.mod & KMOD_LCTRL)
