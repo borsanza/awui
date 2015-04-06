@@ -2,7 +2,9 @@ CMakeFiles/
 Makefile
 cmake_install.cmake
 CMakeCache.txt
+.TAP
 .cbp
+.zip
 libaw/libaw.a
 libawui/libawui.so
 libawui/libawui_static.a
