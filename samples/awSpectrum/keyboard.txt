@@ -1,0 +1,129 @@
+CAPS SHIFT = SHIFT
+SYMBOL SHIFT = ALT
+
+MODE E    ALT + SHIFT
+
+PLOT      Q
+DRAW      W
+REM       E
+RUN       R
+RANDOMIZE T
+RETURN    Y
+IF        U
+INPUT     I
+POKE      O
+PRINT     P
+NEW       A
+SAVE      S
+DIM       D
+FOR       F
+GO TO     G
+GO SUB    H
+LOAD      J
+LIST      K
+LET       L
+COPY      Z
+CLEAR     X
+CONTINUE  C
+CLS       V
+BORDER    B
+NEXT      N
+PAUSE     M
+
+SIN       MODE E, Q
+COS       MODE E, W
+TAN       MODE E, E
+INT       MODE E, R
+RND       MODE E, T
+STR$      MODE E, Y
+CHR$      MODE E, U
+CODE      MODE E, I
+PEEK      MODE E, O
+TAB       MODE E, P
+READ      MODE E, A
+RESTORE   MODE E, S
+DATA      MODE E, D
+SGN       MODE E, F
+ABS       MODE E, G
+SQR       MODE E, H
+VAL       MODE E, J
+LEN       MODE E, K
+USR       MODE E, L
+LN        MODE E, Z
+EXP       MODE E, X
+LPRINT    MODE E, C
+LLIST     MODE E, V
+BIN       MODE E, B
+INKEY$    MODE E, N
+PI        MODE E, M
+
+DEF FN    MODE E, ALT + 1
+FN        MODE E, ALT + 2
+LINE      MODE E, ALT + 3
+OPEN #    MODE E, ALT + 4
+CLOSE #   MODE E, ALT + 5
+MOVE      MODE E, ALT + 6
+ERASE     MODE E, ALT + 7
+POINT     MODE E, ALT + 8
+CAT       MODE E, ALT + 9
+FORMAT    MODE E, ALT + 0
+ASN       MODE E, ALT + Q
+ACS       MODE E, ALT + W
+ATN       MODE E, ALT + E
+VERIFY    MODE E, ALT + R
+MERGE     MODE E, ALT + T
+[         MODE E, ALT + Y
+]         MODE E, ALT + U
+IN        MODE E, ALT + I
+OUT       MODE E, ALT + O
+"         MODE E, ALT + A
+|         MODE E, ALT + S
+\         MODE E, ALT + D
+{         MODE E, ALT + F
+}         MODE E, ALT + G
+CIRCLE    MODE E, ALT + H
+VAL$      MODE E, ALT + J
+SCREEN$   MODE E, ALT + K
+ATTR      MODE E, ALT + L
+BEEP      MODE E, ALT + Z
+INK       MODE E, ALT + X
+PAPER     MODE E, ALT + C
+FLASH     MODE E, ALT + V
+BRIGHT    MODE E, ALT + B
+OVER      MODE E, ALT + N
+INVERSE   MODE E, ALT + M
+
+!         ALT + 1
+@         ALT + 2
+#         ALT + 3
+$         ALT + 4
+%         ALT + 5
+&         ALT + 6
+'         ALT + 7
+(         ALT + 8
+)         ALT + 9
+_         ALT + 0
+<=        ALT + Q
+<>        ALT + W
+>=        ALT + E
+<         ALT + R
+>         ALT + T
+AND       ALT + Y
+OR        ALT + U
+AT        ALT + I
+;         ALT + O
+"         ALT + P
+STOP      ALT + A
+NOT       ALT + S
+STEP      ALT + D
+TO        ALT + F
+THEN      ALT + G
+-         ALT + J
++         ALT + K
+=         ALT + L
+:         ALT + Z
+?         ALT + C
+/         ALT + V
+*         ALT + B
+,         ALT + N
+.         ALT + M
