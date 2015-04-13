@@ -241,6 +241,11 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 			this->CallKey(40, pressed);
 			break;
 
+		case Keys::Key_F2:
+			this->CallKey(00, pressed);
+			this->CallKey(30, pressed);
+			break;
+
 		default: break;
 	}
 }
@@ -332,6 +337,28 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 	if (this->_canChangeControl)
 		return Control::OnRemoteKeyPress(which, button);
+	else {
+		switch (button) {
+			case RemoteButtons::Up:
+				this->CallKey(00, true);
+				this->CallKey(43, true);
+				break;
+			case RemoteButtons::Down:
+				this->CallKey(00, true);
+				this->CallKey(44, true);
+				break;
+			case RemoteButtons::Left:
+				this->CallKey(00, true);
+				this->CallKey(34, true);
+				break;
+			case RemoteButtons::Right:
+				this->CallKey(00, true);
+				this->CallKey(42, true);
+				break;
+			default:
+				break;
+		}
+	}
 
 	return true;
 }
@@ -353,6 +380,28 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 
 	if (this->_canChangeControl)
 		return Control::OnRemoteKeyUp(which, button);
+	else {
+		switch (button) {
+			case RemoteButtons::Up:
+				this->CallKey(00, false);
+				this->CallKey(43, false);
+				break;
+			case RemoteButtons::Down:
+				this->CallKey(00, false);
+				this->CallKey(44, false);
+				break;
+			case RemoteButtons::Left:
+				this->CallKey(00, false);
+				this->CallKey(34, false);
+				break;
+			case RemoteButtons::Right:
+				this->CallKey(00, false);
+				this->CallKey(42, false);
+				break;
+			default:
+				break;
+		}
+	}
 
 	return true;
 }

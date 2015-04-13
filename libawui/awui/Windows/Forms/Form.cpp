@@ -287,7 +287,7 @@ void Form::ProcessEvents() {
 				break;
 
 			case SDL_KEYDOWN:
-				 printf("%d\n", event.key.keysym.sym);
+				// printf("%d\n", event.key.keysym.sym);
 				switch (event.key.keysym.sym) {
 					case SDLK_ESCAPE:
 						if (event.key.keysym.mod & KMOD_LCTRL)
@@ -332,7 +332,6 @@ void Form::ProcessEvents() {
 					case SDLK_c: OnKeyPressPre(Keys::Key_C); break;
 					case SDLK_d: OnKeyPressPre(Keys::Key_D); break;
 					case SDLK_e: OnKeyPressPre(Keys::Key_E); break;
-					case SDLK_F11: this->SetFullscreen(!this->GetFullscreen()); break;
 					case SDLK_f: OnKeyPressPre(Keys::Key_F); break;
 					case SDLK_g: OnKeyPressPre(Keys::Key_G); break;
 					case SDLK_h: OnKeyPressPre(Keys::Key_H); break;
@@ -354,6 +353,19 @@ void Form::ProcessEvents() {
 					case SDLK_x: OnKeyPressPre(Keys::Key_X); break;
 					case SDLK_y: OnKeyPressPre(Keys::Key_Y); break;
 					case SDLK_z: OnKeyPressPre(Keys::Key_Z); break;
+
+					case SDLK_F1: OnKeyPressPre(Keys::Key_F1); break;
+					case SDLK_F2: OnKeyPressPre(Keys::Key_F2); break;
+					case SDLK_F3: OnKeyPressPre(Keys::Key_F3); break;
+					case SDLK_F4: OnKeyPressPre(Keys::Key_F4); break;
+					case SDLK_F5: OnKeyPressPre(Keys::Key_F5); break;
+					case SDLK_F6: OnKeyPressPre(Keys::Key_F6); break;
+					case SDLK_F7: OnKeyPressPre(Keys::Key_F7); break;
+					case SDLK_F8: OnKeyPressPre(Keys::Key_F8); break;
+					case SDLK_F9: OnKeyPressPre(Keys::Key_F9); break;
+					case SDLK_F10: OnKeyPressPre(Keys::Key_F10); break;
+					case SDLK_F11: this->SetFullscreen(!this->GetFullscreen()); break;
+					case SDLK_F12: OnKeyPressPre(Keys::Key_F12); break;
 
 					case SDLK_KP0: OnKeyPressPre(Keys::Key_KP0); break;
 					case SDLK_KP1: OnKeyPressPre(Keys::Key_KP1); break;
@@ -438,6 +450,19 @@ void Form::ProcessEvents() {
 					case SDLK_x: OnKeyUpPre(Keys::Key_X); break;
 					case SDLK_y: OnKeyUpPre(Keys::Key_Y); break;
 					case SDLK_z: OnKeyUpPre(Keys::Key_Z); break;
+
+					case SDLK_F1: OnKeyUpPre(Keys::Key_F1); break;
+					case SDLK_F2: OnKeyUpPre(Keys::Key_F2); break;
+					case SDLK_F3: OnKeyUpPre(Keys::Key_F3); break;
+					case SDLK_F4: OnKeyUpPre(Keys::Key_F4); break;
+					case SDLK_F5: OnKeyUpPre(Keys::Key_F5); break;
+					case SDLK_F6: OnKeyUpPre(Keys::Key_F6); break;
+					case SDLK_F7: OnKeyUpPre(Keys::Key_F7); break;
+					case SDLK_F8: OnKeyUpPre(Keys::Key_F8); break;
+					case SDLK_F9: OnKeyUpPre(Keys::Key_F9); break;
+					case SDLK_F10: OnKeyUpPre(Keys::Key_F10); break;
+					case SDLK_F11: OnKeyUpPre(Keys::Key_F11); break;
+					case SDLK_F12: OnKeyUpPre(Keys::Key_F12); break;
 
 					case SDLK_KP0: OnKeyUpPre(Keys::Key_KP0); break;
 					case SDLK_KP1: OnKeyUpPre(Keys::Key_KP1); break;
