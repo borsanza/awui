@@ -15,7 +15,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
-#define MULTIPLY 3
+#define MULTIPLY 2
 
 FormSpectrum::FormSpectrum() {
 	this->_games = new ArrayList();
@@ -41,7 +41,7 @@ void FormSpectrum::InitializeComponent() {
 
 	this->GetControls()->Add(this->_slider);
 
-	this->SetSize((320 * MULTIPLY) + 50, 262 * MULTIPLY);
+	this->SetSize((352 * MULTIPLY) + 50, (288 * MULTIPLY) + 50);
 	this->SetFullscreen(0);
 	this->SetText("awSpectrum");
 }

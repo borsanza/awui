@@ -3,6 +3,14 @@
 
 #include <stdint.h>
 
+//#define SPECTRUM_WIDTH 320
+//#define SPECTRUM_HEIGHT 240
+
+#define SPECTRUM_BORDER_WIDTH 48 // (352 - 256) / 2
+#define SPECTRUM_BORDER_HEIGHT 48 // (288 - 192) / 2
+#define SPECTRUM_WIDTH 352
+#define SPECTRUM_HEIGHT 288
+
 namespace awui {
 	namespace Emulation {
 		namespace Spectrum {
@@ -17,7 +25,7 @@ namespace awui {
 						uint16_t _col;
 						bool _interrupt:1;
 						uint8_t _vram[16384];
-						uint8_t _data[320*240];
+						uint8_t _data[SPECTRUM_WIDTH * SPECTRUM_HEIGHT];
 						uint8_t _backcolor;
 						int _blinkCount;
 						bool _blink;

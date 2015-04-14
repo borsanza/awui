@@ -12,6 +12,49 @@
 
 using namespace awui::Emulation::Spectrum;
 
+/*
+16384 Ciclos - Borde superior
+
+
+*** Ciclos ***
+ 24:  48 pixeles borde izquierdo
+128: 256 pixeles
+ 24:  48 pixeles borde derecho
+ 48:     sincronismo horizontal
+-------------------
+224 ciclos
+
+48
+192
+48
+------------
+288 Lineas
+
+
+
+349440 Ciclos = 312 lineas * 224 ciclos * 50 frames
+
+
+
+ 60 lineas
+192 lineas
+ 60 lineas
+----------
+312 lineas
+
+
+resolucion 352x288
+352 = 48 + 256 + 48
+288 = 48 + 192 + 48
+
+
+
+
+Por ahi leo que un televisor tiene 720x540 de resolucion
+Tienen en cuenta que un pixel es 2x2
+Asi que la resolucion real de un televisor es 360x270
+*/
+
 ULA::ULA() {
 	this->d._width = 256;
 	this->d._height = 192;
@@ -35,7 +78,7 @@ void ULA::Reset() {
 }
 
 void ULA::Clear() {
-	memset(this->d._data, 0, 320 * 240 * sizeof(uint8_t));
+	memset(this->d._data, 0, SPECTRUM_WIDTH * SPECTRUM_HEIGHT * sizeof(uint8_t));
 }
 
 uint8_t * ULA::GetVram() {
@@ -64,11 +107,11 @@ void ULA::SetHeight(uint16_t height) {
 }
 
 uint16_t ULA::GetTotalWidth() const {
-	return 320;
+	return SPECTRUM_WIDTH;
 }
 
 uint16_t ULA::GetTotalHeight() const {
-	return 240;
+	return SPECTRUM_HEIGHT;
 }
 
 uint8_t ULA::GetPixel(uint16_t x, uint16_t y) const {
@@ -76,7 +119,7 @@ uint8_t ULA::GetPixel(uint16_t x, uint16_t y) const {
 }
 
 bool ULA::IsVSYNC(uint16_t line) const {
-	return 219 == line;
+	return 240 == line;
 }
 
 void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) {
@@ -91,9 +134,9 @@ void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 			*line = 0;
 	}
 
-	if (*col == 271) {
+	if (*col == 304) {
 		// Esto es una chapuza, tengo que revisar al milimetro todo el tema de interrupciones de hsync y vsync
-		if (*line == this->GetTotalHeight() - 43)
+		if (*line == this->GetTotalHeight() - 48)
 			this->d._interrupt = true;
 	}
 
@@ -101,7 +144,7 @@ void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 	// 15 Right Border +
 	// 8 Right Blank <- Suponemos que cambia al final del Right Blank
 	// 26 HSync
-	if (*col == 279) {
+	if (*col == 312) { // 279
 		*hsync = true;
 		*vsync = this->IsVSYNC(*line);
 	}
@@ -112,23 +155,23 @@ void ULA::OnTickBorder() {
 	int y = 0;
 	bool draw = false;
 	if ((this->d._col >= this->GetWidth()) || (this->d._line >= this->GetHeight())) {
-		if (this->d._col >= (this->GetTotalWidth() - 32)) {
+		if (this->d._col >= (this->GetTotalWidth() - SPECTRUM_BORDER_WIDTH)) {
 			draw = true;
-			x = this->d._col - (this->GetTotalWidth() - 32);
+			x = this->d._col - (this->GetTotalWidth() - SPECTRUM_BORDER_WIDTH);
 		} else {
-			if (this->d._col < this->GetWidth() + 32) {
+			if (this->d._col < this->GetWidth() + SPECTRUM_BORDER_WIDTH) {
 				draw = true;
-				x = 32 + this->d._col;
+				x = SPECTRUM_BORDER_WIDTH + this->d._col;
 			}
 		}
 
-		if (this->d._line >= (this->GetTotalHeight() - 24)) {
+		if (this->d._line >= (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT)) {
 			draw = true;
-			y = this->d._line - (this->GetTotalHeight() - 24);
+			y = this->d._line - (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT);
 		} else {
-			if (this->d._line < (this->GetHeight() + 24)) {
+			if (this->d._line < (this->GetHeight() + SPECTRUM_BORDER_HEIGHT)) {
 				draw = true;
-				y = 24 + this->d._line;
+				y = SPECTRUM_BORDER_HEIGHT + this->d._line;
 			}
 		}
 	}
@@ -172,7 +215,7 @@ bool ULA::OnTick(uint32_t counter) {
 			color = (reg & 0x78) >> 3;
 		}
 
-		uint32_t pos = col + 32 + ((line + 24) * this->GetTotalWidth());
+		uint32_t pos = col + SPECTRUM_BORDER_WIDTH + ((line + SPECTRUM_BORDER_HEIGHT) * this->GetTotalWidth());
 		this->d._data[pos] = color;
 	} else {
 		this->OnTickBorder();
