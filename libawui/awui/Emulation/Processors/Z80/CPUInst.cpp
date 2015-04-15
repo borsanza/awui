@@ -1370,9 +1370,7 @@ void CPUInst::SRAXXd(uint8_t reg) {
 	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->d._registers.GetPC() + 2));
 	uint8_t old = this->ReadMemory(finalOffset);
 
-	uint8_t value =  (old >> 1);
-	if (old & 0x80)
-		value |= 0x80;
+	uint8_t value =  (old & 0x80) | (old >> 1);
 
 	this->WriteMemory(finalOffset, value);
 
@@ -1423,6 +1421,7 @@ void CPUInst::SRLXXd(uint8_t reg) {
 	this->d._cycles += 23;
 }
 
+// |2|18| The contents of the low-order nibble of (hl) are copied to the high-order nibble of (hl). The previous contents are copied to the low-order nibble of a. The previous contents are copied to the low-order nibble of (hl).
 void CPUInst::RLD() {
 	uint16_t offset = this->d._registers.GetHL();
 	uint8_t HL = this->ReadMemory(offset);
@@ -1443,6 +1442,7 @@ void CPUInst::RLD() {
 	this->d._cycles += 18;
 }
 
+// |2|18| The contents of the low-order nibble of (hl) are copied to the low-order nibble of a. The previous contents are copied to the high-order nibble of (hl). The previous contents are copied to the low-order nibble of (hl).
 void CPUInst::RRD() {
 	uint16_t offset = this->d._registers.GetHL();
 	uint8_t HL = this->ReadMemory(offset);
