@@ -184,7 +184,7 @@ void CPUInst::LDtofrom(uint8_t to, uint16_t value, uint8_t cycles, uint8_t size)
 // |1|19| Exchanges (ss1) with l, and (ss1+1) with h.
 void CPUInst::EX_ss(uint8_t ss1, uint8_t ss2, uint8_t cycles, uint8_t size) {
 	uint16_t ss = this->d._registers.GetRegss(ss1);
-	uint16_t aux = this->ReadMemory(ss + 1) << 8 | this->ReadMemory(ss);
+	uint16_t aux = (this->ReadMemory(ss + 1) << 8) | this->ReadMemory(ss);
 
 	uint16_t value2 = this->d._registers.GetRegss(ss2);
 
@@ -417,8 +417,8 @@ void CPUInst::CPDR() {
 // |1|4| Adds valueb to a.
 void CPUInst::ADD(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
-	uint8_t value = A + b;
 	uint16_t pvalue = ((uint16_t) A) + ((uint16_t) b);
+	uint8_t value = pvalue;
 
 	this->d._registers.SetA(value);
 
@@ -426,8 +426,8 @@ void CPUInst::ADD(uint8_t b, uint8_t cycles, uint8_t size) {
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
 		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
-		(((~(A ^ b) & (b ^ value)) & 0x80) ? Flag_V : 0) |
-		((pvalue > 0xFF) ? Flag_C : 0)
+		((((~(A ^ b)) & (b ^ value)) & 0x80) ? Flag_V : 0) |
+		((pvalue & 0x100) ? Flag_C : 0)
 	);
 
 	this->d._registers.IncPC(size);
@@ -437,8 +437,8 @@ void CPUInst::ADD(uint8_t b, uint8_t cycles, uint8_t size) {
 // |1|4| Adds l and the carry flag to a.
 void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
-	uint8_t value = A + b;
 	uint16_t pvalue = ((uint16_t) A) + ((uint16_t) b);
+	uint8_t value = pvalue;
 
 	if (this->d._registers.GetF() & Flag_C) {
 		value++;
@@ -451,8 +451,8 @@ void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
 		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
-		(((~(A ^ b) & (b ^ value)) & 0x80) ? Flag_V : 0) |
-		((pvalue > 0xFF) ? Flag_C : 0)
+		((((~(A ^ b)) & (b ^ value)) & 0x80) ? Flag_V : 0) |
+		((pvalue & 0x100) ? Flag_C : 0)
 	);
 
 	this->d._registers.IncPC(size);
@@ -462,8 +462,8 @@ void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
 // |1|4| Subtracts reg from a.
 void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
-	uint8_t value = A - b;
-	int16_t pvalue = ((uint16_t) A) - ((uint16_t) b);
+	int16_t pvalue = ((int16_t) A) - ((int16_t) b);
+	uint8_t value = pvalue;
 
 	this->d._registers.SetA(value);
 
@@ -471,7 +471,7 @@ void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
 		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
-		((((A ^ b) & (A ^ value)) & 0x80) ? Flag_V : 0) |
+		(((A ^ b) & (A ^ value) & 0x80) ? Flag_V : 0) |
 		((pvalue < 0) ? Flag_C : 0) |
 		Flag_N
 	);
@@ -483,8 +483,8 @@ void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
 // |1|4| Subtracts e and the carry flag from a.
 void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
-	uint8_t value = A - b;
-	int16_t pvalue = ((uint16_t) A) - ((uint16_t) b);
+	int16_t pvalue = ((int16_t) A) - ((int16_t) b);
+	uint8_t value = pvalue;
 
 	if (this->d._registers.GetF() & Flag_C) {
 		value--;
@@ -497,7 +497,7 @@ void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
 		(value & (Flag_F3 | Flag_F5)) |
 		ZS_Flags[value] |
 		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
-		((((A ^ b) & (A ^ value)) & 0x80) ? Flag_V : 0) |
+		(((A ^ b) & (A ^ value) & 0x80) ? Flag_V : 0) |
 		((pvalue < 0) ? Flag_C : 0) |
 		Flag_N
 	);
@@ -563,7 +563,7 @@ void CPUInst::CP(uint8_t b, uint8_t cycles, uint8_t size) {
 		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
 		Flag_N |
 		((pvalue & 0x100) ? Flag_C : 0) |
-		((((A ^ b) & (A ^ value)) & 0x80) ? Flag_V : 0)
+		(((A ^ b) & (A ^ value) & 0x80) ? Flag_V : 0)
 	);
 
 	this->d._registers.IncPC(size);
@@ -801,15 +801,12 @@ void CPUInst::SCF() {
 
 // |2|15| Adds ss and the carry flag to hl.
 void CPUInst::ADCHLss(uint8_t reg) {
-	uint16_t old = this->d._registers.GetHL();
+	uint16_t hl = this->d._registers.GetHL();
 	uint16_t b = this->d._registers.GetRegss(reg);
-	uint16_t value = old + b;
-	int32_t pvalue = ((int16_t) old) + ((int16_t) b);
+	uint16_t value = hl + b;
 
-	if (this->d._registers.GetF() & Flag_C) {
+	if (this->d._registers.GetF() & Flag_C)
 		value++;
-		pvalue++;
-	}
 
 	this->d._registers.SetHL(value);
 
@@ -818,9 +815,9 @@ void CPUInst::ADCHLss(uint8_t reg) {
 		((value & Flag_F5H) ? Flag_F5 : 0) |
 		((value & 0x8000) ? Flag_S : 0) |
 		((value == 0) ? Flag_Z : 0) |
-		(((value & 0xFFF) < (old & 0xFFF)) ? Flag_H : 0) |
-		((pvalue > 32767 || pvalue < -32768) ? Flag_V : 0) |
-		((value < old) ? Flag_C : 0)
+		(((value & 0xFFF) < (hl & 0xFFF)) ? Flag_H : 0) |
+		(((~(hl ^ b)) & (hl ^ value) & 0x8000) ? Flag_V : 0) |
+		((value < hl) ? Flag_C : 0)
 	);
 
 	this->d._registers.IncPC(2);
@@ -829,15 +826,12 @@ void CPUInst::ADCHLss(uint8_t reg) {
 
 // |2|15| Subtracts reg and the carry flag from hl.
 void CPUInst::SBCHLss(uint8_t reg) {
-	uint16_t old = this->d._registers.GetHL();
+	uint16_t hl = this->d._registers.GetHL();
 	uint16_t b = this->d._registers.GetRegss(reg);
-	uint16_t value = old - b;
-	int32_t pvalue = ((int16_t) old) - ((int16_t) b);
+	uint16_t value = hl - b;
 
-	if (this->d._registers.GetF() & Flag_C) {
+	if (this->d._registers.GetF() & Flag_C)
 		value--;
-		pvalue--;
-	}
 
 	this->d._registers.SetHL(value);
 
@@ -846,10 +840,10 @@ void CPUInst::SBCHLss(uint8_t reg) {
 		((value & Flag_F5H) ? Flag_F5 : 0) |
 		((value & 0x8000) ? Flag_S : 0) |
 		((value == 0) ? Flag_Z : 0) |
-		(((value & 0xFFF) > (old & 0xFFF)) ? Flag_H : 0) |
-		((pvalue > 32767 || pvalue < -32768) ? Flag_V : 0) |
+		(((value & 0xFFF) > (hl & 0xFFF)) ? Flag_H : 0) |
+		(((hl ^ b) & (hl ^ value) & 0x8000) ? Flag_V : 0) |
 		Flag_N |
-		((value > old) ? Flag_C : 0)
+		((value > hl) ? Flag_C : 0)
 	);
 
 	this->d._registers.IncPC(2);
@@ -859,7 +853,7 @@ void CPUInst::SBCHLss(uint8_t reg) {
 // |2|15| The value of pp is added to XX.
 void CPUInst::ADDXXpp(uint8_t XX, uint16_t reg2, uint8_t cycles, uint8_t size) {
 	uint16_t reg1 = this->d._registers.GetRegss(XX);
-	uint32_t value = reg1 + reg2;
+	uint32_t value = (uint32_t)reg1 + (uint32_t)reg2;
 
 	this->d._registers.SetRegss(XX, value);
 
@@ -867,7 +861,7 @@ void CPUInst::ADDXXpp(uint8_t XX, uint16_t reg2, uint8_t cycles, uint8_t size) {
 		(value & Flag_F3H ? Flag_F3 : 0) |
 		(value & Flag_F5H ? Flag_F5 : 0) |
 		(((reg1 ^ reg2 ^ ((uint16_t) value)) & 0x1000) ? Flag_H : 0) |
-		((value > 0xFFFF) ? Flag_C : 0) |
+		((value & 0x10000) ? Flag_C : 0) |
 		(this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P))
 	);
 
