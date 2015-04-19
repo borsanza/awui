@@ -105,28 +105,34 @@ namespace awui {
 
 						void RLC(uint8_t reg);
 						void RLC_HL();
+						void RLCXXd(uint8_t reg);
+
 						void RRC(uint8_t reg);
 						void RRC_HL();
+						void RRCXXd(uint8_t reg);
+
 						void RL(uint8_t reg);
 						void RL_HL();
+						void RLXXd(uint8_t reg);
+
 						void RR(uint8_t reg);
 						void RR_HL();
+						void RRXXd(uint8_t reg);
+
 						void SLA(uint8_t reg);
 						void SLA_HL();
+						void SLAXXd(uint8_t reg);
+
 						void SRA(uint8_t reg);
 						void SRA_HL();
-						void SRL(uint8_t reg);
-						void SRL_HL();
+						void SRAXXd(uint8_t reg);
+
 						void SLL(uint8_t reg);
 						void SLL_HL();
-
-						void RLCXXd(uint8_t reg);
-						void RRCXXd(uint8_t reg);
-						void RLXXd(uint8_t reg);
-						void RRXXd(uint8_t reg);
-						void SLAXXd(uint8_t reg);
-						void SRAXXd(uint8_t reg);
 						void SLLXXd(uint8_t reg);
+
+						void SRL(uint8_t reg);
+						void SRL_HL();
 						void SRLXXd(uint8_t reg);
 
 						void RLD();
