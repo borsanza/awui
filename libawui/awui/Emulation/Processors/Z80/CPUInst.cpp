@@ -106,7 +106,7 @@ void CPUInst::LDXXdr(uint8_t xx, uint8_t reg) {
 void CPUInst::LDXXdn(uint8_t xx) {
 	uint16_t pc = this->d._registers.GetPC();
 	uint16_t offset = this->d._registers.GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
-	uint16_t n = this->ReadMemory(pc + 3);
+	uint8_t n = this->ReadMemory(pc + 3);
 	this->WriteMemory(offset, n);
 	this->d._registers.IncPC(4);
 	this->d._cycles += 19;
@@ -1592,8 +1592,7 @@ void CPUInst::JR(bool cc) {
 void CPUInst::RET(bool cc, uint8_t cycles) {
 	if (cc) {
 		uint16_t sp = this->d._registers.GetSP();
-		uint16_t pc = this->ReadMemory(sp);
-		pc |= (this->ReadMemory(sp + 1) << 8);
+		uint16_t pc = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
 		this->d._registers.SetSP(sp + 2);
 		this->d._registers.SetPC(pc);
 		this->d._cycles += cycles;
