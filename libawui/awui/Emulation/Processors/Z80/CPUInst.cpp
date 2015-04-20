@@ -1499,11 +1499,10 @@ void CPUInst::BITbssd(uint8_t bit, uint8_t reg, uint8_t d) {
 	uint8_t value = this->ReadMemory(offset) & bit;
 
 	this->d._registers.SetF(
-		((value & 0x80) ? Flag_S : 0) |
-		(!value ? Flag_P | Flag_Z : 0) |
+		((offset & Flag_F3H) ? Flag_F3 : 0) |
+		((offset & Flag_F5H) ? Flag_F5 : 0) |
 		Flag_H |
-		((offset & 0x0800) ? Flag_F3 : 0) |
-		((offset & 0x2000) ? Flag_F5 : 0) |
+		PZS_Flags[value] |
 		(this->d._registers.GetF() & Flag_C)
 	);
 
@@ -1526,6 +1525,14 @@ void CPUInst::SETHL(uint8_t bit) {
 	this->d._cycles += 15;
 }
 
+// |4|23| Sets bit 'bit' of the memory location pointed to by ss plus *.
+void CPUInst::SETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
+	uint16_t offset = this->d._registers.GetRegss(reg) + ((int8_t) d);
+	this->WriteMemory(offset, this->ReadMemory(offset) | bit);
+	this->d._registers.IncPC(4);
+	this->d._cycles += 23;
+}
+
 // |2|8| Resets bit X of reg.
 void CPUInst::RES(uint8_t reg, uint8_t bit) {
 	this->d._registers.SetRegm(reg, this->d._registers.GetRegm(reg) & ~bit);
@@ -1542,17 +1549,9 @@ void CPUInst::RESHL(uint8_t bit) {
 }
 
 // |4|23| Resets bit 'bit' of the memory location pointed to by ss plus *.
-void CPUInst::RESETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
+void CPUInst::RESbssd(uint8_t bit, uint8_t reg, uint8_t d) {
 	uint16_t offset = this->d._registers.GetRegss(reg) + ((int8_t) d);
 	this->WriteMemory(offset, this->ReadMemory(offset) & ~bit);
-	this->d._registers.IncPC(4);
-	this->d._cycles += 23;
-}
-
-// |4|23| Sets bit 'bit' of the memory location pointed to by ss plus *.
-void CPUInst::SETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
-	uint16_t offset = this->d._registers.GetRegss(reg) + ((int8_t) d);
-	this->WriteMemory(offset, this->ReadMemory(offset) | bit);
 	this->d._registers.IncPC(4);
 	this->d._cycles += 23;
 }

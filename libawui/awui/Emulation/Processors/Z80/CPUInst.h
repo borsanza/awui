@@ -141,13 +141,15 @@ namespace awui {
 						// Bit Set, Reset, and Test Group
 						void BIT(uint8_t param, uint8_t compare);
 						void BITHL(uint8_t compare);
+						void BITbssd(uint8_t bit, uint8_t reg, uint8_t d);
+
 						void SET(uint8_t reg, uint8_t bit);
 						void SETHL(uint8_t bit);
+						void SETbssd(uint8_t bit, uint8_t reg, uint8_t d);
+
 						void RES(uint8_t reg, uint8_t bit);
 						void RESHL(uint8_t bit);
-						void BITbssd(uint8_t bit, uint8_t reg, uint8_t d);
-						void RESETbssd(uint8_t bit, uint8_t reg, uint8_t d);
-						void SETbssd(uint8_t bit, uint8_t reg, uint8_t d);
+						void RESbssd(uint8_t bit, uint8_t reg, uint8_t d);
 
 						// Jump Group
 						void JPccnn(bool cc);

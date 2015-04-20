@@ -1182,14 +1182,14 @@ void CPU::RunOpcode() {
 		case OxDDCBnn7F:
 		case OxDDCBnn7E: this->BITbssd(0x80, Reg_IX, this->ReadMemory(pc + 2)); break;
 
-		case OxDDCBnn86: this->RESETbssd(0x01, Reg_IX, this->ReadMemory(pc + 2)); break;
-		case OxDDCBnn8E: this->RESETbssd(0x02, Reg_IX, this->ReadMemory(pc + 2)); break;
-		case OxDDCBnn96: this->RESETbssd(0x04, Reg_IX, this->ReadMemory(pc + 2)); break;
-		case OxDDCBnn9E: this->RESETbssd(0x08, Reg_IX, this->ReadMemory(pc + 2)); break;
-		case OxDDCBnnA6: this->RESETbssd(0x10, Reg_IX, this->ReadMemory(pc + 2)); break;
-		case OxDDCBnnAE: this->RESETbssd(0x20, Reg_IX, this->ReadMemory(pc + 2)); break;
-		case OxDDCBnnB6: this->RESETbssd(0x40, Reg_IX, this->ReadMemory(pc + 2)); break;
-		case OxDDCBnnBE: this->RESETbssd(0x80, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnn86: this->RESbssd(0x01, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnn8E: this->RESbssd(0x02, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnn96: this->RESbssd(0x04, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnn9E: this->RESbssd(0x08, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnA6: this->RESbssd(0x10, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnAE: this->RESbssd(0x20, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnB6: this->RESbssd(0x40, Reg_IX, this->ReadMemory(pc + 2)); break;
+		case OxDDCBnnBE: this->RESbssd(0x80, Reg_IX, this->ReadMemory(pc + 2)); break;
 
 		case OxDDCBnnC6: this->SETbssd(0x01, Reg_IX, this->ReadMemory(pc + 2)); break;
 		case OxDDCBnnCE: this->SETbssd(0x02, Reg_IX, this->ReadMemory(pc + 2)); break;
@@ -1384,14 +1384,14 @@ void CPU::RunOpcode() {
 		case OxFDCBnn7F:
 		case OxFDCBnn7E: this->BITbssd(0x80, Reg_IY, this->ReadMemory(pc + 2)); break;
 
-		case OxFDCBnn86: this->RESETbssd(0x01, Reg_IY, this->ReadMemory(pc + 2)); break;
-		case OxFDCBnn8E: this->RESETbssd(0x02, Reg_IY, this->ReadMemory(pc + 2)); break;
-		case OxFDCBnn96: this->RESETbssd(0x04, Reg_IY, this->ReadMemory(pc + 2)); break;
-		case OxFDCBnn9E: this->RESETbssd(0x08, Reg_IY, this->ReadMemory(pc + 2)); break;
-		case OxFDCBnnA6: this->RESETbssd(0x10, Reg_IY, this->ReadMemory(pc + 2)); break;
-		case OxFDCBnnAE: this->RESETbssd(0x20, Reg_IY, this->ReadMemory(pc + 2)); break;
-		case OxFDCBnnB6: this->RESETbssd(0x40, Reg_IY, this->ReadMemory(pc + 2)); break;
-		case OxFDCBnnBE: this->RESETbssd(0x80, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnn86: this->RESbssd(0x01, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnn8E: this->RESbssd(0x02, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnn96: this->RESbssd(0x04, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnn9E: this->RESbssd(0x08, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnA6: this->RESbssd(0x10, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnAE: this->RESbssd(0x20, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnB6: this->RESbssd(0x40, Reg_IY, this->ReadMemory(pc + 2)); break;
+		case OxFDCBnnBE: this->RESbssd(0x80, Reg_IY, this->ReadMemory(pc + 2)); break;
 
 		case OxFDCBnnC6: this->SETbssd(0x01, Reg_IY, this->ReadMemory(pc + 2)); break;
 		case OxFDCBnnCE: this->SETbssd(0x02, Reg_IY, this->ReadMemory(pc + 2)); break;
