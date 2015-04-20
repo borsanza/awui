@@ -772,8 +772,7 @@ void CPUInst::CCF() {
 
 	this->d._registers.SetF(
 		(A & (Flag_F3 | Flag_F5)) |
-		(carry ? Flag_H : 0) |
-		(!carry ? Flag_C : 0) |
+		(carry ? Flag_H : Flag_C) |
 		(this->d._registers.GetF() & (Flag_P | Flag_Z | Flag_S))
 	);
 
