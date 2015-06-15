@@ -11,6 +11,7 @@
 using namespace awui;
 
 Object::Object() {
+  
 }
 
 Object::~Object() {
