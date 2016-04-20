@@ -21,7 +21,7 @@ MESSAGE(STATUS "SDL_image: ${SDLIMAGE_LIBRARY}")
 PROJECT(libawui)
 
 if(UNIX)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x -O3 -fomit-frame-pointer")
 endif()
 
 INCLUDE_DIRECTORIES(

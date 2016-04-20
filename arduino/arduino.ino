@@ -3,51 +3,57 @@
 
 #include <EEPROM.h>
 #include <IRremote.h>
+
 #include "appleremote.h"
 
 AppleRemote appleRemote;
 
 void setup() {
-//	appleRemote.setOutputSpeed(4800);
-//	appleRemote.setOutputSpeed(9600); // Mac Mini
-//	appleRemote.setOutputSpeed(14400);
-//	appleRemote.setOutputSpeed(19200);
-//	appleRemote.setOutputSpeed(28800);
-//	appleRemote.setOutputSpeed(38400);
-//	appleRemote.setOutputSpeed(57600);
-	appleRemote.setOutputSpeed(115200);
-	appleRemote.setIRPin(6);
+  appleRemote.setOutputSpeed(2400);
+  //	appleRemote.setOutputSpeed(4800);
+  //    appleRemote.setOutputSpeed(9600); // Mac Mini
+  //	appleRemote.setOutputSpeed(14400);
+  //	appleRemote.setOutputSpeed(19200);
+  //	appleRemote.setOutputSpeed(28800);
+  //	appleRemote.setOutputSpeed(38400);
+  //	appleRemote.setOutputSpeed(57600);
+  //	appleRemote.setOutputSpeed(115200);
+  appleRemote.setIRPin(6);
 
-	appleRemote.setLogMode(true);
-	appleRemote.setLedPin(13);
-//	appleRemote.setBlink13Mode(true);
-	appleRemote.init();
+  appleRemote.setLogMode(true);
+  appleRemote.setLedPin(13);
+  //	appleRemote.setBlink13Mode(true);
+  appleRemote.init();
 }
 
 void loop() {
-	static unsigned long oldSec = 5;
-	static unsigned long oldMs = 5;
-	unsigned long time = millis();
-	unsigned long sec = time / 900;
-	unsigned long ms = sec * 900;
+  static unsigned long oldSec = 5;
+  static unsigned long oldMs = 5;
+  unsigned long time = millis();
+  unsigned long sec = time / 900;
+  unsigned long ms = sec * 900;
 
-	if ((time > ms) && (oldSec != sec)) {
-		oldSec = sec;
-		Serial.print("lub");
-		Serial.print(" (");
-		Serial.print(sec);
-		Serial.print(")");
-		Serial.println();
-	}
+  if ((time > ms) && (oldSec != sec)) {
+    oldSec = sec;
+    Serial.print("lub");
+    Serial.print(" (");
+    Serial.print(sec);
+    Serial.print(")");
+    Serial.println();
+  }
 
-	if ((time > (ms + 300)) && (oldMs != ms)) {
-		oldMs = ms;
-		Serial.print("dub");
-		Serial.print(" (");
-		Serial.print(sec);
-		Serial.print(")");
-		Serial.println();
-	}
+  if ((time > (ms + 300)) && (oldMs != ms)) {
+    oldMs = ms;
+    Serial.print("dub");
+    Serial.print(" (");
+    Serial.print(sec);
+    Serial.print(")");
+    Serial.println();
+  }
 
-	appleRemote.loop();
+  appleRemote.loop();
 }
+
+
+
+

@@ -8,8 +8,7 @@ namespace awui {
 		union Word {
 			uint16_t W;
 			struct {
-				uint8_t L;
-				uint8_t H;
+				uint8_t L, H;
 			};
 		};
 	}

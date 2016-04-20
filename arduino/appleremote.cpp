@@ -549,3 +549,5 @@ void AppleRemote::loop() {
 	if (this->actualKey.isAppleRemote() && this->acceptRemote())
 		this->sendCommand();
 }
+
+
