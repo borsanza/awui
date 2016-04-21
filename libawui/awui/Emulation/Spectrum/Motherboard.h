@@ -28,10 +28,11 @@ namespace awui {
 						uint8_t _keys[8];
 					} d;
 
-					// No se guarda
-					Common::Rom * _rom;
 					Processors::Z80::CPU * _z80;
 					ULA * _ula;
+
+					// No se guarda
+					Common::Rom * _rom;
 
 					double _initFrame;
 					double _percFrame;

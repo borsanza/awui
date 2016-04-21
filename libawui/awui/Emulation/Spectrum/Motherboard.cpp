@@ -51,6 +51,7 @@ Motherboard::~Motherboard() {
 
 void Motherboard::Reset() {
 	this->_z80->Reset();
+	this->_ula->Reset();
 
 	memset(this->d._ram, 0, 8192 * sizeof(uint8_t));
 	memset(this->d._boardram, 0, 32768 * sizeof(uint8_t));
@@ -220,6 +221,7 @@ uint32_t Motherboard::GetCRC32() {
 int Motherboard::GetSaveSize() {
 	int size = sizeof(Motherboard::saveData);
 	size += awui::Emulation::Processors::Z80::CPU::GetSaveSize();
+	size += awui::Emulation::Spectrum::ULA::GetSaveSize();
 
 	return size;
 }
@@ -227,11 +229,13 @@ int Motherboard::GetSaveSize() {
 void Motherboard::LoadState(uint8_t * data) {
 	memcpy (&this->d, data, sizeof(Motherboard::saveData));
 	this->_z80->LoadState(&data[sizeof(Motherboard::saveData)]);
+	this->_ula->LoadState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
 }
 
 void Motherboard::SaveState(uint8_t * data) {
 	memcpy (data, &this->d, sizeof(Motherboard::saveData));
 	this->_z80->SaveState(&data[sizeof(Motherboard::saveData)]);
+	this->_ula->SaveState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
 }
 
 double Motherboard::GetVirtualTime() {
