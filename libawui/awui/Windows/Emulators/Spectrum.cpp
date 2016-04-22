@@ -6,16 +6,20 @@
 
 #include "Spectrum.h"
 
+#include <awui/Console.h>
+#include <awui/Convert.h>
 #include <awui/Drawing/Image.h>
 #include <awui/DateTime.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
 #include <awui/Emulation/Spectrum/ULA.h>
+#include <awui/IO/FileStream.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
 
 using namespace awui;
 using namespace awui::Drawing;
+using namespace awui::IO;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::Spectrum;
@@ -31,8 +35,8 @@ Spectrum::Spectrum() {
 
 	this->_first = -1;
 	this->_last = -1;
-	this->_actual = -1;
 	this->_lastTick = 0;
+	this->_fileSlot = 0;
 
 	this->_colors[0]  = 0x000000;
 	this->_colors[1]  = 0x0000BF;
@@ -50,15 +54,9 @@ Spectrum::Spectrum() {
 	this->_colors[13] = 0x00FFFF;
 	this->_colors[14] = 0xFFFF00;
 	this->_colors[15] = 0xFFFFFF;
-
-	for (int i = 0; i < TOTALSAVED; i++)
-		this->_savedData[i] = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
 }
 
 Spectrum::~Spectrum() {
-	for (int i = 0; i < TOTALSAVED; i++)
-		free(this->_savedData[i]);
-
 	delete this->_cpu;
 	delete this->_image;
 }
@@ -75,7 +73,6 @@ void Spectrum::LoadRom(const String file) {
 	this->_cpu->LoadRom(file);
 	this->_first = 0;
 	this->_last = 0;
-	this->_actual = 0;
 	this->_lastTick = DateTime::GetNow().GetTicks();
 }
 
@@ -83,15 +80,6 @@ void Spectrum::CheckLimits() {
 }
 
 void Spectrum::OnTick() {
-	long long now = DateTime::GetNow().GetTicks();
-	if ((now - this->_lastTick) > 10000000) {
-		this->_lastTick = now;
-		this->_actual++;
-		if (this->_last < this->_actual)
-			this->_last = this->_actual;
-		this->_cpu->SaveState(this->_savedData[this->_actual % TOTALSAVED]);
-	}
-
 	this->_cpu->OnTick();
 }
 
@@ -303,8 +291,10 @@ uint8_t Spectrum::GetPad(int which) const {
 
 bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	bool ret = false;
-
-	if (button & RemoteButtons::Button5) {
+	
+	//Console::WriteLine(Convert::ToString(button));
+/*
+	if (Form::GetButtonsPad1() == RemoteButtons::SNES_L) {
 		this->_lastTick = DateTime::GetNow().GetTicks();
 		this->_actual--;
 		if (this->_actual < this->_first)
@@ -312,8 +302,9 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
 		ret = true;
 	}
-
-	if (button & RemoteButtons::Button6) {
+*/
+/*
+	if (Form::GetButtonsPad1() == RemoteButtons::SNES_R) {
 		this->_lastTick = DateTime::GetNow().GetTicks();
 		this->_actual++;
 		if (this->_actual > this->_last)
@@ -321,8 +312,61 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
 		ret = true;
 	}
+*/
+	if (_fileSlot > 0 && (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_DECREASE)) {
+		_fileSlot--;
+		Console::Write("Estado: ");
+		Console::WriteLine(Convert::ToString(_fileSlot));
+	}
 
-	if ((Form::GetButtonsPad1() & RemoteButtons::Button5) && (button & RemoteButtons::Button6)) {
+	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_INCREASE) {
+		_fileSlot++;
+		Console::Write("Estado: ");
+		Console::WriteLine(Convert::ToString(_fileSlot));
+	}
+
+	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_LOAD) {
+		String name = "file.state";
+		if (_fileSlot > 0)
+			name = String::Concat(name, Convert::ToString(_fileSlot));
+
+		if (File::Exists(name)) {
+			Console::Write("Cargando: ");
+			Console::WriteLine(name);
+
+			uint8_t * savedData = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
+			FileStream * file = new FileStream(name, FileMode::Open, FileAccess::Read);
+			for (unsigned int i = 0; i < file->GetLength(); i++)
+				savedData[i] = file->ReadByte();
+
+			this->_cpu->LoadState(savedData);
+			free(savedData);
+		}
+	}
+
+	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SAVE) {
+		String name = "file.state";
+		if (_fileSlot > 0)
+			name = String::Concat(name, Convert::ToString(_fileSlot));
+
+		Console::Write("Guardando: ");
+		Console::WriteLine(name);
+
+		uint8_t * savedData = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
+		FileStream * file = new FileStream(name, FileMode::Truncate, FileAccess::Write);
+		this->_cpu->SaveState(savedData);
+		
+		for (int i = 0; i < Motherboard::GetSaveSize(); i++)
+			file->WriteByte(savedData[i]);
+
+		file->Close();
+		delete file;
+		
+		free(savedData);
+	}
+
+	
+	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET) {
 		this->_cpu->Reset();
 		ret = true;
 	}

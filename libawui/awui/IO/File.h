@@ -1,7 +1,10 @@
 #ifndef _AWUI_IO_FILE_H
 #define _AWUI_IO_FILE_H
 
+#include <awui/String.h>
+
 namespace awui {
+
 	namespace IO {
 		struct FileAccess {
 			enum Enum {
@@ -21,6 +24,12 @@ namespace awui {
 				Append = 6,
 			};
 		};
+
+		class File {
+			public:
+				static bool Exists(String path);
+		};
+
 	}
 }
 

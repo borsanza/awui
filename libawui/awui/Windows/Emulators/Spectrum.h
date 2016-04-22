@@ -33,14 +33,13 @@ namespace awui {
 					bool _canChangeControl;
 					bool _pause;
 					bool _invertKeys;
+					int _fileSlot;
 
 					uint8_t GetPad(int which) const;
 
 					int _first;
 					int _last;
-					int _actual;
 					long long _lastTick;
-					uint8_t * _savedData[TOTALSAVED];
 					void CheckLimits();
 
 					uint32_t _colors[16];

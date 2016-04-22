@@ -30,6 +30,7 @@ syntax: glob
 *.rar
 *.kdev*
 *.rom
+*.state*
 libaw/*.c
 libaw/*.h
 libaw/aw/*.h
