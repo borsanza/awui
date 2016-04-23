@@ -1,6 +1,9 @@
 #!/bin/sh
+
+my_dir="$(dirname "$0")"
+. "$my_dir/../config/globals.sh"
+
 make clean
 rm CMakeCache.txt
-cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release .
+cmake -G "$EDITOR" -DCMAKE_BUILD_TYPE=Release .
 make -j8
-
