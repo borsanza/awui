@@ -13,11 +13,13 @@
 #include <awui/Emulation/Common/Rom.h>
 #include <awui/Emulation/Processors/Z80/CPU.h>
 #include <awui/Emulation/Spectrum/ULA.h>
+#include <awui/Convert.h>
 
 using namespace awui;
 using namespace awui::Emulation;
 using namespace awui::Emulation::Common;
 using namespace awui::Emulation::Spectrum;
+using namespace awui::Emulation::Processors::Z80;
 
 void WriteMemoryCB(uint16_t pos, uint8_t value, void * data) { ((Motherboard *) data)->WriteMemory(pos, value); }
 uint8_t ReadMemoryCB(uint16_t pos, void * data) { return ((Motherboard *) data)->ReadMemory(pos); }
@@ -96,6 +98,18 @@ void Motherboard::OnTick() {
 	this->_percFrame = 0;
 	for (int i = 0; i < iters; i++) {
 		int64_t oldCycles = this->_z80->GetCycles();
+
+		if (this->_z80->GetPC() == 0x056B) {
+			Console::WriteLine("0x056B");
+			Console::WriteLine(Convert::ToString(this->_z80->GetRegisters()->GetDE()));
+			this->_z80->GetRegisters()->SetBC(0xB001);
+			//this->_z80->GetRegisters()->AlternateAF();
+			//this->_z80->GetRegisters()->SetAF(0x0145);
+			//this->_z80->GetRegisters()->AlternateAF();
+			this->_z80->GetRegisters()->SetFFlag(Flag_C, false);
+			//this->_z80->GetRegisters()->SetPC(0x056c);
+		}
+		
 		this->_z80->RunOpcode();
 
 		double times = (this->_z80->GetCycles() - oldCycles);
