@@ -10,6 +10,9 @@ namespace awui {
 		namespace Processors {
 			namespace Z80 {
 				class CPUInst {
+					private:
+						void FillFlags();
+
 					protected:
 						struct saveData {
 							int64_t _cycles;

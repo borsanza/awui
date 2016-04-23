@@ -10,11 +10,31 @@
 
 using namespace awui::Emulation::Processors::Z80;
 
+uint8_t ZS_Flags[256];
+uint8_t PZS_Flags[256];
+
 CPUInst::CPUInst() {
+	this->FillFlags();
 	this->Reset();
 }
 
 CPUInst::~CPUInst() {
+}
+
+void CPUInst::FillFlags() {
+	for (int i = 0; i < 256; i++) {
+		int aux = i;
+		bool parity = true;
+		while (aux != 0) {
+			if (aux & 1)
+				parity = !parity;
+
+			aux = aux >> 1;
+		}
+
+		ZS_Flags[i] = ((i == 0) ? Flag_Z : 0) | ((i > 127) ? Flag_S : 0);
+		PZS_Flags[i] = ZS_Flags[i] | (parity ? Flag_P : 0);
+	}
 }
 
 void CPUInst::Reset() {
@@ -417,18 +437,18 @@ void CPUInst::CPDR() {
 // |1|4| Adds valueb to a.
 void CPUInst::ADD(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
-	uint16_t pvalue = ((uint16_t) A) + ((uint16_t) b);
-	uint8_t value = pvalue;
-
-	this->d._registers.SetA(value);
+	Word w;
+	w.W = ((uint16_t) A) + ((uint16_t) b);
 
 	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
-		((((~(A ^ b)) & (b ^ value)) & 0x80) ? Flag_V : 0) |
-		((pvalue & 0x100) ? Flag_C : 0)
+		(w.L & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[w.L] |
+		((A ^ b ^ w.L) & Flag_H) |
+		((((~(A ^ b)) & (b ^ w.L)) & 0x80) ? Flag_V : 0) |
+		w.H
 	);
+
+	this->d._registers.SetA(w.L);
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -437,23 +457,18 @@ void CPUInst::ADD(uint8_t b, uint8_t cycles, uint8_t size) {
 // |1|4| Adds l and the carry flag to a.
 void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
-	uint16_t pvalue = ((uint16_t) A) + ((uint16_t) b);
-	uint8_t value = pvalue;
-
-	if (this->d._registers.GetF() & Flag_C) {
-		value++;
-		pvalue++;
-	}
-
-	this->d._registers.SetA(value);
+	Word w;
+	w.W = ((uint16_t) A) + ((uint16_t) b) + (this->d._registers.GetF() & Flag_C);
 
 	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
-		((((~(A ^ b)) & (b ^ value)) & 0x80) ? Flag_V : 0) |
-		((pvalue & 0x100) ? Flag_C : 0)
+		(w.L & (Flag_F3 | Flag_F5)) |
+		ZS_Flags[w.L] |
+		((A ^ b ^ w.L) & Flag_H) |
+		((((~(A ^ b)) & (b ^ w.L)) & 0x80) ? Flag_V : 0) |
+		w.H
 	);
+
+	this->d._registers.SetA(w.L);
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -802,21 +817,19 @@ void CPUInst::SCF() {
 void CPUInst::ADCHLss(uint8_t reg) {
 	uint16_t hl = this->d._registers.GetHL();
 	uint16_t b = this->d._registers.GetRegss(reg);
-	uint16_t value = hl + b;
+	Word w;
+	w.W = hl + b + (this->d._registers.GetF() & Flag_C);
 
-	if (this->d._registers.GetF() & Flag_C)
-		value++;
-
-	this->d._registers.SetHL(value);
+	this->d._registers.SetHL(w.W);
 
 	this->d._registers.SetF(
-		((value & Flag_F3H) ? Flag_F3 : 0) |
-		((value & Flag_F5H) ? Flag_F5 : 0) |
-		((value & 0x8000) ? Flag_S : 0) |
-		((value == 0) ? Flag_Z : 0) |
-		(((value & 0xFFF) < (hl & 0xFFF)) ? Flag_H : 0) |
-		(((~(hl ^ b)) & (hl ^ value) & 0x8000) ? Flag_V : 0) |
-		((value < hl) ? Flag_C : 0)
+		((w.W & Flag_F3H) ? Flag_F3 : 0) |
+		((w.W & Flag_F5H) ? Flag_F5 : 0) |
+		(w.H & Flag_S) |
+		((w.W == 0) ? Flag_Z : 0) |
+		(((hl ^ b ^ w.W) & 0x1000) ? Flag_H : 0) |
+		(((~(hl ^ b)) & (b ^ w.W) & 0x8000) ? Flag_V : 0) |
+		((((uint32_t) hl + (uint32_t) b +  (uint32_t) (this->d._registers.GetF() & Flag_C)) & 0x10000) ? Flag_C : 0)
 	);
 
 	this->d._registers.IncPC(2);

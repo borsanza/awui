@@ -64,60 +64,6 @@ namespace awui {
 					Reg_PC = 47,
 				};
 
-				constexpr static uint8_t ZS_Flags[256] = {
-					Flag_Z,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,
-					Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,
-					Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,
-					Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,
-					Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,
-					Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,
-					Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,
-					Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,Flag_S,
-				};
-
-				constexpr static uint8_t PZS_Flags[256] = {
-					Flag_P|Flag_Z,0,0,Flag_P,0,Flag_P,Flag_P,0,
-					0,Flag_P,Flag_P,0,Flag_P,0,0,Flag_P,
-					0,Flag_P,Flag_P,0,Flag_P,0,0,Flag_P,
-					Flag_P,0,0,Flag_P,0,Flag_P,Flag_P,0,
-					0,Flag_P,Flag_P,0,Flag_P,0,0,Flag_P,
-					Flag_P,0,0,Flag_P,0,Flag_P,Flag_P,0,
-					Flag_P,0,0,Flag_P,0,Flag_P,Flag_P,0,
-					0,Flag_P,Flag_P,0,Flag_P,0,0,Flag_P,
-					0,Flag_P,Flag_P,0,Flag_P,0,0,Flag_P,
-					Flag_P,0,0,Flag_P,0,Flag_P,Flag_P,0,
-					Flag_P,0,0,Flag_P,0,Flag_P,Flag_P,0,
-					0,Flag_P,Flag_P,0,Flag_P,0,0,Flag_P,
-					Flag_P,0,0,Flag_P,0,Flag_P,Flag_P,0,
-					0,Flag_P,Flag_P,0,Flag_P,0,0,Flag_P,
-					0,Flag_P,Flag_P,0,Flag_P,0,0,Flag_P,
-					Flag_P,0,0,Flag_P,0,Flag_P,Flag_P,0,
-					Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,
-					Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,
-					Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,
-					Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,
-					Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,
-					Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,
-					Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,
-					Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,
-					Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,
-					Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,
-					Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,
-					Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,
-					Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,
-					Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,
-					Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,
-					Flag_S,Flag_P|Flag_S,Flag_P|Flag_S,Flag_S,Flag_P|Flag_S,Flag_S,Flag_S,Flag_P|Flag_S,
-				};
-
 				class Registers {
 					private:
 						Word _af;
