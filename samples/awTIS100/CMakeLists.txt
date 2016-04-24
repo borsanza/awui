@@ -6,7 +6,7 @@ FIND_PATH(LIBAWUI_INCLUDE_DIRS awui/Object.h "./libawui" DOC "awui includes")
 PROJECT(awTIS100)
 
 if(UNIX)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x -O3 -fomit-frame-pointer")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
 endif()
 
 INCLUDE_DIRECTORIES(
