@@ -7,3 +7,4 @@ make clean
 rm CMakeCache.txt
 cmake -G "$EDITOR" -DCMAKE_BUILD_TYPE=Debug .
 make -j8
+
