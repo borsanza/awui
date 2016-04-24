@@ -206,10 +206,11 @@ void CPUInst::EX_ss(uint8_t ss1, uint8_t ss2, uint8_t cycles, uint8_t size) {
 	uint16_t ss = this->d._registers.GetRegss(ss1);
 	uint16_t aux = (this->ReadMemory(ss + 1) << 8) | this->ReadMemory(ss);
 
-	uint16_t value2 = this->d._registers.GetRegss(ss2);
+	Word value2;
+	value2.W = this->d._registers.GetRegss(ss2);
 
-	this->WriteMemory(ss + 1, value2 >> 8);
-	this->WriteMemory(ss, value2 & 0xFF);
+	this->WriteMemory(ss + 1, value2.H);
+	this->WriteMemory(ss, value2.L);
 	this->d._registers.SetRegss(ss2, aux);
 
 	this->d._registers.IncPC(size);
@@ -1629,13 +1630,14 @@ void CPUInst::RSTp(uint8_t p) {
 
 // |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
 void CPUInst::CALLnn() {
-	uint16_t pc = this->d._registers.GetPC() + 3;
+	Word pc;
+	pc.W = this->d._registers.GetPC() + 3;
 	uint16_t sp = this->d._registers.GetSP() - 2;
 	this->d._registers.SetSP(sp);
-	this->WriteMemory(sp, pc & 0xFF);
-	this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
+	this->WriteMemory(sp, pc.L);
+	this->WriteMemory(sp + 1, pc.H);
 	this->d._cycles += 17;
-	this->d._registers.SetPC((this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2));
+	this->d._registers.SetPC((this->ReadMemory(pc.W - 1) << 8) | this->ReadMemory(pc.W - 2));
 }
 
 // |3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
@@ -1654,11 +1656,12 @@ void CPUInst::CallInterrupt(uint16_t offset) {
 		this->d._isSuspended = false;
 	}
 
-	uint16_t pc = this->d._registers.GetPC();
+	Word pc;
+	pc.W = this->d._registers.GetPC();
 	uint16_t sp = this->d._registers.GetSP() - 2;
 	this->d._registers.SetSP(sp);
-	this->WriteMemory(sp, pc & 0xFF);
-	this->WriteMemory(sp + 1, (pc >> 8) & 0xFF);
+	this->WriteMemory(sp, pc.L);
+	this->WriteMemory(sp + 1, pc.H);
 	this->d._cycles += 11;
 	this->d._registers.SetPC(offset);
 }
