@@ -25,7 +25,7 @@ Chip8::Chip8() {
 	this->_image = new Drawing::Image(64, 32);
 	this->_cpu = new CPU();
 	this->SetTabStop(true);
-	this->_invertedColors = false;
+	this->_invertedColors = true;
 }
 
 Chip8::~Chip8() {
@@ -257,6 +257,9 @@ bool Chip8::OnKeyPress(Keys::Enum key) {
 	int keypressed = this->ConvertKeyAwToChip8(key);
 	if (keypressed >= 0)
 		this->_cpu->KeyDown(keypressed);
+
+	if (key == Keys::Key_I)
+		this->SetInvertedColors(!this->_invertedColors);
 
 	return true;
 }

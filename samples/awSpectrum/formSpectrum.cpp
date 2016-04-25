@@ -78,7 +78,6 @@ void FormSpectrum::LoadRom(const awui::String file) {
 	if (system->CompareTo("chip8") == 0) {
 		Chip8 * ch8 = new Chip8();
 		ch8->LoadRom(file);
-		//ch8->SetInvertedColors(this->_invertedColors);
 		arcade = ch8;
 	}
 
@@ -103,17 +102,3 @@ void FormSpectrum::OnTick() {
 		// printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
 	}
 }
-
-/*
-bool Form1::OnKeyPress(Keys::Enum key) {
-	if (key == Keys::Key_I) {
-		this->_invertedColors = !this->_invertedColors;
-		for (int i = 0; i < this->_games->GetCount(); i++) {
-			Chip8 * c8 = (Chip8 *)this->_games->Get(i);
-			c8->SetInvertedColors(this->_invertedColors);
-		}
-	}
-
-	return Form::OnKeyPress(key);
-}
-*/
