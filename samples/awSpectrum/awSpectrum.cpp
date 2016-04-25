@@ -11,7 +11,7 @@
 using namespace awui::Windows::Forms;
 
 int main(int argc, char ** argv) {
-	FormSpectrum *form = new FormSpectrum();
+	FormSpectrum * form = new FormSpectrum();
 	for (int i = 1; i< argc; i++)
 		form->LoadRom(argv[i]);
 

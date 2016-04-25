@@ -48,18 +48,19 @@ void FormSpectrum::InitializeComponent() {
 }
 
 void FormSpectrum::LoadRom(const awui::String file) {
-	ArrayList * list = file.Split("/");
+	ArrayList list = file.Split("/");
 	int found = -1;
 	String * system = 0;
-	for (int i = 0; i < list->GetCount(); i++) {
-		String * name = (String *)list->Get(i);
-
-		if (found == i) {
-            system = name;
-		}
+	for (int i = 0; i < list.GetCount(); i++) {
+		String * name = (String *)list.Get(i);
 
 		if (name->CompareTo("roms") == 0)
 			found = i + 1;
+
+		if (found == i)
+            system = name;
+		else
+			delete name;
 	}
 
 	if (!system)
@@ -80,6 +81,8 @@ void FormSpectrum::LoadRom(const awui::String file) {
 		//ch8->SetInvertedColors(this->_invertedColors);
 		arcade = ch8;
 	}
+
+	delete system;
 
 	if (arcade) {
 		arcade->SetTabStop(true);

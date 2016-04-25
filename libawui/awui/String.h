@@ -45,7 +45,7 @@ namespace awui {
 			String Substring(int startIndex) const;
 			String Substring(int startIndex, int length) const;
 
-			ArrayList * Split(const String value) const;
+			ArrayList Split(const String value) const;
 
 			virtual String ToString();
 	};

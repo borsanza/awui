@@ -123,8 +123,8 @@ int String::IndexOf(String value, int startIndex) const {
 	return -1;
 }
 
-ArrayList * String::Split(const String value) const {
-	ArrayList * list = new ArrayList();
+ArrayList String::Split(const String value) const {
+	ArrayList list;
 
 	int pre = 0;
 	int pos = 0;
@@ -142,7 +142,7 @@ ArrayList * String::Split(const String value) const {
 		if (pos != -1)
 			pos++;
 
-		list->Add(new String(pru));
+		list.Add(new String(pru));
 	} while (pos != -1);
 
 	return list;
