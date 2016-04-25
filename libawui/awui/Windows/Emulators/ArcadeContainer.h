@@ -8,7 +8,12 @@ using namespace awui::Windows::Forms;
 namespace awui {
 	namespace Windows {
 		namespace Emulators {
+			class DebuggerSMS;
 			class ArcadeContainer : public Button {
+				public:
+					virtual void SetSoundEnabled(bool mode) {}
+					virtual void SetDebugger(DebuggerSMS * debugger) {};
+					virtual int GetType() const = 0;
 			};
 		}
 	}

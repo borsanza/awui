@@ -35,9 +35,6 @@ int DebuggerSMS::IsClass(Classes::Enum objectClass) const {
 }
 
 void DebuggerSMS::OnTick() {
-	if (!this->_rom)
-		return;
-
 	int newWidth = this->GetWidth();
 	if (!this->_show) {
 		if (this->_width != 1) {
@@ -56,6 +53,9 @@ void DebuggerSMS::OnTick() {
 	}
 
 	if (this->_width == 1)
+		return;
+
+	if (!this->_rom)
 		return;
 
 	uint8_t c, r, g, b;
@@ -128,8 +128,4 @@ void DebuggerSMS::OnPaint(OpenGL::GL * gl) {
 
 void DebuggerSMS::SetRom(MasterSystem * rom) {
 	this->_rom = rom;
-}
-
-uint32_t DebuggerSMS::GetCRC32() {
-	return this->_rom->GetCRC32();
 }

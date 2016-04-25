@@ -35,7 +35,6 @@ namespace awui {
 					void SetRom(MasterSystem * rom);
 					bool GetShow() { return _show; }
 					void SetShow(bool show) { _show = show; }
-					uint32_t GetCRC32();
 			};
 		}
 	}

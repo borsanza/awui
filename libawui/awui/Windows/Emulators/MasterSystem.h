@@ -41,6 +41,7 @@ namespace awui {
 					virtual ~MasterSystem();
 
 					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual int GetType() const { return 2;}
 
 					void LoadRom(const String file);
 
@@ -55,13 +56,13 @@ namespace awui {
 					void SetMultiply(int multiply);
 					uint32_t GetCRC32();
 
-					inline void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };
+					virtual void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };
 					inline void SetInvertKeys(bool mode) { this->_invertKeys = mode; }
 
 					bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 					bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 
-					void SetSoundEnabled(bool mode);
+					virtual void SetSoundEnabled(bool mode);
 			};
 		}
 	}

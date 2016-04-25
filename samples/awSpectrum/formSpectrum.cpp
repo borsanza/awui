@@ -8,7 +8,10 @@
 
 #include <awui/Console.h>
 #include <awui/String.h>
+#include <awui/Emulation/MasterSystem/Motherboard.h>
+#include <awui/Windows/Emulators/DebuggerSMS.h>
 #include <awui/Windows/Emulators/Chip8.h>
+#include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Emulators/Spectrum.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/SliderBrowser.h>
@@ -40,6 +43,13 @@ void FormSpectrum::InitializeComponent() {
 	this->_slider->SetDock(DockStyle::Fill);
 	this->_slider->SetMargin(25);
 
+	this->_debugger = new DebuggerSMS();
+	this->_debugger->SetDock(DockStyle::Right);
+	this->_debugger->SetTabStop(false);
+	this->_debugger->SetWidth(1);
+	this->_debugger->SetShow(false);
+
+	this->GetControls()->Add(this->_debugger);
 	this->GetControls()->Add(this->_slider);
 
 	this->SetSize((352 * MULTIPLY) + 50, (288 * MULTIPLY) + 50);
@@ -67,19 +77,32 @@ void FormSpectrum::LoadRom(const awui::String file) {
 		return;
 
 	ArcadeContainer * arcade = 0;
-	if (system->CompareTo("zxspectrum") == 0) {
-		Spectrum * ms = new Spectrum();
-		ms->SetMultiply(1);
-	//	ms->LoadOS("");
-		ms->LoadRom(file);
-		arcade = ms;
-	}
+	do {
+		if (system->CompareTo("mastersystem") == 0) {
+			MasterSystem * sms = new MasterSystem();
+			sms->SetMultiply(MULTIPLY);
+			sms->SetSize(256 * MULTIPLY, 262 * MULTIPLY);
+			sms->LoadRom(file);
+			arcade = sms;
+			break;
+		}
 
-	if (system->CompareTo("chip8") == 0) {
-		Chip8 * ch8 = new Chip8();
-		ch8->LoadRom(file);
-		arcade = ch8;
-	}
+		if (system->CompareTo("zxspectrum") == 0) {
+			Spectrum * szx = new Spectrum();
+			szx->SetMultiply(MULTIPLY);
+		//	szx->LoadOS("");
+			szx->LoadRom(file);
+			arcade = szx;
+			break;
+		}
+
+		if (system->CompareTo("chip8") == 0) {
+			Chip8 * ch8 = new Chip8();
+			ch8->LoadRom(file);
+			arcade = ch8;
+			break;
+		}
+	} while (false);
 
 	delete system;
 
@@ -97,7 +120,19 @@ void FormSpectrum::OnTick() {
 	static ArcadeContainer * selected = NULL;
 
 	if (selected != this->_slider->GetControlSelected()) {
+		if (selected != NULL) {
+			this->_debugger->SetShow(false);
+			selected->SetSoundEnabled(false);
+			selected->SetDebugger(0);
+			this->_debugger->SetRom(0);
+		}
+
 		selected = (ArcadeContainer *) this->_slider->GetControlSelected();
+		selected->SetSoundEnabled(true);
+		if (selected->GetType() == 2)
+			this->_debugger->SetRom((MasterSystem *) selected);
+
+		selected->SetDebugger(this->_debugger);
 		this->SetText(selected->GetName());
 		// printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
 	}

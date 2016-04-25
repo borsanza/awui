@@ -20,6 +20,7 @@
 using namespace awui::IO;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
+using namespace awui::Emulation::Spectrum;
 
 Spectrum::Spectrum() {
 	this->SetSize(1, 1);

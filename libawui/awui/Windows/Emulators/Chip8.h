@@ -28,6 +28,7 @@ namespace awui {
 					virtual ~Chip8();
 
 					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual int GetType() const { return 1;}
 
 					void LoadRom(const String file);
 

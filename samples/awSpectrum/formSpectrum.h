@@ -10,6 +10,10 @@ namespace awui {
 	}
 
 	namespace Windows {
+		namespace Emulators {
+			class DebuggerSMS;
+		}
+
 		namespace Forms {
 			class SliderBrowser;
 		}
@@ -18,11 +22,13 @@ namespace awui {
 
 using namespace awui::Collections;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Emulators;
 
 class FormSpectrum : public awui::Windows::Forms::Form {
 	private:
 		SliderBrowser * _slider;
 		ArrayList * _games;
+		DebuggerSMS * _debugger;
 
 		void InitializeComponent();
 

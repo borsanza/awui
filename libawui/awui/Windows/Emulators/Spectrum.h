@@ -12,14 +12,12 @@ namespace awui {
 		}
 	}
 
-	using namespace awui::Emulation::Spectrum;
-
 	namespace Windows {
 		namespace Emulators {
 			class Spectrum : public ArcadeContainer {
 				private:
 					Drawing::Image * _image;
-					Motherboard * _cpu;
+					awui::Emulation::Spectrum::Motherboard * _cpu;
 					int _multiply;
 					bool _canChangeControl;
 					bool _pause;
@@ -43,12 +41,13 @@ namespace awui {
 					virtual ~Spectrum();
 
 					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual int GetType() const { return 3;}
 
 					void LoadRom(const String file);
 
 					virtual void OnTick();
 
-					Motherboard * GetCPU();
+					awui::Emulation::Spectrum::Motherboard * GetCPU();
 
 					virtual void OnPaint(OpenGL::GL* gl);
 
