@@ -78,7 +78,7 @@ void FormSpectrum::LoadRom(const awui::String file) {
 
 	ArcadeContainer * arcade = 0;
 	do {
-		if (system->CompareTo("mastersystem") == 0) {
+		if (*system == "mastersystem") {
 			MasterSystem * sms = new MasterSystem();
 			sms->SetMultiply(MULTIPLY);
 			sms->SetSize(256 * MULTIPLY, 262 * MULTIPLY);
@@ -87,7 +87,7 @@ void FormSpectrum::LoadRom(const awui::String file) {
 			break;
 		}
 
-		if (system->CompareTo("zxspectrum") == 0) {
+		if (*system == "zxspectrum") {
 			Spectrum * szx = new Spectrum();
 			szx->SetMultiply(MULTIPLY);
 		//	szx->LoadOS("");
@@ -96,7 +96,7 @@ void FormSpectrum::LoadRom(const awui::String file) {
 			break;
 		}
 
-		if (system->CompareTo("chip8") == 0) {
+		if (*system == "chip8") {
 			Chip8 * ch8 = new Chip8();
 			ch8->LoadRom(file);
 			arcade = ch8;
