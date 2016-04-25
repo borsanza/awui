@@ -7,6 +7,7 @@
 #include "String.h"
 
 #include <algorithm>
+#include <awui/Console.h>
 #include <awui/Object.h>
 
 using namespace awui;
@@ -21,7 +22,7 @@ String::String(const char * value) {
 String::~String() {
 }
 
-int String::GetLength() {
+int String::GetLength() const {
 	return this->value.length();
 }
 
@@ -33,7 +34,7 @@ int String::Compare(String strA, String strB) {
 	return strA.value.compare(strB.value);
 }
 
-int String::CompareTo(String strB) {
+int String::CompareTo(String strB) const {
 	return this->value.compare(strB.value);
 }
 
@@ -70,14 +71,14 @@ char String::operator[](int pos) {
 	return this->value[pos];
 }
 
-String String::ToUpper() {
+String String::ToUpper() const {
 	String str2;
 	std::transform(this->value.begin(), this->value.end(), str2.value.begin(), ::toupper);
 
 	return str2;
 }
 
-String String::ToLower() {
+String String::ToLower() const {
 	String str2;
 	std::transform(this->value.begin(), this->value.end(), str2.value.begin(), ::tolower);
 
@@ -96,17 +97,17 @@ String String::Concat(String str0, String str1, String str2, String str3) {
 	return ((str0 + str1) + (str2 + str3));
 }
 
-bool String::Contains(String strB) {
+bool String::Contains(String strB) const {
 	int pos = this->value.find(strB.value);
 
 	return ((pos >=0) && (pos < this->GetLength()));
 }
 
-String String::Substring(int startIndex) {
+String String::Substring(int startIndex) const {
 	return String(this->value.substr(startIndex).c_str());
 }
 
-String String::Substring(int startIndex, int length) {
+String String::Substring(int startIndex, int length) const {
 	return String(this->value.substr(startIndex, length).c_str());
 }
 
@@ -114,10 +115,35 @@ String String::ToString() {
 	return String(this->value.c_str());
 }
 
-int String::IndexOf(String value) {
-	std::string::size_type loc = this->value.find(value.value, 0);
+int String::IndexOf(String value, int startIndex) const {
+	std::string::size_type loc = this->value.find(value.value, startIndex);
 	if (loc != std::string::npos)
 		return loc;
 
 	return -1;
+}
+
+ArrayList * String::Split(const String value) const {
+	ArrayList * list = new ArrayList();
+
+	int pre = 0;
+	int pos = 0;
+	do {
+		String pru;
+		pos = this->IndexOf(value, pos);
+		if (pos == -1) {
+			pru = this->Substring(pre);
+		} else {
+			pru = this->Substring(pre, pos - pre);
+		}
+
+		pre = pos + 1;
+
+		if (pos != -1)
+			pos++;
+
+		list->Add(new String(pru));
+	} while (pos != -1);
+
+	return list;
 }
