@@ -15,8 +15,10 @@ samples/awArcade/awArcade
 samples/awSlider/awSlider
 samples/awSpectrum/awSpectrum
 build/
+roms/
 
 syntax: glob
+callgrind.out.*
 */Debug/*
 *.layout
 *.vcproj

@@ -17,12 +17,9 @@
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
 
-using namespace awui;
-using namespace awui::Drawing;
 using namespace awui::IO;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
-using namespace awui::Emulation::Spectrum;
 
 Spectrum::Spectrum() {
 	this->SetSize(1, 1);
@@ -291,7 +288,7 @@ uint8_t Spectrum::GetPad(int which) const {
 
 bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	bool ret = false;
-	
+
 	//Console::WriteLine(Convert::ToString(button));
 /*
 	if (Form::GetButtonsPad1() == RemoteButtons::SNES_L) {
@@ -355,17 +352,17 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		uint8_t * savedData = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
 		FileStream * file = new FileStream(name, FileMode::Truncate, FileAccess::Write);
 		this->_cpu->SaveState(savedData);
-		
+
 		for (int i = 0; i < Motherboard::GetSaveSize(); i++)
 			file->WriteByte(savedData[i]);
 
 		file->Close();
 		delete file;
-		
+
 		free(savedData);
 	}
 
-	
+
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET) {
 		this->_cpu->Reset();
 		ret = true;

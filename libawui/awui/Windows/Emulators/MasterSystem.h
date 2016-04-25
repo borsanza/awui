@@ -1,33 +1,24 @@
 #ifndef _AWUI_WINDOWS_EMULATORS_MASTERSYSTEM_H
 #define _AWUI_WINDOWS_EMULATORS_MASTERSYSTEM_H
 
-#include <awui/Windows/Forms/Button.h>
+#include "ArcadeContainer.h"
 
 #define TOTALSAVED 60
 
 namespace awui {
-	namespace Drawing {
-		class Image;
-	}
-
 	namespace Emulation {
 		namespace MasterSystem {
 			class Motherboard;
 		}
 	}
 
-	namespace OpenGL {
-		class GL;
-	}
-
 	using namespace awui::Emulation::MasterSystem;
-	using namespace awui::Windows::Forms;
 
 	namespace Windows {
 		namespace Emulators {
 			class DebuggerSMS;
 
-			class MasterSystem : public Button {
+			class MasterSystem : public ArcadeContainer {
 				private:
 					Drawing::Image * _image;
 					Motherboard * _cpu;

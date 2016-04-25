@@ -1,31 +1,22 @@
 #ifndef _AWUI_WINDOWS_EMULATORS_SPECTRUM_H
 #define _AWUI_WINDOWS_EMULATORS_SPECTRUM_H
 
-#include <awui/Windows/Forms/Button.h>
+#include "ArcadeContainer.h"
 
 #define TOTALSAVED 60
 
 namespace awui {
-	namespace Drawing {
-		class Image;
-	}
-
 	namespace Emulation {
 		namespace Spectrum {
 			class Motherboard;
 		}
 	}
 
-	namespace OpenGL {
-		class GL;
-	}
-
 	using namespace awui::Emulation::Spectrum;
-	using namespace awui::Windows::Forms;
 
 	namespace Windows {
 		namespace Emulators {
-			class Spectrum : public Button {
+			class Spectrum : public ArcadeContainer {
 				private:
 					Drawing::Image * _image;
 					Motherboard * _cpu;

@@ -1,29 +1,20 @@
 #ifndef _AWUI_WINDOWS_EMULATORS_CHIP8_H
 #define _AWUI_WINDOWS_EMULATORS_CHIP8_H
 
-#include <awui/Windows/Forms/Button.h>
+#include "ArcadeContainer.h"
 
 namespace awui {
-	namespace Drawing {
-		class Image;
-	}
-
 	namespace Emulation {
 		namespace Chip8 {
 			class CPU;
 		}
 	}
 
-	namespace OpenGL {
-		class GL;
-	}
-
 	using namespace awui::Emulation::Chip8;
-	using namespace awui::Windows::Forms;
 
 	namespace Windows {
 		namespace Emulators {
-			class Chip8 : public Button {
+			class Chip8 : public ArcadeContainer {
 				private:
 					CPU * _cpu;
 					Drawing::Image * _image;

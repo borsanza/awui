@@ -14,9 +14,6 @@
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <SDL_opengl.h>
 
-using namespace awui::Drawing;
-using namespace awui::Emulation::Common;
-using namespace awui::Emulation::MasterSystem;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 

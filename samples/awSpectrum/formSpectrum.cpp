@@ -7,6 +7,7 @@
 #include "formSpectrum.h"
 
 #include <awui/Drawing/Color.h>
+#include <awui/Windows/Emulators/ArcadeContainer.h>
 #include <awui/Windows/Emulators/Spectrum.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/SliderBrowser.h>
@@ -61,10 +62,10 @@ void FormSpectrum::LoadRom(const awui::String file) {
 }
 
 void FormSpectrum::OnTick() {
-	static Spectrum * selected = NULL;
+	static ArcadeContainer * selected = NULL;
 
 	if (selected != this->_slider->GetControlSelected()) {
-		selected = (Spectrum *) this->_slider->GetControlSelected();
+		selected = (ArcadeContainer *) this->_slider->GetControlSelected();
 		this->SetText(selected->GetName());
 		// printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
 	}
