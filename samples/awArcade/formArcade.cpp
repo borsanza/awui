@@ -1,10 +1,10 @@
 /*
- * samples/awSpectrum/formSpectrum.cpp
+ * samples/awArcade/formArcade.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
 
-#include "formSpectrum.h"
+#include "formArcade.h"
 
 #include <awui/Console.h>
 #include <awui/String.h>
@@ -21,12 +21,12 @@ using namespace awui::Windows::Emulators;
 
 #define MULTIPLY 2
 
-FormSpectrum::FormSpectrum() {
+FormArcade::FormArcade() {
 	this->_games = new ArrayList();
 	this->InitializeComponent();
 }
 
-FormSpectrum::~FormSpectrum() {
+FormArcade::~FormArcade() {
 	for (int i = 0; i < this->_games->GetCount(); i++) {
 		Object * ms = this->_games->Get(i);
 		delete ms;
@@ -36,7 +36,7 @@ FormSpectrum::~FormSpectrum() {
 	delete this->_games;
 }
 
-void FormSpectrum::InitializeComponent() {
+void FormArcade::InitializeComponent() {
 	this->SetBackColor(Color::FromArgb(255, 8, 8, 8));
 
 	this->_slider = new SliderBrowser();
@@ -57,7 +57,7 @@ void FormSpectrum::InitializeComponent() {
 	this->SetText("awArcade");
 }
 
-void FormSpectrum::LoadRom(const awui::String file) {
+void FormArcade::LoadRom(const awui::String file) {
 	ArrayList list = file.Split("/");
 	int found = -1;
 	String * system = 0;
@@ -116,7 +116,7 @@ void FormSpectrum::LoadRom(const awui::String file) {
 	}
 }
 
-void FormSpectrum::OnTick() {
+void FormArcade::OnTick() {
 	static ArcadeContainer * selected = NULL;
 
 	if (selected != this->_slider->GetControlSelected()) {

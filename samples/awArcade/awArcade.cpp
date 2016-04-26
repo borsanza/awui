@@ -1,10 +1,10 @@
 /*
- * samples/awSpectrum/awSpectrum.cpp
+ * samples/awArcade/awArcade.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
 
-#include "formSpectrum.h"
+#include "formArcade.h"
 
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
@@ -22,7 +22,8 @@ int main(int argc, char ** argv) {
 			for (int i = 0; i<137476075; i++) {
 				ms->GetCPU()->ADDXXpp(Reg_HL, 15, 11, 0);
 			}
-			return 0;*/
+			return 0;
+*/
 
 			while (!ms->GetCPU()->IsEndlessLoop())
 				ms->RunOpcode();
@@ -33,7 +34,7 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	FormSpectrum * form = new FormSpectrum();
+	FormArcade * form = new FormArcade();
 	for (int i = 1; i< argc; i++)
 		form->LoadRom(argv[i]);
 

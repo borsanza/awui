@@ -14,7 +14,7 @@ namespace awui {
 
 using namespace awui::Windows::Forms;
 
-class FormArcade : public awui::Windows::Forms::Form {
+class FormTest : public awui::Windows::Forms::Form {
 	private:
 		Button * buttonL;
 		RemoteButtons::Enum buttonPressed;
@@ -23,8 +23,8 @@ class FormArcade : public awui::Windows::Forms::Form {
 		void InitializeComponent();
 
 	public:
-		FormArcade();
-		virtual ~FormArcade();
+		FormTest();
+		virtual ~FormTest();
 
 		virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 		virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);

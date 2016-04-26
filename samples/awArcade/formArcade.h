@@ -1,5 +1,5 @@
-#ifndef _FORMSPECTRUM_H
-#define _FORMSPECTRUM_H
+#ifndef _FORMARCADE_H
+#define _FORMARCADE_H
 
 #include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>
@@ -24,7 +24,7 @@ using namespace awui::Collections;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Emulators;
 
-class FormSpectrum : public awui::Windows::Forms::Form {
+class FormArcade : public awui::Windows::Forms::Form {
 	private:
 		SliderBrowser * _slider;
 		ArrayList * _games;
@@ -33,8 +33,8 @@ class FormSpectrum : public awui::Windows::Forms::Form {
 		void InitializeComponent();
 
 	public:
-		FormSpectrum();
-		virtual ~FormSpectrum();
+		FormArcade();
+		virtual ~FormArcade();
 
 		void LoadRom(const awui::String file);
 
