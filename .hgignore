@@ -8,12 +8,10 @@ CMakeCache.txt
 libaw/libaw.a
 libawui/libawui.so
 libawui/libawui_static.a
-samples/awuiDemo/awuiDemo
-samples/awChip8/awChip8
-samples/awMasterGear/awMasterGear
 samples/awArcade/awArcade
 samples/awSlider/awSlider
-samples/awSpectrum/awSpectrum
+samples/awTest/awTest
+samples/awuiDemo/awuiDemo
 build/
 roms/
 
@@ -36,3 +34,4 @@ callgrind.out.*
 libaw/*.c
 libaw/*.h
 libaw/aw/*.h
+
