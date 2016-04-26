@@ -1,4 +1,4 @@
 #!/bin/sh
 
-./awSpectrum ./roms/chip8/*/*.ch8
+./awArcade ./roms/chip8/*/*.ch8
 
