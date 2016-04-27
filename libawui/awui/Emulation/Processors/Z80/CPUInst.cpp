@@ -156,12 +156,11 @@ void CPUInst::LDdd_nn(uint8_t reg, uint8_t cycles, uint8_t size) {
 // |4|20| Stores reg into the memory location pointed to by **
 void CPUInst::LDnndd(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint16_t pc = this->d._registers.GetPC();
-	uint16_t word = this->d._registers.GetRegss(reg);
-	uint8_t high = word >> 8;
-	uint8_t low = word;
+	Word value;
+	value.W = this->d._registers.GetRegss(reg);
 	uint16_t offset = (this->ReadMemory(pc + size - 1) << 8) | this->ReadMemory(pc + size - 2);
-	this->WriteMemory(offset, low);
-	this->WriteMemory(offset + 1, high);
+	this->WriteMemory(offset, value.L);
+	this->WriteMemory(offset + 1, value.H);
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
 }
