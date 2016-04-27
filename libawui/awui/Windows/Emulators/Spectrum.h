@@ -57,6 +57,7 @@ namespace awui {
 					virtual bool OnKeyUp(Keys::Enum key);
 					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+					virtual void SetSoundEnabled(bool mode);
 			};
 		}
 	}

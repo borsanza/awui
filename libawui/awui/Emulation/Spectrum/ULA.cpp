@@ -238,9 +238,9 @@ int ULA::GetSaveSize() {
 }
 
 void ULA::LoadState(uint8_t * data) {
-	memcpy (&this->d, data, sizeof(ULA::saveData));
+	memcpy(&this->d, data, sizeof(ULA::saveData));
 }
 
 void ULA::SaveState(uint8_t * data) {
-	memcpy (data, &this->d, sizeof(ULA::saveData));
+	memcpy(data, &this->d, sizeof(ULA::saveData));
 }

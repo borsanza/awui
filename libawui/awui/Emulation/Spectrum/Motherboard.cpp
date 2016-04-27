@@ -12,6 +12,7 @@
 #include <awui/DateTime.h>
 #include <awui/Emulation/Common/Rom.h>
 #include <awui/Emulation/Processors/Z80/CPU.h>
+#include <awui/Emulation/Spectrum/Sound.h>
 #include <awui/Emulation/Spectrum/ULA.h>
 #include <awui/Convert.h>
 
@@ -34,6 +35,7 @@ Motherboard::Motherboard() {
 	this->_z80->SetReadPortCB(ReadPortCB, this);
 
 	this->_ula = new ULA();
+	this->_sound = new Sound();
 
 	this->_rom = new Common::Rom(4096);
 	this->d._frame = 0;
@@ -109,7 +111,7 @@ void Motherboard::OnTick() {
 			this->_z80->GetRegisters()->SetFFlag(Flag_C, false);
 			//this->_z80->GetRegisters()->SetPC(0x056c);
 		}
-		
+
 		this->_z80->RunOpcode();
 
 		double times = (this->_z80->GetCycles() - oldCycles);
@@ -166,6 +168,8 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 void Motherboard::WritePort(uint8_t port, uint8_t value) {
 	if (port == 0xFE) {
 		this->_ula->SetBackColor(value & 0x07);
+		this->_sound->WriteSound(this, value);
+
 		return;
 	}
 
@@ -174,57 +178,32 @@ void Motherboard::WritePort(uint8_t port, uint8_t value) {
 
 uint8_t Motherboard::ReadPort(uint8_t port) const {
 	if (port == 0xFE) {
-		if ((this->_z80->GetAddressBus() & 0x01) == 0) {
-			uint8_t row = (this->_z80->GetAddressBus() >> 8);
+		assert(this->_z80->GetAddressBus().L == 0xFE);
+		uint8_t row = this->_z80->GetAddressBus().H;
 
-			uint8_t value = 0xFF;
-/*
-			if ((row & 0x01) == 0) value &= this->d._keys[0];
-			if ((row & 0x02) == 0) value &= this->d._keys[1];
-			if ((row & 0x04) == 0) value &= this->d._keys[2];
-			if ((row & 0x08) == 0) value &= this->d._keys[3];
-			if ((row & 0x10) == 0) value &= this->d._keys[4];
-			if ((row & 0x20) == 0) value &= this->d._keys[5];
-			if ((row & 0x40) == 0) value &= this->d._keys[6];
-			if ((row & 0x80) == 0) value &= this->d._keys[7];
-			if (value != 0xFF)
-				printf("%.2X\n", value);
-*/
+		uint8_t value = 0xFF;
 
-			switch (row) {
-				case 0xFE: value = this->d._keys[0]; break;
-				case 0xFD: value = this->d._keys[1]; break;
-				case 0xFB: value = this->d._keys[2]; break;
-				case 0xF7: value = this->d._keys[3]; break;
-				case 0xEF: value = this->d._keys[4]; break;
-				case 0xDF: value = this->d._keys[5]; break;
-				case 0xBF: value = this->d._keys[6]; break;
-				case 0x7F: value = this->d._keys[7]; break;
-				default:
-					if ((this->d._keys[7] & 1) == 0)
-						value = 0;
-
-					if (((this->d._keys[0] & 1) == 0) &&    // Shift
-						((this->d._keys[0] & 0x10) == 0) && // V
-						((this->d._keys[7] & 0x10) == 0))   // B
-						value = 0;
-
-//					printf("ReadPort: %.2X, %.2X: %.2X\n", row, port, value);
-					break;
-			}
-
-/*
-		static bool a = false;
-		a = !a;
-		value &= a?0xBF:0xFF;
-*/
-
-			return value;
+		for (int i = 0; i <= 7; i++) {
+			if ((row & 1) == 0)
+				value &= this->d._keys[i];
+			row >>= 1;
 		}
+
+/*
+		if (value != 0xFF) {
+			for (int i = 0; i <= 7; i++)
+				printf("%d: %X  ", i, this->d._keys[i]);
+			printf("port: %X  ", port);
+			printf("address: %X  ", this->_z80->GetAddressBus().W);
+			printf("Value: %X  ", value);
+			printf("\n");
+		}
+*/
+
+		return value;
 	}
 
 	printf("ReadPort: %.2X\n", port);
-
 	return 0xFF;
 }
 
@@ -260,8 +239,10 @@ double Motherboard::GetVirtualTime() {
 
 void Motherboard::OnKeyPress(uint8_t row, uint8_t key) {
 	this->d._keys[row] &= ~key;
+	// printf("Press %d: %x\n", row, this->d._keys[row]);
 }
 
 void Motherboard::OnKeyUp(uint8_t row, uint8_t key) {
 	this->d._keys[row] |= key;
+	// printf("Up %d: %x\n", row, this->d._keys[row]);
 }

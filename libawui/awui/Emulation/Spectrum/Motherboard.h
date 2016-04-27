@@ -16,6 +16,7 @@ namespace awui {
 		}
 
 		namespace Spectrum {
+			class Sound;
 			class ULA;
 
 			class Motherboard {
@@ -30,6 +31,7 @@ namespace awui {
 
 					Processors::Z80::CPU * _z80;
 					ULA * _ula;
+					Sound * _sound;
 
 					// No se guarda
 					Common::Rom * _rom;
@@ -62,6 +64,7 @@ namespace awui {
 					void SaveState(uint8_t * data);
 
 					double GetVirtualTime();
+					inline Sound * GetSound() const { return this->_sound; }
 
 					void WriteMemory(uint16_t pos, uint8_t value);
 					uint8_t ReadMemory(uint16_t pos) const;

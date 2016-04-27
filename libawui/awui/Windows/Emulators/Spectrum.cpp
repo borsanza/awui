@@ -12,6 +12,7 @@
 #include <awui/DateTime.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
 #include <awui/Emulation/Spectrum/ULA.h>
+#include <awui/Emulation/Spectrum/SoundSDL.h>
 #include <awui/IO/FileStream.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
@@ -446,4 +447,8 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	}
 
 	return true;
+}
+
+void Spectrum::SetSoundEnabled(bool mode) {
+	SoundSDL::Instance()->SetPlayingSound(mode ? this->_cpu->GetSound() : 0);
 }

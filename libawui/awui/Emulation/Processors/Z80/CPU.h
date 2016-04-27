@@ -18,8 +18,8 @@ namespace awui {
 						void RunOpcode();
 						bool IsEndlessLoop() const;
 
-						uint16_t GetAddressBus() const;
-						void SetAddressBus(uint16_t);
+						Word GetAddressBus() const;
+						void SetAddressBus(Word);
 
 						void Reset();
 

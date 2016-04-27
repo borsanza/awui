@@ -8,9 +8,11 @@
 
 //#define SLOW
 #include <string>
+#include <awui/Emulation/Common/Word.h>
 // #include <string.h>
 //#define NUMOPCODES
 
+using namespace awui::Emulation;
 using namespace awui::Emulation::Processors::Z80;
 
 #ifdef NUMOPCODES
@@ -1445,12 +1447,12 @@ void CPU::RunOpcode() {
 //	printf("%s\n", logCode);
 }
 
-uint16_t CPU::GetAddressBus() const {
-	return this->d._addressBus.W;
+Word CPU::GetAddressBus() const {
+	return this->d._addressBus;
 }
 
-void CPU::SetAddressBus(uint16_t data) {
-	this->d._addressBus.W = data;
+void CPU::SetAddressBus(Word data) {
+	this->d._addressBus = data;
 }
 
 bool CPU::IsEndlessLoop() const {
