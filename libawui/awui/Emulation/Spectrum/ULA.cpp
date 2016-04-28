@@ -118,12 +118,27 @@ uint8_t ULA::GetPixel(uint16_t x, uint16_t y) const {
 	return this->d._data[(y * this->GetTotalWidth()) + x];
 }
 
+/* VSYNC
+0	191	192	Video Display
+192	247	56	Bottom Border
+248	255	8	Vertical Sync
+256	312	56	Top Border
+*/
+
 bool ULA::IsVSYNC(uint16_t line) const {
-	return 240 == line;
+	 // Resto 8 para quitarle el Vertical sync y no se vea negro
+	return line == 240;
 }
 
-void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) {
-	*hsync = false;
+/* HSYNC
+0 (0)	127 (255)	Video
+128 (256)	151 (303)	Right Border
+152 (304)	165 (331)	HSync
+152 (304)	199 (399)	Blank
+200 (400)	223 (447)	Left Border
+*/
+
+void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * vsync) {
 	*vsync = false;
 
 	(*col)++;
@@ -134,18 +149,9 @@ void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 			*line = 0;
 	}
 
-	if (*col == 304) {
-		// Esto es una chapuza, tengo que revisar al milimetro todo el tema de interrupciones de hsync y vsync
-		if (*line == this->GetTotalHeight() - 48)
-			this->d._interrupt = true;
-	}
-
-	// 256 Active Display +
-	// 15 Right Border +
-	// 8 Right Blank <- Suponemos que cambia al final del Right Blank
-	// 26 HSync
-	if (*col == 312) { // 279
-		*hsync = true;
+	// Resto 8 para quitarle el Vertical sync y no se vea negro
+	if ((*col == 0) && (*line == 240)) {
+		this->d._interrupt = true;
 		*vsync = this->IsVSYNC(*line);
 	}
 }
@@ -165,13 +171,13 @@ void ULA::OnTickBorder() {
 			}
 		}
 
-		if (this->d._line >= (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT)) {
+		if (this->d._line >= (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT_BOTTOM)) {
 			draw = true;
-			y = this->d._line - (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT);
+			y = this->d._line - (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT_TOP);
 		} else {
-			if (this->d._line < (this->GetHeight() + SPECTRUM_BORDER_HEIGHT)) {
+			if (this->d._line < (this->GetHeight() + SPECTRUM_BORDER_HEIGHT_BOTTOM)) {
 				draw = true;
-				y = SPECTRUM_BORDER_HEIGHT + this->d._line;
+				y = SPECTRUM_BORDER_HEIGHT_TOP + this->d._line;
 			}
 		}
 	}
@@ -181,12 +187,9 @@ void ULA::OnTickBorder() {
 }
 
 bool ULA::OnTick(uint32_t counter) {
-	bool ret = false;
-	bool hsync, vsync;
+	bool vsync;
 
-	this->CalcNextPixel(&this->d._col, &this->d._line, &hsync, &vsync);
-	if (vsync)
-		ret = true;
+	this->CalcNextPixel(&this->d._col, &this->d._line, &vsync);
 
 	if ((this->d._col == 0) && (this->d._line == 0)) {
 		if (++(this->d._blinkCount) >= 16) {
@@ -215,13 +218,13 @@ bool ULA::OnTick(uint32_t counter) {
 			color = (reg & 0x78) >> 3;
 		}
 
-		uint32_t pos = col + SPECTRUM_BORDER_WIDTH + ((line + SPECTRUM_BORDER_HEIGHT) * this->GetTotalWidth());
+		uint32_t pos = col + SPECTRUM_BORDER_WIDTH + ((line + SPECTRUM_BORDER_HEIGHT_TOP) * this->GetTotalWidth());
 		this->d._data[pos] = color;
 	} else {
 		this->OnTickBorder();
 	}
 
-	return ret;
+	return vsync;
 }
 
 bool ULA::GetInterrupt() {

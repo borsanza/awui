@@ -52,7 +52,7 @@ void FormArcade::InitializeComponent() {
 	this->GetControls()->Add(this->_debugger);
 	this->GetControls()->Add(this->_slider);
 
-	this->SetSize((352 * MULTIPLY) + 50, (288 * MULTIPLY) + 50);
+	this->SetSize((352 * MULTIPLY) + 50, (304 * MULTIPLY) + 50);
 	this->SetFullscreen(0);
 	this->SetText("awArcade");
 }

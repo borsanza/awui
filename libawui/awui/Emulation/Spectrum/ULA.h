@@ -3,13 +3,14 @@
 
 #include <stdint.h>
 
-//#define SPECTRUM_WIDTH 320
-//#define SPECTRUM_HEIGHT 240
+// Me he olvidado de los 8 de vsync para que no se vea negro en la imagen,
+// eso hay que descontarlo en los retrazos
 
-#define SPECTRUM_BORDER_WIDTH 48 // (352 - 256) / 2
-#define SPECTRUM_BORDER_HEIGHT 48 // (288 - 192) / 2
-#define SPECTRUM_WIDTH 352
-#define SPECTRUM_HEIGHT 288
+#define SPECTRUM_BORDER_WIDTH 48
+#define SPECTRUM_BORDER_HEIGHT_TOP 56
+#define SPECTRUM_BORDER_HEIGHT_BOTTOM 56
+#define SPECTRUM_WIDTH 352  // 352 = 48 + 256 + 48
+#define SPECTRUM_HEIGHT 304 // 312 =  8 + 56 + 192 + 56
 
 namespace awui {
 	namespace Emulation {
@@ -32,7 +33,7 @@ namespace awui {
 					} d;
 
 					void SetHeight(uint16_t height);
-					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync);
+					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * vsync);
 					bool IsVSYNC(uint16_t line) const;
 
 					void OnTickBorder();
