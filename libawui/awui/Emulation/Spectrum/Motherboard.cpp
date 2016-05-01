@@ -81,12 +81,11 @@ void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
 
 	double fps = NTSC ? 59.922743404f : 49.7014591858f;
-	// He leido que funciona a 3.5Mhz exactos...
-	double speed = 3.5f; //NTSC ? 3.579545f : 3.5468949f;
-	this->d._frame += fps / 59.922743404f; // Refresco de awui
+	double speed = NTSC ? 3.579545f : 3.5468949f;
+	this->d._frame++;// += 59.922743404f; // Refresco de awui
 
-	if ((int) this->d._frame == (int) this->d._oldFrame)
-		return;
+//	if ((int) this->d._frame == (int) this->d._oldFrame)
+//		return;
 
 	this->d._oldFrame = this->d._frame;
 
