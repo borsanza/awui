@@ -133,6 +133,8 @@ void Spectrum::CallKey(int key, bool pressed) {
 
 void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 	switch (key) {
+		case Keys::Key_F2:     this->SaveState(); break;
+		case Keys::Key_F4:     this->LoadState(); break;
 		case Keys::Key_LSHIFT:
 		case Keys::Key_RSHIFT: this->CallKey(00, pressed); break;
 		case Keys::Key_Z:      this->CallKey(01, pressed); break;
@@ -228,7 +230,7 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 			this->CallKey(40, pressed);
 			break;
 
-		case Keys::Key_F2:
+		case Keys::Key_F5:
 			this->CallKey(00, pressed);
 			this->CallKey(30, pressed);
 			break;
@@ -324,46 +326,11 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		Console::WriteLine(Convert::ToString(_fileSlot));
 	}
 
-	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_LOAD) {
-		String name = "file.state";
-		if (_fileSlot > 0)
-			name = String::Concat(name, Convert::ToString(_fileSlot));
+	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_LOAD)
+		this->LoadState();
 
-		if (File::Exists(name)) {
-			Console::Write("Cargando: ");
-			Console::WriteLine(name);
-
-			uint8_t * savedData = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
-			FileStream * file = new FileStream(name, FileMode::Open, FileAccess::Read);
-			for (unsigned int i = 0; i < file->GetLength(); i++)
-				savedData[i] = file->ReadByte();
-
-			this->_cpu->LoadState(savedData);
-			free(savedData);
-		}
-	}
-
-	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SAVE) {
-		String name = "file.state";
-		if (_fileSlot > 0)
-			name = String::Concat(name, Convert::ToString(_fileSlot));
-
-		Console::Write("Guardando: ");
-		Console::WriteLine(name);
-
-		uint8_t * savedData = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
-		FileStream * file = new FileStream(name, FileMode::Truncate, FileAccess::Write);
-		this->_cpu->SaveState(savedData);
-
-		for (int i = 0; i < Motherboard::GetSaveSize(); i++)
-			file->WriteByte(savedData[i]);
-
-		file->Close();
-		delete file;
-
-		free(savedData);
-	}
-
+	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SAVE)
+		this->SaveState();
 
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET) {
 		this->_cpu->Reset();
@@ -451,4 +418,44 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 
 void Spectrum::SetSoundEnabled(bool mode) {
 	SoundSDL::Instance()->SetPlayingSound(mode ? this->_cpu->GetSound() : 0);
+}
+
+void Spectrum::LoadState() {
+	String name = "file.state";
+	if (_fileSlot > 0)
+		name = String::Concat(name, Convert::ToString(_fileSlot));
+
+	if (File::Exists(name)) {
+		Console::Write("Cargando: ");
+		Console::WriteLine(name);
+
+		uint8_t * savedData = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
+		FileStream * file = new FileStream(name, FileMode::Open, FileAccess::Read);
+		for (unsigned int i = 0; i < file->GetLength(); i++)
+			savedData[i] = file->ReadByte();
+
+		this->_cpu->LoadState(savedData);
+		free(savedData);
+	}
+}
+
+void Spectrum::SaveState() {
+	String name = "file.state";
+	if (_fileSlot > 0)
+		name = String::Concat(name, Convert::ToString(_fileSlot));
+
+	Console::Write("Guardando: ");
+	Console::WriteLine(name);
+
+	uint8_t * savedData = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
+	FileStream * file = new FileStream(name, FileMode::Truncate, FileAccess::Write);
+	this->_cpu->SaveState(savedData);
+
+	for (int i = 0; i < Motherboard::GetSaveSize(); i++)
+		file->WriteByte(savedData[i]);
+
+	file->Close();
+	delete file;
+
+	free(savedData);
 }

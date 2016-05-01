@@ -35,6 +35,8 @@ namespace awui {
 
 					void CallKey(int key, bool pressed);
 					void DoKey(Keys::Enum key, bool pressed);
+					void SaveState();
+					void LoadState();
 
 				public:
 					Spectrum();
