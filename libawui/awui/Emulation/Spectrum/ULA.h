@@ -28,6 +28,7 @@ namespace awui {
 						uint8_t _vram[16384];
 						uint8_t _data[SPECTRUM_WIDTH * SPECTRUM_HEIGHT];
 						uint8_t _backcolor;
+						uint8_t _lastbackcolor;
 						int _blinkCount;
 						bool _blink;
 					} d;

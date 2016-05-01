@@ -149,6 +149,9 @@ void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * vsync) {
 			*line = 0;
 	}
 
+	if (*col == 304)
+		this->d._lastbackcolor = this->d._backcolor;
+
 	// Resto 8 para quitarle el Vertical sync y no se vea negro
 	if ((*col == 0) && (*line == 240)) {
 		this->d._interrupt = true;
@@ -157,33 +160,28 @@ void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * vsync) {
 }
 
 void ULA::OnTickBorder() {
-	int x = 0;
-	int y = 0;
-	bool draw = false;
-	if ((this->d._col >= this->GetWidth()) || (this->d._line >= this->GetHeight())) {
-		if (this->d._col >= (this->GetTotalWidth() - SPECTRUM_BORDER_WIDTH)) {
-			draw = true;
-			x = this->d._col - (this->GetTotalWidth() - SPECTRUM_BORDER_WIDTH);
-		} else {
-			if (this->d._col < this->GetWidth() + SPECTRUM_BORDER_WIDTH) {
-				draw = true;
-				x = SPECTRUM_BORDER_WIDTH + this->d._col;
-			}
-		}
+	int x = this->d._col;
+	int y = this->d._line;
+	bool ymore = false;
 
-		if (this->d._line >= (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT_BOTTOM)) {
-			draw = true;
-			y = this->d._line - (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT_TOP);
-		} else {
-			if (this->d._line < (this->GetHeight() + SPECTRUM_BORDER_HEIGHT_BOTTOM)) {
-				draw = true;
-				y = SPECTRUM_BORDER_HEIGHT_TOP + this->d._line;
-			}
-		}
+	if (this->d._col < (this->GetWidth() + SPECTRUM_BORDER_WIDTH))
+		x = this->d._col + SPECTRUM_BORDER_WIDTH;
+
+	if (this->d._col >= (this->GetTotalWidth() - SPECTRUM_BORDER_WIDTH)) {
+		x = this->d._col - (this->GetTotalWidth() - SPECTRUM_BORDER_WIDTH);
+		ymore = true;
 	}
 
-	if (draw)
-		this->d._data[x + (y * this->GetTotalWidth())] = this->d._backcolor;
+	if (this->d._line < (this->GetHeight() + SPECTRUM_BORDER_HEIGHT_BOTTOM))
+		y = this->d._line + SPECTRUM_BORDER_HEIGHT_TOP;
+
+	if (this->d._line >= (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT_TOP))
+		y = this->d._line - (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT_TOP);
+
+	if (ymore)
+		y = (y + 1) % this->GetTotalHeight();
+
+	this->d._data[x + (y * this->GetTotalWidth())] = this->d._lastbackcolor;
 }
 
 bool ULA::OnTick(uint32_t counter) {
