@@ -76,21 +76,31 @@ void Motherboard::CheckInterrupts() {
 	this->_z80->CallInterrupt(0x0038);
 }
 
+/*
+  NTSC: 30Hz odd and 30Hz even = 60Hz
+  PAL:  25Hz odd and 25Hz even = 50Hz
+
+  http://www.kolumbus.fi/pami1/video/pal_ntsc.html
+  NTSC: 59,94 Hz
+  PAS:  50 HZ
+*/
+
 #define NTSC 1
 void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
 
-	double fps = NTSC ? 59.922743404f : 49.7014591858f;
-	double speed = NTSC ? 3.579545f : 3.5468949f;
-	this->d._frame++;// += 59.922743404f; // Refresco de awui
+//	double fps = NTSC ? 59.922743404f : 49.7014591858f;
+	double fps = 3500000.0f/69888.0f;
+	double speed = 3.5f;
+	this->d._frame++; // += fps / 59.922743404f; // Refresco de awui
 
-//	if ((int) this->d._frame == (int) this->d._oldFrame)
+	//if ((int) this->d._frame == (int) this->d._oldFrame)
 //		return;
 
 	this->d._oldFrame = this->d._frame;
 
 	double iters = (speed * 1000000.0f) / fps;
-	double itersVDP = this->_ula->GetTotalWidth() * this->_ula->GetTotalHeight();
+	double itersVDP = SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL;
 
 	bool vsync = false;
 	int vdpCount = 0;

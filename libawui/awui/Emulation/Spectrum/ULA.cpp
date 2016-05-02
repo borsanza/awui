@@ -7,6 +7,7 @@
 #include "ULA.h"
 
 #include <awui/Emulation/Spectrum/Motherboard.h>
+#include <awui/Drawing/Image.h>
 #include <assert.h>
 #include <string.h>
 
@@ -66,19 +67,23 @@ ULA::ULA() {
 	this->d._blinkCount = 0;
 	this->d._blink = false;
 
+	this->_image = new Drawing::Image(SPECTRUM_VIDEO_WIDTH_VISUAL, SPECTRUM_VIDEO_HEIGHT_VISUAL);
+
 	this->Reset();
 }
 
 ULA::~ULA() {
+	delete this->_image;
 }
 
 void ULA::Reset() {
 	this->Clear();
+	this->_image->Clear();
 	memset(this->d._vram, 0, 16384 * sizeof(uint8_t));
 }
 
 void ULA::Clear() {
-	memset(this->d._data, 0, SPECTRUM_WIDTH * SPECTRUM_HEIGHT * sizeof(uint8_t));
+	memset(this->d._data, 0, SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL * sizeof(uint8_t));
 }
 
 uint8_t * ULA::GetVram() {
@@ -93,42 +98,27 @@ uint16_t ULA::GetColumn() const {
 	return this->d._col;
 }
 
-uint16_t ULA::GetWidth() const {
-	return this->d._width;
-}
-
-uint16_t ULA::GetHeight() const {
-	return this->d._height;
-}
-
 void ULA::SetHeight(uint16_t height) {
 	if (height != this->d._height)
 		this->d._height = height;
 }
 
-uint16_t ULA::GetTotalWidth() const {
-	return SPECTRUM_WIDTH;
+uint16_t ULA::GetVisualWidth() const {
+	return SPECTRUM_VIDEO_WIDTH_VISUAL;
 }
 
-uint16_t ULA::GetTotalHeight() const {
-	return SPECTRUM_HEIGHT;
-}
-
-uint8_t ULA::GetPixel(uint16_t x, uint16_t y) const {
-	return this->d._data[(y * this->GetTotalWidth()) + x];
+uint16_t ULA::GetVisualHeight() const {
+	return SPECTRUM_VIDEO_HEIGHT_VISUAL;
 }
 
 /* VSYNC
 0	191	192	Video Display
 192	247	56	Bottom Border
-248	255	8	Vertical Sync
-256	312	56	Top Border
-*/
+248	263	16	Vertical Sync
+264	311	48	Top Border
 
-bool ULA::IsVSYNC(uint16_t line) const {
-	 // Resto 8 para quitarle el Vertical sync y no se vea negro
-	return line == 240;
-}
+312 Lines
+*/
 
 /* HSYNC
 0 (0)	127 (255)	Video
@@ -136,69 +126,51 @@ bool ULA::IsVSYNC(uint16_t line) const {
 152 (304)	165 (331)	HSync
 152 (304)	199 (399)	Blank
 200 (400)	223 (447)	Left Border
+
+448 Pixeles = 224 States
+48+256+48
 */
 
-void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * vsync) {
+void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) {
+	*hsync = false;
 	*vsync = false;
 
-	(*col)++;
-	if (*col == this->GetTotalWidth()) {
-		*col = 0;
-		(*line)++;
-		if (*line == this->GetTotalHeight())
-			*line = 0;
-	}
+	*col = (*col + 1) % SPECTRUM_VIDEO_WIDTH_TOTAL;
 
-	if (*col == 304)
+	if (*col == (SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT + (SPECTRUM_VIDEO_WIDTH_SYNC >> 1)))
+		*line = (*line + 1) % SPECTRUM_VIDEO_HEIGHT_TOTAL;
+
+	if (*col == (SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT)) {
 		this->d._lastbackcolor = this->d._backcolor;
+		*hsync = true;
+	}
 
-	// Resto 8 para quitarle el Vertical sync y no se vea negro
-	if ((*col == 0) && (*line == 240)) {
+	if ((*col == 0) && (*line == (SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM))) {
 		this->d._interrupt = true;
-		*vsync = this->IsVSYNC(*line);
+		*vsync = true;
 	}
-}
-
-void ULA::OnTickBorder() {
-	int x = this->d._col;
-	int y = this->d._line;
-	bool ymore = false;
-
-	if (this->d._col < (this->GetWidth() + SPECTRUM_BORDER_WIDTH))
-		x = this->d._col + SPECTRUM_BORDER_WIDTH;
-
-	if (this->d._col >= (this->GetTotalWidth() - SPECTRUM_BORDER_WIDTH)) {
-		x = this->d._col - (this->GetTotalWidth() - SPECTRUM_BORDER_WIDTH);
-		ymore = true;
-	}
-
-	if (this->d._line < (this->GetHeight() + SPECTRUM_BORDER_HEIGHT_BOTTOM))
-		y = this->d._line + SPECTRUM_BORDER_HEIGHT_TOP;
-
-	if (this->d._line >= (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT_TOP))
-		y = this->d._line - (this->GetTotalHeight() - SPECTRUM_BORDER_HEIGHT_TOP);
-
-	if (ymore)
-		y = (y + 1) % this->GetTotalHeight();
-
-	this->d._data[x + (y * this->GetTotalWidth())] = this->d._lastbackcolor;
 }
 
 bool ULA::OnTick(uint32_t counter) {
 	bool vsync;
+	bool hsync;
 
-	this->CalcNextPixel(&this->d._col, &this->d._line, &vsync);
+	this->CalcNextPixel(&this->d._col, &this->d._line, &hsync, &vsync);
 
-	if ((this->d._col == 0) && (this->d._line == 0)) {
-		if (++(this->d._blinkCount) >= 16) {
-			this->d._blinkCount = 0;
-			this->d._blink = !this->d._blink;
-		}
+	uint16_t col = this->d._col;
+	uint16_t line = this->d._line;
+	uint32_t pos = col + (line * SPECTRUM_VIDEO_WIDTH_TOTAL);
+
+	if ((pos == 0) && (++(this->d._blinkCount) >= 16)) {
+		this->d._blinkCount = 0;
+		this->d._blink = !this->d._blink;
 	}
 
-	if ((this->d._col < this->d._width) && (this->d._line < this->d._height)) {
-		uint16_t col = this->d._col;
-		uint16_t line = this->d._line;
+	if (col == (SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT))
+		if (line == (SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM))
+			this->DrawImage();
+
+	if ((col < SPECTRUM_VIDEO_WIDTH) && (line < SPECTRUM_VIDEO_HEIGHT)) {
 		uint8_t newY = (line & 0xC0) | ((line & 0x38) >> 3) | ((line & 0x7) << 3);
 		uint8_t v = this->d._vram[(col >> 3) + (newY * 32)];
 		int bit = 7 - (col & 0x7);
@@ -210,16 +182,23 @@ bool ULA::OnTick(uint32_t counter) {
 			active = !active;
 
 		uint8_t color;
-		if (active) {
+		if (active)
 			color = ((reg & 0x40) >> 3) |  (reg & 0x07);
-		} else {
+		else
 			color = (reg & 0x78) >> 3;
-		}
 
-		uint32_t pos = col + SPECTRUM_BORDER_WIDTH + ((line + SPECTRUM_BORDER_HEIGHT_TOP) * this->GetTotalWidth());
 		this->d._data[pos] = color;
 	} else {
-		this->OnTickBorder();
+/*
+		Es mucho mas rapido asignarlo simplemente
+		uint16_t vsync_begin = SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT;
+		uint16_t vsync_end = vsync_begin + SPECTRUM_VIDEO_WIDTH_SYNC;
+		uint16_t hsync_begin = SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM;
+		uint16_t hsync_end = hsync_begin + SPECTRUM_VIDEO_HEIGHT_SYNC;
+		bool border = !(((col >= vsync_begin) && (col < vsync_end)) || ((line >= hsync_begin) && (line < hsync_end)));
+		if (border)
+*/
+		this->d._data[pos] = this->d._lastbackcolor;
 	}
 
 	return vsync;
@@ -244,4 +223,48 @@ void ULA::LoadState(uint8_t * data) {
 
 void ULA::SaveState(uint8_t * data) {
 	memcpy(data, &this->d, sizeof(ULA::saveData));
+}
+
+void ULA::DrawImage() {
+	uint8_t c;
+	uint16_t width = SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT;
+	uint16_t height = SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM;
+
+	// VIDEO + Border derecho + Borde Inferior
+	for (int x = 0; x < width; x++)
+		for (int y = 0; y < height; y++) {
+			c = this->d._data[(y * SPECTRUM_VIDEO_WIDTH_TOTAL) + x];
+			uint32_t color = _colors[c];
+			this->_image->SetPixel(x + SPECTRUM_VIDEO_WIDTH_LEFT, y + SPECTRUM_VIDEO_HEIGHT_TOP, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+		}
+
+	// Borde superior izquierdo
+	for (int x = 0; x < SPECTRUM_VIDEO_WIDTH_LEFT; x++)
+		for (int y = 0; y < SPECTRUM_VIDEO_HEIGHT_TOP; y++) {
+			int newX = SPECTRUM_VIDEO_WIDTH_TOTAL - SPECTRUM_VIDEO_WIDTH_LEFT + x;
+			int newY = SPECTRUM_VIDEO_HEIGHT_TOTAL - SPECTRUM_VIDEO_HEIGHT_TOP + y;
+			c = this->d._data[(newY * SPECTRUM_VIDEO_WIDTH_TOTAL) + newX];
+			uint32_t color = _colors[c];
+			this->_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+		}
+
+	// Borde superior
+	for (int x = 0; x < width; x++)
+		for (int y = 0; y < SPECTRUM_VIDEO_HEIGHT_TOP; y++) {
+			int newY = SPECTRUM_VIDEO_HEIGHT_TOTAL - SPECTRUM_VIDEO_HEIGHT_TOP + y;
+			c = this->d._data[(newY * SPECTRUM_VIDEO_WIDTH_TOTAL) + x];
+			uint32_t color = _colors[c];
+			this->_image->SetPixel(x + SPECTRUM_VIDEO_WIDTH_LEFT, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+		}
+
+	// Borde Izquierdo
+	for (int x = 0; x < SPECTRUM_VIDEO_WIDTH_LEFT; x++)
+		for (int y = 0; y < height; y++) {
+			int newX = SPECTRUM_VIDEO_WIDTH_TOTAL - SPECTRUM_VIDEO_WIDTH_LEFT + x;
+			c = this->d._data[(y * SPECTRUM_VIDEO_WIDTH_TOTAL) + newX];
+			uint32_t color = _colors[c];
+			this->_image->SetPixel(x, y + SPECTRUM_VIDEO_HEIGHT_TOP, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+		}
+
+	this->_image->Update();
 }

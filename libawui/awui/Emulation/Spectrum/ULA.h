@@ -3,16 +3,25 @@
 
 #include <stdint.h>
 
-// Me he olvidado de los 8 de vsync para que no se vea negro en la imagen,
-// eso hay que descontarlo en los retrazos
+#define SPECTRUM_VIDEO_WIDTH 256
+#define SPECTRUM_VIDEO_WIDTH_RIGHT 48
+#define SPECTRUM_VIDEO_WIDTH_SYNC 96
+#define SPECTRUM_VIDEO_WIDTH_LEFT 48
+#define SPECTRUM_VIDEO_WIDTH_TOTAL 448
+#define SPECTRUM_VIDEO_WIDTH_VISUAL 352 // width + left + right
 
-#define SPECTRUM_BORDER_WIDTH 48
-#define SPECTRUM_BORDER_HEIGHT_TOP 56
-#define SPECTRUM_BORDER_HEIGHT_BOTTOM 56
-#define SPECTRUM_WIDTH 352  // 352 = 48 + 256 + 48
-#define SPECTRUM_HEIGHT 304 // 312 =  8 + 56 + 192 + 56
+#define SPECTRUM_VIDEO_HEIGHT 192
+#define SPECTRUM_VIDEO_HEIGHT_BOTTOM 56
+#define SPECTRUM_VIDEO_HEIGHT_SYNC 16
+#define SPECTRUM_VIDEO_HEIGHT_TOP 48
+#define SPECTRUM_VIDEO_HEIGHT_TOTAL 312
+#define SPECTRUM_VIDEO_HEIGHT_VISUAL 296
 
 namespace awui {
+	namespace Drawing {
+		class Image;
+	}
+
 	namespace Emulation {
 		namespace Spectrum {
 			class Motherboard;
@@ -26,20 +35,37 @@ namespace awui {
 						uint16_t _col;
 						bool _interrupt:1;
 						uint8_t _vram[16384];
-						uint8_t _data[SPECTRUM_WIDTH * SPECTRUM_HEIGHT];
+						uint8_t _data[SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL];
 						uint8_t _backcolor;
 						uint8_t _lastbackcolor;
 						int _blinkCount;
 						bool _blink;
 					} d;
 
-					void SetHeight(uint16_t height);
-					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * vsync);
-					bool IsVSYNC(uint16_t line) const;
+					const uint32_t _colors[16] = {
+						0x000000,
+						0x0000BF,
+						0xBF0000,
+						0xBF00BF,
+						0x00BF00,
+						0x00BFBF,
+						0xBFBF00,
+						0xBFBFBF,
+						0x000000,
+						0x0000FF,
+						0xFF0000,
+						0xFF00FF,
+						0x00FF00,
+						0x00FFFF,
+						0xFFFF00,
+						0xFFFFFF,
+					};
 
-					void OnTickBorder();
-					uint16_t GetWidth() const;
-					uint16_t GetHeight() const;
+					Drawing::Image * _image;
+
+					void SetHeight(uint16_t height);
+					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync);
+					void DrawImage();
 
 				public:
 					ULA();
@@ -51,10 +77,8 @@ namespace awui {
 
 					uint8_t * GetVram();
 
-					uint16_t GetTotalWidth() const;
-					uint16_t GetTotalHeight() const;
-
-					uint8_t GetPixel(uint16_t x, uint16_t y) const;
+					uint16_t GetVisualWidth() const;
+					uint16_t GetVisualHeight() const;
 
 					void Clear();
 
@@ -72,6 +96,8 @@ namespace awui {
 					inline void SetBackColor(uint8_t color) { this->d._backcolor = color; }
 					inline uint8_t ReadByte(uint32_t pos) const { return this->d._vram[pos]; }
 					inline void WriteByte(uint32_t pos, uint8_t value) { this->d._vram[pos] = value; }
+
+					Drawing::Image * GetImage() { return this->_image; }
 			};
 		}
 	}

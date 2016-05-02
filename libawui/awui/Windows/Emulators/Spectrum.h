@@ -16,7 +16,6 @@ namespace awui {
 		namespace Emulators {
 			class Spectrum : public ArcadeContainer {
 				private:
-					Drawing::Image * _image;
 					awui::Emulation::Spectrum::Motherboard * _cpu;
 					int _multiply;
 					bool _canChangeControl;
@@ -30,8 +29,6 @@ namespace awui {
 					int _last;
 					long long _lastTick;
 					void CheckLimits();
-
-					uint32_t _colors[16];
 
 					void CallKey(int key, bool pressed);
 					void DoKey(Keys::Enum key, bool pressed);

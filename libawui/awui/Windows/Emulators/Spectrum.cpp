@@ -25,7 +25,6 @@ using namespace awui::Emulation::Spectrum;
 
 Spectrum::Spectrum() {
 	this->SetSize(1, 1);
-	this->_image = new Drawing::Image(1, 1);
 	this->_cpu = new Motherboard();
 	this->SetTabStop(true);
 	this->_multiply = 1;
@@ -36,28 +35,10 @@ Spectrum::Spectrum() {
 	this->_last = -1;
 	this->_lastTick = 0;
 	this->_fileSlot = 0;
-
-	this->_colors[0]  = 0x000000;
-	this->_colors[1]  = 0x0000BF;
-	this->_colors[2]  = 0xBF0000;
-	this->_colors[3]  = 0xBF00BF;
-	this->_colors[4]  = 0x00BF00;
-	this->_colors[5]  = 0x00BFBF;
-	this->_colors[6]  = 0xBFBF00;
-	this->_colors[7]  = 0xBFBFBF;
-	this->_colors[8]  = 0x000000;
-	this->_colors[9]  = 0x0000FF;
-	this->_colors[10] = 0xFF0000;
-	this->_colors[11] = 0xFF00FF;
-	this->_colors[12] = 0x00FF00;
-	this->_colors[13] = 0x00FFFF;
-	this->_colors[14] = 0xFFFF00;
-	this->_colors[15] = 0xFFFFFF;
 }
 
 Spectrum::~Spectrum() {
 	delete this->_cpu;
-	delete this->_image;
 }
 
 int Spectrum::IsClass(Classes::Enum objectClass) const {
@@ -95,29 +76,15 @@ Motherboard * Spectrum::GetCPU() {
 // 7100 pixel stretch, 16 bytes.
 
 void Spectrum::OnPaint(GL* gl) {
-	uint8_t c;
-	ULA * screen = this->_cpu->GetULA();
+	ULA * ula = this->_cpu->GetULA();
 
-	int width = screen->GetTotalWidth();
-	int height = screen->GetTotalHeight();
+	int width = ula->GetImage()->GetWidth() * this->_multiply;
+	int height = ula->GetImage()->GetHeight() * this->_multiply;
 
-	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
-		delete this->_image;
-		this->_image = new Drawing::Image(width, height);
-		this->SetSize(width * this->_multiply, height * this->_multiply);
-	}
+	if ((this->GetWidth() != width) || (this->GetHeight() != height))
+		this->SetSize(width, height);
 
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			c = screen->GetPixel(x, y);
-			uint32_t color = _colors[c];
-			this->_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
-		}
-	}
-
-	this->_image->Update();
-
-	GL::DrawImageGL(this->_image, 0, 0, this->GetWidth(), this->GetHeight());
+	GL::DrawImageGL(ula->GetImage(), 0, 0, this->GetWidth(), this->GetHeight());
 }
 
 void Spectrum::SetMultiply(int multiply) {
