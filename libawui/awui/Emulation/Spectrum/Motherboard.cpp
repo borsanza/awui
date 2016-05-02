@@ -34,6 +34,9 @@ Motherboard::Motherboard() {
 	this->_z80->SetWritePortCB(WritePortCB, this);
 	this->_z80->SetReadPortCB(ReadPortCB, this);
 
+	this->_writeCassetteCB = 0;
+	this->_readCassetteCB = 0;
+
 	this->_ula = new ULA();
 	this->_sound = new Sound();
 	this->_cycles = 0;
@@ -83,10 +86,10 @@ void Motherboard::OnTick() {
 
 	this->_percFrame = 0;
 	do {
-		int64_t tmpCycles = this->_z80->GetCycles();
+		this->_lastCycles = this->_z80->GetCycles();
 		this->_z80->RunOpcode();
-		this->_cycles += this->_z80->GetCycles() - tmpCycles;
-		this->_cyclesULA += this->_z80->GetCycles() - tmpCycles;
+		this->_cycles += this->_z80->GetCycles() - this->_lastCycles;
+		this->_cyclesULA += this->_z80->GetCycles() - this->_lastCycles;
 
 		this->_percFrame = this->_cycles / cyclesFrame;
 
@@ -138,6 +141,15 @@ void Motherboard::WritePort(uint8_t port, uint8_t value) {
 	if (port == 0xFE) {
 		this->_ula->SetBackColor(value & 0x07);
 		this->_sound->WriteSound(this, value);
+
+
+		if ((value & 0x08) != _lastMicState) {
+			_lastMicState = value & 0x08;
+			int16_t diff = (int16_t) this->_lastCycles - this->_lastCycleMic;
+			if (this->_writeCassetteCB)
+				this->_writeCassetteCB(diff);
+			this->_lastCycleMic = this->_lastCycles;
+		}
 
 		return;
 	}
@@ -214,4 +226,14 @@ void Motherboard::OnKeyPress(uint8_t row, uint8_t key) {
 void Motherboard::OnKeyUp(uint8_t row, uint8_t key) {
 	this->d._keys[row] |= key;
 	// printf("Up %d: %x\n", row, this->d._keys[row]);
+}
+
+void Motherboard::SetWriteCassetteCB(void (* fun)(uint16_t), void * data) {
+	this->_writeCassetteCB = fun;
+	this->_writeCassetteDataCB = data;
+}
+
+void Motherboard::SetReadCassetteCB(uint16_t (* fun)(), void * data) {
+	this->_readCassetteCB = fun;
+	this->_readCassetteDataCB = data;
 }

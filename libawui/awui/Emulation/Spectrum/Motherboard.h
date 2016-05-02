@@ -38,9 +38,17 @@ namespace awui {
 					double _percFrame;
 					int64_t _cycles;
 					int64_t _cyclesULA;
+					int64_t _lastCycles;
+					int64_t _lastCycleMic;
+					int64_t _lastMicState;
 
 					void Print(const char * str, ...);
 					void CheckInterrupts();
+
+					void (*_writeCassetteCB) (uint16_t data);
+					void * _writeCassetteDataCB;
+					uint16_t (*_readCassetteCB) ();
+					void * _readCassetteDataCB;
 
 				public:
 					Motherboard();
@@ -75,6 +83,9 @@ namespace awui {
 					void OnKeyUp(uint8_t row, uint8_t key);
 
 					inline ULA * GetULA() const { return this->_ula; }
+
+					void SetWriteCassetteCB(void (* fun)(uint16_t), void * data);
+					void SetReadCassetteCB(uint16_t (* fun)(), void * data);
 			};
 		}
 	}
