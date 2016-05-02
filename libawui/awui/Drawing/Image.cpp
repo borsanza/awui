@@ -92,3 +92,9 @@ void Image::SetPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 	this->image[offset + 2] = r;
 	this->image[offset + 3] = a;
 }
+
+void Image::Clear() {
+	for (int x = 0; x < this->width; x++)
+		for (int y = 0; y < this->height; y++)
+			this->SetPixel(x, y, 0, 0, 0);
+}
