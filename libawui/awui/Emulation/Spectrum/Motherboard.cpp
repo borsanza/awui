@@ -38,8 +38,6 @@ Motherboard::Motherboard() {
 	this->_sound = new Sound();
 
 	this->_rom = new Common::Rom(4096);
-	this->d._frame = 0;
-	this->d._oldFrame = 0;
 
 	for (int i = 0; i < 8; i++)
 		this->d._keys[i] = 0xFF;
@@ -76,72 +74,34 @@ void Motherboard::CheckInterrupts() {
 	this->_z80->CallInterrupt(0x0038);
 }
 
-/*
-  NTSC: 30Hz odd and 30Hz even = 60Hz
-  PAL:  25Hz odd and 25Hz even = 50Hz
-
-  http://www.kolumbus.fi/pami1/video/pal_ntsc.html
-  NTSC: 59,94 Hz
-  PAS:  50 HZ
-*/
-
 #define NTSC 1
 void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
+	double speed = NTSC ? 3579545.0f : 3546894.9f;
+	double cyclesFrame = speed / 59.922743404f;
 
-//	double fps = NTSC ? 59.922743404f : 49.7014591858f;
-	double fps = 3500000.0f/69888.0f;
-	double speed = 3.5f;
-	this->d._frame++; // += fps / 59.922743404f; // Refresco de awui
-
-	//if ((int) this->d._frame == (int) this->d._oldFrame)
-//		return;
-
-	this->d._oldFrame = this->d._frame;
-
-	double iters = (speed * 1000000.0f) / fps;
-	double itersVDP = SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL;
-
-	bool vsync = false;
-	int vdpCount = 0;
-	double vdpIters = 0;
-
-	int realIters = 0;
+	static int64_t cycles = 0;
+	static int64_t cyclesULA = 0;
 	this->_percFrame = 0;
-	for (int i = 0; i < iters; i++) {
-		int64_t oldCycles = this->_z80->GetCycles();
-
-		if (this->_z80->GetPC() == 0x056B) {
-			Console::WriteLine("0x056B");
-			Console::WriteLine(Convert::ToString(this->_z80->GetRegisters()->GetDE()));
-			this->_z80->GetRegisters()->SetBC(0xB001);
-			//this->_z80->GetRegisters()->AlternateAF();
-			//this->_z80->GetRegisters()->SetAF(0x0145);
-			//this->_z80->GetRegisters()->AlternateAF();
-			this->_z80->GetRegisters()->SetFFlag(Flag_C, false);
-			//this->_z80->GetRegisters()->SetPC(0x056c);
-		}
-
+	do {
+		int64_t tmpCycles = this->_z80->GetCycles();
 		this->_z80->RunOpcode();
+		cycles += this->_z80->GetCycles() - tmpCycles;
+		cyclesULA += this->_z80->GetCycles() - tmpCycles;
 
-		double times = (this->_z80->GetCycles() - oldCycles);
-		i = i + times - 1;
-		this->_percFrame = i / iters;
+		this->_percFrame = cycles / cyclesFrame;
 
-		vdpIters += times * (itersVDP / iters);
-		if (!vsync) {
-			for (; vdpCount < vdpIters; vdpCount++) {
-				if (vsync) continue;
-				vsync = this->_ula->OnTick(realIters);
-			}
+		while (cyclesULA > 0) {
+			if (this->_ula->OnTick(0)) this->CheckInterrupts();
+			if (this->_ula->OnTick(0)) this->CheckInterrupts();
+			cyclesULA--;
 		}
-		realIters++;
-	}
 
-	while (!vsync)
-		vsync = this->_ula->OnTick(realIters);
+		if (cycles > cyclesFrame)
+			break;
+	} while (true);
 
-	this->CheckInterrupts();
+	cycles -= cyclesFrame;
 }
 
 void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {

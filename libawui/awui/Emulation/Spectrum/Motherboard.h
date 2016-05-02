@@ -22,8 +22,6 @@ namespace awui {
 			class Motherboard {
 				private:
 					struct saveData {
-						float _frame;
-						float _oldFrame;
 						uint8_t _boardram[32768];
 						uint8_t _ram[8192];
 						uint8_t _keys[8];
