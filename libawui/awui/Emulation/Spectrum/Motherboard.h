@@ -36,6 +36,8 @@ namespace awui {
 
 					double _initFrame;
 					double _percFrame;
+					int64_t _cycles;
+					int64_t _cyclesULA;
 
 					void Print(const char * str, ...);
 					void CheckInterrupts();

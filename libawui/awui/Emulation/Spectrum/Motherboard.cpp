@@ -36,6 +36,8 @@ Motherboard::Motherboard() {
 
 	this->_ula = new ULA();
 	this->_sound = new Sound();
+	this->_cycles = 0;
+	this->_cyclesULA = 0;
 
 	this->_rom = new Common::Rom(4096);
 
@@ -79,28 +81,26 @@ void Motherboard::OnTick() {
 	double speed = 3500000.0f;
 	double cyclesFrame = speed / 59.922743404f;
 
-	static int64_t cycles = 0;
-	static int64_t cyclesULA = 0;
 	this->_percFrame = 0;
 	do {
 		int64_t tmpCycles = this->_z80->GetCycles();
 		this->_z80->RunOpcode();
-		cycles += this->_z80->GetCycles() - tmpCycles;
-		cyclesULA += this->_z80->GetCycles() - tmpCycles;
+		this->_cycles += this->_z80->GetCycles() - tmpCycles;
+		this->_cyclesULA += this->_z80->GetCycles() - tmpCycles;
 
-		this->_percFrame = cycles / cyclesFrame;
+		this->_percFrame = this->_cycles / cyclesFrame;
 
-		while (cyclesULA > 0) {
+		while (this->_cyclesULA > 0) {
 			if (this->_ula->OnTick(0)) this->CheckInterrupts();
 			if (this->_ula->OnTick(0)) this->CheckInterrupts();
-			cyclesULA--;
+			this->_cyclesULA--;
 		}
 
-		if (cycles > cyclesFrame)
+		if (this->_cycles > cyclesFrame)
 			break;
 	} while (true);
 
-	cycles -= cyclesFrame;
+	this->_cycles -= cyclesFrame;
 }
 
 void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {

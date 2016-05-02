@@ -29,6 +29,7 @@ SoundSDL::SoundSDL() {
     this->_wanted.samples = SOUNDSAMPLES;
     this->_wanted.callback = FillAudioSpectrumCB;
     this->_wanted.userdata = 0;
+    this->_tone = 0;
 	SDL_OpenAudio(&this->_wanted, NULL);
 	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
 	SDL_PauseAudio(0);
@@ -65,10 +66,6 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 	int offset = this->_frame * SOUNDSIZEFRAME;
 
-	static int tone = 0;
-//	static int enter = 0;
-	// signal = (signal == 0) ? number : 0;
-
 	for (int i = 0; i < len; i++) {
 		int bufferPos = offset + i;
 
@@ -76,16 +73,10 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 
 		if (stream) {
 			if (channel->_buffer[bufferPos]._signal != 0) {
-				tone = channel->_buffer[bufferPos]._signal;
+				_tone = channel->_buffer[bufferPos]._signal;
 			}
-/*
-			enter++;
-			if (enter >= 10) {
-				printf("\n");
-				enter = 0;
-			}
-*/
-			stream[i] = tone;
+
+			stream[i] = _tone;
 		}
 
 		if (channel->_buffer[bufferPos]._signal != 0)

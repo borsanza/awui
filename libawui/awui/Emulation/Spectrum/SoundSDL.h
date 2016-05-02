@@ -20,6 +20,7 @@ namespace awui {
 
 					awui::Collections::ArrayList _arraySound;
 					Sound * _playing;
+					int _tone;
 
 				public:
 					SoundSDL();
