@@ -74,10 +74,9 @@ void Motherboard::CheckInterrupts() {
 	this->_z80->CallInterrupt(0x0038);
 }
 
-#define NTSC 1
 void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
-	double speed = NTSC ? 3579545.0f : 3546894.9f;
+	double speed = 3500000.0f;
 	double cyclesFrame = speed / 59.922743404f;
 
 	static int64_t cycles = 0;
