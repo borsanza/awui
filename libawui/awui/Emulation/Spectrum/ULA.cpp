@@ -227,6 +227,7 @@ void ULA::SaveState(uint8_t * data) {
 
 void ULA::DrawImage() {
 	uint8_t c;
+	uint32_t color;
 	uint16_t width = SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT;
 	uint16_t height = SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM;
 
@@ -234,7 +235,7 @@ void ULA::DrawImage() {
 	for (int x = 0; x < width; x++)
 		for (int y = 0; y < height; y++) {
 			c = this->d._data[(y * SPECTRUM_VIDEO_WIDTH_TOTAL) + x];
-			uint32_t color = _colors[c];
+			color = _colors[c];
 			this->_image->SetPixel(x + SPECTRUM_VIDEO_WIDTH_LEFT, y + SPECTRUM_VIDEO_HEIGHT_TOP, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
 		}
 
@@ -244,7 +245,7 @@ void ULA::DrawImage() {
 			int newX = SPECTRUM_VIDEO_WIDTH_TOTAL - SPECTRUM_VIDEO_WIDTH_LEFT + x;
 			int newY = SPECTRUM_VIDEO_HEIGHT_TOTAL - SPECTRUM_VIDEO_HEIGHT_TOP + y;
 			c = this->d._data[(newY * SPECTRUM_VIDEO_WIDTH_TOTAL) + newX];
-			uint32_t color = _colors[c];
+			color = _colors[c];
 			this->_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
 		}
 
@@ -253,7 +254,7 @@ void ULA::DrawImage() {
 		for (int y = 0; y < SPECTRUM_VIDEO_HEIGHT_TOP; y++) {
 			int newY = SPECTRUM_VIDEO_HEIGHT_TOTAL - SPECTRUM_VIDEO_HEIGHT_TOP + y;
 			c = this->d._data[(newY * SPECTRUM_VIDEO_WIDTH_TOTAL) + x];
-			uint32_t color = _colors[c];
+			color = _colors[c];
 			this->_image->SetPixel(x + SPECTRUM_VIDEO_WIDTH_LEFT, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
 		}
 
@@ -262,7 +263,7 @@ void ULA::DrawImage() {
 		for (int y = 0; y < height; y++) {
 			int newX = SPECTRUM_VIDEO_WIDTH_TOTAL - SPECTRUM_VIDEO_WIDTH_LEFT + x;
 			c = this->d._data[(y * SPECTRUM_VIDEO_WIDTH_TOTAL) + newX];
-			uint32_t color = _colors[c];
+			color = _colors[c];
 			this->_image->SetPixel(x, y + SPECTRUM_VIDEO_HEIGHT_TOP, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
 		}
 
