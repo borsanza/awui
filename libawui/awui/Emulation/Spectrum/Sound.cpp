@@ -44,8 +44,8 @@ void Sound::WriteByte(Motherboard * cpu, int16_t value) {
 }
 
 void Sound::WriteSound(Motherboard * cpu, int value) {
-    int signal = (value & 0x10) ? +85 : -85;
-    signal += (value & 0x08) ? +42 : -42;
+    int signal = ((value >> 4) & 0x01) ? +85 : -85;
+    signal    += ((value >> 3) & 0x01) ? +42 : -42;
 
 	this->WriteByte(cpu, signal);
 }

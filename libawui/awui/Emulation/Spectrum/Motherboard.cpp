@@ -36,6 +36,10 @@ Motherboard::Motherboard() {
 
 	this->_writeCassetteCB = 0;
 	this->_readCassetteCB = 0;
+	this->_lastWriteState = 0;
+	this->_lastWriteCycle = 0;
+	this->_lastReadCycle = 0;
+	this->_lastReadState = 0;
 
 	this->_ula = new ULA();
 	this->_sound = new Sound();
@@ -79,6 +83,35 @@ void Motherboard::CheckInterrupts() {
 	this->_z80->CallInterrupt(0x0038);
 }
 
+void Motherboard::ProcessCassette() {
+	int data = -2;
+	if ((this->_countReadCycles <= 0) && this->_readCassetteCB)
+		data = this->_readCassetteCB();
+
+	if (this->_countReadCycles <= 0)
+		data = 2168;
+
+	switch (data) {
+		case -2: // Hay que dejarlo para que no ejecute el default
+			break;
+		case -1: // Lee del cassette pero no hay datos
+			this->_countReadCycles = 0;
+			break;
+		default:
+			this->_countReadCycles += data;
+			this->_lastReadState = !this->_lastReadState;
+			this->_sound->WriteSound(this, this->_lastReadState ? 0x08 : 0x10);
+			break;
+	}
+
+	if (this->_countReadCycles > 0) {
+		int16_t diff = (int16_t) (this->_lastCycles - this->_lastReadCycle);
+		this->_countReadCycles -= diff;
+	}
+
+	this->_lastReadCycle = this->_lastCycles;
+}
+
 void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
 	double speed = 3500000.0f;
@@ -92,6 +125,8 @@ void Motherboard::OnTick() {
 		this->_cyclesULA += this->_z80->GetCycles() - this->_lastCycles;
 
 		this->_percFrame = this->_cycles / cyclesFrame;
+
+		this->ProcessCassette();
 
 		while (this->_cyclesULA > 0) {
 			if (this->_ula->OnTick(0)) this->CheckInterrupts();
@@ -140,15 +175,15 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 void Motherboard::WritePort(uint8_t port, uint8_t value) {
 	if (port == 0xFE) {
 		this->_ula->SetBackColor(value & 0x07);
-		this->_sound->WriteSound(this, value);
+		if (this->_countReadCycles == 0)
+			this->_sound->WriteSound(this, value);
 
-
-		if ((value & 0x08) != _lastMicState) {
-			_lastMicState = value & 0x08;
-			int16_t diff = (int16_t) this->_lastCycles - this->_lastCycleMic;
+		if (((value >> 3) & 0x01) != this->_lastWriteState) {
+			this->_lastWriteState = ((value >> 3) & 0x01);
+			int16_t diff = (int16_t) this->_lastCycles - this->_lastWriteCycle;
 			if (this->_writeCassetteCB)
 				this->_writeCassetteCB(diff);
-			this->_lastCycleMic = this->_lastCycles;
+			this->_lastWriteCycle = this->_lastCycles;
 		}
 
 		return;
@@ -169,6 +204,11 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 				value &= this->d._keys[i];
 			row >>= 1;
 		}
+
+		if (this->_lastReadState)
+			value |= 0x40;
+		else
+			value &= 0xBF;
 
 /*
 		if (value != 0xFF) {
@@ -228,12 +268,12 @@ void Motherboard::OnKeyUp(uint8_t row, uint8_t key) {
 	// printf("Up %d: %x\n", row, this->d._keys[row]);
 }
 
-void Motherboard::SetWriteCassetteCB(void (* fun)(uint16_t), void * data) {
+void Motherboard::SetWriteCassetteCB(void (* fun)(int16_t), void * data) {
 	this->_writeCassetteCB = fun;
 	this->_writeCassetteDataCB = data;
 }
 
-void Motherboard::SetReadCassetteCB(uint16_t (* fun)(), void * data) {
+void Motherboard::SetReadCassetteCB(int16_t (* fun)(), void * data) {
 	this->_readCassetteCB = fun;
 	this->_readCassetteDataCB = data;
 }

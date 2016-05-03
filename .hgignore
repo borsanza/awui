@@ -2,9 +2,6 @@ CMakeFiles/
 Makefile
 cmake_install.cmake
 CMakeCache.txt
-.TAP
-.cbp
-.zip
 libaw/libaw.a
 libawui/libawui.so
 libawui/libawui_static.a
@@ -22,6 +19,7 @@ callgrind.out.*
 *.vcproj
 *.sln
 *.ncb
+*.cbp
 *.suo
 *.vcproj.*user
 *.workspace
@@ -30,6 +28,9 @@ callgrind.out.*
 *.rar
 *.kdev*
 *.rom
+*.tap
+*.TAP
+*.zip
 *.state*
 libaw/*.c
 libaw/*.h
