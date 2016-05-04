@@ -24,13 +24,12 @@ namespace awui {
 
 	namespace Emulation {
 		namespace Spectrum {
-			class Motherboard;
-
 			class ULA {
 				private:
 					struct saveData {
 						uint16_t _line;
 						uint16_t _col;
+						uint8_t _vram[16384];
 						uint8_t _data[SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL];
 						uint8_t _backcolor;
 						uint8_t _lastbackcolor;
@@ -58,13 +57,12 @@ namespace awui {
 					};
 
 					Drawing::Image * _image;
-					Motherboard * _motherboard;
 
 					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync);
 					void DrawImage();
 
 				public:
-					ULA(Motherboard * motherboard);
+					ULA();
 					~ULA();
 
 					bool OnTick(uint32_t counter);
@@ -77,6 +75,8 @@ namespace awui {
 					void SaveState(uint8_t * data);
 
 					inline void SetBackColor(uint8_t color) { this->d._backcolor = color; }
+					inline uint8_t ReadByte(uint32_t pos) const { return this->d._vram[pos]; }
+					inline void WriteByte(uint32_t pos, uint8_t value) { this->d._vram[pos] = value; }
 
 					Drawing::Image * GetImage() { return this->_image; }
 			};

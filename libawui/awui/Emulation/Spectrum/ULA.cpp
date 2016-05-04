@@ -56,9 +56,7 @@ Tienen en cuenta que un pixel es 2x2
 Asi que la resolucion real de un televisor es 360x270
 */
 
-ULA::ULA(Motherboard * motherboard) {
-	this->_motherboard = motherboard;
-
+ULA::ULA() {
 	this->d._line = 0;
 	this->d._col = 0;
 	this->d._backcolor = 0;
@@ -75,6 +73,7 @@ ULA::~ULA() {
 }
 
 void ULA::Reset() {
+	memset(this->d._vram, 0, 16384 * sizeof(uint8_t));
 	memset(this->d._data, 0, SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL * sizeof(uint8_t));
 	this->_image->Clear();
 }
@@ -138,11 +137,11 @@ bool ULA::OnTick(uint32_t counter) {
 
 	if ((col < SPECTRUM_VIDEO_WIDTH) && (line < SPECTRUM_VIDEO_HEIGHT)) {
 		uint8_t newY = (line & 0xC0) | ((line & 0x38) >> 3) | ((line & 0x7) << 3);
-		uint8_t v = this->_motherboard->d._ram[(col >> 3) + (newY * 32)];
+		uint8_t v = this->d._vram[(col >> 3) + (newY * 32)];
 		int bit = 7 - (col & 0x7);
 		bool active = ((v & (1 << bit)) != 0) ? true : false;
 
-		uint8_t reg = this->_motherboard->d._ram[0x1800 + (col >> 3) + ((line >> 3) * 32)];
+		uint8_t reg = this->d._vram[0x1800 + (col >> 3) + ((line >> 3) * 32)];
 
 		if (reg & 0x80 && this->d._blink)
 			active = !active;
