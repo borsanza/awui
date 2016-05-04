@@ -46,7 +46,7 @@ Stats::Stats() {
 	this->labelFPS->SetDock(DockStyle::Right);
 	this->labelControls->SetTextAlign(ContentAlignment::MiddleRight);
 	// this->labelPercent->SetTextAlign(ContentAlignment::MiddleRight);
-	this->labelFPS->SetTextAlign(ContentAlignment::MiddleRight);
+	this->labelFPS->SetTextAlign(ContentAlignment::MiddleCenter);
 	Color backColor = Color::FromArgb(0, 0, 0, 0);
 	Color foreColor = Color::FromArgb(255, 255, 255);
 	this->heartbeat->SetBackColor(backColor);
@@ -68,7 +68,7 @@ Stats::Stats() {
 	this->GetControls()->Add(this->spinner);
 	this->GetControls()->Add(this->labelFPS);
 	// this->GetControls()->Add(this->labelPercent);
-	this->GetControls()->Add(this->labelControls);
+	// this->GetControls()->Add(this->labelControls);
 	this->SetHeight(24);
 }
 
