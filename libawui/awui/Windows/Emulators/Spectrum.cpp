@@ -13,6 +13,7 @@
 #include <awui/Emulation/Spectrum/Motherboard.h>
 #include <awui/Emulation/Spectrum/ULA.h>
 #include <awui/Emulation/Spectrum/SoundSDL.h>
+#include <awui/Emulation/Spectrum/TapeCorder.h>
 #include <awui/IO/FileStream.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
@@ -23,9 +24,21 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::Spectrum;
 
+void WriteCassetteCB(int32_t value, void * data) { /* printf("%d\n", value); */ }
+int32_t ReadCassetteCB(void * data) {
+	TapeCorder * tape = ((Spectrum *) data)->GetTapeCorder();
+	if (!tape)
+		return 0;
+
+	return tape->GetNext();
+}
+
 Spectrum::Spectrum() {
 	this->SetSize(1, 1);
-	this->_cpu = new Motherboard();
+	this->_motherboard = new Motherboard();
+	this->_motherboard->SetWriteCassetteCB(WriteCassetteCB, this);
+	this->_motherboard->SetReadCassetteCB(ReadCassetteCB, this);
+
 	this->SetTabStop(true);
 	this->_multiply = 1;
 	this->_canChangeControl = true;
@@ -35,10 +48,11 @@ Spectrum::Spectrum() {
 	this->_last = -1;
 	this->_lastTick = 0;
 	this->_fileSlot = 0;
+	this->_tapecorder = new TapeCorder();
 }
 
 Spectrum::~Spectrum() {
-	delete this->_cpu;
+	delete this->_motherboard;
 }
 
 int Spectrum::IsClass(Classes::Enum objectClass) const {
@@ -50,7 +64,7 @@ int Spectrum::IsClass(Classes::Enum objectClass) const {
 
 void Spectrum::LoadRom(const String file) {
 	this->SetName(file);
-	this->_cpu->LoadRom(file);
+	this->_motherboard->LoadRom(file);
 	this->_first = 0;
 	this->_last = 0;
 	this->_lastTick = DateTime::GetNow().GetTicks();
@@ -60,11 +74,11 @@ void Spectrum::CheckLimits() {
 }
 
 void Spectrum::OnTick() {
-	this->_cpu->OnTick();
+	this->_motherboard->OnTick();
 }
 
 Motherboard * Spectrum::GetCPU() {
-	return this->_cpu;
+	return this->_motherboard;
 }
 
 // Interface:
@@ -76,7 +90,7 @@ Motherboard * Spectrum::GetCPU() {
 // 7100 pixel stretch, 16 bytes.
 
 void Spectrum::OnPaint(GL* gl) {
-	ULA * ula = this->_cpu->GetULA();
+	ULA * ula = this->_motherboard->GetULA();
 
 	int width = ula->GetImage()->GetWidth() * this->_multiply;
 	int height = ula->GetImage()->GetHeight() * this->_multiply;
@@ -93,15 +107,21 @@ void Spectrum::SetMultiply(int multiply) {
 
 void Spectrum::CallKey(int key, bool pressed) {
 	if (pressed)
-		this->_cpu->OnKeyPress(key / 10, 1 << (key % 10));
+		this->_motherboard->OnKeyPress(key / 10, 1 << (key % 10));
 	else
-		this->_cpu->OnKeyUp(key / 10, 1 << (key % 10));
+		this->_motherboard->OnKeyUp(key / 10, 1 << (key % 10));
+}
+
+void Spectrum::LoadCassette() {
+	this->_tapecorder->LoadFile();
 }
 
 void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 	switch (key) {
-		case Keys::Key_F2:     this->SaveState(); break;
-		case Keys::Key_F4:     this->LoadState(); break;
+		case Keys::Key_F2:     if (pressed) this->SaveState(); break;
+		case Keys::Key_F4:     if (pressed) this->LoadState(); break;
+		case Keys::Key_F8:     if (pressed) this->_motherboard->Fast(); break;
+		case Keys::Key_F9:     if (pressed) this->LoadCassette(); break;
 		case Keys::Key_LSHIFT:
 		case Keys::Key_RSHIFT: this->CallKey(00, pressed); break;
 		case Keys::Key_Z:      this->CallKey(01, pressed); break;
@@ -267,7 +287,7 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		this->_actual--;
 		if (this->_actual < this->_first)
 			this->_actual = this->_first;
-		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
+		this->_motherboard->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
 		ret = true;
 	}
 */
@@ -277,7 +297,7 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		this->_actual++;
 		if (this->_actual > this->_last)
 			this->_actual = this->_last;
-		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
+		this->_motherboard->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
 		ret = true;
 	}
 */
@@ -300,14 +320,14 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		this->SaveState();
 
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET) {
-		this->_cpu->Reset();
+		this->_motherboard->Reset();
 		ret = true;
 	}
 
 //	uint8_t pad1 = this->GetPad(0);
 //	uint8_t pad2 = this->GetPad(1);
-//	this->_cpu->SetPad1(pad1);
-//	this->_cpu->SetPad2(pad2);
+//	this->_motherboard->SetPad1(pad1);
+//	this->_motherboard->SetPad2(pad2);
 
 	if (ret)
 		return ret;
@@ -349,8 +369,8 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 
 	uint8_t pad1 = this->GetPad(0);
 	uint8_t pad2 = this->GetPad(1);
-//	this->_cpu->SetPad1(pad1);
-//	this->_cpu->SetPad2(pad2);
+//	this->_motherboard->SetPad1(pad1);
+//	this->_motherboard->SetPad2(pad2);
 	bool paused = (((pad1 & 0x40) == 0) | ((pad2 & 0x40) == 0));
 	if (!paused)
 		this->_pause = false;
@@ -384,7 +404,7 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 }
 
 void Spectrum::SetSoundEnabled(bool mode) {
-	SoundSDL::Instance()->SetPlayingSound(mode ? this->_cpu->GetSound() : 0);
+	SoundSDL::Instance()->SetPlayingSound(mode ? this->_motherboard->GetSound() : 0);
 }
 
 void Spectrum::LoadState() {
@@ -400,8 +420,10 @@ void Spectrum::LoadState() {
 		FileStream * file = new FileStream(name, FileMode::Open, FileAccess::Read);
 		for (unsigned int i = 0; i < file->GetLength(); i++)
 			savedData[i] = file->ReadByte();
+		file->Close();
+		delete file;
 
-		this->_cpu->LoadState(savedData);
+		this->_motherboard->LoadState(savedData);
 		free(savedData);
 	}
 }
@@ -416,7 +438,7 @@ void Spectrum::SaveState() {
 
 	uint8_t * savedData = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
 	FileStream * file = new FileStream(name, FileMode::Truncate, FileAccess::Write);
-	this->_cpu->SaveState(savedData);
+	this->_motherboard->SaveState(savedData);
 
 	for (int i = 0; i < Motherboard::GetSaveSize(); i++)
 		file->WriteByte(savedData[i]);

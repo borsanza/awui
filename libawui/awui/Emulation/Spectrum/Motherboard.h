@@ -42,6 +42,7 @@ namespace awui {
 					int64_t _lastCycles;
 					int64_t _lastWriteCycle;
 					bool _lastWriteState;
+					bool _fast;
 
 					int64_t _lastReadCycle;
 					int64_t _countReadCycles;
@@ -50,9 +51,9 @@ namespace awui {
 					void Print(const char * str, ...);
 					void CheckInterrupts();
 
-					void (*_writeCassetteCB) (int16_t data);
+					void (*_writeCassetteCB) (int32_t data, void *);
 					void * _writeCassetteDataCB;
-					int16_t (*_readCassetteCB) ();
+					int32_t (*_readCassetteCB) (void *);
 					void * _readCassetteDataCB;
 					void ProcessCassette();
 
@@ -90,8 +91,10 @@ namespace awui {
 
 					inline ULA * GetULA() const { return this->_ula; }
 
-					void SetWriteCassetteCB(void (* fun)(int16_t), void * data);
-					void SetReadCassetteCB(int16_t (* fun)(), void * data);
+					void SetWriteCassetteCB(void (* fun)(int32_t, void *), void * data);
+					void SetReadCassetteCB(int32_t (* fun)(void *), void * data);
+
+					void Fast() { this->_fast = !this->_fast; };
 			};
 		}
 	}
