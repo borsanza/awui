@@ -9,8 +9,8 @@
 #include <awui/Console.h>
 #include <awui/String.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
-#include <awui/Windows/Emulators/DebuggerSMS.h>
 #include <awui/Windows/Emulators/Chip8.h>
+#include <awui/Windows/Emulators/DebuggerSMS.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Emulators/Spectrum.h>
 #include <awui/Windows/Forms/ControlCollection.h>

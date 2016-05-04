@@ -9,12 +9,12 @@
 #include <assert.h>
 #include <string.h>
 #include <awui/Console.h>
+#include <awui/Convert.h>
 #include <awui/DateTime.h>
 #include <awui/Emulation/Common/Rom.h>
 #include <awui/Emulation/Processors/Z80/CPU.h>
 #include <awui/Emulation/Spectrum/Sound.h>
 #include <awui/Emulation/Spectrum/ULA.h>
-#include <awui/Convert.h>
 
 using namespace awui;
 using namespace awui::Emulation;

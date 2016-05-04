@@ -6,8 +6,8 @@
 
 #include "ULA.h"
 
-#include <awui/Emulation/Spectrum/Motherboard.h>
 #include <awui/Drawing/Image.h>
+#include <awui/Emulation/Spectrum/Motherboard.h>
 #include <assert.h>
 #include <string.h>
 

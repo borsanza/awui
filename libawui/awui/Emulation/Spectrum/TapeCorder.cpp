@@ -7,8 +7,8 @@
 #include "TapeCorder.h"
 
 #include <awui/Collections/ArrayList.h>
-#include <awui/IO/FileStream.h>
 #include <awui/Emulation/Common/Word.h>
+#include <awui/IO/FileStream.h>
 
 using namespace awui::Collections;
 using namespace awui::Emulation::Spectrum;

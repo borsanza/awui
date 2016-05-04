@@ -8,15 +8,15 @@
 
 #include <awui/Console.h>
 #include <awui/Convert.h>
-#include <awui/Drawing/Image.h>
 #include <awui/DateTime.h>
+#include <awui/Drawing/Image.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
-#include <awui/Emulation/Spectrum/ULA.h>
 #include <awui/Emulation/Spectrum/SoundSDL.h>
 #include <awui/Emulation/Spectrum/TapeCorder.h>
+#include <awui/Emulation/Spectrum/ULA.h>
 #include <awui/IO/FileStream.h>
-#include <awui/Windows/Forms/Form.h>
 #include <awui/OpenGL/GL.h>
+#include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
 
 using namespace awui::IO;
