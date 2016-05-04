@@ -29,12 +29,8 @@ namespace awui {
 			class ULA {
 				private:
 					struct saveData {
-						uint16_t _width;
-						uint16_t _height;
 						uint16_t _line;
 						uint16_t _col;
-						bool _interrupt:1;
-						uint8_t _vram[16384];
 						uint8_t _data[SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL];
 						uint8_t _backcolor;
 						uint8_t _lastbackcolor;
@@ -62,40 +58,25 @@ namespace awui {
 					};
 
 					Drawing::Image * _image;
+					Motherboard * _motherboard;
 
-					void SetHeight(uint16_t height);
 					void CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync);
 					void DrawImage();
 
 				public:
-					ULA();
+					ULA(Motherboard * motherboard);
 					~ULA();
 
 					bool OnTick(uint32_t counter);
 
 					void Reset();
 
-					uint8_t * GetVram();
-
-					uint16_t GetVisualWidth() const;
-					uint16_t GetVisualHeight() const;
-
-					void Clear();
-
-					bool GetInterrupt();
-
-					uint16_t GetLine() const;
-					uint16_t GetColumn() const;
-
 					static int GetSaveSize();
 
 					void LoadState(uint8_t * data);
 					void SaveState(uint8_t * data);
 
-					inline uint8_t GetBackColor() const { return this->d._backcolor; }
 					inline void SetBackColor(uint8_t color) { this->d._backcolor = color; }
-					inline uint8_t ReadByte(uint32_t pos) const { return this->d._vram[pos]; }
-					inline void WriteByte(uint32_t pos, uint8_t value) { this->d._vram[pos] = value; }
 
 					Drawing::Image * GetImage() { return this->_image; }
 			};

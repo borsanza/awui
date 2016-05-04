@@ -41,13 +41,13 @@ Motherboard::Motherboard() {
 	this->_lastReadCycle = 0;
 	this->_lastReadState = 0;
 
-	this->_ula = new ULA();
+	this->_ula = new ULA(this);
 	this->_sound = new Sound();
 	this->_cycles = 0;
 	this->_cyclesULA = 0;
 	this->_fast = false;
 
-	this->_rom = new Common::Rom(4096);
+	this->_rom = new Common::Rom(16384);
 
 	for (int i = 0; i < 8; i++)
 		this->d._keys[i] = 0xFF;
@@ -65,8 +65,7 @@ void Motherboard::Reset() {
 	this->_z80->Reset();
 	this->_ula->Reset();
 
-	memset(this->d._ram, 0, 8192 * sizeof(uint8_t));
-	memset(this->d._boardram, 0, 32768 * sizeof(uint8_t));
+	memset(this->d._ram, 0, 49152 * sizeof(uint8_t));
 }
 
 void Motherboard::LoadRom(const String file) {
@@ -119,7 +118,7 @@ void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
 	double speed = 3500000.0f;
 	if (this->_fast)
-		speed *= 9;
+		speed *= 10;
 
 	double cyclesFrame = speed / 59.922743404f;
 
@@ -147,35 +146,29 @@ void Motherboard::OnTick() {
 	this->_cycles -= cyclesFrame;
 }
 
+// 0000 - 3FFF: ROM Memory
+// 4000 - 57FF: Screen Memory
+// 5800 - 5AFF: Color Data)
+// 5B00 - 5BFF: Printer Buffer
+// 5C00 - 5CBF: System Variables
+// 5CC0 - 5CCA: Reserved
+// 5CCB - FF57: Memory (PROG and RAMTOP)
+// FF58 - FFFF: Reserved
 void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
-	// En la rom no se escribe
-	if (pos < 0x4000)
-		return;
-
-	if (pos < 0x8000) {
-		this->_ula->WriteByte(pos - 0x4000, value);
+	if (pos < 0x4000) {
+		// En la rom no se escribe
+		// this->_rom->WriteByte(pos, value);
 		return;
 	}
 
-	if (pos < 0xE000) {
-		this->d._ram[pos - 0xC000] = value;
-		return;
-	}
-
-	this->d._ram[pos - 0xE000] = value;
+	this->d._ram[pos - 0x4000] = value;
 }
 
 uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 	if (pos < 0x4000)
 		return this->_rom->ReadByte(pos);
 
-	if (pos < 0x8000)
-		return this->_ula->ReadByte(pos - 0x4000);
-
-	if (pos < 0xE000)
-		return this->d._ram[pos - 0xC000];
-
-	return this->d._ram[pos - 0xE000];
+	return this->d._ram[pos - 0x4000];
 }
 
 void Motherboard::WritePort(uint8_t port, uint8_t value) {

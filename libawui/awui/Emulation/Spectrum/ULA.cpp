@@ -56,13 +56,11 @@ Tienen en cuenta que un pixel es 2x2
 Asi que la resolucion real de un televisor es 360x270
 */
 
-ULA::ULA() {
-	this->d._width = 256;
-	this->d._height = 192;
+ULA::ULA(Motherboard * motherboard) {
+	this->_motherboard = motherboard;
 
 	this->d._line = 0;
 	this->d._col = 0;
-	this->d._interrupt = false;
 	this->d._backcolor = 0;
 	this->d._blinkCount = 0;
 	this->d._blink = false;
@@ -77,38 +75,8 @@ ULA::~ULA() {
 }
 
 void ULA::Reset() {
-	this->Clear();
-	this->_image->Clear();
-	memset(this->d._vram, 0, 16384 * sizeof(uint8_t));
-}
-
-void ULA::Clear() {
 	memset(this->d._data, 0, SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL * sizeof(uint8_t));
-}
-
-uint8_t * ULA::GetVram() {
-	return this->d._vram;
-}
-
-uint16_t ULA::GetLine() const {
-	return this->d._line;
-}
-
-uint16_t ULA::GetColumn() const {
-	return this->d._col;
-}
-
-void ULA::SetHeight(uint16_t height) {
-	if (height != this->d._height)
-		this->d._height = height;
-}
-
-uint16_t ULA::GetVisualWidth() const {
-	return SPECTRUM_VIDEO_WIDTH_VISUAL;
-}
-
-uint16_t ULA::GetVisualHeight() const {
-	return SPECTRUM_VIDEO_HEIGHT_VISUAL;
+	this->_image->Clear();
 }
 
 /* VSYNC
@@ -145,10 +113,8 @@ void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vs
 		*hsync = true;
 	}
 
-	if ((*col == 0) && (*line == (SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM))) {
-		this->d._interrupt = true;
+	if ((*col == 0) && (*line == (SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM)))
 		*vsync = true;
-	}
 }
 
 bool ULA::OnTick(uint32_t counter) {
@@ -172,11 +138,11 @@ bool ULA::OnTick(uint32_t counter) {
 
 	if ((col < SPECTRUM_VIDEO_WIDTH) && (line < SPECTRUM_VIDEO_HEIGHT)) {
 		uint8_t newY = (line & 0xC0) | ((line & 0x38) >> 3) | ((line & 0x7) << 3);
-		uint8_t v = this->d._vram[(col >> 3) + (newY * 32)];
+		uint8_t v = this->_motherboard->d._ram[(col >> 3) + (newY * 32)];
 		int bit = 7 - (col & 0x7);
 		bool active = ((v & (1 << bit)) != 0) ? true : false;
 
-		uint8_t reg = this->d._vram[0x1800 + (col >> 3) + ((line >> 3) * 32)];
+		uint8_t reg = this->_motherboard->d._ram[0x1800 + (col >> 3) + ((line >> 3) * 32)];
 
 		if (reg & 0x80 && this->d._blink)
 			active = !active;
@@ -202,15 +168,6 @@ bool ULA::OnTick(uint32_t counter) {
 	}
 
 	return vsync;
-}
-
-bool ULA::GetInterrupt() {
-	if (this->d._interrupt) {
-		this->d._interrupt = false;
-		return true;
-	}
-
-	return false;
 }
 
 int ULA::GetSaveSize() {
