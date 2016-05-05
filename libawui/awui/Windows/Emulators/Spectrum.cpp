@@ -17,7 +17,6 @@
 #include <awui/IO/FileStream.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Emulators/DebuggerSMS.h>
 
 using namespace awui::IO;
 using namespace awui::OpenGL;
@@ -236,43 +235,31 @@ bool Spectrum::OnKeyUp(Keys::Enum key) {
 	return true;
 }
 
-uint8_t Spectrum::GetPad(int which) const {
+uint8_t Spectrum::GetPad() const {
 	if (this->_canChangeControl)
 		return 0xFF;
 
-	uint32_t buttons;
-	switch (which) {
-		default:
-		case 0:
-			buttons = Form::GetButtonsPad1();
-			break;
-		case 1:
-			buttons = Form::GetButtonsPad2();
-			break;
-	}
+	uint32_t buttons = Form::GetButtonsPad1();
 
 	uint8_t pad = 0x00;
 
-	if (!(buttons & RemoteButtons::Up))
-		pad |= 0x01;
+	if (buttons & RemoteButtons::SNES_SELECT)
+		return 0x00;
 
-	if (!(buttons & RemoteButtons::Down))
-		pad |= 0x02;
-
-	if (!(buttons & RemoteButtons::Left))
-		pad |= 0x04;
-
-	if (!(buttons & RemoteButtons::Right))
+	if (buttons & RemoteButtons::Up)
 		pad |= 0x08;
 
-	if (!(buttons & RemoteButtons::Ok))
-		pad |= _invertKeys ? 0x20 : 0x10;
+	if (buttons & RemoteButtons::Down)
+		pad |= 0x04;
 
-	if (!(buttons & RemoteButtons::Play))
-		pad |= _invertKeys ? 0x10 : 0x20;
+	if (buttons & RemoteButtons::Left)
+		pad |= 0x02;
 
-	if (!(buttons & RemoteButtons::Pause))
-		pad |= 0x40;
+	if (buttons & RemoteButtons::Right)
+		pad |= 0x01;
+
+	if (buttons & (RemoteButtons::SNES_Y | RemoteButtons::SNES_B))
+		pad |= 0x10;
 
 	return pad;
 }
@@ -280,27 +267,6 @@ uint8_t Spectrum::GetPad(int which) const {
 bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	bool ret = false;
 
-	//Console::WriteLine(Convert::ToString(button));
-/*
-	if (Form::GetButtonsPad1() == RemoteButtons::SNES_L) {
-		this->_lastTick = DateTime::GetNow().GetTicks();
-		this->_actual--;
-		if (this->_actual < this->_first)
-			this->_actual = this->_first;
-		this->_motherboard->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
-		ret = true;
-	}
-*/
-/*
-	if (Form::GetButtonsPad1() == RemoteButtons::SNES_R) {
-		this->_lastTick = DateTime::GetNow().GetTicks();
-		this->_actual++;
-		if (this->_actual > this->_last)
-			this->_actual = this->_last;
-		this->_motherboard->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
-		ret = true;
-	}
-*/
 	if (_fileSlot > 0 && (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_DECREASE)) {
 		_fileSlot--;
 		Console::Write("Estado: ");
@@ -324,37 +290,14 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		ret = true;
 	}
 
-//	uint8_t pad1 = this->GetPad(0);
-//	uint8_t pad2 = this->GetPad(1);
-//	this->_motherboard->SetPad1(pad1);
-//	this->_motherboard->SetPad2(pad2);
-
 	if (ret)
 		return ret;
 
 	if (this->_canChangeControl)
 		return Control::OnRemoteKeyPress(which, button);
 	else {
-		switch (button) {
-			case RemoteButtons::Up:
-				this->CallKey(00, true);
-				this->CallKey(43, true);
-				break;
-			case RemoteButtons::Down:
-				this->CallKey(00, true);
-				this->CallKey(44, true);
-				break;
-			case RemoteButtons::Left:
-				this->CallKey(00, true);
-				this->CallKey(34, true);
-				break;
-			case RemoteButtons::Right:
-				this->CallKey(00, true);
-				this->CallKey(42, true);
-				break;
-			default:
-				break;
-		}
+		uint8_t pad1 = this->GetPad();
+		this->_motherboard->OnPadEvent(pad1);
 	}
 
 	return true;
@@ -367,38 +310,16 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	if (button & RemoteButtons::Menu)
 		this->_canChangeControl = true;
 
-	uint8_t pad1 = this->GetPad(0);
-	uint8_t pad2 = this->GetPad(1);
-//	this->_motherboard->SetPad1(pad1);
-//	this->_motherboard->SetPad2(pad2);
-	bool paused = (((pad1 & 0x40) == 0) | ((pad2 & 0x40) == 0));
+	uint8_t pad1 = this->GetPad();
+
+	bool paused = ((pad1 & 0x40) == 0);
 	if (!paused)
 		this->_pause = false;
 
 	if (this->_canChangeControl)
 		return Control::OnRemoteKeyUp(which, button);
-	else {
-		switch (button) {
-			case RemoteButtons::Up:
-				this->CallKey(00, false);
-				this->CallKey(43, false);
-				break;
-			case RemoteButtons::Down:
-				this->CallKey(00, false);
-				this->CallKey(44, false);
-				break;
-			case RemoteButtons::Left:
-				this->CallKey(00, false);
-				this->CallKey(34, false);
-				break;
-			case RemoteButtons::Right:
-				this->CallKey(00, false);
-				this->CallKey(42, false);
-				break;
-			default:
-				break;
-		}
-	}
+	else
+		this->_motherboard->OnPadEvent(pad1);
 
 	return true;
 }

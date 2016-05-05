@@ -198,33 +198,45 @@ void Motherboard::WritePort(uint8_t port, uint8_t value) {
 }
 
 uint8_t Motherboard::ReadPort(uint8_t port) const {
-	if (port == 0xFE) {
-		assert(this->_z80->GetAddressBus().L == 0xFE);
+	if ((port & 0x20) == 0)
+		return this->d._kempston;
+
+	// Entra en todas las direcciones pares
+	if ((port & 0x01) == 0) {
+		assert(this->_z80->GetAddressBus().L == port);
 		uint8_t row = this->_z80->GetAddressBus().H;
 
 		uint8_t value = 0xFF;
-
+/*
 		for (int i = 0; i <= 7; i++) {
-			if ((row & 1) == 0)
+			if ((row & 0x01) == 0)
 				value &= this->d._keys[i];
 			row >>= 1;
 		}
-
-		if (this->_lastReadState)
-			value |= 0x40;
-		else
-			value &= 0xBF;
+*/
+		if ((row & 0x01) == 0) value &= this->d._keys[0];
+		if ((row & 0x02) == 0) value &= this->d._keys[1];
+		if ((row & 0x04) == 0) value &= this->d._keys[2];
+		if ((row & 0x08) == 0) value &= this->d._keys[3];
+		if ((row & 0x10) == 0) value &= this->d._keys[4];
+		if ((row & 0x20) == 0) value &= this->d._keys[5];
+		if ((row & 0x40) == 0) value &= this->d._keys[6];
+		if ((row & 0x80) == 0) value &= this->d._keys[7];
 
 /*
 		if (value != 0xFF) {
 			for (int i = 0; i <= 7; i++)
 				printf("%d: %X  ", i, this->d._keys[i]);
-			printf("port: %X  ", port);
+			printf("Row: %.2X  ", this->_z80->GetAddressBus().H ^ 0xFF);
 			printf("address: %X  ", this->_z80->GetAddressBus().W);
 			printf("Value: %X  ", value);
 			printf("\n");
 		}
 */
+		if (this->_lastReadState)
+			value |= 0x40;
+		else
+			value &= 0xBF;
 
 		return value;
 	}
@@ -271,6 +283,10 @@ void Motherboard::OnKeyPress(uint8_t row, uint8_t key) {
 void Motherboard::OnKeyUp(uint8_t row, uint8_t key) {
 	this->d._keys[row] |= key;
 	// printf("Up %d: %x\n", row, this->d._keys[row]);
+}
+
+void Motherboard::OnPadEvent(uint8_t status) {
+	this->d._kempston = status;
 }
 
 void Motherboard::SetWriteCassetteCB(void (* fun)(int32_t, void *), void * data) {

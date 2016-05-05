@@ -21,12 +21,11 @@ namespace awui {
 					int _multiply;
 					bool _canChangeControl;
 					bool _pause;
-					bool _invertKeys;
 					int _fileSlot;
 
 					awui::Emulation::Spectrum::TapeCorder * _tapecorder;
 
-					uint8_t GetPad(int which) const;
+					uint8_t GetPad() const;
 
 					int _first;
 					int _last;
