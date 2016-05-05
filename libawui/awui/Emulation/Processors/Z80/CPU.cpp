@@ -1423,13 +1423,13 @@ void CPU::RunOpcode() {
 				this->d._cycles += 12; // 71400;
 				if (this->_showNotImplemented) {
 #ifdef SLOW
-//					printf("(SP = %.4X) ", this->d._registers.GetSP());
+					printf("(SP = %.4X) ", this->d._registers.GetSP());
 					printf("%s: ", logLine);
 					printf("%s ", logCode);
 					this->_opcode.ShowLogOpcode(this, opcodeEnum);
+#endif
 					printf(" (Not implemented)\n");
 					fflush(stdout);
-#endif
 					this->_showNotImplemented = false;
 				}
 			}

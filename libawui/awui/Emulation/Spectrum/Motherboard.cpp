@@ -76,11 +76,34 @@ void Motherboard::CheckInterrupts() {
 	if (!this->_z80->GetRegisters()->GetIFF1())
 		return;
 
-//		printf("Entra %d\n", this->_vdp->GetLine());
+	Word newPC;
+	switch (this->_z80->GetRegisters()->GetIM()) {
+		case 0:
+			printf("Motherboard::CheckInterrupts: Mode 0 IM: No testeado\n");
+			newPC.W = 0x0038;
+			break;
+		case 1:
+			newPC.W = 0x0038;
+			break;
+		case 2: {
+			Word address;
+			address.H = this->_z80->GetRegisters()->GetI();
+			address.L = 0xFF;
+			newPC.L = this->_z80->ReadMemory(address.W);
+			address.W++;
+			newPC.H = this->_z80->ReadMemory(address.W);
+			break;
+		}
+		default:
+			newPC.W = 0x0038;
+			printf("Motherboard::CheckInterrupts: Mode %d IM: Desconocido\n", this->_z80->GetRegisters()->GetIM());
+			break;
+	}
+
 	this->_z80->SetInInterrupt(true);
 	this->_z80->GetRegisters()->SetIFF1(false);
 	this->_z80->GetRegisters()->SetIFF2(false);
-	this->_z80->CallInterrupt(0x0038);
+	this->_z80->CallInterrupt(newPC.W);
 }
 
 void Motherboard::ProcessCassette() {
