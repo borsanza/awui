@@ -35,12 +35,6 @@ void TapeCorder::Clear() {
 	}
 }
 
-// 0	1	(2) Header 0x13 0x00
-// 2	20	(19)
-// 21	22	(2) Size
-// 23	26	(4)
-// 27	..	(x) Data
-
 void TapeCorder::LoadFile(const String fileParam) {
 	this->Clear();
 	this->_list = new ArrayList();
@@ -50,7 +44,6 @@ void TapeCorder::LoadFile(const String fileParam) {
 	Word blocks;
 	int state = 0;
 
-	int total = 0;
 	int cont;
 	TapeBlock * block;
 	for (unsigned int i = 0; i < file->GetLength(); i++) {
@@ -63,8 +56,6 @@ void TapeCorder::LoadFile(const String fileParam) {
 			case 1:
 				state++;
 				blocks.H = data;
-				total += 2;
-				total += blocks.W;
 				block = new TapeBlock(blocks.W);
 				this->_list->Add(block);
 				cont = 0;
@@ -101,8 +92,10 @@ uint32_t TapeCorder::GetNext() {
 	if (!this->_playing)
 		return -1;
 
-	if (this->_list && (this->_block >= this->_list->GetCount()))
+	if (!this->_list)
 		return -1;
+
+	// if (this->_state != 8) printf("%d\n", this->_state);
 
 	switch (this->_state) {
 		case 0: // Carga lenta
@@ -154,7 +147,10 @@ uint32_t TapeCorder::GetNext() {
 		}
 
 		case 5: // Mini Pausa
-			this->_state = 6;
+			if (this->_list && (this->_block >= this->_list->GetCount()))
+				this->_state = 8;
+			else
+				this->_state = 6;
 			return 945;
 		case 6: // Pausa
 			this->_state = 7;
@@ -166,6 +162,8 @@ uint32_t TapeCorder::GetNext() {
 				this->_state = 1;
 
 			return  2168;
+		case 8: // Fin
+			break;
 	}
 
 	return -1;

@@ -144,7 +144,12 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 		case Keys::Key_F2:     if (pressed) this->SaveState(); break;
 		case Keys::Key_F4:     if (pressed) this->LoadState(); break;
 		case Keys::Key_F8:     if (pressed) this->_motherboard->Fast(); break;
-		case Keys::Key_F9:     if (pressed) this->_tapecorder->Play();; break;
+		case Keys::Key_F9:
+			if (pressed) {
+				this->_tapecorder->Rewind();
+				this->_tapecorder->Play();
+			}
+			break;
 		case Keys::Key_LSHIFT:
 		case Keys::Key_RSHIFT: this->CallKey(00, pressed); break;
 		case Keys::Key_Z:      this->CallKey(01, pressed); break;
