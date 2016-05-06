@@ -38,6 +38,9 @@ namespace awui {
 					int32_t _cycle;
 					bool _playing;
 
+					void (*_finishCassetteCB) (void *);
+					void * _finishCassetteDataCB;
+
 					void Clear();
 
 				public:
@@ -49,6 +52,8 @@ namespace awui {
 					void Rewind();
 					void Play();
 					uint32_t GetNext();
+
+					void SetFinishCassetteCB(void (* fun)(void *), void * data);
 			};
 		}
 	}

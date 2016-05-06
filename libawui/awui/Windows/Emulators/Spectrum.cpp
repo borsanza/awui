@@ -24,12 +24,19 @@ using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::Spectrum;
 
 void WriteCassetteCB(int32_t value, void * data) { /* printf("%d\n", value); */ }
+
 int32_t ReadCassetteCB(void * data) {
 	TapeCorder * tape = ((Spectrum *) data)->GetTapeCorder();
 	if (!tape)
 		return 0;
 
 	return tape->GetNext();
+}
+
+void FinishCassetteCB(void * data) {
+	Spectrum * spectrum = ((Spectrum *) data);
+	if (spectrum && spectrum->GetMotherboard())
+		spectrum->GetMotherboard()->SetFast(false);
 }
 
 Spectrum::Spectrum() {
@@ -48,6 +55,7 @@ Spectrum::Spectrum() {
 	this->_lastTick = 0;
 	this->_fileSlot = 0;
 	this->_tapecorder = new TapeCorder();
+	this->_tapecorder->SetFinishCassetteCB(FinishCassetteCB, this);
 }
 
 Spectrum::~Spectrum() {
@@ -143,7 +151,7 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 	switch (key) {
 		case Keys::Key_F2:     if (pressed) this->SaveState(); break;
 		case Keys::Key_F4:     if (pressed) this->LoadState(); break;
-		case Keys::Key_F8:     if (pressed) this->_motherboard->Fast(); break;
+		case Keys::Key_F8:     if (pressed) this->_motherboard->SetFast(!this->_motherboard->GetFast()); break;
 		case Keys::Key_F9:
 			if (pressed) {
 				this->_tapecorder->Rewind();

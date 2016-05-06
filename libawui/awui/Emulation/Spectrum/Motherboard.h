@@ -95,7 +95,8 @@ namespace awui {
 					void SetWriteCassetteCB(void (* fun)(int32_t, void *), void * data);
 					void SetReadCassetteCB(int32_t (* fun)(void *), void * data);
 
-					void Fast() { this->_fast = !this->_fast; };
+					void SetFast(bool mode) { this->_fast = mode; };
+					bool GetFast() { return this->_fast; };
 			};
 		}
 	}

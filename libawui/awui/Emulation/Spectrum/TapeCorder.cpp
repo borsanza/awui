@@ -163,10 +163,20 @@ uint32_t TapeCorder::GetNext() {
 
 			return  2168;
 		case 8: // Fin
+			if (this->_finishCassetteCB)
+				this->_finishCassetteCB(this->_finishCassetteDataCB);
+			this->_state = 9;
+			break;
+		case 9:
 			break;
 	}
 
 	return -1;
+}
+
+void TapeCorder::SetFinishCassetteCB(void (* fun)(void *), void * data) {
+	this->_finishCassetteCB = fun;
+	this->_finishCassetteDataCB = data;
 }
 
 /******************************************************************************/

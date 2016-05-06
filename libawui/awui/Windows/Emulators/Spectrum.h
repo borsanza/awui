@@ -61,6 +61,7 @@ namespace awui {
 					virtual void SetSoundEnabled(bool mode);
 
 					awui::Emulation::Spectrum::TapeCorder * GetTapeCorder() { return this->_tapecorder; }
+					awui::Emulation::Spectrum::Motherboard * GetMotherboard() { return this->_motherboard; }
 			};
 		}
 	}
