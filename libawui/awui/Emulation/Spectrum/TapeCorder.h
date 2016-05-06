@@ -44,9 +44,10 @@ namespace awui {
 					TapeCorder();
 					~TapeCorder();
 
-					void LoadFile();
+					void LoadFile(const String file);
 
 					void Rewind();
+					void Play();
 					uint32_t GetNext();
 			};
 		}

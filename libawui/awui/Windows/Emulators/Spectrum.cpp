@@ -62,8 +62,36 @@ int Spectrum::IsClass(Classes::Enum objectClass) const {
 }
 
 void Spectrum::LoadRom(const String file) {
-	this->SetName(file);
-	this->_motherboard->LoadRom(file);
+	if (file.EndsWith(".rom"))
+		this->_motherboard->LoadRom(file);
+
+	if (file.EndsWith(".tap")) {
+		String rom = "roms/zxspectrum/48.rom";
+		ArrayList list = file.Split("/");
+		int found = -1;
+		String system;
+		for (int i = 0; i < list.GetCount(); i++) {
+			String * name = (String *)list.Get(i);
+
+			if (name->CompareTo("roms") == 0)
+				found = i + 2;
+
+			if (found == i)
+				system = String::Concat(*name, ".rom");
+
+			if (i == list.GetCount() -1)
+				this->SetName(*name);
+
+			delete name;
+		}
+
+		if (found != -1)
+			rom = String::Concat("roms/zxspectrum/", system);
+
+		this->_motherboard->LoadRom(rom);
+		this->_tapecorder->LoadFile(file);
+	}
+
 	this->_first = 0;
 	this->_last = 0;
 	this->_lastTick = DateTime::GetNow().GetTicks();
@@ -111,16 +139,12 @@ void Spectrum::CallKey(int key, bool pressed) {
 		this->_motherboard->OnKeyUp(key / 10, 1 << (key % 10));
 }
 
-void Spectrum::LoadCassette() {
-	this->_tapecorder->LoadFile();
-}
-
 void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 	switch (key) {
 		case Keys::Key_F2:     if (pressed) this->SaveState(); break;
 		case Keys::Key_F4:     if (pressed) this->LoadState(); break;
 		case Keys::Key_F8:     if (pressed) this->_motherboard->Fast(); break;
-		case Keys::Key_F9:     if (pressed) this->LoadCassette(); break;
+		case Keys::Key_F9:     if (pressed) this->_tapecorder->Play();; break;
 		case Keys::Key_LSHIFT:
 		case Keys::Key_RSHIFT: this->CallKey(00, pressed); break;
 		case Keys::Key_Z:      this->CallKey(01, pressed); break;

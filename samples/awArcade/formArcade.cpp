@@ -90,7 +90,6 @@ void FormArcade::LoadRom(const awui::String file) {
 		if (*system == "zxspectrum") {
 			Spectrum * szx = new Spectrum();
 			szx->SetMultiply(MULTIPLY);
-		//	szx->LoadOS("");
 			szx->LoadRom(file);
 			arcade = szx;
 			break;

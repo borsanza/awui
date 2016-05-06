@@ -41,11 +41,11 @@ void TapeCorder::Clear() {
 // 23	26	(4)
 // 27	..	(x) Data
 
-void TapeCorder::LoadFile() {
+void TapeCorder::LoadFile(const String fileParam) {
 	this->Clear();
 	this->_list = new ArrayList();
 
-	FileStream * file = new FileStream("demo.tap", FileMode::Open, FileAccess::Read);
+	FileStream * file = new FileStream(fileParam, FileMode::Open, FileAccess::Read);
 
 	Word blocks;
 	int state = 0;
@@ -79,12 +79,14 @@ void TapeCorder::LoadFile() {
 		}
 	}
 
-	this->_playing = true;
-
 	file->Close();
 	delete file;
 
 	this->Rewind();
+}
+
+void TapeCorder::Play() {
+	this->_playing = true;
 }
 
 void TapeCorder::Rewind() {

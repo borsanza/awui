@@ -23,6 +23,7 @@ namespace awui {
 			static int Compare(String strA, String strB);
 			int IndexOf(String value, int startIndex = 0) const;
 			int CompareTo(String strB) const;
+			bool EndsWith(String value) const;
 
 			bool operator==(String value);
 			bool operator!=(String value);

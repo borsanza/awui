@@ -38,6 +38,10 @@ int String::CompareTo(String strB) const {
 	return this->value.compare(strB.value);
 }
 
+bool String::EndsWith(String value) const {
+	return (IndexOf(value, this->GetLength() - value.GetLength()) != -1);
+}
+
 bool String::operator==(String value) {
 	return (String::Compare(*this, value) == 0);
 }
