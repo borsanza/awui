@@ -342,21 +342,54 @@ void CPUInst::LDtofrom(uint8_t to, uint16_t value, uint8_t cycles, uint8_t size)
 /***************** Exchange, Block Transfer, and Search Group *****************/
 /******************************************************************************/
 
-// EX (ss1), ss2
-// |1|19| Exchanges (ss1) with l, and (ss1+1) with h.
-void CPUInst::EX_ss(uint8_t ss1, uint8_t ss2, uint8_t cycles, uint8_t size) {
-	uint16_t ss = this->d._registers.GetRegss(ss1);
-	uint16_t aux = (this->ReadMemory(ss + 1) << 8) | this->ReadMemory(ss);
+/**
+ * EX (SP), HL -> pc:4,sp:3,sp+1:3,sp+1:1,sp+1(write):3,sp(write):3,sp(write):1 x 2
+ * |1|19| Exchanges (SP) with L, and (ss1+1) with H.
+ */
+void CPUInst::EX_SPHL() {
+	this->d._cycles += 4;
+	this->d._registers.IncPC();
+
+	uint16_t ss = this->d._registers.GetSP();
+	Word aux;
+	aux.H = this->ReadMemory(ss + 1);
+	aux.L = this->ReadMemory(ss);
+
+	this->d._cycles += 1;
 
 	Word value2;
-	value2.W = this->d._registers.GetRegss(ss2);
+	value2.W = this->d._registers.GetHL();
 
 	this->WriteMemory(ss + 1, value2.H);
 	this->WriteMemory(ss, value2.L);
-	this->d._registers.SetRegss(ss2, aux);
+	this->d._registers.SetHL(aux.W);
 
-	this->d._registers.IncPC(size);
-	this->d._cycles += cycles;
+	this->d._cycles += 2;
+}
+
+/**
+ * EX (SP), reg -> pc:4,sp:3,sp+1:3,sp+1:1,sp+1(write):3,sp(write):3,sp(write):1 x 2
+ * |2|23| Exchanges (SP) with the IXl/IYl, and (SP+1) with the IXh/IYh.
+ */
+void CPUInst::EX_ssX(uint8_t reg) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
+	uint16_t ss = this->d._registers.GetSP();
+	Word aux;
+	aux.H = this->ReadMemory(ss + 1);
+	aux.L = this->ReadMemory(ss);
+
+	this->d._cycles += 1;
+
+	Word value2;
+	value2.W = this->d._registers.GetRegss(reg);
+
+	this->WriteMemory(ss + 1, value2.H);
+	this->WriteMemory(ss, value2.L);
+	this->d._registers.SetRegss(reg, aux.W);
+
+	this->d._cycles += 2;
 }
 
 // |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented.

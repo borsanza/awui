@@ -559,7 +559,9 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		case OxE3: this->EX_ss(Reg_SP, Reg_HL, 19, 1); break;
+		case OxE3: this->EX_SPHL(); break;
+		case OxDDE3: this->EX_ssX(Reg_IX); break;
+		case OxFDE3: this->EX_ssX(Reg_IY); break;
 
 		// F3 DI
 		// |1|4| Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
@@ -1098,8 +1100,6 @@ void CPU::RunOpcode() {
 		case OxDDBC: this->CP(this->d._registers.GetIXH(), 8, 2); break;
 		case OxDDBD: this->CP(this->d._registers.GetIXL(), 8, 2); break;
 
-		case OxDDE3: this->EX_ss(Reg_SP, Reg_IX, 23, 2); break;
-
 /******************************************************************************/
 /************************* IX bit instructions (DDCB) *************************/
 /******************************************************************************/
@@ -1297,8 +1297,6 @@ void CPU::RunOpcode() {
 		case OxFDB5: this->OR(this->d._registers.GetIYL(), 8, 2); break;
 		case OxFDBC: this->CP(this->d._registers.GetIYH(), 8, 2); break;
 		case OxFDBD: this->CP(this->d._registers.GetIYL(), 8, 2); break;
-
-		case OxFDE3: this->EX_ss(Reg_SP, Reg_IY, 23, 2); break;
 
 /******************************************************************************/
 /************************* IY bit instructions (FDCB) *************************/
