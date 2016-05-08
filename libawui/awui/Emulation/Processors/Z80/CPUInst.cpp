@@ -69,7 +69,10 @@ uint8_t CPUInst::ReadPort(uint8_t port) const {
 /******************************************************************************/
 
 /**
- * |1|4| The value are loaded into reg
+ * LD r, r
+ * |1|4| The contents of B/C/D/E/H/L/A are loaded into B/C/D/E/H/L/A.
+ * |2|9| Stores the value of A into register I/R.
+ * |2|8| The contents of B/C/D/E/H/IXH/IXL/IYH/IYL/A are loaded into B/C/D/E/H/IXH/IXL/IYH/IYL/A.
  */
 void CPUInst::LDrr(uint8_t reg, uint8_t value, uint8_t cycles, uint8_t size) {
 	this->d._registers.SetRegm(reg, value);
@@ -78,7 +81,8 @@ void CPUInst::LDrr(uint8_t reg, uint8_t value, uint8_t cycles, uint8_t size) {
 }
 
 /**
- * |1|4| The contents of reg2 are loaded into reg1
+ * LD A, i
+ * |2|9| Stores the value of register I/R into A
  */
 void CPUInst::LDAri(uint8_t value) {
 	this->d._registers.SetA(value);
@@ -94,8 +98,8 @@ void CPUInst::LDAri(uint8_t value) {
 }
 
 /**
- * LD r,(ss)   -> pc:4,ss:3
- * |2|7| Loads * into reg
+ * LD r, * -> pc:4,ss:3
+ * |2|7| Loads * into register B/C/D/E/H/L/A
  */
 void CPUInst::LDrn(uint8_t reg) {
 	this->d._cycles += 4;
@@ -104,8 +108,8 @@ void CPUInst::LDrn(uint8_t reg) {
 }
 
 /**
- * LD r,(ii+n) -> pc:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3
- * |3|11| Loads * into ixh.
+ * LD iih, * -> pc:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3
+ * |3|11| Loads * into IXh/IYh.
  */
 void CPUInst::LDriin(uint8_t reg) {
 	this->d._cycles += 4;
@@ -115,8 +119,8 @@ void CPUInst::LDriin(uint8_t reg) {
 }
 
 /**
- * LD r,(ss) -> pc:4,ss:3
- * |1|7| The contents of (hl) are loaded into reg
+ * LD r, (HL) -> pc:4,ss:3
+ * |1|7| The contents of (HL) are loaded into register B/C/D/E/H/L/A
  */
 void CPUInst::LDrHL(uint8_t reg) {
 	this->d._cycles += 4;
@@ -125,8 +129,8 @@ void CPUInst::LDrHL(uint8_t reg) {
 }
 
 /**
- * LD r,(ii+n) -> pc:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3
- * |3|19| Loads the value pointed to by ix plus * into reg
+ * LD r, (ii + *) -> pc:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3
+ * |3|19| Loads the value pointed to by IX/IY plus * into register B/C/D/E/H/L/A
  */
 void CPUInst::LDrXXd(uint8_t reg, uint8_t reg2) {
 	this->d._cycles += 4;
@@ -136,8 +140,8 @@ void CPUInst::LDrXXd(uint8_t reg, uint8_t reg2) {
 }
 
 /**
- * LD (ss),r -> pc:4,ss:3
- * |1|7| The contents of reg are loaded into (ss).
+ * LD (ss), r -> pc:4,ss:3
+ * |1|7| The contents of register B/C/D/E/H/L/A are loaded into (BC/DE/HL).
  */
 void CPUInst::LDssr(uint16_t offset, uint8_t value) {
 	this->d._cycles += 4;
@@ -146,8 +150,8 @@ void CPUInst::LDssr(uint16_t offset, uint8_t value) {
 }
 
 /**
- * LD (ii+n),r -> pc:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3
- * |3|19| Stores reg to the memory location pointed to by xx plus *.
+ * LD (ii + *), r -> pc:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3
+ * |3|19| Stores register B/C/D/E/H/L/A to the memory location pointed to by IX/IY plus *.
  */
 void CPUInst::LDXXdr(uint8_t xx, uint8_t reg) {
 	this->d._cycles += 4;
@@ -159,7 +163,8 @@ void CPUInst::LDXXdr(uint8_t xx, uint8_t reg) {
 }
 
 /**
- * |4|19| Stores * to the memory location pointed to by xx plus *.
+ * LD (ii + *), *
+ * |4|19| Stores * to the memory location pointed to by IX/IY plus *.
  */
 void CPUInst::LDXXdn(uint8_t xx) {
 	this->d._cycles += 4;
@@ -176,18 +181,30 @@ void CPUInst::LDXXdn(uint8_t xx) {
 /******************************************************************************/
 
 /**
- * |3|10| Loads ** into reg
+ * LD reg, **
+ * |3|10| Loads ** into register BC/DE/HL/SP.
  */
-void CPUInst::LDddnn(uint8_t reg, uint8_t size) {
+void CPUInst::LDddnn(uint8_t reg) {
 	this->d._cycles += 4;
+	this->d._registers.IncPC(3);
 	uint16_t pc = this->d._registers.GetPC();
-	this->d._registers.SetRegss(reg, (this->ReadMemory(pc + size - 1) << 8) | this->ReadMemory(pc + size - 2));
-	this->d._registers.IncPC(size);
+	this->d._registers.SetRegss(reg, (this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2));
 }
 
 /**
- * LD dd,(nn) -> pc:4,pc+1:4,pc+2:3,pc+3:3,nn:3,nn+1:3
- * |4|20| Loads the value pointed to by ** into reg.
+ * LD reg, **
+ * |4|14| Loads ** into register IX/IY.
+ */
+void CPUInst::LDddnnX(uint8_t reg) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(4);
+	uint16_t pc = this->d._registers.GetPC();
+	this->d._registers.SetRegss(reg, (this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2));
+}
+
+/**
+ * LD dd, (**) -> pc:4,pc+1:4,pc+2:3,pc+3:3,nn:3,nn+1:3
+ * |4|20| Loads the value pointed to by ** into register BC/DE/HL/SP/IX/IY
  */
 void CPUInst::LDdd_nn(uint8_t reg) {
 	this->d._cycles += 8;
@@ -203,8 +220,8 @@ void CPUInst::LDdd_nn(uint8_t reg) {
 }
 
 /**
- * LD HL,(nn) -> pc:4,pc+1:3,pc+2:3,nn:3,nn+1:3
- * |3|16| Loads the value pointed to by ** into hl.
+ * LD HL, (**) -> pc:4,pc+1:3,pc+2:3,nn:3,nn+1:3
+ * |3|16| Loads the value pointed to by ** into HL
  */
 void CPUInst::LDHL_nn() {
 	this->d._cycles += 4;
@@ -219,16 +236,34 @@ void CPUInst::LDHL_nn() {
 	this->d._registers.SetHL(data.W);
 }
 
-// |4|20| Stores reg into the memory location pointed to by **
-void CPUInst::LDnndd(uint8_t reg, uint8_t cycles, uint8_t size) {
+/**
+ * LD (**), dd -> pc:4,pc+1:4,pc+2:3,pc+3:3,nn:3,nn+1:3
+ * |4|20| Stores register BC/DE/HL/SP/IX/IY into the memory location pointed to by **
+ */
+void CPUInst::LDnndd(uint8_t reg) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(4);
 	uint16_t pc = this->d._registers.GetPC();
 	Word value;
 	value.W = this->d._registers.GetRegss(reg);
-	uint16_t offset = (this->ReadMemory(pc + size - 1) << 8) | this->ReadMemory(pc + size - 2);
+	uint16_t offset = (this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2);
 	this->WriteMemory(offset, value.L);
 	this->WriteMemory(offset + 1, value.H);
-	this->d._registers.IncPC(size);
-	this->d._cycles += cycles;
+}
+
+/**
+ * LD (**), hl -> pc:4,pc+1:3,pc+2:3,nn:3,nn+1:3
+ * |3|16| Stores HL into the memory location pointed to by **
+ */
+void CPUInst::LDHLdd() {
+	this->d._cycles += 4;
+	this->d._registers.IncPC(3);
+	uint16_t pc = this->d._registers.GetPC();
+	Word value;
+	value.W = this->d._registers.GetRegss(Reg_HL);
+	uint16_t offset = (this->ReadMemory(pc - 1) << 8) | this->ReadMemory(pc - 2);
+	this->WriteMemory(offset, value.L);
+	this->WriteMemory(offset + 1, value.H);
 }
 
 // |2|15| sp is decremented and ixh is stored into the memory location pointed to by sp. sp is decremented again and ixl is stored into the memory location pointed to by sp.

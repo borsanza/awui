@@ -201,7 +201,7 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		case Ox22: this->LDnndd(Reg_HL, 16, 3); break;
+		case Ox22: this->LDHLdd(); break;
 
 		// 36: LD (HL), *
 		// |2|10| Loads * into (hl).
@@ -1026,7 +1026,7 @@ void CPU::RunOpcode() {
 		case OxDD35: this->DECXXd(Reg_IX); break;
 		case OxDD36: this->LDXXdn(Reg_IX); break;
 
-		case OxDD21: this->LDddnn(Reg_IX, 4); break;
+		case OxDD21: this->LDddnnX(Reg_IX); break;
 		case OxDD22: this->LDnndd(Reg_IX); break;
 		case OxDD24: this->INCr(Reg_IXH, 8, 2); break;
 		case OxDD25: this->DECm(Reg_IXH, 8, 2); break;
@@ -1228,7 +1228,7 @@ void CPU::RunOpcode() {
 		case OxFD35: this->DECXXd(Reg_IY); break;
 		case OxFD36: this->LDXXdn(Reg_IY); break;
 
-		case OxFD21: this->LDddnn(Reg_IY, 4); break;
+		case OxFD21: this->LDddnnX(Reg_IY); break;
 		case OxFD22: this->LDnndd(Reg_IY); break;
 		case OxFD24: this->INCr(Reg_IYH, 8, 2); break;
 		case OxFD25: this->DECm(Reg_IYH, 8, 2); break;

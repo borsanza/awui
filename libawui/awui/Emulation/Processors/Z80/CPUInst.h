@@ -53,10 +53,12 @@ namespace awui {
 						void LDXXdn(uint8_t xx);
 
 						// 16-Bit Load Group
-						void LDddnn(uint8_t reg, uint8_t size = 3);
+						void LDddnn(uint8_t reg);
+						void LDddnnX(uint8_t reg);
 						void LDdd_nn(uint8_t reg);
 						void LDHL_nn();
-						void LDnndd(uint8_t reg, uint8_t cycles = 20, uint8_t size = 4);
+						void LDnndd(uint8_t reg);
+						void LDHLdd();
 						void PUSH16(uint8_t reg, uint8_t cycles, uint8_t size);
 						void POP16(uint8_t reg, uint8_t cycles, uint8_t size);
 						void LDtofrom(uint8_t to, uint16_t value, uint8_t cycles, uint8_t size);
