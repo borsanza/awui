@@ -81,8 +81,8 @@ namespace awui {
 					double GetVirtualTime();
 					inline Sound * GetSound() const { return this->_sound; }
 
-					void WriteMemory(uint16_t pos, uint8_t value);
-					uint8_t ReadMemory(uint16_t pos) const;
+					void WriteMemory(uint16_t offset, uint8_t value);
+					uint8_t ReadMemory(uint16_t offset) const;
 					void WritePort(uint8_t port, uint8_t value);
 					uint8_t ReadPort(uint8_t port) const;
 

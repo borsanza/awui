@@ -183,46 +183,59 @@ void Motherboard::OnTick() {
 	this->_cycles -= cyclesFrame;
 }
 
-// 0000 - 3FFF: ROM Memory
-// 4000 - 57FF: Screen Memory
-// 5800 - 5AFF: Color Data
-// 5B00 - 5BFF: Printer Buffer
-// 5C00 - 5CBF: System Variables
-// 5CC0 - 5CCA: Reserved
-// 5CCB - FF57: Memory (PROG and RAMTOP)
-// FF58 - FFFF: Reserved
-void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
-	// En la rom no se escribe
-	if (pos < 0x4000) {
-		this->_z80->IncCycles(3);
-		return;
-	}
+/**
+ * 0000 - 3FFF: ROM Memory
+ * 4000 - 7FFF: ULA Memory
+ * 8000 - FFFF: RAM Memory
+ */
+void Motherboard::WriteMemory(uint16_t offset, uint8_t data) {
+	switch (offset >> 14) {
+		// 0000 - 3FFF
+		case 0:
+			// En la rom no se escribe
+			break;
 
-	if (pos < 0x8000) {
-		this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
-		this->_z80->IncCycles(3);
-		this->_ula->WriteByte(pos - 0x4000, value);
-		return;
+		// 4000 - 7FFF
+		case 1:
+			this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
+			this->_ula->WriteByte(offset & 0x3FFF, data);
+			break;
+
+		// 8000 - FFFF
+		case 2:
+		case 3:
+			this->d._ram[offset & 0x7FFF] = data;
+			break;
 	}
 
 	this->_z80->IncCycles(3);
-	this->d._ram[pos - 0x8000] = value;
 }
 
-uint8_t Motherboard::ReadMemory(uint16_t pos) const {
-	if (pos < 0x4000) {
-		this->_z80->IncCycles(3);
-		return this->_rom->ReadByte(pos);
-	}
+uint8_t Motherboard::ReadMemory(uint16_t offset) const {
+	uint8_t data;
 
-	if (pos < 0x8000) {
-		this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
-		this->_z80->IncCycles(3);
-		return this->_ula->ReadByte(pos - 0x4000);
+	switch (offset >> 14) {
+		// 0000 - 3FFF
+		case 0:
+			data = this->_rom->ReadByte(offset);
+			break;
+
+		// 4000 - 7FFF
+		case 1:
+			this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
+			data = this->_ula->ReadByte(offset & 0x3FFF);
+			break;
+
+		// 8000 - FFFF
+		case 2:
+		case 3:
+			data = this->d._ram[offset & 0x7FFF];
+			break;
 	}
 
 	this->_z80->IncCycles(3);
-	return this->d._ram[pos - 0x8000];
+
+	return data;
 }
 
 void Motherboard::WritePort(uint8_t port, uint8_t value) {
