@@ -392,8 +392,14 @@ void CPUInst::EX_ssX(uint8_t reg) {
 	this->d._cycles += 2;
 }
 
-// |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented.
+/**
+ * LDI -> pc:4,pc+1:4,hl:3,de:3,de:1 x 2,[de:1 x 5]
+ * |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented.
+ */
 void CPUInst::LDI() {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint8_t dataHL = this->ReadMemory(this->d._registers.GetHL());
 	uint8_t valueFlag = dataHL + this->d._registers.GetA();
 
@@ -411,12 +417,16 @@ void CPUInst::LDI() {
 		(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C))
 	);
 
-	this->d._registers.IncPC(2);
-	this->d._cycles += 16;
+	this->d._cycles += 2;
 }
 
-// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented. If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
+/**
+ * LDIR -> pc:4,pc+1:4,hl:3,de:3,de:1 x 2,[de:1 x 5]
+ * |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented. If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
+ */
 void CPUInst::LDIR() {
+	this->d._cycles += 8;
+
 	uint16_t hl = this->d._registers.GetHL();
 	uint16_t de = this->d._registers.GetDE();
 	uint16_t bc = this->d._registers.GetBC() - 1;
@@ -434,15 +444,23 @@ void CPUInst::LDIR() {
 		(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C))
 	);
 
+	// TODO: Repasar el orden de los ciclos, no estoy seguro
 	if (bc == 0) {
 		this->d._registers.IncPC(2);
-		this->d._cycles += 16;
-	} else
-		this->d._cycles += 21;
+		this->d._cycles += 2;
+	}
+	else
+		this->d._cycles += 7;
 }
 
-// |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl, de, and bc are decremented.
+/**
+ * LDD -> pc:4,pc+1:4,hl:3,de:3,de:1 x 2
+ * |2|16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl, de, and bc are decremented.
+ */
 void CPUInst::LDD() {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint16_t HL = this->d._registers.GetHL();
 	uint16_t DE = this->d._registers.GetDE();
 	uint16_t BC = this->d._registers.GetBC() - 1;
@@ -462,12 +480,15 @@ void CPUInst::LDD() {
 		(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C))
 	);
 
-	this->d._registers.IncPC(2);
-	this->d._cycles += 16;
+	this->d._cycles += 2;
 }
 
-// |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl, de, and bc are decremented. If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
+/**
+ * LDDR -> pc:4,pc+1:4,hl:3,de:3,de:1 x 2,[de:1 x 5]
+ * |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl, de, and bc are decremented. If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
+ */
 void CPUInst::LDDR() {
+	this->d._cycles += 8;
 	uint16_t HL = this->d._registers.GetHL();
 	uint16_t DE = this->d._registers.GetDE();
 	uint16_t BC = this->d._registers.GetBC() - 1;
@@ -486,16 +507,22 @@ void CPUInst::LDDR() {
 		(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C))
 	);
 
-	if (BC != 0) {
-		this->d._cycles += 21;
-	} else {
+	if (BC == 0) {
 		this->d._registers.IncPC(2);
-		this->d._cycles += 16;
+		this->d._cycles += 2;
+	} else {
+		this->d._cycles += 7;
 	}
 }
 
-// |2|16| Compares the value of the memory location pointed to by hl with a. Then hl is incremented and bc is decremented.
+/**
+ * CPI -> pc:4,pc+1:4,hl:3,hl:1 x 5
+ * |2|16| Compares the value of the memory location pointed to by hl with a. Then hl is incremented and bc is decremented.
+ */
 void CPUInst::CPI() {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint16_t HL = this->d._registers.GetHL();
 	uint8_t b = this->ReadMemory(HL);
 	uint8_t old = this->d._registers.GetA();
@@ -516,12 +543,16 @@ void CPUInst::CPI() {
 		(this->d._registers.GetF() & Flag_C)
 	);
 
-	this->d._registers.IncPC(2);
-	this->d._cycles += 16;
+	this->d._cycles += 5;
 }
 
-// |2|21/16| Compares the value of the memory location pointed to by hl with a. Then hl is incremented and bc is decremented. If bc is not zero and z is not set, this operation is repeated. Interrupts can trigger while this instruction is processing.
+/**
+ * CPIR -> pc:4,pc+1:4,hl:3,hl:1 x 5,[hl:1 x 5]
+ * |2|21/16| Compares the value of the memory location pointed to by hl with a. Then hl is incremented and bc is decremented. If bc is not zero and z is not set, this operation is repeated. Interrupts can trigger while this instruction is processing.
+ */
 void CPUInst::CPIR() {
+	this->d._cycles += 8;
+
 	uint16_t HL = this->d._registers.GetHL();
 	uint8_t b = this->ReadMemory(HL);
 	uint8_t old = this->d._registers.GetA();
@@ -543,15 +574,21 @@ void CPUInst::CPIR() {
 	);
 
 	if ((BC != 0) && (value != 0)) {
-		this->d._cycles += 21;
+		this->d._cycles += 10;
 	} else {
 		this->d._registers.IncPC(2);
-		this->d._cycles += 16;
+		this->d._cycles += 5;
 	}
 }
 
-// |2|16| Compares the value of the memory location pointed to by hl with a. Then hl and bc are decremented.
+/**
+ * CPD -> pc:4,pc+1:4,hl:3,hl:1 x 5
+ * |2|16| Compares the value of the memory location pointed to by hl with a. Then hl and bc are decremented.
+ */
 void CPUInst::CPD() {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint16_t HL = this->d._registers.GetHL();
 	uint8_t b = this->ReadMemory(HL);
 	uint8_t old = this->d._registers.GetA();
@@ -572,12 +609,16 @@ void CPUInst::CPD() {
 		(this->d._registers.GetF() & Flag_C)
 	);
 
-	this->d._registers.IncPC(2);
-	this->d._cycles += 16;
+	this->d._cycles += 5;
 }
 
-// |2|21/16| Compares the value of the memory location pointed to by hl with a. Then hl and bc are decremented. If bc is not zero and z is not set, this operation is repeated. Interrupts can trigger while this instruction is processing.
+/**
+ * CPDR -> pc:4,pc+1:4,hl:3,hl:1 x 5,[hl:1 x 5]
+ * |2|21/16| Compares the value of the memory location pointed to by hl with a. Then hl and bc are decremented. If bc is not zero and z is not set, this operation is repeated. Interrupts can trigger while this instruction is processing.
+ */
 void CPUInst::CPDR() {
+	this->d._cycles += 8;
+
 	uint16_t HL = this->d._registers.GetHL();
 	uint8_t b = this->ReadMemory(HL);
 	uint8_t old = this->d._registers.GetA();
@@ -599,10 +640,10 @@ void CPUInst::CPDR() {
 	);
 
 	if ((BC != 0) && (value != 0)) {
-		this->d._cycles += 21;
+		this->d._cycles += 10;
 	} else {
 		this->d._registers.IncPC(2);
-		this->d._cycles += 16;
+		this->d._cycles += 5;
 	}
 }
 
