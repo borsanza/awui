@@ -862,11 +862,19 @@ void CPUInst::DECm(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1|11| Subtracts one from (hl)
+/**
+ * DEC (HL) -> pc:4,hl:3,hl:1,hl(write):3
+ * |1|11| Subtracts one from (hl).
+ */
 void CPUInst::DECHL() {
+	this->d._cycles += 4;
+	this->d._registers.IncPC();
+
 	uint16_t HL = this->d._registers.GetHL();
 	uint8_t old = this->ReadMemory(HL);
 	uint8_t value = old - 1;
+
+	this->d._cycles++;
 
  	this->WriteMemory(HL, value);
 
@@ -878,15 +886,20 @@ void CPUInst::DECHL() {
 		Flag_N |
 		(this->d._registers.GetF() & Flag_C)
 	);
-
-	this->d._registers.IncPC();
-	this->d._cycles += 11;
 }
 
-// |1|11| Adds one to (hl).
+/**
+ * INC (HL) -> pc:4,hl:3,hl:1,hl(write):3
+ * |1|11| Adds one to (hl).
+ */
 void CPUInst::INCHL() {
+	this->d._cycles += 4;
+	this->d._registers.IncPC();
+
 	uint8_t old = this->ReadMemory(this->d._registers.GetHL());
 	uint8_t value = old + 1;
+
+	this->d._cycles++;
 
 	this->WriteMemory(this->d._registers.GetHL(), value);
 
@@ -897,17 +910,25 @@ void CPUInst::INCHL() {
 		((old == 0x7F) ? Flag_V : 0) |
 		(this->d._registers.GetF() & Flag_C)
 	);
-
-	this->d._registers.IncPC();
-	this->d._cycles += 11;
 }
 
-// |3|23| Adds one to the memory location pointed to by ix plus *.
+/**
+ * INC (ii + n) -> c:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3,ii+n:1,ii+n(write):3
+ * |3|23| Adds one to the memory location pointed to by IX/IY plus *.
+ */
 void CPUInst::INCXXd(uint8_t xx) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(3);
+
 	uint16_t pc = this->d._registers.GetPC();
-	uint16_t offset = this->d._registers.GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
+	uint16_t offset = this->d._registers.GetRegss(xx) + ((int8_t) this->ReadMemory(pc - 1));
+
+	this->d._cycles += 5;
+
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = old + 1;
+
+	this->d._cycles++;
 
 	this->WriteMemory(offset, value);
 
@@ -918,17 +939,25 @@ void CPUInst::INCXXd(uint8_t xx) {
 		((old == 0x7F) ? Flag_V : 0) |
 		(this->d._registers.GetF() & Flag_C)
 	);
-
-	this->d._registers.IncPC(3);
-	this->d._cycles += 23;
 }
 
-// |3|23| Subtracts one from the memory location pointed to by ix plus *.
+/**
+ * DEC (ii + n) -> c:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3,ii+n:1,ii+n(write):3
+ * |3|23| Subtracts one from the memory location pointed to by ix plus *.
+ */
 void CPUInst::DECXXd(uint8_t xx) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(3);
+
 	uint16_t pc = this->d._registers.GetPC();
-	uint16_t offset = this->d._registers.GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
+	uint16_t offset = this->d._registers.GetRegss(xx) + ((int8_t) this->ReadMemory(pc - 1));
+
+	this->d._cycles += 5;
+
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = old - 1;
+
+	this->d._cycles++;
 
 	this->WriteMemory(offset, value);
 
@@ -940,9 +969,6 @@ void CPUInst::DECXXd(uint8_t xx) {
 		Flag_N |
 		(this->d._registers.GetF() & Flag_C)
 	);
-
-	this->d._registers.IncPC(3);
-	this->d._cycles += 23;
 }
 
 /******************************************************************************/
