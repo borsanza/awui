@@ -44,12 +44,16 @@ void CPUInst::Reset() {
 	this->d._registers.Clear();
 }
 
-void CPUInst::WriteMemory(uint16_t pos, uint8_t value) const {
+void CPUInst::WriteMemory(uint16_t pos, uint8_t value) {
 	this->_writeMemoryCB(pos, value, this->_writeMemoryDataCB);
+	this->d._cycles += 3;
 }
 
-uint8_t CPUInst::ReadMemory(uint16_t pos) const {
-	return this->_readMemoryCB(pos, this->_readMemoryDataCB);
+uint8_t CPUInst::ReadMemory(uint16_t pos) {
+	uint8_t data = this->_readMemoryCB(pos, this->_readMemoryDataCB);
+	this->d._cycles += 3;
+
+	return data;
 }
 
 void CPUInst::WritePort(uint8_t port, uint8_t value) const {
@@ -64,14 +68,18 @@ uint8_t CPUInst::ReadPort(uint8_t port) const {
 /****************************** 8-Bit Load Group ******************************/
 /******************************************************************************/
 
-// |1|4| The value are loaded into reg
+/**
+ * |1|4| The value are loaded into reg
+ */
 void CPUInst::LDrr(uint8_t reg, uint8_t value, uint8_t cycles, uint8_t size) {
 	this->d._registers.SetRegm(reg, value);
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
 }
 
-// |1|4| The contents of reg2 are loaded into reg1
+/**
+ * |1|4| The contents of reg2 are loaded into reg1
+ */
 void CPUInst::LDAri(uint8_t value) {
 	this->d._registers.SetA(value);
 
@@ -85,72 +93,130 @@ void CPUInst::LDAri(uint8_t value) {
 	this->d._cycles += 9;
 }
 
-// |2|7| Loads * into reg
-void CPUInst::LDrn(uint8_t reg, uint8_t cycles, uint8_t size) {
-	this->d._registers.SetRegm(reg, this->ReadMemory(this->d._registers.GetPC() + size - 1));
-	this->d._registers.IncPC(size);
-	this->d._cycles += cycles;
+/**
+ * LD r,(ss)   -> pc:4,ss:3
+ * |2|7| Loads * into reg
+ */
+void CPUInst::LDrn(uint8_t reg) {
+	this->d._cycles += 4;
+	this->d._registers.IncPC(2);
+	this->d._registers.SetRegm(reg, this->ReadMemory(this->d._registers.GetPC() - 1));
 }
 
-// |1|7| The contents of (hl) are loaded into reg
+/**
+ * LD r,(ii+n) -> pc:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3
+ * |3|11| Loads * into ixh.
+ */
+void CPUInst::LDriin(uint8_t reg) {
+	this->d._cycles += 4;
+	this->d._registers.IncPC(3);
+	this->d._registers.SetRegm(reg, this->ReadMemory(this->d._registers.GetPC() - 1));
+	this->d._cycles += 4;
+}
+
+/**
+ * LD r,(ss) -> pc:4,ss:3
+ * |1|7| The contents of (hl) are loaded into reg
+ */
 void CPUInst::LDrHL(uint8_t reg) {
+	this->d._cycles += 4;
 	this->d._registers.SetRegm(reg, this->ReadMemory(this->d._registers.GetHL()));
 	this->d._registers.IncPC();
-	this->d._cycles += 7;
 }
 
-// |3|19| Loads the value pointed to by ix plus * into reg
+/**
+ * LD r,(ii+n) -> pc:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3
+ * |3|19| Loads the value pointed to by ix plus * into reg
+ */
 void CPUInst::LDrXXd(uint8_t reg, uint8_t reg2) {
+	this->d._cycles += 4;
 	this->d._registers.SetRegm(reg, this->ReadMemory(this->d._registers.GetRegss(reg2) + (int8_t)this->ReadMemory(this->d._registers.GetPC() + 2)));
 	this->d._registers.IncPC(3);
-	this->d._cycles += 19;
+	this->d._cycles += 9;
 }
 
-// |1|7| The contents of reg are loaded into (ss).
+/**
+ * LD (ss),r -> pc:4,ss:3
+ * |1|7| The contents of reg are loaded into (ss).
+ */
 void CPUInst::LDssr(uint16_t offset, uint8_t value) {
+	this->d._cycles += 4;
 	this->WriteMemory(offset, value);
 	this->d._registers.IncPC();
-	this->d._cycles += 7;
 }
 
-// |3|19| Stores reg to the memory location pointed to by xx plus *.
+/**
+ * LD (ii+n),r -> pc:4,pc+1:4,pc+2:3,pc+2:1 x 5,ii+n:3
+ * |3|19| Stores reg to the memory location pointed to by xx plus *.
+ */
 void CPUInst::LDXXdr(uint8_t xx, uint8_t reg) {
+	this->d._cycles += 4;
 	uint16_t x = this->d._registers.GetRegss(xx);
 	uint16_t offset = x + ((int8_t) this->ReadMemory(this->d._registers.GetPC() + 2));
 	this->WriteMemory(offset, this->d._registers.GetRegm(reg));
 	this->d._registers.IncPC(3);
-	this->d._cycles += 19;
+	this->d._cycles += 9;
 }
 
-// |4|19| Stores * to the memory location pointed to by xx plus *.
+/**
+ * |4|19| Stores * to the memory location pointed to by xx plus *.
+ */
 void CPUInst::LDXXdn(uint8_t xx) {
+	this->d._cycles += 4;
 	uint16_t pc = this->d._registers.GetPC();
-	uint16_t offset = this->d._registers.GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
 	uint8_t n = this->ReadMemory(pc + 3);
+	uint16_t offset = this->d._registers.GetRegss(xx) + ((int8_t) this->ReadMemory(pc + 2));
 	this->WriteMemory(offset, n);
 	this->d._registers.IncPC(4);
-	this->d._cycles += 19;
+	this->d._cycles += 6;
 }
 
 /******************************************************************************/
 /***************************** 16-Bit Load Group ******************************/
 /******************************************************************************/
 
-// |3|10| Loads ** into reg
+/**
+ * |3|10| Loads ** into reg
+ */
 void CPUInst::LDddnn(uint8_t reg, uint8_t size) {
+	this->d._cycles += 4;
 	uint16_t pc = this->d._registers.GetPC();
 	this->d._registers.SetRegss(reg, (this->ReadMemory(pc + size - 1) << 8) | this->ReadMemory(pc + size - 2));
 	this->d._registers.IncPC(size);
-	this->d._cycles += 10;
 }
 
-// |4|20| Loads the value pointed to by ** into reg.
-void CPUInst::LDdd_nn(uint8_t reg, uint8_t cycles, uint8_t size) {
+/**
+ * LD dd,(nn) -> pc:4,pc+1:4,pc+2:3,pc+3:3,nn:3,nn+1:3
+ * |4|20| Loads the value pointed to by ** into reg.
+ */
+void CPUInst::LDdd_nn(uint8_t reg) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(4);
 	uint16_t pc = this->d._registers.GetPC();
-	uint16_t offset = (this->ReadMemory(pc + size - 1) << 8) | this->ReadMemory(pc + size - 2);
-	this->d._registers.SetRegss(reg, (this->ReadMemory(offset + 1) << 8) | this->ReadMemory(offset));
-	this->d._registers.IncPC(size);
-	this->d._cycles += cycles;
+	Word offset;
+	offset.L = this->ReadMemory(pc - 2);
+	offset.H = this->ReadMemory(pc - 1);
+	Word data;
+	data.L = this->ReadMemory(offset.W);
+	data.H = this->ReadMemory(offset.W + 1);
+	this->d._registers.SetRegss(reg, data.W);
+}
+
+/**
+ * LD HL,(nn) -> pc:4,pc+1:3,pc+2:3,nn:3,nn+1:3
+ * |3|16| Loads the value pointed to by ** into hl.
+ */
+void CPUInst::LDHL_nn() {
+	this->d._cycles += 4;
+	this->d._registers.IncPC(3);
+	uint16_t pc = this->d._registers.GetPC();
+	Word offset;
+	offset.L = this->ReadMemory(pc - 2);
+	offset.H = this->ReadMemory(pc - 1);
+	Word data;
+	data.L = this->ReadMemory(offset.W);
+	data.H = this->ReadMemory(offset.W + 1);
+	this->d._registers.SetHL(data.W);
 }
 
 // |4|20| Stores reg into the memory location pointed to by **
@@ -1583,17 +1649,17 @@ void CPUInst::JPccnn(bool cc) {
 	this->d._cycles += 10;
 }
 
+// Contented
 // |2|12/7| If condition cc is true, the signed value * is added to pc.
 // The jump is measured from the start of the instruction opcode.
 void CPUInst::JR(bool cc) {
+	this->d._cycles += 4;
 	int8_t value = this->ReadMemory(this->d._registers.GetPC() + 1);
 	if (cc) {
 		this->d._registers.IncPC(value + 2);
-		this->d._cycles += 12;
-	} else {
+		this->d._cycles += 5;
+	} else
 		this->d._registers.IncPC(2);
-		this->d._cycles += 7;
-	}
 }
 
 /******************************************************************************/

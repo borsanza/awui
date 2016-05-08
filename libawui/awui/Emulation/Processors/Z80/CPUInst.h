@@ -37,14 +37,15 @@ namespace awui {
 						uint8_t (*_readPortCB) (uint8_t pos, void *);
 						void * _readPortDataCB;
 
-						void WriteMemory(uint16_t pos, uint8_t value) const;
+						void WriteMemory(uint16_t pos, uint8_t value);
 						uint8_t ReadPort(uint8_t port) const;
 						void WritePort(uint8_t port, uint8_t value) const;
 
 						// 8-Bit Load Group
 						void LDrr(uint8_t reg1, uint8_t reg2, uint8_t cycles, uint8_t size);
 						void LDAri(uint8_t value);
-						void LDrn(uint8_t reg, uint8_t cycles, uint8_t size);
+						void LDrn(uint8_t reg);
+						void LDriin(uint8_t reg);
 						void LDrHL(uint8_t reg);
 						void LDrXXd(uint8_t reg, uint8_t reg2);
 						void LDssr(uint16_t offset, uint8_t value);
@@ -53,7 +54,8 @@ namespace awui {
 
 						// 16-Bit Load Group
 						void LDddnn(uint8_t reg, uint8_t size = 3);
-						void LDdd_nn(uint8_t reg, uint8_t cycles, uint8_t size);
+						void LDdd_nn(uint8_t reg);
+						void LDHL_nn();
 						void LDnndd(uint8_t reg, uint8_t cycles = 20, uint8_t size = 4);
 						void PUSH16(uint8_t reg, uint8_t cycles, uint8_t size);
 						void POP16(uint8_t reg, uint8_t cycles, uint8_t size);
@@ -188,7 +190,7 @@ namespace awui {
 						inline Registers * GetRegisters() { return &(this->d._registers); }
 						inline uint32_t GetAddressBus() const { return this->d._addressBus.W; }
 
-						uint8_t ReadMemory(uint16_t pos) const;
+						uint8_t ReadMemory(uint16_t pos);
 						void CallInterrupt(uint16_t offset);
 
 						static int GetSaveSize();

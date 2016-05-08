@@ -207,8 +207,6 @@ void Motherboard::WriteMemory(uint16_t offset, uint8_t data) {
 			this->d._ram[offset & 0x7FFF] = data;
 			break;
 	}
-
-	this->_z80->IncCycles(3);
 }
 
 uint8_t Motherboard::ReadMemory(uint16_t offset) const {
@@ -232,8 +230,6 @@ uint8_t Motherboard::ReadMemory(uint16_t offset) const {
 			data = this->d._ram[offset & 0x7FFF];
 			break;
 	}
-
-	this->_z80->IncCycles(3);
 
 	return data;
 }

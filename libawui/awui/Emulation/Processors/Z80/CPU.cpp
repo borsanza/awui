@@ -334,16 +334,16 @@ void CPU::RunOpcode() {
 			break;
 
 		// 2A: LD HL, (**)
-		case Ox2A: this->LDdd_nn(Reg_HL, 16, 3); break;
+		case Ox2A: this->LDHL_nn(); break;
 
 		// LD r, *
-		case Ox06: this->LDrn(Reg_B, 7, 2); break;
-		case Ox0E: this->LDrn(Reg_C, 7, 2); break;
-		case Ox16: this->LDrn(Reg_D, 7, 2); break;
-		case Ox1E: this->LDrn(Reg_E, 7, 2); break;
-		case Ox26: this->LDrn(Reg_H, 7, 2); break;
-		case Ox2E: this->LDrn(Reg_L, 7, 2); break;
-		case Ox3E: this->LDrn(Reg_A, 7, 2); break;
+		case Ox06: this->LDrn(Reg_B); break;
+		case Ox0E: this->LDrn(Reg_C); break;
+		case Ox16: this->LDrn(Reg_D); break;
+		case Ox1E: this->LDrn(Reg_E); break;
+		case Ox26: this->LDrn(Reg_H); break;
+		case Ox2E: this->LDrn(Reg_L); break;
+		case Ox3E: this->LDrn(Reg_A); break;
 
 		// LD (ss), r
 		case Ox02: this->LDssr(this->d._registers.GetBC(), this->d._registers.GetA()); break;
@@ -642,10 +642,10 @@ void CPU::RunOpcode() {
 		case OxED73: this->LDnndd(Reg_SP); break;
 
 		// LD dd, (nn)
-		case OxED4B: this->LDdd_nn(Reg_BC, 20, 4); break;
-		case OxED5B: this->LDdd_nn(Reg_DE, 20, 4); break;
-		case OxED6B: this->LDdd_nn(Reg_HL, 20, 4); break;
-		case OxED7B: this->LDdd_nn(Reg_SP, 20, 4); break;
+		case OxED4B: this->LDdd_nn(Reg_BC); break;
+		case OxED5B: this->LDdd_nn(Reg_DE); break;
+		case OxED6B: this->LDdd_nn(Reg_HL); break;
+		case OxED7B: this->LDdd_nn(Reg_SP); break;
 
 		case OxED4A: this->ADCHLss(Reg_BC); break;
 		case OxED5A: this->ADCHLss(Reg_DE); break;
@@ -1032,7 +1032,7 @@ void CPU::RunOpcode() {
 		case OxDD25: this->DECm(Reg_IXH, 8, 2); break;
 		case OxDD2C: this->INCr(Reg_IXL, 8, 2); break;
 		case OxDD2D: this->DECm(Reg_IXL, 8, 2); break;
-		case OxDD2A: this->LDdd_nn(Reg_IX, 20, 4); break;
+		case OxDD2A: this->LDdd_nn(Reg_IX); break;
 
 		case OxDD46: this->LDrXXd(Reg_B, Reg_IX); break;
 		case OxDD4E: this->LDrXXd(Reg_C, Reg_IX); break;
@@ -1076,8 +1076,8 @@ void CPU::RunOpcode() {
 		case OxDD77: this->LDXXdr(Reg_IX, Reg_A); break;
 
 		case OxDDF9: this->LDtofrom(Reg_SP, this->d._registers.GetIX(), 10, 2); break;
-		case OxDD26: this->LDrn(Reg_IXH, 11, 3); break;
-		case OxDD2E: this->LDrn(Reg_IXL, 11, 3); break;
+		case OxDD26: this->LDriin(Reg_IXH); break;
+		case OxDD2E: this->LDriin(Reg_IXL); break;
 
 		case OxDD84: this->ADD(this->d._registers.GetIXH(), 8, 2); break;
 		case OxDD85: this->ADD(this->d._registers.GetIXL(), 8, 2); break;
@@ -1234,7 +1234,7 @@ void CPU::RunOpcode() {
 		case OxFD25: this->DECm(Reg_IYH, 8, 2); break;
 		case OxFD2C: this->INCr(Reg_IYL, 8, 2); break;
 		case OxFD2D: this->DECm(Reg_IYL, 8, 2); break;
-		case OxFD2A: this->LDdd_nn(Reg_IY, 20, 4); break;
+		case OxFD2A: this->LDdd_nn(Reg_IY); break;
 
 		case OxFD46: this->LDrXXd(Reg_B, Reg_IY); break;
 		case OxFD4E: this->LDrXXd(Reg_C, Reg_IY); break;
@@ -1278,8 +1278,8 @@ void CPU::RunOpcode() {
 		case OxFD77: this->LDXXdr(Reg_IY, Reg_A); break;
 
 		case OxFDF9: this->LDtofrom(Reg_SP, this->d._registers.GetIY(), 10, 2); break;
-		case OxFD26: this->LDrn(Reg_IYH, 11, 3); break;
-		case OxFD2E: this->LDrn(Reg_IYL, 11, 3); break;
+		case OxFD26: this->LDriin(Reg_IYH); break;
+		case OxFD2E: this->LDriin(Reg_IYL); break;
 
 		case OxFD84: this->ADD(this->d._registers.GetIYH(), 8, 2); break;
 		case OxFD85: this->ADD(this->d._registers.GetIYL(), 8, 2); break;
