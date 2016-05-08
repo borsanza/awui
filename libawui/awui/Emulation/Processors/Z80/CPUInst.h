@@ -184,6 +184,7 @@ namespace awui {
 						inline uint16_t GetPC() const { return this->d._registers.GetPC(); }
 						inline void SetPC(uint16_t pc) { this->d._registers.SetPC(pc); }
 						inline int64_t GetCycles() const { return this->d._cycles; }
+						inline void IncCycles(uint8_t inc) { this->d._cycles += inc; }
 						inline Registers * GetRegisters() { return &(this->d._registers); }
 						inline uint32_t GetAddressBus() const { return this->d._addressBus.W; }
 
