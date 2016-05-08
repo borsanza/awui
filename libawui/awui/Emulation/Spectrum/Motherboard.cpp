@@ -34,7 +34,7 @@ Content Memory:
 	14342	No delay         <- 14342 % 8 = 6;
 */
 
-static int content_states[] = { 5, 4, 3, 2, 1, 0, 0, 6 };
+// static int content_states[] = { 5, 4, 3, 2, 1, 0, 0, 6 };
 
 void WriteMemoryCB(uint16_t pos, uint8_t value, void * data) { ((Motherboard *) data)->WriteMemory(pos, value); }
 uint8_t ReadMemoryCB(uint16_t pos, void * data) { return ((Motherboard *) data)->ReadMemory(pos); }
@@ -197,7 +197,7 @@ void Motherboard::WriteMemory(uint16_t offset, uint8_t data) {
 
 		// 4000 - 7FFF
 		case 1:
-			this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
+			// this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
 			this->_ula->WriteByte(offset & 0x3FFF, data);
 			break;
 
@@ -220,7 +220,7 @@ uint8_t Motherboard::ReadMemory(uint16_t offset) const {
 
 		// 4000 - 7FFF
 		case 1:
-			this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
+			// this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
 			data = this->_ula->ReadByte(offset & 0x3FFF);
 			break;
 
