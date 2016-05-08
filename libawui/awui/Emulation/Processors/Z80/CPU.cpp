@@ -48,6 +48,8 @@ void CPU::Reset() {
 }
 
 void CPU::RunOpcode() {
+	int64_t tStatesOld = this->d._cycles;
+
 	uint16_t pc = this->d._registers.GetPC();
 
 	uint8_t opcode1 = this->ReadMemory(pc);
@@ -130,6 +132,8 @@ void CPU::RunOpcode() {
 #ifdef NUMOPCODES
 	opcodesT[opcodeEnum]++;
 #endif
+
+	this->d._cycles = tStatesOld;
 
 	// http://clrhome.org/table/
 	this->d._isEndlessLoop = false;

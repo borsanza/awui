@@ -1609,6 +1609,7 @@ void CPUInst::SLA_HL() {
 }
 
 /**
+ * TODO: Revisar
  * |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
  */
 void CPUInst::SLAXXd(uint8_t reg) {
@@ -1653,6 +1654,7 @@ void CPUInst::SRA(uint8_t reg) {
 }
 
 /**
+ * TODO: Revisar
  * SRA (HL)
  * |2|15| The contents of (hl) are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
  */
@@ -1674,27 +1676,39 @@ void CPUInst::SRA_HL() {
 		((old & 0x01) ? Flag_C : 0));
 }
 
-// |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
+/**
+ * TODO: Revisar
+ * |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
+ */
 void CPUInst::SRAXXd(uint8_t reg) {
-	uint16_t XX = this->d._registers.GetRegss(reg);
-	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->d._registers.GetPC() + 2));
-	uint8_t old = this->ReadMemory(finalOffset);
+	this->d._cycles += 8;
+	this->d._registers.IncPC(4);
 
+	uint16_t XX = this->d._registers.GetRegss(reg);
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->d._registers.GetPC() - 2));
+
+	this->d._cycles += 5;
+
+	uint8_t old = this->ReadMemory(finalOffset);
 	uint8_t value =  (old & 0x80) | (old >> 1);
 
+	this->d._cycles++;
+
 	this->WriteMemory(finalOffset, value);
 
 	this->d._registers.SetF(
 		(value & (Flag_F3 | Flag_F5)) |
 		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
-
-	this->d._registers.IncPC(4);
-	this->d._cycles += 23;
 }
 
-// |2|8| The contents of b are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+/**
+ * |2|8| The contents of b are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+ */
 void CPUInst::SLL(uint8_t reg) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint8_t old = this->d._registers.GetRegm(reg);
 	uint8_t value = (old << 1) | 1;
 
@@ -1704,16 +1718,21 @@ void CPUInst::SLL(uint8_t reg) {
 		(value & (Flag_F3 | Flag_F5)) |
 		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0));
-
-	this->d._registers.IncPC(2);
-	this->d._cycles += 8;
 }
 
-// |2|15| The contents of (hl) are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+/**
+ * SLL (HL)
+ * |2|15| The contents of (hl) are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+ */
 void CPUInst::SLL_HL() {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint16_t offset = this->d._registers.GetHL();
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value = (old << 1) | 1;
+
+	this->d._cycles++;
 
 	this->WriteMemory(offset, value);
 
@@ -1721,18 +1740,26 @@ void CPUInst::SLL_HL() {
 		(value & (Flag_F3 | Flag_F5)) |
 		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0));
-
-	this->d._registers.IncPC(2);
-	this->d._cycles += 15;
 }
 
-// |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+/**
+ * TODO: Revisar
+ * |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+ */
 void CPUInst::SLLXXd(uint8_t reg) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(4);
+
 	uint16_t XX = this->d._registers.GetRegss(reg);
-	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->d._registers.GetPC() + 2));
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->d._registers.GetPC() - 2));
+
+	this->d._cycles += 5;
+
 	uint8_t old = this->ReadMemory(finalOffset);
 
 	uint8_t value = (old << 1) | 1;
+
+	this->d._cycles++;
 
 	this->WriteMemory(finalOffset, value);
 
@@ -1740,13 +1767,15 @@ void CPUInst::SLLXXd(uint8_t reg) {
 		(value & (Flag_F3 | Flag_F5)) |
 		PZS_Flags[value] |
 		((old & 0x80) ? Flag_C : 0));
-
-	this->d._registers.IncPC(4);
-	this->d._cycles += 23;
 }
 
-// |2|8| The contents of b are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
+/**
+ * |2|8| The contents of b are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
+ */
 void CPUInst::SRL(uint8_t reg) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint8_t old = this->d._registers.GetRegm(reg);
 	uint8_t value =  old >> 1;
 
@@ -1756,16 +1785,21 @@ void CPUInst::SRL(uint8_t reg) {
 		(value & (Flag_F3 | Flag_F5)) |
 		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
-
-	this->d._registers.IncPC(2);
-	this->d._cycles += 8;
 }
 
-// |2|15| The contents of (hl) are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
+/**
+ * TODO: Revisar
+ * |2|15| The contents of (hl) are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
+ */
 void CPUInst::SRL_HL() {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint16_t offset = this->d._registers.GetHL();
 	uint8_t old = this->ReadMemory(offset);
 	uint8_t value =  old >> 1;
+
+	this->d._cycles++;
 
 	this->WriteMemory(offset, value);
 
@@ -1773,18 +1807,24 @@ void CPUInst::SRL_HL() {
 		(value & (Flag_F3 | Flag_F5)) |
 		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
-
-	this->d._registers.IncPC(2);
-	this->d._cycles += 15;
 }
 
-// |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
+/**
+ * |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
+ */
 void CPUInst::SRLXXd(uint8_t reg) {
-	uint16_t XX = this->d._registers.GetRegss(reg);
-	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->d._registers.GetPC() + 2));
-	uint8_t old = this->ReadMemory(finalOffset);
+	this->d._cycles += 8;
+	this->d._registers.IncPC(4);
 
+	uint16_t XX = this->d._registers.GetRegss(reg);
+	uint16_t finalOffset = XX + ((int8_t) this->ReadMemory(this->d._registers.GetPC() - 2));
+
+	this->d._cycles += 5;
+
+	uint8_t old = this->ReadMemory(finalOffset);
 	uint8_t value =  old >> 1;
+
+	this->d._cycles++;
 
 	this->WriteMemory(finalOffset, value);
 
@@ -1792,13 +1832,16 @@ void CPUInst::SRLXXd(uint8_t reg) {
 		(value & (Flag_F3 | Flag_F5)) |
 		PZS_Flags[value] |
 		((old & 0x01) ? Flag_C : 0));
-
-	this->d._registers.IncPC(4);
-	this->d._cycles += 23;
 }
 
-// |2|18| The contents of the low-order nibble of (hl) are copied to the high-order nibble of (hl). The previous contents are copied to the low-order nibble of a. The previous contents are copied to the low-order nibble of (hl).
+/**
+ * RLD -> pc:4,pc+1:4,hl:3,hl:1 x 4,hl(write):3
+ * |2|18| The contents of the low-order nibble of (hl) are copied to the high-order nibble of (hl). The previous contents are copied to the low-order nibble of a. The previous contents are copied to the low-order nibble of (hl).
+ */
 void CPUInst::RLD() {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint16_t offset = this->d._registers.GetHL();
 	uint8_t HL = this->ReadMemory(offset);
 	uint8_t A = this->d._registers.GetA();
@@ -1806,6 +1849,9 @@ void CPUInst::RLD() {
 	uint8_t valueHL = (HL << 4) | (A & 0x0F);
 
 	this->d._registers.SetA(valueA);
+
+	this->d._cycles += 4;
+
 	this->WriteMemory(offset, valueHL);
 
 	this->d._registers.SetF(
@@ -1813,13 +1859,16 @@ void CPUInst::RLD() {
 		PZS_Flags[valueA] |
 		(this->d._registers.GetF() & Flag_C)
 	);
-
-	this->d._registers.IncPC(2);
-	this->d._cycles += 18;
 }
 
-// |2|18| The contents of the low-order nibble of (hl) are copied to the low-order nibble of a. The previous contents are copied to the high-order nibble of (hl). The previous contents are copied to the low-order nibble of (hl).
+/**
+ * RRD -> pc:4,pc+1:4,hl:3,hl:1 x 4,hl(write):3
+ * |2|18| The contents of the low-order nibble of (hl) are copied to the low-order nibble of a. The previous contents are copied to the high-order nibble of (hl). The previous contents are copied to the low-order nibble of (hl).
+ */
 void CPUInst::RRD() {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint16_t offset = this->d._registers.GetHL();
 	uint8_t HL = this->ReadMemory(offset);
 	uint8_t A = this->d._registers.GetA();
@@ -1827,6 +1876,9 @@ void CPUInst::RRD() {
 	uint8_t valueHL = (A << 4) | (HL >> 4);
 
 	this->d._registers.SetA(valueA);
+
+	this->d._cycles += 4;
+
 	this->WriteMemory(offset, valueHL);
 
 	this->d._registers.SetF(
@@ -1834,9 +1886,6 @@ void CPUInst::RRD() {
 		PZS_Flags[valueA] |
 		(this->d._registers.GetF() & Flag_C)
 	);
-
-	this->d._registers.IncPC(2);
-	this->d._cycles += 18;
 }
 
 /******************************************************************************/
