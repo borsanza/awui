@@ -975,7 +975,9 @@ void CPUInst::DECXXd(uint8_t xx) {
 /************** General-Purpose Arithmetic and CPU Control Group **************/
 /******************************************************************************/
 
-// |1|4| Adjusts a for BCD addition and subtraction operations.
+/**
+ * |1|4| Adjusts a for BCD addition and subtraction operations.
+ */
 void CPUInst::DAA() {
 	uint8_t A = this->d._registers.GetA();
 	uint8_t tmp = A;
@@ -1009,7 +1011,9 @@ void CPUInst::DAA() {
 	this->d._cycles += 4;
 }
 
-// |1|4| The contents of a are inverted (one's complement).
+/**
+ * |1|4| The contents of a are inverted (one's complement).
+ */
 void CPUInst::CPL() {
 	uint8_t A = ~this->d._registers.GetA();
 	this->d._registers.SetA(A);
@@ -1025,7 +1029,9 @@ void CPUInst::CPL() {
 	this->d._cycles += 4;
 }
 
-// |2|8| The contents of a are negated (two's complement). Operation is the same as subtracting a from zero.
+/**
+ * |2|8| The contents of a are negated (two's complement). Operation is the same as subtracting a from zero.
+ */
 void CPUInst::NEG() {
 	uint8_t A = this->d._registers.GetA();
 	uint8_t value = 0 - A;
@@ -1044,7 +1050,9 @@ void CPUInst::NEG() {
 	this->d._cycles += 8;
 }
 
-// |1|4| Inverts the carry flag.
+/**
+ * |1|4| Inverts the carry flag.
+ */
 void CPUInst::CCF() {
 	bool carry = this->d._registers.GetF() & Flag_C;
 	uint8_t A = this->d._registers.GetA();
@@ -1059,7 +1067,9 @@ void CPUInst::CCF() {
 	this->d._cycles += 4;
 }
 
-// |1|4| Sets the carry flag.
+/**
+ * |1|4| Sets the carry flag.
+ */
 void CPUInst::SCF() {
 	uint8_t A = this->d._registers.GetA();
 
@@ -1077,7 +1087,9 @@ void CPUInst::SCF() {
 /*************************** 16-Bit Arithmetic Group **************************/
 /******************************************************************************/
 
-// |2|15| Adds ss and the carry flag to hl.
+/**
+ * |2|15| Adds ss and the carry flag to hl.
+ */
 void CPUInst::ADCHLss(uint8_t reg) {
 	uint16_t hl = this->d._registers.GetHL();
 	uint16_t b = this->d._registers.GetRegss(reg);
@@ -1100,7 +1112,9 @@ void CPUInst::ADCHLss(uint8_t reg) {
 	this->d._cycles += 15;
 }
 
-// |2|15| Subtracts reg and the carry flag from hl.
+/**
+ * |2|15| Subtracts reg and the carry flag from hl.
+ */
 void CPUInst::SBCHLss(uint8_t reg) {
 	uint16_t hl = this->d._registers.GetHL();
 	uint16_t b = this->d._registers.GetRegss(reg);
@@ -1126,7 +1140,9 @@ void CPUInst::SBCHLss(uint8_t reg) {
 	this->d._cycles += 15;
 }
 
-// |2|15| The value of pp is added to XX.
+/**
+ * |2|15| The value of pp is added to XX.
+ */
 void CPUInst::ADDXXpp(uint8_t XX, uint16_t reg2, uint8_t cycles, uint8_t size) {
 	uint16_t reg1 = this->d._registers.GetRegss(XX);
 	uint32_t value = (uint32_t)reg1 + (uint32_t)reg2;
@@ -1145,14 +1161,18 @@ void CPUInst::ADDXXpp(uint8_t XX, uint16_t reg2, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1|6| Adds one to reg
+/**
+ * |1|6| Adds one to reg
+ */
 void CPUInst::INCss(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->d._registers.SetRegss(reg, this->d._registers.GetRegss(reg) + 1);
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
 }
 
-// |1|6| Subtracts one from ss
+/**
+ * |1|6| Subtracts one from ss
+ */
 void CPUInst::DECss(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->d._registers.SetRegss(reg, this->d._registers.GetRegss(reg) - 1);
 	this->d._registers.IncPC(size);
@@ -1163,7 +1183,9 @@ void CPUInst::DECss(uint8_t reg, uint8_t cycles, uint8_t size) {
 /*************************** Rotate and Shift Group ***************************/
 /******************************************************************************/
 
-// |1|4| The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
+/**
+ * |1|4| The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
+ */
 void CPUInst::RLCA() {
 	uint8_t old = this->d._registers.GetA();
 	uint8_t value = (old << 1);
@@ -1182,7 +1204,9 @@ void CPUInst::RLCA() {
 	this->d._cycles += 4;
 }
 
-// |1|4| The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
+/**
+ * |1|4| The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
+ */
 void CPUInst::RLA() {
 	uint8_t old = this->d._registers.GetA();
 	uint8_t value = (old << 1);
@@ -1201,7 +1225,9 @@ void CPUInst::RLA() {
 	this->d._cycles += 4;
 }
 
-// |1|4| The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
+/**
+ * |1|4| The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
+ */
 void CPUInst::RRCA() {
 	uint8_t old = this->d._registers.GetA();
 	uint8_t value = (old >> 1);
@@ -1220,7 +1246,9 @@ void CPUInst::RRCA() {
 	this->d._cycles += 4;
 }
 
-// |1|4| The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
+/**
+ * |1|4| The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
+ */
 void CPUInst::RRA() {
 	uint8_t old = this->d._registers.GetA();
 	uint8_t value = (old >> 1);
@@ -1239,7 +1267,9 @@ void CPUInst::RRA() {
 	this->d._cycles += 4;
 }
 
-// |2|8| The contents of b are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
+/**
+ * |2|8| The contents of b are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
+ */
 void CPUInst::RLC(uint8_t reg) {
 	uint8_t old = this->d._registers.GetRegm(reg);
 	uint8_t value = (old << 1);
