@@ -2050,25 +2050,34 @@ void CPUInst::RESbssd(uint8_t bit, uint8_t reg) {
 /********************************* Jump Group *********************************/
 /******************************************************************************/
 
-// |3|10| If condition cc is true, ** is copied to pc.
+/**
+ * |3|10| If condition cc is true, ** is copied to pc.
+ */
 void CPUInst::JPccnn(bool cc) {
-	if (cc) {
-		uint16_t pc = this->d._registers.GetPC();
-		this->d._registers.SetPC((this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1));
-	} else
-		this->d._registers.IncPC(3);
+	this->d._cycles += 4;
+	uint16_t pc = this->d._registers.GetPC();
 
-	this->d._cycles += 10;
+	Word offset;
+	offset.H = this->ReadMemory(pc + 2);
+	offset.L = this->ReadMemory(pc + 1);
+
+	if (cc)
+		this->d._registers.SetPC(offset.W);
+	else
+		this->d._registers.IncPC(3);
 }
 
-// Contented
-// |2|12/7| If condition cc is true, the signed value * is added to pc.
-// The jump is measured from the start of the instruction opcode.
+/**
+ * pc:4,pc+1:3,[pc+1:1 x 5]
+ * |2|12/7| If condition cc is true, the signed value * is added to pc.
+ * The jump is measured from the start of the instruction opcode.
+ */
 void CPUInst::JR(bool cc) {
 	this->d._cycles += 4;
-	int8_t value = this->ReadMemory(this->d._registers.GetPC() + 1);
+	int8_t offset = this->ReadMemory(this->d._registers.GetPC() + 1);
+
 	if (cc) {
-		this->d._registers.IncPC(value + 2);
+		this->d._registers.IncPC(offset + 2);
 		this->d._cycles += 5;
 	} else
 		this->d._registers.IncPC(2);
@@ -2078,22 +2087,46 @@ void CPUInst::JR(bool cc) {
 /*************************** Call And Return Group ****************************/
 /******************************************************************************/
 
-// |1|11/5| If condition cc is true, the top stack entry is popped into pc.
-void CPUInst::RET(bool cc, uint8_t cycles) {
-	if (cc) {
-		uint16_t sp = this->d._registers.GetSP();
-		uint16_t pc = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
-		this->d._registers.SetSP(sp + 2);
-		this->d._registers.SetPC(pc);
-		this->d._cycles += cycles;
-	} else {
-		this->d._registers.IncPC();
-		this->d._cycles += 5;
-	}
+/**
+ * RET -> pc:4,sp:3,sp+1:3
+ * |1|10| The top stack entry is popped into pc.
+ */
+void CPUInst::RET() {
+	this->d._cycles += 4;
+	uint16_t sp = this->d._registers.GetSP();
+	Word pc;
+	pc.H = this->ReadMemory(sp + 1);
+	pc.L = this->ReadMemory(sp);
+
+	this->d._inInterrupt = false;
+
+	this->d._registers.SetSP(sp + 2);
+	this->d._registers.SetPC(pc.W);
 }
 
-// |1|11| The current pc value plus one is pushed onto the stack, then is loaded with ph.
+/**
+ * RET cc -> pc:4,ir:1,[sp:3,sp+1:3]
+ * |1|11/5| If condition cc is true, the top stack entry is popped into pc.
+ */
+void CPUInst::RETcc(bool cc) {
+	this->d._cycles += 5;
+	if (cc) {
+		uint16_t sp = this->d._registers.GetSP();
+		Word pc;
+		pc.H = this->ReadMemory(sp + 1);
+		pc.L = this->ReadMemory(sp);
+		this->d._registers.SetSP(sp + 2);
+		this->d._registers.SetPC(pc.W);
+	} else
+		this->d._registers.IncPC();
+}
+
+/**
+ * RST n -> pc:4,ir:1,sp-1:3,sp-2:3
+ * |1|11| The current pc value plus one is pushed onto the stack, then is loaded with ph.
+ */
 void CPUInst::RSTp(uint8_t p) {
+	this->d._cycles += 5;
 	Word pc;
 	pc.W = this->d._registers.GetPC() + 1;
 	uint16_t sp = this->d._registers.GetSP() - 2;
@@ -2101,23 +2134,29 @@ void CPUInst::RSTp(uint8_t p) {
 	this->WriteMemory(sp + 1, pc.H);
 	this->WriteMemory(sp, pc.L);
 
-	this->d._cycles += 11;
 	this->d._registers.SetPC(p);
 }
 
-// |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **.
+/**
+ * CALL ** -> pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+ * |3|17| The current pc value plus three is pushed onto the stack, then is loaded with **
+ */
 void CPUInst::CALLnn() {
+	this->d._cycles += 4;
 	Word pc;
 	pc.W = this->d._registers.GetPC() + 3;
 	uint16_t sp = this->d._registers.GetSP() - 2;
 	this->d._registers.SetSP(sp);
 	this->WriteMemory(sp, pc.L);
 	this->WriteMemory(sp + 1, pc.H);
-	this->d._cycles += 17;
+	this->d._cycles++;
 	this->d._registers.SetPC((this->ReadMemory(pc.W - 1) << 8) | this->ReadMemory(pc.W - 2));
 }
 
-// |3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+/**
+ * CALL cc,nn -> pc:4,pc+1:3,pc+2:3,[pc+2:1,sp-1:3,sp-2:3]
+ * |3|17/10| If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+ */
 void CPUInst::CALLccnn(bool cc) {
 	if (cc)
 		CALLnn();
@@ -2128,6 +2167,8 @@ void CPUInst::CALLccnn(bool cc) {
 }
 
 void CPUInst::CallInterrupt(uint16_t offset) {
+	this->d._cycles += 5;
+
 	if (this->d._isSuspended) {
 		this->d._registers.IncPC();
 		this->d._isSuspended = false;
@@ -2139,25 +2180,38 @@ void CPUInst::CallInterrupt(uint16_t offset) {
 	this->d._registers.SetSP(sp);
 	this->WriteMemory(sp, pc.L);
 	this->WriteMemory(sp + 1, pc.H);
-	this->d._cycles += 11;
 	this->d._registers.SetPC(offset);
 }
 
+/**
+ * RETI -> pc:4,pc+1:4,sp:3,sp+1:3
+ * |2|14| Used at the end of a maskable interrupt service routine. The top stack entry is popped into pc, and signals an I/O device that the interrupt has finished, allowing nested interrupts (not a consideration on the TI).
+ */
 void CPUInst::RETI() {
+	this->d._cycles += 8;
+
 	uint16_t sp = this->d._registers.GetSP();
-	uint16_t pc = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
+	Word pc;
+	pc.H = this->ReadMemory(sp + 1);
+	pc.L = this->ReadMemory(sp);
 	this->d._registers.SetSP(sp + 2);
-	this->d._registers.SetPC(pc);
-	this->d._cycles += 14;
+	this->d._registers.SetPC(pc.W);
 	this->d._registers.SetIFF1(this->d._registers.GetIFF2());
 }
 
+/**
+ * RETN -> pc:4,pc+1:4,sp:3,sp+1:3
+ * |2|14| Used at the end of a non-maskable interrupt service routine (located at $0066) to pop the top stack entry into PC. The value of IFF2 is copied to IFF1 so that maskable interrupts are allowed to continue as before. NMIs are not enabled on the TI.
+ */
 void CPUInst::RETN() {
+	this->d._cycles += 8;
+
 	uint16_t sp = this->d._registers.GetSP();
-	uint16_t pc = (this->ReadMemory(sp + 1) << 8) | this->ReadMemory(sp);
+	Word pc;
+	pc.H = this->ReadMemory(sp + 1);
+	pc.L = this->ReadMemory(sp);
 	this->d._registers.SetSP(sp + 2);
-	this->d._registers.SetPC(pc);
-	this->d._cycles += 14;
+	this->d._registers.SetPC(pc.W);
 	this->d._registers.SetIFF1(this->d._registers.GetIFF2());
 }
 

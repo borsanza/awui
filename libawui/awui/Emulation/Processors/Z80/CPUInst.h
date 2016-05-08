@@ -166,7 +166,8 @@ namespace awui {
 						void JR(bool cc);
 
 						// Call And Return Group
-						void RET(bool cc, uint8_t cycles = 11);
+						void RET();
+						void RETcc(bool cc);
 						void RSTp(uint8_t p);
 						void CALLnn();
 						void CALLccnn(bool cc);

@@ -480,18 +480,15 @@ void CPU::RunOpcode() {
 
 		// C9: RET
 		// |1|10| The top stack entry is popped into pc.
-		case OxC0: this->RET(!(this->d._registers.GetF() & Flag_Z)); break;
-		case OxC8: this->RET( (this->d._registers.GetF() & Flag_Z)); break;
-		case OxC9:
-			this->RET(true, 10);
-			this->d._inInterrupt = false;
-			break;
-		case OxD0: this->RET(!(this->d._registers.GetF() & Flag_C)); break;
-		case OxD8: this->RET( (this->d._registers.GetF() & Flag_C)); break;
-		case OxE0: this->RET(!(this->d._registers.GetF() & Flag_V)); break;
-		case OxE8: this->RET( (this->d._registers.GetF() & Flag_V)); break;
-		case OxF0: this->RET(!(this->d._registers.GetF() & Flag_S)); break;
-		case OxF8: this->RET( (this->d._registers.GetF() & Flag_S)); break;
+		case OxC0: this->RETcc(!(this->d._registers.GetF() & Flag_Z)); break;
+		case OxC8: this->RETcc( (this->d._registers.GetF() & Flag_Z)); break;
+		case OxC9: this->RET(); break;
+		case OxD0: this->RETcc(!(this->d._registers.GetF() & Flag_C)); break;
+		case OxD8: this->RETcc( (this->d._registers.GetF() & Flag_C)); break;
+		case OxE0: this->RETcc(!(this->d._registers.GetF() & Flag_V)); break;
+		case OxE8: this->RETcc( (this->d._registers.GetF() & Flag_V)); break;
+		case OxF0: this->RETcc(!(this->d._registers.GetF() & Flag_S)); break;
+		case OxF8: this->RETcc( (this->d._registers.GetF() & Flag_S)); break;
 
 		// CD nn: CALL **
 		case OxC4: this->CALLccnn(!(this->d._registers.GetF() & Flag_Z)); break;
