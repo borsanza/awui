@@ -22,6 +22,20 @@ using namespace awui::Emulation::Common;
 using namespace awui::Emulation::Spectrum;
 using namespace awui::Emulation::Processors::Z80;
 
+/*
+Content Memory:
+	14335	6 (until 14.341) <- 14336 % 8 = 7;
+	14336	5 (until 14.341) <- 14336 % 8 = 0;
+	14337	4 (until 14.341) <- 14336 % 8 = 1;
+	14338	3 (until 14.341) <- 14336 % 8 = 2;
+	14339	2 (until 14.341) <- 14336 % 8 = 3;
+	14340	1 (until 14.341) <- 14336 % 8 = 4;
+	14341	No delay         <- 14336 % 8 = 5;
+	14342	No delay         <- 14336 % 8 = 6;
+*/
+
+static int content_states[] = { 5, 4, 3, 2, 1, 0, 0, 6 };
+
 void WriteMemoryCB(uint16_t pos, uint8_t value, void * data) { ((Motherboard *) data)->WriteMemory(pos, value); }
 uint8_t ReadMemoryCB(uint16_t pos, void * data) { return ((Motherboard *) data)->ReadMemory(pos); }
 void WritePortCB(uint8_t port, uint8_t value, void * data) { ((Motherboard *) data)->WritePort(port, value); }
@@ -179,24 +193,35 @@ void Motherboard::OnTick() {
 // FF58 - FFFF: Reserved
 void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 	// En la rom no se escribe
-	if (pos < 0x4000)
+	if (pos < 0x4000) {
+		this->_z80->IncCycles(3);
 		return;
+	}
 
 	if (pos < 0x8000) {
+		this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
+		this->_z80->IncCycles(3);
 		this->_ula->WriteByte(pos - 0x4000, value);
 		return;
 	}
 
+	this->_z80->IncCycles(3);
 	this->d._ram[pos - 0x8000] = value;
 }
 
 uint8_t Motherboard::ReadMemory(uint16_t pos) const {
-	if (pos < 0x4000)
+	if (pos < 0x4000) {
+		this->_z80->IncCycles(3);
 		return this->_rom->ReadByte(pos);
+	}
 
-	if (pos < 0x8000)
+	if (pos < 0x8000) {
+		this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
+		this->_z80->IncCycles(3);
 		return this->_ula->ReadByte(pos - 0x4000);
+	}
 
+	this->_z80->IncCycles(3);
 	return this->d._ram[pos - 0x8000];
 }
 
