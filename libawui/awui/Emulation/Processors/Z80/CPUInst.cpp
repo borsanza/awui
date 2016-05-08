@@ -2259,7 +2259,7 @@ void CPUInst::INI() {
 	this->d._registers.SetFFlag(Flag_N, true);
 
 	this->d._registers.IncPC(2);
-	this->d._cycles += 16;
+	this->d._cycles += 13; // 16 - 3
 }
 
 // |2|11| The value of a is written to port *.
@@ -2272,7 +2272,7 @@ void CPUInst::OUTnA() {
 	this->WritePort(n, data);
 
 	this->d._registers.IncPC(2);
-	this->d._cycles += 11;
+	this->d._cycles += 8; // 11 - 3
 }
 
 // |2|12| The value of reg is written to port c.
@@ -2288,8 +2288,14 @@ void CPUInst::OUTC(uint8_t value) {
 	this->d._cycles += 12;
 }
 
-// |2|16| A byte from the memory location pointed to by hl is written to port c. Then hl is incremented and b is decremented.
+/**
+ * OUTD -> pc:4,pc+1:4,ir:1,hl:3,IO,[bc:1 x 5]
+ * |2|16| A byte from the memory location pointed to by hl is written to port c. Then hl is incremented and b is decremented.
+ */
 void CPUInst::OUTI() {
+	this->d._cycles += 9;
+	this->d._registers.IncPC(2);
+
 	uint8_t C = this->d._registers.GetC();
 	uint8_t B = this->d._registers.GetB() - 1;
 	uint16_t HL = this->d._registers.GetHL();
@@ -2304,12 +2310,17 @@ void CPUInst::OUTI() {
 	this->d._registers.SetFFlag(Flag_Z, B == 0);
 	this->d._registers.SetFFlag(Flag_N, true);
 
-	this->d._registers.IncPC(2);
-	this->d._cycles += 16;
+	this->d._cycles += 4;
 }
 
-// |2|16| A byte from the memory location pointed to by hl is written to port c. Then hl and b are decremented.
+/**
+ * OUTD -> pc:4,pc+1:4,ir:1,hl:3,IO,[bc:1 x 5]
+ * |2|16| A byte from the memory location pointed to by hl is written to port c. Then hl and b are decremented.
+ */
 void CPUInst::OUTD() {
+	this->d._cycles += 9;
+	this->d._registers.IncPC(2);
+
 	uint8_t B = this->d._registers.GetB() - 1;
 	uint8_t C = this->d._registers.GetC();
 	uint16_t HL = this->d._registers.GetHL();
@@ -2323,8 +2334,7 @@ void CPUInst::OUTD() {
 	this->d._registers.SetFFlag(Flag_Z, B == 0);
 	this->d._registers.SetFFlag(Flag_N, true);
 
-	this->d._registers.IncPC(2);
-	this->d._cycles += 16;
+	this->d._cycles += 4;
 }
 
 int CPUInst::GetSaveSize() {
