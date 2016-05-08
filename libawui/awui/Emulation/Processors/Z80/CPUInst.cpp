@@ -1810,6 +1810,7 @@ void CPUInst::SRL_HL() {
 }
 
 /**
+ * TODO: Revisar
  * |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
  */
 void CPUInst::SRLXXd(uint8_t reg) {
@@ -1892,8 +1893,14 @@ void CPUInst::RRD() {
 /*********************** Bit Set, Reset, and Test Group ***********************/
 /******************************************************************************/
 
-// |2|8| Tests bit compare of value.
+/**
+ * BIT b, r -> pc:4,pc+1:4
+ * |2|8| Tests bit compare of value.
+ */
 void CPUInst::BIT(uint8_t valueb, uint8_t compare) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint8_t value = valueb & compare;
 
 	this->d._registers.SetF(
@@ -1902,15 +1909,21 @@ void CPUInst::BIT(uint8_t valueb, uint8_t compare) {
 		PZS_Flags[value] |
 		(this->d._registers.GetF() & Flag_C)
 	);
-
-	this->d._registers.IncPC(2);
-	this->d._cycles += 8;
 }
 
+/**
+ * BIT b, (HL) -> pc:4,pc+1:4,hl:3,hl:1
+ * |2|12| Tests bit compare of (HL).
+ */
 void CPUInst::BITHL(uint8_t compare) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
 	uint16_t HL = this->d._registers.GetHL();
 	uint8_t valueb = this->ReadMemory(HL);
 	uint8_t value = valueb & compare;
+
+	this->d._cycles++;
 
 	this->d._registers.SetF(
 		((HL & Flag_F3H) ? Flag_F3 : 0) |
@@ -1919,15 +1932,25 @@ void CPUInst::BITHL(uint8_t compare) {
 		PZS_Flags[value] |
 		(this->d._registers.GetF() & Flag_C)
 	);
-
-	this->d._registers.IncPC(2);
-	this->d._cycles += 12;
 }
 
-// |4|20| Tests bit 'bit' of the memory location pointed to by ss plus *.
-void CPUInst::BITbssd(uint8_t bit, uint8_t reg, uint8_t d) {
+/**
+ * TODO: Revisar
+ * pc:4,pc+1:4,pc+2:3,pc+3:3,pc+3:1 x 2,ii+n:3,ii+n:1
+ * |4|20| Tests bit 'bit' of the memory location pointed to by ss plus *.
+ */
+void CPUInst::BITbssd(uint8_t bit, uint8_t reg) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(4);
+
+	uint8_t d = this->ReadMemory(this->d._registers.GetPC() - 2);
+
+	this->d._cycles += 5;
+
 	uint16_t offset = this->d._registers.GetRegss(reg) + ((int8_t) d);
 	uint8_t value = this->ReadMemory(offset) & bit;
+
+	this->d._cycles++;
 
 	this->d._registers.SetF(
 		((offset & Flag_F3H) ? Flag_F3 : 0) |
@@ -1936,55 +1959,91 @@ void CPUInst::BITbssd(uint8_t bit, uint8_t reg, uint8_t d) {
 		PZS_Flags[value] |
 		(this->d._registers.GetF() & Flag_C)
 	);
-
-	this->d._registers.IncPC(4);
-	this->d._cycles += 20;
 }
 
-// |2|8| Sets bit X of reg.
+/**
+ * |2|8| Sets bit X of reg.
+ */
 void CPUInst::SET(uint8_t reg, uint8_t bit) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
 	this->d._registers.SetRegm(reg, this->d._registers.GetRegm(reg) | bit);
-	this->d._registers.IncPC(2);
-	this->d._cycles += 8;
 }
 
-// |2|15| Sets bit X of (HL).
+/**
+ * SET b, (HL) -> pc:4,pc+1:4,hl:3,hl:1,hl(write):3
+ * |2|15| Sets bit X of (HL).
+ */
 void CPUInst::SETHL(uint8_t bit) {
-	uint16_t offset = this->d._registers.GetHL();
-	this->WriteMemory(offset, this->ReadMemory(offset) | bit);
-	this->d._registers.IncPC(2);
-	this->d._cycles += 15;
-}
-
-// |4|23| Sets bit 'bit' of the memory location pointed to by ss plus *.
-void CPUInst::SETbssd(uint8_t bit, uint8_t reg, uint8_t d) {
-	uint16_t offset = this->d._registers.GetRegss(reg) + ((int8_t) d);
-	this->WriteMemory(offset, this->ReadMemory(offset) | bit);
-	this->d._registers.IncPC(4);
-	this->d._cycles += 23;
-}
-
-// |2|8| Resets bit X of reg.
-void CPUInst::RES(uint8_t reg, uint8_t bit) {
-	this->d._registers.SetRegm(reg, this->d._registers.GetRegm(reg) & ~bit);
-	this->d._registers.IncPC(2);
 	this->d._cycles += 8;
-}
-
-// |2|15| Resets bit X of (HL).
-void CPUInst::RESHL(uint8_t bit) {
-	uint16_t offset = this->d._registers.GetHL();
-	this->WriteMemory(offset, this->ReadMemory(offset) & ~bit);
 	this->d._registers.IncPC(2);
-	this->d._cycles += 15;
+	uint16_t offset = this->d._registers.GetHL();
+	uint8_t value = this->ReadMemory(offset) | bit;
+	this->d._cycles++;
+	this->WriteMemory(offset,  value);
 }
 
-// |4|23| Resets bit 'bit' of the memory location pointed to by ss plus *.
-void CPUInst::RESbssd(uint8_t bit, uint8_t reg, uint8_t d) {
-	uint16_t offset = this->d._registers.GetRegss(reg) + ((int8_t) d);
-	this->WriteMemory(offset, this->ReadMemory(offset) & ~bit);
+/**
+ * pc:4,pc+1:4,pc+2:3,pc+3:3,pc+3:1 x 2,ii+n:3,ii+n:1,ii+n(write):3
+ * |4|23| Sets bit 'bit' of the memory location pointed to by ss plus *
+ */
+void CPUInst::SETbssd(uint8_t bit, uint8_t reg) {
+	this->d._cycles += 11;
 	this->d._registers.IncPC(4);
-	this->d._cycles += 23;
+
+	uint16_t pc = this->d._registers.GetPC();
+	uint8_t d = this->ReadMemory(pc - 2);
+
+	uint16_t offset = this->d._registers.GetRegss(reg) + ((int8_t) d);
+
+	this->d._cycles += 2;
+
+	uint8_t value = this->ReadMemory(offset) | bit;
+	this->d._cycles++;
+	this->WriteMemory(offset, value);
+}
+
+/**
+ * |2|8| Resets bit X of reg.
+ */
+void CPUInst::RES(uint8_t reg, uint8_t bit) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+	this->d._registers.SetRegm(reg, this->d._registers.GetRegm(reg) & ~bit);
+}
+
+/**
+ * RES b,(HL) -> pc:4,pc+1:4,hl:3,hl:1,hl(write):3
+ * |2|15| Resets bit X of (HL).
+ */
+void CPUInst::RESHL(uint8_t bit) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+
+	uint16_t offset = this->d._registers.GetHL();
+	uint8_t value = this->ReadMemory(offset) & ~bit;
+	this->d._cycles++;
+	this->WriteMemory(offset, value);
+}
+
+/**
+ * RES b,(ii+n) -> pc:4,pc+1:4,pc+2:3,pc+3:3,pc+3:1 x 2,ii+n:3,ii+n:1,ii+n(write):3
+ * |4|23| Resets bit 'bit' of the memory location pointed to by ss plus *.
+ */
+void CPUInst::RESbssd(uint8_t bit, uint8_t reg) {
+	this->d._cycles += 11;
+	this->d._registers.IncPC(4);
+
+	uint16_t pc = this->d._registers.GetPC();
+	uint8_t d = this->ReadMemory(pc - 2);
+
+	uint16_t offset = this->d._registers.GetRegss(reg) + ((int8_t) d);
+
+	this->d._cycles += 2;
+
+	uint8_t value = this->ReadMemory(offset) & ~bit;
+	this->d._cycles++;
+	this->WriteMemory(offset, value);
 }
 
 /******************************************************************************/
