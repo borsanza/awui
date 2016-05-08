@@ -266,34 +266,76 @@ void CPUInst::LDHLdd() {
 	this->WriteMemory(offset + 1, value.H);
 }
 
-// |2|15| sp is decremented and ixh is stored into the memory location pointed to by sp. sp is decremented again and ixl is stored into the memory location pointed to by sp.
-void CPUInst::PUSH16(uint8_t reg, uint8_t cycles, uint8_t size) {
+/**
+ * PUSH ss -> pc:4,ir:1,sp-1:3,sp-2:3
+ * |1|11| sp is decremented and b is stored into the memory location pointed to by sp. sp is decremented again and c is stored into the memory location pointed to by sp.
+ */
+void CPUInst::PUSH16(uint8_t reg) {
+	this->d._cycles += 5;
+	this->d._registers.IncPC();
 	Word value;
 	value.W = this->d._registers.GetRegss(reg);
 	uint16_t sp = this->d._registers.GetSP();
 	this->WriteMemory(sp - 1, value.H);
 	this->WriteMemory(sp - 2, value.L);
 	this->d._registers.SetSP(sp - 2);
-	this->d._registers.IncPC(size);
-	this->d._cycles += cycles;
 }
 
-// |2|14| The memory location pointed to by sp is stored into ixl and sp is incremented. The memory location pointed to by sp is stored into ixh and sp is incremented again.
-void CPUInst::POP16(uint8_t reg, uint8_t cycles, uint8_t size) {
+/**
+ * PUSH ii
+ * |2|15| sp is decremented and ixh is stored into the memory location pointed to by sp. sp is decremented again and ixl is stored into the memory location pointed to by sp.
+ */
+void CPUInst::PUSH16X(uint8_t reg) {
+	this->d._cycles += 9;
+	this->d._registers.IncPC(2);
+	Word value;
+	value.W = this->d._registers.GetRegss(reg);
+	uint16_t sp = this->d._registers.GetSP();
+	this->WriteMemory(sp - 1, value.H);
+	this->WriteMemory(sp - 2, value.L);
+	this->d._registers.SetSP(sp - 2);
+}
+
+/**
+ * POP ss -> pc:4,sp:3,sp+1:3
+ * |1|10| The memory location pointed to by sp is stored into c and sp is incremented. The memory location pointed to by sp is stored into b and sp is incremented again.
+ */
+void CPUInst::POP16(uint8_t reg) {
+	this->d._cycles += 4;
+	this->d._registers.IncPC();
 	uint16_t sp = this->d._registers.GetSP();
 	Word value;
 	value.H = this->ReadMemory(sp + 1);
 	value.L = this->ReadMemory(sp);
 	this->d._registers.SetRegss(reg, value.W);
 	this->d._registers.SetSP(sp + 2);
-	this->d._registers.IncPC(size);
-	this->d._cycles += cycles;
 }
 
+/**
+ * POP ii
+ * |2|14| The memory location pointed to by sp is stored into ixl and sp is incremented. The memory location pointed to by sp is stored into ixh and sp is incremented again.
+ */
+void CPUInst::POP16X(uint8_t reg) {
+	this->d._cycles += 8;
+	this->d._registers.IncPC(2);
+	uint16_t sp = this->d._registers.GetSP();
+	Word value;
+	value.H = this->ReadMemory(sp + 1);
+	value.L = this->ReadMemory(sp);
+	this->d._registers.SetRegss(reg, value.W);
+	this->d._registers.SetSP(sp + 2);
+}
+
+/**
+ * |1|6|  Loads the value of HL into SP.
+ * |1|4|  Loads the value of HL into PC.
+ * |2|8|  Loads the value of IX/IY into PC.
+ * |2|10| Loads the value of IX/IY into SP.
+ */
 void CPUInst::LDtofrom(uint8_t to, uint16_t value, uint8_t cycles, uint8_t size) {
-	this->d._registers.SetRegss(to, value);
-	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
+	this->d._registers.IncPC(size);
+	this->d._registers.SetRegss(to, value);
 }
 
 /******************************************************************************/

@@ -286,6 +286,11 @@ void CPU::RunOpcode() {
 		case Ox7E: this->LDrHL(Reg_A); break;
 
 		case OxF9: this->LDtofrom(Reg_SP, this->d._registers.GetHL(), 6, 1); break;
+		case OxE9: this->LDtofrom(Reg_PC, this->d._registers.GetHL(), 4, 1); break;
+		case OxDDE9: this->LDtofrom(Reg_PC, this->d._registers.GetIX(), 8, 1); break;
+		case OxFDE9: this->LDtofrom(Reg_PC, this->d._registers.GetIY(), 8, 1); break;
+		case OxDDF9: this->LDtofrom(Reg_SP, this->d._registers.GetIX(), 10, 2); break;
+		case OxFDF9: this->LDtofrom(Reg_SP, this->d._registers.GetIY(), 10, 2); break;
 
 		// 28 nn: JR X, *
 		// |2|12/7| If condition X is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
@@ -459,15 +464,15 @@ void CPU::RunOpcode() {
 			}
 			break;
 
-		case OxC1: this->POP16(Reg_BC, 10, 1); break;
-		case OxD1: this->POP16(Reg_DE, 10, 1); break;
-		case OxE1: this->POP16(Reg_HL, 10, 1); break;
-		case OxF1: this->POP16(Reg_AF, 10, 1); break;
+		case OxC1: this->POP16(Reg_BC); break;
+		case OxD1: this->POP16(Reg_DE); break;
+		case OxE1: this->POP16(Reg_HL); break;
+		case OxF1: this->POP16(Reg_AF); break;
 
-		case OxC5: this->PUSH16(Reg_BC, 11, 1); break;
-		case OxD5: this->PUSH16(Reg_DE, 11, 1); break;
-		case OxE5: this->PUSH16(Reg_HL, 11, 1); break;
-		case OxF5: this->PUSH16(Reg_AF, 11, 1); break;
+		case OxC5: this->PUSH16(Reg_BC); break;
+		case OxD5: this->PUSH16(Reg_DE); break;
+		case OxE5: this->PUSH16(Reg_HL); break;
+		case OxF5: this->PUSH16(Reg_AF); break;
 
 		// C9: RET
 		// |1|10| The top stack entry is popped into pc.
@@ -531,8 +536,6 @@ void CPU::RunOpcode() {
 				this->d._cycles += 11;
 			}
 			break;
-
-		case OxE9: this->LDtofrom(Reg_PC, this->d._registers.GetHL(), 4, 0); break; // No aumenta el PC
 
 		// 08: EX AF, AF'
 		// |1|4| Exchanges the 16-bit contents of af and af'.
@@ -1018,8 +1021,8 @@ void CPU::RunOpcode() {
 		case OxDDB6: this->OR(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxDDBE: this->CP(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 
-		case OxDDE1: this->POP16(Reg_IX, 14, 2); break;
-		case OxDDE5: this->PUSH16(Reg_IX, 15, 2); break;
+		case OxDDE1: this->POP16X(Reg_IX); break;
+		case OxDDE5: this->PUSH16X(Reg_IX); break;
 		case OxDD23: this->INCss(Reg_IX, 10, 2); break;
 		case OxDD2B: this->DECss(Reg_IX, 10, 2); break;
 		case OxDD34: this->INCXXd(Reg_IX); break;
@@ -1075,7 +1078,6 @@ void CPU::RunOpcode() {
 		case OxDD75: this->LDXXdr(Reg_IX, Reg_L); break;
 		case OxDD77: this->LDXXdr(Reg_IX, Reg_A); break;
 
-		case OxDDF9: this->LDtofrom(Reg_SP, this->d._registers.GetIX(), 10, 2); break;
 		case OxDD26: this->LDriin(Reg_IXH); break;
 		case OxDD2E: this->LDriin(Reg_IXL); break;
 
@@ -1096,7 +1098,6 @@ void CPU::RunOpcode() {
 		case OxDDBC: this->CP(this->d._registers.GetIXH(), 8, 2); break;
 		case OxDDBD: this->CP(this->d._registers.GetIXL(), 8, 2); break;
 
-		case OxDDE9: this->LDtofrom(Reg_PC, this->d._registers.GetIX(), 8, 0); break; // No aumenta el PC
 		case OxDDE3: this->EX_ss(Reg_SP, Reg_IX, 23, 2); break;
 
 /******************************************************************************/
@@ -1220,8 +1221,8 @@ void CPU::RunOpcode() {
 		case OxFDB6: this->OR(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 		case OxFDBE: this->CP(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
 
-		case OxFDE1: this->POP16(Reg_IY, 14, 2); break;
-		case OxFDE5: this->PUSH16(Reg_IY, 15, 2); break;
+		case OxFDE1: this->POP16X(Reg_IY); break;
+		case OxFDE5: this->PUSH16X(Reg_IY); break;
 		case OxFD23: this->INCss(Reg_IY, 10, 2); break;
 		case OxFD2B: this->DECss(Reg_IY, 10, 2); break;
 		case OxFD34: this->INCXXd(Reg_IY); break;
@@ -1277,7 +1278,6 @@ void CPU::RunOpcode() {
 		case OxFD75: this->LDXXdr(Reg_IY, Reg_L); break;
 		case OxFD77: this->LDXXdr(Reg_IY, Reg_A); break;
 
-		case OxFDF9: this->LDtofrom(Reg_SP, this->d._registers.GetIY(), 10, 2); break;
 		case OxFD26: this->LDriin(Reg_IYH); break;
 		case OxFD2E: this->LDriin(Reg_IYL); break;
 
@@ -1298,7 +1298,6 @@ void CPU::RunOpcode() {
 		case OxFDBC: this->CP(this->d._registers.GetIYH(), 8, 2); break;
 		case OxFDBD: this->CP(this->d._registers.GetIYL(), 8, 2); break;
 
-		case OxFDE9: this->LDtofrom(Reg_PC, this->d._registers.GetIY(), 8, 0); break; // No aumenta el PC
 		case OxFDE3: this->EX_ss(Reg_SP, Reg_IY, 23, 2); break;
 
 /******************************************************************************/
