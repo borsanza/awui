@@ -651,7 +651,9 @@ void CPUInst::CPDR() {
 /*************************** 8-Bit Arithmetic Group ***************************/
 /******************************************************************************/
 
-// |1|4| Adds valueb to a.
+/**
+ * |1|4| Adds valueb to a.
+ */
 void CPUInst::ADD(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
 	Word w;
@@ -671,7 +673,9 @@ void CPUInst::ADD(uint8_t b, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1|4| Adds l and the carry flag to a.
+/**
+ * |1|4| Adds l and the carry flag to a.
+ */
 void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
 	Word w;
@@ -691,7 +695,9 @@ void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1|4| Subtracts reg from a.
+/**
+ * |1|4| Subtracts reg from a.
+ */
 void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
 	int16_t pvalue = ((int16_t) A) - ((int16_t) b);
@@ -712,7 +718,9 @@ void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1|4| Subtracts e and the carry flag from a.
+/**
+ * |1|4| Subtracts e and the carry flag from a.
+ */
 void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
 	int16_t pvalue = ((int16_t) A) - ((int16_t) b);
@@ -738,7 +746,9 @@ void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1|4|Bitwise AND on a with valueb.
+/**
+ * |1|4|Bitwise AND on a with valueb.
+ */
 void CPUInst::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	uint8_t value = this->d._registers.GetA() & valueb;
 
@@ -754,7 +764,9 @@ void CPUInst::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1|4| Bitwise OR on a with valueb
+/**
+ * |1|4| Bitwise OR on a with valueb
+ */
 void CPUInst::OR(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	uint8_t value = this->d._registers.GetA() | valueb;
 
@@ -769,7 +781,9 @@ void CPUInst::OR(uint8_t valueb, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1/2|4/7| Bitwise XOR on a with b.
+/**
+ * |1/2|4/7| Bitwise XOR on a with b.
+ */
 void CPUInst::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t value = this->d._registers.GetA() ^ b;
 
@@ -784,6 +798,9 @@ void CPUInst::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
+/**
+ * |1|4| Subtracts b from a and affects flags according to the result. a is not modified.
+ */
 void CPUInst::CP(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t A = this->d._registers.GetA();
 	uint8_t value = A - b;
@@ -802,7 +819,9 @@ void CPUInst::CP(uint8_t b, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1|4| Adds one to reg
+/**
+ * |1|4| Adds one to reg
+ */
 void CPUInst::INCr(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint8_t old = this->d._registers.GetRegm(reg);
 	uint8_t value = old + 1;
@@ -821,7 +840,9 @@ void CPUInst::INCr(uint8_t reg, uint8_t cycles, uint8_t size) {
 	this->d._cycles += cycles;
 }
 
-// |1|4| Subtracts one from m
+/**
+ * |1|4| Subtracts one from m
+ */
 void CPUInst::DECm(uint8_t reg, uint8_t cycles, uint8_t size) {
 	uint8_t old = this->d._registers.GetRegm(reg);
 	uint8_t value = old - 1;
