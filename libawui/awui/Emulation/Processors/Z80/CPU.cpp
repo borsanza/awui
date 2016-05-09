@@ -210,9 +210,9 @@ void CPU::RunOpcode() {
 		// 36: LD (HL), *
 		// |2|10| Loads * into (hl).
 		case Ox36:
+			this->d._cycles += 4;
 			this->WriteMemory(this->d._registers.GetHL() , this->ReadMemory(pc + 1));
 			this->d._registers.IncPC(2);
-			this->d._cycles += 10;
 			break;
 
 		// DEC X
@@ -308,37 +308,37 @@ void CPU::RunOpcode() {
 		// |3|13| Stores a into the memory location pointed to by **.
 		case Ox32:
 			{
+				this->d._cycles += 4;
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
 				this->WriteMemory(offset, this->d._registers.GetA());
 				this->d._registers.IncPC(3);
-				this->d._cycles += 13;
 			}
 			break;
 
 		// 0A: LD A, (BC)
 		// |1|7| Loads the value pointed to by bc into a.
 		case Ox0A:
+			this->d._cycles += 4;
 			this->d._registers.SetA(this->ReadMemory(this->d._registers.GetBC()));
 			this->d._registers.IncPC();
-			this->d._cycles += 7;
 			break;
 
 		// 1A: LD A, (DE)
 		// |1|7| Loads the value pointed to by de into a.
 		case Ox1A:
+			this->d._cycles += 4;
 			this->d._registers.SetA(this->ReadMemory(this->d._registers.GetDE()));
 			this->d._registers.IncPC();
-			this->d._cycles += 7;
 			break;
 
 		// 3A: LD A, (**)
 		// |3|13| Loads the value pointed to by ** into a.
 		case Ox3A:
 			{
+				this->d._cycles += 4;
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
 				this->d._registers.SetA(this->ReadMemory(offset));
 				this->d._registers.IncPC(3);
-				this->d._cycles += 13;
 			}
 			break;
 
@@ -459,12 +459,12 @@ void CPU::RunOpcode() {
 		// |3|10| ** is copied to pc.
 		case OxC3:
 			{
+				this->d._cycles += 4;
 				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
 				if (offset == pc)
 					this->d._isEndlessLoop = true;
 				else
 					this->d._registers.SetPC(offset);
-				this->d._cycles += 10;
 			}
 			break;
 
@@ -531,10 +531,10 @@ void CPU::RunOpcode() {
 		// |2|11| A byte from port * is written to a.
 		case OxDB:
 			{
+				this->d._cycles += 8;
 				this->d._registers.SetA(this->ReadPort(this->ReadMemory(pc + 1)));
 //				printf("PORT: %d: %X\n", this->ReadMemory(pc + 1), this->ReadMemory(pc + 1));
 				this->d._registers.IncPC(2);
-				this->d._cycles += 11;
 			}
 			break;
 
@@ -729,9 +729,9 @@ void CPU::RunOpcode() {
 				this->d._registers.SetFFlag(Flag_Z, true);
 				if (b == 0) {
 					this->d._registers.IncPC(2);
-					this->d._cycles += 16;
+					this->d._cycles += 13;
 				} else
-					this->d._cycles += 21;
+					this->d._cycles += 18;
 			}
 			break;
 
