@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Windows/Forms/Application.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano

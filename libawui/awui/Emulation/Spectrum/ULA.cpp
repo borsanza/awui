@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Emulation/Spectrum/ULA.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano

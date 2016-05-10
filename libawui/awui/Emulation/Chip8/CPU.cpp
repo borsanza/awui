@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Emulation/Chip8/CPU.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
@@ -20,8 +20,6 @@
 #include <awui/String.h>
 
 using namespace awui::Emulation::Chip8;
-
-// TODO: Mirar de mejorar el borrado de los colores
 
 CPU::CPU() {
 	this->_screen = new Screen(64, 32);
