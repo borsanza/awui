@@ -109,6 +109,9 @@ void Spectrum::CheckLimits() {
 }
 
 void Spectrum::OnTick() {
+	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET)
+		this->_motherboard->Reset();
+
 	this->_motherboard->OnTick();
 }
 
@@ -321,11 +324,6 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SAVE)
 		this->SaveState();
-
-	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET) {
-		this->_motherboard->Reset();
-		ret = true;
-	}
 
 	if (ret)
 		return ret;

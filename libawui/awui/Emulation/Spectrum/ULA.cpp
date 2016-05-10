@@ -74,7 +74,9 @@ ULA::~ULA() {
 
 void ULA::Reset() {
 	memset(this->d._vram, 0, 16384 * sizeof(uint8_t));
-	memset(this->d._data, 0, SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL * sizeof(uint8_t));
+	// Me gusta no vaciar la memoria de video, se parece mas al reset que se producia en el spectrum
+	// cuando se pulsaba el boton, queda mas realista
+	// memset(this->d._data, 0, SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL * sizeof(uint8_t));
 	this->_image->Clear();
 }
 
