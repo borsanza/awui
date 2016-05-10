@@ -70,8 +70,10 @@ int Spectrum::IsClass(Classes::Enum objectClass) const {
 }
 
 void Spectrum::LoadRom(const String file) {
-	if (file.EndsWith(".rom"))
+	if (file.EndsWith(".rom")) {
 		this->_motherboard->LoadRom(file);
+		this->SetName(file);
+	}
 
 	if (file.EndsWith(".tap")) {
 		String rom = "roms/zxspectrum/48.rom";
