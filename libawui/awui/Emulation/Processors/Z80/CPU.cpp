@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Emulation/Processors/Z80/CPU.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
@@ -146,15 +146,15 @@ void CPU::RunOpcode() {
 		// 00: NOP
 		// |1|4| No operation is performed.
 		case Ox00:
-			this->d._registers.IncPC();
 			this->d._cycles += 4;
+			this->d._registers.IncPC();
 			break;
 
 		// 76: HALT
 		// |1|4| Suspends CPU operation until an interrupt or reset occurs.
 		case Ox76:
-			this->d._isSuspended = true;
 			this->d._cycles += 4;
+			this->d._isSuspended = true;
 			break;
 
 		// LD dd, nn
@@ -194,14 +194,14 @@ void CPU::RunOpcode() {
 		case Ox37: this->SCF(); break;
 		case Ox3F: this->CCF(); break;
 
-		// 10 n: DJNZ *
+		// DJNZ n -> pc:4,ir:1,pc+1:3,[pc+1:1 x 5]
 		// |2|13/8| The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		case Ox10:
 			{
+				this->d._cycles++;
 				uint8_t bDec = this->d._registers.GetB() - 1;
 				this->d._registers.SetB(bDec);
 				this->JR(bDec != 0);
-				this->d._cycles++;
 			}
 			break;
 
@@ -309,8 +309,10 @@ void CPU::RunOpcode() {
 		case Ox32:
 			{
 				this->d._cycles += 4;
-				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				this->WriteMemory(offset, this->d._registers.GetA());
+				Word offset;
+				offset.H = this->ReadMemory(pc + 2);
+				offset.L = this->ReadMemory(pc + 1);
+				this->WriteMemory(offset.W, this->d._registers.GetA());
 				this->d._registers.IncPC(3);
 			}
 			break;
@@ -319,16 +321,16 @@ void CPU::RunOpcode() {
 		// |1|7| Loads the value pointed to by bc into a.
 		case Ox0A:
 			this->d._cycles += 4;
-			this->d._registers.SetA(this->ReadMemory(this->d._registers.GetBC()));
 			this->d._registers.IncPC();
+			this->d._registers.SetA(this->ReadMemory(this->d._registers.GetBC()));
 			break;
 
 		// 1A: LD A, (DE)
 		// |1|7| Loads the value pointed to by de into a.
 		case Ox1A:
 			this->d._cycles += 4;
-			this->d._registers.SetA(this->ReadMemory(this->d._registers.GetDE()));
 			this->d._registers.IncPC();
+			this->d._registers.SetA(this->ReadMemory(this->d._registers.GetDE()));
 			break;
 
 		// 3A: LD A, (**)
@@ -336,8 +338,10 @@ void CPU::RunOpcode() {
 		case Ox3A:
 			{
 				this->d._cycles += 4;
-				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				this->d._registers.SetA(this->ReadMemory(offset));
+				Word offset;
+				offset.H = this->ReadMemory(pc + 2);
+				offset.L = this->ReadMemory(pc + 1);
+				this->d._registers.SetA(this->ReadMemory(offset.W));
 				this->d._registers.IncPC(3);
 			}
 			break;
@@ -371,9 +375,9 @@ void CPU::RunOpcode() {
 		case Ox83: this->ADD(this->d._registers.GetE()); break;
 		case Ox84: this->ADD(this->d._registers.GetH()); break;
 		case Ox85: this->ADD(this->d._registers.GetL()); break;
-		case Ox86: this->ADD(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case Ox86: this->ADD(this->ReadMemory(this->d._registers.GetHL())); break;
 		case Ox87: this->ADD(this->d._registers.GetA()); break;
-		case OxC6: this->ADD(this->ReadMemory(pc + 1), 7, 2); break;
+		case OxC6: this->ADD(this->ReadMemory(pc + 1), 4, 2); break;
 
 		case Ox88: this->ADC(this->d._registers.GetB()); break;
 		case Ox89: this->ADC(this->d._registers.GetC()); break;
@@ -381,9 +385,9 @@ void CPU::RunOpcode() {
 		case Ox8B: this->ADC(this->d._registers.GetE()); break;
 		case Ox8C: this->ADC(this->d._registers.GetH()); break;
 		case Ox8D: this->ADC(this->d._registers.GetL()); break;
-		case Ox8E: this->ADC(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case Ox8E: this->ADC(this->ReadMemory(this->d._registers.GetHL())); break;
 		case Ox8F: this->ADC(this->d._registers.GetA()); break;
-		case OxCE: this->ADC(this->ReadMemory(pc + 1), 7, 2); break;
+		case OxCE: this->ADC(this->ReadMemory(pc + 1), 4, 2); break;
 
 		case Ox90: this->SUB(this->d._registers.GetB()); break;
 		case Ox91: this->SUB(this->d._registers.GetC()); break;
@@ -391,9 +395,9 @@ void CPU::RunOpcode() {
 		case Ox93: this->SUB(this->d._registers.GetE()); break;
 		case Ox94: this->SUB(this->d._registers.GetH()); break;
 		case Ox95: this->SUB(this->d._registers.GetL()); break;
-		case Ox96: this->SUB(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case Ox96: this->SUB(this->ReadMemory(this->d._registers.GetHL())); break;
 		case Ox97: this->SUB(this->d._registers.GetA()); break;
-		case OxD6: this->SUB(this->ReadMemory(pc + 1), 7, 2); break;
+		case OxD6: this->SUB(this->ReadMemory(pc + 1), 4, 2); break;
 
 		case Ox98: this->SBC(this->d._registers.GetB()); break;
 		case Ox99: this->SBC(this->d._registers.GetC()); break;
@@ -401,9 +405,9 @@ void CPU::RunOpcode() {
 		case Ox9B: this->SBC(this->d._registers.GetE()); break;
 		case Ox9C: this->SBC(this->d._registers.GetH()); break;
 		case Ox9D: this->SBC(this->d._registers.GetL()); break;
-		case Ox9E: this->SBC(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case Ox9E: this->SBC(this->ReadMemory(this->d._registers.GetHL())); break;
 		case Ox9F: this->SBC(this->d._registers.GetA()); break;
-		case OxDE: this->SBC(this->ReadMemory(pc + 1), 7, 2); break;
+		case OxDE: this->SBC(this->ReadMemory(pc + 1), 4, 2); break;
 
 		case OxA0: this->AND(this->d._registers.GetB()); break;
 		case OxA1: this->AND(this->d._registers.GetC()); break;
@@ -411,9 +415,9 @@ void CPU::RunOpcode() {
 		case OxA3: this->AND(this->d._registers.GetE()); break;
 		case OxA4: this->AND(this->d._registers.GetH()); break;
 		case OxA5: this->AND(this->d._registers.GetL()); break;
-		case OxA6: this->AND(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case OxA6: this->AND(this->ReadMemory(this->d._registers.GetHL())); break;
 		case OxA7: this->AND(this->d._registers.GetA()); break;
-		case OxE6: this->AND(this->ReadMemory(pc + 1), 7, 2); break;
+		case OxE6: this->AND(this->ReadMemory(pc + 1), 4, 2); break;
 
 		case OxA8: this->XOR(this->d._registers.GetB()); break;
 		case OxA9: this->XOR(this->d._registers.GetC()); break;
@@ -421,9 +425,9 @@ void CPU::RunOpcode() {
 		case OxAB: this->XOR(this->d._registers.GetE()); break;
 		case OxAC: this->XOR(this->d._registers.GetH()); break;
 		case OxAD: this->XOR(this->d._registers.GetL()); break;
-		case OxAE: this->XOR(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case OxAE: this->XOR(this->ReadMemory(this->d._registers.GetHL())); break;
 		case OxAF: this->XOR(this->d._registers.GetA()); break;
-		case OxEE: this->XOR(this->ReadMemory(pc + 1), 7, 2); break;
+		case OxEE: this->XOR(this->ReadMemory(pc + 1), 4, 2); break;
 
 		case OxB0: this->OR(this->d._registers.GetB()); break;
 		case OxB1: this->OR(this->d._registers.GetC()); break;
@@ -431,9 +435,9 @@ void CPU::RunOpcode() {
 		case OxB3: this->OR(this->d._registers.GetE()); break;
 		case OxB4: this->OR(this->d._registers.GetH()); break;
 		case OxB5: this->OR(this->d._registers.GetL()); break;
-		case OxB6: this->OR(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case OxB6: this->OR(this->ReadMemory(this->d._registers.GetHL())); break;
 		case OxB7: this->OR(this->d._registers.GetA()); break;
-		case OxF6: this->OR(this->ReadMemory(pc + 1), 7, 2); break;
+		case OxF6: this->OR(this->ReadMemory(pc + 1), 4, 2); break;
 
 		case OxB8: this->CP(this->d._registers.GetB()); break;
 		case OxB9: this->CP(this->d._registers.GetC()); break;
@@ -441,9 +445,9 @@ void CPU::RunOpcode() {
 		case OxBB: this->CP(this->d._registers.GetE()); break;
 		case OxBC: this->CP(this->d._registers.GetH()); break;
 		case OxBD: this->CP(this->d._registers.GetL()); break;
-		case OxBE: this->CP(this->ReadMemory(this->d._registers.GetHL()), 7); break;
+		case OxBE: this->CP(this->ReadMemory(this->d._registers.GetHL())); break;
 		case OxBF: this->CP(this->d._registers.GetA()); break;
-		case OxFE: this->CP(this->ReadMemory(pc + 1), 7, 2); break;
+		case OxFE: this->CP(this->ReadMemory(pc + 1), 4, 2); break;
 
 		// JP cc, nn
 		case OxC2: this->JPccnn(!(this->d._registers.GetF() & Flag_Z));  break;
@@ -460,11 +464,13 @@ void CPU::RunOpcode() {
 		case OxC3:
 			{
 				this->d._cycles += 4;
-				uint16_t offset = (this->ReadMemory(pc + 2) << 8) | this->ReadMemory(pc + 1);
-				if (offset == pc)
+				Word offset;
+				offset.H = this->ReadMemory(pc + 2);
+				offset.L = this->ReadMemory(pc + 1);
+				if (offset.W == pc)
 					this->d._isEndlessLoop = true;
 				else
-					this->d._registers.SetPC(offset);
+					this->d._registers.SetPC(offset.W);
 			}
 			break;
 
@@ -512,19 +518,16 @@ void CPU::RunOpcode() {
 		case OxFF: this->RSTp(0x38); break;
 
 		// D3 *: OUT (*), A
-		case OxD3:
-			this->OUTnA();
-			// printf("Address: %s\n", logLine);
-			break;
+		case OxD3: this->OUTnA(); break;
 
 		// D9: EXX
 		// |1|4| Exchanges the 16-bit contents of bc, de, and hl with bc', de', and hl'.
 		case OxD9:
+			this->d._cycles += 4;
 			this->d._registers.AlternateBC();
 			this->d._registers.AlternateDE();
 			this->d._registers.AlternateHL();
 			this->d._registers.IncPC();
-			this->d._cycles += 4;
 			break;
 
 		// DB n: IN A, *
@@ -542,9 +545,9 @@ void CPU::RunOpcode() {
 		// |1|4| Exchanges the 16-bit contents of af and af'.
 		case Ox08:
 			{
-				this->d._registers.AlternateAF();
-				this->d._registers.IncPC();
 				this->d._cycles += 4;
+				this->d._registers.IncPC();
+				this->d._registers.AlternateAF();
 			}
 			break;
 
@@ -552,11 +555,11 @@ void CPU::RunOpcode() {
 		// |1|4| Exchanges the 16-bit contents of de and hl.
 		case OxEB:
 			{
+				this->d._cycles += 4;
+				this->d._registers.IncPC();
 				uint16_t aux = this->d._registers.GetDE();
 				this->d._registers.SetDE(this->d._registers.GetHL());
 				this->d._registers.SetHL(aux);
-				this->d._registers.IncPC();
-				this->d._cycles += 4;
 			}
 			break;
 
@@ -568,20 +571,20 @@ void CPU::RunOpcode() {
 		// |1|4| Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
 		// I dont know if is completed
 		case OxF3:
+			this->d._cycles += 4;
 			this->d._registers.IncPC();
 			this->d._registers.SetIFF1(false);
 			this->d._registers.SetIFF2(false);
-			this->d._cycles += 4;
 			break;
 
 		// FB EI
 		// |1|4| Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
 		// I dont know if is completed
 		case OxFB:
+			this->d._cycles += 4;
 			this->d._registers.IncPC();
 			this->d._registers.SetIFF1(true);
 			this->d._registers.SetIFF2(true);
-			this->d._cycles += 4;
 			break;
 
 /******************************************************************************/
@@ -664,9 +667,9 @@ void CPU::RunOpcode() {
 		case OxED46:
 		case OxED66:
 // 			printf("IM 0\n");
-			this->d._registers.SetIM(0);
-			this->d._registers.IncPC(2);
 			this->d._cycles += 8;
+			this->d._registers.IncPC(2);
+			this->d._registers.SetIM(0);
 			break;
 
 		// ED56: IM 1
@@ -675,9 +678,9 @@ void CPU::RunOpcode() {
 		case OxED56:
 		case OxED76:
 // 			printf("IM 1\n");
-			this->d._registers.SetIM(1);
-			this->d._registers.IncPC(2);
 			this->d._cycles += 8;
+			this->d._registers.IncPC(2);
+			this->d._registers.SetIM(1);
 			break;
 
 		// ED5E: IM 2
@@ -686,9 +689,9 @@ void CPU::RunOpcode() {
 		case OxED5E:
 		case OxED7E:
 // 			printf("IM 2\n");
-			this->d._registers.SetIM(2);
-			this->d._registers.IncPC(2);
 			this->d._cycles += 8;
+			this->d._registers.IncPC(2);
+			this->d._registers.SetIM(2);
 			break;
 
 		case OxED4D:
@@ -710,12 +713,16 @@ void CPU::RunOpcode() {
 		case OxEDAB: this->OUTD(); break;
 		case OxEDA2: this->INI(); break;
 
-		// EDB3: OTIR
-		// |2|21/16| A byte from the memory location pointed to by hl is written to port c.
-		// Then hl is incremented and b is decremented. If b is not zero, this operation is repeated.
-		// Interrupts can trigger while this instruction is processing.
+		/**
+		 * OTIR -> pc:4,pc+1:4,ir:1,hl:3,IO,[bc:1 x 5]
+		 * EDB3: OTIR
+		 * |2|21/16| A byte from the memory location pointed to by hl is written to port c.
+		 * Then hl is incremented and b is decremented. If b is not zero, this operation is repeated.
+		 * Interrupts can trigger while this instruction is processing.
+		 */
 		case OxEDB3:
 			{
+				this->d._cycles += 9;
 				uint16_t hl = this->d._registers.GetHL();
 				uint8_t b = this->d._registers.GetB() - 1;
 				uint8_t c = this->d._registers.GetC();
@@ -729,9 +736,9 @@ void CPU::RunOpcode() {
 				this->d._registers.SetFFlag(Flag_Z, true);
 				if (b == 0) {
 					this->d._registers.IncPC(2);
-					this->d._cycles += 13;
+					this->d._cycles += 4;
 				} else
-					this->d._cycles += 18;
+					this->d._cycles += 9;
 			}
 			break;
 
@@ -1015,14 +1022,14 @@ void CPU::RunOpcode() {
 		case OxDD29: this->ADDXXpp(Reg_IX, this->d._registers.GetIX(), 15, 2); break;
 		case OxDD39: this->ADDXXpp(Reg_IX, this->d._registers.GetSP(), 15, 2); break;
 
-		case OxDD86: this->ADD(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDD8E: this->ADC(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDD96: this->SUB(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDD9E: this->SBC(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDA6: this->AND(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDAE: this->XOR(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDB6: this->OR(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxDDBE: this->CP(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxDD86: this->ADD(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxDD8E: this->ADC(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxDD96: this->SUB(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxDD9E: this->SBC(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxDDA6: this->AND(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxDDAE: this->XOR(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxDDB6: this->OR(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxDDBE: this->CP(this->ReadMemory(this->d._registers.GetIX() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
 
 		case OxDDE1: this->POP16X(Reg_IX); break;
 		case OxDDE5: this->PUSH16X(Reg_IX); break;
@@ -1213,14 +1220,14 @@ void CPU::RunOpcode() {
 		case OxFD29: this->ADDXXpp(Reg_IY, this->d._registers.GetIY(), 15, 2); break;
 		case OxFD39: this->ADDXXpp(Reg_IY, this->d._registers.GetSP(), 15, 2); break;
 
-		case OxFD86: this->ADD(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFD8E: this->ADC(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFD96: this->SUB(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFD9E: this->SBC(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDA6: this->AND(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDAE: this->XOR(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDB6: this->OR(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
-		case OxFDBE: this->CP(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 19, 3); break;
+		case OxFD86: this->ADD(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxFD8E: this->ADC(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxFD96: this->SUB(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxFD9E: this->SBC(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxFDA6: this->AND(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxFDAE: this->XOR(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxFDB6: this->OR(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
+		case OxFDBE: this->CP(this->ReadMemory(this->d._registers.GetIY() + (int8_t)this->ReadMemory(pc + 2)), 13, 3); break;
 
 		case OxFDE1: this->POP16X(Reg_IY); break;
 		case OxFDE5: this->PUSH16X(Reg_IY); break;

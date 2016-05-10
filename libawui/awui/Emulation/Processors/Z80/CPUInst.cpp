@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Emulation/Processors/Z80/CPUInst.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
@@ -2262,8 +2262,12 @@ void CPUInst::INI() {
 	this->d._cycles += 13; // 16 - 3
 }
 
-// |2|11| The value of a is written to port *.
+/**
+ * pc:4,pc+1:3,IO
+ * |2|11| The value of a is written to port *.
+ */
 void CPUInst::OUTnA() {
+	this->d._cycles += 4;
 	uint8_t n = this->ReadMemory(this->d._registers.GetPC() + 1);
 	uint8_t data = this->d._registers.GetA();
 
@@ -2272,7 +2276,7 @@ void CPUInst::OUTnA() {
 	this->WritePort(n, data);
 
 	this->d._registers.IncPC(2);
-	this->d._cycles += 8; // 11 - 3
+	this->d._cycles += 4;
 }
 
 // |2|12| The value of reg is written to port c.

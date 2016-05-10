@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Emulation/Processors/Z80/Registers.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
