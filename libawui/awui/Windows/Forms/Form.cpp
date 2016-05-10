@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Windows/Forms/Form.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano
@@ -7,8 +7,8 @@
 #include "Form.h"
 
 #include <awui/Collections/ArrayList.h>
-#include <awui/Diagnostics/Process.h>
 #include <awui/DateTime.h>
+#include <awui/Diagnostics/Process.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Rectangle.h>
@@ -20,6 +20,7 @@
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Keys.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
@@ -47,6 +48,7 @@ Form::Form() {
 	this->initialized = 0;
 	this->fullscreenWidth = -1;
 	this->fullscreenHeight = -1;
+	this->_win = 0;
 
 	Stats * stats = Stats::Instance();
 	stats->SetDock(DockStyle::Bottom);
@@ -112,8 +114,6 @@ void Form::OnTick() {
 }
 
 void Form::ProcessEvents() {
-	int resizex = -1;
-	int resizey = -1;
 	SDL_Event event;
 
 	if (this->remoteProcess->GetHasString()) {
@@ -364,7 +364,10 @@ void Form::ProcessEvents() {
 					case SDLK_F8: OnKeyPressPre(Keys::Key_F8); break;
 					case SDLK_F9: OnKeyPressPre(Keys::Key_F9); break;
 					case SDLK_F10: OnKeyPressPre(Keys::Key_F10); break;
-					case SDLK_F11: this->SetFullscreen(!this->GetFullscreen()); break;
+					case SDLK_F11:
+						OnKeyPressPre(Keys::Key_F11);
+						this->SetFullscreen(!this->GetFullscreen());
+						break;
 					case SDLK_F12: OnKeyPressPre(Keys::Key_F12); break;
 
 					case SDLK_KP_0: OnKeyPressPre(Keys::Key_KP0); break;
@@ -553,19 +556,20 @@ void Form::ProcessEvents() {
 				this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
 				break;
 
-			case SDL_WINDOWEVENT_RESIZED:
-				resizex = event.window.data1;
-				resizey = event.window.data2;
-				break;
+			case SDL_WINDOWEVENT: {
+				Uint32 windowID = SDL_GetWindowID(this->_win);
+				if (event.window.windowID == windowID)  {
+					switch (event.window.event) {
+						case SDL_WINDOWEVENT_RESIZED:
+							this->SetSize(event.window.data1, event.window.data2);
+							break;
+					}
+				}
+			}
 
 			default:
 				break;
 		}
-	}
-
-	if ((resizex != -1) && (resizey != -1)) {
-		this->SetSize(resizex, resizey);
-		this->RefreshVideo();
 	}
 }
 
@@ -578,33 +582,32 @@ void Form::RefreshVideo() {
 	int flags = SDL_WINDOW_OPENGL;
 	int width = 0;
 	int height = 0;
-
-	/*
-	TODOSDL
-	if (this->fullscreenWidth == -1) {
-		const SDL_VideoInfo * videoInfo = SDL_GetVideoInfo();
-		this->fullscreenWidth = videoInfo->current_w;
-		this->fullscreenHeight = videoInfo->current_h;
-	}
-	*/
+	static int lastWidth = 0;
+	static int lastHeight = 0;
 
 	if (!this->fullscreen) {
 		width = this->GetWidth();
 		height = this->GetHeight();
  		flags |= SDL_WINDOW_RESIZABLE;
 	} else {
-		width = this->fullscreenWidth;
-		height = this->fullscreenHeight;
+		lastWidth = this->GetWidth();
+		lastHeight = this->GetHeight();
  		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-		this->SetSize(width, height);
 	}
 
-	this->_win = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
-	SDL_GL_CreateContext(this->_win);
-
-	void (*swapInterval)(int);
-	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-	swapInterval(1);
+	if (!this->_win) {
+		this->_win = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+		SDL_GL_CreateContext(this->_win);
+		void (*swapInterval)(int);
+		swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+		swapInterval(1);
+	} else {
+		SDL_SetWindowFullscreen(this->_win, flags);
+		if (!this->fullscreen) {
+			SDL_SetWindowSize(this->_win, lastWidth, lastHeight);
+			this->SetSize(lastWidth, lastHeight);
+		}
+	}
 }
 
 void Form::SetFullscreen(int mode) {
@@ -618,9 +621,8 @@ void Form::SetFullscreen(int mode) {
 void Form::SetText(String title) {
 	this->text = title;
 
-// TODOSDL
-//	if (initialized)
-//		SDL_WM_SetCaption(this->text.ToCharArray(), NULL);
+	if (initialized)
+		SDL_SetWindowTitle(this->_win, this->text.ToCharArray());
 }
 
 Control * Form::GetControlSelected() {
