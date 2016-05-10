@@ -493,16 +493,24 @@ void Form::ProcessEvents() {
 				Application::Quit();
 				break;
 
+			case SDL_MOUSEWHEEL: {
+				if (event.wheel.y > 0) {
+					this->mouseButtons |= MouseButtons::XButton1;
+					this->OnMouseDownPre(this->mouseX, this->mouseY, MouseButtons::XButton1, this->mouseButtons);
+					this->mouseButtons &= ~MouseButtons::XButton1;
+					this->OnMouseUpPre(MouseButtons::XButton1, this->mouseButtons);
+				}
+
+				if (event.wheel.y < 0) {
+					this->mouseButtons |= MouseButtons::XButton2;
+					this->OnMouseDownPre(this->mouseX, this->mouseY, MouseButtons::XButton1, this->mouseButtons);
+					this->mouseButtons &= ~MouseButtons::XButton2;
+					this->OnMouseUpPre(MouseButtons::XButton1, this->mouseButtons);
+				}
+			}
 			case SDL_MOUSEBUTTONDOWN: {
 					MouseButtons::Enum button = MouseButtons::None;
 					switch (event.button.button) {
-// TODOSDL: Mirar evento SDL_MOUSWHEEL
-//						case SDL_BUTTON_WHEELUP:
-//							button = MouseButtons::XButton1;
-//							break;
-//						case SDL_BUTTON_WHEELDOWN:
-//							button = MouseButtons::XButton2;
-//							break;
 						case SDL_BUTTON_LEFT:
 							button = MouseButtons::Left;
 							break;
@@ -523,13 +531,6 @@ void Form::ProcessEvents() {
 			case SDL_MOUSEBUTTONUP: {
 					MouseButtons::Enum button = MouseButtons::None;
 					switch (event.button.button) {
-// TODOSDL: Mirar evento SDL_MOUSWHEEL
-//						case SDL_BUTTON_WHEELUP:
-//							button = MouseButtons::XButton1;
-//							break;
-//						case SDL_BUTTON_WHEELDOWN:
-//							button = MouseButtons::XButton2;
-//							break;
 						case SDL_BUTTON_LEFT:
 							button = MouseButtons::Left;
 							break;
