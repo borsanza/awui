@@ -2,7 +2,7 @@
 #define _AWUI_EMULATION_SPECTRUM_SOUNDSDL_H
 
 #include <stdint.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include <awui/Collections/ArrayList.h>
 

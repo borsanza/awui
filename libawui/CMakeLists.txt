@@ -1,4 +1,8 @@
+PROJECT(libawui)
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1)
+
+INCLUDE(FindPkgConfig)
 
 FIND_PACKAGE(OpenGL REQUIRED)
 if(NOT OPENGL_FOUND)
@@ -6,19 +10,7 @@ if(NOT OPENGL_FOUND)
 endif(NOT OPENGL_FOUND)
 MESSAGE(STATUS "OpenGL: ${OPENGL_LIBRARIES}")
 
-FIND_PACKAGE(SDL REQUIRED)
-if(NOT SDL_FOUND)
-	message("ERROR: SDL not found")
-endif(NOT SDL_FOUND)
-MESSAGE(STATUS "SDL: ${SDL_LIBRARY}")
-
-FIND_PACKAGE(SDL_image REQUIRED)
-if(NOT SDLIMAGE_FOUND)
-	message("ERROR: SDL_image not found")
-endif(NOT SDLIMAGE_FOUND)
-MESSAGE(STATUS "SDL_image: ${SDLIMAGE_LIBRARY}")
-
-PROJECT(libawui)
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 
 if(UNIX)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
@@ -27,10 +19,9 @@ endif()
 INCLUDE_DIRECTORIES(
 	/usr/include/cairo/
 	.
-	${SDL_INCLUDE_DIR}
-#	"C:\\awui-project\\cairo\\include\\cairo\\"
+	${OPENGL_INCLUDE_DIR}
+	${SDL2_INCLUDE_DIRS}
 )
-
 
 FILE(GLOB_RECURSE LIBAWUI_SOURCES awui/*.cpp )
 FILE(GLOB_RECURSE LIBAWUI_HEADERS awui/*.h )
@@ -44,9 +35,6 @@ ADD_LIBRARY(awui_static STATIC ${LIBAWUI_SOURCES} ${LIBAWUI_HEADERS})
 TARGET_LINK_LIBRARIES(
 	awui
 	cairo
-	${SDL_LIBRARY}
-	${SDLIMAGE_LIBRARY}
-# Valores para linux
+	${SDL2_LIBRARIES}
 	GL
-#	"C:\\awui-project\\cairo\\lib\\libcairo.dll.a"
 )

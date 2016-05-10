@@ -2,7 +2,7 @@
 #define _AWUI_EMULATION_MASTERSYSTEM_SOUNDSDL_H
 
 #include <stdint.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 // 48000, 44100, 22050, 11025
 #define SOUNDFREQ 44100

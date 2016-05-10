@@ -1,9 +1,9 @@
+PROJECT(awuiDemo)
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1)
 
 FIND_LIBRARY(LIBAWUI_LIBRARIES NAMES libawui libawui.so PATHS "./libawui" DOC "awui library")
 FIND_PATH(LIBAWUI_INCLUDE_DIRS awui/Object.h "./libawui" DOC "awui includes")
-
-PROJECT(awuiDemo)
 
 if(UNIX)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
@@ -23,7 +23,6 @@ ADD_EXECUTABLE(awuiDemo	${AWUIDEMO_SOURCES} ${AWUIDEMO_HEADERS})
 
 TARGET_LINK_LIBRARIES(
 	awuiDemo
-	${OPENGL_LIBRARIES}
 	${LIBAWUI_LIBRARIES}
-#	Imm32
+	SDL2_image
 )

@@ -1,9 +1,9 @@
+PROJECT(awSlider)
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1)
 
 FIND_LIBRARY(LIBAWUI_LIBRARIES NAMES libawui libawui.so PATHS "./libawui" DOC "awui library")
 FIND_PATH(LIBAWUI_INCLUDE_DIRS awui/Object.h "./libawui" DOC "awui includes")
-
-PROJECT(awSlider)
 
 if(UNIX)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
@@ -24,4 +24,5 @@ ADD_EXECUTABLE(awSlider ${AWSLIDER_SOURCES} ${AWSLIDER_HEADERS})
 TARGET_LINK_LIBRARIES(
 	awSlider
 	${LIBAWUI_LIBRARIES}
+	SDL2_image
 )

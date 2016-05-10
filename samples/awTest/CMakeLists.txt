@@ -1,9 +1,9 @@
+PROJECT(awTest)
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1)
 
 FIND_LIBRARY(LIBAWUI_LIBRARIES NAMES libawui libawui.so PATHS "./libawui" DOC "awui library")
 FIND_PATH(LIBAWUI_INCLUDE_DIRS awui/Object.h "./libawui" DOC "awui includes")
-
-PROJECT(awTest)
 
 if(UNIX)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
@@ -24,5 +24,5 @@ ADD_EXECUTABLE(awTest ${AWTEST_SOURCES} ${AWTEST_HEADERS})
 TARGET_LINK_LIBRARIES(
 	awTest
 	${LIBAWUI_LIBRARIES}
-#	Imm32
+	SDL2_image
 )

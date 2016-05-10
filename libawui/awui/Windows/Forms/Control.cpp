@@ -20,7 +20,7 @@
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL_opengl.h>
 
 #include <iostream>
 
