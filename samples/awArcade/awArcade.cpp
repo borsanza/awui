@@ -38,8 +38,6 @@ int main(int argc, char ** argv) {
 	for (int i = 1; i< argc; i++)
 		form->LoadRom(argv[i]);
 
-	// form->LoadRom("roms/zxspectrum/48.rom");
-
 	Application::Run(form);
 
 	return 0;

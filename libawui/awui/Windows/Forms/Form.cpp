@@ -364,10 +364,7 @@ void Form::ProcessEvents() {
 					case SDLK_F8: OnKeyPressPre(Keys::Key_F8); break;
 					case SDLK_F9: OnKeyPressPre(Keys::Key_F9); break;
 					case SDLK_F10: OnKeyPressPre(Keys::Key_F10); break;
-					case SDLK_F11:
-						OnKeyPressPre(Keys::Key_F11);
-						this->SetFullscreen(!this->GetFullscreen());
-						break;
+					case SDLK_F11: OnKeyPressPre(Keys::Key_F11); break;
 					case SDLK_F12: OnKeyPressPre(Keys::Key_F12); break;
 
 					case SDLK_KP_0: OnKeyPressPre(Keys::Key_KP0); break;
@@ -464,7 +461,10 @@ void Form::ProcessEvents() {
 					case SDLK_F8: OnKeyUpPre(Keys::Key_F8); break;
 					case SDLK_F9: OnKeyUpPre(Keys::Key_F9); break;
 					case SDLK_F10: OnKeyUpPre(Keys::Key_F10); break;
-					case SDLK_F11: OnKeyUpPre(Keys::Key_F11); break;
+					case SDLK_F11:
+						OnKeyUpPre(Keys::Key_F11);
+						this->SetFullscreen(!this->GetFullscreen());
+						break;
 					case SDLK_F12: OnKeyUpPre(Keys::Key_F12); break;
 
 					case SDLK_KP_0: OnKeyUpPre(Keys::Key_KP0); break;
