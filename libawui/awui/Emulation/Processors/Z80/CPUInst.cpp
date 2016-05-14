@@ -6,6 +6,7 @@
 
 #include "CPUInst.h"
 
+#include <stdio.h>
 #include <string.h>
 
 using namespace awui::Emulation::Processors::Z80;
@@ -2226,6 +2227,7 @@ void CPUInst::INrC(uint8_t reg) {
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = this->d._registers.GetB();
 
+//	printf("INrC\n");
 	uint8_t data = this->ReadPort(C);
 
 	this->d._registers.SetRegm(reg, data);
@@ -2246,6 +2248,7 @@ void CPUInst::INI() {
 
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = B;
+//	printf("INI\n");
 	this->WriteMemory(HL, this->ReadPort(C));
 	this->d._addressBus.W = HL;
 	B = B - 1;
@@ -2270,6 +2273,7 @@ void CPUInst::OUTnA() {
 
 	this->d._addressBus.L = n;
 	this->d._addressBus.H = data;
+//	printf("OUTnA\n");
 	this->WritePort(n, data);
 
 	this->d._registers.IncPC(2);
@@ -2283,6 +2287,7 @@ void CPUInst::OUTC(uint8_t value) {
 
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = B;
+//	printf("OUTC\n");
 	this->WritePort(C, value);
 
 	this->d._registers.IncPC(2);
@@ -2302,6 +2307,7 @@ void CPUInst::OUTI() {
 	uint16_t HL = this->d._registers.GetHL();
 	uint8_t value = this->ReadMemory(HL);
 
+//	printf("OUTI\n");
 	this->WritePort(C, value);
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = B;
@@ -2326,6 +2332,7 @@ void CPUInst::OUTD() {
 	uint8_t C = this->d._registers.GetC();
 	uint16_t HL = this->d._registers.GetHL();
 
+//	printf("OUTD\n");
 	this->WritePort(C, this->ReadMemory(HL));
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = B;

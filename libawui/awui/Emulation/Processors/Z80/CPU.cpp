@@ -535,7 +535,11 @@ void CPU::RunOpcode() {
 		case OxDB:
 			{
 				this->d._cycles += 8;
-				this->d._registers.SetA(this->ReadPort(this->ReadMemory(pc + 1)));
+				uint8_t n = this->ReadMemory(pc + 1);
+				this->d._addressBus.L = n;
+				this->d._addressBus.H = this->d._registers.GetA();
+//				printf("IN A, *\n");
+				this->d._registers.SetA(this->ReadPort(n));
 //				printf("PORT: %d: %X\n", this->ReadMemory(pc + 1), this->ReadMemory(pc + 1));
 				this->d._registers.IncPC(2);
 			}
@@ -728,8 +732,9 @@ void CPU::RunOpcode() {
 				uint8_t c = this->d._registers.GetC();
 				this->d._addressBus.L = c;
 				this->d._addressBus.H = b;
+//				printf("OTIR\n");
 				this->WritePort(c, this->ReadMemory(hl));
-				//printf("Address: %.4X\n", this->d._addressBus._w);
+//				printf("Address: %.4X\n", this->d._addressBus._w);
 				this->d._registers.SetHL(hl + 1);
 				this->d._registers.SetB(b);
 				this->d._registers.SetFFlag(Flag_N, true);

@@ -265,6 +265,13 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 
 		uint8_t value = 0xFF;
 
+/*
+		static uint8_t debug = 0;
+		if (debug != row) {
+			debug = row;
+			printf("ReadPort: %.2X -> %.2X\n", port, row);
+		}
+*/
 		for (int i = 0; i <= 7; i++) {
 			if ((row & 0x01) == 0)
 				value &= this->d._keys[i];
