@@ -2223,15 +2223,12 @@ void CPUInst::RETN() {
 void CPUInst::INrC(uint8_t reg) {
 	uint8_t C = this->d._registers.GetC();
 
-	if (reg != Reg_UNDEFINED) {
-		this->d._addressBus.L = C;
-		this->d._addressBus.H = this->d._registers.GetB();
-	}
+	this->d._addressBus.L = C;
+	this->d._addressBus.H = this->d._registers.GetB();
 
 	uint8_t data = this->ReadPort(C);
 
-	if (reg != Reg_UNDEFINED)
-		this->d._registers.SetRegm(reg, data);
+	this->d._registers.SetRegm(reg, data);
 
 	this->d._registers.SetF(PZS_Flags[data] |
 		(this->d._registers.GetF() & Flag_C)

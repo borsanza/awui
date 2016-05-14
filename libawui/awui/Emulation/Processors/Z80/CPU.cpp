@@ -597,7 +597,7 @@ void CPU::RunOpcode() {
 		case OxED58: this->INrC(Reg_E); break;
 		case OxED60: this->INrC(Reg_H); break;
 		case OxED68: this->INrC(Reg_L); break;
-		case OxED70: this->INrC(Reg_UNDEFINED); break;
+		case OxED70: this->INrC(Reg_F); break;
 		case OxED78: this->INrC(Reg_A); break;
 
 		case OxED44:
