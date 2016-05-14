@@ -9,7 +9,7 @@
 AppleRemote appleRemote;
 
 void setup() {
-  appleRemote.setOutputSpeed(2400);
+  //    appleRemote.setOutputSpeed(2400);
   //	appleRemote.setOutputSpeed(4800);
   //    appleRemote.setOutputSpeed(9600); // Mac Mini
   //	appleRemote.setOutputSpeed(14400);
@@ -17,7 +17,7 @@ void setup() {
   //	appleRemote.setOutputSpeed(28800);
   //	appleRemote.setOutputSpeed(38400);
   //	appleRemote.setOutputSpeed(57600);
-  //	appleRemote.setOutputSpeed(115200);
+  appleRemote.setOutputSpeed(115200);
   appleRemote.setIRPin(6);
 
   appleRemote.setLogMode(true);
