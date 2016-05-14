@@ -264,32 +264,13 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 		uint8_t row = this->_z80->GetAddressBus().H;
 
 		uint8_t value = 0xFF;
-/*
+
 		for (int i = 0; i <= 7; i++) {
 			if ((row & 0x01) == 0)
 				value &= this->d._keys[i];
 			row >>= 1;
 		}
-*/
-		if ((row & 0x01) == 0) value &= this->d._keys[0];
-		if ((row & 0x02) == 0) value &= this->d._keys[1];
-		if ((row & 0x04) == 0) value &= this->d._keys[2];
-		if ((row & 0x08) == 0) value &= this->d._keys[3];
-		if ((row & 0x10) == 0) value &= this->d._keys[4];
-		if ((row & 0x20) == 0) value &= this->d._keys[5];
-		if ((row & 0x40) == 0) value &= this->d._keys[6];
-		if ((row & 0x80) == 0) value &= this->d._keys[7];
 
-/*
-		if (value != 0xFF) {
-			for (int i = 0; i <= 7; i++)
-				printf("%d: %X  ", i, this->d._keys[i]);
-			printf("Row: %.2X  ", this->_z80->GetAddressBus().H ^ 0xFF);
-			printf("address: %X  ", this->_z80->GetAddressBus().W);
-			printf("Value: %X  ", value);
-			printf("\n");
-		}
-*/
 		if (this->_lastReadState)
 			value |= 0x40;
 		else
