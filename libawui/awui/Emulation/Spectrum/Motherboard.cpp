@@ -264,7 +264,6 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 		uint8_t row = this->_z80->GetAddressBus().H;
 
 		uint8_t value = 0xFF;
-
 /*
 		static uint8_t debug = 0;
 		if (debug != row) {

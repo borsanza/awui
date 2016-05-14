@@ -34,6 +34,8 @@ namespace awui {
 
 					void CallKey(int key, bool pressed);
 					void DoKey(Keys::Enum key, bool pressed);
+					void DoRemoteKey(RemoteButtons::Enum button, bool pressed);
+
 					void SaveState();
 					void LoadState();
 

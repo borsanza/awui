@@ -267,6 +267,29 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 	}
 }
 
+void Spectrum::DoRemoteKey(RemoteButtons::Enum button, bool pressed) {
+	switch (button) {
+		case RemoteButtons::Up:
+			this->CallKey(00, pressed);
+			this->CallKey(43, pressed);
+			break;
+		case RemoteButtons::Down:
+			this->CallKey(00, pressed);
+			this->CallKey(44, pressed);
+			break;
+		case RemoteButtons::Left:
+			this->CallKey(00, pressed);
+			this->CallKey(34, pressed);
+			break;
+		case RemoteButtons::Right:
+			this->CallKey(00, pressed);
+			this->CallKey(42, pressed);
+			break;
+		default:
+			break;
+	}
+}
+
 bool Spectrum::OnKeyPress(Keys::Enum key) {
 	this->DoKey(key, true);
 	return true;
@@ -333,6 +356,7 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	if (this->_canChangeControl)
 		return Control::OnRemoteKeyPress(which, button);
 	else {
+		this->DoRemoteKey(button, true);
 		uint8_t pad1 = this->GetPad();
 		this->_motherboard->OnPadEvent(pad1);
 	}
@@ -355,8 +379,10 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 
 	if (this->_canChangeControl)
 		return Control::OnRemoteKeyUp(which, button);
-	else
+	else {
+		this->DoRemoteKey(button, false);
 		this->_motherboard->OnPadEvent(pad1);
+	}
 
 	return true;
 }
