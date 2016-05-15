@@ -12,12 +12,11 @@
 using namespace awui::Emulation::Spectrum;
 
 Sound::Sound() {
+	for (int j = 0; j < SOUNDBUFFER; j++)
+		this->_buffer[j] = 0;
+
 	// Manera tonta de inicializar SoundSDL
 	SoundSDL::Instance();
-
-	this->_channel = 0;
-	for (int j = 0; j < SOUNDBUFFER; j++)
-		this->_channels._buffer[j]._signal = 0;
 }
 
 int Sound::GetPosBuffer(Motherboard * cpu) {
@@ -31,21 +30,18 @@ int Sound::GetPosBuffer(Motherboard * cpu) {
 	pos = int(pos) % SOUNDSIZEFRAME;
 	pos = pos + (frame * SOUNDSIZEFRAME);
 
-//	printf("%d\n", (int)pos);
-//	printf("------>>>> %d\n", this->_frame);
-
 	return int(pos) % SOUNDBUFFER;
 }
 
 void Sound::WriteByte(Motherboard * cpu, int16_t value) {
 	int pos = this->GetPosBuffer(cpu);
-	this->_channels._buffer[pos]._signal = value;
+	this->_buffer[pos] = value;
 	SoundSDL::Instance()->AddSound(this);
 }
 
 void Sound::WriteSound(Motherboard * cpu, int value) {
-    int signal = ((value >> 4) & 0x01) ? +85 : -85;
-    signal    += ((value >> 3) & 0x01) ? +42 : -42;
+	int signal = ((value >> 4) & 0x01) ? +85 : -85;
+	signal    += ((value >> 3) & 0x01) ? +42 : -42;
 
 	this->WriteByte(cpu, signal);
 }

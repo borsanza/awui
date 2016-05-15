@@ -22,16 +22,17 @@ SoundSDL::SoundSDL() {
 	this->_playing = NULL;
 	this->_frame = 0;
 
-	SDL_Init(SDL_INIT_AUDIO);
+	SDL_memset(&this->_wanted, 0, sizeof(this->_wanted));
 	this->_wanted.freq = SOUNDFREQ;
-    this->_wanted.format = SOUNDFORMAT == 1 ? AUDIO_S8 : AUDIO_S16SYS;
-    this->_wanted.channels = 1;
-    this->_wanted.samples = SOUNDSAMPLES;
-    this->_wanted.callback = FillAudioSpectrumCB;
-    this->_wanted.userdata = 0;
-    this->_tone = 0;
-	SDL_OpenAudio(&this->_wanted, NULL);
+	this->_wanted.format = SOUNDFORMAT == 1 ? AUDIO_S8 : AUDIO_S16SYS;
+	this->_wanted.channels = 1;
+	this->_wanted.samples = SOUNDSAMPLES;
+	this->_wanted.callback = FillAudioSpectrumCB;
+
+	this->_tone = 0;
 	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
+	SDL_Init(SDL_INIT_AUDIO);
+	SDL_OpenAudio(&this->_wanted, NULL);
 	SDL_PauseAudio(0);
 }
 
@@ -43,6 +44,7 @@ SoundSDL* SoundSDL::Instance() {
 }
 
 void FillAudioSpectrumCB(void *userdata, Uint8 *stream, int len) {
+	SDL_memset(stream, 0, len);
 	SoundSDL::Instance()->FillAudio(stream, len);
 }
 
@@ -69,18 +71,15 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 	for (int i = 0; i < len; i++) {
 		int bufferPos = offset + i;
 
-		Channel * channel = &sound->_channels;
-
 		if (stream) {
-			if (channel->_buffer[bufferPos]._signal != 0) {
-				_tone = channel->_buffer[bufferPos]._signal;
-			}
+			if (sound->_buffer[bufferPos] != 0)
+				_tone = sound->_buffer[bufferPos];
 
 			stream[i] = _tone;
 		}
 
-		if (channel->_buffer[bufferPos]._signal != 0)
-			channel->_buffer[bufferPos]._signal = 0;
+		if (sound->_buffer[bufferPos] != 0)
+			sound->_buffer[bufferPos] = 0;
 	}
 
 	this->_frame = (this->_frame + 1) % TOTALFRAMES;

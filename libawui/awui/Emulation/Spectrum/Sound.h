@@ -17,27 +17,16 @@
 namespace awui {
 	namespace Emulation {
 		namespace Spectrum {
-			struct Sample {
-				int16_t _signal;
-			};
-
-			struct Channel {
-				Sample _buffer[SOUNDBUFFER];
-			};
-
 			class Motherboard;
 
 			class Sound : public Object {
 				private:
-					uint16_t _channel;
-					uint8_t _type; // 1: Volumen, 0: Tone/Noise
-
-					int GetPosBuffer(Motherboard * cpu);
 					Motherboard * _cpu;
 
+					int GetPosBuffer(Motherboard * cpu);
+
 				public:
-					uint16_t _noiseData;
-					Channel _channels;
+					int16_t _buffer[SOUNDBUFFER];
 
 					Sound();
 
