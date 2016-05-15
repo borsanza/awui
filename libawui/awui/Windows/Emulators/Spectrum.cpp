@@ -159,8 +159,11 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 		case Keys::Key_F8:     if (pressed) this->_motherboard->SetFast(!this->_motherboard->GetFast()); break;
 		case Keys::Key_F9:
 			if (pressed) {
-				this->_tapecorder->Rewind();
-				this->_tapecorder->Play();
+				if (!this->_tapecorder->IsPlaying()) {
+					this->_tapecorder->Rewind();
+					this->_tapecorder->Play();
+				} else
+					this->_tapecorder->Stop();
 			}
 			break;
 		case Keys::Key_LSHIFT:

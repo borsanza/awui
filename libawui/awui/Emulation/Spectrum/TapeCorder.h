@@ -51,7 +51,9 @@ namespace awui {
 
 					void Rewind();
 					void Play();
+					void Stop() { this->_playing = false; }
 					uint32_t GetNext();
+					inline bool IsPlaying() const { return this->_playing; }
 
 					void SetFinishCassetteCB(void (* fun)(void *), void * data);
 			};
