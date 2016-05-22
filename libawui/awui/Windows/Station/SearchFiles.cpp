@@ -142,6 +142,7 @@ void SearchFiles::Refresh() {
 
 NodeFile::NodeFile() {
 	this->_childList = 0;
+	this->selectedChild = 0;
 	this->_directory = true;
 }
 

@@ -17,6 +17,7 @@ namespace awui {
 					String _name;
 					String _path;
 					bool _directory;
+					int selectedChild;
 					SortedList * _childList;
 					int _emulator;
 
