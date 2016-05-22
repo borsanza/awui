@@ -148,9 +148,12 @@ NodeFile::NodeFile() {
 
 NodeFile::~NodeFile() {
 	// printf("%d) ~NodeFile:  %s\n", this->_emulator, this->_path.ToCharArray());
-	if (this->_childList)
+	if (this->_childList) {
 		for (int i = 0; i < this->_childList->GetCount(); i++) {
 			NodeFile * object = (NodeFile *)this->_childList->GetByIndex(i);
 			delete object;
 		}
+
+		delete this->_childList;
+	}
 }
