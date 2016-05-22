@@ -81,7 +81,7 @@ namespace awui {
 
 				public:
 					Opcode();
-					~Opcode();
+					virtual ~Opcode();
 
 					void SetByte1(uint8_t byte1);
 					void SetByte2(uint8_t byte2);

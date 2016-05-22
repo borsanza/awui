@@ -14,7 +14,7 @@ namespace awui {
 
 				public:
 					Registers(uint8_t n);
-					~Registers();
+					virtual ~Registers();
 
 					void Clear();
 

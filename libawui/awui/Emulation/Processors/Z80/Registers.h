@@ -84,7 +84,7 @@ namespace awui {
 
 					public:
 						Registers();
-						~Registers();
+						virtual ~Registers();
 
 						void Clear();
 						void Alternate();

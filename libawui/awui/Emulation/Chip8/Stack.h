@@ -25,7 +25,7 @@ namespace awui {
 
 				public:
 					Stack();
-					~Stack();
+					virtual ~Stack();
 
 					void Push(int value);
 					int Pop();

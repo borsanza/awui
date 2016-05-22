@@ -63,7 +63,7 @@ namespace awui {
 
 				public:
 					ULA();
-					~ULA();
+					virtual ~ULA();
 
 					bool OnTick(uint32_t counter);
 

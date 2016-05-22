@@ -21,7 +21,7 @@ namespace awui {
 
 				public:
 					TapeBlock(int size);
-					~TapeBlock();
+					virtual ~TapeBlock();
 
 					void SetByte(int pos, uint8_t value);
 					uint8_t GetByte(int pos);
@@ -45,7 +45,7 @@ namespace awui {
 
 				public:
 					TapeCorder();
-					~TapeCorder();
+					virtual ~TapeCorder();
 
 					void LoadFile(const String file);
 

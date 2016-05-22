@@ -79,7 +79,7 @@ namespace awui {
 
 				public:
 					VDP(Motherboard * cpu);
-					~VDP();
+					virtual ~VDP();
 
 					bool OnTick(uint32_t counter);
 

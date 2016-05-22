@@ -13,7 +13,7 @@ namespace awui {
 
 				public:
 					Input();
-					~Input();
+					virtual ~Input();
 
 					bool IsKeyPressed(uint8_t key);
 					int GetKey();
