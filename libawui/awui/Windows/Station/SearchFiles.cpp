@@ -141,9 +141,11 @@ void SearchFiles::Refresh() {
 /********************************** NodeFile **********************************/
 
 NodeFile::NodeFile() {
+	this->_parent = 0;
 	this->_childList = 0;
-	this->selectedChild = 0;
+	this->_selectedChild = 0;
 	this->_directory = true;
+	this->_emulator = 0;
 }
 
 NodeFile::~NodeFile() {
