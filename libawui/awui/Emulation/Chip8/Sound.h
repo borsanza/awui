@@ -11,7 +11,7 @@ namespace awui {
 
 				public:
 					Sound();
-					~Sound();
+					virtual ~Sound();
 
 					void Play();
 					void Stop();

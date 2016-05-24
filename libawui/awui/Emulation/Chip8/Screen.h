@@ -14,7 +14,7 @@ namespace awui {
 
 				public:
 					Screen(uint16_t width, uint16_t height);
-					~Screen();
+					virtual ~Screen();
 
 					void Clear();
 

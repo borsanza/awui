@@ -1290,7 +1290,7 @@ namespace awui {
 
 					public:
 						Opcode();
-						~Opcode();
+						virtual ~Opcode();
 
 						inline void SetByte1(uint8_t byte1) { this->_byte1 = byte1; }
 						inline void SetByte2(uint8_t byte2) { this->_byte2 = byte2; }

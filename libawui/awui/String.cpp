@@ -1,4 +1,4 @@
-/*
+/**
  * awui/String.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano

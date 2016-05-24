@@ -1,4 +1,4 @@
-/*
+/**
  * awui/IO/MemoryStream.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano

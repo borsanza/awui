@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Collections/ArrayList.cpp
  *
  * Copyright (C) 2011 Borja Sánchez Zamorano
@@ -38,7 +38,7 @@ void ArrayList::Add(Object * item) {
 		this->_size = this->_size * 2;
 		this->_data = (Object **) realloc (this->_data, this->_size * sizeof(Object *));
 	}
-	
+
 	this->_data[this->_count] = item;
 	this->_count++;
 }
@@ -67,7 +67,7 @@ awui::Object * ArrayList::Get(int index) {
 
 void ArrayList::Remove(Object * item) {
 	int pos = this->IndexOf(item);
-	
+
 	if (pos != -1)
 		this->RemoveAt(pos);
 }
@@ -75,7 +75,7 @@ void ArrayList::Remove(Object * item) {
 void ArrayList::RemoveAt(int index) {
 	for (int i = index + 1; i < this->_count; i++)
 		this->_data[i - 1] = this->_data[i];
-	
+
 	if (index < this->_count) {
 		this->_count--;
 
@@ -95,12 +95,12 @@ void ArrayList::SetChildIndex(Object * item, int newIndex) {
 	int oldIndex = this->IndexOf(item);
 	if (oldIndex == -1)
 		return;
-	
+
 	for (int i = oldIndex; i < newIndex; i++)
 		this->_data[i] = this->_data[i + 1];
 
 	for (int i = oldIndex; i > newIndex; i--)
 		this->_data[i] = this->_data[i - 1];
-	
+
 	this->_data[newIndex] = item;
 }

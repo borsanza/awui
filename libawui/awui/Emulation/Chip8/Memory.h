@@ -17,7 +17,7 @@ namespace awui {
 
 				public:
 					Memory(int32_t capacity);
-					~Memory();
+					virtual ~Memory();
 
 					void LoadRom(const String file);
 

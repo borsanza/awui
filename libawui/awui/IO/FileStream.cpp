@@ -1,4 +1,4 @@
-/*
+/**
  * awui/IO/FileStream.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano

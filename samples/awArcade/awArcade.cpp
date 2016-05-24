@@ -1,4 +1,4 @@
-/*
+/**
  * samples/awArcade/awArcade.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
@@ -6,11 +6,21 @@
 
 #include "formArcade.h"
 
+#include <awui/Collections/ArrayList.h>
+#include <awui/IO/Directory.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Forms/Application.h>
+#include <awui/Windows/Station/SearchFiles.h>
 
 using namespace awui;
+using namespace awui::Windows::Station;
+
+/**
+ * Chip8: *.ch8, *.c8x
+ * Master System: *.sms, *.sg
+ * Spectrum: *.rom, *.tap
+ */
 
 int main(int argc, char ** argv) {
 	if (argc == 3) {
@@ -34,9 +44,21 @@ int main(int argc, char ** argv) {
 		}
 	}
 
+	SearchFiles search;
+	search.SetPath("./roms/");
+	search.Refresh();
+	ArrayList list;
+	search.GetList(&list, 0);
+	// search.Clear();
+
 	FormArcade * form = new FormArcade();
-	for (int i = 1; i< argc; i++)
-		form->LoadRom(argv[i]);
+	for (int i = 1; i < list.GetCount(); i++) {
+		String * name = (String *)list.Get(i);
+		form->LoadRom(*name);
+	}
+
+//	for (int i = 1; i < argc; i++)
+//		form->LoadRom(argv[i]);
 
 	Application::Run(form);
 

@@ -187,7 +187,7 @@ namespace awui {
 
 					public:
 						CPUInst();
-						~CPUInst();
+						virtual ~CPUInst();
 
 						inline uint16_t GetPC() const { return this->d._registers.GetPC(); }
 						inline void SetPC(uint16_t pc) { this->d._registers.SetPC(pc); }

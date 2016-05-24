@@ -14,7 +14,7 @@ namespace awui {
 
 				public:
 					Ram(uint32_t size);
-					~Ram();
+					virtual ~Ram();
 
 					void Clear();
 					void Resize(uint32_t size);

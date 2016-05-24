@@ -13,7 +13,7 @@ namespace awui {
 
 					public:
 						CPU();
-						~CPU();
+						virtual ~CPU();
 
 						void RunOpcode();
 						bool IsEndlessLoop() const;

@@ -59,7 +59,7 @@ namespace awui {
 
 				public:
 					Motherboard();
-					~Motherboard();
+					virtual ~Motherboard();
 
 					void LoadRom(const String file);
 					void OnTick();

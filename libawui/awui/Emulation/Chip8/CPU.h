@@ -45,7 +45,7 @@ namespace awui {
 
 				public:
 					CPU();
-					~CPU();
+					virtual ~CPU();
 
 					void LoadRom(const String file);
 					void OnTick();
