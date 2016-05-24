@@ -42,6 +42,7 @@ namespace awui {
 					void SetPath(const String path);
 
 					void Refresh();
+					void GetList(ArrayList * list, NodeFile * parent);
 			};
 		}
 	}

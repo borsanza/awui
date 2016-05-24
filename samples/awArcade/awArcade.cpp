@@ -6,6 +6,7 @@
 
 #include "formArcade.h"
 
+#include <awui/Collections/ArrayList.h>
 #include <awui/IO/Directory.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
@@ -22,13 +23,6 @@ using namespace awui::Windows::Station;
  */
 
 int main(int argc, char ** argv) {
-	SearchFiles search;
-	search.SetPath("./roms/");
-	search.Refresh();
-	search.Clear();
-
-	return 0;
-
 	if (argc == 3) {
 		String name = argv[1];
 		if (name == "--testsms") {
@@ -50,9 +44,21 @@ int main(int argc, char ** argv) {
 		}
 	}
 
+	SearchFiles search;
+	search.SetPath("./roms/");
+	search.Refresh();
+	ArrayList list;
+	search.GetList(&list, 0);
+	// search.Clear();
+
 	FormArcade * form = new FormArcade();
-	for (int i = 1; i< argc; i++)
-		form->LoadRom(argv[i]);
+	for (int i = 1; i < list.GetCount(); i++) {
+		String * name = (String *)list.Get(i);
+		form->LoadRom(*name);
+	}
+
+//	for (int i = 1; i < argc; i++)
+//		form->LoadRom(argv[i]);
 
 	Application::Run(form);
 

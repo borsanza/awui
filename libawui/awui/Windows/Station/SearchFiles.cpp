@@ -138,6 +138,21 @@ void SearchFiles::Refresh() {
 	// printf("\nFinish:\n\n");
 }
 
+void SearchFiles::GetList(ArrayList * list, NodeFile * parent) {
+	if (parent == 0)
+		parent = this->_root;
+
+	if (parent->_childList) {
+		for (int i = 0; i < parent->_childList->GetCount(); i++) {
+			NodeFile * child = (NodeFile *)parent->_childList->GetByIndex(i);
+			if (child->_directory)
+				GetList(list, child);
+			else
+				list->Add(&child->_path);
+		}
+	}
+}
+
 /********************************** NodeFile **********************************/
 
 NodeFile::NodeFile() {
