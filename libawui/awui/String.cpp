@@ -127,6 +127,14 @@ int String::IndexOf(String value, int startIndex) const {
 	return -1;
 }
 
+int String::LastIndexOf(String value) const {
+	std::string::size_type loc = this->value.find_last_of(value.value);
+	if (loc != std::string::npos)
+		return loc;
+
+	return -1;
+}
+
 ArrayList String::Split(const String value) const {
 	ArrayList list;
 

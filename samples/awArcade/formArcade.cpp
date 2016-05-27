@@ -106,6 +106,11 @@ void FormArcade::LoadRom(const awui::String file) {
 	delete system;
 
 	if (arcade) {
+		String name = file;
+		name = name.Substring(0, name.LastIndexOf("."));
+		name = name.Substring(name.LastIndexOf("/") + 1);
+		arcade->SetName(name);
+
 		arcade->SetTabStop(true);
 		this->_games->Add(arcade);
 		this->_slider->GetControls()->Add(arcade);
