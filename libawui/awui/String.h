@@ -1,5 +1,4 @@
-#ifndef _AWUI_STRING_H
-#define _AWUI_STRING_H
+#pragma once
 
 #include <string>
 #include <awui/Object.h>
@@ -52,5 +51,3 @@ namespace awui {
 			virtual String ToString();
 	};
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_MASTERSYSTEM_SOUND_H
-#define _AWUI_EMULATION_MASTERSYSTEM_SOUND_H
+#pragma once
 
 #include <stdint.h>
 
@@ -62,5 +61,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

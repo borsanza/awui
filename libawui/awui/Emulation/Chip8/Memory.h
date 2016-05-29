@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_CHIP8_MEMORY_H
-#define _AWUI_EMULATION_CHIP8_MEMORY_H
+#pragma once
 
 #include <awui/String.h>
 
@@ -29,5 +28,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

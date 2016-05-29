@@ -1,5 +1,4 @@
-#ifndef _AWUI_IO_MEMORYSTREAM_H
-#define _AWUI_IO_MEMORYSTREAM_H
+#pragma once
 
 #include <awui/IO/Stream.h>
 
@@ -39,5 +38,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

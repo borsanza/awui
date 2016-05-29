@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_FORMS_CONTROL_H
-#define _AWUI_WINDOWS_FORMS_CONTROL_H
+#pragma once
 
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Rectangle.h>
@@ -167,4 +166,3 @@ namespace awui {
 		}
 	}
 }
-#endif

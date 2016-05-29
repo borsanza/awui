@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_FORMS_LABEL_H
-#define _AWUI_WINDOWS_FORMS_LABEL_H
+#pragma once
 
 #include <awui/Drawing/GlyphMetrics.h>
 #include <awui/String.h>
@@ -50,5 +49,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

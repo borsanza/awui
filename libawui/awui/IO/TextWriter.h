@@ -1,5 +1,4 @@
-#ifndef _AWUI_IO_TEXTWRITER_H
-#define _AWUI_IO_TEXTWRITER_H
+#pragma once
 
 namespace awui {
 	class Object;
@@ -20,5 +19,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

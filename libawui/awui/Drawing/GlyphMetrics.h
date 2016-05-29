@@ -1,9 +1,4 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
 #pragma once
-#ifndef __AWUIGLYPHMETRICS_H__
-#define __AWUIGLYPHMETRICS_H__
 
 namespace awui {
 	namespace Drawing {
@@ -57,5 +52,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

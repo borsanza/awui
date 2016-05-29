@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __AWUICONSOLE_H__
-#define __AWUICONSOLE_H__
 
 #include <awui/IO/TextWriter.h>
 
@@ -24,5 +22,3 @@ namespace awui {
 			static void WriteLine(Object * value);
 	};
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_PROCESSORS_Z80_OPCODE_H
-#define _AWUI_EMULATION_PROCESSORS_Z80_OPCODE_H
+#pragma once
 
 #include <stdint.h>
 
@@ -1305,5 +1304,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

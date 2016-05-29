@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_MASTERSYSTEM_MOTHERBOARD_H
-#define _AWUI_EMULATION_MASTERSYSTEM_MOTHERBOARD_H
+#pragma once
 
 #include <awui/Emulation/Common/Word.h>
 #include <awui/Emulation/MasterSystem/Ports.h>
@@ -104,5 +103,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

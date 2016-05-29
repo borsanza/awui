@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_COMMON_WORD_H
-#define _AWUI_EMULATION_COMMON_WORD_H
+#pragma once
 
 #include <stdint.h>
 
@@ -14,5 +13,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

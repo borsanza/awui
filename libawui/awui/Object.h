@@ -1,5 +1,4 @@
-#ifndef __AWUIOBJECT_H__
-#define __AWUIOBJECT_H__
+#pragma once
 
 namespace awui {
 	class String;
@@ -44,5 +43,3 @@ namespace awui {
 			virtual String ToString();
 	};
 }
-
-#endif

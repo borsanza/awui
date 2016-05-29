@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_CHIP8_SOUND_H
-#define _AWUI_EMULATION_CHIP8_SOUND_H
+#pragma once
 
 namespace awui {
 	namespace Emulation {
@@ -19,5 +18,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

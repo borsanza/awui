@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_PROCESSORS_Z80_CPU_H
-#define _AWUI_EMULATION_PROCESSORS_Z80_CPU_H
+#pragma once
 
 #include <awui/Emulation/Processors/Z80/CPUInst.h>
 
@@ -29,5 +28,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_EMULATORS_SPECTRUM_H
-#define _AWUI_WINDOWS_EMULATORS_SPECTRUM_H
+#pragma once
 
 #include "ArcadeContainer.h"
 
@@ -68,5 +67,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

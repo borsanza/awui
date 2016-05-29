@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_EMULATORS_ARCADECONTAINER_H
-#define _AWUI_WINDOWS_EMULATORS_ARCADECONTAINER_H
+#pragma once
 
 #include <awui/Windows/Forms/Button.h>
 
@@ -18,5 +17,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

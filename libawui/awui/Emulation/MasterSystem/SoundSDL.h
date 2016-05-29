@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_MASTERSYSTEM_SOUNDSDL_H
-#define _AWUI_EMULATION_MASTERSYSTEM_SOUNDSDL_H
+#pragma once
 
 #include <stdint.h>
 #include <SDL2/SDL.h>
@@ -46,5 +45,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

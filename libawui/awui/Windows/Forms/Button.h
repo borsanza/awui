@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_FORMS_BUTTON_H
-#define _AWUI_WINDOWS_FORMS_BUTTON_H
+#pragma once
 
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
@@ -36,5 +35,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

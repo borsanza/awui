@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_SPECTRUM_MOTHERBOARD_H
-#define _AWUI_EMULATION_SPECTRUM_MOTHERBOARD_H
+#pragma once
 
 #include <awui/String.h>
 
@@ -101,5 +100,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

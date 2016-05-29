@@ -1,5 +1,4 @@
-#ifndef _AWUI_DRAWING_RECTANGLE_H
-#define _AWUI_DRAWING_RECTANGLE_H
+#pragma once
 
 #include <awui/Drawing/Point.h>
 #include <awui/Drawing/Size.h>
@@ -56,5 +55,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

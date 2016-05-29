@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_FORMS_SLIDERBROWSER_H
-#define _AWUI_WINDOWS_FORMS_SLIDERBROWSER_H
+#pragma once
 
 #include <awui/Windows/Forms/Control.h>
 
@@ -18,13 +17,13 @@ namespace awui {
 					float _lastTime;
 					int _initPos;
 					int _selected;
-	
+
 				public:
 					SliderBrowser();
 					virtual ~SliderBrowser();
-					
+
 					void SetMargin(int margin);
-					
+
 					virtual void OnTick();
 
 					Control * GetControlSelected() const;
@@ -32,5 +31,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

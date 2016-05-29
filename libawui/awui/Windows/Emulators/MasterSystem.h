@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_EMULATORS_MASTERSYSTEM_H
-#define _AWUI_WINDOWS_EMULATORS_MASTERSYSTEM_H
+#pragma once
 
 #include "ArcadeContainer.h"
 
@@ -67,5 +66,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif
