@@ -1,3 +1,5 @@
+#pragma once
+
 #include <awui/Windows/Forms/Button.h>
 
 namespace awui {
@@ -12,7 +14,7 @@ namespace awui {
 
 using namespace awui::Windows::Forms;
 using namespace awui;
-	
+
 class TestWidget : public Button {
 	private:
 		Drawing::Image * _image;

@@ -14,49 +14,36 @@
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Emulators/Spectrum.h>
 #include <awui/Windows/Forms/ControlCollection.h>
-#include <awui/Windows/Forms/SliderBrowser.h>
+#include <awui/Windows/Forms/Station/StationUI.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 
-#define MULTIPLY 2
+#define MULTIPLY 1
 
 FormArcade::FormArcade() {
-	this->_games = new ArrayList();
 	this->InitializeComponent();
 }
 
 FormArcade::~FormArcade() {
-	for (int i = 0; i < this->_games->GetCount(); i++) {
-		Object * ms = this->_games->Get(i);
-		delete ms;
-	}
-
-	this->_games->Clear();
-	delete this->_games;
 }
 
 void FormArcade::InitializeComponent() {
 	this->SetBackColor(Color::FromArgb(255, 8, 8, 8));
 
-	this->_slider = new SliderBrowser();
-	this->_slider->SetDock(DockStyle::Fill);
-	this->_slider->SetMargin(25);
+	this->_station = new StationUI();
+	this->_station->SetPath("./roms/");
+	this->_station->Refresh();
+	this->_station->SetDock(DockStyle::Fill);
 
-	this->_debugger = new DebuggerSMS();
-	this->_debugger->SetDock(DockStyle::Right);
-	this->_debugger->SetTabStop(false);
-	this->_debugger->SetWidth(1);
-	this->_debugger->SetShow(false);
-
-	this->GetControls()->Add(this->_debugger);
-	this->GetControls()->Add(this->_slider);
+	this->GetControls()->Add(this->_station);
 
 	this->SetSize((352 * MULTIPLY) + 50, (304 * MULTIPLY) + 50);
 	this->SetFullscreen(0);
 	this->SetText("awArcade");
 }
 
+/*
 void FormArcade::LoadRom(const awui::String file) {
 	ArrayList list = file.Split("/");
 	int found = -1;
@@ -113,7 +100,7 @@ void FormArcade::LoadRom(const awui::String file) {
 
 		arcade->SetTabStop(true);
 		this->_games->Add(arcade);
-		this->_slider->GetControls()->Add(arcade);
+		this->_station->GetControls()->Add(arcade);
 
 		if (this->_games->GetCount() == 1)
 			arcade->SetFocus();
@@ -121,9 +108,10 @@ void FormArcade::LoadRom(const awui::String file) {
 }
 
 void FormArcade::OnTick() {
+
 	static ArcadeContainer * selected = NULL;
 
-	if (selected != this->_slider->GetControlSelected()) {
+	if (selected != this->_station->GetControlSelected()) {
 		if (selected != NULL) {
 			this->_debugger->SetShow(false);
 			selected->SetSoundEnabled(false);
@@ -131,7 +119,7 @@ void FormArcade::OnTick() {
 			this->_debugger->SetRom(0);
 		}
 
-		selected = (ArcadeContainer *) this->_slider->GetControlSelected();
+		selected = (ArcadeContainer *) this->_station->GetControlSelected();
 		selected->SetSoundEnabled(true);
 		if (selected->GetType() == 2)
 			this->_debugger->SetRom((MasterSystem *) selected);
@@ -140,4 +128,6 @@ void FormArcade::OnTick() {
 		this->SetText(selected->GetName());
 		// printf("case 0x%.8x: // %s\n", this->_debugger->GetCRC32(), selected->GetName().ToCharArray());
 	}
+
 }
+*/
