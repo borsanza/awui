@@ -1,38 +1,44 @@
 /**
- * awui/Windows/Station/SearchFiles.cpp
+ * awui/Windows/Forms/Station/StationUI.cpp
  *
  * Copyright (C) 2016 Borja Sánchez Zamorano
  */
 
- #include "SearchFiles.h"
+ #include "StationUI.h"
 
 #include <dirent.h>
 #include <string.h>
 
-using namespace awui::Windows::Station;
+/**
+ * Chip8: *.ch8, *.c8x
+ * Master System: *.sms, *.sg
+ * Spectrum: *.rom, *.tap
+ */
 
-SearchFiles::SearchFiles() {
+using namespace awui::Windows::Forms::Station;
+
+StationUI::StationUI() {
 	this->_root = 0;
 }
 
-SearchFiles::~SearchFiles() {
-	// printf("~SearchFiles\n");
+StationUI::~StationUI() {
+	// printf("~StationUI\n");
 	if (this->_root)
 		delete this->_root;
 }
 
-void SearchFiles::SetPath(const String path) {
+void StationUI::SetPath(const String path) {
 	this->_path = path;
 }
 
-void SearchFiles::Clear() {
+void StationUI::Clear() {
 	if (this->_root) {
 		delete this->_root;
 		this->_root = 0;
 	}
 }
 
-void SearchFiles::RecursiveSearch(NodeFile * parent) {
+void StationUI::RecursiveSearch(NodeFile * parent) {
 	DIR *d;
 	struct dirent *dir;
 	d = opendir(parent->_path.ToCharArray());
@@ -87,7 +93,7 @@ void SearchFiles::RecursiveSearch(NodeFile * parent) {
 	}
 }
 
-bool SearchFiles::Minimize(NodeFile * parent) {
+bool StationUI::Minimize(NodeFile * parent) {
 	int r = false;
 
 	if (parent->_childList) {
@@ -126,7 +132,7 @@ bool SearchFiles::Minimize(NodeFile * parent) {
 	return r;
 }
 
-void SearchFiles::Refresh() {
+void StationUI::Refresh() {
 	this->Clear();
 	this->_root = new NodeFile();
 	this->_root->_path = this->_path;
@@ -138,7 +144,7 @@ void SearchFiles::Refresh() {
 	// printf("\nFinish:\n\n");
 }
 
-void SearchFiles::GetList(ArrayList * list, NodeFile * parent) {
+void StationUI::GetList(ArrayList * list, NodeFile * parent) {
 	if (parent == 0)
 		parent = this->_root;
 
