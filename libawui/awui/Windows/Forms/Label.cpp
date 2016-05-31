@@ -45,6 +45,10 @@ int Label::IsClass(Classes::Enum objectClass) const {
 	return Control::IsClass(objectClass);
 }
 
+int Label::GetLabelWidth() const {
+	return this->metrics.GetAdvanceX() + this->metrics.GetBearingX();
+}
+
 #define BORDER 2
 
 void Label::OnPaint(GL* gl) {
@@ -81,14 +85,14 @@ void Label::OnPaint(GL* gl) {
 			case ContentAlignment::TopCenter:
 			case ContentAlignment::MiddleCenter:
 			case ContentAlignment::BottomCenter:
-				posX = this->GetWidth() - this->metrics.GetAdvanceX() + this->metrics.GetBearingX() - 1;
+				posX = this->GetWidth() - this->GetLabelWidth() - 1;
 				posX += this->metrics.GetBearingX();
 				posX /= 2.0f;
 				break;
 			case ContentAlignment::TopRight:
 			case ContentAlignment::MiddleRight:
 			case ContentAlignment::BottomRight:
-				posX = this->GetWidth() - this->metrics.GetAdvanceX() + this->metrics.GetBearingX() - 1;
+				posX = this->GetWidth() - this->GetLabelWidth() - 1;
 				break;
 		}
 

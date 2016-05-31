@@ -45,6 +45,8 @@ namespace awui {
 
 					virtual void SetForeColor(const Drawing::Color color);
 					virtual void SetFont(const Drawing::Font * font);
+
+					int GetLabelWidth() const;
 			};
 		}
 	}

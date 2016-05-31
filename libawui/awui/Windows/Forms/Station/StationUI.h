@@ -1,11 +1,15 @@
 #pragma once
 
-#include <awui/String.h>
 #include <awui/Collections/SortedList.h>
-
+#include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/Button.h>
 
 namespace awui {
+	namespace Effects {
+		class Effect;
+	}
+
 	namespace Windows {
 		namespace Forms {
 			namespace Station {
@@ -18,6 +22,7 @@ namespace awui {
 						int _selectedChild;
 						SortedList * _childList;
 						int _emulator;
+						Button * _label;
 
 					public:
 						NodeFile();
@@ -28,6 +33,13 @@ namespace awui {
 					private:
 						String _path;
 						NodeFile * _root;
+						NodeFile * _actual;
+						int _selected;
+						int _margin;
+						Control * _lastControl;
+						float _lastTime;
+						int _initPos;
+						awui::Effects::Effect * _effect;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);
@@ -41,6 +53,7 @@ namespace awui {
 
 						void Refresh();
 						void GetList(ArrayList * list, NodeFile * parent);
+						virtual void OnTick();
 				};
 			}
 		}

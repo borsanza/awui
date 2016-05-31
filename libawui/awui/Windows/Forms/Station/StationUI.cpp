@@ -6,6 +6,11 @@
 
  #include "StationUI.h"
 
+#include <awui/Drawing/Font.h>
+#include <awui/Effects/Effect.h>
+#include <awui/OpenGL/GL.h>
+#include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Form.h>
 #include <dirent.h>
 #include <string.h>
 
@@ -15,10 +20,51 @@
  * Spectrum: *.rom, *.tap
  */
 
+using namespace awui::Drawing;
+using namespace awui::Effects;
+using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Station;
 
+/********************************** NodeFile **********************************/
+
+NodeFile::NodeFile() {
+	this->_parent = 0;
+	this->_childList = 0;
+	this->_selectedChild = 0;
+	this->_directory = true;
+	this->_emulator = 0;
+	this->_label = 0;
+}
+
+NodeFile::~NodeFile() {
+	// printf("%d) ~NodeFile:  %s\n", this->_emulator, this->_path.ToCharArray());
+	if (this->_childList) {
+		for (int i = 0; i < this->_childList->GetCount(); i++) {
+			NodeFile * object = (NodeFile *)this->_childList->GetByIndex(i);
+			delete object;
+		}
+
+		delete this->_childList;
+	}
+
+	if (this->_label) {
+		this->_label->GetParent()->GetControls()->Remove(this->_label);
+		delete this->_label;
+	}
+}
+
+/********************************* StationUI **********************************/
+
 StationUI::StationUI() {
-	this->_root = 0;
+	this->_root = NULL;
+
+	this->_margin = 8;
+	this->_effect = new EffectLinear();
+	this->SetTabStop(false);
+	this->_lastControl = NULL;
+	this->_lastTime = 0;
+	this->_initPos = 0;
+	this->_selected = -1;
 }
 
 StationUI::~StationUI() {
@@ -58,6 +104,17 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 
 			newFile += dir->d_name;
 			child->_name = dir->d_name;
+
+			child->_label = new Button();
+			child->_label->SetFont(new Font("Monospace", 20, FontStyle::Bold));
+			child->_label->SetDock(DockStyle::None);
+			String name = child->_name;
+			name = name.Substring(0, name.LastIndexOf("."));
+			child->_label->SetText(name);
+			child->_label->SetHeight(40);
+			child->_label->SetWidth(600);
+			this->GetControls()->Add(child->_label);
+
 			if (parent->_emulator == 0) {
 				if (child->_name == "chip8")
 					child->_emulator = 1;
@@ -135,6 +192,7 @@ bool StationUI::Minimize(NodeFile * parent) {
 void StationUI::Refresh() {
 	this->Clear();
 	this->_root = new NodeFile();
+	this->_actual = this->_root;
 	this->_root->_path = this->_path;
 	this->_root->_emulator = 0;
 	this->RecursiveSearch(this->_root);
@@ -159,24 +217,65 @@ void StationUI::GetList(ArrayList * list, NodeFile * parent) {
 	}
 }
 
-/********************************** NodeFile **********************************/
+void StationUI::OnTick() {
+	for (int i = 0; i< this->GetControls()->GetCount(); i++) {
+		Button * w = (Button *)this->GetControls()->Get(i);
+		w->SetWidth(w->GetLabelWidth() + this->_margin * 2);
+	}
 
-NodeFile::NodeFile() {
-	this->_parent = 0;
-	this->_childList = 0;
-	this->_selectedChild = 0;
-	this->_directory = true;
-	this->_emulator = 0;
-}
+	int posSelected = this->GetControls()->IndexOf(Form::GetControlSelected());
 
-NodeFile::~NodeFile() {
-	// printf("%d) ~NodeFile:  %s\n", this->_emulator, this->_path.ToCharArray());
-	if (this->_childList) {
-		for (int i = 0; i < this->_childList->GetCount(); i++) {
-			NodeFile * object = (NodeFile *)this->_childList->GetByIndex(i);
-			delete object;
+	if (posSelected != -1)
+		if (this->_selected != posSelected)
+			this->_selected = posSelected;
+
+	if (this->_selected == -1)
+		this->_selected = 0;
+
+	if (this->_selected >= this->GetControls()->GetCount())
+		return;
+
+	Control * w = (Control *)this->GetControls()->Get(this->_selected);
+
+	bool topOut = (w->GetTop() - this->_margin) <= 0;
+	bool bottomOut = (w->GetBottom() + this->_margin) >= this->GetHeight();
+	if (topOut || bottomOut) {
+		int top;
+		if (topOut)
+			top = this->_margin;
+		else
+			top = this->GetHeight() - (w->GetHeight() + this->_margin);
+
+		if (this->_lastControl != w) {
+			this->_lastControl = w;
+			this->_lastTime = 0;
+			this->_initPos = w->GetTop();
 		}
 
-		delete this->_childList;
+		if (this->_lastTime < 10) {
+			this->_lastTime++;
+			float p = this->_effect->Calculate(this->_lastTime / 10.0f);
+			top = this->_initPos + ((top - this->_initPos) * p);
+		}
+
+		w->SetTop(top);
+	}
+
+	w->SetLeft(((this->GetWidth() >> 1) - w->GetWidth()) >> 1);
+
+	int y = w->GetTop() + w->GetHeight() + this->_margin;
+	for (int i = this->_selected + 1; i< this->GetControls()->GetCount(); i++) {
+		y += this->_margin;
+		Control * w2 = (Control *)this->GetControls()->Get(i);
+		w2->SetLocation(((this->GetWidth() >> 1) - w2->GetWidth()) >> 1, y);
+		y += w2->GetHeight() + this->_margin;
+	}
+
+	y = w->GetTop() - this->_margin;
+	for (int i = this->_selected - 1; i >= 0; i--) {
+		Control * w2 = (Control *)this->GetControls()->Get(i);
+		y -= (this->_margin + w2->GetHeight());
+		w2->SetLocation(((this->GetWidth() >> 1) - w2->GetWidth()) >> 1, y);
+		y -= this->_margin;
 	}
 }

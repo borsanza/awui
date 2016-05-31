@@ -5,10 +5,6 @@
 #include <awui/Windows/Forms/Label.h>
 
 namespace awui {
-	namespace OpenGL {
-		class GL;
-	}
-
 	namespace Windows {
 		namespace Forms {
 			class Button : public Control {
@@ -31,6 +27,7 @@ namespace awui {
 					virtual void OnPaint(OpenGL::GL * gl);
 					virtual void SetForeColor(const Drawing::Color color);
 					virtual void SetFont(const Drawing::Font * font);
+					int GetLabelWidth() const;
 			};
 		}
 	}

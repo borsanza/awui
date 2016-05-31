@@ -69,3 +69,7 @@ void Button::SetFont(const Drawing::Font * font) {
 	Control::SetFont(font);
 	this->label.SetFont(font);
 }
+
+int Button::GetLabelWidth() const {
+	return this->label.GetLabelWidth();
+}
