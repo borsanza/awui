@@ -29,7 +29,7 @@ FormArcade::~FormArcade() {
 }
 
 void FormArcade::InitializeComponent() {
-	this->SetBackColor(Color::FromArgb(255, 8, 8, 8));
+	this->SetBackColor(Color::FromArgb(0, 0, 0));
 
 	this->_station = new StationUI();
 	this->_station->SetPath("./roms/");

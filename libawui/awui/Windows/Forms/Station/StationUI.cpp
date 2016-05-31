@@ -58,7 +58,7 @@ NodeFile::~NodeFile() {
 StationUI::StationUI() {
 	this->_root = NULL;
 
-	this->_margin = 8;
+	this->_margin = 2;
 	this->_effect = new EffectLinear();
 	this->SetTabStop(false);
 	this->_lastControl = NULL;
@@ -106,12 +106,12 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 			child->_name = dir->d_name;
 
 			child->_label = new Button();
-			child->_label->SetFont(new Font("Monospace", 20, FontStyle::Bold));
+			child->_label->SetFont(new Font("Monospace", 27, FontStyle::Bold));
 			child->_label->SetDock(DockStyle::None);
 			String name = child->_name;
 			name = name.Substring(0, name.LastIndexOf("."));
 			child->_label->SetText(name);
-			child->_label->SetHeight(40);
+			child->_label->SetHeight(48);
 			child->_label->SetWidth(600);
 			this->GetControls()->Add(child->_label);
 
@@ -220,7 +220,7 @@ void StationUI::GetList(ArrayList * list, NodeFile * parent) {
 void StationUI::OnTick() {
 	for (int i = 0; i< this->GetControls()->GetCount(); i++) {
 		Button * w = (Button *)this->GetControls()->Get(i);
-		w->SetWidth(w->GetLabelWidth() + this->_margin * 2);
+		w->SetWidth(w->GetLabelWidth() + 18 * 2);
 	}
 
 	int posSelected = this->GetControls()->IndexOf(Form::GetControlSelected());
@@ -237,14 +237,14 @@ void StationUI::OnTick() {
 
 	Control * w = (Control *)this->GetControls()->Get(this->_selected);
 
-	bool topOut = (w->GetTop() - this->_margin) <= 0;
-	bool bottomOut = (w->GetBottom() + this->_margin) >= this->GetHeight();
+	bool topOut = (w->GetTop() - 22) <= 0;
+	bool bottomOut = (w->GetBottom() + 22) >= this->GetHeight();
 	if (topOut || bottomOut) {
 		int top;
 		if (topOut)
-			top = this->_margin;
+			top = 22;
 		else
-			top = this->GetHeight() - (w->GetHeight() + this->_margin);
+			top = this->GetHeight() - (w->GetHeight() + 22);
 
 		if (this->_lastControl != w) {
 			this->_lastControl = w;
@@ -265,8 +265,8 @@ void StationUI::OnTick() {
 
 	int y = w->GetTop() + w->GetHeight() + this->_margin;
 	for (int i = this->_selected + 1; i< this->GetControls()->GetCount(); i++) {
-		y += this->_margin;
 		Control * w2 = (Control *)this->GetControls()->Get(i);
+		y += this->_margin;
 		w2->SetLocation(((this->GetWidth() >> 1) - w2->GetWidth()) >> 1, y);
 		y += w2->GetHeight() + this->_margin;
 	}
