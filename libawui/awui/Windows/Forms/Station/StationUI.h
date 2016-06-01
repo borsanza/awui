@@ -3,7 +3,7 @@
 #include <awui/Collections/SortedList.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
-#include <awui/Windows/Forms/Button.h>
+#include <awui/Windows/Forms/Station/MenuButton.h>
 
 namespace awui {
 	namespace Effects {
@@ -22,7 +22,7 @@ namespace awui {
 						int _selectedChild;
 						SortedList * _childList;
 						int _emulator;
-						Button * _label;
+						MenuButton * _label;
 
 					public:
 						NodeFile();

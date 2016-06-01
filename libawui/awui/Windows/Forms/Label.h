@@ -39,6 +39,7 @@ namespace awui {
 					const Drawing::ContentAlignment::Enum GetTextAlign();
 					void SetTextAlign(Drawing::ContentAlignment::Enum textAlign);
 
+					void Draw(int x, int y, int width, int height);
 					virtual void OnPaint(OpenGL::GL * gl);
 
 					void DrawLines(int x, int y);

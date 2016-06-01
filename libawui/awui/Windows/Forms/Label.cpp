@@ -51,28 +51,28 @@ int Label::GetLabelWidth() const {
 
 #define BORDER 2
 
-void Label::OnPaint(GL* gl) {
+void Label::Draw(int x, int y, int width, int height) {
 	if (this->image) {
-		float posX = 0;
-		float posY = 0;
+		float posX = x;
+		float posY = y;
 
 		switch (this->textAlign) {
 			case ContentAlignment::TopLeft:
 			case ContentAlignment::TopCenter:
 			case ContentAlignment::TopRight:
-				posY = this->metrics.GetAscent();
+				posY += this->metrics.GetAscent();
 				break;
 			case ContentAlignment::MiddleLeft:
 			case ContentAlignment::MiddleCenter:
 			case ContentAlignment::MiddleRight:
-				posY = this->metrics.GetAscent();
-				posY += this->GetHeight() - this->metrics.GetDescent() - 1;
+				posY += this->metrics.GetAscent();
+				posY += height - this->metrics.GetDescent() - 1;
 				posY /= 2.0f;
 				break;
 			case ContentAlignment::BottomLeft:
 			case ContentAlignment::BottomCenter:
 			case ContentAlignment::BottomRight:
-				posY = this->GetHeight() - this->metrics.GetDescent() - 1;
+				posY += height - this->metrics.GetDescent() - 1;
 				break;
 		}
 
@@ -80,19 +80,19 @@ void Label::OnPaint(GL* gl) {
 			case ContentAlignment::TopLeft:
 			case ContentAlignment::MiddleLeft:
 			case ContentAlignment::BottomLeft:
-				posX = this->metrics.GetBearingX();
+				posX += this->metrics.GetBearingX();
 				break;
 			case ContentAlignment::TopCenter:
 			case ContentAlignment::MiddleCenter:
 			case ContentAlignment::BottomCenter:
-				posX = this->GetWidth() - this->GetLabelWidth() - 1;
+				posX += width - this->GetLabelWidth() - 1;
 				posX += this->metrics.GetBearingX();
 				posX /= 2.0f;
 				break;
 			case ContentAlignment::TopRight:
 			case ContentAlignment::MiddleRight:
 			case ContentAlignment::BottomRight:
-				posX = this->GetWidth() - this->GetLabelWidth() - 1;
+				posX += width - this->GetLabelWidth() - 1;
 				break;
 		}
 
@@ -105,6 +105,10 @@ void Label::OnPaint(GL* gl) {
 		GL::DrawImageGL(this->image, correctPosX, correctPosY);
 //		this->DrawLines(posX, posY);
 	}
+}
+
+void Label::OnPaint(GL* gl) {
+	this->Draw(0, 0, this->GetWidth(), this->GetHeight());
 }
 
 void Label::DrawLines(int x, int y) {
