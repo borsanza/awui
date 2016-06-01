@@ -143,3 +143,7 @@ Color & Color::operator=(const Color & other) {
 
 	return *this;
 }
+
+bool Color::operator !=(const Color &b) const {
+	return ((this->r != b.r) || (this->g != b.g) || (this->b != b.b) || (this->a != b.a));
+}

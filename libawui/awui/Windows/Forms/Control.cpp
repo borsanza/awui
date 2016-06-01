@@ -33,6 +33,7 @@ using namespace awui::Windows::Forms::Statistics;
 Control::Control() {
 	this->tabStop = false;
 	this->bounds = Rectangle(0, 0, 100, 100);
+	this->boundsTo = this->bounds;
 	this->controls = new ControlCollection(this);
 	this->mouseEventArgs = new MouseEventArgs();
 	this->mouseControl = NULL;
@@ -107,6 +108,12 @@ void Control::SetBounds(int x, int y, int width, int height) {
 		return;
 
 	this->bounds = Rectangle(x, y, width, height);
+	this->boundsTo = this->bounds;
+	this->_lastWidth = width;
+	this->_lastHeight = height;
+	this->_lastX = x;
+	this->_lastY = y;
+
 	this->Refresh();
 	this->OnResizePre();
 }
@@ -360,8 +367,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 
 			bitmap->GetFixedMargins(&x1, &y1, &x2, &y2);
 
-			int width = control->GetWidth() + x1 + x2;
-			int height = control->GetHeight() + y1 + y2;
+			int width = control->boundsTo.GetWidth() + x1 + x2;
+			int height = control->boundsTo.GetHeight() + y1 + y2;
 
 			lastwidth = Interpolate(lastwidth, width, percent);
 			lastheight = Interpolate(lastheight, height, percent);
@@ -369,8 +376,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 			height = Math::Round(lastheight);
 
 			bitmap->SetSize(width, height);
-			int x = control->GetLeft() - x1;
-			int y = control->GetTop() - y1;
+			int x = control->boundsTo.GetLeft() - x1;
+			int y = control->boundsTo.GetTop() - y1;
 
 			lastx1 = Interpolate(lastx1, x, percent);
 			lasty1 = Interpolate(lasty1, y, percent);
@@ -518,6 +525,18 @@ bool Control::IsVisible() const {
 }
 
 void Control::OnTickPre() {
+	float percent = 0.16f;
+	_lastWidth = Interpolate(_lastWidth, boundsTo.GetWidth(), percent);
+	_lastHeight = Interpolate(_lastHeight, boundsTo.GetHeight(), percent);
+	int w = Math::Round(_lastWidth);
+	int h = Math::Round(_lastHeight);
+	_lastX = Interpolate(_lastX, boundsTo.GetLeft(), percent);
+	_lastY = Interpolate(_lastY, boundsTo.GetTop(), percent);
+	int x = Math::Round(_lastX);
+	int y = Math::Round(_lastY);
+	this->bounds.SetSize(w, h);
+	this->bounds.SetLocation(x, y);
+
 	if (this->IsVisible()) {
 		this->OnTick();
 

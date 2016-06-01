@@ -47,8 +47,14 @@ namespace awui {
 					Control * focused;
 					bool tabStop;
 					Drawing::Rectangle bounds;
-					Drawing::Size minimumSize;
 
+					float _lastWidth;
+					float _lastHeight;
+					float _lastX;
+					float _lastY;
+					Drawing::Rectangle boundsTo;
+
+					Drawing::Size minimumSize;
 					int needRefresh;
 					int refreshed;
 					bool scissorEnabled;
@@ -105,6 +111,8 @@ namespace awui {
 					const Drawing::Size GetSize() const;
 					void SetSize(int width, int height);
 					void SetSize(const Drawing::Size size);
+					inline void SetSizeGo(int w, int h) { this->boundsTo.SetSize(w, h); }
+					inline void SetLocationGo(int x, int y) { this->boundsTo.SetLocation(x, y); }
 
 					const Drawing::Rectangle GetBounds() const;
 					void SetBounds(int x, int y, int width, int height);

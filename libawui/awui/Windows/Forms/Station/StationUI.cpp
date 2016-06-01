@@ -106,12 +106,12 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 			child->_name = dir->d_name;
 
 			child->_label = new MenuButton();
-			child->_label->SetFont(new Font("Monospace", 27, FontStyle::Bold));
+			child->_label->SetFont(new Font("Monospace", 28, FontStyle::Bold));
 			child->_label->SetDock(DockStyle::None);
 			String name = child->_name;
 			name = name.Substring(0, name.LastIndexOf("."));
 			child->_label->SetText(name);
-			child->_label->SetHeight(48);
+			child->_label->SetHeight(61);
 			child->_label->SetWidth(510);
 			this->GetControls()->Add(child->_label);
 
@@ -220,7 +220,7 @@ void StationUI::GetList(ArrayList * list, NodeFile * parent) {
 void StationUI::OnTick() {
 	for (int i = 0; i< this->GetControls()->GetCount(); i++) {
 		MenuButton * w = (MenuButton *)this->GetControls()->Get(i);
-		w->SetWidth(510); // w->GetLabelWidth() + 18 * 2);
+		w->SetWidth(633); // w->GetLabelWidth() + 18 * 2);
 	}
 
 	int posSelected = this->GetControls()->IndexOf(Form::GetControlSelected());
@@ -238,28 +238,15 @@ void StationUI::OnTick() {
 	Control * w = (Control *)this->GetControls()->Get(this->_selected);
 
 	int top = (this->GetHeight() + w->GetHeight()) >> 1;
-
-	if (this->_lastControl != w) {
-		this->_lastControl = w;
-		this->_lastTime = 0;
-		this->_initPos = w->GetTop();
-	}
-
-	if (this->_lastTime < 20) {
-		this->_lastTime++;
-		float p = this->_effect->Calculate(this->_lastTime / 20.0f);
-		top = this->_initPos + ((top - this->_initPos) * p);
-	}
-
-	w->SetTop(top);
-
-	w->SetLeft(105);
+	w->SetLocationGo(70, top);
+	w->SetForeColor(Color::FromArgb(255, 255, 255));
 
 	int y = w->GetTop() + w->GetHeight() + this->_margin;
 	for (int i = this->_selected + 1; i< this->GetControls()->GetCount(); i++) {
-		Control * w2 = (Control *)this->GetControls()->Get(i);
+		MenuButton * w2 = (MenuButton *)this->GetControls()->Get(i);
 		y += this->_margin;
-		w2->SetLocation(105, y);
+		w2->SetLocation(70, y);
+		w2->SetForeColor(Color::FromArgb(199, 199, 199));
 		y += w2->GetHeight() + this->_margin;
 	}
 
@@ -267,7 +254,8 @@ void StationUI::OnTick() {
 	for (int i = this->_selected - 1; i >= 0; i--) {
 		Control * w2 = (Control *)this->GetControls()->Get(i);
 		y -= (this->_margin + w2->GetHeight());
-		w2->SetLocation(105, y);
+		w2->SetLocation(70, y);
+		w2->SetForeColor(Color::FromArgb(199, 199, 199));
 		y -= this->_margin;
 	}
 }

@@ -29,6 +29,8 @@ namespace awui {
 				static Color FromArgb(int alpha, int red, int green, int blue);
 
 				Color & operator= (const Color & other);
+
+				bool operator !=(const Color &b) const;
 		};
 	}
 }

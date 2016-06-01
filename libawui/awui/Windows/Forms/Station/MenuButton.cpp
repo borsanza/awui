@@ -61,8 +61,10 @@ const awui::String MenuButton::GetText() {
 }
 
 void MenuButton::SetForeColor(const Drawing::Color color) {
-	Control::SetForeColor(color);
-	this->label.SetForeColor(this->GetForeColor());
+	if (color != this->GetForeColor()) {
+		Control::SetForeColor(color);
+		this->label.SetForeColor(this->GetForeColor());
+	}
 }
 
 void MenuButton::SetFont(const Drawing::Font * font) {
