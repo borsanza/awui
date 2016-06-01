@@ -237,7 +237,7 @@ void StationUI::OnTick() {
 
 	Control * w = (Control *)this->GetControls()->Get(this->_selected);
 
-	int top = (this->GetHeight() + w->GetHeight()) >> 1;
+	int top = (this->GetHeight() - w->GetHeight()) >> 1;
 	w->SetLocationGo(70, top);
 	w->SetForeColor(Color::FromArgb(255, 255, 255));
 
