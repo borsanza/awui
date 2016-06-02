@@ -248,7 +248,8 @@ void StationUI::OnTick() {
 		if (down < middle)
 			top = middle;
 		else
-			top = down;
+			if (top > (this->GetHeight() - (BORDERMARGIN + MENUBUTTONHEIGHT + this->_margin + this->_margin)))
+				top = down;
 	}
 
 	w->SetLocationGo(70, top);
