@@ -43,7 +43,7 @@ void MenuButton::OnMouseMove(MouseEventArgs* e) {
 }
 
 void MenuButton::OnPaint(GL* gl) {
-	this->label.Draw(16, 0, this->GetWidth() - 32, this->GetHeight());
+	this->label.Draw(23, 0, this->GetWidth() - 32, this->GetHeight());
 }
 
 void MenuButton::SetText(const String str) {

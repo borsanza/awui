@@ -69,7 +69,7 @@ Stats::Stats() {
 	this->GetControls()->Add(this->labelFPS);
 	// this->GetControls()->Add(this->labelPercent);
 	// this->GetControls()->Add(this->labelControls);
-	this->SetHeight(24);
+	this->SetHeight(0); // 24
 }
 
 Stats::~Stats() {

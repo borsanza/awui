@@ -20,8 +20,8 @@
  * Spectrum: *.rom, *.tap
  */
 
-#define BORDERMARGIN 25
-#define MENUBUTTONHEIGHT 61
+#define BORDERMARGIN 50
+#define MENUBUTTONHEIGHT 70
 
 using namespace awui::Drawing;
 using namespace awui::Effects;
@@ -60,7 +60,7 @@ NodeFile::~NodeFile() {
 StationUI::StationUI() {
 	this->_root = NULL;
 
-	this->_margin = 2;
+	this->_margin = 0;
 	this->_effect = new EffectLinear();
 	this->SetTabStop(false);
 	this->_lastControl = NULL;
@@ -246,7 +246,7 @@ void StationUI::OnTick() {
 			continue;
 
 		totalButtons++;
-		w->SetWidth(633);
+		w->SetWidth((this->GetWidth() >> 1) - 100);
 	}
 
 	this->_gradientUp.SetSize(this->GetWidth(), MENUBUTTONHEIGHT);
@@ -271,7 +271,7 @@ void StationUI::OnTick() {
 
 	int middle = (this->GetHeight() - w->GetHeight()) >> 1;
 	int top = BORDERMARGIN + posSelected * (MENUBUTTONHEIGHT + this->_margin + this->_margin);
-	int total = BORDERMARGIN + (totalButtons * (MENUBUTTONHEIGHT + this->_margin + this->_margin));
+	int total = BORDERMARGIN + (totalButtons * (MENUBUTTONHEIGHT + this->_margin + this->_margin)) + BORDERMARGIN;
 
 	if (total > this->GetHeight()) {
 		showGradientBottom = true;
@@ -295,7 +295,8 @@ void StationUI::OnTick() {
 	else
 		this->_gradientDown.SetLocation(0, this->GetHeight());
 
-	w->SetLocationGo(70, top);
+	int left = (this->GetWidth() >> 1) + 40;
+	w->SetLocationGo(left, top);
 	w->SetForeColor(Color::FromArgb(255, 255, 255));
 
 	int y = w->GetTop() + w->GetHeight() + this->_margin;
@@ -305,7 +306,7 @@ void StationUI::OnTick() {
 			continue;
 		MenuButton * w2 = (MenuButton *) w;
 		y += this->_margin;
-		w2->SetLocation(70, y);
+		w2->SetLocation(left, y);
 		w2->SetForeColor(Color::FromArgb(199, 199, 199));
 		y += w2->GetHeight() + this->_margin;
 	}
@@ -317,7 +318,7 @@ void StationUI::OnTick() {
 			continue;
 		MenuButton * w2 = (MenuButton *) w;
 		y -= (this->_margin + w2->GetHeight());
-		w2->SetLocation(70, y);
+		w2->SetLocation(left, y);
 		w2->SetForeColor(Color::FromArgb(199, 199, 199));
 		y -= this->_margin;
 	}
