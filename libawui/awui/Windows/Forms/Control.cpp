@@ -352,7 +352,7 @@ void Control::OnPaint(OpenGL::GL * gl) {
 		if (focused == control) {
 			int x1, y1, x2, y2;
 			Bitmap * bitmap = Form::GetSelectedBitmap();
-			float percent = 0.4f;
+			float percent = 0.16f;
 
 			// Esto solo lo hago porque en la inicializacion del programa
 			// no habia nada seleccionado y hay que actualizar esta variable

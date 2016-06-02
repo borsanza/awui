@@ -20,6 +20,9 @@
  * Spectrum: *.rom, *.tap
  */
 
+#define BORDERMARGIN 25
+#define MENUBUTTONHEIGHT 61
+
 using namespace awui::Drawing;
 using namespace awui::Effects;
 using namespace awui::OpenGL;
@@ -111,7 +114,7 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 			String name = child->_name;
 			name = name.Substring(0, name.LastIndexOf("."));
 			child->_label->SetText(name);
-			child->_label->SetHeight(61);
+			child->_label->SetHeight(MENUBUTTONHEIGHT);
 			child->_label->SetWidth(510);
 			this->GetControls()->Add(child->_label);
 
@@ -237,7 +240,17 @@ void StationUI::OnTick() {
 
 	Control * w = (Control *)this->GetControls()->Get(this->_selected);
 
-	int top = (this->GetHeight() - w->GetHeight()) >> 1;
+	int middle = (this->GetHeight() - w->GetHeight()) >> 1;
+	int top = BORDERMARGIN + posSelected * (MENUBUTTONHEIGHT + this->_margin + this->_margin);
+	if (top > middle) {
+		int down = (this->GetControls()->GetCount() - posSelected) * (MENUBUTTONHEIGHT + this->_margin + this->_margin);
+		down = this->GetHeight() - (down + BORDERMARGIN);
+		if (down < middle)
+			top = middle;
+		else
+			top = down;
+	}
+
 	w->SetLocationGo(70, top);
 	w->SetForeColor(Color::FromArgb(255, 255, 255));
 
