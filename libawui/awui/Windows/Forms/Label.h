@@ -1,17 +1,12 @@
 #pragma once
 
 #include <awui/Drawing/GlyphMetrics.h>
-#include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui {
 	namespace Drawing {
 		class Graphics;
 		class Image;
-	}
-
-	namespace OpenGL {
-		class GL;
 	}
 
 	namespace Windows {

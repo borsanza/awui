@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Windows/Forms/Control.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano
@@ -6,13 +6,7 @@
 
 #include "Control.h"
 
-#include <awui/Collections/ArrayList.h>
-#include <awui/Console.h>
-#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
-#include <awui/Drawing/Graphics.h>
-#include <awui/Drawing/Pen.h>
-#include <awui/Drawing/Rectangle.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Bitmap.h>
@@ -22,13 +16,9 @@
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL2/SDL_opengl.h>
 
-#include <iostream>
-
-using namespace awui::Collections;
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
-using namespace awui::Windows::Forms::Statistics;
 
 Control::Control() {
 	this->tabStop = false;

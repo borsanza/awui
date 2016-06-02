@@ -2,20 +2,14 @@
 
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Rectangle.h>
-#include <awui/Object.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Keys.h>
 #include <awui/Windows/Forms/MouseButtons.h>
 #include <awui/Windows/Forms/RemoteButtons.h>
 
 namespace awui {
-	namespace Collections {
-		class ArrayList;
-	}
-
 	namespace Drawing {
 		class Font;
-		class Point;
 	}
 
 	namespace OpenGL {
@@ -26,7 +20,6 @@ namespace awui {
 		namespace Forms {
 			class ControlCollection;
 			class MouseEventArgs;
-			class Form;
 
 			class Control : public Object {
 				friend class Form;

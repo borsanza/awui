@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Windows/Forms/Label.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano
@@ -7,12 +7,10 @@
 #include "Label.h"
 
 #include <awui/Math.h>
-#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Image.h>
 #include <awui/OpenGL/GL.h>
-#include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/TextRenderer.h>
 
 #include <SDL2/SDL_opengl.h>

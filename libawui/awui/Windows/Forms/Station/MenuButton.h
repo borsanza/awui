@@ -1,7 +1,5 @@
 #pragma once
 
-#include <awui/String.h>
-#include <awui/Windows/Forms/Control.h>
 #include <awui/Windows/Forms/Label.h>
 
 namespace awui {

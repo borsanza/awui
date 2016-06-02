@@ -1,8 +1,7 @@
 #pragma once
 
 #include <awui/Collections/SortedList.h>
-#include <awui/String.h>
-#include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/Station/Gradient.h>
 #include <awui/Windows/Forms/Station/MenuButton.h>
 
 namespace awui {
@@ -40,6 +39,8 @@ namespace awui {
 						float _lastTime;
 						int _initPos;
 						awui::Effects::Effect * _effect;
+						Gradient _gradientUp;
+						Gradient _gradientDown;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);

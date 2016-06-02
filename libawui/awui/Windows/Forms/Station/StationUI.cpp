@@ -8,11 +8,11 @@
 
 #include <awui/Drawing/Font.h>
 #include <awui/Effects/Effect.h>
-#include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/Station/Gradient.h>
+
 #include <dirent.h>
-#include <string.h>
 
 /**
  * Chip8: *.ch8, *.c8x
@@ -25,7 +25,6 @@
 
 using namespace awui::Drawing;
 using namespace awui::Effects;
-using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Station;
 
 /********************************** NodeFile **********************************/
@@ -68,6 +67,22 @@ StationUI::StationUI() {
 	this->_lastTime = 0;
 	this->_initPos = 0;
 	this->_selected = -1;
+
+	this->_gradientUp.SetColor1(Color::FromArgb(255, 0,   0, 0));
+	this->_gradientUp.SetColor2(Color::FromArgb(255, 0,   0, 0));
+	this->_gradientUp.SetColor3(Color::FromArgb(0,  0, 0, 0));
+	this->_gradientUp.SetColor4(Color::FromArgb(0,  0, 0, 0));
+	// this->_gradientUp.SetColor3(Color::FromArgb(255, 255, 0, 0));
+	// this->_gradientUp.SetColor4(Color::FromArgb(255, 255, 0, 0));
+	this->_gradientUp.SetDock(DockStyle::None);
+
+	// this->_gradientDown.SetColor1(Color::FromArgb(255, 255, 0, 0));
+	// this->_gradientDown.SetColor2(Color::FromArgb(255, 255, 0, 0));
+	this->_gradientDown.SetColor1(Color::FromArgb(0,  0, 0, 0));
+	this->_gradientDown.SetColor2(Color::FromArgb(0,  0, 0, 0));
+	this->_gradientDown.SetColor3(Color::FromArgb(255, 0,   0, 0));
+	this->_gradientDown.SetColor4(Color::FromArgb(255, 0,   0, 0));
+	this->_gradientDown.SetDock(DockStyle::None);
 }
 
 StationUI::~StationUI() {
@@ -203,6 +218,9 @@ void StationUI::Refresh() {
 	// printf("\nMinimize:\n\n");
 	while (this->Minimize(this->_root));
 	// printf("\nFinish:\n\n");
+
+	this->GetControls()->Add(&this->_gradientUp);
+	this->GetControls()->Add(&this->_gradientDown);
 }
 
 void StationUI::GetList(ArrayList * list, NodeFile * parent) {
@@ -221,10 +239,18 @@ void StationUI::GetList(ArrayList * list, NodeFile * parent) {
 }
 
 void StationUI::OnTick() {
+	int totalButtons = 0;
 	for (int i = 0; i< this->GetControls()->GetCount(); i++) {
-		MenuButton * w = (MenuButton *)this->GetControls()->Get(i);
-		w->SetWidth(633); // w->GetLabelWidth() + 18 * 2);
+		Control * w = (Control *)this->GetControls()->Get(i);
+		if (!w->IsClass(Classes::MenuButton))
+			continue;
+
+		totalButtons++;
+		w->SetWidth(633);
 	}
+
+	this->_gradientUp.SetSize(this->GetWidth(), MENUBUTTONHEIGHT);
+	this->_gradientDown.SetSize(this->GetWidth(), MENUBUTTONHEIGHT);
 
 	int posSelected = this->GetControls()->IndexOf(Form::GetControlSelected());
 
@@ -235,29 +261,49 @@ void StationUI::OnTick() {
 	if (this->_selected == -1)
 		this->_selected = 0;
 
-	if (this->_selected >= this->GetControls()->GetCount())
+	if (this->_selected >= totalButtons)
 		return;
 
 	Control * w = (Control *)this->GetControls()->Get(this->_selected);
 
+	bool showGradientTop = false;
+	bool showGradientBottom = false;
+
 	int middle = (this->GetHeight() - w->GetHeight()) >> 1;
 	int top = BORDERMARGIN + posSelected * (MENUBUTTONHEIGHT + this->_margin + this->_margin);
-	if (top > middle) {
-		int down = (this->GetControls()->GetCount() - posSelected) * (MENUBUTTONHEIGHT + this->_margin + this->_margin);
-		down = this->GetHeight() - (down + BORDERMARGIN);
-		if (down < middle)
-			top = middle;
-		else
-			if (top > (this->GetHeight() - (BORDERMARGIN + MENUBUTTONHEIGHT + this->_margin + this->_margin)))
-				top = down;
+	int total = BORDERMARGIN + (totalButtons * (MENUBUTTONHEIGHT + this->_margin + this->_margin));
+
+	if (total > this->GetHeight()) {
+		showGradientBottom = true;
+		if (top > middle) {
+			showGradientTop = true;
+			top = this->GetHeight() - (total - top);
+			if (top < middle)
+				top = middle;
+			else
+				showGradientBottom = false;
+		}
 	}
+
+	if (showGradientTop)
+		this->_gradientUp.SetLocation(0, 0);
+	else
+		this->_gradientUp.SetLocation(0, -this->_gradientUp.GetHeight());
+
+	if (showGradientBottom)
+		this->_gradientDown.SetLocation(0, this->GetHeight() - this->_gradientDown.GetHeight());
+	else
+		this->_gradientDown.SetLocation(0, this->GetHeight());
 
 	w->SetLocationGo(70, top);
 	w->SetForeColor(Color::FromArgb(255, 255, 255));
 
 	int y = w->GetTop() + w->GetHeight() + this->_margin;
 	for (int i = this->_selected + 1; i< this->GetControls()->GetCount(); i++) {
-		MenuButton * w2 = (MenuButton *)this->GetControls()->Get(i);
+		Object * w = this->GetControls()->Get(i);
+		if (!w->IsClass(Classes::MenuButton))
+			continue;
+		MenuButton * w2 = (MenuButton *) w;
 		y += this->_margin;
 		w2->SetLocation(70, y);
 		w2->SetForeColor(Color::FromArgb(199, 199, 199));
@@ -266,7 +312,10 @@ void StationUI::OnTick() {
 
 	y = w->GetTop() - this->_margin;
 	for (int i = this->_selected - 1; i >= 0; i--) {
-		Control * w2 = (Control *)this->GetControls()->Get(i);
+		Object * w = this->GetControls()->Get(i);
+		if (!w->IsClass(Classes::MenuButton))
+			continue;
+		MenuButton * w2 = (MenuButton *) w;
 		y -= (this->_margin + w2->GetHeight());
 		w2->SetLocation(70, y);
 		w2->SetForeColor(Color::FromArgb(199, 199, 199));

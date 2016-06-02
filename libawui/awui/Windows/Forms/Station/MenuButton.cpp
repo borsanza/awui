@@ -1,18 +1,12 @@
 /**
- * awui/Windows/Forms/MenuButton.cpp
+ * awui/Windows/Forms/Station/MenuButton.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano
  */
 
 #include "MenuButton.h"
 
-#include <awui/Drawing/Color.h>
-#include <awui/Drawing/Font.h>
-#include <awui/OpenGL/GL.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/MouseEventArgs.h>
-#include <SDL2/SDL_opengl.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -31,7 +25,7 @@ MenuButton::~MenuButton() {
 }
 
 int MenuButton::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Button)
+	if (objectClass == Classes::MenuButton)
 		return 1;
 
 	return Control::IsClass(objectClass);
@@ -45,7 +39,7 @@ void MenuButton::OnMouseDown(MouseEventArgs* e) {
 }
 
 void MenuButton::OnMouseMove(MouseEventArgs* e) {
-	Form::SetControlSelected(this);
+	// Form::SetControlSelected(this);
 }
 
 void MenuButton::OnPaint(GL* gl) {

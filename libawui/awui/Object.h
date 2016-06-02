@@ -30,6 +30,8 @@ namespace awui {
 			MasterSystem,
 			DebuggerSMS,
 			Spectrum,
+			Gradient,
+			MenuButton,
 		};
 	};
 
