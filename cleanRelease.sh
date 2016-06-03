@@ -8,4 +8,5 @@ rm CMakeCache.txt
 cmake -G "$EDITOR" -DCMAKE_BUILD_TYPE=Release .
 make -j$CORES
 cd samples
-./cleanRelease.sh
+./cleanDebug.sh
+
