@@ -38,7 +38,7 @@ void FormArcade::InitializeComponent() {
 
 	this->GetControls()->Add(this->_station);
 
-	this->SetSize((352 * MULTIPLY) + 50, (304 * MULTIPLY) + 50);
+	this->SetSize(1024, 768);
 	this->SetFullscreen(0);
 	this->SetText("awArcade");
 }

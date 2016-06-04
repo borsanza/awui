@@ -1,7 +1,7 @@
 #pragma once
 
 #include <awui/Collections/SortedList.h>
-#include <awui/Windows/Forms/Station/Gradient.h>
+#include <awui/Windows/Forms/Gradient.h>
 #include <awui/Windows/Forms/Station/MenuButton.h>
 
 namespace awui {
@@ -12,6 +12,11 @@ namespace awui {
 	namespace Windows {
 		namespace Forms {
 			namespace Station {
+				namespace Browser {
+					class Browser;
+					class Page;
+				}
+
 				class NodeFile : public awui::Object {
 					public:
 						NodeFile * _parent;
@@ -39,8 +44,9 @@ namespace awui {
 						float _lastTime;
 						int _initPos;
 						awui::Effects::Effect * _effect;
-						Gradient _gradientUp;
-						Gradient _gradientDown;
+
+						Browser::Browser * _browser;
+						Browser::Page * _page;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);

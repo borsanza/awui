@@ -10,7 +10,9 @@
 #include <awui/Effects/Effect.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Station/Gradient.h>
+#include <awui/Windows/Forms/Gradient.h>
+#include <awui/Windows/Forms/Station/Browser/Browser.h>
+#include <awui/Windows/Forms/Station/Browser/Page.h>
 
 #include <dirent.h>
 
@@ -26,6 +28,7 @@
 using namespace awui::Drawing;
 using namespace awui::Effects;
 using namespace awui::Windows::Forms::Station;
+using namespace awui::Windows::Forms::Station::Browser;
 
 /********************************** NodeFile **********************************/
 
@@ -49,10 +52,8 @@ NodeFile::~NodeFile() {
 		delete this->_childList;
 	}
 
-	if (this->_label) {
-		this->_label->GetParent()->GetControls()->Remove(this->_label);
+	if (this->_label)
 		delete this->_label;
-	}
 }
 
 /********************************* StationUI **********************************/
@@ -68,21 +69,10 @@ StationUI::StationUI() {
 	this->_initPos = 0;
 	this->_selected = -1;
 
-	this->_gradientUp.SetColor1(Color::FromArgb(255, 0,   0, 0));
-	this->_gradientUp.SetColor2(Color::FromArgb(255, 0,   0, 0));
-	this->_gradientUp.SetColor3(Color::FromArgb(0,  0, 0, 0));
-	this->_gradientUp.SetColor4(Color::FromArgb(0,  0, 0, 0));
-	// this->_gradientUp.SetColor3(Color::FromArgb(255, 255, 0, 0));
-	// this->_gradientUp.SetColor4(Color::FromArgb(255, 255, 0, 0));
-	this->_gradientUp.SetDock(DockStyle::None);
-
-	// this->_gradientDown.SetColor1(Color::FromArgb(255, 255, 0, 0));
-	// this->_gradientDown.SetColor2(Color::FromArgb(255, 255, 0, 0));
-	this->_gradientDown.SetColor1(Color::FromArgb(0,  0, 0, 0));
-	this->_gradientDown.SetColor2(Color::FromArgb(0,  0, 0, 0));
-	this->_gradientDown.SetColor3(Color::FromArgb(255, 0,   0, 0));
-	this->_gradientDown.SetColor4(Color::FromArgb(255, 0,   0, 0));
-	this->_gradientDown.SetDock(DockStyle::None);
+	this->_page = new Browser::Page();
+	this->_browser = new Browser::Browser();
+	this->GetControls()->Add(this->_browser);
+	this->_browser->SetPage(this->_page);
 }
 
 StationUI::~StationUI() {
@@ -129,9 +119,6 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 			String name = child->_name;
 			name = name.Substring(0, name.LastIndexOf("."));
 			child->_label->SetText(name);
-			child->_label->SetHeight(MENUBUTTONHEIGHT);
-			child->_label->SetWidth(510);
-			this->GetControls()->Add(child->_label);
 
 			if (parent->_emulator == 0) {
 				if (child->_name == "chip8")
@@ -219,8 +206,21 @@ void StationUI::Refresh() {
 	while (this->Minimize(this->_root));
 	// printf("\nFinish:\n\n");
 
-	this->GetControls()->Add(&this->_gradientUp);
-	this->GetControls()->Add(&this->_gradientDown);
+	int y = 50;
+	NodeFile * selected = this->_root;
+	selected = (NodeFile *)selected->_childList->GetByIndex(1);
+	selected = (NodeFile *)selected->_childList->GetByIndex(1);
+	for (int i = 0; i < selected->_childList->GetCount(); i++) {
+		NodeFile * child = (NodeFile *)selected->_childList->GetByIndex(i);
+		child->_label->SetHeight(MENUBUTTONHEIGHT);
+		child->_label->SetLocation(40, y);
+		y += MENUBUTTONHEIGHT;
+		this->_page->GetControls()->Add(child->_label);
+		if (i == 0)
+			Form::SetControlSelected(child->_label);
+	}
+
+	this->_page->SetHeight(y + 50);
 }
 
 void StationUI::GetList(ArrayList * list, NodeFile * parent) {
@@ -239,87 +239,12 @@ void StationUI::GetList(ArrayList * list, NodeFile * parent) {
 }
 
 void StationUI::OnTick() {
-	int totalButtons = 0;
-	for (int i = 0; i< this->GetControls()->GetCount(); i++) {
-		Control * w = (Control *)this->GetControls()->Get(i);
-		if (!w->IsClass(Classes::MenuButton))
-			continue;
+	this->_browser->SetLocation(this->GetWidth() >> 1, 0);
+	this->_browser->SetSize(this->GetWidth() >> 1, this->GetHeight());
+	this->_page->SetWidth(this->_browser->GetWidth());
 
-		totalButtons++;
-		w->SetWidth((this->GetWidth() >> 1) - 100);
-	}
-
-	this->_gradientUp.SetSize(this->GetWidth(), MENUBUTTONHEIGHT);
-	this->_gradientDown.SetSize(this->GetWidth(), MENUBUTTONHEIGHT);
-
-	int posSelected = this->GetControls()->IndexOf(Form::GetControlSelected());
-
-	if (posSelected != -1)
-		if (this->_selected != posSelected)
-			this->_selected = posSelected;
-
-	if (this->_selected == -1)
-		this->_selected = 0;
-
-	if (this->_selected >= totalButtons)
-		return;
-
-	Control * w = (Control *)this->GetControls()->Get(this->_selected);
-
-	bool showGradientTop = false;
-	bool showGradientBottom = false;
-
-	int middle = (this->GetHeight() - w->GetHeight()) >> 1;
-	int top = BORDERMARGIN + posSelected * (MENUBUTTONHEIGHT + this->_margin + this->_margin);
-	int total = BORDERMARGIN + (totalButtons * (MENUBUTTONHEIGHT + this->_margin + this->_margin)) + BORDERMARGIN;
-
-	if (total > this->GetHeight()) {
-		showGradientBottom = true;
-		if (top > middle) {
-			showGradientTop = true;
-			top = this->GetHeight() - (total - top);
-			if (top < middle)
-				top = middle;
-			else
-				showGradientBottom = false;
-		}
-	}
-
-	if (showGradientTop)
-		this->_gradientUp.SetLocation(0, 0);
-	else
-		this->_gradientUp.SetLocation(0, -this->_gradientUp.GetHeight());
-
-	if (showGradientBottom)
-		this->_gradientDown.SetLocation(0, this->GetHeight() - this->_gradientDown.GetHeight());
-	else
-		this->_gradientDown.SetLocation(0, this->GetHeight());
-
-	int left = (this->GetWidth() >> 1) + 40;
-	w->SetLocationGo(left, top);
-	w->SetForeColor(Color::FromArgb(255, 255, 255));
-
-	int y = w->GetTop() + w->GetHeight() + this->_margin;
-	for (int i = this->_selected + 1; i< this->GetControls()->GetCount(); i++) {
-		Object * w = this->GetControls()->Get(i);
-		if (!w->IsClass(Classes::MenuButton))
-			continue;
-		MenuButton * w2 = (MenuButton *) w;
-		y += this->_margin;
-		w2->SetLocation(left, y);
-		w2->SetForeColor(Color::FromArgb(199, 199, 199));
-		y += w2->GetHeight() + this->_margin;
-	}
-
-	y = w->GetTop() - this->_margin;
-	for (int i = this->_selected - 1; i >= 0; i--) {
-		Object * w = this->GetControls()->Get(i);
-		if (!w->IsClass(Classes::MenuButton))
-			continue;
-		MenuButton * w2 = (MenuButton *) w;
-		y -= (this->_margin + w2->GetHeight());
-		w2->SetLocation(left, y);
-		w2->SetForeColor(Color::FromArgb(199, 199, 199));
-		y -= this->_margin;
+	for (int i = 0; i < this->_page->GetControls()->GetCount(); i++) {
+		Control * child = (Control *)this->_page->GetControls()->Get(i);
+		child->SetWidth(this->_browser->GetWidth() - 100);
 	}
 }
