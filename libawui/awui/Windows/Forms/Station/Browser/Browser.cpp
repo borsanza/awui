@@ -13,32 +13,34 @@
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Station::Browser;
 
+#define GRADIENT_WIDTH 64
+
 Browser::Browser() {
-//	this->SetBackColor(Color::FromArgb(255, 255, 255));
+	// this->SetBackColor(Color::FromArgb(255, 255, 255));
 	this->_page = NULL;
 
-	this->_gradientUp.SetColor1(Color::FromArgb(255, 0,   0, 0));
-	this->_gradientUp.SetColor2(Color::FromArgb(255, 0,   0, 0));
-	this->_gradientUp.SetColor3(Color::FromArgb(0,  0, 0, 0));
-	this->_gradientUp.SetColor4(Color::FromArgb(0,  0, 0, 0));
+	this->_gradientUp.SetColor(0, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientUp.SetColor(1, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientUp.SetColor(2, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientUp.SetColor(3, ColorF::FromArgb(0, 0, 0, 0));
 	this->_gradientUp.SetDock(DockStyle::None);
 
-	this->_gradientBottom.SetColor1(Color::FromArgb(0,  0, 0, 0));
-	this->_gradientBottom.SetColor2(Color::FromArgb(0,  0, 0, 0));
-	this->_gradientBottom.SetColor3(Color::FromArgb(255, 0,   0, 0));
-	this->_gradientBottom.SetColor4(Color::FromArgb(255, 0,   0, 0));
+	this->_gradientBottom.SetColor(0, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientBottom.SetColor(1, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientBottom.SetColor(2, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientBottom.SetColor(3, ColorF::FromArgb(0, 0, 0, 0));
 	this->_gradientBottom.SetDock(DockStyle::None);
 
-	this->_gradientLeft.SetColor1(Color::FromArgb(255,  0, 0, 0));
-	this->_gradientLeft.SetColor2(Color::FromArgb(0,  0, 0, 0));
-	this->_gradientLeft.SetColor3(Color::FromArgb(0, 0,   0, 0));
-	this->_gradientLeft.SetColor4(Color::FromArgb(255, 0,   0, 0));
+	this->_gradientLeft.SetColor(0, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientLeft.SetColor(1, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientLeft.SetColor(2, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientLeft.SetColor(3, ColorF::FromArgb(0, 0, 0, 0));
 	this->_gradientLeft.SetDock(DockStyle::None);
 
-	this->_gradientRight.SetColor1(Color::FromArgb(0,  0, 0, 0));
-	this->_gradientRight.SetColor2(Color::FromArgb(255,  0, 0, 0));
-	this->_gradientRight.SetColor3(Color::FromArgb(255, 0,   0, 0));
-	this->_gradientRight.SetColor4(Color::FromArgb(0, 0,   0, 0));
+	this->_gradientRight.SetColor(0, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientRight.SetColor(1, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientRight.SetColor(2, ColorF::FromArgb(0, 0, 0, 0));
+	this->_gradientRight.SetColor(3, ColorF::FromArgb(0, 0, 0, 0));
 	this->_gradientRight.SetDock(DockStyle::None);
 
 	this->GetControls()->Add(&this->_gradientUp);
@@ -54,8 +56,6 @@ void Browser::OnTick() {
 	Control * selected = Form::GetControlSelected();
 	int xCenterW = (selected->GetLeft() + selected->GetRight()) >> 1;
 	int yCenterW = (selected->GetTop() + selected->GetBottom()) >> 1;
-	int xCenterPage = this->_page->GetWidth() >> 1;
-	int yCenterPage = this->_page->GetHeight() >> 1;
 	int xCenter = this->GetWidth() >> 1;
 	int yCenter = this->GetHeight() >> 1;
 
@@ -70,31 +70,33 @@ void Browser::OnTick() {
 
 	this->_page->SetLocationGo(left, top);
 
-	this->_gradientUp.SetSize(this->GetWidth(), 50);
-	this->_gradientBottom.SetSize(this->GetWidth(), 50);
-	this->_gradientLeft.SetSize(50, this->GetHeight());
-	this->_gradientRight.SetSize(50, this->GetHeight());
+	this->_gradientUp.SetSize(this->GetWidth(), GRADIENT_WIDTH);
+	this->_gradientBottom.SetSize(this->GetWidth(), GRADIENT_WIDTH);
+	this->_gradientLeft.SetSize(GRADIENT_WIDTH, this->GetHeight());
+	this->_gradientRight.SetSize(GRADIENT_WIDTH, this->GetHeight());
 
-	if (this->_page->GetTop() < 0)
-		this->_gradientUp.SetLocation(0, 0);
-	else
-		this->_gradientUp.SetLocation(0, -this->_gradientUp.GetHeight());
+	this->_gradientUp.SetLocation(0, 0);
+	this->_gradientBottom.SetLocation(0, this->GetHeight() - this->_gradientBottom.GetHeight());
+	this->_gradientLeft.SetLocation(0, 0);
+	this->_gradientRight.SetLocation(this->GetWidth() - this->_gradientRight.GetWidth(), 0);
 
-	if (this->_page->GetBottom() > this->GetBottom())
-		this->_gradientBottom.SetLocation(0, this->GetHeight() - this->_gradientBottom.GetHeight());
-	else
-		this->_gradientBottom.SetLocation(0, this->GetHeight());
+	float alpha;
 
-	if (this->_page->GetLeft() < 0)
-		this->_gradientLeft.SetLocation(0, 0);
-	else
-		this->_gradientLeft.SetLocation(- this->_gradientLeft.GetWidth(), 0);
+	alpha = (this->_page->GetTopGo() < 0) ? 255 : 0;
+	this->_gradientUp.SetColorGo(0, ColorF::FromArgb(alpha, 0,   0, 0));
+	this->_gradientUp.SetColorGo(1, ColorF::FromArgb(alpha, 0,   0, 0));
 
-	if (this->_page->GetRight() > this->GetRight())
-		this->_gradientRight.SetLocation(this->GetWidth() - this->_gradientRight.GetWidth(), 0);
-	else
-		this->_gradientRight.SetLocation(this->GetWidth(), 0);
+	alpha = (this->_page->GetBottomGo() > this->GetBottom()) ? 255 : 0;
+	this->_gradientBottom.SetColorGo(2, ColorF::FromArgb(alpha, 0,   0, 0));
+	this->_gradientBottom.SetColorGo(3, ColorF::FromArgb(alpha, 0,   0, 0));
 
+	alpha = (this->_page->GetLeftGo() < 0) ? 255 : 0;
+	this->_gradientLeft.SetColorGo(0, ColorF::FromArgb(alpha, 0,   0, 0));
+	this->_gradientLeft.SetColorGo(3, ColorF::FromArgb(alpha, 0,   0, 0));
+
+	alpha = (this->_page->GetRightGo() > this->GetRight()) ? 255 : 0;
+	this->_gradientRight.SetColorGo(1, ColorF::FromArgb(alpha, 0,   0, 0));
+	this->_gradientRight.SetColorGo(2, ColorF::FromArgb(alpha, 0,   0, 0));
 }
 
 void Browser::SetPage(Page * page) {

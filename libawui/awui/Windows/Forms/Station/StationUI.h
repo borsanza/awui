@@ -27,6 +27,7 @@ namespace awui {
 						SortedList * _childList;
 						int _emulator;
 						MenuButton * _label;
+						Browser::Page * _page;
 
 					public:
 						NodeFile();
@@ -43,10 +44,9 @@ namespace awui {
 						Control * _lastControl;
 						float _lastTime;
 						int _initPos;
-						awui::Effects::Effect * _effect;
 
+						Label * _label;
 						Browser::Browser * _browser;
-						Browser::Page * _page;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);

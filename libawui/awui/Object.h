@@ -14,6 +14,7 @@ namespace awui {
 			Label,
 			Keyboard,
 			Color,
+			ColorF,
 			Control,
 			ControlCollection,
 			Form,

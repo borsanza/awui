@@ -38,7 +38,8 @@ NodeFile::NodeFile() {
 	this->_selectedChild = 0;
 	this->_directory = true;
 	this->_emulator = 0;
-	this->_label = 0;
+	this->_label = NULL;
+	this->_page = NULL;
 }
 
 NodeFile::~NodeFile() {
@@ -62,17 +63,21 @@ StationUI::StationUI() {
 	this->_root = NULL;
 
 	this->_margin = 0;
-	this->_effect = new EffectLinear();
 	this->SetTabStop(false);
 	this->_lastControl = NULL;
 	this->_lastTime = 0;
 	this->_initPos = 0;
 	this->_selected = -1;
 
-	this->_page = new Browser::Page();
+	this->_label = new Label();
+	this->_label->SetText("StationTV");
+	this->_label->SetTextAlign(ContentAlignment::BottomCenter);
+	this->_label->SetFont(new Font("Liberation Sans", 38, FontStyle::Bold));
+	this->_label->SetDock(DockStyle::None);
+
 	this->_browser = new Browser::Browser();
+	this->GetControls()->Add(this->_label);
 	this->GetControls()->Add(this->_browser);
-	this->_browser->SetPage(this->_page);
 }
 
 StationUI::~StationUI() {
@@ -114,21 +119,32 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 			child->_name = dir->d_name;
 
 			child->_label = new MenuButton();
-			child->_label->SetFont(new Font("Monospace", 28, FontStyle::Bold));
+			child->_label->SetFont(new Font("Liberation Sans", 28, FontStyle::Bold));
 			child->_label->SetDock(DockStyle::None);
 			String name = child->_name;
 			name = name.Substring(0, name.LastIndexOf("."));
 			child->_label->SetText(name);
 
 			if (parent->_emulator == 0) {
-				if (child->_name == "chip8")
+				if (child->_name == "chip8") {
 					child->_emulator = 1;
-				if (child->_name == "gamegear")
+					child->_label->SetText("CHIP-8");
+				}
+
+				if (child->_name == "gamegear") {
 					child->_emulator = 2;
-				if (child->_name == "mastersystem")
+					child->_label->SetText("Game Gear");
+				}
+
+				if (child->_name == "mastersystem") {
 					child->_emulator = 3;
-				if (child->_name == "zxspectrum")
+					child->_label->SetText("Master System");
+				}
+
+				if (child->_name == "zxspectrum") {
 					child->_emulator = 4;
+					child->_label->SetText("ZX Spectrum");
+				}
 			} else {
 				child->_emulator = parent->_emulator;
 			}
@@ -205,22 +221,6 @@ void StationUI::Refresh() {
 	// printf("\nMinimize:\n\n");
 	while (this->Minimize(this->_root));
 	// printf("\nFinish:\n\n");
-
-	int y = 50;
-	NodeFile * selected = this->_root;
-	selected = (NodeFile *)selected->_childList->GetByIndex(1);
-	selected = (NodeFile *)selected->_childList->GetByIndex(1);
-	for (int i = 0; i < selected->_childList->GetCount(); i++) {
-		NodeFile * child = (NodeFile *)selected->_childList->GetByIndex(i);
-		child->_label->SetHeight(MENUBUTTONHEIGHT);
-		child->_label->SetLocation(40, y);
-		y += MENUBUTTONHEIGHT;
-		this->_page->GetControls()->Add(child->_label);
-		if (i == 0)
-			Form::SetControlSelected(child->_label);
-	}
-
-	this->_page->SetHeight(y + 50);
 }
 
 void StationUI::GetList(ArrayList * list, NodeFile * parent) {
@@ -239,12 +239,32 @@ void StationUI::GetList(ArrayList * list, NodeFile * parent) {
 }
 
 void StationUI::OnTick() {
-	this->_browser->SetLocation(this->GetWidth() >> 1, 0);
-	this->_browser->SetSize(this->GetWidth() >> 1, this->GetHeight());
-	this->_page->SetWidth(this->_browser->GetWidth());
+	if (this->_actual->_page == NULL) {
+		int y = 25;
+		this->_actual->_page = new Page();
+		for (int i = 0; i < this->_actual->_childList->GetCount(); i++) {
+			NodeFile * child = (NodeFile *)this->_actual->_childList->GetByIndex(i);
+			child->_label->SetHeight(MENUBUTTONHEIGHT);
+			child->_label->SetLocation(40, y);
+			y += MENUBUTTONHEIGHT;
+			this->_actual->_page->GetControls()->Add(child->_label);
+			if (i == 0)
+				Form::SetControlSelected(child->_label);
+		}
 
-	for (int i = 0; i < this->_page->GetControls()->GetCount(); i++) {
-		Control * child = (Control *)this->_page->GetControls()->Get(i);
+		this->_actual->_page->SetHeight(y + 25);
+
+		this->_browser->SetPage(this->_actual->_page);
+	}
+
+	this->_label->SetLocation(this->GetWidth() >> 1, 0);
+	this->_label->SetSize(this->GetWidth() >> 1, 69);
+	this->_browser->SetLocation(this->GetWidth() >> 1, 69);
+	this->_browser->SetSize(this->GetWidth() >> 1, this->GetHeight() - (69 + 25));
+	this->_actual->_page->SetWidth(this->_browser->GetWidth());
+
+	for (int i = 0; i < this->_actual->_page->GetControls()->GetCount(); i++) {
+		Control * child = (Control *)this->_actual->_page->GetControls()->Get(i);
 		child->SetWidth(this->_browser->GetWidth() - 100);
 	}
 }

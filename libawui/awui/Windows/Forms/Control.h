@@ -106,6 +106,10 @@ namespace awui {
 					void SetSize(const Drawing::Size size);
 					inline void SetSizeGo(int w, int h) { this->boundsTo.SetSize(w, h); }
 					inline void SetLocationGo(int x, int y) { this->boundsTo.SetLocation(x, y); }
+					inline int GetLeftGo() { return this->boundsTo.GetLeft(); }
+					inline int GetRightGo() { return this->boundsTo.GetRight(); }
+					inline int GetTopGo() { return this->boundsTo.GetTop(); }
+					inline int GetBottomGo() { return this->boundsTo.GetBottom(); }
 
 					const Drawing::Rectangle GetBounds() const;
 					void SetBounds(int x, int y, int width, int height);
@@ -163,6 +167,8 @@ namespace awui {
 
 					void GetControlsSelectables(Collections::ArrayList * list);
 					Control * GetNextControl(Control * ommitControl, Drawing::Point * pCenter, Drawing::Point * p1, Drawing::Point * p2);
+
+					float Interpolate(float from, int to, float percent);
 			};
 		}
 	}

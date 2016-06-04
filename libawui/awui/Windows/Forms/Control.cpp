@@ -286,14 +286,14 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 					glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, 1.0f);
 					glClear(GL_COLOR_BUFFER_BIT);
 				} else {
-					glColor3f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f);
+					glColor3ub(this->backColor.GetR(), this->backColor.GetG(), this->backColor.GetB());
 					GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
 				}
 				break;
 			case 0:
 				break;
 			default:
-				glColor4f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
+				glColor4ub(this->backColor.GetR(), this->backColor.GetG(), this->backColor.GetB(), this->backColor.GetA());
 				GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
 				break;
 		}
@@ -323,7 +323,7 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 	return r;
 }
 
-float Interpolate(float from, int to, float percent) {
+float Control::Interpolate(float from, int to, float percent) {
 	if (awui::Math::Round(from) == to)
 		return from;
 
@@ -360,8 +360,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 			int width = control->boundsTo.GetWidth() + x1 + x2;
 			int height = control->boundsTo.GetHeight() + y1 + y2;
 
-			lastwidth = Interpolate(lastwidth, width, percent);
-			lastheight = Interpolate(lastheight, height, percent);
+			lastwidth = this->Interpolate(lastwidth, width, percent);
+			lastheight = this->Interpolate(lastheight, height, percent);
 			width = Math::Round(lastwidth);
 			height = Math::Round(lastheight);
 
@@ -369,8 +369,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 			int x = control->boundsTo.GetLeft() - x1;
 			int y = control->boundsTo.GetTop() - y1;
 
-			lastx1 = Interpolate(lastx1, x, percent);
-			lasty1 = Interpolate(lasty1, y, percent);
+			lastx1 = this->Interpolate(lastx1, x, percent);
+			lasty1 = this->Interpolate(lasty1, y, percent);
 			x = Math::Round(lastx1);
 			y = Math::Round(lasty1);
 
@@ -516,12 +516,12 @@ bool Control::IsVisible() const {
 
 void Control::OnTickPre() {
 	float percent = 0.16f;
-	_lastWidth = Interpolate(_lastWidth, boundsTo.GetWidth(), percent);
-	_lastHeight = Interpolate(_lastHeight, boundsTo.GetHeight(), percent);
+	_lastWidth = this->Interpolate(_lastWidth, boundsTo.GetWidth(), percent);
+	_lastHeight = this->Interpolate(_lastHeight, boundsTo.GetHeight(), percent);
 	int w = Math::Round(_lastWidth);
 	int h = Math::Round(_lastHeight);
-	_lastX = Interpolate(_lastX, boundsTo.GetLeft(), percent);
-	_lastY = Interpolate(_lastY, boundsTo.GetTop(), percent);
+	_lastX = this->Interpolate(_lastX, boundsTo.GetLeft(), percent);
+	_lastY = this->Interpolate(_lastY, boundsTo.GetTop(), percent);
 	int x = Math::Round(_lastX);
 	int y = Math::Round(_lastY);
 	this->bounds.SetSize(w, h);

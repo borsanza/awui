@@ -1,10 +1,10 @@
 /**
- * awui/Drawing/Color.cpp
+ * awui/Drawing/ColorF.cpp
  *
- * Copyright (C) 2013 Borja Sánchez Zamorano
+ * Copyright (C) 2016 Borja Sánchez Zamorano
  */
 
-#include "Color.h"
+#include "ColorF.h"
 
 #include <awui/Convert.h>
 #include <awui/Math.h>
@@ -13,57 +13,57 @@
 
 using namespace awui::Drawing;
 
-Color::Color() {
-	this->a = 0;
-	this->r = 0;
-	this->g = 0;
-	this->b = 0;
+ColorF::ColorF() {
+	this->a = 0.0f;
+	this->r = 0.0f;
+	this->g = 0.0f;
+	this->b = 0.0f;
 }
 
-int Color::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Color)
+int ColorF::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::ColorF)
 		return 1;
 
 	return Object::IsClass(objectClass);
 }
 
-awui::String Color::ToString() {
+awui::String ColorF::ToString() {
 	String value;
-	value = String("Color [A=") + Convert::ToString(this->a) +
+	value = String("ColorF [A=") + Convert::ToString(this->a) +
 				", R=" + Convert::ToString(this->r) +
 				", G=" + Convert::ToString(this->g) +
 				", B=" + Convert::ToString(this->b) + "]";
 	return value;
 }
 
-unsigned char Color::GetA() const {
+float ColorF::GetA() const {
 	return this->a;
 }
 
-unsigned char Color::GetR() const {
+float ColorF::GetR() const {
 	return this->r;
 }
 
-unsigned char Color::GetG() const {
+float ColorF::GetG() const {
 	return this->g;
 }
 
-unsigned char Color::GetB() const {
+float ColorF::GetB() const {
 	return this->b;
 }
 
-int Color::ToArgb() const {
-	return (((((this->a << 8) + this->r) << 8) + this->g) << 8) + this->b;
+int ColorF::ToArgb() const {
+	return (((((this->a * 256) + this->r) * 256) + this->g) * 256) + this->b;
 }
 
-float Color::GetBrightness() const {
+float ColorF::GetBrightness() const {
 	int M = Math::Max(Math::Max(this->r, this->g), this->b);
 	int m = Math::Min(Math::Min(this->r, this->g), this->b);
 
 	return ((M + m) / 2.0f) / 255.0f;
 }
 
-float Color::GetHue() const {
+float ColorF::GetHue() const {
 	int M = Math::Max(Math::Max(this->r, this->g), this->b);
 	int m = Math::Min(Math::Min(this->r, this->g), this->b);
 
@@ -87,7 +87,7 @@ float Color::GetHue() const {
 	return (float)H;
 }
 
-float Color::GetSaturation() const {
+float ColorF::GetSaturation() const {
 	int M = Math::Max(Math::Max(this->r, this->g), this->b);
 	int m = Math::Min(Math::Min(this->r, this->g), this->b);
 
@@ -102,7 +102,7 @@ float Color::GetSaturation() const {
 	return (float)value;
 }
 
-Color Color::FromArgb(int argb) {
+ColorF ColorF::FromArgb(int argb) {
 	unsigned char a;
 	unsigned char r;
 	unsigned char g;
@@ -116,29 +116,29 @@ Color Color::FromArgb(int argb) {
 	argb = argb >> 8;
 	a = argb % 256;
 
-	return Color::FromArgb(a, r, g, b);
+	return ColorF::FromArgb(a, r, g, b);
 }
 
-Color Color::FromArgb(int alpha, const Color baseColor) {
-	return Color::FromArgb(alpha, baseColor.r, baseColor.g, baseColor.b);
+ColorF ColorF::FromArgb(float alpha, const ColorF baseColor) {
+	return ColorF::FromArgb(alpha, baseColor.r, baseColor.g, baseColor.b);
 }
 
-Color Color::FromArgb(int red, int green, int blue) {
-	return Color::FromArgb(255, red, green, blue);
+ColorF ColorF::FromArgb(float red, float green, float blue) {
+	return ColorF::FromArgb(255, red, green, blue);
 }
 
-Color Color::FromArgb(int alpha, int red, int green, int blue) {
-	Color color;
+ColorF ColorF::FromArgb(float alpha, float red, float green, float blue) {
+	ColorF color;
 
-	color.a = Math::Clamp(alpha, 0, 255);
-	color.r = Math::Clamp(red, 0, 255);
-	color.g = Math::Clamp(green, 0, 255);
-	color.b = Math::Clamp(blue, 0, 255);
+	color.a = Math::Clamp(alpha, 0.0f, 255.0f);
+	color.r = Math::Clamp(red, 0.0f, 255.0f);
+	color.g = Math::Clamp(green, 0.0f, 255.0f);
+	color.b = Math::Clamp(blue, 0.0f, 255.0f);
 
 	return color;
 }
 
-Color & Color::operator=(const Color & other) {
+ColorF & ColorF::operator=(const ColorF & other) {
 	this->r = other.r;
 	this->g = other.g;
 	this->b = other.b;
@@ -147,6 +147,6 @@ Color & Color::operator=(const Color & other) {
 	return *this;
 }
 
-bool Color::operator !=(const Color &b) const {
+bool ColorF::operator !=(const ColorF &b) const {
 	return ((this->r != b.r) || (this->g != b.g) || (this->b != b.b) || (this->a != b.a));
 }
