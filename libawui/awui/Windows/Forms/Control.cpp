@@ -570,7 +570,7 @@ void Control::OnRemoteKeyPressPre(int which, RemoteButtons::Enum button) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnRemoteKeyPressPre(which, button);
+		this->focused->OnRemoteKeyPressPre(which, button);
 }
 
 void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
@@ -582,7 +582,7 @@ void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnRemoteKeyUpPre(which, button);
+		this->focused->OnRemoteKeyUpPre(which, button);
 }
 
 void Control::OnKeyPressPre(Keys::Enum key) {
@@ -594,7 +594,7 @@ void Control::OnKeyPressPre(Keys::Enum key) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnKeyPressPre(key);
+		this->focused->OnKeyPressPre(key);
 }
 
 void Control::OnKeyUpPre(Keys::Enum key) {
@@ -606,7 +606,7 @@ void Control::OnKeyUpPre(Keys::Enum key) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnKeyUpPre(key);
+		this->focused->OnKeyUpPre(key);
 }
 
 void Control::SetFocus(bool selectControl) {

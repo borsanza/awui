@@ -162,6 +162,7 @@ namespace awui {
 					void SetTabStop(bool tabStop);
 
 					void SetFocus(bool selectControl = true);
+					inline Control * GetFocused() const { return this->focused; }
 
 					Control * GetTopParent();
 

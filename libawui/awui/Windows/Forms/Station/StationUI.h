@@ -26,7 +26,7 @@ namespace awui {
 						int _selectedChild;
 						SortedList * _childList;
 						int _emulator;
-						MenuButton * _label;
+						MenuButton * _button;
 						Browser::Page * _page;
 
 					public:
@@ -39,17 +39,14 @@ namespace awui {
 						String _path;
 						NodeFile * _root;
 						NodeFile * _actual;
-						int _selected;
-						int _margin;
-						Control * _lastControl;
-						float _lastTime;
-						int _initPos;
 
-						Label * _label;
+						Label * _title;
 						Browser::Browser * _browser;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);
+
+						void UpdateTitle();
 
 					public:
 						StationUI();
@@ -61,6 +58,9 @@ namespace awui {
 						void Refresh();
 						void GetList(ArrayList * list, NodeFile * parent);
 						virtual void OnTick();
+
+						void SelectChild(NodeFile * node);
+						void SelectParent();
 				};
 			}
 		}

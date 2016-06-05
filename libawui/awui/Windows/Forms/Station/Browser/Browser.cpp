@@ -70,36 +70,42 @@ void Browser::OnTick() {
 
 	this->_page->SetLocationGo(left, top);
 
-	this->_gradientUp.SetSize(this->GetWidth(), GRADIENT_WIDTH);
-	this->_gradientBottom.SetSize(this->GetWidth(), GRADIENT_WIDTH);
-	this->_gradientLeft.SetSize(GRADIENT_WIDTH, this->GetHeight());
-	this->_gradientRight.SetSize(GRADIENT_WIDTH, this->GetHeight());
-
 	this->_gradientUp.SetLocation(0, 0);
-	this->_gradientBottom.SetLocation(0, this->GetHeight() - this->_gradientBottom.GetHeight());
+	this->_gradientUp.SetWidth(this->GetWidth());
 	this->_gradientLeft.SetLocation(0, 0);
-	this->_gradientRight.SetLocation(this->GetWidth() - this->_gradientRight.GetWidth(), 0);
+	this->_gradientLeft.SetHeight(this->GetHeight());
+	this->_gradientRight.SetLocation(this->GetWidth() - GRADIENT_WIDTH, 0);
+	this->_gradientRight.SetHeight(this->GetHeight());
+	this->_gradientBottom.SetLocation(0, this->GetHeight() - GRADIENT_WIDTH);
+	this->_gradientBottom.SetWidth(this->GetWidth());
 
-	float alpha;
+	bool alpha;
 
-	alpha = (this->_page->GetTopGo() < 0) ? 255 : 0;
-	this->_gradientUp.SetColorGo(0, ColorF::FromArgb(alpha, 0,   0, 0));
-	this->_gradientUp.SetColorGo(1, ColorF::FromArgb(alpha, 0,   0, 0));
+	alpha = this->_page->GetTopGo() < 0;
+	this->_gradientUp.SetColorGo(0, ColorF::FromArgb(alpha ? 255 : 0, 0,   0, 0));
+	this->_gradientUp.SetColorGo(1, ColorF::FromArgb(alpha ? 255 : 0, 0,   0, 0));
+	this->_gradientUp.SetHeight(alpha ? GRADIENT_WIDTH : 0);
 
-	alpha = (this->_page->GetBottomGo() > this->GetBottom()) ? 255 : 0;
-	this->_gradientBottom.SetColorGo(2, ColorF::FromArgb(alpha, 0,   0, 0));
-	this->_gradientBottom.SetColorGo(3, ColorF::FromArgb(alpha, 0,   0, 0));
+	alpha = this->_page->GetBottomGo() > this->GetHeight();
+	this->_gradientBottom.SetColorGo(2, ColorF::FromArgb(alpha ? 255 : 0, 0,   0, 0));
+	this->_gradientBottom.SetColorGo(3, ColorF::FromArgb(alpha ? 255 : 0, 0,   0, 0));
+	this->_gradientBottom.SetHeight(alpha ? GRADIENT_WIDTH : 0);
 
-	alpha = (this->_page->GetLeftGo() < 0) ? 255 : 0;
-	this->_gradientLeft.SetColorGo(0, ColorF::FromArgb(alpha, 0,   0, 0));
-	this->_gradientLeft.SetColorGo(3, ColorF::FromArgb(alpha, 0,   0, 0));
+	alpha = this->_page->GetLeftGo() < 0;
+	this->_gradientLeft.SetColorGo(0, ColorF::FromArgb(alpha ? 255 : 0, 0,   0, 0));
+	this->_gradientLeft.SetColorGo(3, ColorF::FromArgb(alpha ? 255 : 0, 0,   0, 0));
+	this->_gradientLeft.SetWidth(alpha ? GRADIENT_WIDTH : 0);
 
-	alpha = (this->_page->GetRightGo() > this->GetRight()) ? 255 : 0;
-	this->_gradientRight.SetColorGo(1, ColorF::FromArgb(alpha, 0,   0, 0));
-	this->_gradientRight.SetColorGo(2, ColorF::FromArgb(alpha, 0,   0, 0));
+	alpha = this->_page->GetRightGo() > this->GetWidth();
+	this->_gradientRight.SetColorGo(1, ColorF::FromArgb(alpha ? 255 : 0, 0,   0, 0));
+	this->_gradientRight.SetColorGo(2, ColorF::FromArgb(alpha ? 255 : 0, 0,   0, 0));
+	this->_gradientRight.SetWidth(alpha ? GRADIENT_WIDTH : 0);
 }
 
 void Browser::SetPage(Page * page) {
+	if (this->_page == page)
+		return;
+
 	if (this->_page) {
 		this->GetControls()->Remove(this->_page);
 		this->GetControls()->Remove(&this->_gradientUp);

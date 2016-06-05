@@ -38,7 +38,7 @@ NodeFile::NodeFile() {
 	this->_selectedChild = 0;
 	this->_directory = true;
 	this->_emulator = 0;
-	this->_label = NULL;
+	this->_button = NULL;
 	this->_page = NULL;
 }
 
@@ -53,8 +53,8 @@ NodeFile::~NodeFile() {
 		delete this->_childList;
 	}
 
-	if (this->_label)
-		delete this->_label;
+	if (this->_button)
+		delete this->_button;
 }
 
 /********************************* StationUI **********************************/
@@ -62,21 +62,16 @@ NodeFile::~NodeFile() {
 StationUI::StationUI() {
 	this->_root = NULL;
 
-	this->_margin = 0;
 	this->SetTabStop(false);
-	this->_lastControl = NULL;
-	this->_lastTime = 0;
-	this->_initPos = 0;
-	this->_selected = -1;
 
-	this->_label = new Label();
-	this->_label->SetText("StationTV");
-	this->_label->SetTextAlign(ContentAlignment::BottomCenter);
-	this->_label->SetFont(new Font("Liberation Sans", 38, FontStyle::Bold));
-	this->_label->SetDock(DockStyle::None);
+	this->_title = new Label();
+	this->_title->SetText("StationTV");
+	this->_title->SetTextAlign(ContentAlignment::BottomCenter);
+	this->_title->SetFont(new Font("Liberation Sans", 38, FontStyle::Bold));
+	this->_title->SetDock(DockStyle::None);
 
 	this->_browser = new Browser::Browser();
-	this->GetControls()->Add(this->_label);
+	this->GetControls()->Add(this->_title);
 	this->GetControls()->Add(this->_browser);
 }
 
@@ -118,32 +113,33 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 			newFile += dir->d_name;
 			child->_name = dir->d_name;
 
-			child->_label = new MenuButton();
-			child->_label->SetFont(new Font("Liberation Sans", 28, FontStyle::Bold));
-			child->_label->SetDock(DockStyle::None);
+			child->_button = new MenuButton(this);
+			child->_button->SetNodeFile(child);
+			child->_button->SetFont(new Font("Liberation Sans", 28, FontStyle::Bold));
+			child->_button->SetDock(DockStyle::None);
 			String name = child->_name;
 			name = name.Substring(0, name.LastIndexOf("."));
-			child->_label->SetText(name);
+			child->_button->SetText(name);
 
 			if (parent->_emulator == 0) {
 				if (child->_name == "chip8") {
 					child->_emulator = 1;
-					child->_label->SetText("CHIP-8");
+					child->_button->SetText("CHIP-8");
 				}
 
 				if (child->_name == "gamegear") {
 					child->_emulator = 2;
-					child->_label->SetText("Game Gear");
+					child->_button->SetText("Game Gear");
 				}
 
 				if (child->_name == "mastersystem") {
 					child->_emulator = 3;
-					child->_label->SetText("Master System");
+					child->_button->SetText("Master System");
 				}
 
 				if (child->_name == "zxspectrum") {
 					child->_emulator = 4;
-					child->_label->SetText("ZX Spectrum");
+					child->_button->SetText("ZX Spectrum");
 				}
 			} else {
 				child->_emulator = parent->_emulator;
@@ -242,23 +238,24 @@ void StationUI::OnTick() {
 	if (this->_actual->_page == NULL) {
 		int y = 25;
 		this->_actual->_page = new Page();
+		this->_browser->SetPage(this->_actual->_page);
 		for (int i = 0; i < this->_actual->_childList->GetCount(); i++) {
 			NodeFile * child = (NodeFile *)this->_actual->_childList->GetByIndex(i);
-			child->_label->SetHeight(MENUBUTTONHEIGHT);
-			child->_label->SetLocation(40, y);
+			child->_button->SetHeight(MENUBUTTONHEIGHT);
+			child->_button->SetLocation(40, y);
 			y += MENUBUTTONHEIGHT;
-			this->_actual->_page->GetControls()->Add(child->_label);
+			this->_actual->_page->GetControls()->Add(child->_button);
 			if (i == 0)
-				Form::SetControlSelected(child->_label);
+				child->_button->SetFocus(true);
 		}
 
 		this->_actual->_page->SetHeight(y + 25);
-
-		this->_browser->SetPage(this->_actual->_page);
 	}
 
-	this->_label->SetLocation(this->GetWidth() >> 1, 0);
-	this->_label->SetSize(this->GetWidth() >> 1, 69);
+	this->_browser->SetPage(this->_actual->_page);
+
+	this->_title->SetLocation(this->GetWidth() >> 1, 0);
+	this->_title->SetSize(this->GetWidth() >> 1, 69);
 	this->_browser->SetLocation(this->GetWidth() >> 1, 69);
 	this->_browser->SetSize(this->GetWidth() >> 1, this->GetHeight() - (69 + 25));
 	this->_actual->_page->SetWidth(this->_browser->GetWidth());
@@ -267,4 +264,31 @@ void StationUI::OnTick() {
 		Control * child = (Control *)this->_actual->_page->GetControls()->Get(i);
 		child->SetWidth(this->_browser->GetWidth() - 100);
 	}
+}
+
+void StationUI::SelectChild(NodeFile * node) {
+	if (node->_directory) {
+		this->_actual = node;
+		this->OnTick();
+		this->_actual->_page->GetFocused()->SetFocus(true);
+		this->UpdateTitle();
+	}
+}
+
+void StationUI::SelectParent() {
+	if (this->_actual != NULL) {
+		if (this->_actual->_parent != NULL) {
+			this->_actual = this->_actual->_parent;
+			this->_browser->SetPage(this->_actual->_page);
+			this->_actual->_page->GetFocused()->SetFocus(true);
+			this->UpdateTitle();
+		}
+	}
+}
+
+void StationUI::UpdateTitle() {
+	if (this->_actual == this->_root)
+		this->_title->SetText("StationTV");
+	else
+		this->_title->SetText(this->_actual->_button->GetText());
 }
