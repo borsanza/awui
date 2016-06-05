@@ -11,6 +11,7 @@
 #include <awui/Windows/Forms/Application.h>
 
 using namespace awui;
+using namespace awui::Windows::Emulators;
 
 int main(int argc, char ** argv) {
 	if (argc == 3) {

@@ -22,7 +22,6 @@ namespace awui {
 					Drawing::Image * _image;
 					Motherboard * _cpu;
 					DebuggerSMS * _debugger;
-					int _multiply;
 					bool _canChangeControl;
 					bool _pause;
 					bool _invertKeys;
@@ -52,7 +51,6 @@ namespace awui {
 					virtual void OnPaint(OpenGL::GL* gl);
 					virtual bool OnKeyPress(Keys::Enum key);
 
-					void SetMultiply(int multiply);
 					uint32_t GetCRC32();
 
 					virtual void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };

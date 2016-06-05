@@ -17,7 +17,6 @@ namespace awui {
 			class Spectrum : public ArcadeContainer {
 				private:
 					awui::Emulation::Spectrum::Motherboard * _motherboard;
-					int _multiply;
 					bool _canChangeControl;
 					bool _pause;
 					int _fileSlot;
@@ -52,8 +51,6 @@ namespace awui {
 					awui::Emulation::Spectrum::Motherboard * GetCPU();
 
 					virtual void OnPaint(OpenGL::GL* gl);
-
-					void SetMultiply(int multiply);
 
 					virtual bool OnKeyPress(Keys::Enum key);
 					virtual bool OnKeyUp(Keys::Enum key);

@@ -32,7 +32,7 @@ SoundSDL::SoundSDL() {
 	this->_tone = 0;
 	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
 	SDL_Init(SDL_INIT_AUDIO);
-	// SDL_OpenAudio(&this->_wanted, NULL);
+	SDL_OpenAudio(&this->_wanted, NULL);
 	SDL_PauseAudio(0);
 }
 

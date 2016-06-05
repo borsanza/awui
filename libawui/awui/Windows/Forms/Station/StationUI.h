@@ -3,6 +3,7 @@
 #include <awui/Collections/SortedList.h>
 #include <awui/Windows/Forms/Gradient.h>
 #include <awui/Windows/Forms/Station/MenuButton.h>
+#include <awui/Windows/Emulators/ArcadeContainer.h>
 
 namespace awui {
 	namespace Effects {
@@ -28,6 +29,7 @@ namespace awui {
 						int _emulator;
 						MenuButton * _button;
 						Browser::Page * _page;
+						Emulators::ArcadeContainer * _arcade;
 
 					public:
 						NodeFile();
@@ -39,6 +41,7 @@ namespace awui {
 						String _path;
 						NodeFile * _root;
 						NodeFile * _actual;
+						Emulators::ArcadeContainer * _arcade;
 
 						Label * _title;
 						Browser::Browser * _browser;
@@ -47,6 +50,8 @@ namespace awui {
 						bool Minimize(NodeFile * parent);
 
 						void UpdateTitle();
+
+						void CheckArcade();
 
 					public:
 						StationUI();
@@ -61,6 +66,8 @@ namespace awui {
 
 						void SelectChild(NodeFile * node);
 						void SelectParent();
+
+						void SetArcade(Emulators::ArcadeContainer * arcade);
 				};
 			}
 		}

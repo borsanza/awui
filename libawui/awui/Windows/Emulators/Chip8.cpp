@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Windows/Emulators/Chip8.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
@@ -6,14 +6,9 @@
 
 #include "Chip8.h"
 
-#include <awui/Console.h>
-#include <awui/Convert.h>
-#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Chip8/CPU.h>
 #include <awui/Emulation/Chip8/Screen.h>
-#include <awui/Emulation/Chip8/Opcode.h>
-#include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 
 using namespace awui::Drawing;
@@ -21,11 +16,10 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 
 Chip8::Chip8() {
-	this->SetSize(74, 42);
 	this->_image = new Drawing::Image(64, 32);
 	this->_cpu = new CPU();
-	this->SetTabStop(true);
-	this->_invertedColors = true;
+	this->SetTabStop(false);
+	this->_invertedColors = false;
 }
 
 Chip8::~Chip8() {
@@ -44,47 +38,13 @@ void Chip8::LoadRom(const String file) {
 	this->SetName(file);
 }
 
-void Chip8::AdjustSizeOfChip8() {
-	int width, height;
-
-	int multiply = 1;
-	int margin = 2;
-	switch (this->GetChip8Mode()) {
-		default:
-		case awui::Emulation::Chip8::CHIP8:
-			width = 64;
-			height = 32;
-			multiply = 8;
-			break;
-		case awui::Emulation::Chip8::SUPERCHIP8:
-			width = 128;
-			height = 64;
-			multiply = 4;
-			break;
-		case awui::Emulation::Chip8::CHIP8HIRES:
-			width = 64;
-			height = 64;
-			multiply = 6;
-			break;
-		case awui::Emulation::Chip8::MEGACHIP8:
-			width = 256;
-			height = 192;
-			multiply = 2;
-			margin = 0;
-			break;
-	}
-
-	multiply = 2;
-
-	this->SetSize(((width + margin) * multiply), ((height + margin) * multiply));
-}
-
 void Chip8::OnTick() {
 	this->_cpu->OnTick();
-	this->AdjustSizeOfChip8();
 }
 
 void Chip8::OnPaint(GL* gl) {
+	Screen * screen = this->_cpu->GetScreen();
+
 	if (this->_cpu->GetImageUpdated()) {
 		if (this->_cpu->GetChip8Mode() == MEGACHIP8)
 			this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
@@ -94,8 +54,6 @@ void Chip8::OnPaint(GL* gl) {
 			else
 				this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 		}
-
-		Screen * screen = this->_cpu->GetScreen();
 
 		if ((screen->GetWidth() != this->_image->GetWidth()) || (screen->GetHeight() != this->_image->GetHeight())) {
 			delete this->_image;
@@ -131,31 +89,27 @@ void Chip8::OnPaint(GL* gl) {
 		this->_cpu->SetImageUpdated(false);
 	}
 
-	int border = (this->_cpu->GetChip8Mode() == MEGACHIP8) ? 0 : 2;
+	int width = screen->GetWidth();
+	int height = screen->GetHeight();
 
-	int borderx = (border * this->GetWidth()) / (this->_image->GetWidth() + border);
-	int bordery = (border * this->GetHeight()) / (this->_image->GetHeight() + border);
+	float w = width;
+	float h = height;
+	float ratio = w / h;
+	w = this->GetWidth();
+	h = this->GetWidth() / ratio;
 
-	int controlWidth = this->GetWidth() - borderx;
-	int controlHeight = this->GetHeight() - bordery;
-
-	float ratio = (float)this->_image->GetWidth() / (float)this->_image->GetHeight();
-	int width = controlHeight * ratio;
-	int height = controlHeight;
-
-	if (width > controlWidth) {
-		width = controlWidth;
-		height = (float)controlWidth / ratio;
+	if (h > this->GetHeight()) {
+		h = this->GetHeight();
+		w = this->GetHeight() * ratio;
 	}
 
-	int left = (this->GetWidth() - width) / 2.0f;
-	int top = (this->GetHeight() - height) / 2.0f;
+	int ratio2 = w / width;
+	if (ratio2 >= 1) {
+		w = width * ratio2;
+		h = height * ratio2;
+	}
 
-	// Console::Write(Convert::ToString(width));
-	// Console::Write("x");
-	// Console::WriteLine(Convert::ToString(height));
-
-	GL::DrawImageGL(this->_image, left, top, width, height);
+	GL::DrawImageGL(this->_image, int(this->GetWidth() - w) >> 1, int(this->GetHeight() - h) >> 1, w, h);
 }
 
 int Chip8::GetChip8Mode() {

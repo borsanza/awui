@@ -9,16 +9,20 @@
 #include <awui/Windows/Forms/Station/StationUI.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
+#include <awui/Windows/Emulators/Chip8.h>
+#include <awui/Windows/Emulators/MasterSystem.h>
+#include <awui/Windows/Emulators/Spectrum.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
+using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Station;
 
 MenuButton::MenuButton(StationUI * station) {
 	this->_station = station;
 	this->SetSize(75, 23);
-	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	// this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->SetTabStop(true);
 
 	this->_label.SetTextAlign(ContentAlignment::MiddleLeft);
@@ -107,4 +111,36 @@ bool MenuButton::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 
 void MenuButton::SetNodeFile(NodeFile * node) {
 	this->_node = node;
+}
+
+void MenuButton::CheckArcade() {
+	if (!this->_node->_directory) {
+		if (this->_node->_arcade == NULL) {
+			switch (this->_node->_emulator) {
+				case 2:
+				case 3: {
+					MasterSystem * sms = new MasterSystem();
+					sms->LoadRom(this->_node->_path);
+					this->_node->_arcade = sms;
+					break;
+				}
+				case 4: {
+					Spectrum * szx = new Spectrum();
+					szx->LoadRom(this->_node->_path);
+					this->_node->_arcade = szx;
+					break;
+				}
+				case 1: {
+					Chip8 * ch8 = new Chip8();
+					ch8->LoadRom(this->_node->_path);
+					this->_node->_arcade = ch8;
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+
+	this->_station->SetArcade(this->_node->_arcade);
 }

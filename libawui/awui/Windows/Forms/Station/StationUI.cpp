@@ -40,6 +40,7 @@ NodeFile::NodeFile() {
 	this->_emulator = 0;
 	this->_button = NULL;
 	this->_page = NULL;
+	this->_arcade = NULL;
 }
 
 NodeFile::~NodeFile() {
@@ -60,6 +61,7 @@ NodeFile::~NodeFile() {
 /********************************* StationUI **********************************/
 
 StationUI::StationUI() {
+	this->_arcade = NULL;
 	this->_root = NULL;
 
 	this->SetTabStop(false);
@@ -264,6 +266,13 @@ void StationUI::OnTick() {
 		Control * child = (Control *)this->_actual->_page->GetControls()->Get(i);
 		child->SetWidth(this->_browser->GetWidth() - 100);
 	}
+
+	this->CheckArcade();
+
+	if (this->_arcade) {
+		this->_arcade->SetLocation(BORDERMARGIN, BORDERMARGIN);
+		this->_arcade->SetSize((this->GetWidth() >> 1) - BORDERMARGIN, this->GetHeight() - (BORDERMARGIN << 1));
+	}
 }
 
 void StationUI::SelectChild(NodeFile * node) {
@@ -291,4 +300,24 @@ void StationUI::UpdateTitle() {
 		this->_title->SetText("StationTV");
 	else
 		this->_title->SetText(this->_actual->_button->GetText());
+}
+
+void StationUI::CheckArcade() {
+	MenuButton * c = (MenuButton *) this->_actual->_page->GetFocused();
+	if (c)
+		c->CheckArcade();
+}
+
+void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
+	if (this->_arcade) {
+		this->GetControls()->Remove(this->_arcade);
+		this->_arcade->SetSoundEnabled(false);
+		this->_arcade = NULL;
+	}
+
+	if (arcade) {
+		this->_arcade = arcade;
+		this->_arcade->SetSoundEnabled(true);
+		this->GetControls()->Add(this->_arcade);
+	}
 }

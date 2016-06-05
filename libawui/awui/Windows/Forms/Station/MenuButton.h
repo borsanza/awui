@@ -34,6 +34,8 @@ namespace awui {
 						virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 
 						void SetNodeFile(NodeFile * node);
+
+						void CheckArcade();
 				};
 			}
 		}

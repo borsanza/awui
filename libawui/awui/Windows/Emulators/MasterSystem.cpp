@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Windows/Emulators/MasterSystem.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
@@ -6,7 +6,6 @@
 
 #include "MasterSystem.h"
 
-#include <awui/Console.h>
 #include <awui/Drawing/Image.h>
 #include <awui/DateTime.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
@@ -24,8 +23,7 @@ MasterSystem::MasterSystem() {
 	this->SetSize(1, 1);
 	this->_image = new Drawing::Image(1, 1);
 	this->_cpu = new Motherboard();
-	this->SetTabStop(true);
-	this->_multiply = 1;
+	this->SetTabStop(false);
 	this->_canChangeControl = true;
 	this->_pause = false;
 
@@ -239,7 +237,6 @@ void MasterSystem::OnPaint(GL* gl) {
 	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
 		delete this->_image;
 		this->_image = new Drawing::Image(width, height);
-		this->SetSize(width * this->_multiply, height * this->_multiply);
 	}
 
 	for (int y = 0; y < height; y++) {
@@ -254,7 +251,24 @@ void MasterSystem::OnPaint(GL* gl) {
 
 	this->_image->Update();
 
-	GL::DrawImageGL(this->_image, 0, 0, this->GetWidth(), this->GetHeight());
+	float w = width;
+	float h = height;
+	float ratio = w / h;
+	w = this->GetWidth();
+	h = this->GetWidth() / ratio;
+
+	if (h > this->GetHeight()) {
+		h = this->GetHeight();
+		w = this->GetHeight() * ratio;
+	}
+
+	int ratio2 = w / width;
+	if (ratio2 >= 1) {
+		w = width * ratio2;
+		h = height * ratio2;
+	}
+
+	GL::DrawImageGL(this->_image, int(this->GetWidth() - w) >> 1, int(this->GetHeight() - h) >> 1, w, h);
 }
 
 bool MasterSystem::OnKeyPress(Keys::Enum key) {
@@ -271,10 +285,6 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 		this->_cpu->Reset();
 
 	return true;
-}
-
-void MasterSystem::SetMultiply(int multiply) {
-	this->_multiply = multiply;
 }
 
 uint32_t MasterSystem::GetCRC32() {

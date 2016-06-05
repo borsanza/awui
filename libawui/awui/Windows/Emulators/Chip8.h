@@ -20,7 +20,6 @@ namespace awui {
 					bool _invertedColors;
 
 					int ConvertKeyAwToChip8(Keys::Enum key);
-					void AdjustSizeOfChip8();
 
 				public:
 					Chip8();
