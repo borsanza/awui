@@ -36,6 +36,7 @@ Control::Control() {
 	this->OnResizePre();
 	this->font = new Font("sans-serif", 12);
 	this->scissorEnabled = true;
+	this->_preventChangeControl = false;
 }
 
 Control::~Control() {
@@ -636,7 +637,7 @@ bool Control::OnKeyUp(Keys::Enum button) {
 }
 
 bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
-	if (Form::GetControlSelected() == this) {
+	if ((Form::GetControlSelected() == this) && (!this->_preventChangeControl)) {
 		Point pCenter(Math::Round((this->GetWidth() / 2.0f) + this->GetAbsoluteLeft()), Math::Round((this->GetHeight() / 2.0f) + this->GetAbsoluteTop()));
 		Point p1;
 		Point p2;

@@ -40,6 +40,7 @@ namespace awui {
 					Control * focused;
 					bool tabStop;
 					bool _drawShadow;
+					bool _preventChangeControl;
 					Drawing::Rectangle bounds;
 
 					float _lastWidth;
@@ -174,6 +175,8 @@ namespace awui {
 					Control * GetNextControl(Control * ommitControl, Drawing::Point * pCenter, Drawing::Point * p1, Drawing::Point * p2);
 
 					float Interpolate(float from, int to, float percent);
+
+					inline void SetPreventChangeControl(bool mode) { this->_preventChangeControl = mode; }
 			};
 		}
 	}

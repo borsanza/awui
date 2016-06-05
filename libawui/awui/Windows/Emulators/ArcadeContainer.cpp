@@ -15,6 +15,7 @@ ArcadeContainer::ArcadeContainer() {
 	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->SetTabStop(false);
 	this->SetDrawShadow(false);
+	this->SetPreventChangeControl(true);
 	this->_station = NULL;
 }
 
@@ -26,10 +27,8 @@ void ArcadeContainer::SetStationUI(StationUI * station) {
 }
 
 bool ArcadeContainer::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	if (button & RemoteButtons::Menu) {
+	if (button & RemoteButtons::Menu)
 		this->_station->ExitingArcade();
-		return true;
-	}
 
 	return Button::OnRemoteKeyUp(which, button);
 }
