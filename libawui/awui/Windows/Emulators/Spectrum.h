@@ -17,7 +17,6 @@ namespace awui {
 			class Spectrum : public ArcadeContainer {
 				private:
 					awui::Emulation::Spectrum::Motherboard * _motherboard;
-					bool _canChangeControl;
 					bool _pause;
 					int _fileSlot;
 

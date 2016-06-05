@@ -21,12 +21,9 @@ using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;
 
 MasterSystem::MasterSystem() {
-	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->SetSize(1, 1);
 	this->_image = new Drawing::Image(1, 1);
 	this->_cpu = new Motherboard();
-	this->SetTabStop(false);
-	this->_canChangeControl = true;
 	this->_pause = false;
 
 	this->_first = -1;
@@ -61,7 +58,6 @@ void MasterSystem::LoadRom(const String file) {
 	this->_actual = 0;
 	this->_lastTick = DateTime::GetNow().GetTicks();
 	this->_cpu->SaveState(this->_savedData[this->_actual]);
-
 
 	uint32_t crc = this->GetCRC32();
 	switch (crc) {
@@ -294,9 +290,6 @@ uint32_t MasterSystem::GetCRC32() {
 }
 
 uint8_t MasterSystem::GetPad(int which) const {
-	if (this->_canChangeControl)
-		return 0xFF;
-
 	uint32_t buttons;
 	switch (which) {
 		default:
@@ -378,18 +371,12 @@ bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	if (button & RemoteButtons::Button4)
 		this->_debugger->SetShow(!this->_debugger->GetShow());
 
-	if (this->_canChangeControl)
-		return Control::OnRemoteKeyPress(which, button);
-
 	return true;
 }
 
 bool MasterSystem::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	if ((button & RemoteButtons::Pause) || (button & RemoteButtons::Ok) || (button & RemoteButtons::Play))
-		this->_canChangeControl = false;
-
-	if (button & RemoteButtons::Menu)
-		this->_canChangeControl = true;
+	if (ArcadeContainer::OnRemoteKeyUp(which, button))
+		return true;
 
 	uint8_t pad1 = this->GetPad(0);
 	uint8_t pad2 = this->GetPad(1);
@@ -398,9 +385,6 @@ bool MasterSystem::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	bool paused = (((pad1 & 0x40) == 0) | ((pad2 & 0x40) == 0));
 	if (!paused)
 		this->_pause = false;
-
-	if (this->_canChangeControl)
-		return Control::OnRemoteKeyUp(which, button);
 
 	return true;
 }

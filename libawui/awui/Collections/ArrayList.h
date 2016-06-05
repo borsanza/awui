@@ -27,7 +27,7 @@ namespace awui {
 				void Remove(Object * item);
 				void RemoveAt(int index);
 				void SetChildIndex(Object * item, int index);
-				void Replace(Object * oldItem, Object * newItem);
+				virtual void Replace(Object * oldItem, Object * newItem);
 		};
 	}
 }

@@ -6,10 +6,6 @@
 #include <awui/Windows/Emulators/ArcadeContainer.h>
 
 namespace awui {
-	namespace Effects {
-		class Effect;
-	}
-
 	namespace Windows {
 		namespace Forms {
 			namespace Station {
@@ -22,6 +18,7 @@ namespace awui {
 					private:
 						float _status;
 						bool _showing;
+						StationUI * _station;
 
 					public:
 						FadePanel();
@@ -29,9 +26,13 @@ namespace awui {
 
 						void ShowFade();
 						void HideFade();
-						inline bool IsShowing() const { return this->_showing; }
-						inline bool IsFullScreen() const { return this->_showing && this->_status >= 100.0f; }
+						inline bool IsShowing() const { return this->_status > 0.0f; }
+						inline bool IsFullScreen() const { return this->_status >= 100.0f; }
+						inline bool IsStopped() const { return ((this->_status == 0.0f) || (this->_status == 200.0f)); }
 						virtual void OnTick();
+
+						inline void SetStationUI(StationUI * station) { this->_station = station; }
+
 				};
 
 				class NodeFile : public awui::Object {
@@ -40,7 +41,6 @@ namespace awui {
 						String _name;
 						String _path;
 						bool _directory;
-						int _selectedChild;
 						SortedList * _childList;
 						int _emulator;
 						MenuButton * _button;
@@ -55,7 +55,7 @@ namespace awui {
 
 				class StationUI : public Control {
 					private:
-						FadePanel * _fade;
+						FadePanel _fade;
 						String _path;
 						NodeFile * _root;
 						NodeFile * _actual;
@@ -70,6 +70,7 @@ namespace awui {
 						void UpdateTitle();
 
 						void CheckArcade();
+						void RefreshList();
 
 					public:
 						StationUI();
@@ -79,13 +80,16 @@ namespace awui {
 						void SetPath(const String path);
 
 						void Refresh();
-						void GetList(ArrayList * list, NodeFile * parent);
+						// void GetList(ArrayList * list, NodeFile * parent);
 						virtual void OnTick();
 
 						void SelectChild(NodeFile * node);
 						void SelectParent();
 
 						void SetArcade(Emulators::ArcadeContainer * arcade);
+						void SetArcadeFullScreen();
+						void ExitingArcade();
+						void ExitArcade();
 				};
 			}
 		}

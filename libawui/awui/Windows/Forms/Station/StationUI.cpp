@@ -17,12 +17,6 @@
 
 #include <dirent.h>
 
-/**
- * Chip8: *.ch8, *.c8x
- * Master System: *.sms, *.sg
- * Spectrum: *.rom, *.tap
- */
-
 #define BORDERMARGIN 50
 #define MENUBUTTONHEIGHT 70
 
@@ -32,8 +26,8 @@ using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
 
 StationUI::StationUI() {
+	this->_fade.SetStationUI(this);
 	this->_arcade = NULL;
-	this->_fade = NULL;
 	this->_root = NULL;
 
 	this->SetTabStop(false);
@@ -187,12 +181,12 @@ void StationUI::Refresh() {
 	this->_root->_path = this->_path;
 	this->_root->_emulator = 0;
 	this->RecursiveSearch(this->_root);
-
-	// printf("\nMinimize:\n\n");
 	while (this->Minimize(this->_root));
-	// printf("\nFinish:\n\n");
+
+	this->RefreshList();
 }
 
+/*
 void StationUI::GetList(ArrayList * list, NodeFile * parent) {
 	if (parent == 0)
 		parent = this->_root;
@@ -207,12 +201,12 @@ void StationUI::GetList(ArrayList * list, NodeFile * parent) {
 		}
 	}
 }
+*/
 
-void StationUI::OnTick() {
+void StationUI::RefreshList() {
 	if (this->_actual->_page == NULL) {
 		int y = 25;
 		this->_actual->_page = new Page();
-		this->_browser->SetPage(this->_actual->_page);
 		for (int i = 0; i < this->_actual->_childList->GetCount(); i++) {
 			NodeFile * child = (NodeFile *)this->_actual->_childList->GetByIndex(i);
 			child->_button->SetHeight(MENUBUTTONHEIGHT);
@@ -220,13 +214,22 @@ void StationUI::OnTick() {
 			y += MENUBUTTONHEIGHT;
 			this->_actual->_page->GetControls()->Add(child->_button);
 			if (i == 0)
-				child->_button->SetFocus(true);
+				child->_button->SetFocus();
 		}
 
 		this->_actual->_page->SetHeight(y + 25);
 	}
 
 	this->_browser->SetPage(this->_actual->_page);
+}
+
+void StationUI::OnTick() {
+	static Control * lastFocused = NULL;
+	Control * c = this->_actual->_page->GetFocused();
+	if (lastFocused != c) {
+		lastFocused = c;
+		this->CheckArcade();
+	}
 
 	this->_title->SetLocation(this->GetWidth() >> 1, 0);
 	this->_title->SetSize(this->GetWidth() >> 1, 69);
@@ -239,13 +242,10 @@ void StationUI::OnTick() {
 		child->SetWidth(this->_browser->GetWidth() - 100);
 	}
 
-	this->CheckArcade();
-
-	if (this->_fade)
-		this->_fade->SetBounds(0, 0, this->GetWidth(), this->GetHeight());
+	this->_fade.SetBounds(0, 0, this->GetWidth(), this->GetHeight());
 
 	if (this->_arcade) {
-		if (this->_fade && this->_fade->IsFullScreen()) {
+		if (this->_fade.IsFullScreen()) {
 			this->_arcade->SetBounds(0, 0, this->GetWidth(), this->GetHeight());
 		} else {
 			this->_arcade->SetLocation(BORDERMARGIN, this->_browser->GetTop());
@@ -257,17 +257,19 @@ void StationUI::OnTick() {
 void StationUI::SelectChild(NodeFile * node) {
 	if (node->_directory) {
 		this->_actual = node;
-		this->OnTick();
+		this->RefreshList();
 		this->_actual->_page->GetFocused()->SetFocus(true);
 		this->UpdateTitle();
 	} else {
-		if (!this->_fade) {
-			this->_fade = new FadePanel();
-			this->GetControls()->Add(this->_fade);
-		}
+		if (!this->_fade.IsStopped())
+			return;
+		if (this->GetControls()->IndexOf(&this->_fade) == -1)
+			this->GetControls()->Add(&this->_fade);
 
-		this->_fade->ShowFade();
-		this->GetControls()->MoveToEnd(this->_fade);
+		this->GetControls()->MoveToEnd(&this->_fade);
+		this->_arcade->SetTabStop(true);
+		this->_arcade->SetFocus();
+		this->_fade.ShowFade();
 	}
 }
 
@@ -312,6 +314,25 @@ void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
 	}
 }
 
+void StationUI::SetArcadeFullScreen() {
+	this->GetControls()->Remove(&this->_fade);
+}
+
+void StationUI::ExitingArcade() {
+	if (!this->_fade.IsStopped())
+		return;
+
+	this->_fade.HideFade();
+	this->GetControls()->Add(&this->_fade);
+	this->_arcade->SetTabStop(false);
+	Control * c = this->_actual->_page->GetFocused();
+	c->SetFocus(true);
+}
+
+void StationUI::ExitArcade() {
+	this->GetControls()->Remove(&this->_fade);
+}
+
 /********************************* FadePanel **********************************/
 
 FadePanel::FadePanel() {
@@ -331,9 +352,17 @@ void FadePanel::HideFade() {
 
 void FadePanel::OnTick() {
 	if (this->_showing) {
-		this->_status = this->Interpolate(this->_status, 200.0f, 0.20f);
+		this->_status += 10;
+		if (Math::Round(this->_status) >= 200.0f) {
+			this->_status = 200.0f;
+			this->_station->SetArcadeFullScreen();
+		}
 	} else {
-		this->_status = this->Interpolate(this->_status, 0.0f, 0.20f);
+		this->_status -= 10;
+		if (Math::Round(this->_status) <= 0.0f) {
+			this->_status = 0.0f;
+			this->_station->ExitArcade();
+		}
 	}
 
 	if (this->_status <= 100.0f)
@@ -347,7 +376,6 @@ void FadePanel::OnTick() {
 NodeFile::NodeFile() {
 	this->_parent = 0;
 	this->_childList = 0;
-	this->_selectedChild = 0;
 	this->_directory = true;
 	this->_emulator = 0;
 	this->_button = NULL;

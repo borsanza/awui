@@ -22,7 +22,6 @@ namespace awui {
 					Drawing::Image * _image;
 					Motherboard * _cpu;
 					DebuggerSMS * _debugger;
-					bool _canChangeControl;
 					bool _pause;
 					bool _invertKeys;
 
@@ -56,8 +55,8 @@ namespace awui {
 					virtual void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };
 					inline void SetInvertKeys(bool mode) { this->_invertKeys = mode; }
 
-					bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-					bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
+					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 
 					virtual void SetSoundEnabled(bool mode);
 			};

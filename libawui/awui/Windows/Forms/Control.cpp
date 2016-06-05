@@ -20,6 +20,7 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Control::Control() {
+	this->_drawShadow = true;
 	this->tabStop = false;
 	this->bounds = Rectangle(0, 0, 100, 100);
 	this->boundsTo = this->bounds;
@@ -338,7 +339,7 @@ void Control::OnPaint(OpenGL::GL * gl) {
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
 
-		if (focused == control) {
+		if ((focused == control) && (control->GetDrawShadow())) {
 			int x1, y1, x2, y2;
 			Bitmap * bitmap = Form::GetSelectedBitmap();
 			float percent = 0.16f;

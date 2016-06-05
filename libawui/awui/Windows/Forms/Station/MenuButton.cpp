@@ -142,5 +142,8 @@ void MenuButton::CheckArcade() {
 		}
 	}
 
+	if (this->_node->_arcade)
+		this->_node->_arcade->SetStationUI(this->_station);
+
 	this->_station->SetArcade(this->_node->_arcade);
 }

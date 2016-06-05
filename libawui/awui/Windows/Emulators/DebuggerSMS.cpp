@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Windows/Emulators/DebuggerSMS.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano

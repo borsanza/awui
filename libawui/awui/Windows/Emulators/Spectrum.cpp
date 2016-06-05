@@ -41,14 +41,11 @@ void FinishCassetteCB(void * data) {
 }
 
 Spectrum::Spectrum() {
-	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->SetSize(1, 1);
 	this->_motherboard = new Motherboard();
 	this->_motherboard->SetWriteCassetteCB(WriteCassetteCB, this);
 	this->_motherboard->SetReadCassetteCB(ReadCassetteCB, this);
 
-	this->SetTabStop(false);
-	this->_canChangeControl = true;
 	this->_pause = false;
 
 	this->_first = -1;
@@ -313,9 +310,6 @@ bool Spectrum::OnKeyUp(Keys::Enum key) {
 }
 
 uint8_t Spectrum::GetPad() const {
-	if (this->_canChangeControl)
-		return 0xFF;
-
 	uint32_t buttons = Form::GetButtonsPad1();
 
 	uint8_t pad = 0x00;
@@ -365,23 +359,16 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	if (ret)
 		return ret;
 
-	if (this->_canChangeControl)
-		return Control::OnRemoteKeyPress(which, button);
-	else {
-		this->DoRemoteKey(button, true);
-		uint8_t pad1 = this->GetPad();
-		this->_motherboard->OnPadEvent(pad1);
-	}
+	this->DoRemoteKey(button, true);
+	uint8_t pad1 = this->GetPad();
+	this->_motherboard->OnPadEvent(pad1);
 
 	return true;
 }
 
 bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	if ((button & RemoteButtons::Pause) || (button & RemoteButtons::Ok) || (button & RemoteButtons::Play))
-		this->_canChangeControl = false;
-
-	if (button & RemoteButtons::Menu)
-		this->_canChangeControl = true;
+	if (ArcadeContainer::OnRemoteKeyUp(which, button))
+		return true;
 
 	uint8_t pad1 = this->GetPad();
 
@@ -389,12 +376,8 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	if (!paused)
 		this->_pause = false;
 
-	if (this->_canChangeControl)
-		return Control::OnRemoteKeyUp(which, button);
-	else {
-		this->DoRemoteKey(button, false);
-		this->_motherboard->OnPadEvent(pad1);
-	}
+	this->DoRemoteKey(button, false);
+	this->_motherboard->OnPadEvent(pad1);
 
 	return true;
 }

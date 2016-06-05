@@ -21,6 +21,8 @@ namespace awui {
 					virtual void Add(Control * item);
 
 					void MoveToEnd(Control * item);
+
+					virtual void Replace(Control * oldItem, Control * newItem);
 			};
 		}
 	}

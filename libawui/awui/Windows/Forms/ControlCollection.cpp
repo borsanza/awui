@@ -37,3 +37,9 @@ void ControlCollection::MoveToEnd(Control * item) {
 	this->Remove(item);
 	this->Add(item);
 }
+
+void ControlCollection::Replace(Control * oldItem, Control * newItem) {
+	ArrayList::Replace(oldItem, newItem);
+	if (newItem)
+		newItem->SetParent(this->owner);
+}

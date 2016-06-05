@@ -54,6 +54,10 @@ Browser::~Browser() {
 
 void Browser::OnTick() {
 	Control * selected = Form::GetControlSelected();
+
+	if (selected->GetParent() != this->_page)
+		return;
+
 	int xCenterW = (selected->GetLeft() + selected->GetRight()) >> 1;
 	int yCenterW = (selected->GetTop() + selected->GetBottom()) >> 1;
 	int xCenter = this->GetWidth() >> 1;
@@ -106,18 +110,14 @@ void Browser::SetPage(Page * page) {
 	if (this->_page == page)
 		return;
 
-	if (this->_page) {
+	if (this->_page)
 		this->GetControls()->Remove(this->_page);
-		this->GetControls()->Remove(&this->_gradientUp);
-		this->GetControls()->Remove(&this->_gradientBottom);
-		this->GetControls()->Remove(&this->_gradientLeft);
-		this->GetControls()->Remove(&this->_gradientRight);
-	}
 
 	this->_page = page;
 	this->GetControls()->Add(this->_page);
-	this->GetControls()->Add(&this->_gradientUp);
-	this->GetControls()->Add(&this->_gradientBottom);
-	this->GetControls()->Add(&this->_gradientLeft);
-	this->GetControls()->Add(&this->_gradientRight);
+
+	this->GetControls()->MoveToEnd(&this->_gradientUp);
+	this->GetControls()->MoveToEnd(&this->_gradientBottom);
+	this->GetControls()->MoveToEnd(&this->_gradientLeft);
+	this->GetControls()->MoveToEnd(&this->_gradientRight);
 }

@@ -39,6 +39,7 @@ namespace awui {
 				private:
 					Control * focused;
 					bool tabStop;
+					bool _drawShadow;
 					Drawing::Rectangle bounds;
 
 					float _lastWidth;
@@ -94,6 +95,9 @@ namespace awui {
 
 					const Drawing::Point GetLocation() const;
 					void SetLocation(int x, int y);
+
+					inline void SetDrawShadow(bool mode) { this->_drawShadow = mode; }
+					inline bool GetDrawShadow() { return this->_drawShadow; }
 
 					int GetWidth() const;
 					void SetWidth(int width);

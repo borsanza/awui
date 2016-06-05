@@ -18,7 +18,6 @@ using namespace awui::Windows::Emulators;
 Chip8::Chip8() {
 	this->_image = new Drawing::Image(64, 32);
 	this->_cpu = new CPU();
-	this->SetTabStop(false);
 	this->_invertedColors = false;
 }
 
