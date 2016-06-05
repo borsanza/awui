@@ -4,142 +4,165 @@
 #include "Stats.h"
 
 #include <awui/Convert.h>
-#include <awui/Drawing/Color.h>
+//#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Math.h>
-#include <awui/TimeSpan.h>
+//#include <awui/TimeSpan.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Statistics;
 
-Stats* Stats::pinstance = 0;
+Stats* Stats::_instance = 0;
 
 Stats::Stats() {
-	this->fps = 0;
-	this->fpsCalculated = 0;
-	this->lastSecond = -1;
-	// this->percent = 0;
-	this->drawedControls = 0;
+#if defined(SHOW_FPS) || defined(SHOW_PERCENT)
+	this->_lastSecond = -1;
+#endif // defined
 
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	this->idle = TimeSpan(0.0f);
-	this->beforeSync = DateTime::GetNow();
-	this->afterSync = DateTime::GetNow();
+	this->_idle = TimeSpan(0.0f);
+	this->_beforeSync = DateTime::GetNow();
+	this->_afterSync = DateTime::GetNow();
 
 	Font font = Font("Monospace", 14);
-
-	// this->labelPercent = new Label();
-	this->labelControls = new Label();
-	this->labelFPS = new Label();
-	this->heartbeat = new Heartbeat();
-	this->spinner = new Spinner();
-
-	// this->labelPercent->SetFont(&font);
-	this->labelControls->SetFont(&font);
-	this->labelFPS->SetFont(&font);
-
-	this->spinner->SetDock(DockStyle::Right);
-	this->heartbeat->SetDock(DockStyle::Left);
-	this->labelControls->SetDock(DockStyle::Right);
-	// this->labelPercent->SetDock(DockStyle::Right);
-	this->labelFPS->SetDock(DockStyle::Right);
-	this->labelControls->SetTextAlign(ContentAlignment::MiddleRight);
-	// this->labelPercent->SetTextAlign(ContentAlignment::MiddleRight);
-	this->labelFPS->SetTextAlign(ContentAlignment::MiddleCenter);
 	Color backColor = Color::FromArgb(0, 0, 0, 0);
 	Color foreColor = Color::FromArgb(255, 255, 255);
-	this->heartbeat->SetBackColor(backColor);
-	this->spinner->SetBackColor(backColor);
-	this->labelControls->SetBackColor(backColor);
-	// this->labelPercent->SetBackColor(backColor);
-	this->labelFPS->SetBackColor(backColor);
-	this->heartbeat->SetForeColor(foreColor);
-	this->spinner->SetForeColor(foreColor);
-	this->labelControls->SetForeColor(foreColor);
-	// this->labelPercent->SetForeColor(foreColor);
-	this->labelFPS->SetForeColor(foreColor);
 
-	this->labelControls->SetWidth(150);
-	this->labelFPS->SetWidth(90);
-	// this->labelPercent->SetWidth(70);
+#ifdef SHOW_HEARTBEAT
+	this->_heartbeat = new Heartbeat();
+	this->_heartbeat->SetDock(DockStyle::Left);
+	this->_heartbeat->SetBackColor(backColor);
+	this->_heartbeat->SetForeColor(foreColor);
+	this->GetControls()->Add(this->_heartbeat);
+#endif // SHOW_HEARTBEAT
 
-	this->GetControls()->Add(this->heartbeat);
-	// this->GetControls()->Add(this->spinner);
-	// this->GetControls()->Add(this->labelFPS);
-	// this->GetControls()->Add(this->labelPercent);
-	// this->GetControls()->Add(this->labelControls);
+#ifdef SHOW_SPINNER
+	this->_spinner = new Spinner();
+	this->_spinner->SetDock(DockStyle::Right);
+	this->_spinner->SetBackColor(backColor);
+	this->_spinner->SetForeColor(foreColor);
+	this->GetControls()->Add(this->_spinner);
+#endif // SHOW_SPINNER
+
+#ifdef SHOW_FPS
+	this->_fps = 0;
+	this->_fpsCalculated = 0;
+	this->_labelFPS = new Label();
+	this->_labelFPS->SetFont(&font);
+	this->_labelFPS->SetDock(DockStyle::Right);
+	this->_labelFPS->SetTextAlign(ContentAlignment::MiddleCenter);
+	this->_labelFPS->SetBackColor(backColor);
+	this->_labelFPS->SetForeColor(foreColor);
+	this->_labelFPS->SetWidth(90);
+	this->GetControls()->Add(this->_labelFPS);
+#endif // SHOW_FPS
+
+#ifdef SHOW_PERCENT
+	this->_percent = 0;
+	this->_labelPercent = new Label();
+	this->_labelPercent->SetFont(&font);
+	this->_labelPercent->SetDock(DockStyle::Right);
+	this->_labelPercent->SetTextAlign(ContentAlignment::MiddleRight);
+	this->_labelPercent->SetBackColor(backColor);
+	this->_labelPercent->SetForeColor(foreColor);
+	this->_labelPercent->SetWidth(70);
+	this->GetControls()->Add(this->_labelPercent);
+#endif // SHOW_PERCENT
+
+#ifdef SHOW_WIDGETS
+	this->_drawedControls = 0;
+	this->_labelControls = new Label();
+	this->_labelControls->SetFont(&font);
+	this->_labelControls->SetDock(DockStyle::Right);
+	this->_labelControls->SetTextAlign(ContentAlignment::MiddleRight);
+	this->_labelControls->SetBackColor(backColor);
+	this->_labelControls->SetForeColor(foreColor);
+	this->_labelControls->SetWidth(150);
+	this->GetControls()->Add(this->_labelControls);
+#endif // SHOW_WIDGETS
 
 	this->SetHeight(24);
-	//this->SetHeight(0);
 }
 
 Stats::~Stats() {
 }
 
 void Stats::SetTimeBeforeIddle() {
-	DateTime beforeSync_last = this->beforeSync;
-	this->beforeSync = DateTime::GetNow();
+	DateTime beforeSync_last = this->_beforeSync;
+	this->_beforeSync = DateTime::GetNow();
 
-	this->idle = TimeSpan(this->afterSync.GetTicks() - beforeSync_last.GetTicks());
+	this->_idle = TimeSpan(this->_afterSync.GetTicks() - beforeSync_last.GetTicks());
 
-	this->timeUsed += this->beforeSync.GetTicks() - this->afterSync.GetTicks();
+#ifdef SHOW_PERCENT
+	this->_timeUsed += this->_beforeSync.GetTicks() - this->_afterSync.GetTicks();
+#endif // SHOW_PERCENT
 }
 
 awui::TimeSpan Stats::GetIdle() {
-	return this->idle;
+	return this->_idle;
 }
 
 void Stats::SetTimeAfterIddle() {
-	this->afterSync = DateTime::GetNow();
+	this->_afterSync = DateTime::GetNow();
 
-	int second = this->afterSync.GetSecond();
-	this->fps++;
+#ifdef SHOW_FPS
+	this->_fps++;
+#endif // SHOW_FPS
 
-	if (this->lastSecond != second) {
-		this->lastSecond = second;
-		float total = ((this->afterSync.GetTicks() - this->lastTime.GetTicks()) / 10000000.0f);
+#if defined(SHOW_FPS) || defined(SHOW_PERCENT)
+	int second = this->_afterSync.GetSecond();
+	if (this->_lastSecond != second) {
+		this->_lastSecond = second;
+		float total = ((this->_afterSync.GetTicks() - this->_lastTime.GetTicks()) / 10000000.0f);
 
+#ifdef SHOW_FPS
 		if (total != 0) {
-			float calc = Math::Round((this->fps / total) * 10.0f) / 10.0f;
+			float calc = Math::Round((this->_fps / total) * 10.0f) / 10.0f;
 
-			if (this->fpsCalculated != calc) {
-				this->fpsCalculated = calc;
-				this->labelFPS->SetText(Convert::ToString(this->fpsCalculated, 1) + String(" FPS"));
+			if (this->_fpsCalculated != calc) {
+				this->_fpsCalculated = calc;
+				this->_labelFPS->SetText(Convert::ToString(this->_fpsCalculated, 1) + String(" FPS"));
 			}
 		}
 
-		this->fps = 0;
-		this->lastTime = this->afterSync;
+		this->_fps = 0;
+#endif // SHOW_FPS
 
-/*
+		this->_lastTime = this->_afterSync;
+
+#ifdef SHOW_PERCENT
 		if (total != 0) {
-			float calc = Math::Round((this->timeUsed / 10000000.0f) / total * 10000.0f) / 100.0f;
-			if (calc != this->percent) {
-				this->percent = calc;
-				this->labelPercent->SetText(Convert::ToString(this->percent, 2) + String("%"));
+			float calc = Math::Round((this->_timeUsed / 10000000.0f) / total * 10000.0f) / 100.0f;
+			if (calc != this->_percent) {
+				this->_percent = calc;
+				this->_labelPercent->SetText(Convert::ToString(this->_percent, 2) + String("%"));
 			}
 		}
-*/
-
-		this->timeUsed = 0;
+		this->_timeUsed = 0;
+#endif // SHOW_PERCENT
 	}
+#endif // defined
 }
 
 Stats* Stats::Instance() {
-	if (pinstance == 0)
-    pinstance = new Stats;
+	if (Stats::_instance == 0)
+		Stats::_instance = new Stats;
 
-  return pinstance;
+	return Stats::_instance;
 }
 
 void Stats::OnRemoteHeartbeat() {
-	this->heartbeat->OnRemoteHeartbeat();
+#ifdef SHOW_HEARTBEAT
+	this->_heartbeat->OnRemoteHeartbeat();
+#endif // SHOW_HEARTBEAT
 }
 
 void Stats::SetDrawedControls(int drawedControls) {
-	if (this->drawedControls != drawedControls) {
-		this->drawedControls = drawedControls;
-		this->labelControls->SetText(Convert::ToString(this->drawedControls) + String(" widgets"));
+#ifdef SHOW_WIDGETS
+	if (this->_drawedControls != drawedControls) {
+		this->_drawedControls = drawedControls;
+		this->_labelControls->SetText(Convert::ToString(this->_drawedControls) + String(" widgets"));
 	}
+#endif // SHOW_WIDGETS
 }
