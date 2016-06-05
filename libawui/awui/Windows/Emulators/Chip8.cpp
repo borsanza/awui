@@ -33,9 +33,23 @@ int Chip8::IsClass(Classes::Enum objectClass) const {
 	return Control::IsClass(objectClass);
 }
 
+void Chip8::CheckBackcolor() {
+	if (this->_cpu->GetChip8Mode() == MEGACHIP8)
+		this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	else {
+		if (!this->_invertedColors)
+			this->SetBackColor(Color::FromArgb(163, 218, 2));
+		else
+			this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	}
+}
+
 void Chip8::LoadRom(const String file) {
 	this->_cpu->LoadRom(file);
 	this->SetName(file);
+
+	this->_cpu->OnTick();
+	this->CheckBackcolor();
 }
 
 void Chip8::OnTick() {
@@ -46,14 +60,7 @@ void Chip8::OnPaint(GL* gl) {
 	Screen * screen = this->_cpu->GetScreen();
 
 	if (this->_cpu->GetImageUpdated()) {
-		if (this->_cpu->GetChip8Mode() == MEGACHIP8)
-			this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-		else {
-			if (!this->_invertedColors)
-				this->SetBackColor(Color::FromArgb(163, 218, 2));
-			else
-				this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-		}
+		this->CheckBackcolor();
 
 		if ((screen->GetWidth() != this->_image->GetWidth()) || (screen->GetHeight() != this->_image->GetHeight())) {
 			delete this->_image;
