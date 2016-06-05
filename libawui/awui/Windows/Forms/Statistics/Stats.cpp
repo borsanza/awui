@@ -65,13 +65,13 @@ Stats::Stats() {
 	// this->labelPercent->SetWidth(70);
 
 	this->GetControls()->Add(this->heartbeat);
-	this->GetControls()->Add(this->spinner);
-	this->GetControls()->Add(this->labelFPS);
+	// this->GetControls()->Add(this->spinner);
+	// this->GetControls()->Add(this->labelFPS);
 	// this->GetControls()->Add(this->labelPercent);
 	// this->GetControls()->Add(this->labelControls);
 
-	// this->SetHeight(24);
-	this->SetHeight(0);
+	this->SetHeight(24);
+	//this->SetHeight(0);
 }
 
 Stats::~Stats() {

@@ -259,7 +259,7 @@ void StationUI::OnTick() {
 	this->_title->SetLocation(this->GetWidth() >> 1, 0);
 	this->_title->SetSize(this->GetWidth() >> 1, 69);
 	this->_browser->SetLocation(this->GetWidth() >> 1, 69);
-	this->_browser->SetSize(this->GetWidth() >> 1, this->GetHeight() - (69 + 25));
+	this->_browser->SetSize(this->GetWidth() >> 1, this->GetHeight() - 69);
 	this->_actual->_page->SetWidth(this->_browser->GetWidth());
 
 	for (int i = 0; i < this->_actual->_page->GetControls()->GetCount(); i++) {
@@ -270,8 +270,8 @@ void StationUI::OnTick() {
 	this->CheckArcade();
 
 	if (this->_arcade) {
-		this->_arcade->SetLocation(BORDERMARGIN, BORDERMARGIN);
-		this->_arcade->SetSize((this->GetWidth() >> 1) - BORDERMARGIN, this->GetHeight() - (BORDERMARGIN << 1));
+		this->_arcade->SetLocation(BORDERMARGIN, this->_browser->GetTop());
+		this->_arcade->SetSize((this->GetWidth() >> 1) - BORDERMARGIN, this->_browser->GetHeight());
 	}
 }
 
