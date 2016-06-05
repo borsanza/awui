@@ -13,7 +13,6 @@
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
-#include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL2/SDL_opengl.h>
 
 using namespace awui::Drawing;

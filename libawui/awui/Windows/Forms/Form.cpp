@@ -51,7 +51,7 @@ Form::Form() {
 	this->_win = 0;
 
 	Stats * stats = Stats::Instance();
-	stats->SetDock(DockStyle::Bottom);
+	stats->SetDock(DockStyle::None);
 	this->GetControls()->Add(stats);
 
 	this->remoteProcess = new awui::Diagnostics::Process();
@@ -101,6 +101,11 @@ void Form::OnRemoteHeartbeat() {
 }
 
 void Form::OnTick() {
+	Stats * stats = Stats::Instance();
+	this->GetControls()->MoveToEnd(stats);
+	stats->SetWidth(this->GetWidth());
+	stats->SetLocation(0, this->GetHeight() - stats->GetHeight());
+
 	static DateTime lastTime = DateTime::GetNow();
 	DateTime now = DateTime::GetNow();
 	if (lastTime.GetSecond() != now.GetSecond()) {

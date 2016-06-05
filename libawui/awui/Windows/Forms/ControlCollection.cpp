@@ -32,3 +32,8 @@ void ControlCollection::Add(Control * item) {
 	item->SetParent(this->owner);
 	this->owner->Layout();
 }
+
+void ControlCollection::MoveToEnd(Control * item) {
+	this->Remove(item);
+	this->Add(item);
+}

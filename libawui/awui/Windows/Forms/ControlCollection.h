@@ -19,6 +19,8 @@ namespace awui {
 
 					Control * GetOwner();
 					virtual void Add(Control * item);
+
+					void MoveToEnd(Control * item);
 			};
 		}
 	}

@@ -15,11 +15,13 @@
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
 
+using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;
 
 MasterSystem::MasterSystem() {
+	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->SetSize(1, 1);
 	this->_image = new Drawing::Image(1, 1);
 	this->_cpu = new Motherboard();

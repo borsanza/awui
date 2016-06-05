@@ -35,12 +35,12 @@ int Chip8::IsClass(Classes::Enum objectClass) const {
 
 void Chip8::CheckBackcolor() {
 	if (this->_cpu->GetChip8Mode() == MEGACHIP8)
-		this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+		this->SetBackColor(Color::FromArgb(0, 0, 0));
 	else {
 		if (!this->_invertedColors)
 			this->SetBackColor(Color::FromArgb(163, 218, 2));
 		else
-			this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+			this->SetBackColor(Color::FromArgb(0, 0, 0));
 	}
 }
 
@@ -101,6 +101,7 @@ void Chip8::OnPaint(GL* gl) {
 
 	float w = width;
 	float h = height;
+
 	float ratio = w / h;
 	w = this->GetWidth();
 	h = this->GetWidth() / ratio;

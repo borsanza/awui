@@ -104,3 +104,19 @@ void ArrayList::SetChildIndex(Object * item, int newIndex) {
 
 	this->_data[newIndex] = item;
 }
+
+void ArrayList::Replace(Object * oldItem, Object * newItem) {
+	if (oldItem && newItem) {
+		int index = this->IndexOf(oldItem);
+
+		if (index != -1)
+			this->_data[index] = newItem;
+		else
+			this->Add(newItem);
+	} else {
+		if (oldItem)
+			this->Remove(oldItem);
+		if (newItem)
+			this->Add(newItem);
+	}
+}

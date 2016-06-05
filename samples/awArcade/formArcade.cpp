@@ -28,7 +28,7 @@ void FormArcade::InitializeComponent() {
 
 	this->GetControls()->Add(this->_station);
 
-	this->SetSize(1024, 768);
+	this->SetSize(1280, 720);
 	this->SetFullscreen(0);
 	this->SetText("StationTV");
 }

@@ -18,10 +18,11 @@
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Form.h>
 
+using namespace awui::Drawing;
+using namespace awui::Emulation::Spectrum;
 using namespace awui::IO;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
-using namespace awui::Emulation::Spectrum;
 
 void WriteCassetteCB(int32_t value, void * data) { /* printf("%d\n", value); */ }
 
@@ -40,6 +41,7 @@ void FinishCassetteCB(void * data) {
 }
 
 Spectrum::Spectrum() {
+	this->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->SetSize(1, 1);
 	this->_motherboard = new Motherboard();
 	this->_motherboard->SetWriteCassetteCB(WriteCassetteCB, this);

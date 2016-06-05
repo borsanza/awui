@@ -18,6 +18,22 @@ namespace awui {
 					class Page;
 				}
 
+				class FadePanel : public Control {
+					private:
+						float _status;
+						bool _showing;
+
+					public:
+						FadePanel();
+						~FadePanel();
+
+						void ShowFade();
+						void HideFade();
+						inline bool IsShowing() const { return this->_showing; }
+						inline bool IsFullScreen() const { return this->_showing && this->_status >= 100.0f; }
+						virtual void OnTick();
+				};
+
 				class NodeFile : public awui::Object {
 					public:
 						NodeFile * _parent;
@@ -29,6 +45,7 @@ namespace awui {
 						int _emulator;
 						MenuButton * _button;
 						Browser::Page * _page;
+
 						Emulators::ArcadeContainer * _arcade;
 
 					public:
@@ -38,6 +55,7 @@ namespace awui {
 
 				class StationUI : public Control {
 					private:
+						FadePanel * _fade;
 						String _path;
 						NodeFile * _root;
 						NodeFile * _actual;

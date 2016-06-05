@@ -6,6 +6,7 @@
 
  #include "StationUI.h"
 
+#include <awui/Math.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Effects/Effect.h>
 #include <awui/Windows/Forms/ControlCollection.h>
@@ -30,38 +31,9 @@ using namespace awui::Effects;
 using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
 
-/********************************** NodeFile **********************************/
-
-NodeFile::NodeFile() {
-	this->_parent = 0;
-	this->_childList = 0;
-	this->_selectedChild = 0;
-	this->_directory = true;
-	this->_emulator = 0;
-	this->_button = NULL;
-	this->_page = NULL;
-	this->_arcade = NULL;
-}
-
-NodeFile::~NodeFile() {
-	// printf("%d) ~NodeFile:  %s\n", this->_emulator, this->_path.ToCharArray());
-	if (this->_childList) {
-		for (int i = 0; i < this->_childList->GetCount(); i++) {
-			NodeFile * object = (NodeFile *)this->_childList->GetByIndex(i);
-			delete object;
-		}
-
-		delete this->_childList;
-	}
-
-	if (this->_button)
-		delete this->_button;
-}
-
-/********************************* StationUI **********************************/
-
 StationUI::StationUI() {
 	this->_arcade = NULL;
+	this->_fade = NULL;
 	this->_root = NULL;
 
 	this->SetTabStop(false);
@@ -259,7 +231,7 @@ void StationUI::OnTick() {
 	this->_title->SetLocation(this->GetWidth() >> 1, 0);
 	this->_title->SetSize(this->GetWidth() >> 1, 69);
 	this->_browser->SetLocation(this->GetWidth() >> 1, 69);
-	this->_browser->SetSize(this->GetWidth() >> 1, this->GetHeight() - 69);
+	this->_browser->SetSize(this->GetWidth() >> 1, this->GetHeight() - (69 + 25));
 	this->_actual->_page->SetWidth(this->_browser->GetWidth());
 
 	for (int i = 0; i < this->_actual->_page->GetControls()->GetCount(); i++) {
@@ -269,9 +241,16 @@ void StationUI::OnTick() {
 
 	this->CheckArcade();
 
+	if (this->_fade)
+		this->_fade->SetBounds(0, 0, this->GetWidth(), this->GetHeight());
+
 	if (this->_arcade) {
-		this->_arcade->SetLocation(BORDERMARGIN, this->_browser->GetTop());
-		this->_arcade->SetSize((this->GetWidth() >> 1) - BORDERMARGIN, this->_browser->GetHeight());
+		if (this->_fade && this->_fade->IsFullScreen()) {
+			this->_arcade->SetBounds(0, 0, this->GetWidth(), this->GetHeight());
+		} else {
+			this->_arcade->SetLocation(BORDERMARGIN, this->_browser->GetTop());
+			this->_arcade->SetSize((this->GetWidth() >> 1) - BORDERMARGIN, this->_browser->GetHeight());
+		}
 	}
 }
 
@@ -281,6 +260,14 @@ void StationUI::SelectChild(NodeFile * node) {
 		this->OnTick();
 		this->_actual->_page->GetFocused()->SetFocus(true);
 		this->UpdateTitle();
+	} else {
+		if (!this->_fade) {
+			this->_fade = new FadePanel();
+			this->GetControls()->Add(this->_fade);
+		}
+
+		this->_fade->ShowFade();
+		this->GetControls()->MoveToEnd(this->_fade);
 	}
 }
 
@@ -309,8 +296,12 @@ void StationUI::CheckArcade() {
 }
 
 void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
+	if (this->_arcade == arcade)
+		return;
+
+	this->GetControls()->Replace(this->_arcade, arcade);
+
 	if (this->_arcade) {
-		this->GetControls()->Remove(this->_arcade);
 		this->_arcade->SetSoundEnabled(false);
 		this->_arcade = NULL;
 	}
@@ -318,6 +309,63 @@ void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
 	if (arcade) {
 		this->_arcade = arcade;
 		this->_arcade->SetSoundEnabled(true);
-		this->GetControls()->Add(this->_arcade);
 	}
+}
+
+/********************************* FadePanel **********************************/
+
+FadePanel::FadePanel() {
+	this->_status = 0.0f;
+}
+
+FadePanel::~FadePanel() {
+}
+
+void FadePanel::ShowFade() {
+	this->_showing = true;
+}
+
+void FadePanel::HideFade() {
+	this->_showing = false;
+}
+
+void FadePanel::OnTick() {
+	if (this->_showing) {
+		this->_status = this->Interpolate(this->_status, 200.0f, 0.20f);
+	} else {
+		this->_status = this->Interpolate(this->_status, 0.0f, 0.20f);
+	}
+
+	if (this->_status <= 100.0f)
+		this->SetBackColor(Color::FromArgb(this->_status * 2.55f, 0, 0, 0));
+	else
+		this->SetBackColor(Color::FromArgb((200.0f - this->_status) * 2.55f, 0, 0, 0));
+}
+
+/********************************** NodeFile **********************************/
+
+NodeFile::NodeFile() {
+	this->_parent = 0;
+	this->_childList = 0;
+	this->_selectedChild = 0;
+	this->_directory = true;
+	this->_emulator = 0;
+	this->_button = NULL;
+	this->_page = NULL;
+	this->_arcade = NULL;
+}
+
+NodeFile::~NodeFile() {
+	// printf("%d) ~NodeFile:  %s\n", this->_emulator, this->_path.ToCharArray());
+	if (this->_childList) {
+		for (int i = 0; i < this->_childList->GetCount(); i++) {
+			NodeFile * object = (NodeFile *)this->_childList->GetByIndex(i);
+			delete object;
+		}
+
+		delete this->_childList;
+	}
+
+	if (this->_button)
+		delete this->_button;
 }

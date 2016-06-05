@@ -6,7 +6,7 @@
 
 #include "Page.h"
 
-using namespace awui::Drawing;
+// using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Station::Browser;
 
 Page::Page() {
