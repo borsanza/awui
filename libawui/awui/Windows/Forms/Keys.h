@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_FORMS_KEYS_H
-#define _AWUI_WINDOWS_FORMS_KEYS_H
+#pragma once
 
 namespace awui {
 	namespace Windows {
@@ -90,5 +89,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

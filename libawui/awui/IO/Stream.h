@@ -1,5 +1,4 @@
-#ifndef _AWUI_IO_STREAM_H
-#define _AWUI_IO_STREAM_H
+#pragma once
 
 #include <stdint.h>
 
@@ -19,5 +18,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

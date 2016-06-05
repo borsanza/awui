@@ -1,5 +1,4 @@
-#ifndef _AWUI_IO_DIRECTORY_H
-#define _AWUI_IO_DIRECTORY_H
+#pragma once
 
 #include <awui/String.h>
 
@@ -13,5 +12,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

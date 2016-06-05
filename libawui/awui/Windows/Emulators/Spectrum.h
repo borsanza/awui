@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_EMULATORS_SPECTRUM_H
-#define _AWUI_WINDOWS_EMULATORS_SPECTRUM_H
+#pragma once
 
 #include "ArcadeContainer.h"
 
@@ -18,7 +17,6 @@ namespace awui {
 			class Spectrum : public ArcadeContainer {
 				private:
 					awui::Emulation::Spectrum::Motherboard * _motherboard;
-					int _multiply;
 					bool _canChangeControl;
 					bool _pause;
 					int _fileSlot;
@@ -54,8 +52,6 @@ namespace awui {
 
 					virtual void OnPaint(OpenGL::GL* gl);
 
-					void SetMultiply(int multiply);
-
 					virtual bool OnKeyPress(Keys::Enum key);
 					virtual bool OnKeyUp(Keys::Enum key);
 					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
@@ -68,5 +64,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

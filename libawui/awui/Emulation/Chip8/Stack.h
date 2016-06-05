@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_CHIP8_STACK_H
-#define _AWUI_EMULATION_CHIP8_STACK_H
+#pragma once
 
 #include <awui/Object.h>
 
@@ -34,5 +33,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

@@ -1,9 +1,4 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
 #pragma once
-#ifndef __AWUIPEN_H__
-#define __AWUIPEN_H__
 
 #include <awui/Object.h>
 #include <awui/Drawing/Color.h>
@@ -40,5 +35,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

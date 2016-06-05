@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_CHIP8_CPU_H
-#define _AWUI_EMULATION_CHIP8_CPU_H
+#pragma once
 
 #include <awui/Emulation/Chip8/Opcode.h>
 #include <awui/String.h>
@@ -65,5 +64,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

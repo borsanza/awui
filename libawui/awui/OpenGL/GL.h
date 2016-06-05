@@ -1,5 +1,4 @@
-#ifndef _AWUI_OPENGL_GL_H
-#define _AWUI_OPENGL_GL_H
+#pragma once
 
 #include <awui/Drawing/Rectangle.h>
 
@@ -44,5 +43,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

@@ -1,44 +1,27 @@
-#ifndef _FORMARCADE_H
-#define _FORMARCADE_H
+#pragma once
 
 #include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>
 
 namespace awui {
-	namespace Collections {
-		class ArrayList;
-	}
-
 	namespace Windows {
-		namespace Emulators {
-			class DebuggerSMS;
-		}
-
 		namespace Forms {
-			class SliderBrowser;
+			namespace Station {
+				class StationUI;
+			}
 		}
 	}
 }
 
-using namespace awui::Collections;
-using namespace awui::Windows::Forms;
-using namespace awui::Windows::Emulators;
+using namespace awui::Windows::Forms::Station;
 
 class FormArcade : public awui::Windows::Forms::Form {
 	private:
-		SliderBrowser * _slider;
-		ArrayList * _games;
-		DebuggerSMS * _debugger;
+		StationUI * _station;
 
 		void InitializeComponent();
 
 	public:
 		FormArcade();
 		virtual ~FormArcade();
-
-		void LoadRom(const awui::String file);
-
-		virtual void OnTick();
 };
-
-#endif

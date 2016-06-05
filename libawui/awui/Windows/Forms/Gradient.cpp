@@ -1,0 +1,72 @@
+/**
+ * awui/Windows/Forms/Station/Gradient.cpp
+ *
+ * Copyright (C) 2016 Borja Sánchez Zamorano
+ */
+
+#include "Gradient.h"
+
+#include <SDL2/SDL_opengl.h>
+
+using namespace awui::Drawing;
+using namespace awui::OpenGL;
+using namespace awui::Windows::Forms::Station;
+
+Gradient::Gradient() {
+	this->SetTabStop(false);
+}
+
+Gradient::~Gradient() {
+}
+
+int Gradient::IsClass(Classes::Enum objectClass) const {
+	if (objectClass == Classes::Gradient)
+		return 1;
+
+	return Control::IsClass(objectClass);
+}
+
+void Gradient::SetColor(int pos, const Drawing::ColorF color) {
+	this->_color[pos] = this->_colorGo[pos] = color;
+}
+
+void Gradient::SetColorGo(int pos, const Drawing::ColorF color) {
+	this->_colorGo[pos] = color;
+}
+
+void Gradient::OnPaint(GL* gl) {
+	ColorF * c;
+
+	glBegin(GL_QUADS);
+
+	c = &this->_color[0];
+	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
+	glVertex3f(0.0f, 0.0f, 0.0f);
+
+	c = &this->_color[1];
+	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
+	glVertex3f(this->GetWidth(), 0.0f, 0.0f);
+
+	c = &this->_color[2];
+	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
+	glVertex3f(this->GetWidth(), this->GetHeight(), 0.0f);
+
+	c = &this->_color[3];
+	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
+	glVertex3f(0.0f, this->GetHeight(), 0.0f);
+
+	glEnd();
+}
+
+awui::Drawing::ColorF Gradient::InterpolateColor(Drawing::ColorF * c1, Drawing::ColorF * c2, float percent) {
+	return ColorF::FromArgb(
+		this->Interpolate(c1->GetA(), c2->GetA(), percent),
+		this->Interpolate(c1->GetR(), c2->GetR(), percent),
+		this->Interpolate(c1->GetG(), c2->GetG(), percent),
+		this->Interpolate(c1->GetB(), c2->GetB(), percent));
+}
+
+void Gradient::OnTick() {
+	for (int i = 0; i < 4; i++)
+		this->_color[i] = this->InterpolateColor(&this->_color[i], &this->_colorGo[i], 0.02f);
+}

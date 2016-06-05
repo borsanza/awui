@@ -1,22 +1,15 @@
-#ifndef _AWUI_WINDOWS_FORMS_CONTROL_H
-#define _AWUI_WINDOWS_FORMS_CONTROL_H
+#pragma once
 
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Rectangle.h>
-#include <awui/Object.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Keys.h>
 #include <awui/Windows/Forms/MouseButtons.h>
 #include <awui/Windows/Forms/RemoteButtons.h>
 
 namespace awui {
-	namespace Collections {
-		class ArrayList;
-	}
-
 	namespace Drawing {
 		class Font;
-		class Point;
 	}
 
 	namespace OpenGL {
@@ -27,7 +20,6 @@ namespace awui {
 		namespace Forms {
 			class ControlCollection;
 			class MouseEventArgs;
-			class Form;
 
 			class Control : public Object {
 				friend class Form;
@@ -48,8 +40,14 @@ namespace awui {
 					Control * focused;
 					bool tabStop;
 					Drawing::Rectangle bounds;
-					Drawing::Size minimumSize;
 
+					float _lastWidth;
+					float _lastHeight;
+					float _lastX;
+					float _lastY;
+					Drawing::Rectangle boundsTo;
+
+					Drawing::Size minimumSize;
 					int needRefresh;
 					int refreshed;
 					bool scissorEnabled;
@@ -106,6 +104,12 @@ namespace awui {
 					const Drawing::Size GetSize() const;
 					void SetSize(int width, int height);
 					void SetSize(const Drawing::Size size);
+					inline void SetSizeGo(int w, int h) { this->boundsTo.SetSize(w, h); }
+					inline void SetLocationGo(int x, int y) { this->boundsTo.SetLocation(x, y); }
+					inline int GetLeftGo() { return this->boundsTo.GetLeft(); }
+					inline int GetRightGo() { return this->boundsTo.GetRight(); }
+					inline int GetTopGo() { return this->boundsTo.GetTop(); }
+					inline int GetBottomGo() { return this->boundsTo.GetBottom(); }
 
 					const Drawing::Rectangle GetBounds() const;
 					void SetBounds(int x, int y, int width, int height);
@@ -158,13 +162,15 @@ namespace awui {
 					void SetTabStop(bool tabStop);
 
 					void SetFocus(bool selectControl = true);
+					inline Control * GetFocused() const { return this->focused; }
 
 					Control * GetTopParent();
 
 					void GetControlsSelectables(Collections::ArrayList * list);
 					Control * GetNextControl(Control * ommitControl, Drawing::Point * pCenter, Drawing::Point * p1, Drawing::Point * p2);
+
+					float Interpolate(float from, int to, float percent);
 			};
 		}
 	}
 }
-#endif

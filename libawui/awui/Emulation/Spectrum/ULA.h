@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_SPECTRUM_ULA_H
-#define _AWUI_EMULATION_SPECTRUM_ULA_H
+#pragma once
 
 #include <stdint.h>
 
@@ -83,5 +82,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_PROCESSORS_Z80_REGISTERS_H
-#define _AWUI_EMULATION_PROCESSORS_Z80_REGISTERS_H
+#pragma once
 
 #include <awui/Emulation/Common/Word.h>
 #include <stdint.h>
@@ -168,4 +167,3 @@ namespace awui {
 		}
 	}
 }
-#endif

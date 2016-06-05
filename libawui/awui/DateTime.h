@@ -1,8 +1,4 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
-#ifndef _AWUI_DATETIME_H
-#define _AWUI_DATETIME_H
+#pragma once
 
 #include <awui/Object.h>
 
@@ -26,5 +22,3 @@ namespace awui {
 			unsigned char GetHour();
 	};
 }
-
-#endif

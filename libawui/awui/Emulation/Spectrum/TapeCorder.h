@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_SPECTRUM_TAPECORDER_H
-#define _AWUI_EMULATION_SPECTRUM_TAPECORDER_H
+#pragma once
 
 #include <awui/Object.h>
 
@@ -60,5 +59,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

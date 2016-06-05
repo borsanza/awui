@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_FORMS_SPLITCONTAINER_H
-#define _AWUI_WINDOWS_FORMS_SPLITCONTAINER_H
+#pragma once
 
 #include <awui/Windows/Forms/Control.h>
 
@@ -61,5 +60,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

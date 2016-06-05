@@ -1,15 +1,10 @@
-#ifndef _AWUI_WINDOWS_FORMS_BUTTON_H
-#define _AWUI_WINDOWS_FORMS_BUTTON_H
+#pragma once
 
 #include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
 #include <awui/Windows/Forms/Label.h>
 
 namespace awui {
-	namespace OpenGL {
-		class GL;
-	}
-
 	namespace Windows {
 		namespace Forms {
 			class Button : public Control {
@@ -32,9 +27,8 @@ namespace awui {
 					virtual void OnPaint(OpenGL::GL * gl);
 					virtual void SetForeColor(const Drawing::Color color);
 					virtual void SetFont(const Drawing::Font * font);
+					int GetLabelWidth() const;
 			};
 		}
 	}
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_EFFECTS_EFFECT_H
-#define _AWUI_EFFECTS_EFFECT_H
+#pragma once
 
 #include <awui/Object.h>
 #include <awui/String.h>
@@ -118,5 +117,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

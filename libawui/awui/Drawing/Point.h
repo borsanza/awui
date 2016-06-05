@@ -1,5 +1,4 @@
-#ifndef _AWUI_DRAWING_POINT_H
-#define _AWUI_DRAWING_POINT_H
+#pragma once
 
 namespace awui {
 	class String;
@@ -33,5 +32,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

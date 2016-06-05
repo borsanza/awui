@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_MASTERSYSTEM_PORTS_H
-#define _AWUI_EMULATION_MASTERSYSTEM_PORTS_H
+#pragma once
 
 #include <stdint.h>
 
@@ -23,5 +22,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

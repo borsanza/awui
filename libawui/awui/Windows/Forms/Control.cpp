@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Windows/Forms/Control.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano
@@ -6,13 +6,7 @@
 
 #include "Control.h"
 
-#include <awui/Collections/ArrayList.h>
-#include <awui/Console.h>
-#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
-#include <awui/Drawing/Graphics.h>
-#include <awui/Drawing/Pen.h>
-#include <awui/Drawing/Rectangle.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Bitmap.h>
@@ -22,17 +16,14 @@
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL2/SDL_opengl.h>
 
-#include <iostream>
-
-using namespace awui::Collections;
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
-using namespace awui::Windows::Forms::Statistics;
 
 Control::Control() {
 	this->tabStop = false;
 	this->bounds = Rectangle(0, 0, 100, 100);
+	this->boundsTo = this->bounds;
 	this->controls = new ControlCollection(this);
 	this->mouseEventArgs = new MouseEventArgs();
 	this->mouseControl = NULL;
@@ -107,6 +98,12 @@ void Control::SetBounds(int x, int y, int width, int height) {
 		return;
 
 	this->bounds = Rectangle(x, y, width, height);
+	this->boundsTo = this->bounds;
+	this->_lastWidth = width;
+	this->_lastHeight = height;
+	this->_lastX = x;
+	this->_lastY = y;
+
 	this->Refresh();
 	this->OnResizePre();
 }
@@ -289,14 +286,14 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 					glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, 1.0f);
 					glClear(GL_COLOR_BUFFER_BIT);
 				} else {
-					glColor3f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f);
+					glColor3ub(this->backColor.GetR(), this->backColor.GetG(), this->backColor.GetB());
 					GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
 				}
 				break;
 			case 0:
 				break;
 			default:
-				glColor4f(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, this->backColor.GetA() / 255.0f);
+				glColor4ub(this->backColor.GetR(), this->backColor.GetG(), this->backColor.GetB(), this->backColor.GetA());
 				GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
 				break;
 		}
@@ -326,7 +323,7 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 	return r;
 }
 
-float Interpolate(float from, int to, float percent) {
+float Control::Interpolate(float from, int to, float percent) {
 	if (awui::Math::Round(from) == to)
 		return from;
 
@@ -345,7 +342,7 @@ void Control::OnPaint(OpenGL::GL * gl) {
 		if (focused == control) {
 			int x1, y1, x2, y2;
 			Bitmap * bitmap = Form::GetSelectedBitmap();
-			float percent = 0.4f;
+			float percent = 0.16f;
 
 			// Esto solo lo hago porque en la inicializacion del programa
 			// no habia nada seleccionado y hay que actualizar esta variable
@@ -360,20 +357,20 @@ void Control::OnPaint(OpenGL::GL * gl) {
 
 			bitmap->GetFixedMargins(&x1, &y1, &x2, &y2);
 
-			int width = control->GetWidth() + x1 + x2;
-			int height = control->GetHeight() + y1 + y2;
+			int width = control->boundsTo.GetWidth() + x1 + x2;
+			int height = control->boundsTo.GetHeight() + y1 + y2;
 
-			lastwidth = Interpolate(lastwidth, width, percent);
-			lastheight = Interpolate(lastheight, height, percent);
+			lastwidth = this->Interpolate(lastwidth, width, percent);
+			lastheight = this->Interpolate(lastheight, height, percent);
 			width = Math::Round(lastwidth);
 			height = Math::Round(lastheight);
 
 			bitmap->SetSize(width, height);
-			int x = control->GetLeft() - x1;
-			int y = control->GetTop() - y1;
+			int x = control->boundsTo.GetLeft() - x1;
+			int y = control->boundsTo.GetTop() - y1;
 
-			lastx1 = Interpolate(lastx1, x, percent);
-			lasty1 = Interpolate(lasty1, y, percent);
+			lastx1 = this->Interpolate(lastx1, x, percent);
+			lasty1 = this->Interpolate(lasty1, y, percent);
 			x = Math::Round(lastx1);
 			y = Math::Round(lasty1);
 
@@ -518,6 +515,18 @@ bool Control::IsVisible() const {
 }
 
 void Control::OnTickPre() {
+	float percent = 0.16f;
+	_lastWidth = this->Interpolate(_lastWidth, boundsTo.GetWidth(), percent);
+	_lastHeight = this->Interpolate(_lastHeight, boundsTo.GetHeight(), percent);
+	int w = Math::Round(_lastWidth);
+	int h = Math::Round(_lastHeight);
+	_lastX = this->Interpolate(_lastX, boundsTo.GetLeft(), percent);
+	_lastY = this->Interpolate(_lastY, boundsTo.GetTop(), percent);
+	int x = Math::Round(_lastX);
+	int y = Math::Round(_lastY);
+	this->bounds.SetSize(w, h);
+	this->bounds.SetLocation(x, y);
+
 	if (this->IsVisible()) {
 		this->OnTick();
 
@@ -561,7 +570,7 @@ void Control::OnRemoteKeyPressPre(int which, RemoteButtons::Enum button) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnRemoteKeyPressPre(which, button);
+		this->focused->OnRemoteKeyPressPre(which, button);
 }
 
 void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
@@ -573,7 +582,7 @@ void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnRemoteKeyUpPre(which, button);
+		this->focused->OnRemoteKeyUpPre(which, button);
 }
 
 void Control::OnKeyPressPre(Keys::Enum key) {
@@ -585,7 +594,7 @@ void Control::OnKeyPressPre(Keys::Enum key) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnKeyPressPre(key);
+		this->focused->OnKeyPressPre(key);
 }
 
 void Control::OnKeyUpPre(Keys::Enum key) {
@@ -597,7 +606,7 @@ void Control::OnKeyUpPre(Keys::Enum key) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (this->focused)
-		focused->OnKeyUpPre(key);
+		this->focused->OnKeyUpPre(key);
 }
 
 void Control::SetFocus(bool selectControl) {

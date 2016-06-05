@@ -1,5 +1,4 @@
-#ifndef __AWUIOBJECT_H__
-#define __AWUIOBJECT_H__
+#pragma once
 
 namespace awui {
 	class String;
@@ -15,6 +14,7 @@ namespace awui {
 			Label,
 			Keyboard,
 			Color,
+			ColorF,
 			Control,
 			ControlCollection,
 			Form,
@@ -31,6 +31,8 @@ namespace awui {
 			MasterSystem,
 			DebuggerSMS,
 			Spectrum,
+			Gradient,
+			MenuButton,
 		};
 	};
 
@@ -44,5 +46,3 @@ namespace awui {
 			virtual String ToString();
 	};
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_CONVERT_H
-#define _AWUI_CONVERT_H
+#pragma once
 
 #include <awui/Object.h>
 
@@ -13,5 +12,3 @@ namespace awui {
 			static String ToString(char value);
 	};
 }
-
-#endif

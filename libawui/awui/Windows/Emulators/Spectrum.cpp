@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Windows/Emulators/Spectrum.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
@@ -45,8 +45,7 @@ Spectrum::Spectrum() {
 	this->_motherboard->SetWriteCassetteCB(WriteCassetteCB, this);
 	this->_motherboard->SetReadCassetteCB(ReadCassetteCB, this);
 
-	this->SetTabStop(true);
-	this->_multiply = 1;
+	this->SetTabStop(false);
 	this->_canChangeControl = true;
 	this->_pause = false;
 
@@ -70,10 +69,8 @@ int Spectrum::IsClass(Classes::Enum objectClass) const {
 }
 
 void Spectrum::LoadRom(const String file) {
-	if (file.EndsWith(".rom")) {
+	if (file.EndsWith(".rom"))
 		this->_motherboard->LoadRom(file);
-		this->SetName(file);
-	}
 
 	if (file.EndsWith(".tap")) {
 		String rom = "roms/zxspectrum/48.rom";
@@ -88,9 +85,6 @@ void Spectrum::LoadRom(const String file) {
 
 			if (found == i)
 				system = String::Concat(*name, ".rom");
-
-			if (i == list.GetCount() -1)
-				this->SetName(*name);
 
 			delete name;
 		}
@@ -132,17 +126,30 @@ Motherboard * Spectrum::GetCPU() {
 void Spectrum::OnPaint(GL* gl) {
 	ULA * ula = this->_motherboard->GetULA();
 
-	int width = ula->GetImage()->GetWidth() * this->_multiply;
-	int height = ula->GetImage()->GetHeight() * this->_multiply;
+	int width = ula->GetImage()->GetWidth();
+	int height = ula->GetImage()->GetHeight();
 
-	if ((this->GetWidth() != width) || (this->GetHeight() != height))
-		this->SetSize(width, height);
 
-	GL::DrawImageGL(ula->GetImage(), 0, 0, this->GetWidth(), this->GetHeight());
-}
+	//GL::DrawImageGL(ula->GetImage(), 0, 0, this->GetWidth(), this->GetHeight());
 
-void Spectrum::SetMultiply(int multiply) {
-	this->_multiply = multiply;
+	float w = width;
+	float h = height;
+	float ratio = w / h;
+	w = this->GetWidth();
+	h = this->GetWidth() / ratio;
+
+	if (h > this->GetHeight()) {
+		h = this->GetHeight();
+		w = this->GetHeight() * ratio;
+	}
+
+	int ratio2 = w / width;
+	if (ratio2 >= 1) {
+		w = width * ratio2;
+		h = height * ratio2;
+	}
+
+	GL::DrawImageGL(ula->GetImage(), int(this->GetWidth() - w) >> 1, int(this->GetHeight() - h) >> 1, w, h);
 }
 
 void Spectrum::CallKey(int key, bool pressed) {

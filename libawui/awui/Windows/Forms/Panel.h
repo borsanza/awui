@@ -1,9 +1,4 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
 #pragma once
-#ifndef __AWUIPANEL_H__
-#define __AWUIPANEL_H__
 
 #include <awui/Windows/Forms/Control.h>
 
@@ -22,5 +17,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_FORMS_APPLICATION_H
-#define _AWUI_WINDOWS_FORMS_APPLICATION_H
+#pragma once
 
 #include <awui/Object.h>
 
@@ -25,5 +24,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

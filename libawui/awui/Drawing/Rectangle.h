@@ -1,5 +1,4 @@
-#ifndef _AWUI_DRAWING_RECTANGLE_H
-#define _AWUI_DRAWING_RECTANGLE_H
+#pragma once
 
 #include <awui/Drawing/Point.h>
 #include <awui/Drawing/Size.h>
@@ -18,10 +17,10 @@ namespace awui {
 				Rectangle(const Point location, const Size size);
 				Rectangle(int x, int y, int width, int height);
 
-				int GetWidth() const;
+				inline int GetWidth() const { return this->size.GetWidth(); }
 				void SetWidth(int width);
 
-				int GetHeight() const;
+				inline int GetHeight() const { return this->size.GetHeight(); }
 				void SetHeight(int height);
 
 				inline int GetX() const { return this->location.GetX(); }
@@ -35,10 +34,12 @@ namespace awui {
 				int GetRight() const;
 				inline int GetTop() const { return this->location.GetY(); }
 				Point GetLocation() const;
+
 				Size GetSize() const;
 				void SetLocation(const Point location);
 				void SetLocation(int x, int y) { this->SetLocation(Point(x, y)); }
 				void SetSize(const Size size);
+				void SetSize(int width, int height);
 
 				void Inflate(const Size size);
 				void Inflate(int width, int height);
@@ -56,5 +57,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

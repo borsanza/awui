@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_COMMON_ROM_H
-#define _AWUI_EMULATION_COMMON_ROM_H
+#pragma once
 
 #include <awui/String.h>
 #include <awui/IO/MemoryStream.h>
@@ -29,5 +28,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

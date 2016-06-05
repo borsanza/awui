@@ -6,5 +6,5 @@ my_dir="$(dirname "$0")"
 make clean
 rm CMakeCache.txt
 cmake -G "$EDITOR" -DCMAKE_BUILD_TYPE=Debug .
-make -j8
+make -j$CORES
 

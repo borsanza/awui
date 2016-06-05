@@ -1,8 +1,6 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+#pragma once
 
 #include <awui/Windows/Forms/Control.h>
-
 #include <awui/Windows/Forms/SplitContainer.h>
 
 namespace awui {

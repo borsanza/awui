@@ -1,18 +1,12 @@
-#ifndef _AWUI_WINDOWS_FORMS_LABEL_H
-#define _AWUI_WINDOWS_FORMS_LABEL_H
+#pragma once
 
 #include <awui/Drawing/GlyphMetrics.h>
-#include <awui/String.h>
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui {
 	namespace Drawing {
 		class Graphics;
 		class Image;
-	}
-
-	namespace OpenGL {
-		class GL;
 	}
 
 	namespace Windows {
@@ -40,15 +34,16 @@ namespace awui {
 					const Drawing::ContentAlignment::Enum GetTextAlign();
 					void SetTextAlign(Drawing::ContentAlignment::Enum textAlign);
 
+					void Draw(int x, int y, int width, int height);
 					virtual void OnPaint(OpenGL::GL * gl);
 
 					void DrawLines(int x, int y);
 
 					virtual void SetForeColor(const Drawing::Color color);
 					virtual void SetFont(const Drawing::Font * font);
+
+					int GetLabelWidth() const;
 			};
 		}
 	}
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_FORMS_KEYBOARD_H
-#define _AWUI_WINDOWS_FORMS_KEYBOARD_H
+#pragma once
 
 #include <awui/Windows/Forms/Control.h>
 
@@ -16,5 +15,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

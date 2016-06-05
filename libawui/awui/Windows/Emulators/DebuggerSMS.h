@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_EMULATORS_DEBUGGERSMS_H
-#define _AWUI_WINDOWS_EMULATORS_DEBUGGERSMS_H
+#pragma once
 
 #include <awui/Windows/Forms/Button.h>
 
@@ -39,5 +38,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

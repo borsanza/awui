@@ -1,5 +1,4 @@
-#ifndef _AWUI_RANDOM_H
-#define _AWUI_RANDOM_H
+#pragma once
 
 namespace awui {
 	class Random {
@@ -18,5 +17,3 @@ namespace awui {
 			int NextByte();
 	};
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_EMULATORS_CHIP8_H
-#define _AWUI_WINDOWS_EMULATORS_CHIP8_H
+#pragma once
 
 #include "ArcadeContainer.h"
 
@@ -21,7 +20,6 @@ namespace awui {
 					bool _invertedColors;
 
 					int ConvertKeyAwToChip8(Keys::Enum key);
-					void AdjustSizeOfChip8();
 
 				public:
 					Chip8();
@@ -43,5 +41,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

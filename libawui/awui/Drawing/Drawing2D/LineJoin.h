@@ -1,9 +1,4 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
 #pragma once
-#ifndef __AWUILINEJOIN_H__
-#define __AWUILINEJOIN_H__
 
 namespace awui {
 	namespace Drawing {
@@ -18,5 +13,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

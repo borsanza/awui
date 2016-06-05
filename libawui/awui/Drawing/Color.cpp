@@ -1,5 +1,8 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
+/**
+ * awui/Drawing/Color.cpp
+ *
+ * Copyright (C) 2013 Borja Sánchez Zamorano
+ */
 
 #include "Color.h"
 
@@ -142,4 +145,8 @@ Color & Color::operator=(const Color & other) {
 	this->a = other.a;
 
 	return *this;
+}
+
+bool Color::operator !=(const Color &b) const {
+	return ((this->r != b.r) || (this->g != b.g) || (this->b != b.b) || (this->a != b.a));
 }

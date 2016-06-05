@@ -28,16 +28,8 @@ Rectangle::Rectangle(int x, int y, int width, int height) {
 	this->size = Size(width, height);
 }
 
-int Rectangle::GetWidth() const {
-	return this->size.GetWidth();
-}
-
 void Rectangle::SetWidth(int width) {
 	this->size.SetWidth(width);
-}
-
-int Rectangle::GetHeight() const {
-	return this->size.GetHeight();
 }
 
 void Rectangle::SetHeight(int height) {
@@ -74,6 +66,10 @@ void Rectangle::SetLocation(Point location) {
 
 void Rectangle::SetSize(Size size) {
 	this->size = size;
+}
+
+void Rectangle::SetSize(int width, int height) {
+	this->size = Size(width, height);
 }
 
 void Rectangle::Inflate(Size size) {

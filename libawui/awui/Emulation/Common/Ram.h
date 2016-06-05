@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_COMMON_RAM_H
-#define _AWUI_EMULATION_COMMON_RAM_H
+#pragma once
 
 #include <stdint.h>
 #include <assert.h>
@@ -25,5 +24,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

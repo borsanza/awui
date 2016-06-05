@@ -1,9 +1,4 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
 #pragma once
-#ifndef __AWUITIMESPAN_H__
-#define __AWUITIMESPAN_H__
 
 #include <awui/Object.h>
 
@@ -48,5 +43,3 @@ namespace awui {
 			TimeSpan & operator= (const TimeSpan & other);
 	};
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_CHIP8_SCREEN_H
-#define _AWUI_EMULATION_CHIP8_SCREEN_H
+#pragma once
 
 #include <stdint.h>
 
@@ -33,5 +32,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

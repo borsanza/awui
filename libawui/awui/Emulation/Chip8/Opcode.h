@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_CHIP8_OPCODE_H
-#define _AWUI_EMULATION_CHIP8_OPCODE_H
+#pragma once
 
 #include <stdint.h>
 
@@ -101,5 +100,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

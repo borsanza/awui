@@ -1,5 +1,4 @@
-#ifndef _AWUI_COLLECTIONS_ARRAYLIST_H
-#define _AWUI_COLLECTIONS_ARRAYLIST_H
+#pragma once
 
 #include <awui/Object.h>
 
@@ -31,5 +30,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

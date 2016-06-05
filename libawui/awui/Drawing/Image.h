@@ -1,5 +1,4 @@
-#ifndef _AWUI_DRAWING_IMAGE_H
-#define _AWUI_DRAWING_IMAGE_H
+#pragma once
 
 #include <awui/Object.h>
 #include <stdint.h>
@@ -43,5 +42,3 @@ namespace awui {
 		};
 	}
 }
-
-#endif

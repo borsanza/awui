@@ -1,5 +1,4 @@
-#ifndef _AWUI_EMULATION_PROCESSORS_Z80_CPUINST_H
-#define _AWUI_EMULATION_PROCESSORS_Z80_CPUINST_H
+#pragma once
 
 #include <awui/Emulation/Processors/Z80/Opcode.h>
 #include <awui/Emulation/Processors/Z80/Registers.h>
@@ -215,5 +214,3 @@ namespace awui {
 		}
 	}
 }
-
-#endif

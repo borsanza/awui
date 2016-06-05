@@ -1,5 +1,4 @@
-#ifndef _AWUI_STRING_H
-#define _AWUI_STRING_H
+#pragma once
 
 #include <string>
 #include <awui/Object.h>
@@ -22,6 +21,7 @@ namespace awui {
 
 			static int Compare(String strA, String strB);
 			int IndexOf(String value, int startIndex = 0) const;
+			int LastIndexOf(String value) const;
 			int CompareTo(String strB) const;
 			bool EndsWith(String value) const;
 
@@ -51,5 +51,3 @@ namespace awui {
 			virtual String ToString();
 	};
 }
-
-#endif

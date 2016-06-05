@@ -1,5 +1,4 @@
-#ifndef _AWUI_WINDOWS_FORMS_REMOTEBUTTONS_H
-#define _AWUI_WINDOWS_FORMS_REMOTEBUTTONS_H
+#pragma once
 
 namespace awui {
 	namespace Windows {
@@ -30,7 +29,7 @@ namespace awui {
 					SNES_Y = 0x0010,
 					SNES_L = 0x0400,
 					SNES_R = 0x0800,
-					
+
 /*
 Select+Start              Exit
 Select+X                  RGUI Menu
@@ -51,5 +50,3 @@ Select+X                  RGUI Menu
 		}
 	}
 }
-
-#endif

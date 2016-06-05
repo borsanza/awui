@@ -1,9 +1,4 @@
-// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
-// feedback: borsanza AT gmail DOT com
-
 #pragma once
-#ifndef __AWUICOLOR_H__
-#define __AWUICOLOR_H__
 
 #include <awui/Object.h>
 
@@ -34,8 +29,8 @@ namespace awui {
 				static Color FromArgb(int alpha, int red, int green, int blue);
 
 				Color & operator= (const Color & other);
+
+				bool operator !=(const Color &b) const;
 		};
 	}
 }
-
-#endif

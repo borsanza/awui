@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Emulation/Spectrum/SoundSDL.cpp
  *
  * Copyright (C) 2016 Borja Sánchez Zamorano
