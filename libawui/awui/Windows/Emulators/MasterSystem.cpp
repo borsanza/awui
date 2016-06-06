@@ -30,6 +30,7 @@ MasterSystem::MasterSystem() {
 	this->_last = -1;
 	this->_actual = -1;
 	this->_lastTick = 0;
+	this->_debugger = NULL;
 
 	for (int i = 0; i < TOTALSAVED; i++)
 		this->_savedData[i] = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
@@ -276,7 +277,7 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 		screen->Clear();;
 	}
 
-	if (key == Keys::Key_D)
+	if ((this->_debugger) && (key == Keys::Key_D))
 		this->_debugger->SetShow(!this->_debugger->GetShow());
 
 	if (key == Keys::Key_BACKSPACE)
@@ -368,7 +369,7 @@ bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		}
 	}
 
-	if (button & RemoteButtons::Button4)
+	if (this->_debugger && (button & RemoteButtons::Button4))
 		this->_debugger->SetShow(!this->_debugger->GetShow());
 
 	return true;
