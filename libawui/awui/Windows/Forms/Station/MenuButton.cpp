@@ -62,10 +62,14 @@ void MenuButton::OnMouseMove(MouseEventArgs* e) {
 }
 
 void MenuButton::OnPaint(GL* gl) {
-	if (Form::GetControlSelected() == this)
-		this->SetForeColor(Color::FromArgb(255, 255, 255));
-	else
-		this->SetForeColor(Color::FromArgb(199, 199, 199));
+	if (this->_node->_directory) {
+		this->SetForeColor(Color::FromArgb(138, 226, 52));
+	} else {
+		if (Form::GetControlSelected() == this)
+			this->SetForeColor(Color::FromArgb(255, 255, 255));
+		else
+			this->SetForeColor(Color::FromArgb(199, 199, 199));
+	}
 
 	this->_label.Draw(23, 0, this->GetWidth() - 32, this->GetHeight());
 }
