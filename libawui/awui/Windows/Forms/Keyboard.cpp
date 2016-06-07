@@ -27,7 +27,7 @@ Keyboard::Keyboard() {
 			button->SetDock(DockStyle::None);
 			button->SetLocation(30 + j * 70, 30 + i * 55);
 			button->SetSize(50, 50);
-			button->SetFont(&font);
+			button->SetFont(font);
 			button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 			button->SetForeColor(Color::FromArgb(255, 255, 255));
 			char frase[2];
@@ -45,7 +45,7 @@ Keyboard::Keyboard() {
 	button->SetDock(DockStyle::None);
 	button->SetLocation(30, 360);
 	button->SetSize(120, 50);
-	button->SetFont(&font);
+	button->SetFont(font);
 	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	button->SetForeColor(Color::FromArgb(255, 255, 255));
 	button->SetText("SPACE");
@@ -55,7 +55,7 @@ Keyboard::Keyboard() {
 	button->SetDock(DockStyle::None);
 	button->SetLocation(170, 360);
 	button->SetSize(120, 50);
-	button->SetFont(&font);
+	button->SetFont(font);
 	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	button->SetForeColor(Color::FromArgb(255, 255, 255));
 	button->SetText("DELETE");
@@ -65,7 +65,7 @@ Keyboard::Keyboard() {
 	button->SetDock(DockStyle::None);
 	button->SetLocation(310, 360);
 	button->SetSize(120, 50);
-	button->SetFont(&font);
+	button->SetFont(font);
 	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	button->SetForeColor(Color::FromArgb(255, 255, 255));
 	button->SetText("CLEAR");

@@ -65,7 +65,7 @@ void Button::SetForeColor(const Drawing::Color color) {
 	this->label.SetForeColor(this->GetForeColor());
 }
 
-void Button::SetFont(const Drawing::Font * font) {
+void Button::SetFont(const Drawing::Font font) {
 	Control::SetFont(font);
 	this->label.SetFont(font);
 }

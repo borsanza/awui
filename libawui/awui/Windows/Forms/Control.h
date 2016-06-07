@@ -131,7 +131,7 @@ namespace awui {
 					virtual void SetForeColor(const Drawing::Color color);
 
 					Drawing::Font * GetFont();
-					virtual void SetFont(const Drawing::Font * font);
+					virtual void SetFont(const Drawing::Font font);
 
 					void Refresh();
 

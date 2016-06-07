@@ -1,5 +1,6 @@
 #pragma once
 
+#include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Label.h>
 
 namespace awui {
@@ -29,7 +30,7 @@ namespace awui {
 						virtual void OnMouseMove(MouseEventArgs* e);
 						virtual void OnPaint(OpenGL::GL* gl);
 						virtual void SetForeColor(const Drawing::Color color);
-						virtual void SetFont(const Drawing::Font * font);
+						virtual void SetFont(const Drawing::Font font);
 						int GetLabelWidth() const;
 						virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 

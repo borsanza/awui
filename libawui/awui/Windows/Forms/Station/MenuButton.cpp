@@ -89,7 +89,7 @@ void MenuButton::SetForeColor(const Drawing::Color color) {
 	}
 }
 
-void MenuButton::SetFont(const Drawing::Font * font) {
+void MenuButton::SetFont(const Drawing::Font font) {
 	Control::SetFont(font);
 	this->_label.SetFont(font);
 }

@@ -40,7 +40,7 @@ namespace awui {
 					void DrawLines(int x, int y);
 
 					virtual void SetForeColor(const Drawing::Color color);
-					virtual void SetFont(const Drawing::Font * font);
+					virtual void SetFont(const Drawing::Font font);
 
 					int GetLabelWidth() const;
 			};

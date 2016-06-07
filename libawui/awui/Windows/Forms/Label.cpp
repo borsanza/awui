@@ -150,7 +150,7 @@ void Label::SetForeColor(const Drawing::Color color) {
 	this->UpdateBufferText();
 }
 
-void Label::SetFont(const Drawing::Font * font) {
+void Label::SetFont(const Drawing::Font font) {
 	Control::SetFont(font);
 	this->UpdateBufferText();
 }

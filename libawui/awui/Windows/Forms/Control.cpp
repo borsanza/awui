@@ -542,8 +542,8 @@ awui::Drawing::Font * Control::GetFont() {
 	return this->font;
 }
 
-void Control::SetFont(const Drawing::Font * font) {
-	*this->font = *font;
+void Control::SetFont(const Drawing::Font font) {
+	*this->font = font;
 }
 
 void Control::SetScissorEnabled(bool mode) {

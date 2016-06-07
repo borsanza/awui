@@ -36,7 +36,7 @@ StationUI::StationUI() {
 	this->_title = new Label();
 	this->_title->SetText("StationTV");
 	this->_title->SetTextAlign(ContentAlignment::BottomCenter);
-	this->_title->SetFont(new Font("Liberation Sans", 38, FontStyle::Bold));
+	this->_title->SetFont(Font("Liberation Sans", 38, FontStyle::Bold));
 	this->_title->SetDock(DockStyle::None);
 
 	this->_browser = new Browser::Browser();
@@ -84,7 +84,7 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 
 			child->_button = new MenuButton(this);
 			child->_button->SetNodeFile(child);
-			child->_button->SetFont(new Font("Liberation Sans", 28, FontStyle::Bold));
+			child->_button->SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 			child->_button->SetDock(DockStyle::None);
 			String name = child->_name;
 			name = name.Substring(0, name.LastIndexOf("."));
