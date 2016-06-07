@@ -17,6 +17,7 @@ syntax: glob
 callgrind.out.*
 */Debug/*
 *.layout
+*.deb
 *.vcproj
 *.sln
 *.ncb
