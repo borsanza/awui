@@ -37,9 +37,10 @@ namespace awui {
 
 				class NodeFile : public awui::Object {
 					public:
-						NodeFile * _parent;
+						String _key;
 						String _name;
 						String _path;
+						NodeFile * _parent;
 						bool _directory;
 						SortedList * _childList;
 						int _emulator;
