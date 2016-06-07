@@ -5,8 +5,8 @@ CMakeCache.txt
 libaw/libaw.a
 libawui/libawui.so
 libawui/libawui_static.a
-samples/awArcade/stationTV
-samples/awArcade/ubuntu/StationTV/usr/local/bin/stationTV
+samples/stationTV/stationTV
+samples/stationTV/ubuntu/StationTV/usr/local/bin/stationTV
 samples/awSlider/awSlider
 samples/awTest/awTest
 samples/awuiDemo/awuiDemo
