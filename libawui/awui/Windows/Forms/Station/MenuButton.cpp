@@ -63,7 +63,7 @@ void MenuButton::OnMouseMove(MouseEventArgs* e) {
 
 void MenuButton::OnPaint(GL* gl) {
 	if (this->_node->_directory) {
-		this->SetForeColor(Color::FromArgb(138, 226, 52));
+		this->SetForeColor(Color::FromArgb(114, 159, 207));
 	} else {
 		if (Form::GetControlSelected() == this)
 			this->SetForeColor(Color::FromArgb(255, 255, 255));
