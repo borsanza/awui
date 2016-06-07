@@ -44,35 +44,31 @@ void SortedList::Add(Object * key, Object * value) {
 		return;
 	}
 
-	SortedListItem * itemListAux = this->first;
-
-	bool change = false;
 	// Para acelerar inserciones, miramos si lo podemos insertar en ultima posicion
 	// Este algoritmo es super optimizable, pero para salir del paso lo dejo asi
-	if (!(this->last->key->ToString() > key->ToString())) {
-		itemListAux = this->last;
-	} else {
-		while (itemListAux->next != NULL) {
-			if (itemListAux->key->ToString() > key->ToString()) {
-				change = true;
-				break;
-			}
-
-			itemListAux = itemListAux->next;
-		}
-	}
-
-	if (change) {
-		itemList->key = itemListAux->key;
-		itemList->value = itemListAux->value;
-		itemListAux->key = key;
-		itemListAux->value = value;
-	} else {
+	if (key->ToString() >= this->last->key->ToString()) {
+		this->last->next = itemList;
 		this->last = itemList;
+		return;
 	}
+
+	SortedListItem * itemListAux = this->first;
+	while (itemListAux->next != NULL) {
+		if (key->ToString() < itemListAux->key->ToString())
+			break;
+
+		itemListAux = itemListAux->next;
+	}
+
+	itemList->key = itemListAux->key;
+	itemList->value = itemListAux->value;
+	itemListAux->key = key;
+	itemListAux->value = value;
 
 	itemList->next = itemListAux->next;
 	itemListAux->next = itemList;
+
+	while (this->last->next) this->last = this->last->next;
 }
 
 int SortedList::GetCount() {

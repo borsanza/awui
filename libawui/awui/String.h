@@ -28,7 +28,9 @@ namespace awui {
 			bool operator==(String value);
 			bool operator!=(String value);
 			bool operator>(String value);
+			bool operator>=(String value);
 			bool operator<(String value);
+			bool operator<=(String value);
 			String operator+(String strB);
 			void operator+=(String strB);
 			String operator+(Object *value);

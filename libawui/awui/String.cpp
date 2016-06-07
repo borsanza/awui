@@ -43,19 +43,27 @@ bool String::EndsWith(String value) const {
 }
 
 bool String::operator==(String value) {
-	return (String::Compare(*this, value) == 0);
+	return (this->CompareTo(value) == 0);
 }
 
 bool String::operator!=(String value) {
-	return (String::Compare(*this, value) != 0);
+	return (this->CompareTo(value) != 0);
 }
 
 bool String::operator>(String value) {
-	return (String::Compare(*this, value) > 0);
+	return (this->CompareTo(value) > 0);
+}
+
+bool String::operator>=(String value) {
+	return (this->CompareTo(value) >= 0);
 }
 
 bool String::operator<(String value) {
-	return (String::Compare(*this, value) < 0);
+	return (this->CompareTo(value) < 0);
+}
+
+bool String::operator<=(String value) {
+	return (this->CompareTo(value) <= 0);
 }
 
 String String::operator+(String strB) {
