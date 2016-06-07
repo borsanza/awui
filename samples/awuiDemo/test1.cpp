@@ -71,7 +71,7 @@ void Test1::AddButtonEffect(Effect * effect, Control * control, int posy) {
 		button->SetSize(150, 52);
 		button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 		button->SetForeColor(Color::FromArgb(255, 255, 255));
-		button->SetFont(new Font("Monospace", 20, FontStyle::Bold));
+		button->SetFont(Font("Monospace", 20, FontStyle::Bold));
 		button->SetTop(y);
 		control->GetControls()->Add(button);
 

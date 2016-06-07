@@ -47,7 +47,7 @@ void FormTest::InitializeComponent() {
 	buttonL->SetLocation(500, 50);
 	buttonL->SetSize(Size(200, 48));
 	buttonL->SetText("SILVIA");
-	buttonL->SetFont(&font);
+	buttonL->SetFont(font);
 	this->GetControls()->Add(buttonL);
 
 	this->SetSize(460, 460);
