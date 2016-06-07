@@ -1,5 +1,5 @@
 /**
- * samples/awArcade/awArcade.cpp
+ * samples/stationTV/stationTV.cpp
  *
  * Copyright (C) 2014 Borja Sánchez Zamorano
  */
