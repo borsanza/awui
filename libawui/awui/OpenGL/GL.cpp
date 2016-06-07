@@ -1,4 +1,4 @@
-/*
+/**
  * awui/OpenGL/GL.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano

@@ -10,9 +10,17 @@ namespace awui {
 				class NodeFile;
 				class StationUI;
 
+				class LabelButton : public Label {
+					public:
+						LabelButton();
+						virtual ~LabelButton();
+
+						virtual void OnMouseDown(MouseEventArgs* e);
+				};
+
 				class MenuButton : public Control {
 					private:
-						Label _label;
+						LabelButton _label;
 						NodeFile * _node;
 						StationUI * _station;
 
@@ -27,7 +35,6 @@ namespace awui {
 
 						virtual void OnMouseLeave();
 						virtual void OnMouseDown(MouseEventArgs* e);
-						virtual void OnMouseMove(MouseEventArgs* e);
 						virtual void OnPaint(OpenGL::GL* gl);
 						virtual void SetForeColor(const Drawing::Color color);
 						virtual void SetFont(const Drawing::Font font);
@@ -37,6 +44,8 @@ namespace awui {
 						void SetNodeFile(NodeFile * node);
 
 						void CheckArcade();
+
+						virtual void OnResize();
 				};
 			}
 		}
