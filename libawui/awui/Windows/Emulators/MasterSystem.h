@@ -38,7 +38,7 @@ namespace awui {
 					virtual ~MasterSystem();
 
 					virtual int IsClass(Classes::Enum objectClass) const;
-					virtual int GetType() const { return 2;}
+					virtual int GetType() const { return Types::MasterSystem;}
 
 					void LoadRom(const String file);
 

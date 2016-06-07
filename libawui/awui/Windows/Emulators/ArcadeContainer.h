@@ -15,6 +15,16 @@ namespace awui {
 		using namespace awui::Windows::Forms::Station;
 
 		namespace Emulators {
+			struct Types {
+				enum Enum {
+					Undefined = 0,
+					Chip8,
+					MasterSystem,
+					GameGear,
+					Spectrum,
+				};
+			};
+
 			class DebuggerSMS;
 			class ArcadeContainer : public Button {
 				protected:

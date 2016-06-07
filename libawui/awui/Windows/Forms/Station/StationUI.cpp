@@ -22,6 +22,7 @@
 
 using namespace awui::Drawing;
 using namespace awui::Effects;
+using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
 
@@ -89,24 +90,24 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 			name = name.Substring(0, name.LastIndexOf("."));
 			child->_button->SetText(name);
 
-			if (parent->_emulator == 0) {
+			if (parent->_emulator == Types::Undefined) {
 				if (child->_name == "chip8") {
-					child->_emulator = 1;
+					child->_emulator = Types::Chip8;
 					child->_button->SetText("CHIP-8");
 				}
 
 				if (child->_name == "gamegear") {
-					child->_emulator = 2;
+					child->_emulator = Types::GameGear;
 					child->_button->SetText("Game Gear");
 				}
 
 				if (child->_name == "mastersystem") {
-					child->_emulator = 3;
+					child->_emulator = Types::MasterSystem;
 					child->_button->SetText("Master System");
 				}
 
 				if (child->_name == "zxspectrum") {
-					child->_emulator = 4;
+					child->_emulator = Types::Spectrum;
 					child->_button->SetText("ZX Spectrum");
 				}
 			} else {
@@ -150,16 +151,16 @@ bool StationUI::Minimize(NodeFile * parent) {
 					continue;
 			} else {
 				switch (child->_emulator) {
-					case 1:
+					case Types::Chip8:
 						if (child->_path.EndsWith("ch8")) continue;
 						if (child->_path.EndsWith("c8x")) continue;
 						break;
-					case 2:
-					case 3:
+					case Types::GameGear:
+					case Types::MasterSystem:
 						if (child->_path.EndsWith("sms")) continue;
 						if (child->_path.EndsWith("sg")) continue;
 						break;
-					case 4:
+					case Types::Spectrum:
 						if (child->_path.EndsWith("rom")) continue;
 						if (child->_path.EndsWith("tap")) continue;
 						break;
@@ -180,7 +181,7 @@ void StationUI::Refresh() {
 	this->_root = new NodeFile();
 	this->_actual = this->_root;
 	this->_root->_path = this->_path;
-	this->_root->_emulator = 0;
+	this->_root->_emulator = Types::Undefined;
 	this->RecursiveSearch(this->_root);
 	while (this->Minimize(this->_root));
 
@@ -334,6 +335,20 @@ void StationUI::ExitArcade() {
 	this->GetControls()->Remove(&this->_fade);
 }
 
+bool StationUI::OnKeyPress(Keys::Enum key) {
+	if (this->_arcade && (this->_arcade->GetType() == Types::Chip8))
+		return this->_arcade->OnKeyPress(key);
+
+	return Control::OnKeyPress(key);
+}
+
+bool StationUI::OnKeyUp(Keys::Enum key) {
+	if (this->_arcade && (this->_arcade->GetType() == Types::Chip8))
+		return this->_arcade->OnKeyUp(key);
+
+	return Control::OnKeyUp(key);
+}
+
 /********************************* FadePanel **********************************/
 
 FadePanel::FadePanel() {
@@ -378,7 +393,7 @@ NodeFile::NodeFile() {
 	this->_parent = 0;
 	this->_childList = 0;
 	this->_directory = true;
-	this->_emulator = 0;
+	this->_emulator = Types::Undefined;
 	this->_button = NULL;
 	this->_page = NULL;
 	this->_arcade = NULL;

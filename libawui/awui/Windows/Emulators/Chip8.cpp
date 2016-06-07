@@ -15,10 +15,12 @@ using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 
+bool Chip8::_invertedColors = false;
+
 Chip8::Chip8() {
 	this->_image = new Drawing::Image(64, 32);
 	this->_cpu = new CPU();
-	this->_invertedColors = false;
+	this->_lastInverted = Chip8::_invertedColors;
 }
 
 Chip8::~Chip8() {
@@ -36,7 +38,7 @@ void Chip8::CheckBackcolor() {
 	if (this->_cpu->GetChip8Mode() == MEGACHIP8)
 		this->SetBackColor(Color::FromArgb(0, 0, 0));
 	else {
-		if (!this->_invertedColors)
+		if (!Chip8::_invertedColors)
 			this->SetBackColor(Color::FromArgb(163, 218, 2));
 		else
 			this->SetBackColor(Color::FromArgb(0, 0, 0));
@@ -52,48 +54,58 @@ void Chip8::LoadRom(const String file) {
 }
 
 void Chip8::OnTick() {
+	if (this->_lastInverted != Chip8::_invertedColors) {
+		this->UpdateImage();
+		this->_lastInverted = Chip8::_invertedColors;
+	}
+
 	this->_cpu->OnTick();
+}
+
+void Chip8::UpdateImage() {
+	Screen * screen = this->_cpu->GetScreen();
+
+	this->CheckBackcolor();
+
+	if ((screen->GetWidth() != this->_image->GetWidth()) || (screen->GetHeight() != this->_image->GetHeight())) {
+		delete this->_image;
+		this->_image = new Drawing::Image(screen->GetWidth(), screen->GetHeight());
+	}
+
+	if (this->_cpu->GetChip8Mode() == MEGACHIP8) {
+		for (int y = 0; y < screen->GetHeight(); y++) {
+			for (int x = 0; x < screen->GetWidth(); x++) {
+				uint32_t pixel = screen->GetPixel(x, y);
+				this->_image->SetPixel(x, y, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF, 255);
+			}
+		}
+	} else {
+		for (int y = 0; y < screen->GetHeight(); y++) {
+			for (int x = 0; x < screen->GetWidth(); x++) {
+				if (!Chip8::_invertedColors) {
+					if (screen->GetPixel(x, y))
+						this->_image->SetPixel(x, y, 50, 88, 4, 255);
+					else
+						this->_image->SetPixel(x, y, 128, 185, 0, 255);
+				} else {
+					if (screen->GetPixel(x, y))
+						this->_image->SetPixel(x, y, 255, 255, 255, 255);
+					else
+						this->_image->SetPixel(x, y, 0, 0, 0, 255);
+				}
+			}
+		}
+	}
+
+	this->_image->Update();
+	this->_cpu->SetImageUpdated(false);
 }
 
 void Chip8::OnPaint(GL* gl) {
 	Screen * screen = this->_cpu->GetScreen();
 
-	if (this->_cpu->GetImageUpdated()) {
-		this->CheckBackcolor();
-
-		if ((screen->GetWidth() != this->_image->GetWidth()) || (screen->GetHeight() != this->_image->GetHeight())) {
-			delete this->_image;
-			this->_image = new Drawing::Image(screen->GetWidth(), screen->GetHeight());
-		}
-
-		if (this->_cpu->GetChip8Mode() == MEGACHIP8) {
-			for (int y = 0; y < screen->GetHeight(); y++) {
-				for (int x = 0; x < screen->GetWidth(); x++) {
-					uint32_t pixel = screen->GetPixel(x, y);
-					this->_image->SetPixel(x, y, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF, 255);
-				}
-			}
-		} else {
-			for (int y = 0; y < screen->GetHeight(); y++) {
-				for (int x = 0; x < screen->GetWidth(); x++) {
-					if (!this->_invertedColors) {
-						if (screen->GetPixel(x, y))
-							this->_image->SetPixel(x, y, 50, 88, 4, 255);
-						else
-							this->_image->SetPixel(x, y, 128, 185, 0, 255);
-					} else {
-						if (screen->GetPixel(x, y))
-							this->_image->SetPixel(x, y, 255, 255, 255, 255);
-						else
-							this->_image->SetPixel(x, y, 0, 0, 0, 255);
-					}
-				}
-			}
-		}
-
-		this->_image->Update();
-		this->_cpu->SetImageUpdated(false);
-	}
+	if (this->_cpu->GetImageUpdated())
+		this->UpdateImage();
 
 	int width = screen->GetWidth();
 	int height = screen->GetHeight();
@@ -220,7 +232,7 @@ bool Chip8::OnKeyPress(Keys::Enum key) {
 		this->_cpu->KeyDown(keypressed);
 
 	if (key == Keys::Key_I)
-		this->SetInvertedColors(!this->_invertedColors);
+		this->SetInvertedColors(!Chip8::_invertedColors);
 
 	return true;
 }
@@ -234,6 +246,6 @@ bool Chip8::OnKeyUp(Keys::Enum key) {
 }
 
 void Chip8::SetInvertedColors(bool mode) {
-	this->_invertedColors = mode;
-	this->_cpu->SetImageUpdated(true);
+	Chip8::_invertedColors = mode;
+	this->UpdateImage();
 }

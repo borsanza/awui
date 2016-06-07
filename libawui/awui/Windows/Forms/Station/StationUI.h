@@ -91,6 +91,9 @@ namespace awui {
 						void SetArcadeFullScreen();
 						void ExitingArcade();
 						void ExitArcade();
+
+						virtual bool OnKeyPress(Keys::Enum key);
+						virtual bool OnKeyUp(Keys::Enum key);
 				};
 			}
 		}

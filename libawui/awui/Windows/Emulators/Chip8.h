@@ -15,19 +15,22 @@ namespace awui {
 		namespace Emulators {
 			class Chip8 : public ArcadeContainer {
 				private:
+					static bool _invertedColors;
+					bool _lastInverted;
+
 					CPU * _cpu;
 					Drawing::Image * _image;
-					bool _invertedColors;
 
 					int ConvertKeyAwToChip8(Keys::Enum key);
 					void CheckBackcolor();
+					void UpdateImage();
 
 				public:
 					Chip8();
 					virtual ~Chip8();
 
 					virtual int IsClass(Classes::Enum objectClass) const;
-					virtual int GetType() const { return 1;}
+					virtual int GetType() const { return Types::Chip8;}
 
 					void LoadRom(const String file);
 

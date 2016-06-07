@@ -41,7 +41,7 @@ namespace awui {
 					virtual ~Spectrum();
 
 					virtual int IsClass(Classes::Enum objectClass) const;
-					virtual int GetType() const { return 3;}
+					virtual int GetType() const { return Types::Spectrum;}
 
 					void LoadRom(const String file);
 
