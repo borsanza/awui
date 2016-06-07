@@ -1,0 +1,10 @@
+Package: StationTV
+Version: 1.0
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libsdl2-2.0-0 (>= 2.0), libsdl2-image-2.0-0 (>= 2.0), libcairo2 (>= 1.14)
+Maintainer: Borja Sanchez Zamorano <borsanza@gmail.com>
+Description: StationTV
+ StationTV is a multiemulator for TV in realtime
+
