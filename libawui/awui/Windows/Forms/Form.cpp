@@ -6,27 +6,16 @@
 
 #include "Form.h"
 
-#include <awui/Collections/ArrayList.h>
-#include <awui/DateTime.h>
 #include <awui/Diagnostics/Process.h>
-#include <awui/Drawing/Color.h>
-#include <awui/Drawing/Graphics.h>
-#include <awui/Drawing/Rectangle.h>
 #include <awui/IO/Directory.h>
 #include <awui/OpenGL/GL.h>
-#include <awui/String.h>
 #include <awui/Windows/Forms/Application.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
-#include <awui/Windows/Forms/Keys.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
-
-#ifndef GL_BGRA
-	#define GL_BGRA 0x80E1
-#endif
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
@@ -579,8 +568,6 @@ void Form::ProcessEvents() {
 	}
 }
 
-#include <GL/glx.h>
-
 void Form::RefreshVideo() {
 	if (!initialized)
 		return;
@@ -604,9 +591,7 @@ void Form::RefreshVideo() {
 	if (!this->_win) {
 		this->_win = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
 		SDL_GL_CreateContext(this->_win);
-		void (*swapInterval)(int);
-		swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-		swapInterval(1);
+		SDL_GL_SetSwapInterval(1);
 	} else {
 		SDL_SetWindowFullscreen(this->_win, flags);
 		if (!this->fullscreen) {
