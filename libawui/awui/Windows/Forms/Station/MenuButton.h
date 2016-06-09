@@ -11,11 +11,16 @@ namespace awui {
 				class StationUI;
 
 				class LabelButton : public Label {
+					private:
+						bool _lastSelected;
+						int _frames;
+
 					public:
 						LabelButton();
 						virtual ~LabelButton();
 
 						virtual void OnMouseDown(MouseEventArgs* e);
+						virtual void OnTick();
 				};
 
 				class MenuButton : public Control {

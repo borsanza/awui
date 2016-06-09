@@ -19,7 +19,10 @@ using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
+#define SCROLLMARGIN 80
+
 Label::Label() {
+	this->_scrolled = 0;
 	this->image = NULL;
 	this->g = NULL;
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
@@ -106,7 +109,14 @@ void Label::Draw(int x, int y, int width, int height) {
 }
 
 void Label::OnPaint(GL* gl) {
-	this->Draw(0, 0, this->GetWidth(), this->GetHeight());
+	int scrolled = Math::Round(this->_scrolled);
+	this->Draw(scrolled, 0, this->GetWidth(), this->GetHeight());
+
+	if (scrolled != 0)
+		this->Draw(scrolled + (this->GetLabelWidth() + SCROLLMARGIN), 0, this->GetWidth(), this->GetHeight());
+	else
+		if (this->_scrolled)
+			this->_scrolled = 0;
 }
 
 void Label::DrawLines(int x, int y) {
@@ -169,4 +179,17 @@ void Label::UpdateBufferText() {
 	this->g = Drawing::Graphics::FromImage(this->image);
 
 	this->g->DrawString(this->text, &font, this->GetForeColor(), 0, 0);
+}
+
+void Label::SetScrolled(float scroll) {
+	this->_scrolled = scroll;
+	while (this->_scrolled <= -(this->GetLabelWidth() + SCROLLMARGIN))
+		this->_scrolled += this->GetLabelWidth() + SCROLLMARGIN;
+
+	while (this->_scrolled >= (this->GetLabelWidth() + SCROLLMARGIN))
+		this->_scrolled -= this->GetLabelWidth() + SCROLLMARGIN;
+}
+
+float Label::GetScrolled() const {
+	return this->_scrolled;
 }

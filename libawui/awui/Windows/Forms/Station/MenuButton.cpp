@@ -175,6 +175,7 @@ void MenuButton::OnResize() {
 /******************************** LabelButton *********************************/
 
 LabelButton::LabelButton() {
+	this->_lastSelected = false;
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->SetTextAlign(ContentAlignment::MiddleLeft);
 	this->SetTabStop(false);
@@ -185,4 +186,41 @@ LabelButton::~LabelButton() {
 
 void LabelButton::OnMouseDown(MouseEventArgs * e) {
 	this->GetParent()->OnMouseDown(e);
+}
+
+void LabelButton::OnTick() {
+	bool selected = (Form::GetControlSelected() == this->GetParent());
+
+	if (this->_lastSelected != selected) {
+		this->_lastSelected = selected;
+		this->_frames = 0;
+	}
+
+	if (selected && (this->GetLabelWidth() > this->GetWidth())) {
+		if (this->_frames < 120)
+			this->SetScrolled(0.0f);
+		else {
+			this->SetScrolled(this->GetScrolled() - 1);
+			if (this->GetScrolled() == 0)
+				this->_frames = 0;
+		}
+
+		this->_frames++;
+	} else {
+		float scrolled = this->GetScrolled();
+		if (scrolled != 0) {
+			float dst = 0;
+			float min = -(this->GetLabelWidth() + 80);
+			if ((this->GetLabelWidth() >> 1) < -scrolled)
+				dst = min;
+
+			dst = this->Interpolate(scrolled, dst, 0.25f);
+			if ((fabs(dst) <= 1) || ((dst - 1) <= min))
+				dst = 0;
+
+			this->SetScrolled(dst);
+		}
+
+		this->_frames = 0;
+	}
 }

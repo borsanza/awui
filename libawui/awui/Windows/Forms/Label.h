@@ -19,6 +19,7 @@ namespace awui {
 					Drawing::Image * image;
 					Drawing::Graphics *g;
 					Drawing::GlyphMetrics metrics;
+					float _scrolled;
 
 					void UpdateBufferText();
 
@@ -41,6 +42,9 @@ namespace awui {
 
 					virtual void SetForeColor(const Drawing::Color color);
 					virtual void SetFont(const Drawing::Font font);
+
+					void SetScrolled(float scroll);
+					float GetScrolled() const;
 
 					int GetLabelWidth() const;
 			};
