@@ -49,7 +49,7 @@ Stats::Stats() {
 	this->_fps = 0;
 	this->_fpsCalculated = 0;
 	this->_labelFPS = new Label();
-	this->_labelFPS->SetFont(&font);
+	this->_labelFPS->SetFont(font);
 	this->_labelFPS->SetDock(DockStyle::Right);
 	this->_labelFPS->SetTextAlign(ContentAlignment::MiddleCenter);
 	this->_labelFPS->SetBackColor(backColor);
@@ -61,7 +61,7 @@ Stats::Stats() {
 #ifdef SHOW_PERCENT
 	this->_percent = 0;
 	this->_labelPercent = new Label();
-	this->_labelPercent->SetFont(&font);
+	this->_labelPercent->SetFont(font);
 	this->_labelPercent->SetDock(DockStyle::Right);
 	this->_labelPercent->SetTextAlign(ContentAlignment::MiddleRight);
 	this->_labelPercent->SetBackColor(backColor);
@@ -73,7 +73,7 @@ Stats::Stats() {
 #ifdef SHOW_WIDGETS
 	this->_drawedControls = 0;
 	this->_labelControls = new Label();
-	this->_labelControls->SetFont(&font);
+	this->_labelControls->SetFont(font);
 	this->_labelControls->SetDock(DockStyle::Right);
 	this->_labelControls->SetTextAlign(ContentAlignment::MiddleRight);
 	this->_labelControls->SetBackColor(backColor);
