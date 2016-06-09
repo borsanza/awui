@@ -52,7 +52,7 @@ Stats::Stats() {
 	this->_labelFPS->SetFont(font);
 	this->_labelFPS->SetDock(DockStyle::Right);
 	this->_labelFPS->SetTextAlign(ContentAlignment::MiddleCenter);
-	this->_labelFPS->SetBackColor(backColor);
+	this->_labelFPS->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->_labelFPS->SetForeColor(foreColor);
 	this->_labelFPS->SetWidth(90);
 	this->GetControls()->Add(this->_labelFPS);
@@ -76,9 +76,9 @@ Stats::Stats() {
 	this->_labelControls->SetFont(font);
 	this->_labelControls->SetDock(DockStyle::Right);
 	this->_labelControls->SetTextAlign(ContentAlignment::MiddleRight);
-	this->_labelControls->SetBackColor(backColor);
+	this->_labelControls->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->_labelControls->SetForeColor(foreColor);
-	this->_labelControls->SetWidth(150);
+	this->_labelControls->SetWidth(100);
 	this->GetControls()->Add(this->_labelControls);
 #endif // SHOW_WIDGETS
 

@@ -222,7 +222,7 @@ void Control::Layout() {
 	int y1 = 0;
 	int x2 = this->GetWidth() - 1;
 	int y2 = this->GetHeight() - 1;
-	int margin = 1;
+	int margin = 0;
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
