@@ -218,6 +218,9 @@ void LabelButton::OnTick() {
 			if ((fabs(dst) <= 1) || ((dst - 1) <= min))
 				dst = 0;
 
+			if ((dst <= -80) && (dst >= (min + 80)))
+				dst = 0;
+
 			this->SetScrolled(dst);
 		}
 
