@@ -33,12 +33,23 @@ void ControlCollection::Add(Control * item) {
 	this->owner->Layout();
 }
 
+void ControlCollection::Remove(Control * item) {
+	item->CheckMouseControl();
+
+	ArrayList::Remove(item);
+	item->SetParent(NULL);
+	this->owner->Layout();
+}
+
 void ControlCollection::MoveToEnd(Control * item) {
 	this->Remove(item);
 	this->Add(item);
 }
 
 void ControlCollection::Replace(Control * oldItem, Control * newItem) {
+	if (oldItem)
+		oldItem->CheckMouseControl();
+
 	ArrayList::Replace(oldItem, newItem);
 	if (newItem)
 		newItem->SetParent(this->owner);

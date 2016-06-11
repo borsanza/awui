@@ -68,6 +68,7 @@ namespace awui {
 					int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl, bool first = false);
 					void ChangeControlOnMouseOver(Control * control);
 					bool IsVisible() const;
+					void CleanMouseControl();
 
 				protected:
 					void OnTickPre();
@@ -180,6 +181,7 @@ namespace awui {
 					inline void SetPreventChangeControl(bool mode) { this->_preventChangeControl = mode; }
 
 					inline void SetVisible(bool mode) { this->_visible = mode; }
+					void CheckMouseControl();
 			};
 		}
 	}

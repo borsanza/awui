@@ -771,3 +771,15 @@ Control * Control::GetNextControl(Control * ommitControl, Point * pCenter, Point
 
 	return selected;
 }
+
+void Control::CheckMouseControl() {
+	if (this->GetParent() && this->GetParent()->mouseControl == this)
+		this->GetParent()->CleanMouseControl();
+}
+
+void Control::CleanMouseControl() {
+	if (this->mouseControl != NULL)
+		this->mouseControl->CleanMouseControl();
+
+	this->mouseControl = NULL;
+}
