@@ -318,12 +318,16 @@ void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
 
 void StationUI::SetArcadeFullScreen() {
 	this->GetControls()->Remove(&this->_fade);
+	this->_title->SetVisible(false);
+	this->_browser->SetVisible(false);
 }
 
 void StationUI::ExitingArcade() {
 	if (!this->_fade.IsStopped())
 		return;
 
+	this->_title->SetVisible(true);
+	this->_browser->SetVisible(true);
 	this->_fade.HideFade();
 	this->GetControls()->Add(&this->_fade);
 	this->_arcade->SetTabStop(false);

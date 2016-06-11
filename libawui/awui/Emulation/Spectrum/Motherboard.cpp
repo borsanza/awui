@@ -155,7 +155,7 @@ void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
 	double speed = 3500000.0f;
 	if (this->_fast)
-		speed *= 10;
+		speed *= 9;
 
 	double cyclesFrame = speed / 59.922743404f;
 

@@ -37,6 +37,7 @@ Control::Control() {
 	this->font = new Font("sans-serif", 12);
 	this->scissorEnabled = true;
 	this->_preventChangeControl = false;
+	this->_visible = true;
 }
 
 Control::~Control() {
@@ -226,6 +227,9 @@ void Control::Layout() {
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
+		if (!control->IsVisible())
+			continue;
+
 		switch (control->GetDock()) {
 			case DockStyle::None:
 				break;
@@ -302,7 +306,7 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 	int r = 0;
 
 	Rectangle cr = gl->GetClippingResult();
-	int isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0);
+	int isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0) && this->_visible;
 	if (isVisible) {
 		r++;
 		this->OnPaint(NULL);
@@ -314,6 +318,8 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 	if (isVisible) {
 		for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 			Control * control = (Control *)this->GetControls()->Get(i);
+			if (!control->IsVisible())
+				continue;
 
 			GL gl2;
 			gl2.SetClippingBase(gl->GetClippingResult());
@@ -339,6 +345,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 
 	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
 		Control * control = (Control *)this->GetControls()->Get(i);
+		if (!control->IsVisible())
+			continue;
 
 		if ((focused == control) && (control->GetDrawShadow())) {
 			int x1, y1, x2, y2;
@@ -387,6 +395,8 @@ void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int button
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
 		Control * control = (Control *)this->GetControls()->Get(i);
+		if (!control->IsVisible())
+			continue;
 
 		if (this->mouseControl != NULL) {
 			if (this->mouseControl == control) {
@@ -465,6 +475,8 @@ void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons) {
 
 	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
 		Control * control = (Control *)this->GetControls()->Get(i);
+		if (!control->IsVisible())
+			continue;
 
 		if (this->mouseControl != NULL) {
 			if (this->mouseControl == control) {
@@ -505,6 +517,9 @@ const awui::String Control::GetName() {
 bool Control::IsVisible() const {
 	bool isVisible = true;
 
+	if (!this->_visible)
+		return false;
+
 	if (this->GetParent()) {
 		Rectangle pr = this->GetParent()->GetBounds();
 		pr.SetLocation(0, 0);
@@ -533,6 +548,8 @@ void Control::OnTickPre() {
 
 		for (int i = 0; i<this->GetControls()->GetCount(); i++) {
 			Control * control = (Control *)this->GetControls()->Get(i);
+			if (!control->IsVisible())
+				continue;
 			control->OnTickPre();
 		}
 	}

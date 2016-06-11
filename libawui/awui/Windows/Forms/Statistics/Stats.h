@@ -11,8 +11,8 @@
 //#define SHOW_SPINNER 1
 
 #ifndef NDEBUG
-	#define SHOW_FPS 1
 	#define SHOW_WIDGETS 1
+	#define SHOW_FPS 1
 #endif
 
 #define SHOW_HEARTBEAT 1

@@ -41,6 +41,7 @@ namespace awui {
 					bool tabStop;
 					bool _drawShadow;
 					bool _preventChangeControl;
+					bool _visible;
 					Drawing::Rectangle bounds;
 
 					float _lastWidth;
@@ -177,6 +178,8 @@ namespace awui {
 					float Interpolate(float from, int to, float percent);
 
 					inline void SetPreventChangeControl(bool mode) { this->_preventChangeControl = mode; }
+
+					inline void SetVisible(bool mode) { this->_visible = mode; }
 			};
 		}
 	}
