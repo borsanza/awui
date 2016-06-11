@@ -185,6 +185,19 @@ void StationUI::Refresh() {
 	this->RecursiveSearch(this->_root);
 	while (this->Minimize(this->_root));
 
+	if (!this->_root->_childList) {
+		this->_root->_childList = new SortedList();
+		NodeFile * child = new NodeFile();
+		child->_name = "No hay roms";
+		child->_directory = false;
+		child->_button = new MenuButton(this);
+		child->_button->SetNodeFile(child);
+		child->_button->SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
+		child->_button->SetDock(DockStyle::None);
+		child->_button->SetText(child->_name);
+		this->_root->_childList->Add(&child->_name, child);
+	}
+
 	this->RefreshList();
 }
 
@@ -263,15 +276,17 @@ void StationUI::SelectChild(NodeFile * node) {
 		this->_actual->_page->GetFocused()->SetFocus(true);
 		this->UpdateTitle();
 	} else {
-		if (!this->_fade.IsStopped())
-			return;
-		if (this->GetControls()->IndexOf(&this->_fade) == -1)
-			this->GetControls()->Add(&this->_fade);
+		if (node->_emulator != Types::Undefined) {
+			if (!this->_fade.IsStopped())
+				return;
+			if (this->GetControls()->IndexOf(&this->_fade) == -1)
+				this->GetControls()->Add(&this->_fade);
 
-		this->GetControls()->MoveToEnd(&this->_fade);
-		this->_arcade->SetTabStop(true);
-		this->_arcade->SetFocus();
-		this->_fade.ShowFade();
+			this->GetControls()->MoveToEnd(&this->_fade);
+			this->_arcade->SetTabStop(true);
+			this->_arcade->SetFocus();
+			this->_fade.ShowFade();
+		}
 	}
 }
 
