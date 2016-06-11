@@ -24,6 +24,8 @@ MenuButton::MenuButton(StationUI * station) {
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->_station = station;
 	this->SetTabStop(true);
+	this->SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
+	this->SetDock(DockStyle::None);
 
 	this->GetControls()->Add(&this->_label);
 }

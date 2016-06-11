@@ -1,7 +1,6 @@
 #pragma once
 
 #include <awui/Collections/SortedList.h>
-#include <awui/Windows/Forms/Gradient.h>
 #include <awui/Windows/Forms/Station/MenuButton.h>
 #include <awui/Windows/Emulators/ArcadeContainer.h>
 
@@ -37,17 +36,16 @@ namespace awui {
 
 				class NodeFile : public awui::Object {
 					public:
+						NodeFile * _parent;
+						bool _directory;
+						int _emulator;
 						String _key;
 						String _name;
 						String _path;
-						NodeFile * _parent;
-						bool _directory;
-						SortedList * _childList;
-						int _emulator;
 						MenuButton * _button;
 						Browser::Page * _page;
-
 						Emulators::ArcadeContainer * _arcade;
+						SortedList * _childList;
 
 					public:
 						NodeFile();

@@ -7,11 +7,8 @@
  #include "StationUI.h"
 
 #include <awui/Math.h>
-#include <awui/Drawing/Font.h>
-#include <awui/Effects/Effect.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Gradient.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
 
@@ -21,7 +18,6 @@
 #define MENUBUTTONHEIGHT 70
 
 using namespace awui::Drawing;
-using namespace awui::Effects;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
@@ -84,8 +80,6 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 
 			child->_button = new MenuButton(this);
 			child->_button->SetNodeFile(child);
-			child->_button->SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
-			child->_button->SetDock(DockStyle::None);
 			String name = child->_name;
 			name = name.Substring(0, name.LastIndexOf("."));
 			child->_button->SetText(name);
@@ -192,8 +186,6 @@ void StationUI::Refresh() {
 		child->_directory = false;
 		child->_button = new MenuButton(this);
 		child->_button->SetNodeFile(child);
-		child->_button->SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
-		child->_button->SetDock(DockStyle::None);
 		child->_button->SetText(child->_name);
 		this->_root->_childList->Add(&child->_name, child);
 	}
