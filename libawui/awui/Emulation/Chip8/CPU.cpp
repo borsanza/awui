@@ -6,7 +6,6 @@
 
 #include "CPU.h"
 
-#include <assert.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Emulation/Chip8/Input.h>
@@ -17,7 +16,6 @@
 #include <awui/Emulation/Chip8/Sound.h>
 #include <awui/Math.h>
 #include <awui/Random.h>
-#include <awui/String.h>
 
 using namespace awui::Emulation::Chip8;
 
