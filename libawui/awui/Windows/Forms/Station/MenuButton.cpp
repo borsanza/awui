@@ -61,19 +61,21 @@ void MenuButton::OnMouseDown(MouseEventArgs * e) {
 #define OFFSET 0.5f
 
 void MenuButton::OnPaint(GL* gl) {
+	if (Form::GetControlSelected() == this)
+		this->SetForeColor(Color::FromArgb(255, 255, 255));
+	else
+		this->SetForeColor(Color::FromArgb(199, 199, 199));
+
 	if (this->_node->_directory) {
 		glLineWidth(2.5f);
 
 		float x = this->GetWidth() - 22.0f;
 		float y = (this->GetHeight() >> 1) - 0.5f;
 
-		if (Form::GetControlSelected() == this) {
-			this->SetForeColor(Color::FromArgb(255, 255, 255));
+		if (Form::GetControlSelected() == this)
 			glColor3ub(255, 255, 255);
-		} else {
-			this->SetForeColor(Color::FromArgb(199, 199, 199));
+		else
 			glColor3ub(199, 199, 199);
-		}
 
 		glEnable( GL_LINE_SMOOTH );
 		glBegin(GL_LINE_STRIP);
