@@ -242,6 +242,9 @@ int Chip8::ConvertRemoteKeyToChip8(RemoteButtons::Enum button) {
 		case RemoteButtons::Down:
 			keyPressed = 8;
 			break;
+		case RemoteButtons::Ok:
+			keyPressed = 5;
+			break;
 		default:
 			break;
 	}
