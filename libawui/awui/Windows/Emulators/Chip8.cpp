@@ -226,6 +226,29 @@ int Chip8::ConvertKeyAwToChip8(Keys::Enum key) {
 	return keyPressed;
 }
 
+int Chip8::ConvertRemoteKeyToChip8(RemoteButtons::Enum button) {
+	int keyPressed = -1;
+
+	switch (button) {
+		case RemoteButtons::Up:
+			keyPressed = 2;
+			break;
+		case RemoteButtons::Left:
+			keyPressed = 4;
+			break;
+		case RemoteButtons::Right:
+			keyPressed = 6;
+			break;
+		case RemoteButtons::Down:
+			keyPressed = 8;
+			break;
+		default:
+			break;
+	}
+
+	return keyPressed;
+}
+
 bool Chip8::OnKeyPress(Keys::Enum key) {
 	int keypressed = this->ConvertKeyAwToChip8(key);
 	if (keypressed >= 0)
@@ -248,4 +271,25 @@ bool Chip8::OnKeyUp(Keys::Enum key) {
 void Chip8::SetInvertedColors(bool mode) {
 	Chip8::_invertedColors = mode;
 	this->UpdateImage();
+}
+
+
+bool Chip8::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
+	int keypressed = this->ConvertRemoteKeyToChip8(button);
+	if (keypressed >= 0) {
+		this->_cpu->KeyDown(keypressed);
+		return true;
+	}
+
+	return ArcadeContainer::OnRemoteKeyPress(which, button);
+}
+
+bool Chip8::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
+	int keypressed = this->ConvertRemoteKeyToChip8(button);
+	if (keypressed >= 0) {
+		this->_cpu->KeyUp(keypressed);
+		return true;
+	}
+
+	return ArcadeContainer::OnRemoteKeyUp(which, button);
 }

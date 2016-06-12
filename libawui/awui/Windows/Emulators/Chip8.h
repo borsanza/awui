@@ -22,6 +22,7 @@ namespace awui {
 					Drawing::Image * _image;
 
 					int ConvertKeyAwToChip8(Keys::Enum key);
+					int ConvertRemoteKeyToChip8(RemoteButtons::Enum button);
 					void CheckBackcolor();
 					void UpdateImage();
 
@@ -41,6 +42,8 @@ namespace awui {
 
 					virtual bool OnKeyPress(Keys::Enum key);
 					virtual bool OnKeyUp(Keys::Enum key);
+					bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
+					bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 			};
 		}
 	}
