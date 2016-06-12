@@ -1,4 +1,4 @@
-/*
+/**
  * awui/Drawing/Image.cpp
  *
  * Copyright (C) 2011 Borja Sánchez Zamorano

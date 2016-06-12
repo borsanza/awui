@@ -2,7 +2,7 @@
 
 #include <awui/Windows/Forms/Control.h>
 
-typedef unsigned int	GLuint;
+typedef unsigned int GLuint;
 
 namespace awui {
 	namespace OpenGL {

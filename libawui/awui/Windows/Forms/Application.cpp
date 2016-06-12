@@ -6,6 +6,7 @@
 
 #include "Application.h"
 
+#include <awui/Drawing/Shader.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL2/SDL.h>
@@ -44,6 +45,8 @@ void Application::Run(Form * form = NULL) {
 	atexit(SDL_Quit);
 
 	Stats * stats = Stats::Instance();
+
+	// awui::Drawing::Shader * shader = new awui::Drawing::Shader();
 
 	while (!Application::quit) {
 		form->ProcessEvents();

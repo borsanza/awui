@@ -1,0 +1,47 @@
+#version 130
+//precision mediump float;
+
+// Textura de entrada
+uniform sampler2D tex;
+
+//uniform vec4 uColor;
+
+//uniform vec2 resolution;
+//uniform float gl_Time;
+
+out vec4 MyFragColor;
+
+void main() {
+	// gl_Color -> Color de la textura
+
+/*
+	//gl_TexCoord[0] = gl_MultiTexCoord0;
+	vec2 prueba;
+	prueba.x = gl_TexCoord[0].x;
+	prueba.y = gl_TexCoord[0].y;
+	gl_TexCoord[0].x = gl_TexCoord[0].x + 0.5;
+//	vec4 texel = texture2D(tex, gl_TexCoord[0].xy);
+	vec4 texel = texture2D(tex, prueba.xy);
+
+	gl_FragColor = texel;
+	gl_FragColor.x = 0.0;
+	//gl_FragColor.y = 0.0;
+	//gl_FragColor = gl_Color;
+
+
+*/
+	//gl_Position = ftransform();
+	// gl_TexCoord[0].x+=0.5;
+	// gl_FragColor = gl_SecondaryColor;
+	// gl_FragColor.y = 0.0;
+
+	vec4 texel = texture2D(tex, gl_TexCoord[0].xy);
+	vec3 color = vec3(texel.x, texel.y, texel.z);
+	ivec2 resolution = textureSize(tex, 0);
+    float alpha = 1.0;
+    float range = 50.0;
+    if (gl_FragCoord.x > (resolution.x - range))
+    	alpha = (resolution.x - gl_FragCoord.x) / range;
+
+    gl_FragColor = vec4(color, alpha);
+}

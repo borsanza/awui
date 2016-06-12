@@ -33,6 +33,7 @@ namespace awui {
 			Spectrum,
 			Gradient,
 			MenuButton,
+			Shader,
 		};
 	};
 
