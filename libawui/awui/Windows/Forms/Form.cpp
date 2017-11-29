@@ -676,3 +676,7 @@ bool Form::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	return Control::OnRemoteKeyUp(which, button);
 }
 
+void Form::SwapGL() {
+	SDL_GL_SwapBuffers();
+}
+

@@ -59,7 +59,9 @@ namespace awui {
 
 					inline static uint32_t GetButtonsPad1() { return Form::_buttonsPad1; }
 					inline static uint32_t GetButtonsPad2() { return Form::_buttonsPad2; }
+					void SwapGL();
 			};
 		}
 	}
 }
+

@@ -59,7 +59,7 @@ void Application::Run(Form * form = NULL) {
 		form->OnPaintForm();
 
 		stats->SetTimeBeforeIddle();
-		SDL_GL_SwapBuffers();
+		form->SwapGL();
 		stats->SetTimeAfterIddle();
 	}
 
