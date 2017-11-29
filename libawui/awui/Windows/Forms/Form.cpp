@@ -572,8 +572,8 @@ void Form::RefreshVideo() {
 		return;
 
 	int flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
-	int width = 0;
-	int height = 0;
+	static int lastWidth = 0;
+	static int lastHeight = 0;
 
 	if (this->fullscreenWidth == -1) {
 		const SDL_VideoInfo * videoInfo = SDL_GetVideoInfo();
@@ -581,18 +581,31 @@ void Form::RefreshVideo() {
 		this->fullscreenHeight = videoInfo->current_h;
 	}
 
-	if (!this->fullscreen) {
-		width = this->GetWidth();
-		height = this->GetHeight();
- 		flags |= SDL_RESIZABLE;
+	static bool first = true;
+	int finalWidth, finalHeight;
+	if (this->fullscreen) {
+		lastWidth = this->GetWidth();
+		lastHeight = this->GetHeight();
+		flags |= SDL_FULLSCREEN;
+
+		finalWidth = this->fullscreenWidth;
+		finalHeight = this->fullscreenHeight;
 	} else {
-		width = this->fullscreenWidth;
-		height = this->fullscreenHeight;
- 		flags |= SDL_FULLSCREEN;
-		this->SetSize(width, height);
+		flags |= SDL_RESIZABLE;
+
+		if (first) {
+			finalWidth = this->GetWidth();
+			finalHeight = this->GetHeight();
+			first = false;
+		} else {
+			finalWidth = lastWidth;
+			finalHeight = lastHeight;
+		}
 	}
 
-	SDL_SetVideoMode(width, height, 32, flags);
+	SDL_SetVideoMode(finalWidth, finalHeight, 32, flags);
+	this->SetSize(finalWidth, finalHeight);
+
 	void (*swapInterval)(int);
 	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
 	swapInterval(1);
