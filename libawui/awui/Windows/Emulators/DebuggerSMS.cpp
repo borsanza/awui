@@ -12,7 +12,7 @@
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL_opengl.h>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;

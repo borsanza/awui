@@ -6,7 +6,7 @@
 
 #include "Gradient.h"
 
-#include <SDL2/SDL_opengl.h>
+#include <SDL_opengl.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;

@@ -9,8 +9,8 @@
 #include <awui/Drawing/Shader.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL.h>
+#include <SDL_opengl.h>
 
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;
@@ -59,7 +59,7 @@ void Application::Run(Form * form = NULL) {
 		form->OnPaintForm();
 
 		stats->SetTimeBeforeIddle();
-		form->SwapGL();
+		SDL_GL_SwapBuffers();
 		stats->SetTimeAfterIddle();
 	}
 

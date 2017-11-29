@@ -14,8 +14,8 @@
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL.h>
+#include <SDL_opengl.h>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
@@ -37,7 +37,6 @@ Form::Form() {
 	this->initialized = 0;
 	this->fullscreenWidth = -1;
 	this->fullscreenHeight = -1;
-	this->_win = 0;
 
 	Stats * stats = Stats::Instance();
 	stats->SetDock(DockStyle::None);
@@ -108,6 +107,8 @@ void Form::OnTick() {
 }
 
 void Form::ProcessEvents() {
+	int resizex = -1;
+	int resizey = -1;
 	SDL_Event event;
 
 	if (this->remoteProcess->GetHasString()) {
@@ -361,16 +362,16 @@ void Form::ProcessEvents() {
 					case SDLK_F11: OnKeyPressPre(Keys::Key_F11); break;
 					case SDLK_F12: OnKeyPressPre(Keys::Key_F12); break;
 
-					case SDLK_KP_0: OnKeyPressPre(Keys::Key_KP0); break;
-					case SDLK_KP_1: OnKeyPressPre(Keys::Key_KP1); break;
-					case SDLK_KP_2: OnKeyPressPre(Keys::Key_KP2); break;
-					case SDLK_KP_3: OnKeyPressPre(Keys::Key_KP3); break;
-					case SDLK_KP_4: OnKeyPressPre(Keys::Key_KP4); break;
-					case SDLK_KP_5: OnKeyPressPre(Keys::Key_KP5); break;
-					case SDLK_KP_6: OnKeyPressPre(Keys::Key_KP6); break;
-					case SDLK_KP_7: OnKeyPressPre(Keys::Key_KP7); break;
-					case SDLK_KP_8: OnKeyPressPre(Keys::Key_KP8); break;
-					case SDLK_KP_9: OnKeyPressPre(Keys::Key_KP9); break;
+					case SDLK_KP0: OnKeyPressPre(Keys::Key_KP0); break;
+					case SDLK_KP1: OnKeyPressPre(Keys::Key_KP1); break;
+					case SDLK_KP2: OnKeyPressPre(Keys::Key_KP2); break;
+					case SDLK_KP3: OnKeyPressPre(Keys::Key_KP3); break;
+					case SDLK_KP4: OnKeyPressPre(Keys::Key_KP4); break;
+					case SDLK_KP5: OnKeyPressPre(Keys::Key_KP5); break;
+					case SDLK_KP6: OnKeyPressPre(Keys::Key_KP6); break;
+					case SDLK_KP7: OnKeyPressPre(Keys::Key_KP7); break;
+					case SDLK_KP8: OnKeyPressPre(Keys::Key_KP8); break;
+					case SDLK_KP9: OnKeyPressPre(Keys::Key_KP9); break;
 					case SDLK_KP_DIVIDE: OnKeyPressPre(Keys::Key_KP_DIVIDE); break;
 					case SDLK_KP_EQUALS: OnKeyPressPre(Keys::Key_KP_EQUALS); break;
 					case SDLK_KP_MINUS: OnKeyPressPre(Keys::Key_KP_MINUS); break;
@@ -461,16 +462,16 @@ void Form::ProcessEvents() {
 						break;
 					case SDLK_F12: OnKeyUpPre(Keys::Key_F12); break;
 
-					case SDLK_KP_0: OnKeyUpPre(Keys::Key_KP0); break;
-					case SDLK_KP_1: OnKeyUpPre(Keys::Key_KP1); break;
-					case SDLK_KP_2: OnKeyUpPre(Keys::Key_KP2); break;
-					case SDLK_KP_3: OnKeyUpPre(Keys::Key_KP3); break;
-					case SDLK_KP_4: OnKeyUpPre(Keys::Key_KP4); break;
-					case SDLK_KP_5: OnKeyUpPre(Keys::Key_KP5); break;
-					case SDLK_KP_6: OnKeyUpPre(Keys::Key_KP6); break;
-					case SDLK_KP_7: OnKeyUpPre(Keys::Key_KP7); break;
-					case SDLK_KP_8: OnKeyUpPre(Keys::Key_KP8); break;
-					case SDLK_KP_9: OnKeyUpPre(Keys::Key_KP9); break;
+					case SDLK_KP0: OnKeyUpPre(Keys::Key_KP0); break;
+					case SDLK_KP1: OnKeyUpPre(Keys::Key_KP1); break;
+					case SDLK_KP2: OnKeyUpPre(Keys::Key_KP2); break;
+					case SDLK_KP3: OnKeyUpPre(Keys::Key_KP3); break;
+					case SDLK_KP4: OnKeyUpPre(Keys::Key_KP4); break;
+					case SDLK_KP5: OnKeyUpPre(Keys::Key_KP5); break;
+					case SDLK_KP6: OnKeyUpPre(Keys::Key_KP6); break;
+					case SDLK_KP7: OnKeyUpPre(Keys::Key_KP7); break;
+					case SDLK_KP8: OnKeyUpPre(Keys::Key_KP8); break;
+					case SDLK_KP9: OnKeyUpPre(Keys::Key_KP9); break;
 					case SDLK_KP_DIVIDE: OnKeyUpPre(Keys::Key_KP_DIVIDE); break;
 					case SDLK_KP_EQUALS: OnKeyUpPre(Keys::Key_KP_EQUALS); break;
 					case SDLK_KP_MINUS: OnKeyUpPre(Keys::Key_KP_MINUS); break;
@@ -487,24 +488,15 @@ void Form::ProcessEvents() {
 				Application::Quit();
 				break;
 
-			case SDL_MOUSEWHEEL: {
-				if (event.wheel.y > 0) {
-					this->mouseButtons |= MouseButtons::XButton1;
-					this->OnMouseDownPre(this->mouseX, this->mouseY, MouseButtons::XButton1, this->mouseButtons);
-					this->mouseButtons &= ~MouseButtons::XButton1;
-					this->OnMouseUpPre(MouseButtons::XButton1, this->mouseButtons);
-				}
-
-				if (event.wheel.y < 0) {
-					this->mouseButtons |= MouseButtons::XButton2;
-					this->OnMouseDownPre(this->mouseX, this->mouseY, MouseButtons::XButton1, this->mouseButtons);
-					this->mouseButtons &= ~MouseButtons::XButton2;
-					this->OnMouseUpPre(MouseButtons::XButton1, this->mouseButtons);
-				}
-			}
 			case SDL_MOUSEBUTTONDOWN: {
 					MouseButtons::Enum button = MouseButtons::None;
 					switch (event.button.button) {
+						case SDL_BUTTON_WHEELUP:
+							button = MouseButtons::XButton1;
+							break;
+						case SDL_BUTTON_WHEELDOWN:
+							button = MouseButtons::XButton2;
+							break;
 						case SDL_BUTTON_LEFT:
 							button = MouseButtons::Left;
 							break;
@@ -525,6 +517,12 @@ void Form::ProcessEvents() {
 			case SDL_MOUSEBUTTONUP: {
 					MouseButtons::Enum button = MouseButtons::None;
 					switch (event.button.button) {
+						case SDL_BUTTON_WHEELUP:
+							button = MouseButtons::XButton1;
+							break;
+						case SDL_BUTTON_WHEELDOWN:
+							button = MouseButtons::XButton2;
+							break;
 						case SDL_BUTTON_LEFT:
 							button = MouseButtons::Left;
 							break;
@@ -551,54 +549,53 @@ void Form::ProcessEvents() {
 				this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
 				break;
 
-			case SDL_WINDOWEVENT: {
-				Uint32 windowID = SDL_GetWindowID(this->_win);
-				if (event.window.windowID == windowID)  {
-					switch (event.window.event) {
-						case SDL_WINDOWEVENT_RESIZED:
-							this->SetSize(event.window.data1, event.window.data2);
-							break;
-					}
-				}
-			}
+			case SDL_VIDEORESIZE:
+				resizex = event.resize.w;
+				resizey = event.resize.h;
+				break;
 
 			default:
 				break;
 		}
 	}
+
+	if ((resizex != -1) && (resizey != -1)) {
+		this->SetSize(resizex, resizey);
+		this->RefreshVideo();
+	}
 }
+
+#include <GL/glx.h>
 
 void Form::RefreshVideo() {
 	if (!initialized)
 		return;
 
-	int flags = SDL_WINDOW_OPENGL;
+	int flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
 	int width = 0;
 	int height = 0;
-	static int lastWidth = 0;
-	static int lastHeight = 0;
+
+	if (this->fullscreenWidth == -1) {
+		const SDL_VideoInfo * videoInfo = SDL_GetVideoInfo();
+		this->fullscreenWidth = videoInfo->current_w;
+		this->fullscreenHeight = videoInfo->current_h;
+	}
 
 	if (!this->fullscreen) {
 		width = this->GetWidth();
 		height = this->GetHeight();
- 		flags |= SDL_WINDOW_RESIZABLE;
+ 		flags |= SDL_RESIZABLE;
 	} else {
-		lastWidth = this->GetWidth();
-		lastHeight = this->GetHeight();
- 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		width = this->fullscreenWidth;
+		height = this->fullscreenHeight;
+ 		flags |= SDL_FULLSCREEN;
+		this->SetSize(width, height);
 	}
 
-	if (!this->_win) {
-		this->_win = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
-		SDL_GL_CreateContext(this->_win);
-		SDL_GL_SetSwapInterval(1);
-	} else {
-		SDL_SetWindowFullscreen(this->_win, flags);
-		if (!this->fullscreen) {
-			SDL_SetWindowSize(this->_win, lastWidth, lastHeight);
-			this->SetSize(lastWidth, lastHeight);
-		}
-	}
+	SDL_SetVideoMode(width, height, 32, flags);
+	void (*swapInterval)(int);
+	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+	swapInterval(1);
 }
 
 void Form::SetFullscreen(int mode) {
@@ -613,7 +610,7 @@ void Form::SetText(String title) {
 	this->text = title;
 
 	if (initialized)
-		SDL_SetWindowTitle(this->_win, this->text.ToCharArray());
+		SDL_WM_SetCaption(this->text.ToCharArray(), NULL);
 }
 
 Control * Form::GetControlSelected() {
@@ -679,6 +676,3 @@ bool Form::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	return Control::OnRemoteKeyUp(which, button);
 }
 
-void Form::SwapGL() {
-	SDL_GL_SwapWindow(this->_win);
-}

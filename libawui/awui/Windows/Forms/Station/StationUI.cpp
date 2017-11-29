@@ -11,7 +11,7 @@
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
-
+#include <string.h>
 #include <dirent.h>
 
 #define BORDERMARGIN 50

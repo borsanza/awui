@@ -1,7 +1,6 @@
 #pragma once
 
 #include <awui/Windows/Forms/Control.h>
-#include <SDL2/SDL_video.h>
 
 namespace awui {
 	namespace Diagnostics {
@@ -23,7 +22,6 @@ namespace awui {
 					Control * mouseControlOver;
 					awui::Diagnostics::Process* remoteProcess;
 					String text;
-					SDL_Window * _win;
 
 					int mouseX;
 					int mouseY;
@@ -61,7 +59,6 @@ namespace awui {
 
 					inline static uint32_t GetButtonsPad1() { return Form::_buttonsPad1; }
 					inline static uint32_t GetButtonsPad2() { return Form::_buttonsPad2; }
-					void SwapGL();
 			};
 		}
 	}

@@ -23,12 +23,12 @@ SoundSDL::SoundSDL() {
 	this->_playing = NULL;
 	this->_frame = 0;
 
-	SDL_memset(&this->_wanted, 0, sizeof(this->_wanted));
 	this->_wanted.freq = SOUNDFREQ;
 	this->_wanted.format = SOUNDFORMAT == 1 ? AUDIO_S8 : AUDIO_S16SYS;
 	this->_wanted.channels = 1;
 	this->_wanted.samples = SOUNDSAMPLES;
 	this->_wanted.callback = FillAudioMasterSystemCB;
+	this->_wanted.userdata = 0;
 
 	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
 	SDL_Init(SDL_INIT_AUDIO);
@@ -44,7 +44,6 @@ SoundSDL* SoundSDL::Instance() {
 }
 
 void FillAudioMasterSystemCB(void *userdata, Uint8 *stream, int len) {
-	SDL_memset(stream, 0, len);
 	SoundSDL::Instance()->FillAudio(stream, len);
 }
 

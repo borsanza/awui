@@ -13,7 +13,8 @@
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/Station/StationUI.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL_opengl.h>
+#include <math.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;

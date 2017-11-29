@@ -4,7 +4,7 @@
 #include "Heartbeat.h"
 #include <awui/Drawing/Color.h>
 #include <awui/OpenGL/GL.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL_opengl.h>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Statistics;
