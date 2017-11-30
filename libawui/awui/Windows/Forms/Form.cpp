@@ -596,7 +596,6 @@ void Form::RefreshVideo() {
 		if (first) {
 			finalWidth = this->GetWidth();
 			finalHeight = this->GetHeight();
-			first = false;
 		} else {
 			finalWidth = lastWidth;
 			finalHeight = lastHeight;
@@ -605,6 +604,7 @@ void Form::RefreshVideo() {
 
 	SDL_SetVideoMode(finalWidth, finalHeight, 32, flags);
 	this->SetSize(finalWidth, finalHeight);
+	first = false;
 
 	void (*swapInterval)(int);
 	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
