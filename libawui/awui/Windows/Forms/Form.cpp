@@ -597,8 +597,9 @@ void Form::RefreshVideo() {
 			finalWidth = this->GetWidth();
 			finalHeight = this->GetHeight();
 		} else {
-			finalWidth = lastWidth;
-			finalHeight = lastHeight;
+			finalWidth = lastWidth > 0 ? lastWidth : this->GetWidth();
+			finalHeight = lastHeight > 0 ? lastHeight : this->GetHeight();
+			lastWidth = lastHeight = 0;
 		}
 	}
 
