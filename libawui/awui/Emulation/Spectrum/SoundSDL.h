@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <awui/Collections/ArrayList.h>
 

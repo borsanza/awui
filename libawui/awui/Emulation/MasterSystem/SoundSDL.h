@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 // 48000, 44100, 22050, 11025
 #define SOUNDFREQ 44100
