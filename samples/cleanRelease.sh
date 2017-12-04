@@ -3,8 +3,7 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/../config/globals.sh"
 
-make clean
+ninja clean
 rm CMakeCache.txt
 cmake -G "$EDITOR" -DCMAKE_BUILD_TYPE=Release .
-make -j$CORES
-
+ninja

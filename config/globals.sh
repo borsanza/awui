@@ -1,5 +1,5 @@
 #!/bin/sh
 
-EDITOR="CodeBlocks - Unix Makefiles"
+EDITOR="CodeBlocks - Ninja"
 CORES=`nproc`
 
