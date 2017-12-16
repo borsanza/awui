@@ -13,6 +13,7 @@ using namespace awui::Collections;
 
 SortedList::SortedList() {
 	this->first = NULL;
+	this->last = NULL;
 	this->count = 0;
 }
 

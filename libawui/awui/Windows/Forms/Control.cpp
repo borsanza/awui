@@ -20,6 +20,11 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Control::Control() {
+	this->refreshed = 0;
+	this->_lastWidth = 0;
+	this->_lastHeight = 0;
+	this->_lastX = 0;
+	this->_lastY = 0;
 	this->_drawShadow = true;
 	this->tabStop = false;
 	this->bounds = Rectangle(0, 0, 100, 100);

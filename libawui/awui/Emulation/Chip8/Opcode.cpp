@@ -13,6 +13,8 @@
 using namespace awui::Emulation::Chip8;
 
 Opcode::Opcode() {
+	this->_byte1 = 0;
+	this->_byte2 = 0;
 }
 
 Opcode::~Opcode() {

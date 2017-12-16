@@ -1,5 +1,6 @@
 #pragma once
 
+#include <awui/Emulation/Common/Word.h>
 #include <awui/Emulation/Processors/Z80/CPUInst.h>
 
 namespace awui {

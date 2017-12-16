@@ -59,6 +59,9 @@ FileStream::FileStream(const String path, FileMode::Enum mode, FileAccess::Enum 
 }
 
 FileStream::FileStream(const String path, FileMode::Enum mode) {
+	this->_file = NULL;
+	this->_pos = 0;
+	this->_length = 0;
 	if (mode == FileMode::Enum::Append)
 		FileStream(path, mode, FileAccess::Enum::Write);
 	else

@@ -8,6 +8,8 @@
 
 #include <awui/String.h>
 
+#include <stdlib.h>
+
 using namespace awui::Emulation::Chip8;
 
 Screen::Screen(uint16_t width, uint16_t height) {

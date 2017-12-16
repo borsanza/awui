@@ -21,6 +21,7 @@ using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;
 
 MasterSystem::MasterSystem() {
+	this->_invertKeys = false;
 	this->SetSize(1, 1);
 	this->_image = new Drawing::Image(1, 1);
 	this->_cpu = new Motherboard();

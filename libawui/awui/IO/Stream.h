@@ -6,6 +6,8 @@ namespace awui {
 	namespace IO {
 		class Stream {
 			public:
+				virtual ~Stream();
+
 				virtual void Close() = 0;
 
 				virtual void SetPosition(uint32_t value) = 0;

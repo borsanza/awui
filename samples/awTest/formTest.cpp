@@ -13,6 +13,8 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 FormTest::FormTest() {
+	this->buttonPressed = RemoteButtons::None;
+	this->buttonL = NULL;
 	this->InitializeComponent();
 }
 

@@ -17,6 +17,9 @@ using namespace awui::Effects;
 using namespace awui::Windows::Forms;
 
 Test1::Test1() {
+	this->_buttons = NULL;
+	this->_effects = NULL;
+	this->_splitter = NULL;
 	this->InitializeComponent();
 }
 

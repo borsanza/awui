@@ -11,6 +11,9 @@
 
 using namespace awui::IO;
 
+TextWriter::~TextWriter() {
+}
+
 void TextWriter::Write(Object *value) {
 	this->Write(value->ToString());
 }

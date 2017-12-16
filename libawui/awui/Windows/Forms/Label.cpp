@@ -27,7 +27,7 @@ Label::Label() {
 	this->g = NULL;
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->SetSize(75, 23);
-	this->SetTextAlign(ContentAlignment::TopLeft);
+	this->textAlign = ContentAlignment::TopLeft;
 	this->SetForeColor(Color::FromArgb(255, 255, 255));
 }
 

@@ -3,7 +3,7 @@
 
 #include "Math.h"
 
-#include <cmath>
+#include <math.h>
 #include <stdlib.h>
 
 using namespace awui;

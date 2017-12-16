@@ -145,7 +145,7 @@ bool ULA::OnTick(uint32_t counter) {
 
 		uint8_t reg = this->d._vram[0x1800 + (col >> 3) + ((line >> 3) * 32)];
 
-		if (reg & 0x80 && this->d._blink)
+		if ((reg & 0x80) && this->d._blink)
 			active = !active;
 
 		uint8_t color;

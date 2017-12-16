@@ -9,7 +9,7 @@
 #include <awui/Convert.h>
 #include <awui/Math.h>
 #include <awui/String.h>
-#include <cmath>
+#include <math.h>
 #include <stdlib.h>
 
 using namespace awui::Drawing;

@@ -7,6 +7,8 @@ namespace awui {
 	namespace IO {
 		class TextWriter {
 			public:
+				virtual ~TextWriter();
+
 				virtual void Flush() = 0;
 				virtual String GetNewLine() = 0;
 				virtual void Write(char value) = 0;

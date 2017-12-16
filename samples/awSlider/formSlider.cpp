@@ -15,6 +15,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 FormSlider::FormSlider() {
+	this->_slider = NULL;
 	this->InitializeComponent();
 }
 

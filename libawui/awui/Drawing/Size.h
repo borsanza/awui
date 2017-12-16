@@ -15,6 +15,7 @@ namespace awui {
 				Size();
 				Size(const Point pt);
 				Size(int width, int height);
+				virtual ~Size();
 
 				int GetWidth() const;
 				void SetWidth(int width);

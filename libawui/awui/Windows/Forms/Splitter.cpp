@@ -13,12 +13,10 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Splitter::Splitter() {
+	this->orientation = SplitContainer::Orientation::Horizontal;
 	this->SetBackColor(Color::FromArgb(255, 255, 255));
-
 	this->SetName("Splitter");
-
 	this->SetSize(20, 200);
-
 	this->mouseActive = 0;
 }
 

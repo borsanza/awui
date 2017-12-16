@@ -19,6 +19,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Test2::Test2() {
+	this->listbox = NULL;
 	this->mameProcess = NULL;
 	this->runMame = true;
 	this->endMame = false;

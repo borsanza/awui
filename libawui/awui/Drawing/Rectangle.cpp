@@ -1,7 +1,7 @@
 /*
  * awui/Drawing/Rectangle.cpp
  *
- * Copyright (C) 2011 Borja Sánchez Zamorano
+ * Copyright (C) 2011 Borja Sï¿½nchez Zamorano
  */
 
 #include "Rectangle.h"
@@ -26,6 +26,9 @@ Rectangle::Rectangle(const Point location, const Size size) {
 Rectangle::Rectangle(int x, int y, int width, int height) {
 	this->location = Point(x, y);
 	this->size = Size(width, height);
+}
+
+Rectangle::~Rectangle() {
 }
 
 void Rectangle::SetWidth(int width) {

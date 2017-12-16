@@ -12,6 +12,8 @@
 using namespace awui::Emulation::Spectrum;
 
 Sound::Sound() {
+	this->_cpu = NULL;
+
 	for (int j = 0; j < SOUNDBUFFER; j++)
 		this->_buffer[j] = 0;
 

@@ -17,9 +17,18 @@
 #include <awui/Math.h>
 #include <awui/Random.h>
 
+#include <stdlib.h>
+
 using namespace awui::Emulation::Chip8;
 
 CPU::CPU() {
+	this->_spriteWidth = 0;
+	this->_spriteHeight = 0;
+	this->_pc = 0;
+	this->_imageUpdated = false;
+	this->_finished = 0;
+	this->_soundTimer = 0;
+	this->_delayTimer = 0;
 	this->_screen = new Screen(64, 32);
 	this->_memory = new Memory(4096);
 	this->_registers = new Registers(16);

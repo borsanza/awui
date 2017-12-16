@@ -10,11 +10,20 @@
 #include <awui/Emulation/Common/Word.h>
 #include <awui/IO/FileStream.h>
 
+#include <stdlib.h>
+
 using namespace awui::Collections;
 using namespace awui::Emulation::Spectrum;
 using namespace awui::IO;
 
 TapeCorder::TapeCorder() {
+	this->_finishCassetteCB = NULL;
+	this->_finishCassetteDataCB = NULL;
+	this->_cycle = 0;
+	this->_state = 0;
+	this->_block = 0;
+	this->_posBit = 0;
+	this->_posByte = 0;
 	this->_list = 0;
 	this->_playing = false;
 	this->Rewind();

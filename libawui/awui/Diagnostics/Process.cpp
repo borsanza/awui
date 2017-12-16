@@ -2,7 +2,9 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "Process.h"
-#include "string.h"
+
+#include <string.h>
+#include <sys/select.h>
 
 using namespace awui::Diagnostics;
 

@@ -17,6 +17,7 @@ namespace awui {
 				Point();
 				Point(const Size sz);
 				Point(int x, int y);
+				virtual ~Point();
 
 				inline int GetX() const { return this->_x; }
 				void SetX(int x);

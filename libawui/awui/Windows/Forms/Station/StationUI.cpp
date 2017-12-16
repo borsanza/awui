@@ -23,6 +23,7 @@ using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
 
 StationUI::StationUI() {
+	this->_actual = 0;
 	this->_fade.SetStationUI(this);
 	this->_arcade = NULL;
 	this->_root = NULL;
@@ -363,6 +364,8 @@ bool StationUI::OnKeyUp(Keys::Enum key) {
 /********************************* FadePanel **********************************/
 
 FadePanel::FadePanel() {
+	this->_station = NULL;
+	this->_showing = false;
 	this->_status = 0.0f;
 }
 

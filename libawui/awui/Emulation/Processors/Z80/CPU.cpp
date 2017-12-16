@@ -8,7 +8,6 @@
 
 //#define SLOW
 #include <string>
-#include <awui/Emulation/Common/Word.h>
 // #include <string.h>
 //#define NUMOPCODES
 

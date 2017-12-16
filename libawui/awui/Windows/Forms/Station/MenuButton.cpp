@@ -22,6 +22,7 @@ using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms::Station;
 
 MenuButton::MenuButton(StationUI * station) {
+	this->_node = NULL;
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->_station = station;
 	this->SetTabStop(true);
@@ -180,6 +181,7 @@ void MenuButton::OnResize() {
 /******************************** LabelButton *********************************/
 
 LabelButton::LabelButton() {
+	this->_frames = 0;
 	this->_lastSelected = false;
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->SetTextAlign(ContentAlignment::MiddleLeft);

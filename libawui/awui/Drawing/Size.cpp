@@ -10,18 +10,27 @@
 using namespace awui::Drawing;
 
 Size::Size() {
+	this->width = 0;
+	this->height = 0;
 	this->SetWidth(0);
 	this->SetHeight(0);
 }
 
 Size::Size(const Point pt) {
+	this->width = 0;
+	this->height = 0;
 	this->SetWidth(pt.GetX());
 	this->SetHeight(pt.GetY());
 }
 
 Size::Size(int width, int height) {
+	this->width = 0;
+	this->height = 0;
 	this->SetWidth(width);
 	this->SetHeight(height);
+}
+
+Size::~Size() {
 }
 
 int Size::GetWidth() const {

@@ -34,7 +34,7 @@ double DateTime::GetTotalSeconds() {
 	struct timeval tv;
 	struct timezone tz;
 	gettimeofday(&tv, &tz);
-	return tv.tv_sec + (tv.tv_usec / 1000000.0d);
+	return tv.tv_sec + (tv.tv_usec / 1000000.0);
 }
 
 unsigned char DateTime::GetSecond() {

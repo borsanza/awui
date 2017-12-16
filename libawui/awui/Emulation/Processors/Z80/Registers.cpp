@@ -11,6 +11,9 @@
 using namespace awui::Emulation::Processors::Z80;
 
 Registers::Registers() {
+	this->_im = 0;
+	this->_iff1 = false;
+	this->_iff2 = false;
 	this->Clear();
 }
 

@@ -27,6 +27,9 @@ Point::Point(int x, int y) {
 	this->_y = y;
 }
 
+Point::~Point() {
+}
+
 void Point::SetX(int x) {
 	this->_x = x;
 }

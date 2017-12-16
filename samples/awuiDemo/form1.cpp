@@ -11,6 +11,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Form1::Form1() {
+	this->bitmap2 = NULL;
 	this->InitializeComponent();
 }
 

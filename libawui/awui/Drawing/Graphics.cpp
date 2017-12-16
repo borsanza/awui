@@ -17,6 +17,8 @@ using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
 
 Graphics::Graphics() {
+	this->cairo_surface = NULL;
+	this->cr = NULL;
 }
 
 Graphics::~Graphics() {

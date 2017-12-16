@@ -11,6 +11,7 @@
 using namespace awui::Emulation::Chip8;
 
 Registers::Registers(uint8_t n) {
+	this->_i = 0;
 	this->_length = n;
 	this->_v = (uint8_t *) malloc (sizeof(uint8_t *) * n);
 	this->Clear();

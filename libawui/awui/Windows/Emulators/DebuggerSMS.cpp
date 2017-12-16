@@ -18,6 +18,7 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 
 DebuggerSMS::DebuggerSMS() {
+	this->_width = 0;
 	this->_rom = NULL;
 	this->_tiles = new Drawing::Image(128, 256);
 	this->_colors = new Drawing::Image(32, 1);

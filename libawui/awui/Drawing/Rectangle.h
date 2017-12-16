@@ -16,6 +16,7 @@ namespace awui {
 				Rectangle();
 				Rectangle(const Point location, const Size size);
 				Rectangle(int x, int y, int width, int height);
+				virtual ~Rectangle();
 
 				inline int GetWidth() const { return this->size.GetWidth(); }
 				void SetWidth(int width);

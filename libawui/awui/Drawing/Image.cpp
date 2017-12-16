@@ -8,6 +8,7 @@
 
 #include <awui/String.h>
 #include <cairo.h>
+#include <stdlib.h>
 #include <SDL_opengl.h>
 
 #define BTPP 4
@@ -15,9 +16,10 @@
 using namespace awui::Drawing;
 
 Image::Image(int width, int height) {
+	this->texture = 0;
 	this->width = width;
 	this->height = height;
-	this->image = (unsigned char *) calloc (BTPP, this->width * this->height);
+	this->image = (unsigned char *) calloc(BTPP, this->width * this->height);
 	this->cairo_surface = cairo_image_surface_create_for_data(this->image, CAIRO_FORMAT_ARGB32, this->width, this->height, BTPP * this->width);
 	this->cr = cairo_create(this->cairo_surface);
 	this->loaded = false;
@@ -25,6 +27,7 @@ Image::Image(int width, int height) {
 
 Image::Image(String filename) {
 	this->image = NULL;
+	this->texture = 0;
 	this->cairo_surface = cairo_image_surface_create_from_png(filename.ToCharArray());
 	this->width = cairo_image_surface_get_width(this->cairo_surface);
 	this->height = cairo_image_surface_get_height(this->cairo_surface);

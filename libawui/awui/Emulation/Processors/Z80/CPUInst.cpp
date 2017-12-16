@@ -15,6 +15,16 @@ uint8_t ZS_Flags[256];
 uint8_t PZS_Flags[256];
 
 CPUInst::CPUInst() {
+	this->_showLog = false;
+	this->_readPortCB = NULL;
+	this->_readPortDataCB = NULL;
+	this->_readMemoryCB = NULL;
+	this->_readMemoryDataCB = NULL;
+	this->_writePortCB = NULL;
+	this->_writePortDataCB = NULL;
+	this->_writeMemoryCB = NULL;
+	this->_writeMemoryDataCB = NULL;
+	this->_showNotImplemented = false;
 	this->FillFlags();
 	this->Reset();
 }

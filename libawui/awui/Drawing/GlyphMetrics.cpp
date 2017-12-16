@@ -6,6 +6,14 @@
 using namespace awui::Drawing;
 
 GlyphMetrics::GlyphMetrics() {
+	this->width = 0;
+	this->height = 0;
+	this->ascent = 0;
+	this->descent = 0;
+	this->advancex = 0;
+	this->advancey = 0;
+	this->bearingx = 0;
+	this->bearingy = 0;
 }
 
 int GlyphMetrics::GetWidth() const {

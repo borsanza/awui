@@ -11,17 +11,17 @@ using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
 
 Pen::Pen(Drawing::Color color) {
-	this->SetColor(color);
-	this->SetWidth(1);
-	this->SetLineCap(LineCap::Butt);
-	this->SetLineJoin(LineJoin::Miter);
+	this->color = color;
+	this->width = 1;
+	this->lineCap = LineCap::Butt;
+	this->lineJoin = LineJoin::Miter;
 }
 
 Pen::Pen(Drawing::Color color, float width) {
-	this->SetColor(color);
-	this->SetWidth(width);
-	this->SetLineCap(LineCap::Butt);
-	this->SetLineJoin(LineJoin::Miter);
+	this->color = color;
+	this->width = width;
+	this->lineCap = LineCap::Butt;
+	this->lineJoin = LineJoin::Miter;
 }
 
 Pen::~Pen() {

@@ -13,6 +13,7 @@ using namespace awui::IO;
 
 MemoryStream::MemoryStream(uint32_t capacity) {
 	this->_data = 0;
+	this->_capacity = 0;
 	this->SetCapacity(capacity);
 	this->_position = 0;
 	this->_length = 0;

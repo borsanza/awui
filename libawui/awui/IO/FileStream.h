@@ -9,7 +9,7 @@ namespace awui {
 	class String;
 
 	namespace IO {
-		class FileStream : public Stream {
+		class FileStream : Stream {
 			private:
 				FILE * _file;
 				long _length;

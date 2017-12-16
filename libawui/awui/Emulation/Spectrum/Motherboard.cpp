@@ -12,6 +12,7 @@
 #include <awui/Convert.h>
 #include <awui/DateTime.h>
 #include <awui/Emulation/Common/Rom.h>
+#include <awui/Emulation/Common/Word.h>
 #include <awui/Emulation/Processors/Z80/CPU.h>
 #include <awui/Emulation/Spectrum/Sound.h>
 #include <awui/Emulation/Spectrum/ULA.h>
@@ -42,6 +43,13 @@ void WritePortCB(uint8_t port, uint8_t value, void * data) { ((Motherboard *) da
 uint8_t ReadPortCB(uint8_t port, void * data) { return ((Motherboard *) data)->ReadPort(port); }
 
 Motherboard::Motherboard() {
+	this->_percFrame = 0;
+	this->_initFrame = 0;
+	this->_countReadCycles = 0;
+	this->_lastCycles = 0;
+	this->_writeCassetteDataCB = NULL;
+	this->_readCassetteDataCB = NULL;
+
 	this->_z80 = new awui::Emulation::Processors::Z80::CPU();
 	this->_z80->SetWriteMemoryCB(WriteMemoryCB, this);
 	this->_z80->SetReadMemoryCB(ReadMemoryCB, this);

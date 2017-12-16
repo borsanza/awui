@@ -12,6 +12,10 @@
 using namespace awui::Emulation::MasterSystem;
 
 Sound::Sound() {
+	this->_type = 0;
+	this->_noiseData = 0;
+	this->_cpu = NULL;
+
 	// Manera tonta de inicializar SoundSDL
 	SoundSDL::Instance();
 

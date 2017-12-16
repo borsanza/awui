@@ -15,6 +15,7 @@ using namespace awui::Emulation::Common;
 using namespace awui::IO;
 
 Rom::Rom(int32_t capacity) {
+	this->_numPages = 0;
 	this->_rom = new MemoryStream(capacity);
 	this->_rom->SetLength(capacity);
 }

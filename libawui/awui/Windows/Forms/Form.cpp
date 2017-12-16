@@ -27,6 +27,8 @@ uint32_t Form::_buttonsPad1 = 0;
 uint32_t Form::_buttonsPad2 = 0;
 
 Form::Form() {
+	this->mouseX = 0;
+	this->mouseY = 0;
 	this->text = "";
 	this->SetBackColor(Drawing::Color::FromArgb(192, 192, 192));
 
