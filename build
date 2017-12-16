@@ -27,6 +27,12 @@ case "$OPTION" in
 	r|re|reg|rege|regen|regene|regener|regenera|regenerat|regenerate)
 		. "$BUILD_PATH"/scripts/build-regenerate "$@"
 		;;
+	# stationTV
+	s|st|sta|stat|stati|statio|station|stationT|stationTV)
+		cd samples/stationTV
+		./stationTV
+		cd ../..
+		;;
 	*)
 		if [[ ! -z $OPTION ]]; then
 			echo "$COMMAND: unknown command '$OPTION'"
@@ -40,6 +46,7 @@ case "$OPTION" in
 		echo " clean         clean projects"
 		echo " countlines    countlines"
 		echo " regenerate    regenerate projects"
+		echo " stationTV     launch stationTV"
 		echo
 
 		exit 1
