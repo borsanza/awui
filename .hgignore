@@ -12,7 +12,8 @@ cmake_install.cmake
 \.cproject
 \.project
 
-libawui/libawui.so
+b/libawui/d/libawui.so
+b/libawui/r/libawui.so
 samples/awSlider/awSlider
 samples/awTest/awTest
 samples/awuiDemo/awuiDemo
