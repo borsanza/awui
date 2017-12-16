@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# shellcheck disable=SC1090
+
+BUILD_PATH="$(dirname "$0")"
+COMMAND=$(basename "$0")
+
+. "${BUILD_PATH}/config/globals.sh"
+
+OPTION=$1
+shift
+
+case "$OPTION" in
+	# build
+	b|bu|bui|buil|build)
+		. "$BUILD_PATH"/scripts/build-build "$@"
+		;;
+	# clean
+	c|cl|cle|clea|clean)
+		. "$BUILD_PATH"/scripts/build-clean "$@"
+		;;
+	# countlines
+	co|cou|coun|count|countl|countli|countlin|countline|countlines)
+		. "$BUILD_PATH"/scripts/build-countlines "$@"
+		;;
+	# regenerate
+	r|re|reg|rege|regen|regene|regener|regenera|regenerat|regenerate)
+		. "$BUILD_PATH"/scripts/build-regenerate "$@"
+		;;
+	*)
+		if [[ ! -z $OPTION ]]; then
+			echo "$COMMAND: unknown command '$OPTION'"
+		fi
+
+		echo "Build"
+		echo
+		echo "basic commands:"
+		echo
+		echo " clean         clean projects"
+		echo " countlines    countlines"
+		echo " regenerate    regenerate projects"
+		echo
+
+		exit 1
+		;;
+esac
+
