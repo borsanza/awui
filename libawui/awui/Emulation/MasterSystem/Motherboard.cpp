@@ -35,6 +35,8 @@ Motherboard::Motherboard() {
 	this->_sound = new Sound();
 	this->_sound->SetCPU(this);
 
+	this->_percFrame = 0;
+	this->_initFrame = 0;
 	this->_vdp = new VDP(this);
 	this->d._addressBus.W = 0;
 	this->d._frame = 0;
