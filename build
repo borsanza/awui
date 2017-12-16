@@ -36,6 +36,7 @@ case "$OPTION" in
 		echo
 		echo "basic commands:"
 		echo
+		echo " build         build projects"
 		echo " clean         clean projects"
 		echo " countlines    countlines"
 		echo " regenerate    regenerate projects"
