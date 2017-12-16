@@ -3,7 +3,7 @@
 # shellcheck disable=SC2034
 
 BUILD_TYPE="Debug"
-USE_MAKE=0
+USE_MAKE=1
 ECLIPSE_VERSION="4.7.1a"
 
 if [ "$USE_MAKE" -eq "1" ]; then
