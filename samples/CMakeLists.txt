@@ -3,9 +3,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1)
 PROJECT(samples)
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	SET(LIBAWUI_BIN_PATH "../../b/libawui/d")
+	SET(LIBAWUI_BIN_PATH "../../b/d/libawui")
 ELSE()
-	SET(LIBAWUI_BIN_PATH "../../b/libawui/r")
+	SET(LIBAWUI_BIN_PATH "../../b/r/libawui")
 ENDIF()
 
 ADD_SUBDIRECTORY(stationTV)
