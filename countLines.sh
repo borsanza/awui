@@ -1,4 +1,4 @@
 #!/bin/sh
 
-find libawui/ -iregex '.*\.\(cpp\|h\)$' | xargs wc -l | sort -n
+find libawui/ -iregex '.*\.\(cpp\|h\)$' -print0 | xargs -0 wc -l | sort -n
 

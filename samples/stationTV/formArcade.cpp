@@ -12,6 +12,7 @@
 using namespace awui::Drawing;
 
 FormArcade::FormArcade() {
+	this->_station = NULL;
 	this->InitializeComponent();
 }
 
