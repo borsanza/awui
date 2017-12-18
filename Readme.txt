@@ -10,6 +10,22 @@ Install CMake from http://www.cmake.org/
 Install Tortoise hg from http://tortoisehg.bitbucket.org/
 
 
+Install Oracle Java 8:
+
+https://tecadmin.net/install-oracle-java-8-ubuntu-via-ppa/#
+
+add-apt-repository ppa:webupd8team/java
+apt-get update
+apt-get install oracle-java8-installer
+java -version
+
+apt-get install oracle-java8-set-default
+
+cat >> /etc/environment <<EOL
+JAVA_HOME=/usr/lib/jvm/java-8-oracle
+JRE_HOME=/usr/lib/jvm/java-8-oracle/jre
+EOL
+
 awui:
 
 1.- Clone the repository from google code:
