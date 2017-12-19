@@ -8,7 +8,7 @@ else
 	cd b/r/libawui || exit
 fi
 
-rm CMakeCache.txt
+rm ../../../libawui/CMakeCache.txt
 cmake -G "$EDITOR" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_ECLIPSE_VERSION="$ECLIPSE_VERSION" ../../../libawui
 ($COMMAND_BUILD)
 cd ../../.. || exit
