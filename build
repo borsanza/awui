@@ -11,13 +11,13 @@ OPTION=$1
 shift
 
 declare -a options=(
-                    "build"
-                    "clean"
-                    "countlines"
-		    "help"
-                    "regenerate"
-                    "stationTV"
-                    )
+	"build"
+	"clean"
+	"countlines"
+	"help"
+	"regenerate"
+	"stationTV"
+	)
 
 MATCHES=()
 if [[ a"$OPTION"a == "aa" ]]; then
@@ -44,7 +44,6 @@ if [[ "${#MATCHES[@]}" -gt 1 ]]; then
 	echo "   " "${MATCHES[@]}"
 	exit
 fi
-
 
 case "$OPTION" in
 	build)
