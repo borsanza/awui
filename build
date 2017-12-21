@@ -74,10 +74,11 @@ case "$OPTION" in
 		echo
 		echo "basic commands:"
 		echo
-		echo " build         build projects"
+		echo " build         build projects (efault)"
 		echo " clean         clean projects"
-		echo " countlines    countlines"
-		echo " regenerate    regenerate projects"
+		echo " countlines    count all project lines"
+		echo " help          display this help and exit"
+		echo " regenerate    regenerate cmake projects and build"
 		echo " stationTV     launch stationTV"
 		echo
 
