@@ -10,34 +10,66 @@ COMMAND=$(basename "$0")
 OPTION=$1
 shift
 
+declare -a options=(
+                    "build"
+                    "clean"
+                    "countlines"
+		    "help"
+                    "regenerate"
+                    "stationTV"
+                    )
+
+MATCHES=()
+if [[ a"$OPTION"a == "aa" ]]; then
+	OPTION="build"
+fi
+
+for element in "${options[@]}"; do
+	if [[ "$element" == "$OPTION"* ]]; then
+		MATCHES+=(${element})
+	fi
+done
+
+if [[ "${#MATCHES[@]}" -eq 0 ]]; then
+	echo "${COMMAND}: unknown command '${OPTION}'"
+	MATCHES+=("help")
+fi
+
+if [[ "${#MATCHES[@]}" -eq 1 ]]; then
+	OPTION="${MATCHES[0]}"
+fi
+
+if [[ "${#MATCHES[@]}" -gt 1 ]]; then
+	echo "${COMMAND}: command '${OPTION}' is ambiguous:"
+	echo "   " "${MATCHES[@]}"
+	exit
+fi
+
+
 case "$OPTION" in
 	# build
-	b|bu|bui|buil|build)
+	build)
 		. "$BUILD_PATH"/scripts/build-build "$@"
 		;;
 	# clean
-	c|cl|cle|clea|clean)
+	clean)
 		. "$BUILD_PATH"/scripts/build-clean "$@"
 		;;
 	# countlines
-	co|cou|coun|count|countl|countli|countlin|countline|countlines)
+	countlines)
 		. "$BUILD_PATH"/scripts/build-countlines "$@"
 		;;
 	# regenerate
-	r|re|reg|rege|regen|regene|regener|regenera|regenerat|regenerate)
+	regenerate)
 		. "$BUILD_PATH"/scripts/build-regenerate "$@"
 		;;
 	# stationTV
-	s|st|sta|stat|stati|statio|station|stationT|stationTV)
-		cd samples/stationTV
+	stationTV)
+		cd samples/stationTV || exit
 		./stationTV
-		cd ../..
+		cd ../.. || exit
 		;;
 	*)
-		if [[ ! -z $OPTION ]]; then
-			echo "$COMMAND: unknown command '$OPTION'"
-		fi
-
 		echo "Build"
 		echo
 		echo "basic commands:"
