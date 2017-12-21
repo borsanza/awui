@@ -47,23 +47,18 @@ fi
 
 
 case "$OPTION" in
-	# build
 	build)
 		. "$BUILD_PATH"/scripts/build-build "$@"
 		;;
-	# clean
 	clean)
 		. "$BUILD_PATH"/scripts/build-clean "$@"
 		;;
-	# countlines
 	countlines)
 		. "$BUILD_PATH"/scripts/build-countlines "$@"
 		;;
-	# regenerate
 	regenerate)
 		. "$BUILD_PATH"/scripts/build-regenerate "$@"
 		;;
-	# stationTV
 	stationTV)
 		cd samples/stationTV || exit
 		./stationTV
