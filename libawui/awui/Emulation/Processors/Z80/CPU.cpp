@@ -1415,7 +1415,7 @@ void CPU::RunOpcode() {
 
 		default:
 		{
-			bool normal = false;
+//			bool normal = false;
 			if ((opcode1 == 0xDD) || (opcode1 == 0xFD)) {
 /*
 				switch (opcode2) {
@@ -1428,7 +1428,7 @@ void CPU::RunOpcode() {
 */
 			}
 
-			if (!normal) {
+//			if (!normal) {
 				this->d._cycles += 12; // 71400;
 				if (this->_showNotImplemented) {
 #ifdef SLOW
@@ -1441,7 +1441,7 @@ void CPU::RunOpcode() {
 					fflush(stdout);
 					this->_showNotImplemented = false;
 				}
-			}
+//			}
 
 //			assert(0);
 			break;

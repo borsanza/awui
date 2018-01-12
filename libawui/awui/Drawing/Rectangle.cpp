@@ -1,7 +1,7 @@
 /*
  * awui/Drawing/Rectangle.cpp
  *
- * Copyright (C) 2011 Borja S�nchez Zamorano
+ * Copyright (C) 2011 Borja Sanchez Zamorano
  */
 
 #include "Rectangle.h"

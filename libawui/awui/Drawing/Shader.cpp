@@ -48,7 +48,7 @@ void Shader::printShaderLog(GLuint shader) {
 
 		delete[] infoLog;
 	} else
-		printf( "Name %d is not a shader\n", shader );
+		printf( "Name %d is not a shader\n", (int) shader );
 }
 
 GLuint Shader::LoadShaderFromFile( std::string path, GLenum shaderType) {
@@ -68,7 +68,7 @@ GLuint Shader::LoadShaderFromFile( std::string path, GLenum shaderType) {
 		GLint shaderCompiled = GL_FALSE;
 		glGetShaderiv( shaderID, GL_COMPILE_STATUS, &shaderCompiled );
 		if (shaderCompiled != GL_TRUE) {
-			printf("Unable to compile shader %d!\n\nSource:\n%s\n", shaderID, shaderSource);
+			printf("Unable to compile shader %d!\n\nSource:\n%s\n", (int) shaderID, shaderSource);
 			printShaderLog(shaderID);
 			glDeleteShader(shaderID);
 			shaderID = 0;
