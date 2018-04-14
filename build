@@ -17,6 +17,7 @@ declare -a options=(
 	"help"
 	"regenerate"
 	"stationTV"
+	"ubuntu"
 	)
 
 MATCHES=()
@@ -63,6 +64,9 @@ case "$OPTION" in
 		./stationTV
 		cd ../.. || exit
 		;;
+	ubuntu)
+		. "$BUILD_PATH"/scripts/build-ubuntu "$@"
+		;;
 	*)
 		echo "Build"
 		echo
@@ -74,6 +78,7 @@ case "$OPTION" in
 		echo " help          display this help and exit"
 		echo " regenerate    regenerate cmake projects and build"
 		echo " stationTV     launch stationTV"
+		echo " ubuntu        Check Ubuntu development packages"
 		echo
 
 		exit 1

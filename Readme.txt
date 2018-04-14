@@ -1,5 +1,5 @@
 Ubuntu:
-  apt-get install cmake libsdl1.2-dev libsdl-image1.2-dev libcairo2-dev
+  apt-get install cmake libsdl1.2-dev libsdl-image1.2-dev libcairo2-dev libglew-dev
 
 openssl s_client -connect code.google.com:443 < /dev/null 2> /dev/null | openssl x509 -fingerprint -noout -in /dev/stdin
 
@@ -64,3 +64,4 @@ Finish:
 2.- Open the Project.sln with Visual Studio
 
 3.- Set the at startup project to awuiDemo
+
