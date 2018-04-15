@@ -1,15 +1,6 @@
 Ubuntu:
   apt-get install cmake libsdl1.2-dev libsdl-image1.2-dev libcairo2-dev libglew-dev libv8-dev
 
-openssl s_client -connect code.google.com:443 < /dev/null 2> /dev/null | openssl x509 -fingerprint -noout -in /dev/stdin
-
-How to compile in Windows:
-
-Install CMake from http://www.cmake.org/
-
-Install Tortoise hg from http://tortoisehg.bitbucket.org/
-
-
 Install Oracle Java 8:
 
 https://tecadmin.net/install-oracle-java-8-ubuntu-via-ppa/#
@@ -25,6 +16,16 @@ cat >> /etc/environment <<EOL
 JAVA_HOME=/usr/lib/jvm/java-8-oracle
 JRE_HOME=/usr/lib/jvm/java-8-oracle/jre
 EOL
+
+--------------------------------------------------------------------------------
+
+openssl s_client -connect code.google.com:443 < /dev/null 2> /dev/null | openssl x509 -fingerprint -noout -in /dev/stdin
+
+How to compile in Windows:
+
+Install CMake from http://www.cmake.org/
+
+Install Tortoise hg from http://tortoisehg.bitbucket.org/
 
 awui:
 

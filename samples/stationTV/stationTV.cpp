@@ -9,11 +9,17 @@
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Forms/Application.h>
+#include <awui/Scripting/JavaScript/JavaScript.h>
 
 using namespace awui;
 using namespace awui::Windows::Emulators;
+using namespace awui::Scripting::JavaScript;
 
 int main(int argc, char ** argv) {
+	JavaScript * js = new JavaScript();
+	js->Run("var a = ''; for (i = 0; i < 3; i++) a += 'Hola ' + i + ' Mundo\\n';");
+	return 0;
+
 	if (argc == 3) {
 		String name = argv[1];
 		if (name == "--testsms") {

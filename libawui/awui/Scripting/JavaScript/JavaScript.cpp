@@ -6,16 +6,23 @@
 
 #include "JavaScript.h"
 
-#include <v8.h>
+using namespace awui::Scripting::JavaScript;
 
-using namespace awui::Scripting;
+int JavaScript::JavaScript::instances = 0;
 
 JavaScript::JavaScript() {
+	if (JavaScript::instances == 0)
+		JavaScript::Initialize();
 
+	JavaScript::instances++;
+
+	this->context = v8::Context::New();
 }
 
 JavaScript::~JavaScript() {
-
+	JavaScript::instances--;
+	if (JavaScript::instances == 0)
+		JavaScript::Shutdown();
 }
 
 void JavaScript::Initialize() {
@@ -28,8 +35,7 @@ void JavaScript::Initialize() {
 
 void JavaScript::Run(const char * code) {
 	v8::HandleScope handle_scope;
-	v8::Handle<v8::Context> context = v8::Context::New();
-	v8::Context::Scope context_scope(context);
+	v8::Context::Scope context_scope(this->context);
 	v8::Handle<v8::String> source = v8::String::New(code);
 	v8::Handle<v8::Script> script = v8::Script::Compile(source);
 	v8::Handle<v8::Value> result = script->Run();

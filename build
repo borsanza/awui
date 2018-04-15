@@ -72,13 +72,13 @@ case "$OPTION" in
 		echo
 		echo "basic commands:"
 		echo
-		echo " build         build projects (efault)"
+		echo " build         build projects (default)"
 		echo " clean         clean projects"
 		echo " countlines    count all project lines"
 		echo " help          display this help and exit"
 		echo " regenerate    regenerate cmake projects and build"
 		echo " stationTV     launch stationTV"
-		echo " ubuntu        Check Ubuntu development packages"
+		echo " ubuntu        Install Ubuntu development packages"
 		echo
 
 		exit 1
