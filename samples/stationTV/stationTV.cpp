@@ -17,7 +17,7 @@ using namespace awui::Scripting::JavaScript;
 
 int main(int argc, char ** argv) {
 	JavaScript * js = new JavaScript();
-	js->Run("var a = ''; for (i = 0; i < 3; i++) a += 'Hola ' + i + ' Mundo\\n';");
+	js->Run("cd(1); ls(1); set(1); get(1);");
 	return 0;
 
 	if (argc == 3) {
