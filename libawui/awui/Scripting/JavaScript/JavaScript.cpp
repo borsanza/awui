@@ -28,81 +28,73 @@ ln <item>.<property> <item>.<property> - enlazar una propiedad a otra
 backup                                 - exportar todos los elementos
 */
 
-/*
-v8::Handle<v8::Value> js_cd(const v8::Arguments& args) {
-	bool first = true;
-    for (int i = 0; i < args.Length(); i++) {
-        v8::HandleScope handle_scope();
-        if (first)
-            first = false;
-        else
-            printf(" ");
-        v8::String::Utf8Value str(args[i]);
-        const char* cstr = str.operator *();
-        printf("%s", cstr);
-    }
-    return v8::Null();
-}
-*/
-
 v8::Handle<v8::Value> js_ls(const v8::Arguments& args) {
-	printf("ls [<pattern>]\n");
-    return v8::Null();
+	printf("ls");
+	for (int i = 0; i < args.Length(); i++) {
+		v8::HandleScope handle_scope();
+		v8::String::Utf8Value str(args[i]);
+		const char* cstr = str.operator *();
+		printf(" %s", cstr);
+	}
+
+	//	printf("ls [<pattern>]\n");
+	printf("\n");
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_cd(const v8::Arguments& args) {
 	printf("cd [<path>]\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_add(const v8::Arguments& args) {
 	printf("add <item> [<property>=<value> ...]\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_cp(const v8::Arguments& args) {
 	printf("cp <item> <itemnew>\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_rm(const v8::Arguments& args) {
 	printf("rm <item>\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_mv(const v8::Arguments& args) {
 	printf("mv <olditem> <newitem>\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_set(const v8::Arguments& args) {
 	printf("set <item>.<property> <value>\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_unset(const v8::Arguments& args) {
 	printf("unset <item>.<property>\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_get(const v8::Arguments& args) {
 	printf("get <item>.<property>\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_cat(const v8::Arguments& args) {
 	printf("cat <item>\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_ln(const v8::Arguments& args) {
 	printf("ln\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 v8::Handle<v8::Value> js_backup(const v8::Arguments& args) {
 	printf("backup\n");
-    return v8::Null();
+	return v8::Null();
 }
 
 JavaScript::JavaScript() {

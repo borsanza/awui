@@ -17,7 +17,7 @@ using namespace awui::Scripting::JavaScript;
 
 int main(int argc, char ** argv) {
 	JavaScript * js = new JavaScript();
-	js->Run("ls(1); cd(1); add(1); cp(1); rm(1); mv(1); set(1); unset(1); get(1); cat(1); backup(1);");
+	js->Run("ls(1, 2, 3); cd(1); add(1); cp(1); rm(1); mv(1); set(1); unset(1); get(1); cat(1); backup(1);");
 	return 0;
 
 	if (argc == 3) {
