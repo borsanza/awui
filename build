@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# shellcheck disable=SC1090
 
 BUILD_PATH="$(dirname "$0")"
 COMMAND=$(basename "$0")
 
+# shellcheck source=/dev/null
 . "${BUILD_PATH}/config/globals.sh"
 
 OPTION=$1
@@ -48,15 +48,19 @@ fi
 
 case "$OPTION" in
 	build)
+		# shellcheck source=/dev/null
 		. "$BUILD_PATH"/scripts/build-build "$@"
 		;;
 	clean)
+		# shellcheck source=/dev/null
 		. "$BUILD_PATH"/scripts/build-clean "$@"
 		;;
 	countlines)
+		# shellcheck source=/dev/null
 		. "$BUILD_PATH"/scripts/build-countlines "$@"
 		;;
 	regenerate)
+		# shellcheck source=/dev/null
 		. "$BUILD_PATH"/scripts/build-regenerate "$@"
 		;;
 	stationTV)
@@ -65,6 +69,7 @@ case "$OPTION" in
 		cd ../.. || exit
 		;;
 	ubuntu)
+		# shellcheck source=/dev/null
 		. "$BUILD_PATH"/scripts/build-ubuntu "$@"
 		;;
 	*)
