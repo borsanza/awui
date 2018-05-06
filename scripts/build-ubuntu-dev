@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sudo apt-get install mercurial ttf-bitstream-vera tortoisehg-caja vim vim-syntastic shellcheck checkstyle cppcheck cppcheck-gui
+
