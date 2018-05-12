@@ -30,6 +30,11 @@ for element in "${options[@]}"; do
 	if [[ "$element" == "$OPTION"* ]]; then
 		MATCHES+=(${element})
 	fi
+
+	if [[ "$element" == "$OPTION" ]]; then
+		MATCHES=(${element})
+		break;
+	fi
 done
 
 if [[ "${#MATCHES[@]}" -eq 0 ]]; then
@@ -74,6 +79,7 @@ case "$OPTION" in
 		. "$BUILD_PATH"/scripts/build-ubuntu "$@"
 		;;
 	ubuntu-dev)
+		# shellcheck source=/dev/null
 		. "$BUILD_PATH"/scripts/build-ubuntu-dev "$@"
 		;;
 	*)
