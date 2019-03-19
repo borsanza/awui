@@ -13,6 +13,8 @@ cmake_install.cmake
 \.project
 \.settings
 
+.vscode/
+
 b/d/libawui/libawui.so
 b/r/libawui/libawui.so
 b/r/libawui/libawui.dll
@@ -24,6 +26,8 @@ samples/awTest/awTest
 samples/awuiDemo/awuiDemo
 samples/stationTV/roms/
 samples/stationTV/stationTV
+samples/stationTV/installer
+samples/stationTV/libawui.dll
 ext/glew/
 ext/SDL_image/
 ext/ninja.exe
