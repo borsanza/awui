@@ -4,7 +4,7 @@
 
 BUILD_TYPE="Debug"
 USE_MAKE=1
-ECLIPSE_VERSION="4.7.1a"
+#ECLIPSE_VERSION="4.7.1a"
 
 if [ "$USE_MAKE" -eq "1" ]; then
 	CORES=$(nproc)
@@ -16,4 +16,3 @@ else
 	COMMAND_BUILD="ninja"
 	MAKE_CLEAN="ninja -t clean"
 fi
-
