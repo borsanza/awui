@@ -119,13 +119,13 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 
 			child->_path = newFile;
 			child->_parent = parent;
-			child->_directory = dir->d_type == DT_DIR;
+//			child->_directory = dir->d_type == DT_DIR;
 
 			child->_key = String::Concat((child->_directory? "1" : "2") , child->_name);
 			parent->_childList->Add(&child->_key, child);
 
-			if (child->_directory)
-				this->RecursiveSearch(child);
+//			if (child->_directory)
+			this->RecursiveSearch(child);
 		}
 
 		closedir(d);

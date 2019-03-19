@@ -20,7 +20,7 @@ namespace awui {
 					static uint32_t _buttonsPad1;
 					static uint32_t _buttonsPad2;
 					Control * mouseControlOver;
-					awui::Diagnostics::Process* remoteProcess;
+					//awui::Diagnostics::Process* remoteProcess;
 					String text;
 
 					int mouseX;

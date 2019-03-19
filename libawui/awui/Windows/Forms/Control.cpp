@@ -27,7 +27,7 @@ Control::Control() {
 	this->_lastY = 0;
 	this->_drawShadow = true;
 	this->tabStop = false;
-	this->bounds = Rectangle(0, 0, 100, 100);
+	this->bounds = Drawing::Rectangle(0, 0, 100, 100);
 	this->boundsTo = this->bounds;
 	this->controls = new ControlCollection(this);
 	this->mouseEventArgs = new MouseEventArgs();
@@ -104,7 +104,7 @@ void Control::SetBounds(int x, int y, int width, int height) {
 	if ((this->bounds.GetX() == x) && (this->bounds.GetY() == y) && (this->bounds.GetWidth() == width) && (this->bounds.GetHeight() == height))
 		return;
 
-	this->bounds = Rectangle(x, y, width, height);
+	this->bounds = Drawing::Rectangle(x, y, width, height);
 	this->boundsTo = this->bounds;
 	this->_lastWidth = width;
 	this->_lastHeight = height;
@@ -166,7 +166,7 @@ const Size Control::GetSize() const {
 	return this->bounds.GetSize();
 }
 
-const Rectangle Control::GetBounds() const {
+const awui::Drawing::Rectangle Control::GetBounds() const {
 	return this->bounds;
 }
 
@@ -275,7 +275,7 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	Rectangle rect2;
+	Drawing::Rectangle rect2;
 	rect2.SetX(x);
 	rect2.SetY(height - y - this->GetHeight());
 	rect2.SetWidth(this->GetWidth());
@@ -310,7 +310,7 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 
 	int r = 0;
 
-	Rectangle cr = gl->GetClippingResult();
+	Drawing::Rectangle cr = gl->GetClippingResult();
 	int isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0) && this->_visible;
 	if (isVisible) {
 		r++;
@@ -526,9 +526,9 @@ bool Control::IsVisible() const {
 		return false;
 
 	if (this->GetParent()) {
-		Rectangle pr = this->GetParent()->GetBounds();
+		Drawing::Rectangle pr = this->GetParent()->GetBounds();
 		pr.SetLocation(0, 0);
-		Rectangle cr = Rectangle::Intersect(this->bounds, pr);
+		Drawing::Rectangle cr = Drawing::Rectangle::Intersect(this->bounds, pr);
 		isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0);
 	}
 

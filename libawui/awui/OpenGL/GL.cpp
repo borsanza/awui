@@ -16,28 +16,28 @@ using namespace awui::OpenGL;
 GL::GL() {
 }
 
-void GL::SetClippingBase(Rectangle rectangle) {
+void GL::SetClippingBase(awui::Drawing::Rectangle rectangle) {
 	this->rectangle1 = rectangle;
 }
 
-void GL::SetClipping(Rectangle rectangle) {
+void GL::SetClipping(awui::Drawing::Rectangle rectangle) {
 	this->rectangle2 = rectangle;
 }
 
-Rectangle GL::GetClippingBase() {
+awui::Drawing::Rectangle GL::GetClippingBase() {
 	return this->rectangle1;
 }
 
-Rectangle GL::GetClipping() {
+awui::Drawing::Rectangle GL::GetClipping() {
 	return this->rectangle2;
 }
 
-Rectangle GL::GetClippingResult() {
+awui::Drawing::Rectangle GL::GetClippingResult() {
 	return Rectangle::Intersect(this->rectangle1, this->rectangle2);
 }
 
 void GL::SetClipping() {
-	Rectangle rect = this->GetClippingResult();
+	awui::Drawing::Rectangle rect = this->GetClippingResult();
 
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
 }

@@ -15,11 +15,16 @@ cmake_install.cmake
 
 b/d/libawui/libawui.so
 b/r/libawui/libawui.so
+b/r/libawui/libawui.dll
+b/r/libawui/libawui.dll.a
 samples/awSlider/awSlider
 samples/awTest/awTest
 samples/awuiDemo/awuiDemo
 samples/stationTV/roms/
 samples/stationTV/stationTV
+ext/glew/
+ext/SDL_image/
+ext/ninja.exe
 
 syntax: glob
 

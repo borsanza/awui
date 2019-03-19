@@ -44,12 +44,12 @@ Form::Form() {
 	stats->SetDock(DockStyle::None);
 	this->GetControls()->Add(stats);
 
-	this->remoteProcess = new awui::Diagnostics::Process();
-	this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
+//	this->remoteProcess = new awui::Diagnostics::Process();
+//	this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
 }
 
 Form::~Form() {
-	delete this->remoteProcess;
+//	delete this->remoteProcess;
 }
 
 int Form::IsClass(Classes::Enum objectClass) const {
@@ -100,11 +100,13 @@ void Form::OnTick() {
 	DateTime now = DateTime::GetNow();
 	if (lastTime.GetSecond() != now.GetSecond()) {
 		lastTime = now;
+/*
 		if (this->remoteProcess->GetHasExited()) {
 			delete this->remoteProcess;
 			this->remoteProcess = new awui::Diagnostics::Process();
 			this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
 		}
+*/
 	}
 }
 
@@ -112,7 +114,7 @@ void Form::ProcessEvents() {
 	int resizex = -1;
 	int resizey = -1;
 	SDL_Event event;
-
+/*
 	if (this->remoteProcess->GetHasString()) {
 		awui::String line = this->remoteProcess->GetLine();
 
@@ -156,7 +158,7 @@ void Form::ProcessEvents() {
 		if (line == "32:0")
 			Application::Quit();
 	}
-
+*/
 	while (SDL_PollEvent(&event)) {
 		switch(event.type) {
 			case SDL_JOYBUTTONDOWN:
@@ -567,7 +569,7 @@ void Form::ProcessEvents() {
 	}
 }
 
-#include <GL/glx.h>
+//#include <GL/glx.h>
 
 void Form::RefreshVideo() {
 	if (!initialized)
@@ -609,9 +611,11 @@ void Form::RefreshVideo() {
 	this->SetSize(finalWidth, finalHeight);
 	first = false;
 
+/*
 	void (*swapInterval)(int);
 	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
 	swapInterval(1);
+*/
 }
 
 void Form::SetFullscreen(int mode) {
