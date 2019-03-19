@@ -6,13 +6,13 @@
 
 #include "Directory.h"
 
-#ifdef WINDOWS
-    #include <direct.h>
-    #define GetCurrentDir _getcwd
-#else
+#ifdef __linux__
     #include <unistd.h>
     #define GetCurrentDir getcwd
- #endif
+#elif _WIN32
+    #include <direct.h>
+    #define GetCurrentDir _getcwd
+#endif
 
 using namespace awui;
 using namespace awui::IO;

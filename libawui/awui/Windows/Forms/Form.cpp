@@ -570,7 +570,27 @@ void Form::ProcessEvents() {
 	}
 }
 
-//#include <GL/glx.h>
+#ifdef __linux__
+	#include <GL/glx.h>
+#elif _WIN32
+
+#include <GL/wglext.h>
+
+bool WGLExtensionSupported(const char *extension_name) {
+    PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsString = NULL;
+
+    _wglGetExtensionsString = (PFNWGLGETEXTENSIONSSTRINGEXTPROC) wglGetProcAddress("wglGetExtensionsStringEXT");
+
+    if (strstr(_wglGetExtensionsString(), extension_name) == NULL)
+        return false;
+
+    return true;
+}
+
+PFNWGLSWAPINTERVALEXTPROC       wglSwapIntervalEXT = NULL;
+//PFNWGLGETSWAPINTERVALEXTPROC    wglGetSwapIntervalEXT = NULL;
+bool initSwapInterval = false;
+#endif
 
 void Form::RefreshVideo() {
 	if (!initialized)
@@ -612,11 +632,21 @@ void Form::RefreshVideo() {
 	this->SetSize(finalWidth, finalHeight);
 	first = false;
 
-/*
+#ifdef __linux__
 	void (*swapInterval)(int);
 	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
 	swapInterval(1);
-*/
+#elif _WIN32
+
+	if (!initSwapInterval && WGLExtensionSupported("WGL_EXT_swap_control"))
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC) wglGetProcAddress("wglSwapIntervalEXT");
+		// wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC) wglGetProcAddress("wglGetSwapIntervalEXT");
+
+	initSwapInterval = true;
+
+	if (wglSwapIntervalEXT)
+		wglSwapIntervalEXT(1);
+#endif
 }
 
 void Form::SetFullscreen(int mode) {
