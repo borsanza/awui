@@ -31,9 +31,17 @@ SoundSDL::SoundSDL() {
 	this->_wanted.callback = FillAudioMasterSystemCB;
 
 	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
+
 	SDL_Init(SDL_INIT_AUDIO);
-	SDL_OpenAudio(&this->_wanted, NULL);
-	SDL_PauseAudio(0);
+	SDL_AudioSpec have;
+	if (SDL_OpenAudio(&this->_wanted, &have) < 0) {
+		// SDL_Log("Failed to open audio: %s", SDL_GetError());
+	} else {
+	    if (have.format != this->_wanted.format) {
+	        // SDL_Log("We didn't get Float32 audio format.");
+	    }
+		SDL_PauseAudio(0);
+	}
 }
 
 SoundSDL* SoundSDL::Instance() {
@@ -70,6 +78,10 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 	int offset = this->_frame * SOUNDSIZEFRAME;
 	for (int i = 0; i < len; i++) {
 		int bufferPos = offset + i;
+
+		// FIXME: Hay desbordamiento de memoria y por eso pongo este if
+		if (bufferPos >= SOUNDBUFFER)
+			continue;
 
 		int outputValue = 0;
 
@@ -116,6 +128,7 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 		}
 
 		// Noise
+
 		{
 			Channel * channel = &sound->_channels[3];
 
@@ -125,6 +138,7 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 				channel->_count = 0;
 				sound->_noiseData = 0x8000;
 			}
+
 
 			if (channel->_buffer[bufferPos]._changeVolume) {
 				channel->_buffer[bufferPos]._changeVolume = false;
