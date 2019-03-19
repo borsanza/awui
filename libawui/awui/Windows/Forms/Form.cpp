@@ -7,6 +7,7 @@
 #include "Form.h"
 
 #include <awui/Diagnostics/Process.h>
+#include <awui/Drawing/Image.h>
 #include <awui/IO/Directory.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Application.h>
@@ -623,6 +624,9 @@ void Form::SetFullscreen(int mode) {
 		return;
 
 	this->fullscreen = mode;
+
+	Bitmap::UnloadAll();
+	Drawing::Image::UnloadAll();
 	this->RefreshVideo();
 }
 
