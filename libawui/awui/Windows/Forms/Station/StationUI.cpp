@@ -13,6 +13,7 @@
 #include <awui/Windows/Forms/Station/Browser/Page.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 #define BORDERMARGIN 50
 #define MENUBUTTONHEIGHT 70
@@ -109,23 +110,24 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 				child->_emulator = parent->_emulator;
 			}
 
-			// 4 Directory
-			// 8 Files
-			// if (dir->d_type == DT_REG)
-				// printf("%s\n", newFile.ToCharArray());
-
 			if (!parent->_childList)
 				parent->_childList = new SortedList();
 
 			child->_path = newFile;
 			child->_parent = parent;
-//			child->_directory = dir->d_type == DT_DIR;
+
+			bool isDir = false;
+			struct stat statbuf;
+			if (stat(newFile.ToCharArray(), &statbuf) != -1)
+				isDir = S_ISDIR(statbuf.st_mode);
+
+			child->_directory = isDir;
 
 			child->_key = String::Concat((child->_directory? "1" : "2") , child->_name);
 			parent->_childList->Add(&child->_key, child);
 
-//			if (child->_directory)
-			this->RecursiveSearch(child);
+			if (child->_directory)
+				this->RecursiveSearch(child);
 		}
 
 		closedir(d);
