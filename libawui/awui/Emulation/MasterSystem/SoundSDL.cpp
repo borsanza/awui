@@ -25,7 +25,7 @@ SoundSDL::SoundSDL() {
 
 	memset(&this->_wanted, 0, sizeof(this->_wanted));
 	this->_wanted.freq = SOUNDFREQ;
-	this->_wanted.format = SOUNDFORMAT == 1 ? AUDIO_S8 : AUDIO_S16SYS;
+	this->_wanted.format = AUDIO_S16SYS;
 	this->_wanted.channels = 1;
 	this->_wanted.samples = SOUNDSAMPLES;
 	this->_wanted.callback = FillAudioMasterSystemCB;
@@ -35,11 +35,12 @@ SoundSDL::SoundSDL() {
 	SDL_Init(SDL_INIT_AUDIO);
 	SDL_AudioSpec have;
 	if (SDL_OpenAudio(&this->_wanted, &have) < 0) {
-		// SDL_Log("Failed to open audio: %s", SDL_GetError());
+        printf("Failed to open audio: %s", SDL_GetError());
 	} else {
 	    if (have.format != this->_wanted.format) {
-	        // SDL_Log("We didn't get Float32 audio format.");
+	        printf("We didn't get Float32 audio format.\n");
 	    }
+
 		SDL_PauseAudio(0);
 	}
 }
@@ -73,9 +74,9 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 }
 
 void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
-	float speed = (SOUNDFREQ * 32.0f * SOUNDFORMAT) / (sound->GetCPU()->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
+	float speed = (SOUNDFREQ * 32.0f * 2) / (sound->GetCPU()->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
 
-	int offset = this->_frame * SOUNDSIZEFRAME;
+	int offset = this->_frame * SOUNDSAMPLES;
 	for (int i = 0; i < len; i++) {
 		int bufferPos = offset + i;
 

@@ -2,7 +2,7 @@
 
 # shellcheck disable=SC2034
 
-BUILD_TYPE="Release"
+BUILD_TYPE="Debug"
 USE_MAKE=1
 #ECLIPSE_VERSION="4.7.1a"
 
