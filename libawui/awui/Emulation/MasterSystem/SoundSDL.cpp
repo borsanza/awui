@@ -25,15 +25,24 @@ SoundSDL::SoundSDL() {
 
 	memset(&this->_wanted, 0, sizeof(this->_wanted));
 	this->_wanted.freq = SOUNDFREQ;
-	this->_wanted.format = SOUNDFORMAT == 1 ? AUDIO_S8 : AUDIO_S16SYS;
+	this->_wanted.format = AUDIO_S16SYS;
 	this->_wanted.channels = 1;
 	this->_wanted.samples = SOUNDSAMPLES;
 	this->_wanted.callback = FillAudioMasterSystemCB;
 
 	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
+
 	SDL_Init(SDL_INIT_AUDIO);
-	SDL_OpenAudio(&this->_wanted, NULL);
-	SDL_PauseAudio(0);
+	SDL_AudioSpec have;
+	if (SDL_OpenAudio(&this->_wanted, &have) < 0) {
+        printf("Failed to open audio: %s", SDL_GetError());
+	} else {
+	    if (have.format != this->_wanted.format) {
+	        printf("We didn't get Float32 audio format.\n");
+	    }
+
+		SDL_PauseAudio(0);
+	}
 }
 
 SoundSDL* SoundSDL::Instance() {
@@ -65,11 +74,15 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 }
 
 void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
-	float speed = (SOUNDFREQ * 32.0f * SOUNDFORMAT) / (sound->GetCPU()->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
+	float speed = (SOUNDFREQ * 32.0f * 2) / (sound->GetCPU()->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
 
-	int offset = this->_frame * SOUNDSIZEFRAME;
+	int offset = this->_frame * SOUNDSAMPLES;
 	for (int i = 0; i < len; i++) {
 		int bufferPos = offset + i;
+
+		// FIXME: Hay desbordamiento de memoria y por eso pongo este if
+		if (bufferPos >= SOUNDBUFFER)
+			continue;
 
 		int outputValue = 0;
 
@@ -116,6 +129,7 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 		}
 
 		// Noise
+
 		{
 			Channel * channel = &sound->_channels[3];
 
@@ -125,6 +139,7 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 				channel->_count = 0;
 				sound->_noiseData = 0x8000;
 			}
+
 
 			if (channel->_buffer[bufferPos]._changeVolume) {
 				channel->_buffer[bufferPos]._changeVolume = false;

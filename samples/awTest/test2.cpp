@@ -20,7 +20,7 @@ using namespace awui::Windows::Forms;
 
 Test2::Test2() {
 	this->listbox = NULL;
-	this->mameProcess = NULL;
+//	this->mameProcess = NULL;
 	this->runMame = true;
 	this->endMame = false;
 	this->InitializeComponent();
@@ -56,8 +56,8 @@ void Test2::CheckMame() {
 	if (this->runMame) {
 		this->runMame = false;
 		this->games.Clear();
-		this->mameProcess = new awui::Diagnostics::Process();
-		this->mameProcess->Start("mame", "-listfull");
+//		this->mameProcess = new awui::Diagnostics::Process();
+//		this->mameProcess->Start("mame", "-listfull");
 	}
 }
 
@@ -72,35 +72,37 @@ void Test2::CheckGames() {
 	bool reRun = false;
 
 	do {
-		if (this->mameProcess->GetHasExited()) {
+//		if (this->mameProcess->GetHasExited()) {
 //			this->endMame = true;
 //			reRun = true;
-			break;
-		}
+//			break;
+//		}
 
-		if (!this->mameProcess->GetHasString())
-			break;
+//		if (!this->mameProcess->GetHasString())
+//			break;
 
-		awui::String line = this->mameProcess->GetLine();
+//		awui::String line = this->mameProcess->GetLine();
 		lines++;
 		if (lines == 1)
 			continue;
 
 		end = awui::DateTime::GetNow();
 
-		int pos = line.IndexOf(" ");
-		awui::String key = line.Substring(0, pos);
+//		int pos = line.IndexOf(" ");
+//		awui::String key = line.Substring(0, pos);
 
-		pos = line.IndexOf("\"");
-		awui::String name = line.Substring(pos + 1);
-		pos = name.IndexOf("\"");
-		name = name.Substring(0, pos);
+//		pos = line.IndexOf("\"");
+//		awui::String name = line.Substring(pos + 1);
+//		pos = name.IndexOf("\"");
+//		name = name.Substring(0, pos);
 
+/*
 		if (key.GetLength() > 0) {
 			this->games.Add(&name, &key);
 			this->listbox->GetItems()->Add(&name);
 //			Console::WriteLine(key + ": " + name);
 		}
+*/
 	} while ((end.GetTicks() - begin.GetTicks()) < ((time.GetTicks() - lastTime.GetTicks()) * 0.25));
 
 	lastTime = end.GetTicks() - begin.GetTicks();
@@ -109,9 +111,9 @@ void Test2::CheckGames() {
 //	button->SetText(Convert::ToString(this->games.GetCount()) + " games");
 
 	if (reRun) {
-		delete this->mameProcess;
+//		delete this->mameProcess;
 		lines = 0;
-		this->mameProcess = NULL;
+//		this->mameProcess = NULL;
 		this->runMame = true;
 		Console::WriteLine("-");
 	}

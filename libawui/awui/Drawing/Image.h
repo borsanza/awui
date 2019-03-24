@@ -1,5 +1,6 @@
 #pragma once
 
+#include <awui/Collections/ArrayList.h>
 #include <awui/Object.h>
 #include <stdint.h>
 
@@ -15,6 +16,7 @@ namespace awui {
 			friend class Graphics;
 
 			private:
+				static Collections::ArrayList list;
 				int width;
 				int height;
 				cairo_surface_t *cairo_surface;
@@ -34,6 +36,8 @@ namespace awui {
 				int GetHeight();
 
 				void Load();
+				void Unload();
+				static void UnloadAll();
 				GLuint GetTexture();
 
 				void SetPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 0xFF);

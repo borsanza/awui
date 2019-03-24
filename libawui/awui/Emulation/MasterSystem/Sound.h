@@ -4,13 +4,11 @@
 
 // 48000, 44100, 22050, 11025
 #define SOUNDFREQ 44100
-#define SOUNDFORMAT 1
 #define SOUNDSAMPLES 1024
 //#define SOUNDSAMPLES 2048
 
 #define TOTALFRAMES 3
-#define SOUNDSIZEFRAME ((SOUNDSAMPLES * SOUNDFORMAT) / 2)
-#define SOUNDBUFFER (SOUNDSIZEFRAME * TOTALFRAMES)
+#define SOUNDBUFFER (SOUNDSAMPLES * TOTALFRAMES)
 
 #include <awui/Object.h>
 
@@ -20,8 +18,8 @@ namespace awui {
 			struct Sample {
 				int8_t _volume;
 				uint16_t _tone;
-				bool _changeTone;
-				bool _changeVolume;
+				int8_t _changeTone:1;
+				int8_t _changeVolume:1;
 			};
 
 			struct Channel {

@@ -42,9 +42,9 @@ int Sound::GetPosBuffer(Motherboard * cpu) {
 	float timeFrame = SOUNDSAMPLES / (SOUNDFREQ * 2.0f);
 	int frame = (int(now / timeFrame)) % TOTALFRAMES;
 
-	double pos = (double(SOUNDSIZEFRAME) * now) / timeFrame;
-	pos = int(pos) % SOUNDSIZEFRAME;
-	pos = pos + (frame * SOUNDSIZEFRAME);
+	double pos = (double(SOUNDSAMPLES) * now) / timeFrame;
+	pos = int(pos) % SOUNDSAMPLES;
+	pos = pos + (frame * SOUNDSAMPLES);
 
 //	printf("%d\n", (int)pos);
 //	printf("------>>>> %d\n", this->_frame);

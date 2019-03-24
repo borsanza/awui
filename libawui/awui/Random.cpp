@@ -24,7 +24,7 @@ Random::~Random() {
 
 int Random::Next() {
 	if (this->seed)
-		return rand_r(&this->seed);
+		srand(this->seed);
 
 	return rand();
 }

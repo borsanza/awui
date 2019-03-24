@@ -1,5 +1,6 @@
 #pragma once
 
+#include <awui/Collections/ArrayList.h>
 #include <awui/Windows/Forms/Control.h>
 
 typedef unsigned int GLuint;
@@ -20,6 +21,7 @@ namespace awui {
 			};
 			class Bitmap : public Control {
 				private:
+					static Collections::ArrayList list;
 					GLuint texture;
 					int textureWidth;
 					int textureHeight;
@@ -33,6 +35,7 @@ namespace awui {
 					bool loaded;
 
 					void Load();
+					void Unload();
 
 					void PaintNoResized();
 					void PaintTiled();
@@ -51,6 +54,8 @@ namespace awui {
 
 					void SetStretchMode(StretchMode::Enum stretchMode);
 					StretchMode::Enum GetStretchMode();
+
+					static void UnloadAll();
 			};
 		}
 	}

@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include <awui/String.h>
@@ -23,3 +24,4 @@ namespace awui {
 		};
 	}
 }
+*/

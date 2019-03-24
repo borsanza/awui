@@ -7,6 +7,7 @@
 #include "Form.h"
 
 #include <awui/Diagnostics/Process.h>
+#include <awui/Drawing/Image.h>
 #include <awui/IO/Directory.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Application.h>
@@ -44,12 +45,12 @@ Form::Form() {
 	stats->SetDock(DockStyle::None);
 	this->GetControls()->Add(stats);
 
-	this->remoteProcess = new awui::Diagnostics::Process();
-	this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
+//	this->remoteProcess = new awui::Diagnostics::Process();
+//	this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
 }
 
 Form::~Form() {
-	delete this->remoteProcess;
+//	delete this->remoteProcess;
 }
 
 int Form::IsClass(Classes::Enum objectClass) const {
@@ -100,11 +101,13 @@ void Form::OnTick() {
 	DateTime now = DateTime::GetNow();
 	if (lastTime.GetSecond() != now.GetSecond()) {
 		lastTime = now;
+/*
 		if (this->remoteProcess->GetHasExited()) {
 			delete this->remoteProcess;
 			this->remoteProcess = new awui::Diagnostics::Process();
 			this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
 		}
+*/
 	}
 }
 
@@ -112,7 +115,7 @@ void Form::ProcessEvents() {
 	int resizex = -1;
 	int resizey = -1;
 	SDL_Event event;
-
+/*
 	if (this->remoteProcess->GetHasString()) {
 		awui::String line = this->remoteProcess->GetLine();
 
@@ -156,7 +159,7 @@ void Form::ProcessEvents() {
 		if (line == "32:0")
 			Application::Quit();
 	}
-
+*/
 	while (SDL_PollEvent(&event)) {
 		switch(event.type) {
 			case SDL_JOYBUTTONDOWN:
@@ -567,7 +570,27 @@ void Form::ProcessEvents() {
 	}
 }
 
-#include <GL/glx.h>
+#ifdef __linux__
+	#include <GL/glx.h>
+#elif _WIN32
+
+#include <GL/wglext.h>
+
+bool WGLExtensionSupported(const char *extension_name) {
+    PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsString = NULL;
+
+    _wglGetExtensionsString = (PFNWGLGETEXTENSIONSSTRINGEXTPROC) wglGetProcAddress("wglGetExtensionsStringEXT");
+
+    if (strstr(_wglGetExtensionsString(), extension_name) == NULL)
+        return false;
+
+    return true;
+}
+
+PFNWGLSWAPINTERVALEXTPROC       wglSwapIntervalEXT = NULL;
+//PFNWGLGETSWAPINTERVALEXTPROC    wglGetSwapIntervalEXT = NULL;
+bool initSwapInterval = false;
+#endif
 
 void Form::RefreshVideo() {
 	if (!initialized)
@@ -609,9 +632,21 @@ void Form::RefreshVideo() {
 	this->SetSize(finalWidth, finalHeight);
 	first = false;
 
+#ifdef __linux__
 	void (*swapInterval)(int);
 	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
 	swapInterval(1);
+#elif _WIN32
+
+	if (!initSwapInterval && WGLExtensionSupported("WGL_EXT_swap_control"))
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC) wglGetProcAddress("wglSwapIntervalEXT");
+		// wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC) wglGetProcAddress("wglGetSwapIntervalEXT");
+
+	initSwapInterval = true;
+
+	if (wglSwapIntervalEXT)
+		wglSwapIntervalEXT(1);
+#endif
 }
 
 void Form::SetFullscreen(int mode) {
@@ -619,6 +654,9 @@ void Form::SetFullscreen(int mode) {
 		return;
 
 	this->fullscreen = mode;
+
+	Bitmap::UnloadAll();
+	Drawing::Image::UnloadAll();
 	this->RefreshVideo();
 }
 

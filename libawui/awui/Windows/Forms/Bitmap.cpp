@@ -11,6 +11,8 @@
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
+ArrayList Bitmap::list;
+
 Bitmap::Bitmap(const String file) {
 	this->loaded = false;
 	this->file = file;
@@ -24,10 +26,14 @@ Bitmap::Bitmap(const String file) {
 	this->texture = -1;
 
 	this->stretchMode = StretchMode::Stretch;
+
+	Bitmap::list.Add(this);
 }
 
 Bitmap::~Bitmap() {
-	glDeleteTextures(1, &this->texture);
+	Bitmap::list.Remove(this);
+
+	this->Unload();
 }
 
 int Bitmap::IsClass(Classes::Enum objectClass) const {
@@ -63,8 +69,6 @@ void Bitmap::Load() {
 	if (this->loaded)
 		return;
 
-	this->loaded = true;
-
 	SDL_Surface * textureImage = IMG_Load(file.ToCharArray());
 	if (textureImage) {
 		glGenTextures(1, &this->texture);
@@ -80,6 +84,24 @@ void Bitmap::Load() {
 
 	if (textureImage)
 		SDL_FreeSurface(textureImage);
+
+	this->loaded = true;
+}
+
+void Bitmap::Unload() {
+	if (!this->loaded)
+		return;
+
+	glDeleteTextures(1, &this->texture);
+	this->texture = -1;
+	this->loaded = false;
+}
+
+void Bitmap::UnloadAll() {
+	for (int i = 0; i < Bitmap::list.GetCount(); i++) {
+		Bitmap * bitmap = (Bitmap *)Bitmap::list.Get(i);
+		bitmap->Unload();
+	}
 }
 
 void Bitmap::PaintNoResized() {
