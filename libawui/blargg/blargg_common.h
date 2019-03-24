@@ -53,7 +53,8 @@
 #include "boost/static_assert.hpp"
 
 // BOOST::uint8_t, BOOST::int16_t, etc.
-#include "boost/cstdint.hpp"
+//#include "boost/cstdint.hpp"
+#include <stdint.h>
 
 // bool, true, false
 #ifndef BLARGG_COMPILER_HAS_BOOL

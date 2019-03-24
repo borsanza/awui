@@ -48,7 +48,12 @@ void Ports::WriteByte(Motherboard * cpu, uint8_t port, uint8_t value) {
 //	printf("Write Port: %.2X    Value: %.2X\n", port, value);
 	if (port == 0x7f || port == 0x7e) {
 		// printf("Write Port: %.2X    Value: %.2X\n", port, value);
-		cpu->GetSound()->WriteByte(cpu, value);
+		cpu->GetSound()->WriteData(cpu, value);
+		return;
+	}
+
+	if (port == 0x06) {
+		cpu->GetSound()->WriteGGStereo(cpu, value);
 		return;
 	}
 

@@ -35,8 +35,6 @@ namespace awui {
 
 					static SoundSDL* Instance();
 					void FillAudio(Uint8 *stream, int len);
-					void FillAudioSDL(Sound * sound, Uint8 *stream, int len);
-					void AddSound(Sound * sound);
 
 					inline void SetPlayingSound(Sound * sound) { this->_playing = sound; }
 			};
