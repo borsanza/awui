@@ -5,44 +5,68 @@
  */
 
 #include "SoundSDL.h"
-
-#include <awui/DateTime.h>
-#include <awui/Object.h>
-#include <awui/Emulation/MasterSystem/Motherboard.h>
-#include <awui/Emulation/MasterSystem/Sound.h>
-#include <awui/Emulation/MasterSystem/VDP.h>
+#include <assert.h>
 
 using namespace awui::Emulation::MasterSystem;
-using namespace awui::Collections;
 
-extern void FillAudioMasterSystemCB(void *udata, Uint8 *stream, int len);
+#define SOUNDFREQ 44100
+#define SOUNDSAMPLES 1024
+#define BUFFERSIZE 2048
+#define NUMBUFFERS 3
+#define NUMCHANNELS 1
 
 SoundSDL* SoundSDL::_instance = 0;
 
 SoundSDL::SoundSDL() {
-	this->_playing = NULL;
-	this->_frame = 0;
+	_playing = NULL;
+	writePos = 0;
 
-	memset(&this->_wanted, 0, sizeof(this->_wanted));
-	this->_wanted.freq = SOUNDFREQ;
-	this->_wanted.format = AUDIO_S16SYS;
-	this->_wanted.channels = 1;
-	this->_wanted.samples = SOUNDSAMPLES;
-	this->_wanted.callback = FillAudioMasterSystemCB;
+	bufs = new short[(long) BUFFERSIZE * NUMBUFFERS];
+	if ( !bufs )
+		return;
+	
+	semaphore = SDL_CreateSemaphore(NUMBUFFERS - 1);
+	if (!semaphore)
+		return; 
 
-	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
+	SDL_AudioSpec wanted;
+
+	memset(&wanted, 0, sizeof(wanted));
+	wanted.freq = SOUNDFREQ;
+	wanted.format = AUDIO_S16SYS;
+	wanted.channels = NUMCHANNELS;
+	wanted.samples = BUFFERSIZE / NUMCHANNELS;
+	wanted.callback = SDLCallback;
 
 	SDL_Init(SDL_INIT_AUDIO);
 	SDL_AudioSpec have;
-	if (SDL_OpenAudio(&this->_wanted, &have) < 0) {
+	if (SDL_OpenAudio(&wanted, &have) < 0) {
         printf("Failed to open audio: %s", SDL_GetError());
 	} else {
-	    if (have.format != this->_wanted.format) {
+	    if (have.format != wanted.format) {
 	        printf("We didn't get Float32 audio format.\n");
 	    }
 
 		SDL_PauseAudio(0);
 	}
+
+	soundOpen = true;
+}
+
+SoundSDL::~SoundSDL() {
+	if (soundOpen) {
+		soundOpen = false;
+		SDL_PauseAudio( true );
+		SDL_CloseAudio();
+	}
+	
+	if (semaphore) {
+		SDL_DestroySemaphore(semaphore);
+		semaphore = NULL;
+	}
+	
+	delete [] bufs;
+	bufs = NULL;
 }
 
 SoundSDL* SoundSDL::Instance() {
@@ -52,10 +76,42 @@ SoundSDL* SoundSDL::Instance() {
 	return SoundSDL::_instance;
 }
 
-void FillAudioMasterSystemCB(void *userdata, Uint8 *stream, int len) {
-	SoundSDL::Instance()->FillAudio(stream, len);
+void SoundSDL::SDLCallback(void *data, uint8_t *stream, int len) {
+	((SoundSDL*) data)->FillBuffer(stream, len);
 }
 
-void SoundSDL::FillAudio(Uint8 *stream, int len) {
+void SoundSDL::FillBuffer(uint8_t * out, int count) {
+	if (SDL_SemValue(semaphore) < (NUMBUFFERS - 1)) {
+		memcpy(out, GetBufPtr(readBuf), count);
+		readBuf = (readBuf + 1) % NUMBUFFERS;
+		SDL_SemPost(semaphore);
+	} else {
+		memset(out, 0, count);
+	}
+}
 
+inline short* SoundSDL::GetBufPtr(int index)
+{
+	assert((unsigned) index < NUMBUFFERS);
+	return bufs + (long) index * BUFFERSIZE;
+}
+
+void SoundSDL::Write(const short * in, int count) {
+	while (count) {
+		int n = BUFFERSIZE - writePos;
+
+		if (n > count)
+			n = count;
+		
+		memcpy(GetBufPtr(writeBuf) + writePos, in, n * sizeof (short));
+		in += n;
+		writePos += n;
+		count -= n;
+		
+		if (writePos >= BUFFERSIZE) {
+			writePos = 0;
+			writeBuf = (writeBuf + 1) % NUMBUFFERS;
+			SDL_SemWait(semaphore);
+		}
+	}
 }

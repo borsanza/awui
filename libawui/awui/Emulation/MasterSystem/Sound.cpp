@@ -11,8 +11,11 @@
 
 using namespace awui::Emulation::MasterSystem;
 
+#define SOUNDFREQ 44100
+#define SOUNDSAMPLES 1024
+
 Sound::Sound() {
-	if (!buf.sample_rate(44100))
+	if (!buf.sample_rate(SOUNDFREQ))
 		printf("Out of memory\n");
 	buf.clock_rate(3579545); // NTSC
 	apu.output(&buf);

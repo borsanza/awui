@@ -3,16 +3,6 @@
 #include <stdint.h>
 #include <SDL.h>
 
-// 48000, 44100, 22050, 11025
-#define SOUNDFREQ 44100
-#define SOUNDSAMPLES 1024
-//#define SOUNDSAMPLES 2048
-
-#define TOTALFRAMES 3
-#define SOUNDBUFFER (SOUNDSAMPLES * TOTALFRAMES)
-
-#include <awui/Collections/ArrayList.h>
-
 namespace awui {
 	namespace Emulation {
 		namespace MasterSystem {
@@ -21,22 +11,27 @@ namespace awui {
 			class SoundSDL {
 				private:
 					static SoundSDL* _instance;
-					int _frame;
-					double _initTimeSound;
-					SDL_AudioSpec _wanted;
-
-					awui::Collections::ArrayList _arraySound;
 					Sound * _playing;
+
+					short * volatile bufs;
+					SDL_sem* volatile semaphore;
+					int volatile readBuf;
+					bool soundOpen = false;
+					int writePos;
+					int writeBuf;
+
+					static void SDLCallback(void *data, uint8_t *stream, int length);
+					virtual void FillBuffer(uint8_t * stream, int length);
+					short * GetBufPtr(int index);
 
 				public:
 					SoundSDL();
-
-					inline double GetInitTimeSound() { return this->_initTimeSound; }
+					~SoundSDL();
 
 					static SoundSDL* Instance();
-					void FillAudio(Uint8 *stream, int len);
 
 					inline void SetPlayingSound(Sound * sound) { this->_playing = sound; }
+					void Write(const short * in, int count);
 			};
 		}
 	}
