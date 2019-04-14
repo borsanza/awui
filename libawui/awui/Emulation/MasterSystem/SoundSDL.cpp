@@ -19,7 +19,9 @@ SoundSDL* SoundSDL::_instance = 0;
 
 SoundSDL::SoundSDL() {
 	_playing = NULL;
+	writeBuf = 0;
 	writePos = 0;
+	readBuf = 0;
 
 	bufs = new short[(long) BUFFERSIZE * NUMBUFFERS];
 	if ( !bufs )
@@ -77,7 +79,7 @@ SoundSDL* SoundSDL::Instance() {
 }
 
 void SoundSDL::SDLCallback(void *data, uint8_t *stream, int len) {
-	((SoundSDL*) data)->FillBuffer(stream, len);
+	Instance()->FillBuffer(stream, len);
 }
 
 void SoundSDL::FillBuffer(uint8_t * out, int count) {

@@ -24,6 +24,7 @@ namespace awui {
 
 					void WriteData(Motherboard * cpu, uint8_t value);
 					void WriteGGStereo(Motherboard * cpu, uint8_t value);
+					void EndFrame(int length);
 			};
 		}
 	}

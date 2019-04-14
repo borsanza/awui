@@ -144,6 +144,8 @@ void Motherboard::OnTick() {
 		realIters++;
 	}
 
+	this->_sound->EndFrame(DateTime::GetTotalSeconds());
+
 	while (!vsync) {
 		vsync = this->_vdp->OnTick(realIters);
 		if (vsync)
