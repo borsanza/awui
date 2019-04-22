@@ -27,11 +27,11 @@ Sound::Sound() {
 }
 
 void Sound::WriteData(Motherboard *cpu, uint8_t value) {
-	apu.write_data(cpu->GetVirtualTime(), value);
+	apu.write_data(cpu->GetZ80()->GetCycles(), value);
 }
 
 void Sound::WriteGGStereo(Motherboard *cpu, uint8_t value) {
-	apu.write_ggstereo(cpu->GetVirtualTime(), value);
+	apu.write_ggstereo(cpu->GetZ80()->GetCycles(), value);
 }
 
 const size_t out_size = 4096;

@@ -25,10 +25,11 @@ void MasterGearWritePortCB(uint8_t port, uint8_t value, void * data) { ((Motherb
 uint8_t MasterGearReadPortCB(uint8_t port, void * data) { return ((Motherboard *) data)->ReadPort(port); }
 
 Motherboard::Motherboard() {
-	this->_z80.SetWriteMemoryCB(MasterGearWriteMemoryCB, this);
-	this->_z80.SetReadMemoryCB(MasterGearReadMemoryCB, this);
-	this->_z80.SetWritePortCB(MasterGearWritePortCB, this);
-	this->_z80.SetReadPortCB(MasterGearReadPortCB, this);
+	this->_z80 = new Processors::Z80::CPU();
+	this->_z80->SetWriteMemoryCB(MasterGearWriteMemoryCB, this);
+	this->_z80->SetReadMemoryCB(MasterGearReadMemoryCB, this);
+	this->_z80->SetWritePortCB(MasterGearWritePortCB, this);
+	this->_z80->SetReadPortCB(MasterGearReadPortCB, this);
 
 	this->d._mapper = MAPPER_SEGA;
 	this->_rom = new Rom(4096);
@@ -64,7 +65,7 @@ void Motherboard::Reset() {
 	this->d._frame0 = 0;
 	this->d._frame1 = 1;
 	this->d._frame2 = 2;
-	this->_z80.Reset();
+	this->_z80->Reset();
 
 	memset(this->d._ram, 0, 8192 * sizeof(uint8_t));
 	memset(this->d._boardram, 0, 32768 * sizeof(uint8_t));
@@ -77,20 +78,20 @@ void Motherboard::LoadRom(const String file) {
 
 void Motherboard::CheckInterrupts() {
 	bool interrupt = this->_vdp->GetInterrupt();
-	if (!this->_z80.GetRegisters()->GetIFF1())
+	if (!this->_z80->GetRegisters()->GetIFF1())
 		return;
 
 	if (interrupt) {
 //		printf("Entra %d\n", this->_vdp->GetLine());
-		this->_z80.SetInInterrupt(true);
-		this->_z80.GetRegisters()->SetIFF1(false);
-		this->_z80.GetRegisters()->SetIFF2(false);
-		this->_z80.CallInterrupt(0x0038);
+		this->_z80->SetInInterrupt(true);
+		this->_z80->GetRegisters()->SetIFF1(false);
+		this->_z80->GetRegisters()->SetIFF2(false);
+		this->_z80->CallInterrupt(0x0038);
 	}
 }
 
 void Motherboard::RunOpcode() {
-	this->_z80.RunOpcode();
+	this->_z80->RunOpcode();
 }
 
 // http://www.smspower.org/forums/viewtopic.php?p=69680
@@ -119,16 +120,16 @@ void Motherboard::OnTick() {
 	this->_percFrame = 0;
 
 	for (int i = 0; i < iters; i++) {
-		int64_t oldCycles = this->_z80.GetCycles();
+		int64_t oldCycles = this->_z80->GetCycles();
 		this->RunOpcode();
 
-		if (this->d._wantPause & !this->_z80.IsInInterrupt()) {
-			this->_z80.GetRegisters()->SetIFF1(false);
-			this->_z80.CallInterrupt(0x0066);
+		if (this->d._wantPause & !this->_z80->IsInInterrupt()) {
+			this->_z80->GetRegisters()->SetIFF1(false);
+			this->_z80->CallInterrupt(0x0066);
 			this->d._wantPause = false;
 		}
 
-		double times = (this->_z80.GetCycles() - oldCycles);
+		double times = (this->_z80->GetCycles() - oldCycles);
 		i = i + times - 1;
 		this->_percFrame = i / iters;
 
@@ -144,13 +145,13 @@ void Motherboard::OnTick() {
 		realIters++;
 	}
 
-	this->_sound->EndFrame(DateTime::GetTotalSeconds());
-
 	while (!vsync) {
 		vsync = this->_vdp->OnTick(realIters);
 		if (vsync)
 			this->CheckInterrupts();
 	}
+
+	this->_sound->EndFrame(this->_z80->GetCycles());
 }
 
 uint16_t Motherboard::GetAddressBus() const {
@@ -162,7 +163,7 @@ void Motherboard::SetAddressBus(uint16_t data) {
 }
 
 bool Motherboard::IsEndlessLoop() const {
-	return this->_z80.IsEndlessLoop();
+	return this->_z80->IsEndlessLoop();
 }
 
 void Motherboard::CallPaused() {
@@ -309,14 +310,14 @@ void Motherboard::LoadState(uint8_t * data) {
 	memcpy (&this->d, data, sizeof(Motherboard::saveData));
 
 	this->_vdp->LoadState(&data[sizeof(Motherboard::saveData)]);
-	this->_z80.LoadState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
+	this->_z80->LoadState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
 }
 
 void Motherboard::SaveState(uint8_t * data) {
 	memcpy (data, &this->d, sizeof(Motherboard::saveData));
 
 	this->_vdp->SaveState(&data[sizeof(Motherboard::saveData)]);
-	this->_z80.SaveState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
+	this->_z80->SaveState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
 }
 
 double Motherboard::GetVirtualTime() {

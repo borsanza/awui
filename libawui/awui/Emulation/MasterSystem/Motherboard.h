@@ -57,7 +57,7 @@ namespace awui {
 
 					VDP * _vdp;
 					Sound * _sound;
-					Processors::Z80::CPU _z80;
+					Processors::Z80::CPU * _z80;
 
 					void Print(const char * str, ...);
 					void CheckInterrupts();
@@ -86,7 +86,7 @@ namespace awui {
 
 					uint32_t GetCRC32();
 					void SetMapper(uint8_t mapper);
-					inline uint16_t GetPC() const { return this->_z80.GetPC();}
+					inline uint16_t GetPC() const { return this->_z80->GetPC();}
 
 					static int GetSaveSize();
 					void LoadState(uint8_t * data);
@@ -99,6 +99,7 @@ namespace awui {
 					uint8_t ReadMemory(uint16_t pos) const;
 					void WritePort(uint8_t port, uint8_t value);
 					uint8_t ReadPort(uint8_t port);
+					inline Processors::Z80::CPU * GetZ80() const { return this->_z80; }
 			};
 		}
 	}

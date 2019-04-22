@@ -23,7 +23,7 @@ SoundSDL::SoundSDL() {
 	writePos = 0;
 	readBuf = 0;
 
-	bufs = new short[(long) BUFFERSIZE * NUMBUFFERS];
+	bufs = new int16_t[(long) BUFFERSIZE * NUMBUFFERS];
 	if ( !bufs )
 		return;
 	
@@ -92,20 +92,20 @@ void SoundSDL::FillBuffer(uint8_t * out, int count) {
 	}
 }
 
-inline short* SoundSDL::GetBufPtr(int index)
+inline int16_t* SoundSDL::GetBufPtr(int index)
 {
 	assert((unsigned) index < NUMBUFFERS);
 	return bufs + (long) index * BUFFERSIZE;
 }
 
-void SoundSDL::Write(const short * in, int count) {
+void SoundSDL::Write(const int16_t * in, int count) {
 	while (count) {
 		int n = BUFFERSIZE - writePos;
 
 		if (n > count)
 			n = count;
 		
-		memcpy(GetBufPtr(writeBuf) + writePos, in, n * sizeof (short));
+		memcpy(GetBufPtr(writeBuf) + writePos, in, n * sizeof (int16_t));
 		in += n;
 		writePos += n;
 		count -= n;
