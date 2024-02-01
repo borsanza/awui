@@ -2,6 +2,9 @@
 
 #include <awui/Windows/Forms/Control.h>
 
+typedef struct SDL_Window SDL_Window;
+typedef void *SDL_GLContext;
+
 namespace awui {
 	namespace Diagnostics {
 		class Process;
@@ -22,6 +25,8 @@ namespace awui {
 					Control * mouseControlOver;
 					//awui::Diagnostics::Process* remoteProcess;
 					String text;
+					SDL_Window * window;
+					SDL_GLContext context;
 
 					int mouseX;
 					int mouseY;
