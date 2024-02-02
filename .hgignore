@@ -9,6 +9,8 @@ syntax: glob
 
 # Archivos de registro y otros archivos temporales
 *.log
+*~
+.*.un~
 
 # Archivos de objeto y binarios
 *.dll
@@ -49,6 +51,7 @@ build.ninja
 .ninja_log
 
 # Ignorar directorios de compilación y depuración
+build/
 *.obj
 *.pdb
 *.tlog

@@ -4,7 +4,9 @@ setlocal
 
 call buildvars.bat
 
-cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug .
+cd build
+
+cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug ..
 if %ERRORLEVEL% neq 0 (
     echo Error generando archivos de proyecto con CMake.
     exit /b %ERRORLEVEL%

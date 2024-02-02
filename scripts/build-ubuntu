@@ -1,4 +1,0 @@
-#!/bin/sh
-
-sudo apt-get install cmake libsdl1.2-dev libsdl-image1.2-dev libcairo2-dev libglew-dev
-
