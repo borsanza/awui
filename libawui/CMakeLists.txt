@@ -1,52 +1,32 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
-PROJECT(libawui)
+project(libawui)
 
-FIND_PACKAGE(PkgConfig REQUIRED)
-FIND_PACKAGE(OpenGL REQUIRED)
-FIND_PACKAGE(GLEW REQUIRED)
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
-PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
-PKG_CHECK_MODULES(CAIRO REQUIRED cairo)
+# Configuración estándar del proyecto
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_CXX_EXTENSIONS FALSE)
 
-# OpenGL configuration
-IF (NOT OPENGL_FOUND)
-  MESSAGE(FATAL_ERROR "OpenGL not found")
-ENDIF ()
-
-# GLEW configuration
-IF (NOT GLEW_FOUND)
-  MESSAGE(FATAL_ERROR "GLEW not found")
-ENDIF ()
-
-# SDL2 configuration
-IF (NOT SDL2_FOUND)
-  MESSAGE(FATAL_ERROR "SDL2 not found")
-ENDIF ()
-
-# SDL2_image configuration
-IF (NOT SDL2IMAGE_FOUND)
-  MESSAGE(FATAL_ERROR "SDL2_image not found")
-ENDIF ()
-
-# Cairo configuration
-IF (NOT CAIRO_FOUND)
-  MESSAGE(FATAL_ERROR "Cairo not found")
-ENDIF ()
+find_package(PkgConfig REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+pkg_search_module(SDL2 REQUIRED sdl2)
+pkg_search_module(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
+pkg_search_module(CAIRO REQUIRED cairo)
 
 # Define los archivos de fuente y cabecera
-FILE(GLOB_RECURSE LIBAWUI_SOURCES awui/*.cpp )
-FILE(GLOB_RECURSE LIBAWUI_HEADERS awui/*.h )
+file(GLOB_RECURSE LIBAWUI_SOURCES awui/*.cpp )
+file(GLOB_RECURSE LIBAWUI_HEADERS awui/*.h )
 
 # Organiza los archivos en grupos visuales para IDEs
-SOURCE_GROUP("Source" FILES ${LIBAWUI_SOURCES})
-SOURCE_GROUP("Headers" FILES ${LIBAWUI_HEADERS})
+source_group("Source" FILES ${LIBAWUI_SOURCES})
+source_group("Headers" FILES ${LIBAWUI_HEADERS})
 
 # Define el target de la biblioteca
-ADD_LIBRARY(awui SHARED ${LIBAWUI_SOURCES} ${LIBAWUI_HEADERS})
+add_library(awui SHARED ${LIBAWUI_SOURCES} ${LIBAWUI_HEADERS})
 
 # Especifica directorios de inclusión para el target
-TARGET_INCLUDE_DIRECTORIES(awui PUBLIC
+target_include_directories(awui PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CAIRO_INCLUDE_DIRS}
   ${GLEW_INCLUDE_DIRS}
@@ -56,7 +36,7 @@ TARGET_INCLUDE_DIRECTORIES(awui PUBLIC
 )
 
 # Vincula el target con las bibliotecas necesarias
-TARGET_LINK_LIBRARIES(awui PUBLIC
+target_link_libraries(awui PRIVATE
   ${CAIRO_LIBRARIES}
   ${GLEW_LIBRARIES}
   ${OPENGL_gl_LIBRARY}
@@ -65,4 +45,4 @@ TARGET_LINK_LIBRARIES(awui PUBLIC
 )
 
 # Agrega definiciones de compilación para el target
-TARGET_COMPILE_DEFINITIONS(awui PRIVATE ${CAIRO_CFLAGS_OTHER})
+target_compile_definitions(awui PRIVATE ${CAIRO_CFLAGS_OTHER})

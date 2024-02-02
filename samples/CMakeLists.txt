@@ -1,8 +1,8 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
-PROJECT(samples)
+project(AwuiSamples)
 
-ADD_SUBDIRECTORY(stationTV)
-ADD_SUBDIRECTORY(awuiDemo)
-ADD_SUBDIRECTORY(awSlider)
-ADD_SUBDIRECTORY(awTest)
+add_subdirectory(stationTV)
+add_subdirectory(awuiDemo)
+add_subdirectory(awSlider)
+add_subdirectory(awTest)

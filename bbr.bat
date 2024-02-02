@@ -1,0 +1,19 @@
+@echo off
+
+setlocal
+
+call buildvars.bat
+
+cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release .
+if %ERRORLEVEL% neq 0 (
+    echo Error generando archivos de proyecto con CMake.
+    exit /b %ERRORLEVEL%
+)
+
+ninja
+if %ERRORLEVEL% neq 0 (
+    echo Error compilando el proyecto.
+    exit /b %ERRORLEVEL%
+)
+
+endlocal

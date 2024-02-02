@@ -1,0 +1,3 @@
+@echo off
+
+ninja clean

@@ -1,29 +1,30 @@
-PROJECT(awuiDemo)
+cmake_minimum_required(VERSION 3.10)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
+project(awuiDemo CXX)
 
-FIND_LIBRARY(LIBAWUI_LIBRARIES NAMES libawui libawui.so PATHS "${LIBAWUI_BIN_PATH}" DOC "awui library")
-FIND_PATH(LIBAWUI_INCLUDE_DIRS awui/Object.h "../../libawui" DOC "awui includes")
+# Configuración estándar del proyecto
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_CXX_EXTENSIONS FALSE)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
-	
-INCLUDE_DIRECTORIES(
-	${LIBAWUI_INCLUDE_DIRS}
+file(GLOB AWUIDEMO_SOURCES *.cpp)
+
+if(WIN32)
+	add_executable(awuiDemo WIN32)
+else()
+	add_executable(awuiDemo)
+endif()
+
+target_sources(awuiDemo PRIVATE
+	${AWUIDEMO_SOURCES}
 )
 
-FILE(GLOB AWUIDEMO_SOURCES *.cpp)
-FILE(GLOB AWUIDEMO_HEADERS *.h)
+target_link_libraries(awuiDemo PRIVATE awui)
 
-SOURCE_GROUP("Source" FILES ${AWUIDEMO_SOURCES})
-SOURCE_GROUP("Headers" FILES ${AWUIDEMO_HEADERS})
-
-IF (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
-	ADD_EXECUTABLE(awuiDemo	WIN32 ${AWUIDEMO_SOURCES} ${AWUIDEMO_HEADERS})
-ELSE ()
-	ADD_EXECUTABLE(awuiDemo	${AWUIDEMO_SOURCES} ${AWUIDEMO_HEADERS})
-ENDIF ()
-
-TARGET_LINK_LIBRARIES(
-	awuiDemo
-	awui
-)
+if(WIN32)
+	add_custom_command(TARGET awuiDemo
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			$<TARGET_FILE:awui>
+			$<TARGET_FILE_DIR:awuiDemo>)
+endif()

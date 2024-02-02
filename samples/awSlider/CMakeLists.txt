@@ -1,29 +1,30 @@
-PROJECT(awSlider)
+cmake_minimum_required(VERSION 3.10)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
+project(awSlider CXX)
 
-FIND_LIBRARY(LIBAWUI_LIBRARIES NAMES libawui libawui.so PATHS "${LIBAWUI_BIN_PATH}" DOC "awui library")
-FIND_PATH(LIBAWUI_INCLUDE_DIRS awui/Object.h "../../libawui" DOC "awui includes")
+# Configuración estándar del proyecto
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_CXX_EXTENSIONS FALSE)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
-	
-INCLUDE_DIRECTORIES(
-	${LIBAWUI_INCLUDE_DIRS}
+file(GLOB AWSLIDER_SOURCES *.cpp)
+
+if(WIN32)
+	add_executable(awSlider WIN32)
+else()
+	add_executable(awSlider)
+endif()
+
+target_sources(awSlider PRIVATE
+	${AWSLIDER_SOURCES}
 )
 
-FILE(GLOB AWSLIDER_SOURCES *.cpp)
-FILE(GLOB AWSLIDER_HEADERS *.h)
+target_link_libraries(awSlider PRIVATE awui)
 
-SOURCE_GROUP("Source" FILES ${AWSLIDER_SOURCES})
-SOURCE_GROUP("Headers" FILES ${AWSLIDER_HEADERS})
-
-IF (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
-	ADD_EXECUTABLE(awSlider WIN32 ${AWSLIDER_SOURCES} ${AWSLIDER_HEADERS})
-ELSE ()
-	ADD_EXECUTABLE(awSlider ${AWSLIDER_SOURCES} ${AWSLIDER_HEADERS})
-ENDIF ()
-
-TARGET_LINK_LIBRARIES(
-	awSlider
-	awui
-)
+if(WIN32)
+	add_custom_command(TARGET awSlider
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			$<TARGET_FILE:awui>
+			$<TARGET_FILE_DIR:awSlider>)
+endif()
