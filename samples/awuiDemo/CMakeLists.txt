@@ -25,5 +25,5 @@ ENDIF ()
 
 TARGET_LINK_LIBRARIES(
 	awuiDemo
-	${LIBAWUI_LIBRARIES}
+	awui
 )

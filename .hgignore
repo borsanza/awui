@@ -15,7 +15,8 @@ syntax: glob
 *.a
 
 # Visual Studio build output
-Debug/
+b/d/
+b/r/
 
 # Visual Studio user-specific files
 *.suo

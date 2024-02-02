@@ -25,5 +25,5 @@ ENDIF ()
 
 TARGET_LINK_LIBRARIES(
 	awSlider
-	${LIBAWUI_LIBRARIES}
+	awui
 )

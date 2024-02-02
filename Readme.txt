@@ -3,11 +3,15 @@ Windows:
   winget install --id=Ninja-build.Ninja  -e
   Install MinGW-w64 using MSYS2: https://www.msys2.org/
     pacman -Syu
-	pacman -S mingw-w64-x86_64-toolchain
-	pacman -S mingw-w64-x86_64-glew
-	pacman -S mingw-w64-x86_64-SDL2
-	pacman -S mingw-w64-x86_64-SDL2_image
-	pacman -S mingw-w64-x86_64-cairo
+    pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-glew mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_image mingw-w64-x86_64-cairo
+
+  buildvars.bat
+  cd libawui
+  cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release .
+  cd ..
+  cd samples
+  cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release .
+  ninja
 
 Ubuntu:
   apt-get install cmake libsdl1.2-dev libsdl-image1.2-dev libcairo2-dev libglew-dev

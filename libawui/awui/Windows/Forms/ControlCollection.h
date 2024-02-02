@@ -23,7 +23,7 @@ namespace awui {
 
 					void MoveToEnd(Control * item);
 
-					virtual void Replace(Control * oldItem, Control * newItem);
+					void Replace(Object * oldItem, Object * newItem) override;
 			};
 		}
 	}

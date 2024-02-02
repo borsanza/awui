@@ -46,11 +46,15 @@ void ControlCollection::MoveToEnd(Control * item) {
 	this->Add(item);
 }
 
-void ControlCollection::Replace(Control * oldItem, Control * newItem) {
-	if (oldItem)
-		oldItem->CheckMouseControl();
+void ControlCollection::Replace(Object * oldItem, Object * newItem) {
+	Control* oldControl = dynamic_cast<Control*>(oldItem);
+    Control* newControl = dynamic_cast<Control*>(newItem);
 
-	ArrayList::Replace(oldItem, newItem);
-	if (newItem)
-		newItem->SetParent(this->owner);
+	if (oldControl)
+		oldControl->CheckMouseControl();
+
+	ArrayList::Replace(oldControl, newControl);
+
+	if (newControl)
+		newControl->SetParent(this->owner);
 }
