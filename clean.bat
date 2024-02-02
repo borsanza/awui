@@ -1,4 +1,5 @@
 @echo off
 
-del CMakeCache.txt
-ninja -t clean
+del CMakeCache.txt 2>nul
+if exist build.ninja ninja -t clean
+del build.ninja 2>nul
