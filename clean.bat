@@ -1,3 +1,3 @@
 @echo off
 
-ninja clean
+ninja -t clean

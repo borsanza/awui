@@ -47,3 +47,11 @@ Makefile
 build.ninja
 .ninja_deps
 .ninja_log
+
+# Ignorar directorios de compilación y depuración
+*.obj
+*.pdb
+*.tlog
+
+# Ignorar todos los archivos .autogen y .recipe
+*.recipe
