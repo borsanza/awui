@@ -27,4 +27,10 @@ if(WIN32)
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different
 			$<TARGET_FILE:awui>
 			$<TARGET_FILE_DIR:awuiDemo>)
+
+	add_custom_command(TARGET awuiDemo
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+			${DLLS_PATH}
+			$<TARGET_FILE_DIR:awuiDemo>)
 endif()
