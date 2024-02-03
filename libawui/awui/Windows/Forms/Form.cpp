@@ -74,6 +74,7 @@ void Form::OnPaintForm() {
 	rectangle.SetY(0);
 	rectangle.SetWidth(this->GetWidth());
 	rectangle.SetHeight(this->GetHeight());
+
 	gl.SetClippingBase(rectangle);
 
 	glDisable(GL_CULL_FACE);
@@ -560,9 +561,9 @@ void Form::ProcessEvents() {
 
 			case SDL_WINDOWEVENT:
 				if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-     				resizex = event.window.data1;
-        			resizey = event.window.data2;
-    			}
+					resizex = event.window.data1;
+					resizey = event.window.data2;
+				}
 				break;
 
 			default:
@@ -583,14 +584,14 @@ void Form::ProcessEvents() {
 #include <GL/wglext.h>
 
 bool WGLExtensionSupported(const char *extension_name) {
-    PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsString = NULL;
+	PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsString = NULL;
 
-    _wglGetExtensionsString = (PFNWGLGETEXTENSIONSSTRINGEXTPROC) wglGetProcAddress("wglGetExtensionsStringEXT");
+	_wglGetExtensionsString = (PFNWGLGETEXTENSIONSSTRINGEXTPROC) wglGetProcAddress("wglGetExtensionsStringEXT");
 
-    if (strstr(_wglGetExtensionsString(), extension_name) == NULL)
-        return false;
+	if (strstr(_wglGetExtensionsString(), extension_name) == NULL)
+		return false;
 
-    return true;
+	return true;
 }
 
 PFNWGLSWAPINTERVALEXTPROC       wglSwapIntervalEXT = NULL;
@@ -608,9 +609,9 @@ void Form::RefreshVideo() {
 	if (this->fullscreenWidth == -1 || this->fullscreenHeight == -1) {
 		SDL_DisplayMode current;
 		if (SDL_GetDesktopDisplayMode(0, &current) == 0) {
-            this->fullscreenWidth = current.w;
-            this->fullscreenHeight = current.h;
-        }
+			this->fullscreenWidth = current.w;
+			this->fullscreenHeight = current.h;
+		}
 	}
 
 	static bool first = true;
@@ -636,20 +637,28 @@ void Form::RefreshVideo() {
 	}
 
 	if (!this->window) {
-        // Crear una nueva ventana si aún no existe
-        this->window = SDL_CreateWindow(this->text.ToCharArray(),
-                                  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                  finalWidth, finalHeight, flags);
-    } else {
-        // Actualizar la ventana existente
-        SDL_SetWindowSize(window, finalWidth, finalHeight);
-        SDL_SetWindowFullscreen(window, flags);
-    }
+		// Crear una nueva ventana si aún no existe
+		this->window = SDL_CreateWindow(this->text.ToCharArray(),
+							SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+							finalWidth, finalHeight, flags);
+		if (this->window == NULL) {
+			printf("La ventana no pudo ser creada: %s\n", SDL_GetError());
+			return;
+		}
+	} else {
+		// Actualizar la ventana existente
+		SDL_SetWindowSize(window, finalWidth, finalHeight);
+		SDL_SetWindowFullscreen(window, flags);
+	}
 
 	if (!this->context) {
-        // Crear un nuevo contexto de renderizado OpenGL si aún no existe
-        this->context = SDL_GL_CreateContext(this->window);
-    }
+		// Crear un nuevo contexto de renderizado OpenGL si aún no existe
+		this->context = SDL_GL_CreateContext(this->window);
+		if (!this->context) {
+			printf("No se pudo crear el contexto: %s\n", SDL_GetError());
+			return;
+		}
+	}
 
 	if (SDL_GL_SetSwapInterval(1) < 0) {
 	}

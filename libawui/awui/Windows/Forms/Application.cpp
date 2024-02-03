@@ -6,7 +6,6 @@
 
 #include "Application.h"
 
-#include <awui/Drawing/Shader.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL.h>
@@ -30,9 +29,13 @@ void Application::Quit() {
 	Application::quit = 1;
 }
 
+#include <iostream>
+
 void Application::Run(Form * form = NULL) {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+		printf("SDL no pudo inicializarse: %s\n", SDL_GetError());
 		return;
+	}
 
 	if (SDL_NumJoysticks() > 0)
 		Application::stick1 = SDL_JoystickOpen(0);
@@ -45,8 +48,6 @@ void Application::Run(Form * form = NULL) {
 	atexit(SDL_Quit);
 
 	Stats * stats = Stats::Instance();
-
-	// awui::Drawing::Shader * shader = new awui::Drawing::Shader();
 
 	while (!Application::quit) {
 		form->ProcessEvents();
