@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS FALSE)
 
 file(GLOB AWUIDEMO_SOURCES *.cpp)
 
-if(WIN32)
+if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
 	add_executable(awuiDemo WIN32)
 else()
 	add_executable(awuiDemo)
