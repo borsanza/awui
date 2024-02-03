@@ -28,6 +28,7 @@ uint32_t Form::_buttonsPad1 = 0;
 uint32_t Form::_buttonsPad2 = 0;
 
 Form::Form() {
+	this->window = 0;
 	this->mouseX = 0;
 	this->mouseY = 0;
 	this->text = "";
