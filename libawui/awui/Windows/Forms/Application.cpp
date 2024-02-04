@@ -31,9 +31,16 @@ void Application::Quit() {
 
 void Application::Run(Form * form = NULL) {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
-		printf("SDL no pudo inicializarse: %s\n", SDL_GetError());
+		SDL_Log("[ERROR] SDL_Init failed: %s", SDL_GetError());
 		return;
 	}
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	// No se ve si no pongo modo de compatiblidad
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 	if (SDL_NumJoysticks() > 0)
 		Application::stick1 = SDL_JoystickOpen(0);
@@ -55,6 +62,7 @@ void Application::Run(Form * form = NULL) {
 		glViewport(0, 0, form->GetWidth(), form->GetHeight());
 		glClearColor(form->GetBackColor().GetR() / 255.0f, form->GetBackColor().GetG() / 255.0f, form->GetBackColor().GetB() / 255.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 		form->OnPaintForm();
 
 		stats->SetTimeBeforeIddle();

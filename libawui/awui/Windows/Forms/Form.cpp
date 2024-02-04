@@ -29,6 +29,7 @@ uint32_t Form::_buttonsPad2 = 0;
 
 Form::Form() {
 	this->window = 0;
+	this->context = 0;
 	this->mouseX = 0;
 	this->mouseY = 0;
 	this->text = "";
@@ -51,6 +52,12 @@ Form::Form() {
 }
 
 Form::~Form() {
+	if (this->context)
+		SDL_GL_DeleteContext(this->context);
+
+	if (this->window)
+		SDL_DestroyWindow(this->window);
+
 //	delete this->remoteProcess;
 }
 
@@ -577,28 +584,6 @@ void Form::ProcessEvents() {
 	}
 }
 
-#ifdef __linux__
-	#include <GL/glx.h>
-#elif _WIN32
-
-#include <GL/wglext.h>
-
-bool WGLExtensionSupported(const char *extension_name) {
-	PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsString = NULL;
-
-	_wglGetExtensionsString = (PFNWGLGETEXTENSIONSSTRINGEXTPROC) wglGetProcAddress("wglGetExtensionsStringEXT");
-
-	if (strstr(_wglGetExtensionsString(), extension_name) == NULL)
-		return false;
-
-	return true;
-}
-
-PFNWGLSWAPINTERVALEXTPROC       wglSwapIntervalEXT = NULL;
-//PFNWGLGETSWAPINTERVALEXTPROC    wglGetSwapIntervalEXT = NULL;
-bool initSwapInterval = false;
-#endif
-
 void Form::RefreshVideo() {
 	if (!initialized)
 		return;
@@ -642,7 +627,7 @@ void Form::RefreshVideo() {
 							SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 							finalWidth, finalHeight, flags);
 		if (this->window == NULL) {
-			printf("La ventana no pudo ser creada: %s\n", SDL_GetError());
+			SDL_Log("[ERROR] SDL_CreateWindow failed: %s", SDL_GetError());
 			return;
 		}
 	} else {
@@ -654,34 +639,27 @@ void Form::RefreshVideo() {
 	if (!this->context) {
 		// Crear un nuevo contexto de renderizado OpenGL si aún no existe
 		this->context = SDL_GL_CreateContext(this->window);
-		if (!this->context) {
-			printf("No se pudo crear el contexto: %s\n", SDL_GetError());
+		if (this->context == NULL) {
+			SDL_Log("[ERROR] SDL_GL_CreateContext failed: %s", SDL_GetError());
+			SDL_DestroyWindow(this->window);
+			SDL_Quit();
+			this->window = 0;
 			return;
 		}
 	}
 
+	if (SDL_GL_MakeCurrent(this->window, this->context) < 0) {
+		SDL_Log("[ERROR] SDL_GL_MakeCurrent failed: %s", SDL_GetError());
+		return;
+	}
+
 	if (SDL_GL_SetSwapInterval(1) < 0) {
+		SDL_Log("[ERROR] SDL_GL_SetSwapInterval failed: %s", SDL_GetError());
+		return;
 	}
 
 	this->SetSize(finalWidth, finalHeight);
 	first = false;
-/*
-#ifdef __linux__
-	void (*swapInterval)(int);
-	swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-	swapInterval(1);
-#elif _WIN32
-
-	if (!initSwapInterval && WGLExtensionSupported("WGL_EXT_swap_control"))
-		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC) wglGetProcAddress("wglSwapIntervalEXT");
-		// wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC) wglGetProcAddress("wglGetSwapIntervalEXT");
-
-	initSwapInterval = true;
-
-	if (wglSwapIntervalEXT)
-		wglSwapIntervalEXT(1);
-#endif
-*/
 }
 
 void Form::SetFullscreen(int mode) {
