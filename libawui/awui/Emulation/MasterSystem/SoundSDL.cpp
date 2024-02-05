@@ -19,29 +19,54 @@ extern void FillAudioMasterSystemCB(void *udata, Uint8 *stream, int len);
 
 SoundSDL* SoundSDL::_instance = 0;
 
+const char* GetAudioFormatName(SDL_AudioFormat format) {
+	switch (format) {
+		case AUDIO_U8:      return "AUDIO_U8";
+		case AUDIO_S8:      return "AUDIO_S8";
+		case AUDIO_U16LSB:  return "AUDIO_U16LSB";
+		case AUDIO_S16LSB:  return "AUDIO_S16LSB";
+		case AUDIO_U16MSB:  return "AUDIO_U16MSB";
+		case AUDIO_S16MSB:  return "AUDIO_S16MSB";
+		case AUDIO_S32LSB:  return "AUDIO_S32LSB";
+		case AUDIO_S32MSB:  return "AUDIO_S32MSB";
+		case AUDIO_F32LSB:  return "AUDIO_F32LSB";
+		case AUDIO_F32MSB:  return "AUDIO_F32MSB";
+		default:            return "Unknown Format";
+	}
+}
+
 SoundSDL::SoundSDL() {
 	this->_playing = NULL;
 	this->_frame = 0;
 
-	memset(&this->_wanted, 0, sizeof(this->_wanted));
-	this->_wanted.freq = SOUNDFREQ;
-	this->_wanted.format = AUDIO_S16SYS;
-	this->_wanted.channels = 1;
-	this->_wanted.samples = SOUNDSAMPLES;
-	this->_wanted.callback = FillAudioMasterSystemCB;
+	SDL_AudioSpec desired;
+	SDL_zero(desired);
+	desired.freq = SOUNDFREQ;
+	desired.format = AUDIO_S16SYS;
+	desired.channels = 2;
+	desired.samples = SOUNDSAMPLES;
+	desired.callback = FillAudioMasterSystemCB;
+	desired.userdata = nullptr;
 
 	this->_initTimeSound = awui::DateTime::GetTotalSeconds();
 
-	SDL_Init(SDL_INIT_AUDIO);
-	SDL_AudioSpec have;
-	if (SDL_OpenAudio(&this->_wanted, &have) < 0) {
-        printf("Failed to open audio: %s", SDL_GetError());
-	} else {
-	    if (have.format != this->_wanted.format) {
-	        printf("We didn't get Float32 audio format.\n");
-	    }
+	if (SDL_Init(SDL_INIT_AUDIO) != 0) {
+		SDL_Log("[ERROR] SDL_Init(SDL_INIT_AUDIO): %s", SDL_GetError());
+		return;
+	}
 
-		SDL_PauseAudio(0);
+	this->_audioDevice = SDL_OpenAudioDevice(nullptr, 0, &desired, &this->_obtained, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
+
+	if (this->_audioDevice == 0) {
+		SDL_Log("[ERROR] SDL_OpenAudioDevice: %s", SDL_GetError());
+	} else {
+		if (this->_obtained.format != desired.format) {
+			SDL_Log("[ERROR] Desired format: %s, but obtained format: %s.",
+				GetAudioFormatName(desired.format), 
+				GetAudioFormatName(this->_obtained.format));
+		}
+
+		SDL_PauseAudioDevice(this->_audioDevice, 0);
 	}
 }
 
@@ -69,20 +94,60 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 			this->FillAudioSDL(sound, 0, len);
 	}
 
-	if (playing)
+	if (playing) {
 		this->FillAudioSDL(playing, stream, len);
+	} else {
+		int numSamples = 0;
+		switch (this->_obtained.format) {
+			case AUDIO_S16SYS:
+				numSamples = len / sizeof(Sint16);
+				break;
+			case AUDIO_F32LSB:
+				numSamples = len / sizeof(float);
+				break;
+		}
+		int offset = this->_frame * SOUNDSAMPLES;
+		for (int i = 0; i < numSamples; i++) {		
+			if (stream) {
+				switch (this->_obtained.format) {
+					case AUDIO_S16SYS: {
+						auto* outStream = reinterpret_cast<Sint16*>(stream);
+						outStream[i] = static_cast<Sint16>(0);
+					}
+					break;
+					case AUDIO_F32LSB:
+					{
+						auto* outStream = reinterpret_cast<float*>(stream);
+						outStream[i] = 0;
+					}
+					break;
+				}
+			}
+		}
+	}
 }
 
 void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
-	float speed = (SOUNDFREQ * 32.0f * 2) / (sound->GetCPU()->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
+	float speed = (SOUNDFREQ * 32.0f * 2.0f) / (sound->GetCPU()->GetVDP()->GetNTSC() ? 3579545.0f : 3546893.0f);
+
+	int numSamples = 0;
+	switch (this->_obtained.format) {
+		case AUDIO_S16SYS:
+			numSamples = len / sizeof(Sint16);
+			break;
+		case AUDIO_F32LSB:
+			numSamples = len / sizeof(float);
+			break;
+	}
+
+	const float preAmplificationFactor = 25.0f;
 
 	int offset = this->_frame * SOUNDSAMPLES;
-	for (int i = 0; i < len; i++) {
+	for (int i = 0; i < numSamples; i++) {
 		int bufferPos = offset + i;
 
 		// FIXME: Hay desbordamiento de memoria y por eso pongo este if
-		if (bufferPos >= SOUNDBUFFER)
-			continue;
+		if (bufferPos >= SOUNDBUFFER) continue;
 
 		int outputValue = 0;
 
@@ -107,7 +172,7 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 				continue;
 			}
 
-			if (channel->_count == 0)
+			if (channel->_count <= 0)
 				continue;
 
 			channel->_count--;
@@ -129,7 +194,6 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 		}
 
 		// Noise
-
 		{
 			Channel * channel = &sound->_channels[3];
 
@@ -164,7 +228,8 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 					sound->_noiseData = (sound->_noiseData >> 1) | (carry ? 0x8000 : 0);
 				}
 
-				channel->_count--;
+				if (channel->_count > 0)
+					channel->_count--;
 
 				if (sound->_noiseData & 1)
 					outputValue += channel->_last._volume;
@@ -173,8 +238,26 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 			}
 		}
 
-		if (stream)
-			stream[i] = outputValue;
+
+		if (stream) {
+			outputValue = static_cast<int>(outputValue * preAmplificationFactor);
+
+			switch (this->_obtained.format) {
+				case AUDIO_S16SYS: {
+					auto* outStream = reinterpret_cast<Sint16*>(stream);
+					outStream[i] = static_cast<Sint16>(std::max(-32768, std::min(outputValue, 32767)));
+				}
+				break;
+				case AUDIO_F32LSB:
+				{
+					auto* outStream = reinterpret_cast<float*>(stream);
+					float sampleValue = outputValue / static_cast<float>(32768);
+					sampleValue = std::max(-1.0f, std::min(sampleValue, 1.0f));
+					outStream[i] = sampleValue;
+				}
+				break;
+			}
+		}
 	}
 
 	this->_frame = (this->_frame + 1) % TOTALFRAMES;

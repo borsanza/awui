@@ -4,7 +4,8 @@
 
 // 48000, 44100, 22050, 11025
 #define SOUNDFREQ 44100
-#define SOUNDSAMPLES 1024
+#define SOUNDSAMPLES 512
+//#define SOUNDSAMPLES 1024
 //#define SOUNDSAMPLES 2048
 
 #define TOTALFRAMES 3
@@ -18,21 +19,21 @@ namespace awui {
 			struct Sample {
 				int8_t _volume;
 				uint16_t _tone;
-				int8_t _changeTone:1;
-				int8_t _changeVolume:1;
+				uint8_t _changeTone:1;
+				uint8_t _changeVolume:1;
 			};
 
 			struct Channel {
 				bool _useModulation;
 				uint16_t _register;
 
-				uint16_t _tone;     // 10 bits tono y 3 bits noise
+				uint16_t _tone;  // 10 bits tono y 3 bits noise
 				uint8_t _volume; // 4 bit
 				unsigned int _fase;
 
 				Sample _buffer[SOUNDBUFFER];
 				Sample _last;
-				int _count;
+				unsigned int _count;
 			};
 
 			class Motherboard;

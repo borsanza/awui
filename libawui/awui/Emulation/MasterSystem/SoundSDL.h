@@ -5,7 +5,8 @@
 
 // 48000, 44100, 22050, 11025
 #define SOUNDFREQ 44100
-#define SOUNDSAMPLES 1024
+#define SOUNDSAMPLES 512
+//#define SOUNDSAMPLES 1024
 //#define SOUNDSAMPLES 2048
 
 #define TOTALFRAMES 3
@@ -23,10 +24,12 @@ namespace awui {
 					static SoundSDL* _instance;
 					int _frame;
 					double _initTimeSound;
-					SDL_AudioSpec _wanted;
+					SDL_AudioSpec _obtained;
+					SDL_AudioDeviceID _audioDevice;
 
 					awui::Collections::ArrayList _arraySound;
 					Sound * _playing;
+ 					void ResetChannels(Sound * sound);
 
 				public:
 					SoundSDL();
