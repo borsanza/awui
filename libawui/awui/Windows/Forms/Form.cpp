@@ -633,13 +633,8 @@ void Form::RefreshVideo() {
 	}
 	
 	// Actualizar la ventana existente
-	if (this->fullscreen) {
-		this->lastFullscreenState = 1;
-		SDL_SetWindowFullscreen(this->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-	} else {
-		this->lastFullscreenState = 0;
-		SDL_SetWindowFullscreen(this->window, 0);
-	}
+	this->lastFullscreenState = this->fullscreen ? 1 : 0;
+	SDL_SetWindowFullscreen(this->window, this->fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 
 	if (!this->context) {
 		// Crear un nuevo contexto de renderizado OpenGL si aún no existe
