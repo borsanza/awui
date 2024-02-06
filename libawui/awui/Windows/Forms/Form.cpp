@@ -38,10 +38,12 @@ Form::Form() {
 	this->SetBounds(100, 100, 300, 300);
 	this->mouseButtons = 0;
 	this->mouseControlOver = NULL;
-	this->fullscreen = 1;
 	this->initialized = 0;
-	this->fullscreenWidth = -1;
-	this->fullscreenHeight = -1;
+
+	this->lastFullscreenState = -1;
+	this->fullscreen = 1;
+	this->lastWidth = 0;
+	this->lastHeight = 0;
 
 	Stats * stats = Stats::Instance();
 	stats->SetDock(DockStyle::None);
@@ -588,37 +590,33 @@ void Form::RefreshVideo() {
 	if (!initialized)
 		return;
 
-	static int lastWidth = 0;
-	static int lastHeight = 0;
-
-	if (this->fullscreenWidth == -1 || this->fullscreenHeight == -1) {
-		SDL_DisplayMode current;
-		if (SDL_GetDesktopDisplayMode(0, &current) == 0) {
-			this->fullscreenWidth = current.w;
-			this->fullscreenHeight = current.h;
-		}
-	}
-
-	static bool first = true;
 	int finalWidth, finalHeight;
 	Uint32 flags = SDL_WINDOW_OPENGL;
 
 	if (this->fullscreen) {
-		lastWidth = this->GetWidth();
-		lastHeight = this->GetHeight();
-		flags |= SDL_WINDOW_FULLSCREEN;
+		if (this->lastFullscreenState != 1) {
+			lastWidth = this->GetWidth();
+			lastHeight = this->GetHeight();
+		}
+		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_BORDERLESS;
 
-		finalWidth = this->fullscreenWidth;
-		finalHeight = this->fullscreenHeight;
+		SDL_DisplayMode current;
+		int windowDisplayIndex = 0;
+		if (this->window)
+			windowDisplayIndex = SDL_GetWindowDisplayIndex(this->window);
+
+		if (SDL_GetDesktopDisplayMode(windowDisplayIndex, &current) == 0) {
+			finalWidth = current.w;
+			finalHeight = current.h;
+		}
 	} else {
 		flags |= SDL_WINDOW_RESIZABLE;
-		if (first) {
+		if (this->lastFullscreenState == -1) {
 			finalWidth = this->GetWidth();
 			finalHeight = this->GetHeight();
 		} else {
 			finalWidth = lastWidth > 0 ? lastWidth : this->GetWidth();
 			finalHeight = lastHeight > 0 ? lastHeight : this->GetHeight();
-			lastWidth = lastHeight = 0;
 		}
 	}
 
@@ -631,10 +629,17 @@ void Form::RefreshVideo() {
 			SDL_Log("[ERROR] SDL_CreateWindow failed: %s", SDL_GetError());
 			return;
 		}
+	}
+	
+	// Actualizar la ventana existente
+	if (this->fullscreen) {
+		this->lastFullscreenState = 1;
+		SDL_SetWindowSize(this->window, finalWidth, finalHeight);
+		SDL_SetWindowFullscreen(this->window, flags);
 	} else {
-		// Actualizar la ventana existente
-		SDL_SetWindowSize(window, finalWidth, finalHeight);
-		SDL_SetWindowFullscreen(window, flags);
+		this->lastFullscreenState = 0;
+		SDL_SetWindowFullscreen(this->window, 0);
+		SDL_SetWindowSize(this->window, finalWidth, finalHeight);
 	}
 
 	if (!this->context) {
@@ -660,7 +665,6 @@ void Form::RefreshVideo() {
 	}
 
 	this->SetSize(finalWidth, finalHeight);
-	first = false;
 }
 
 void Form::SetFullscreen(int mode) {

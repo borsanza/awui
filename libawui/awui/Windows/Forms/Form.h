@@ -31,10 +31,12 @@ namespace awui {
 					int mouseX;
 					int mouseY;
 					int mouseButtons;
-					int fullscreen;
-					int fullscreenWidth;
-					int fullscreenHeight;
 					int initialized;
+
+					int fullscreen;
+					int lastFullscreenState;
+					int lastWidth;
+					int lastHeight;
 
 					void OnPaintForm();
 
