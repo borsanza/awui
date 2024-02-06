@@ -591,20 +591,20 @@ void Form::RefreshVideo() {
 		return;
 
 	int finalWidth, finalHeight;
-	Uint32 flags = SDL_WINDOW_OPENGL;
+	Uint32 flags = 0;
 
 	if (this->fullscreen) {
+		flags |= SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN_DESKTOP;
 		if (this->lastFullscreenState != 1) {
-			lastWidth = this->GetWidth();
-			lastHeight = this->GetHeight();
+			this->lastWidth = this->GetWidth();
+			this->lastHeight = this->GetHeight();
 		}
-		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_BORDERLESS;
 
-		SDL_DisplayMode current;
 		int windowDisplayIndex = 0;
 		if (this->window)
 			windowDisplayIndex = SDL_GetWindowDisplayIndex(this->window);
 
+		SDL_DisplayMode current;
 		if (SDL_GetDesktopDisplayMode(windowDisplayIndex, &current) == 0) {
 			finalWidth = current.w;
 			finalHeight = current.h;
@@ -615,8 +615,8 @@ void Form::RefreshVideo() {
 			finalWidth = this->GetWidth();
 			finalHeight = this->GetHeight();
 		} else {
-			finalWidth = lastWidth > 0 ? lastWidth : this->GetWidth();
-			finalHeight = lastHeight > 0 ? lastHeight : this->GetHeight();
+			finalWidth = this->lastWidth > 0 ? this->lastWidth : this->GetWidth();
+			finalHeight = this->lastHeight > 0 ? this->lastHeight : this->GetHeight();
 		}
 	}
 
@@ -624,7 +624,7 @@ void Form::RefreshVideo() {
 		// Crear una nueva ventana si aún no existe
 		this->window = SDL_CreateWindow(this->text.ToCharArray(),
 							SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-							finalWidth, finalHeight, flags);
+							finalWidth, finalHeight, flags | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 		if (this->window == NULL) {
 			SDL_Log("[ERROR] SDL_CreateWindow failed: %s", SDL_GetError());
 			return;
@@ -634,11 +634,11 @@ void Form::RefreshVideo() {
 	// Actualizar la ventana existente
 	if (this->fullscreen) {
 		this->lastFullscreenState = 1;
-		SDL_SetWindowSize(this->window, finalWidth, finalHeight);
-		SDL_SetWindowFullscreen(this->window, flags);
+		SDL_SetWindowFullscreen(this->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	} else {
 		this->lastFullscreenState = 0;
 		SDL_SetWindowFullscreen(this->window, 0);
+		SDL_SetWindowResizable(this->window, SDL_TRUE);
 		SDL_SetWindowSize(this->window, finalWidth, finalHeight);
 	}
 
