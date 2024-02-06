@@ -611,6 +611,7 @@ void Form::RefreshVideo() {
 		finalWidth = this->fullscreenWidth;
 		finalHeight = this->fullscreenHeight;
 	} else {
+		flags |= SDL_WINDOW_RESIZABLE;
 		if (first) {
 			finalWidth = this->GetWidth();
 			finalHeight = this->GetHeight();
