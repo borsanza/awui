@@ -611,7 +611,8 @@ void Form::RefreshVideo() {
 		}
 	} else {
 		flags |= SDL_WINDOW_RESIZABLE;
-		if (this->lastFullscreenState == -1) {
+
+		if (this->lastFullscreenState <= 0) {
 			finalWidth = this->GetWidth();
 			finalHeight = this->GetHeight();
 		} else {
@@ -638,8 +639,6 @@ void Form::RefreshVideo() {
 	} else {
 		this->lastFullscreenState = 0;
 		SDL_SetWindowFullscreen(this->window, 0);
-		SDL_SetWindowResizable(this->window, SDL_TRUE);
-		SDL_SetWindowSize(this->window, finalWidth, finalHeight);
 	}
 
 	if (!this->context) {
