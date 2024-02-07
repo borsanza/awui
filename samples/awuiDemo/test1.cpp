@@ -8,8 +8,9 @@
 #include <awui/Effects/Effect.h>
 #include <awui/Math.h>
 #include <awui/Windows/Forms/Button.h>
-#include <awui/Windows/Forms/Panel.h>
 #include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/Panel.h>
 #include <awui/Windows/Forms/SplitContainer.h>
 
 using namespace awui::Drawing;
@@ -82,6 +83,9 @@ void Test1::AddButtonEffect(Effect * effect, Control * control, int posy) {
 		this->_effects->Add(effect);
 
 		y += button->GetHeight();
+
+		if (Form::GetControlSelected() == NULL)
+			Form::SetControlSelected(button);
 	}
 }
 

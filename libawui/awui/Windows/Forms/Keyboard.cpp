@@ -10,6 +10,7 @@
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Form.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
@@ -35,6 +36,10 @@ Keyboard::Keyboard() {
 			frase[1] = 0;
 			button->SetText(frase);
 			this->GetControls()->Add(button);
+
+			if (Form::GetControlSelected() == NULL)
+				Form::SetControlSelected(button);
+
 			pos++;
 		}
 	}

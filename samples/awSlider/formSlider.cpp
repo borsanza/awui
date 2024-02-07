@@ -27,13 +27,15 @@ void FormSlider::InitializeComponent() {
 	this->_slider->SetDock(DockStyle::Fill);
 	this->_slider->SetMargin(25);
 	this->GetControls()->Add(_slider);
-
+	
 	for (int i = 0; i < 512; i++) {
 		TestWidget * w = new TestWidget();
 		w->SetSize(342, 262);
 		w->SetLocation(25, 0);
 		this->_slider->GetControls()->Add(w);
 		w->SetTabStop(true);
+		if (Form::GetControlSelected() == NULL)
+			Form::SetControlSelected(w);
 	}
 
 	this->SetText("Test FormSlider");
