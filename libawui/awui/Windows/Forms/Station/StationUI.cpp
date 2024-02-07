@@ -31,15 +31,24 @@ StationUI::StationUI() {
 
 	this->SetTabStop(false);
 
+	Font font = Font("Liberation Sans", 38, FontStyle::Bold);
+	Font font2 = Font("Liberation Sans", 22, FontStyle::Bold);
 	this->_title = new Label();
 	this->_title->SetText("StationTV");
 	this->_title->SetTextAlign(ContentAlignment::BottomCenter);
-	this->_title->SetFont(Font("Liberation Sans", 38, FontStyle::Bold));
+	this->_title->SetFont(font);
 	this->_title->SetDock(DockStyle::None);
 
 	this->_browser = new Browser::Browser();
 	this->GetControls()->Add(this->_title);
 	this->GetControls()->Add(this->_browser);
+
+	this->_settings = new Button();
+	this->_settings->SetDock(DockStyle::None);
+	this->_settings->SetFont(font2);
+	this->_settings->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	this->_settings->SetText("Settings");
+	this->GetControls()->Add(this->_settings);
 }
 
 StationUI::~StationUI() {
@@ -224,6 +233,9 @@ void StationUI::OnTick() {
 		this->CheckArcade();
 	}
 
+	this->_settings->SetLocation(this->GetWidth() - 116, 8);
+	this->_settings->SetSize(100, 45);
+	
 	this->_title->SetLocation(this->GetWidth() >> 1, 0);
 	this->_title->SetSize(this->GetWidth() >> 1, 69);
 	this->_browser->SetLocation(this->GetWidth() >> 1, 69);

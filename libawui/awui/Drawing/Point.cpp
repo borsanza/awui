@@ -8,6 +8,7 @@
 
 #include <awui/Convert.h>
 #include <awui/Drawing/Size.h>
+#include <awui/Math.h>
 #include <awui/String.h>
 
 using namespace awui::Drawing;
@@ -51,17 +52,7 @@ awui::String Point::ToString() {
 	return value;
 }
 
-
-int Point::Sign(Point * p1, Point * p2, Point * p3) {
-	return (p1->_x - p3->_x) * (p2->_y - p3->_y) - (p2->_x - p3->_x) * (p1->_y - p3->_y);
-}
-
-bool Point::InTriangle(Point * v1, Point * v2, Point * v3) {
-	bool b1, b2, b3;
-
-	b1 = Point::Sign(this, v1, v2) < 0;
-	b2 = Point::Sign(this, v2, v3) < 0;
-	b3 = Point::Sign(this, v3, v1) < 0;
-
-	return ((b1 == b2) && (b2 == b3));
+float Point::Distance(Point * p1, Point * p2) {
+	return Math::Sqrt(Math::Pow((float)p1->GetX() - p2->GetX(), 2.0f)
+					+ Math::Pow((float)p1->GetY() - p2->GetY(), 2.0f));
 }

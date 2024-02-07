@@ -90,10 +90,12 @@ namespace awui {
 
 					int GetLeft() const;
 					int GetAbsoluteLeft() const;
+					int GetAbsoluteRight() const;
 					void SetLeft(int x);
 
 					int GetTop() const;
 					int GetAbsoluteTop() const;
+					int GetAbsoluteBottom() const;
 					void SetTop(int y);
 
 					const Drawing::Point GetLocation() const;
@@ -174,7 +176,6 @@ namespace awui {
 					Control * GetTopParent();
 
 					void GetControlsSelectables(Collections::ArrayList * list);
-					Control * GetNextControl(Control * ommitControl, Drawing::Point * pCenter, Drawing::Point * p1, Drawing::Point * p2);
 
 					float Interpolate(float from, int to, float percent);
 

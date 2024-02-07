@@ -128,6 +128,9 @@ int Control::GetAbsoluteTop() const {
 	return this->GetTop() + pos;
 }
 
+int Control::GetAbsoluteBottom() const {
+	return this->GetAbsoluteTop() + this->GetHeight() - 1;
+}
 
 int Control::GetLeft() const {
 	return this->bounds.GetLeft();
@@ -140,6 +143,10 @@ int Control::GetAbsoluteLeft() const {
 		pos = parent->GetAbsoluteLeft();
 
 	return this->GetLeft() + pos;
+}
+
+int Control::GetAbsoluteRight() const {
+	return this->GetAbsoluteLeft() + this->GetWidth() - 1;
 }
 
 int Control::GetRight() const {
@@ -658,59 +665,182 @@ bool Control::OnKeyUp(Keys::Enum button) {
 	return false;
 }
 
+// Arriba y Abajo: de la fila de items mas cercana el item mas cercano
+// Izquierda y Derecha: De la actual fila, el item mas cercano
 bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	if ((Form::GetControlSelected() == this) && (!this->_preventChangeControl)) {
-		Point pCenter(Math::Round((this->GetWidth() / 2.0f) + this->GetAbsoluteLeft()), Math::Round((this->GetHeight() / 2.0f) + this->GetAbsoluteTop()));
-		Point p1;
-		Point p2;
-		int distance = 3000;
+		Point thisP1(this->GetAbsoluteLeft(), this->GetAbsoluteTop());
+		Point thisP2(this->GetAbsoluteRight(), this->GetAbsoluteBottom());;
+		Point thisCenter((thisP1.GetX() + thisP2.GetX()) >> 1, (thisP1.GetY() + thisP2.GetY()) >> 1);
+
+		float distance = 30000;
+		float distance2 = 30000;
+		Control * selected = NULL;
+
+		ArrayList list;
+		this->GetTopParent()->GetControlsSelectables(&list);
 
 		switch (button) {
-			case RemoteButtons::Up:
-				pCenter.SetY(this->GetAbsoluteTop());
-				p1.SetX(pCenter.GetX() - distance);
-				p1.SetY(pCenter.GetY() - distance);
-				p2.SetX(pCenter.GetX() + distance);
-				p2.SetY(pCenter.GetY() - distance);
+			case RemoteButtons::Left:
+				for (int i = 0; i<list.GetCount(); i++) {
+					Control * control = (Control *)list.Get(i);
+					if (control == this) continue;
+
+					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+
+					if ((controlCenter.GetX()  < thisCenter.GetX()) &&
+						(controlP1.GetTop()    < thisP2.GetBottom()) &&
+						(controlP2.GetBottom() > thisP1.GetTop())) {
+						float calc = Point::Distance(&controlCenter, &thisCenter);
+						if (calc < distance) {
+							distance = calc;
+							selected = control;
+						}
+					}
+				}
 				break;
 			case RemoteButtons::Right:
-				pCenter.SetX(this->GetAbsoluteLeft() + this->GetWidth());
-				p1.SetX(pCenter.GetX() + distance);
-				p1.SetY(pCenter.GetY() - distance);
-				p2.SetX(pCenter.GetX() + distance);
-				p2.SetY(pCenter.GetY() + distance);
+				for (int i = 0; i<list.GetCount(); i++) {
+					Control * control = (Control *)list.Get(i);
+					if (control == this) continue;
+
+					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+
+					if ((controlCenter.GetX()  > thisCenter.GetX()) &&
+						(controlP1.GetTop()    < thisP2.GetBottom()) &&
+						(controlP2.GetBottom() > thisP1.GetTop())) {
+						float calc = Point::Distance(&controlCenter, &thisCenter);
+						if (calc < distance) {
+							distance = calc;
+							selected = control;
+						}
+					}
+				}
 				break;
-			case RemoteButtons::Down:
-				pCenter.SetY(this->GetAbsoluteTop() + this->GetHeight());
-				p1.SetX(pCenter.GetX() - distance);
-				p1.SetY(pCenter.GetY() + distance);
-				p2.SetX(pCenter.GetX() + distance);
-				p2.SetY(pCenter.GetY() + distance);
+			case RemoteButtons::Down: {
+				Control * selectedAux = NULL;
+				// Primero busco el mas cercano en Y por abajo
+				for (int i = 0; i<list.GetCount(); i++) {
+					Control * control = (Control *)list.Get(i);
+					if (control == this) continue;
+
+					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+
+					if (controlP1.GetTop() > thisP1.GetBottom()) {
+						float calc = controlP1.GetTop() - thisP1.GetTop();
+						if (calc < distance) {
+							distance = calc;
+							distance2 = 30000;
+							selectedAux = control;
+						} else {
+							if (calc == distance) {
+								float calc2 = controlCenter.GetY() - thisCenter.GetY();
+								if (calc2 < distance2) {
+									distance2 = calc2;
+									selectedAux = control;
+								}
+							}
+						}
+					}
+				}
+
+				if (!selectedAux) break;
+				distance = 30000;
+
+				// Ahora busco de ese cercano, uno que este en la misma horizontal y mas cerca del actual
+				// Y que ademas este por debajo del actual
+				for (int i = 0; i<list.GetCount(); i++) {
+					Control * control = (Control *)list.Get(i);
+					if (control == this) continue;
+
+					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+
+					if ((controlP1.GetTop()    < selectedAux->GetAbsoluteBottom()) &&
+					    (controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
+						(controlP1.GetTop()    > thisP1.GetBottom())) {
+						float calc = Point::Distance(&controlCenter, &thisCenter);
+						if (calc < distance) {
+							distance = calc;
+							selected = control;
+						}
+					}
+				}
+			}
 				break;
-			case RemoteButtons::Left:
-				pCenter.SetX(this->GetAbsoluteLeft());
-				p1.SetX(pCenter.GetX() - distance);
-				p1.SetY(pCenter.GetY() - distance);
-				p2.SetX(pCenter.GetX() - distance);
-				p2.SetY(pCenter.GetY() + distance);
+			case RemoteButtons::Up: {
+				Control * selectedAux = NULL;
+				// Primero busco el mas cercano en Y por arriba
+				for (int i = 0; i<list.GetCount(); i++) {
+					Control * control = (Control *)list.Get(i);
+					if (control == this) continue;
+
+					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+
+					if (controlP2.GetBottom() < thisP2.GetTop()) {
+						float calc = thisP2.GetBottom() - controlP2.GetBottom();
+						if (calc < distance) {
+							distance = calc;
+							distance2 = 30000;
+							selectedAux = control;
+						} else {
+							if (calc == distance) {
+								float calc2 = thisCenter.GetY() - controlCenter.GetY();
+								if (calc2 < distance2) {
+									distance2 = calc2;
+									selectedAux = control;
+								}
+							}
+						}
+					}
+				}
+
+				if (!selectedAux) break;
+				distance = 30000;
+
+				// Ahora busco de ese cercano, uno que este en la misma horizontal y mas cerca del actual
+				// Y ademas que este por arriba del actual
+				for (int i = 0; i<list.GetCount(); i++) {
+					Control * control = (Control *)list.Get(i);
+					if (control == this) continue;
+
+					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+
+					if ((controlP1.GetTop()    < selectedAux->GetAbsoluteBottom()) &&
+						(controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
+					 	(controlP2.GetBottom() < thisP2.GetTop())) {
+						float calc = Point::Distance(&controlCenter, &thisCenter);
+						if (calc < distance) {
+							distance = calc;
+							selected = control;
+						}
+					}
+				}
+			}
 				break;
 			default:
 				break;
 		}
 
+		if (selected)
+			Form::SetControlSelected(selected);
+
 		switch (button) {
 			case RemoteButtons::Up:
 			case RemoteButtons::Right:
 			case RemoteButtons::Down:
 			case RemoteButtons::Left:
-				{
-					Control * control = this->GetTopParent();
-					if (control) {
-						control = control->GetNextControl(this, &pCenter, &p1, &p2);
-						if (control)
-							Form::SetControlSelected(control);
-					}
-				}
 				break;
 			case RemoteButtons::Play:
 //				Console::WriteLine("Play");
@@ -741,40 +871,6 @@ void Control::GetControlsSelectables(ArrayList * list) {
 
 	if (this->GetTabStop())
 		list->Add(this);
-}
-
-#define PARTS 4.0f
-
-Control * Control::GetNextControl(Control * ommitControl, Point * pCenter, Point * p1, Point * p2) {
-	ArrayList list;
-	this->GetControlsSelectables(&list);
-
-	Control * selected = NULL;
-	float distance = 3000;
-
-	for (int i = 0; i<list.GetCount(); i++) {
-		Control * control = (Control *)list.Get(i);
-		if (control == ommitControl)
-			continue;
-
-		for (int j2=0; j2<=PARTS; j2++) {
-			for (int j3=0; j3<=PARTS; j3++) {
-				int x = Math::Round(control->GetAbsoluteLeft() + (control->GetWidth() * j2 / PARTS));
-				int y = Math::Round(control->GetAbsoluteTop() + (control->GetHeight() * j3 / PARTS));
-				Point pControlCenter(x, y);
-				if (pControlCenter.InTriangle(pCenter, p1, p2)) {
-					float dist = Math::Sqrt(Math::Pow((float)pCenter->GetX() - pControlCenter.GetX(), 2.0f)
-																+ Math::Pow((float)pCenter->GetY() - pControlCenter.GetY(), 2.0f));
-					if (dist < distance) {
-						distance = dist;
-						selected = control;
-					}
-				}
-			}
-		}
-	}
-
-	return selected;
 }
 
 void Control::CheckMouseControl() {

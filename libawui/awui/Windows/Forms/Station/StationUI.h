@@ -62,6 +62,7 @@ namespace awui {
 
 						Label * _title;
 						Browser::Browser * _browser;
+						Button * _settings;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);
