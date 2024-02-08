@@ -4,6 +4,8 @@
 #include <awui/Windows/Forms/Station/MenuButton.h>
 #include <awui/Windows/Emulators/ArcadeContainer.h>
 
+class SettingsWidget;
+
 namespace awui {
 	namespace Windows {
 		namespace Forms {
@@ -62,7 +64,8 @@ namespace awui {
 
 						Label * _title;
 						Browser::Browser * _browser;
-						Button * _settings;
+						SettingsWidget * _settings;
+						Label * _clock;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);

@@ -11,9 +11,11 @@
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
+#include <awui/Windows/Forms/Station/SettingsWidget.h>
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #define BORDERMARGIN 50
 #define MENUBUTTONHEIGHT 70
@@ -33,6 +35,7 @@ StationUI::StationUI() {
 
 	Font font = Font("Liberation Sans", 38, FontStyle::Bold);
 	Font font2 = Font("Liberation Sans", 22, FontStyle::Bold);
+	Font fontClock = Font("Liberation Sans", 26, FontStyle::Bold);
 	this->_title = new Label();
 	this->_title->SetText("StationTV");
 	this->_title->SetTextAlign(ContentAlignment::BottomCenter);
@@ -43,12 +46,23 @@ StationUI::StationUI() {
 	this->GetControls()->Add(this->_title);
 	this->GetControls()->Add(this->_browser);
 
-	this->_settings = new Button();
+	this->_settings = new SettingsWidget();
 	this->_settings->SetDock(DockStyle::None);
 	this->_settings->SetFont(font2);
 	this->_settings->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->_settings->SetText("Settings");
+	this->_settings->SetSize(44, 46);
 	this->GetControls()->Add(this->_settings);
+
+	this->_clock = new Label();
+	this->_clock->SetDock(DockStyle::None);
+	this->_clock->SetFont(fontClock);
+	this->_clock->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	this->_clock->SetForeColor(Color::FromArgb(151, 151, 151));
+	this->_clock->SetTextAlign(ContentAlignment::TopCenter);
+	this->_clock->SetText("11:59");
+	this->GetControls()->Add(this->_clock);
+
 }
 
 StationUI::~StationUI() {
@@ -233,8 +247,21 @@ void StationUI::OnTick() {
 		this->CheckArcade();
 	}
 
-	this->_settings->SetLocation(this->GetWidth() - 116, 8);
-	this->_settings->SetSize(100, 45);
+	time_t t;
+	time(&t);
+	struct tm *tm;
+	tm = localtime(&t);
+	char hora[6];
+	strftime(hora, sizeof(hora), "%H:%M", tm);
+	String horaS(hora);
+
+	if (this->_clock->GetText().CompareTo(horaS) != 0)
+		this->_clock->SetText(horaS);
+
+	this->_settings->SetLocation(this->GetWidth() - 150, 8);
+
+	this->_clock->SetLocation(this->GetWidth() - 80, 16);
+	this->_clock->SetSize(this->_clock->GetLabelWidth(), 45);
 	
 	this->_title->SetLocation(this->GetWidth() >> 1, 0);
 	this->_title->SetSize(this->GetWidth() >> 1, 69);
