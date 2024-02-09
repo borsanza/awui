@@ -10,6 +10,7 @@ namespace awui {
 	namespace Windows {
 		namespace Forms {
 			class Bitmap;
+			class ImageFader;
 
 			namespace Station {
 				namespace Browser {
@@ -69,7 +70,7 @@ namespace awui {
 						Browser::Browser * _browser;
 						SettingsWidget * _settings;
 						Label * _clock;
-						Bitmap * _background;
+						ImageFader * _backgroundFader;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);
@@ -102,8 +103,6 @@ namespace awui {
 
 						virtual bool OnKeyPress(Keys::Enum key);
 						virtual bool OnKeyUp(Keys::Enum key);
-
-						virtual void OnPaint(OpenGL::GL* gl);
 				};
 			}
 		}

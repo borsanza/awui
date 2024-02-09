@@ -81,9 +81,10 @@ Keyboard::Keyboard() {
 Keyboard::~Keyboard() {
 }
 
-int Keyboard::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Keyboard)
-		return 1;
+bool Keyboard::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Keyboard) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

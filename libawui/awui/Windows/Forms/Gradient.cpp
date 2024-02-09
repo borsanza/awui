@@ -19,9 +19,10 @@ Gradient::Gradient() {
 Gradient::~Gradient() {
 }
 
-int Gradient::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Gradient)
-		return 1;
+bool Gradient::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Gradient) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

@@ -52,7 +52,7 @@ namespace awui {
 					Bitmap(const String file);
 					virtual ~Bitmap();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					void SetFixedMargins(int x1, int y1, int x2, int y2);
 					void GetFixedMargins(int * x1, int * y1, int * x2, int * y2);

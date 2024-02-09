@@ -15,7 +15,7 @@ namespace awui {
 					Splitter();
 					virtual ~Splitter();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					SplitContainer::Orientation::Enum GetOrientation();
 					void SetOrientation(SplitContainer::Orientation::Enum orientation);

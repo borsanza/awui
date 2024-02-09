@@ -40,9 +40,10 @@ SplitContainer::SplitContainer() {
 SplitContainer::~SplitContainer() {
 }
 
-int SplitContainer::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::SplitContainer)
-		return 1;
+bool SplitContainer::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::SplitContainer) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

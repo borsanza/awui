@@ -17,7 +17,7 @@ namespace awui {
 				public:
 					static void Run(Form * form);
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					static void Quit();
 			};

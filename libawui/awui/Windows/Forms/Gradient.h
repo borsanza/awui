@@ -17,7 +17,7 @@ namespace awui {
 						Gradient();
 						virtual ~Gradient();
 
-						virtual int IsClass(Classes::Enum objectClass) const;
+						virtual bool IsClass(Classes objectClass) const override;
 
 						void SetColor(int pos, const Drawing::ColorF color);
 						void SetColorGo(int pos, const Drawing::ColorF color);

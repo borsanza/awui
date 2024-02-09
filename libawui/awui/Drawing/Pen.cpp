@@ -27,9 +27,10 @@ Pen::Pen(Drawing::Color color, float width) {
 Pen::~Pen() {
 }
 
-int Pen::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Pen)
-		return 1;
+bool Pen::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Pen) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

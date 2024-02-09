@@ -21,9 +21,10 @@ Color::Color() {
 	this->b = 0;
 }
 
-int Color::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Color)
-		return 1;
+bool Color::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Color) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

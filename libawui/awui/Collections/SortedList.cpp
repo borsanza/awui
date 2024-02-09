@@ -21,9 +21,10 @@ SortedList::~SortedList() {
 	this->Clear();
 }
 
-int SortedList::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::SortedList)
-		return 1;
+bool SortedList::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::SortedList) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

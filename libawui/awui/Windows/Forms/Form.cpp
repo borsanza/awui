@@ -63,9 +63,10 @@ Form::~Form() {
 //	delete this->remoteProcess;
 }
 
-int Form::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Form)
-		return 1;
+bool Form::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Form) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

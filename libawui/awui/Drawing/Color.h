@@ -11,7 +11,7 @@ namespace awui {
 			public:
 				Color();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+				virtual bool IsClass(Classes objectClass) const override;
 				virtual String ToString();
 
 				unsigned char GetA() const;

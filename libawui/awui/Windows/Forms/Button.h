@@ -16,7 +16,7 @@ namespace awui {
 					Button();
 					virtual ~Button();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					const String GetText();
 					void SetText(const String str);

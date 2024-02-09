@@ -39,9 +39,10 @@ Label::~Label() {
 		delete this->image;
 }
 
-int Label::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Label)
-		return 1;
+bool Label::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Label) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

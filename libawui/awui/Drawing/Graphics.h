@@ -26,7 +26,7 @@ namespace awui {
 			public:
 				virtual ~Graphics();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+				virtual bool IsClass(Classes objectClass) const override;
 
 				static Graphics * FromImage(Drawing::Image *image);
 

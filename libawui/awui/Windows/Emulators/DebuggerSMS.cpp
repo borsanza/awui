@@ -28,11 +28,12 @@ DebuggerSMS::DebuggerSMS() {
 DebuggerSMS::~DebuggerSMS() {
 }
 
-int DebuggerSMS::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::DebuggerSMS)
-		return 1;
+bool DebuggerSMS::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::DebuggerSMS) {
+		return true;
+	}
 
-	return Control::IsClass(objectClass);
+	return Button::IsClass(objectClass);
 }
 
 void DebuggerSMS::OnTick() {

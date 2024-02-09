@@ -36,9 +36,10 @@ MenuButton::~MenuButton() {
 	this->GetControls()->Remove(&this->_label);
 }
 
-int MenuButton::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::MenuButton)
-		return 1;
+bool MenuButton::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::MenuButton) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

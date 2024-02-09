@@ -34,6 +34,8 @@ namespace awui {
 					ArcadeContainer();
 					virtual ~ArcadeContainer();
 
+					virtual bool IsClass(Classes objectClass) const override;
+
 					virtual void SetSoundEnabled(bool mode) {}
 					virtual void SetDebugger(DebuggerSMS * debugger) {};
 					virtual int GetType() const = 0;

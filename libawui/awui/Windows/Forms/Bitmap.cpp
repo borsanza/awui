@@ -37,9 +37,10 @@ Bitmap::~Bitmap() {
 	this->Unload();
 }
 
-int Bitmap::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Bitmap)
-		return 1;
+bool Bitmap::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Bitmap) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

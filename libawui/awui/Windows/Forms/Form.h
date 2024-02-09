@@ -46,7 +46,7 @@ namespace awui {
 					Form();
 					virtual ~Form();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					void Init();
 					void SetText(String title);

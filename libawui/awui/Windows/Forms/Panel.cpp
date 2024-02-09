@@ -16,9 +16,10 @@ Panel::Panel() {
 Panel::~Panel() {
 }
 
-int Panel::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Panel)
-		return 1;
+bool Panel::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Panel) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

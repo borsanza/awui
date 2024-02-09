@@ -27,11 +27,12 @@ Chip8::~Chip8() {
 	delete this->_cpu;
 }
 
-int Chip8::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Chip8)
-		return 1;
+bool Chip8::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Chip8) {
+		return true;
+	}
 
-	return Control::IsClass(objectClass);
+	return ArcadeContainer::IsClass(objectClass);
 }
 
 void Chip8::CheckBackcolor() {

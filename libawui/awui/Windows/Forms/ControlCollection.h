@@ -15,7 +15,7 @@ namespace awui {
 					ControlCollection(Control *);
 					virtual ~ControlCollection();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					Control * GetOwner();
 					virtual void Add(Control * item);

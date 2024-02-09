@@ -19,7 +19,7 @@ namespace awui {
 				Pen(awui::Drawing::Color color, float width);
 				virtual ~Pen();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+				virtual bool IsClass(Classes objectClass) const override;
 
 				awui::Drawing::Color GetColor();
 				void SetColor(awui::Drawing::Color color);

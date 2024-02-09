@@ -5,38 +5,38 @@
 namespace awui {
 	class String;
 
-	struct Classes {
-		enum Enum {
-			Object,
-			Application,
-			ArrayList,
-			SortedList,
-			Button,
-			Bitmap,
-			Label,
-			Keyboard,
-			Color,
-			ColorF,
-			Control,
-			ControlCollection,
-			Form,
-			Graphics,
-			Image,
-			MouseEventArgs,
-			Panel,
-			Pen,
-			SplitContainer,
-			Splitter,
-			ListBox,
-			Stack,
-			Chip8,
-			MasterSystem,
-			DebuggerSMS,
-			Spectrum,
-			Gradient,
-			MenuButton,
-			Shader,
-		};
+	enum class Classes {
+		Object,
+		Application,
+		ArrayList,
+		SortedList,
+		Button,
+		Bitmap,
+		ImageFader,
+		Label,
+		Keyboard,
+		Color,
+		ColorF,
+		Control,
+		ControlCollection,
+		Form,
+		Graphics,
+		Image,
+		MouseEventArgs,
+		Panel,
+		Pen,
+		SplitContainer,
+		Splitter,
+		ListBox,
+		Stack,
+		Chip8,
+		MasterSystem,
+		DebuggerSMS,
+		Spectrum,
+		Gradient,
+		MenuButton,
+		Shader,
+		ArcadeContainer,
 	};
 
 	class Object {
@@ -44,7 +44,7 @@ namespace awui {
 			Object();
 			virtual ~Object();
 
-			virtual int IsClass(Classes::Enum objectClass) const;
+			virtual bool IsClass(Classes objectClass) const;
 
 			virtual String ToString();
 	};

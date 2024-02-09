@@ -18,9 +18,10 @@ int Application::quit = 0;
 SDL_Joystick * Application::stick1 = NULL;
 SDL_Joystick * Application::stick2 = NULL;
 
-int Application::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Application)
-		return 1;
+bool Application::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Application) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

@@ -45,11 +45,12 @@ MasterSystem::~MasterSystem() {
 	delete this->_image;
 }
 
-int MasterSystem::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::MasterSystem)
-		return 1;
+bool MasterSystem::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::MasterSystem) {
+		return true;
+	}
 
-	return Control::IsClass(objectClass);
+	return ArcadeContainer::IsClass(objectClass);
 }
 
 void MasterSystem::LoadRom(const String file) {

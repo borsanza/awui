@@ -38,7 +38,7 @@ namespace awui {
 					SplitContainer();
 					virtual ~SplitContainer();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					Panel * GetPanel1();
 					Panel * GetPanel2();

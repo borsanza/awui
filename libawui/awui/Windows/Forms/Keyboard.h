@@ -10,7 +10,7 @@ namespace awui {
 					Keyboard();
 					virtual ~Keyboard();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 			};
 		}
 	}

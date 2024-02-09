@@ -25,7 +25,7 @@ namespace awui {
 					DebuggerSMS();
 					virtual ~DebuggerSMS();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					virtual void OnTick();
 

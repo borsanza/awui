@@ -33,7 +33,7 @@ namespace awui {
 						MenuButton(StationUI * station);
 						virtual ~MenuButton();
 
-						virtual int IsClass(Classes::Enum objectClass) const;
+						virtual bool IsClass(Classes objectClass) const override;
 
 						const String GetText();
 						void SetText(const String str);

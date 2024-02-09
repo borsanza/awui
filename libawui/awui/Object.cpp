@@ -17,11 +17,12 @@ Object::Object() {
 Object::~Object() {
 }
 
-int Object::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Object)
-		return 1;
+bool Object::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Object) {
+		return true;
+	}
 
-	return 0;
+	return false;
 }
 
 String Object::ToString() {

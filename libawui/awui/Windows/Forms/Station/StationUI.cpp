@@ -10,6 +10,7 @@
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/ImageFader.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
 #include <awui/Windows/Forms/Station/SettingsWidget.h>
@@ -33,7 +34,12 @@ StationUI::StationUI() {
 	this->_arcade = NULL;
 	this->_root = NULL;
 
-	this->_background = NULL;
+	this->_backgroundFader = new ImageFader();
+	this->_backgroundFader->SetTabStop(false);
+	this->_backgroundFader->SetDock(DockStyle::Fill);
+	this->_backgroundFader->SetColor(ColorF::FromArgb(0.25f, 1.0f, 1.0f, 1.0f));
+
+	this->GetControls()->Add(this->_backgroundFader);
 
 	this->SetTabStop(false);
 
@@ -65,7 +71,6 @@ StationUI::StationUI() {
 	this->_clock->SetTextAlign(ContentAlignment::TopCenter);
 	this->_clock->SetText("11:59");
 	this->GetControls()->Add(this->_clock);
-
 }
 
 StationUI::~StationUI() {
@@ -86,7 +91,7 @@ void StationUI::Clear() {
 }
 
 void StationUI::SetBackground(Bitmap * background) {
-	this->_background = background;
+	this->_backgroundFader->SetImage(background);
 }
 
 void StationUI::RecursiveSearch(NodeFile * parent) {
@@ -122,7 +127,6 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 					child->_emulator = Types::Chip8;
 					child->_button->SetText("CHIP-8");
 					child->_background = new Bitmap("./images/chip8.jpg");
-					child->_background->SetColor(ColorF::FromArgb(0.1f, 1.0f, 1.0f, 1.0f));
 					child->_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
@@ -130,7 +134,6 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 					child->_emulator = Types::GameGear;
 					child->_button->SetText("Game Gear");
 					child->_background = new Bitmap("./images/gamegear.jpg");
-					child->_background->SetColor(ColorF::FromArgb(0.1f, 1.0f, 1.0f, 1.0f));
 					child->_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
@@ -138,7 +141,6 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 					child->_emulator = Types::MasterSystem;
 					child->_button->SetText("Master System");
 					child->_background = new Bitmap("./images/mastersystem.jpg");
-					child->_background->SetColor(ColorF::FromArgb(0.1f, 1.0f, 1.0f, 1.0f));
 					child->_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
@@ -146,7 +148,6 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 					child->_emulator = Types::Spectrum;
 					child->_button->SetText("ZX Spectrum");
 					child->_background = new Bitmap("./images/zxspectrum.jpg");
-					child->_background->SetColor(ColorF::FromArgb(0.1f, 1.0f, 1.0f, 1.0f));
 					child->_background->SetStretchMode(StretchMode::AspectFill);
 				}
 			} else {
@@ -199,6 +200,7 @@ bool StationUI::Minimize(NodeFile * parent) {
 					case Types::MasterSystem:
 						if (child->_path.EndsWith("sms")) continue;
 						if (child->_path.EndsWith("sg")) continue;
+						if (child->_path.EndsWith("gg")) continue;
 						break;
 					case Types::Spectrum:
 						if (child->_path.EndsWith("rom")) continue;
@@ -403,14 +405,6 @@ bool StationUI::OnKeyUp(Keys::Enum key) {
 		return this->_arcade->OnKeyUp(key);
 
 	return Control::OnKeyUp(key);
-}
-
-void StationUI::OnPaint(OpenGL::GL* gl) {
-	Control::OnPaint(gl);
-	if (this->_background) {
-		this->_background->SetSize(this->GetWidth(), this->GetHeight());
-		this->_background->OnPaint(gl);
-	}
 }
 
 /********************************* FadePanel **********************************/

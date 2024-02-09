@@ -24,9 +24,10 @@ Graphics::Graphics() {
 Graphics::~Graphics() {
 }
 
-int Graphics::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Graphics)
-		return 1;
+bool Graphics::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Graphics) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

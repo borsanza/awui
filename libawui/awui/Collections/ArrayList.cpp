@@ -22,9 +22,10 @@ ArrayList::~ArrayList() {
 	free(this->_data);
 }
 
-int ArrayList::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::ArrayList)
-		return 1;
+bool ArrayList::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::ArrayList) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

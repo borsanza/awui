@@ -23,9 +23,10 @@ Splitter::Splitter() {
 Splitter::~Splitter() {
 }
 
-int Splitter::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Splitter)
-		return 1;
+bool Splitter::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Splitter) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

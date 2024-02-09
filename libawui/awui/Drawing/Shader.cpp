@@ -26,9 +26,10 @@ Shader::Shader() {
 Shader::~Shader() {
 }
 
-int Shader::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Shader)
-		return 1;
+bool Shader::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Shader) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

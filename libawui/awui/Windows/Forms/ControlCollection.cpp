@@ -16,9 +16,10 @@ ControlCollection::ControlCollection(Control * owner) {
 ControlCollection::~ControlCollection() {
 }
 
-int ControlCollection::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::ControlCollection)
-		return 1;
+bool ControlCollection::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::ControlCollection) {
+		return true;
+	}
 
 	return ArrayList::IsClass(objectClass);
 }

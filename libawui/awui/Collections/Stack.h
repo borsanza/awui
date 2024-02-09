@@ -18,7 +18,7 @@ namespace awui {
 				Stack();
 				virtual ~Stack();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+				virtual bool IsClass(Classes objectClass) const override;
 
 				virtual String ToString();
 

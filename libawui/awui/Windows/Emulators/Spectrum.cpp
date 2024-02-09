@@ -60,11 +60,12 @@ Spectrum::~Spectrum() {
 	delete this->_motherboard;
 }
 
-int Spectrum::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Spectrum)
-		return 1;
+bool Spectrum::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Spectrum) {
+		return true;
+	}
 
-	return Control::IsClass(objectClass);
+	return ArcadeContainer::IsClass(objectClass);
 }
 
 void Spectrum::LoadRom(const String file) {

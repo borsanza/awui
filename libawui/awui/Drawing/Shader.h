@@ -18,7 +18,7 @@ namespace awui {
 				Shader();
 				virtual ~Shader();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+				virtual bool IsClass(Classes objectClass) const override;
 				GLuint LoadShaderFromFile(std::string path, GLenum shaderType);
 		};
 	}

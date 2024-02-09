@@ -59,9 +59,10 @@ Control::~Control() {
 	delete this->controls;
 }
 
-int Control::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Control)
-		return 1;
+bool Control::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Control) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

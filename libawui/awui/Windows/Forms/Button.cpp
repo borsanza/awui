@@ -28,9 +28,10 @@ Button::Button() {
 Button::~Button() {
 }
 
-int Button::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Button)
-		return 1;
+bool Button::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Button) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }

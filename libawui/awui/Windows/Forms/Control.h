@@ -77,7 +77,7 @@ namespace awui {
 					Control();
 					virtual ~Control();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					const virtual Drawing::Size GetMinimumSize() const;
 					void SetMinimumSize(Drawing::Size size);

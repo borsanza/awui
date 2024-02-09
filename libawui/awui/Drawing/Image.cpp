@@ -56,9 +56,10 @@ Image::~Image() {
 	this->Unload();
 }
 
-int Image::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Image)
-		return 1;
+bool Image::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Image) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

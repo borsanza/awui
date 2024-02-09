@@ -14,7 +14,7 @@ namespace awui {
 				ArrayList();
 				virtual ~ArrayList();
 
-				virtual int IsClass(Classes::Enum objectClass) const;
+				virtual bool IsClass(Classes objectClass) const override;
 
 				virtual String ToString();
 

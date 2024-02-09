@@ -26,7 +26,7 @@ namespace awui {
 					MouseEventArgs();
 					virtual ~MouseEventArgs();
 
-					virtual int IsClass(Classes::Enum objectClass) const;
+					virtual bool IsClass(Classes objectClass) const override;
 
 					int GetX();
 					int GetY();

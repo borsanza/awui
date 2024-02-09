@@ -16,9 +16,10 @@ MouseEventArgs::MouseEventArgs() {
 MouseEventArgs::~MouseEventArgs() {
 }
 
-int MouseEventArgs::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::MouseEventArgs)
-		return 1;
+bool MouseEventArgs::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::MouseEventArgs) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

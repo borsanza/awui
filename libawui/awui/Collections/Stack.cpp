@@ -20,9 +20,10 @@ Stack::~Stack() {
 	this->Clear();
 }
 
-int Stack::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::Stack)
-		return 1;
+bool Stack::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::Stack) {
+		return true;
+	}
 
 	return Object::IsClass(objectClass);
 }

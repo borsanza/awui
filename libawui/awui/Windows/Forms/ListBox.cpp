@@ -16,9 +16,10 @@ ListBox::~ListBox() {
 	delete this->collection;
 }
 
-int ListBox::IsClass(Classes::Enum objectClass) const {
-	if (objectClass == Classes::ListBox)
-		return 1;
+bool ListBox::IsClass(Classes objectClass) const {
+	if (objectClass == Classes::ListBox) {
+		return true;
+	}
 
 	return Control::IsClass(objectClass);
 }
