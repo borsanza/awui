@@ -24,6 +24,7 @@ Bitmap::Bitmap(const String file) {
 	this->textureWidth = 0;
 	this->textureHeight = 0;
 	this->texture = -1;
+	this->_color = Drawing::ColorF::FromArgb(1.0f, 1.0f, 1.0f, 1.0f);
 
 	this->stretchMode = StretchMode::Stretch;
 
@@ -77,7 +78,7 @@ void Bitmap::Load() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // GL_NEAREST or GL_LINEAR
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, 4, textureImage->w, textureImage->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureImage->pixels);
+		glTexImage2D(GL_TEXTURE_2D, 0, 4, textureImage->w, textureImage->h, 0, textureImage->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, textureImage->pixels);
 		this->textureWidth = textureImage->w;
 		this->textureHeight = textureImage->h;
 	}
@@ -315,20 +316,21 @@ void Bitmap::PaintTiled() {
 	glTexCoord2f(tx1, ty2); glVertex2i(xn1, yn2); // Left Bottom
 }
 
-void Bitmap::PaintStretched() {
+
+void Bitmap::PaintTexture(int left, int top, int right, int bottom) {
 	int x0, x1, x2, x3;
 	int y0, y1, y2, y3;
 	float tx0, tx1, tx2, tx3;
 	float ty0, ty1, ty2, ty3;
 
-	x0 = 0;
-	x1 = this->fixX1;
-	x2 = this->GetWidth() - this->fixX2;
-	x3 = this->GetWidth();
-	y0 = 0;
-	y1 = this->fixY1;
-	y2 = this->GetHeight() - this->fixY2;
-	y3 = this->GetHeight();
+	x0 = left;
+	x1 = left + this->fixX1;
+	x2 = right - this->fixX2;
+	x3 = right;
+	y0 = top;
+	y1 = top + this->fixY1;
+	y2 = bottom - this->fixY2;
+	y3 = bottom;
 	tx0 = 0.0f;
 	tx1 = (float)(this->fixX1) / (float)this->textureWidth;
 	tx2 = (float)(this->textureWidth - this->fixX2) / (float)this->textureWidth;
@@ -415,6 +417,79 @@ void Bitmap::PaintStretched() {
 	}
 }
 
+void Bitmap::PaintStretched() {
+	PaintTexture(0, 0, this->GetRight(), this->GetBottom());
+}
+
+void Bitmap::PaintAspectFit() {
+	// Obtener dimensiones del área de destino
+	int destWidth = this->GetRight();
+	int destHeight = this->GetBottom();
+
+	// Calcular la relación de aspecto de la imagen y del destino
+	float imageAspectRatio = static_cast<float>(this->textureWidth) / this->textureHeight;
+	float destAspectRatio = static_cast<float>(destWidth) / destHeight;
+
+	int drawWidth, drawHeight;
+
+	if (destAspectRatio > imageAspectRatio)
+	{
+		// El área de destino es más ancha en proporción a la imagen: ajustar por altura
+		drawHeight = destHeight;
+		drawWidth = static_cast<int>(imageAspectRatio * drawHeight);
+	}
+	else
+	{
+		// El área de destino es más alta en proporción, o igual: ajustar por ancho
+		drawWidth = destWidth;
+		drawHeight = static_cast<int>(drawWidth / imageAspectRatio);
+	}
+
+	// Calcular posición inicial para centrar la imagen
+	int left = (destWidth - drawWidth) / 2;
+	int top = (destHeight - drawHeight) / 2;
+	int right = left + drawWidth;
+	int bottom = top + drawHeight;
+
+	// Pintar la textura ajustada y centrada
+	PaintTexture(left, top, right, bottom);
+}
+
+void Bitmap::PaintAspectFill() {
+    // Obtener dimensiones del área de destino
+    int destWidth = this->GetRight();
+    int destHeight = this->GetBottom();
+
+    // Calcular la relación de aspecto de la imagen y del destino
+    float imageAspectRatio = static_cast<float>(this->textureWidth) / this->textureHeight;
+    float destAspectRatio = static_cast<float>(destWidth) / destHeight;
+
+    int drawWidth, drawHeight;
+
+    if (destAspectRatio > imageAspectRatio) {
+        // El área de destino es más ancha en proporción a la imagen: ajustar por ancho
+        drawWidth = destWidth;
+        drawHeight = static_cast<int>(drawWidth / imageAspectRatio);
+    } else {
+        // El área de destino es más alta en proporción, o igual: ajustar por altura
+        drawHeight = destHeight;
+        drawWidth = static_cast<int>(imageAspectRatio * drawHeight);
+    }
+
+    // Calcular posición inicial para asegurar que la imagen esté centrada
+    int left = (destWidth - drawWidth) / 2;
+    int top = (destHeight - drawHeight) / 2;
+    int right = left + drawWidth;
+    int bottom = top + drawHeight;
+
+    // Pintar la textura ajustada y centrada, permitiendo que se extienda fuera del área visible si es necesario
+    PaintTexture(left, top, right, bottom);
+}
+
+void Bitmap::SetColor(Drawing::ColorF color) {
+	this->_color = color;
+}
+
 void Bitmap::OnPaint(GL* gl) {
 	this->Load();
 
@@ -434,7 +509,7 @@ void Bitmap::OnPaint(GL* gl) {
 	glBindTexture(GL_TEXTURE_2D, this->texture);
 
 	glPushMatrix();
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(this->_color.GetR(), this->_color.GetG(),this->_color.GetB(), this->_color.GetA());
 
 	glBegin(GL_QUADS);
 
@@ -448,9 +523,18 @@ void Bitmap::OnPaint(GL* gl) {
 		case StretchMode::Enum::Stretch:
 			this->PaintStretched();
 			break;
+		case StretchMode::Enum::AspectFit:
+			this->PaintAspectFit();
+			break;
+		case StretchMode::Enum::AspectFill:
+			this->PaintAspectFill();
+			break;
 	}
 
 	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
 	glPopMatrix();
 
 	if (!oldBlend)

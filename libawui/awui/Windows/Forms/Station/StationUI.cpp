@@ -7,6 +7,7 @@
  #include "StationUI.h"
 
 #include <awui/Math.h>
+#include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
@@ -22,6 +23,7 @@
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
+using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
 
@@ -30,6 +32,8 @@ StationUI::StationUI() {
 	this->_fade.SetStationUI(this);
 	this->_arcade = NULL;
 	this->_root = NULL;
+
+	this->_background = NULL;
 
 	this->SetTabStop(false);
 
@@ -50,7 +54,6 @@ StationUI::StationUI() {
 	this->_settings->SetDock(DockStyle::None);
 	this->_settings->SetFont(font2);
 	this->_settings->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	this->_settings->SetText("Settings");
 	this->_settings->SetSize(44, 46);
 	this->GetControls()->Add(this->_settings);
 
@@ -82,6 +85,10 @@ void StationUI::Clear() {
 	}
 }
 
+void StationUI::SetBackground(Bitmap * background) {
+	this->_background = background;
+}
+
 void StationUI::RecursiveSearch(NodeFile * parent) {
 	DIR *d;
 	struct dirent *dir;
@@ -102,6 +109,7 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 
 			newFile += dir->d_name;
 			child->_name = dir->d_name;
+			child->_background = NULL;
 
 			child->_button = new MenuButton(this);
 			child->_button->SetNodeFile(child);
@@ -113,21 +121,33 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 				if (child->_name == "chip8") {
 					child->_emulator = Types::Chip8;
 					child->_button->SetText("CHIP-8");
+					child->_background = new Bitmap("./images/chip8.jpg");
+					child->_background->SetColor(ColorF::FromArgb(0.1f, 1.0f, 1.0f, 1.0f));
+					child->_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
 				if (child->_name == "gamegear") {
 					child->_emulator = Types::GameGear;
 					child->_button->SetText("Game Gear");
+					child->_background = new Bitmap("./images/gamegear.jpg");
+					child->_background->SetColor(ColorF::FromArgb(0.1f, 1.0f, 1.0f, 1.0f));
+					child->_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
 				if (child->_name == "mastersystem") {
 					child->_emulator = Types::MasterSystem;
 					child->_button->SetText("Master System");
+					child->_background = new Bitmap("./images/mastersystem.jpg");
+					child->_background->SetColor(ColorF::FromArgb(0.1f, 1.0f, 1.0f, 1.0f));
+					child->_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
 				if (child->_name == "zxspectrum") {
 					child->_emulator = Types::Spectrum;
 					child->_button->SetText("ZX Spectrum");
+					child->_background = new Bitmap("./images/zxspectrum.jpg");
+					child->_background->SetColor(ColorF::FromArgb(0.1f, 1.0f, 1.0f, 1.0f));
+					child->_background->SetStretchMode(StretchMode::AspectFill);
 				}
 			} else {
 				child->_emulator = parent->_emulator;
@@ -383,6 +403,14 @@ bool StationUI::OnKeyUp(Keys::Enum key) {
 		return this->_arcade->OnKeyUp(key);
 
 	return Control::OnKeyUp(key);
+}
+
+void StationUI::OnPaint(OpenGL::GL* gl) {
+	Control::OnPaint(gl);
+	if (this->_background) {
+		this->_background->SetSize(this->GetWidth(), this->GetHeight());
+		this->_background->OnPaint(gl);
+	}
 }
 
 /********************************* FadePanel **********************************/

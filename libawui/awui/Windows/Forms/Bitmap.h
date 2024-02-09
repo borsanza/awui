@@ -2,6 +2,7 @@
 
 #include <awui/Collections/ArrayList.h>
 #include <awui/Windows/Forms/Control.h>
+#include <awui/Drawing/ColorF.h>
 
 typedef unsigned int GLuint;
 
@@ -17,6 +18,8 @@ namespace awui {
 					NoResize = 0,
 					Tile = 1,
 					Stretch = 2,
+					AspectFit = 3,
+					AspectFill = 4,
 				};
 			};
 			class Bitmap : public Control {
@@ -30,6 +33,7 @@ namespace awui {
 					int fixY1;
 					int fixY2;
 					StretchMode::Enum stretchMode;
+					Drawing::ColorF _color;
 
 					String file;
 					bool loaded;
@@ -39,7 +43,10 @@ namespace awui {
 
 					void PaintNoResized();
 					void PaintTiled();
+					void PaintTexture(int x, int y, int width, int height);
 					void PaintStretched();
+					void PaintAspectFit();
+					void PaintAspectFill();
 
 				public:
 					Bitmap(const String file);
@@ -51,6 +58,8 @@ namespace awui {
 					void GetFixedMargins(int * x1, int * y1, int * x2, int * y2);
 
 					virtual void OnPaint(OpenGL::GL* gl);
+
+					void SetColor(Drawing::ColorF color);
 
 					void SetStretchMode(StretchMode::Enum stretchMode);
 					StretchMode::Enum GetStretchMode();

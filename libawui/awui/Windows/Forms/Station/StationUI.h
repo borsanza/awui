@@ -9,6 +9,8 @@ class SettingsWidget;
 namespace awui {
 	namespace Windows {
 		namespace Forms {
+			class Bitmap;
+
 			namespace Station {
 				namespace Browser {
 					class Browser;
@@ -48,6 +50,7 @@ namespace awui {
 						Browser::Page * _page;
 						Emulators::ArcadeContainer * _arcade;
 						SortedList * _childList;
+						Bitmap * _background;
 
 					public:
 						NodeFile();
@@ -66,6 +69,7 @@ namespace awui {
 						Browser::Browser * _browser;
 						SettingsWidget * _settings;
 						Label * _clock;
+						Bitmap * _background;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);
@@ -94,8 +98,12 @@ namespace awui {
 						void ExitingArcade();
 						void ExitArcade();
 
+						void SetBackground(Bitmap * background);
+
 						virtual bool OnKeyPress(Keys::Enum key);
 						virtual bool OnKeyUp(Keys::Enum key);
+
+						virtual void OnPaint(OpenGL::GL* gl);
 				};
 			}
 		}

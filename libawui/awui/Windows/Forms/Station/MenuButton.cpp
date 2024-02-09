@@ -135,6 +135,9 @@ void MenuButton::SetNodeFile(NodeFile * node) {
 }
 
 void MenuButton::CheckArcade() {
+	if (this->_node->_background)
+		this->_station->SetBackground(this->_node->_background);
+
 	if (!this->_node->_directory) {
 		if (this->_node->_arcade == NULL) {
 			switch (this->_node->_emulator) {
