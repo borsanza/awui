@@ -1,16 +1,5 @@
 #!/bin/bash
 
-# Directorio destino fijo
-DEST_DIR="lib64"
-
-# Lista de archivos a copiar
-FILES=(
-    "/mingw64/bin/glew32.dll"
-    "/mingw64/bin/SDL2.dll"
-    "/mingw64/bin/SDL2_image.dll"
-    "/mingw64/bin/libcairo-2.dll"
-)
-
 # Función para copiar las dependencias
 copy_deps() {
     local file="$1"
@@ -59,10 +48,25 @@ copy_files() {
     done
 }
 
+################################### 64 bits ###################################
+
+# Directorio destino fijo
+DEST_DIR="lib64"
+
+# Lista de archivos a copiar
+FILES=(
+    "/mingw64/bin/glew32.dll"
+    "/mingw64/bin/SDL2.dll"
+    "/mingw64/bin/SDL2_image.dll"
+    "/mingw64/bin/libcairo-2.dll"
+)
+
 rm ${DEST_DIR}/*
 
 # Inicia el proceso de copia
 copy_files
+
+################################### 32 bits ###################################
 
 # Directorio destino fijo
 DEST_DIR="lib32"
@@ -75,8 +79,12 @@ FILES=(
     "/mingw32/bin/libcairo-2.dll"
 )
 
-copy_files
+rm ${DEST_DIR}/*
 
 ls lib64/ | xargs -i cp /mingw32/bin/{} lib32/
 
 cp /mingw32/bin/libgcc_s_dw2-1.dll lib32/
+
+# Inicia el proceso de copia
+copy_files
+
