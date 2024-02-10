@@ -4,8 +4,8 @@ setlocal
 
 call buildvars32.bat
 
-mkdir build32
-cd build32
+mkdir build
+cd build
 
 cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32" ..
 if %ERRORLEVEL% neq 0 (

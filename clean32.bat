@@ -2,7 +2,7 @@
 
 setlocal
 
-cd build32
+cd build
 
 del CMakeCache.txt 2>nul
 if exist build.ninja ninja -t clean
