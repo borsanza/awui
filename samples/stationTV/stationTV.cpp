@@ -20,8 +20,9 @@ int main(int argc, char ** argv) {
 			MasterSystem * ms = new MasterSystem();
 			ms->LoadRom(argv[2]);
 
-			while (!ms->GetCPU()->IsEndlessLoop())
+			while (!ms->GetCPU()->IsEndlessLoop()) {
 				ms->RunOpcode();
+			}
 
 			//ms->GetCPU()->PrintLog();
 			return 0;
@@ -30,8 +31,9 @@ int main(int argc, char ** argv) {
 
 	FormArcade * form = new FormArcade();
 
-//	for (int i = 1; i < argc; i++)
+//	for (int i = 1; i < argc; i++) {
 //		form->LoadRom(argv[i]);
+//	}
 
 	Application::Run(form);
 

@@ -10,6 +10,7 @@ set(CMAKE_CXX_EXTENSIONS FALSE)
 find_package(PkgConfig REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(nlohmann_json REQUIRED)
 pkg_search_module(SDL2 REQUIRED sdl2)
 pkg_search_module(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
 pkg_search_module(CAIRO REQUIRED cairo)
@@ -42,6 +43,7 @@ target_link_libraries(awui PRIVATE
   ${OPENGL_gl_LIBRARY}
   ${SDL2_LIBRARIES}
   ${SDL2IMAGE_LIBRARIES}
+  nlohmann_json::nlohmann_json
 )
 
 # Agrega definiciones de compilación para el target

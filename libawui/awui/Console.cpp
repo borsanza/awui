@@ -3,43 +3,55 @@
 
 #include "Console.h"
 
-#include <awui/String.h>
 #include <awui/Environment.h>
 
 #include <iostream>
 
 using namespace awui;
 
-void awui::Console::outClass::Flush() {
+IO::TextWriter* awui::Console::Error = new awui::Console::ErrorClass();
+IO::TextWriter* awui::Console::Out = new awui::Console::OutClass();
+
+void awui::Console::OutClass::Flush() {
 	std::cout << std::flush;
 }
 
-String awui::Console::outClass::GetNewLine() {
+String awui::Console::OutClass::GetNewLine() {
 	return Environment::GetNewLine();
 }
 
-void awui::Console::outClass::Write(String value) {
+void awui::Console::OutClass::Write(String value) {
 	std::cout << value.ToCharArray();
 }
 
-void awui::Console::outClass::Write(char value) {
+void awui::Console::OutClass::Write(char value) {
 	std::cout << value;
 }
 
-IO::TextWriter * awui::Console::GetOut() {
-	static IO::TextWriter *out = new outClass();
+void awui::Console::ErrorClass::Flush() {
+	std::cerr << std::flush;
+}
 
-	return out;
+String awui::Console::ErrorClass::GetNewLine() {
+	return Environment::GetNewLine();
+}
+
+void awui::Console::ErrorClass::Write(String value) {
+	std::cerr << value.ToCharArray();
+}
+
+void awui::Console::ErrorClass::Write(char value) {
+	std::cerr << value;
 }
 
 void awui::Console::Write(String value) {
-	awui::Console::GetOut()->Write(value);
+	awui::Console::Out->Write(value);
 }
 
 void awui::Console::WriteLine(String value) {
-	awui::Console::GetOut()->WriteLine(value);
+	awui::Console::Out->WriteLine(value);
 }
 
 void awui::Console::WriteLine(Object * value) {
-	awui::Console::GetOut()->WriteLine(value);
+	awui::Console::Out->WriteLine(value);
 }

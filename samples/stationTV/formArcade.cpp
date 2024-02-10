@@ -12,24 +12,25 @@
 using namespace awui::Drawing;
 
 FormArcade::FormArcade() {
-	this->_station = NULL;
-	this->InitializeComponent();
+	m_station = NULL;
+	InitializeComponent();
 }
 
 FormArcade::~FormArcade() {
+	delete m_station;
 }
 
 void FormArcade::InitializeComponent() {
-	this->SetBackColor(Color::FromArgb(0, 0, 0));
+	SetBackColor(Color::FromArgb(0, 0, 0));
 
-	this->_station = new StationUI();
-	this->_station->SetPath("./roms/");
-	this->_station->Refresh();
-	this->_station->SetDock(DockStyle::Fill);
+	m_station = new StationUI();
+	m_station->SetPath("./roms/");
+	m_station->Refresh();
+	m_station->SetDock(DockStyle::Fill);
 
-	this->GetControls()->Add(this->_station);
+	GetControls()->Add(m_station);
 
-	this->SetSize(1280, 720);
-	this->SetFullscreen(0);
-	this->SetText("StationTV");
+	SetSize(1280, 720);
+	SetFullscreen(0);
+	SetText("StationTV");
 }

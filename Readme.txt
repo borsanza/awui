@@ -6,11 +6,23 @@ Windows:
 
   C:\msys64\mingw32.exe
     pacman -Syu
-    pacman -S vim mingw-w64-i686-toolchain mingw-w64-i686-glew mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_image mingw-w64-i686-cairo
+    pacman -S vim
+    pacman -S mingw-w64-i686-toolchain
+    pacman -S mingw-w64-i686-glew
+    pacman -S mingw-w64-i686-SDL2
+    pacman -S mingw-w64-i686-SDL2_image
+    pacman -S mingw-w64-i686-cairo
+    pacman -S mingw-w64-i686-nlohmann-json
 
   C:\msys64\mingw64.exe
     pacman -Syu
-    pacman -S vim mingw-w64-x86_64-toolchain mingw-w64-x86_64-glew mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_image mingw-w64-x86_64-cairo
+    pacman -S vim
+    pacman -S mingw-w64-x86_64-toolchain
+    pacman -S mingw-w64-x86_64-glew
+    pacman -S mingw-w64-x86_64-SDL2
+    pacman -S mingw-w64-x86_64-SDL2_image
+    pacman -S mingw-w64-x86_64-cairo
+    pacman -S mingw-w64-x86_64-nlohmann-json
 
     cd /c/awui/ext/
     ./generate-libs.sh
