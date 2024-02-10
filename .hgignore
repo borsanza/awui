@@ -52,6 +52,7 @@ build.ninja
 
 # Ignorar directorios de compilación y depuración
 build/
+build32/
 *.obj
 *.pdb
 *.tlog
