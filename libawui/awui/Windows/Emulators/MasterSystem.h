@@ -19,19 +19,19 @@ namespace awui {
 
 			class MasterSystem : public ArcadeContainer {
 				private:
-					Drawing::Image * _image;
-					Motherboard * _cpu;
-					DebuggerSMS * _debugger;
-					bool _pause;
-					bool _invertKeys;
+					Drawing::Image * m_image;
+					Motherboard * m_cpu;
+					DebuggerSMS * m_debugger;
+					bool m_pause;
 
-					uint8_t GetPad(int which) const;
+					uint8_t m_buttonsPad1;
+					uint8_t m_buttonsPad2;
 
-					int _first;
-					int _last;
-					int _actual;
-					long long _lastTick;
-					uint8_t * _savedData[TOTALSAVED];
+					int m_first;
+					int m_last;
+					int m_actual;
+					long long m_lastTick;
+					uint8_t * m_savedData[TOTALSAVED];
 
 				public:
 					MasterSystem();
@@ -49,14 +49,11 @@ namespace awui {
 
 					virtual void OnPaint(OpenGL::GL* gl);
 					virtual bool OnKeyPress(Keys::Enum key);
+					virtual bool OnKeyUp(Keys::Enum key);
 
 					uint32_t GetCRC32();
 
-					virtual void SetDebugger(DebuggerSMS * debugger) { this->_debugger = debugger; };
-					inline void SetInvertKeys(bool mode) { this->_invertKeys = mode; }
-
-					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+					virtual void SetDebugger(DebuggerSMS * debugger) { m_debugger = debugger; };
 
 					virtual void SetSoundEnabled(bool mode);
 			};

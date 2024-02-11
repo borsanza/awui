@@ -21,28 +21,30 @@ using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;
 
 MasterSystem::MasterSystem() {
-	this->_invertKeys = false;
-	this->SetSize(1, 1);
-	this->_image = new Drawing::Image(1, 1);
-	this->_cpu = new Motherboard();
-	this->_pause = false;
+	m_buttonsPad1 = 0xFF;
+	m_buttonsPad2 = 0xFF;
+	m_pause = false;
 
-	this->_first = -1;
-	this->_last = -1;
-	this->_actual = -1;
-	this->_lastTick = 0;
-	this->_debugger = NULL;
+	SetSize(1, 1);
+	m_image = new Drawing::Image(1, 1);
+	m_cpu = new Motherboard();
+
+	m_first = -1;
+	m_last = -1;
+	m_actual = -1;
+	m_lastTick = 0;
+	m_debugger = NULL;
 
 	for (int i = 0; i < TOTALSAVED; i++)
-		this->_savedData[i] = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
+		m_savedData[i] = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
 }
 
 MasterSystem::~MasterSystem() {
 	for (int i = 0; i < TOTALSAVED; i++)
-		free(this->_savedData[i]);
+		free(m_savedData[i]);
 
-	delete this->_cpu;
-	delete this->_image;
+	delete m_cpu;
+	delete m_image;
 }
 
 bool MasterSystem::IsClass(Classes objectClass) const {
@@ -54,15 +56,15 @@ bool MasterSystem::IsClass(Classes objectClass) const {
 }
 
 void MasterSystem::LoadRom(const String file) {
-	this->SetName(file);
-	this->_cpu->LoadRom(file);
-	this->_first = 0;
-	this->_last = 0;
-	this->_actual = 0;
-	this->_lastTick = DateTime::GetNow().GetTicks();
-	this->_cpu->SaveState(this->_savedData[this->_actual]);
+	SetName(file);
+	m_cpu->LoadRom(file);
+	m_first = 0;
+	m_last = 0;
+	m_actual = 0;
+	m_lastTick = DateTime::GetNow().GetTicks();
+	m_cpu->SaveState(m_savedData[m_actual]);
 
-	uint32_t crc = this->GetCRC32();
+	uint32_t crc = GetCRC32();
 	switch (crc) {
 		case 0xd87316f6: // #gscept Intro by blindio (PD)
 		case 0xa581402e: // 64 Color Palette Test Program by Charles MacDonald V1.00 (PD)
@@ -188,56 +190,50 @@ void MasterSystem::LoadRom(const String file) {
 		case 0xa463ddfa: // Zoom Effect #1_1 by Charles MacDonald (PD)
 		case 0xb97e110a: // Zoom Effect #1_2 by Charles MacDonald (PD)
 		case 0x980fdc4b: // Zoom Effect #1_3 by Charles MacDonald (PD)
-			this->GetCPU()->SetMapper(awui::Emulation::MasterSystem::MAPPER_NONE);
-			break;
-	}
-
-	switch (crc) {
-		case 0xaed9aac4: // Alex Kidd in Miracle World (UEB) (V1.1) [!]
-			this->SetInvertKeys(true);
+			GetCPU()->SetMapper(awui::Emulation::MasterSystem::MAPPER_NONE);
 			break;
 	}
 }
 
 void MasterSystem::OnTick() {
 	long long now = DateTime::GetNow().GetTicks();
-	if ((now - this->_lastTick) > 10000000) {
-		this->_lastTick = now;
-		this->_actual++;
-		if (this->_last < this->_actual)
-			this->_last = this->_actual;
-		this->_cpu->SaveState(this->_savedData[this->_actual % TOTALSAVED]);
+	if ((now - m_lastTick) > 10000000) {
+		m_lastTick = now;
+		m_actual++;
+		if (m_last < m_actual)
+			m_last = m_actual;
+		m_cpu->SaveState(m_savedData[m_actual % TOTALSAVED]);
 	}
 
-	this->_cpu->OnTick();
+	m_cpu->OnTick();
 }
 
 void MasterSystem::RunOpcode() {
-	this->_cpu->RunOpcode();
+	m_cpu->RunOpcode();
 }
 
 Motherboard * MasterSystem::GetCPU() {
-	return this->_cpu;
+	return m_cpu;
 }
 
 void MasterSystem::OnPaint(GL* gl) {
 	uint8_t c, r, g, b;
 	uint8_t color[4] {0, 85, 170, 255};
-	VDP * screen = this->_cpu->GetVDP();
+	VDP * screen = m_cpu->GetVDP();
 
 //	¿Lo rellenamos con el registro 7?
 //	c = screen->GetBackColor();
 //	r = color[c & 0x3];
 //	g = color[(c >> 2) & 0x3];
 //	b = color[(c >> 4) & 0x3];
-//	this->SetBackColor(Color::FromArgb(255, r, g, b));
+//	SetBackColor(Color::FromArgb(255, r, g, b));
 
 	int width = screen->GetVisualWidth();
 	int height = screen->GetVisualHeight();
 
-	if ((width != this->_image->GetWidth()) || (height != this->_image->GetHeight())) {
-		delete this->_image;
-		this->_image = new Drawing::Image(width, height);
+	if ((width != m_image->GetWidth()) || (height != m_image->GetHeight())) {
+		delete m_image;
+		m_image = new Drawing::Image(width, height);
 	}
 
 	for (int y = 0; y < height; y++) {
@@ -246,21 +242,21 @@ void MasterSystem::OnPaint(GL* gl) {
 			r = color[c & 0x3];
 			g = color[(c >> 2) & 0x3];
 			b = color[(c >> 4) & 0x3];
-			this->_image->SetPixel(x, y, r, g, b);
+			m_image->SetPixel(x, y, r, g, b);
 		}
 	}
 
-	this->_image->Update();
+	m_image->Update();
 
 	float w = width;
 	float h = height;
 	float ratio = w / h;
-	w = this->GetWidth();
-	h = this->GetWidth() / ratio;
+	w = GetWidth();
+	h = GetWidth() / ratio;
 
-	if (h > this->GetHeight()) {
-		h = this->GetHeight();
-		w = this->GetHeight() * ratio;
+	if (h > GetHeight()) {
+		h = GetHeight();
+		w = GetHeight() * ratio;
 	}
 
 	int ratio2 = w / width;
@@ -269,129 +265,183 @@ void MasterSystem::OnPaint(GL* gl) {
 		h = height * ratio2;
 	}
 
-	GL::DrawImageGL(this->_image, int(this->GetWidth() - w) >> 1, int(this->GetHeight() - h) >> 1, w, h);
+	GL::DrawImageGL(m_image, int(GetWidth() - w) >> 1, int(GetHeight() - h) >> 1, w, h);
 }
 
 bool MasterSystem::OnKeyPress(Keys::Enum key) {
-	if (key == Keys::Key_B) {
-		VDP * screen = this->_cpu->GetVDP();
-		screen->SetShowBorder(!screen->GetShowBorder());
-		screen->Clear();;
+	bool ret = false;
+	uint8_t button1 = 0;
+	uint8_t button2 = 0;
+
+	switch (key) {
+		case Keys::Key_UP:
+			button2 = 0x01;
+			break;
+		case Keys::Key_DOWN:
+			button2 = 0x02;
+			break;
+		case Keys::Key_LEFT:
+			button2 = 0x04;
+			break;
+		case Keys::Key_RIGHT:
+			button2 = 0x08;
+			break;
+		case Keys::Key_KP0:
+			button2 = 0x10;
+			break;
+		case Keys::Key_KP_PERIOD:
+			button2 = 0x20;
+			break;
+		case Keys::Key_W:
+			button1 = 0x01;
+			break;
+		case Keys::Key_S:
+			button1 = 0x02;
+			break;
+		case Keys::Key_A:
+			button1 = 0x04;
+			break;
+		case Keys::Key_D:
+			button1 = 0x08;
+			break;
+		case Keys::Key_G:
+			button1 = 0x10;
+			break;
+		case Keys::Key_H:
+			button1 = 0x20;
+			break;
+		case Keys::Key_SPACE:
+			if (!m_pause) {
+				m_pause = true;
+				m_cpu->CallPaused();
+			}
+			ret = true;
+			break;
+		case Keys::Key_BACKSPACE:
+			m_cpu->Reset();
+			ret = true;
+			break;
+		case Keys::Key_F:
+			if (m_debugger) {
+				m_debugger->SetShow(!m_debugger->GetShow());
+				ret = true;
+			}
+			break;
+		case Keys::Key_B: {
+			VDP * screen = m_cpu->GetVDP();
+			screen->SetShowBorder(!screen->GetShowBorder());
+			screen->Clear();
+			ret = true;
+			}
+			break;
+		case Keys::Key_Q:
+			m_lastTick = DateTime::GetNow().GetTicks();
+			m_actual--;
+			if (m_actual < m_first)
+				m_actual = m_first;
+			m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
+			m_cpu->SetPad1(0xFF);
+			m_cpu->SetPad2(0xFF);
+			ret = true;
+			break;
+		case Keys::Key_E:
+			m_lastTick = DateTime::GetNow().GetTicks();
+			m_actual++;
+			if (m_actual > m_last)
+				m_actual = m_last;
+			m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
+			m_cpu->SetPad1(0xFF);
+			m_cpu->SetPad2(0xFF);
+			ret = true;
+			break;
 	}
 
-	if ((this->_debugger) && (key == Keys::Key_D))
-		this->_debugger->SetShow(!this->_debugger->GetShow());
+	if (button1) {
+		m_buttonsPad1 &= ~button1;
+		m_cpu->SetPad1(m_buttonsPad1);
+		ret = true;
+	}
 
-	if (key == Keys::Key_BACKSPACE)
-		this->_cpu->Reset();
+	if (button2) {
+		m_buttonsPad2 &= ~button2;
+		m_cpu->SetPad2(m_buttonsPad2);
+		ret = true;
+	}
 
 	return true;
+}
+
+bool MasterSystem::OnKeyUp(Keys::Enum key) {
+	bool ret = false;
+	uint8_t button1 = 0;
+	uint8_t button2 = 0;
+
+	switch (key) {
+		case Keys::Key_UP:
+			button2 = 0x01;
+			break;
+		case Keys::Key_DOWN:
+			button2 = 0x02;
+			break;
+		case Keys::Key_LEFT:
+			button2 = 0x04;
+			break;
+		case Keys::Key_RIGHT:
+			button2 = 0x08;
+			break;
+		case Keys::Key_KP0:
+			button2 = 0x10;
+			break;
+		case Keys::Key_KP_PERIOD:
+			button2 = 0x20;
+			break;
+		case Keys::Key_W:
+			button1 = 0x01;
+			break;
+		case Keys::Key_S:
+			button1 = 0x02;
+			break;
+		case Keys::Key_A:
+			button1 = 0x04;
+			break;
+		case Keys::Key_D:
+			button1 = 0x08;
+			break;
+		case Keys::Key_G:
+			button1 = 0x10;
+			break;
+		case Keys::Key_H:
+			button1 = 0x20;
+			break;
+		case Keys::Key_SPACE:
+			m_pause = false;
+			ret = true;
+			break;
+		case Keys::Key_BACKSPACE:
+			m_cpu->Reset();
+			ret = true;
+			break;
+	}
+
+	if (button1) {
+		m_buttonsPad1 |= button1;
+		m_cpu->SetPad1(m_buttonsPad1);
+		ret = true;
+	}
+
+	if (button2) {
+		m_buttonsPad2 |= button2;
+		m_cpu->SetPad2(m_buttonsPad2);
+		ret = true;
+	}
+
+	return ret;
 }
 
 uint32_t MasterSystem::GetCRC32() {
-	return this->_cpu->GetCRC32();
-}
-
-uint8_t MasterSystem::GetPad(int which) const {
-	uint32_t buttons;
-	switch (which) {
-		default:
-		case 0:
-			buttons = Form::GetButtonsPad1();
-			break;
-		case 1:
-			buttons = Form::GetButtonsPad2();
-			break;
-	}
-
-	uint8_t pad = 0x00;
-
-	if (!(buttons & RemoteButtons::Up))
-		pad |= 0x01;
-
-	if (!(buttons & RemoteButtons::Down))
-		pad |= 0x02;
-
-	if (!(buttons & RemoteButtons::Left))
-		pad |= 0x04;
-
-	if (!(buttons & RemoteButtons::Right))
-		pad |= 0x08;
-
-	if (!(buttons & RemoteButtons::Ok))
-		pad |= _invertKeys ? 0x20 : 0x10;
-
-	if (!(buttons & RemoteButtons::Play))
-		pad |= _invertKeys ? 0x10 : 0x20;
-
-	if (!(buttons & RemoteButtons::Pause))
-		pad |= 0x40;
-
-	return pad;
-}
-
-bool MasterSystem::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
-	bool ret = false;
-	if (button & RemoteButtons::Button5) {
-		this->_lastTick = DateTime::GetNow().GetTicks();
-		this->_actual--;
-		if (this->_actual < this->_first)
-			this->_actual = this->_first;
-		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
-		ret = true;
-	}
-
-	if (button & RemoteButtons::Button6) {
-		this->_lastTick = DateTime::GetNow().GetTicks();
-		this->_actual++;
-		if (this->_actual > this->_last)
-			this->_actual = this->_last;
-		this->_cpu->LoadState(this->_savedData[this->_actual % TOTALSAVED]);
-		ret = true;
-	}
-
-	if ((Form::GetButtonsPad1() & RemoteButtons::Button5) && (button & RemoteButtons::Button6)) {
-		this->_cpu->Reset();
-		ret = true;
-	}
-
-	uint8_t pad1 = this->GetPad(0);
-	uint8_t pad2 = this->GetPad(1);
-	this->_cpu->SetPad1(pad1);
-	this->_cpu->SetPad2(pad2);
-
-	if (ret)
-		return ret;
-
-	bool paused = (((pad1 & 0x40) == 0) | ((pad2 & 0x40) == 0));
-	if (paused) {
-		if (!this->_pause) {
-			this->_pause = true;
-			this->_cpu->CallPaused();
-		}
-	}
-
-	if (this->_debugger && (button & RemoteButtons::Button4))
-		this->_debugger->SetShow(!this->_debugger->GetShow());
-
-	return true;
-}
-
-bool MasterSystem::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	if (ArcadeContainer::OnRemoteKeyUp(which, button))
-		return true;
-
-	uint8_t pad1 = this->GetPad(0);
-	uint8_t pad2 = this->GetPad(1);
-	this->_cpu->SetPad1(pad1);
-	this->_cpu->SetPad2(pad2);
-	bool paused = (((pad1 & 0x40) == 0) | ((pad2 & 0x40) == 0));
-	if (!paused)
-		this->_pause = false;
-
-	return true;
+	return m_cpu->GetCRC32();
 }
 
 void MasterSystem::SetSoundEnabled(bool mode) {
-	SoundSDL::Instance()->SetPlayingSound(mode ? this->_cpu->GetSound() : 0);
+	SoundSDL::Instance()->SetPlayingSound(mode ? m_cpu->GetSound() : 0);
 }

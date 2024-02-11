@@ -84,6 +84,11 @@ namespace awui {
 					Key_PERIOD,
 					Key_MINUS,
 					Key_QUOTE,
+
+					Key_LEFT,
+					Key_RIGHT,
+					Key_UP,
+					Key_DOWN,
 				};
 			};
 		}

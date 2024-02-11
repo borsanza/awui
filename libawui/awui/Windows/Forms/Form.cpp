@@ -315,11 +315,22 @@ void Form::ProcessEvents() {
 						OnRemoteKeyPressPre(0, RemoteButtons::Ok);
 						OnKeyPressPre(Keys::Key_KP_ENTER);
 						break;
-					case SDLK_LEFT: OnRemoteKeyPressPre(0, RemoteButtons::Left); break;
-					case SDLK_RIGHT: OnRemoteKeyPressPre(0, RemoteButtons::Right); break;
-					case SDLK_UP: OnRemoteKeyPressPre(0, RemoteButtons::Up); break;
-					case SDLK_DOWN: OnRemoteKeyPressPre(0, RemoteButtons::Down); break;
-
+					case SDLK_LEFT:
+						OnRemoteKeyPressPre(0, RemoteButtons::Left);
+						OnKeyPressPre(Keys::Key_LEFT);
+						break;
+					case SDLK_RIGHT:
+						OnRemoteKeyPressPre(0, RemoteButtons::Right);
+						OnKeyPressPre(Keys::Key_RIGHT);
+						break;
+					case SDLK_UP:
+						OnRemoteKeyPressPre(0, RemoteButtons::Up);
+						OnKeyPressPre(Keys::Key_UP);
+						break;
+					case SDLK_DOWN:
+						OnRemoteKeyPressPre(0, RemoteButtons::Down);
+						OnKeyPressPre(Keys::Key_DOWN);
+						break;
 					case SDLK_QUOTE: OnKeyPressPre(Keys::Key_QUOTE); break;
 					case SDLK_COMMA: OnKeyPressPre(Keys::Key_COMMA); break;
 					case SDLK_MINUS: OnKeyPressPre(Keys::Key_MINUS); break;
@@ -412,11 +423,22 @@ void Form::ProcessEvents() {
 						OnRemoteKeyUpPre(0, RemoteButtons::Ok);
 						OnKeyUpPre(Keys::Key_KP_ENTER);
 						break;
-					case SDLK_LEFT: OnRemoteKeyUpPre(0, RemoteButtons::Left); break;
-					case SDLK_RIGHT: OnRemoteKeyUpPre(0, RemoteButtons::Right); break;
-					case SDLK_UP: OnRemoteKeyUpPre(0, RemoteButtons::Up); break;
-					case SDLK_DOWN: OnRemoteKeyUpPre(0, RemoteButtons::Down); break;
-
+					case SDLK_LEFT:
+						OnRemoteKeyUpPre(0, RemoteButtons::Left);
+						OnKeyUpPre(Keys::Key_LEFT);
+						break;
+					case SDLK_RIGHT:
+						OnRemoteKeyUpPre(0, RemoteButtons::Right);
+						OnKeyUpPre(Keys::Key_RIGHT);
+						break;
+					case SDLK_UP:
+						OnRemoteKeyUpPre(0, RemoteButtons::Up);
+						OnKeyUpPre(Keys::Key_UP);
+						break;
+					case SDLK_DOWN:
+						OnRemoteKeyUpPre(0, RemoteButtons::Down);
+						OnKeyUpPre(Keys::Key_DOWN);
+						break;
 					case SDLK_QUOTE: OnKeyUpPre(Keys::Key_QUOTE); break;
 					case SDLK_COMMA: OnKeyUpPre(Keys::Key_COMMA); break;
 					case SDLK_MINUS: OnKeyUpPre(Keys::Key_MINUS); break;
