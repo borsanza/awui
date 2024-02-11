@@ -274,24 +274,6 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 	uint8_t button2 = 0;
 
 	switch (key) {
-		case Keys::Key_UP:
-			button2 = 0x01;
-			break;
-		case Keys::Key_DOWN:
-			button2 = 0x02;
-			break;
-		case Keys::Key_LEFT:
-			button2 = 0x04;
-			break;
-		case Keys::Key_RIGHT:
-			button2 = 0x08;
-			break;
-		case Keys::Key_KP0:
-			button2 = 0x10;
-			break;
-		case Keys::Key_KP_PERIOD:
-			button2 = 0x20;
-			break;
 		case Keys::Key_W:
 			button1 = 0x01;
 			break;
@@ -305,10 +287,30 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			button1 = 0x08;
 			break;
 		case Keys::Key_G:
+		case Keys::Key_J:
 			button1 = 0x10;
 			break;
 		case Keys::Key_H:
 			button1 = 0x20;
+			break;
+		case Keys::Key_UP:
+			button2 = 0x01;
+			break;
+		case Keys::Key_DOWN:
+			button2 = 0x02;
+			break;
+		case Keys::Key_LEFT:
+			button2 = 0x04;
+			break;
+		case Keys::Key_RIGHT:
+			button2 = 0x08;
+			break;
+		case Keys::Key_KP1:
+		case Keys::Key_KP3:
+			button2 = 0x10;
+			break;
+		case Keys::Key_KP2:
+			button2 = 0x20;
 			break;
 		case Keys::Key_SPACE:
 			if (!m_pause) {
@@ -377,24 +379,6 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 	uint8_t button2 = 0;
 
 	switch (key) {
-		case Keys::Key_UP:
-			button2 = 0x01;
-			break;
-		case Keys::Key_DOWN:
-			button2 = 0x02;
-			break;
-		case Keys::Key_LEFT:
-			button2 = 0x04;
-			break;
-		case Keys::Key_RIGHT:
-			button2 = 0x08;
-			break;
-		case Keys::Key_KP0:
-			button2 = 0x10;
-			break;
-		case Keys::Key_KP_PERIOD:
-			button2 = 0x20;
-			break;
 		case Keys::Key_W:
 			button1 = 0x01;
 			break;
@@ -408,10 +392,30 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 			button1 = 0x08;
 			break;
 		case Keys::Key_G:
+		case Keys::Key_J:
 			button1 = 0x10;
 			break;
 		case Keys::Key_H:
 			button1 = 0x20;
+			break;
+		case Keys::Key_UP:
+			button2 = 0x01;
+			break;
+		case Keys::Key_DOWN:
+			button2 = 0x02;
+			break;
+		case Keys::Key_LEFT:
+			button2 = 0x04;
+			break;
+		case Keys::Key_RIGHT:
+			button2 = 0x08;
+			break;
+		case Keys::Key_KP1:
+		case Keys::Key_KP3:
+			button2 = 0x10;
+			break;
+		case Keys::Key_KP2:
+			button2 = 0x20;
 			break;
 		case Keys::Key_SPACE:
 			m_pause = false;
