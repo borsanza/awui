@@ -22,8 +22,10 @@ using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;
 
 MasterSystem::MasterSystem() {
-	m_buttonsPad1 = 0xFF;
-	m_buttonsPad2 = 0xFF;
+	m_keys1 = 0xFF;
+	m_keys2 = 0xFF;
+	m_joys1 = 0xFF;
+	m_joys2 = 0xFF;
 	m_pause = false;
 
 	SetSize(1, 1);
@@ -343,8 +345,7 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			if (m_actual < m_first)
 				m_actual = m_first;
 			m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
-			m_cpu->SetPad1(0xFF);
-			m_cpu->SetPad2(0xFF);
+			RefreshPads();
 			ret = true;
 			break;
 		case Keys::Key_E:
@@ -353,21 +354,20 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			if (m_actual > m_last)
 				m_actual = m_last;
 			m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
-			m_cpu->SetPad1(0xFF);
-			m_cpu->SetPad2(0xFF);
+			RefreshPads();
 			ret = true;
 			break;
 	}
 
 	if (button1) {
-		m_buttonsPad1 &= ~button1;
-		m_cpu->SetPad1(m_buttonsPad1);
+		m_keys1 &= ~button1;
+		RefreshPads();
 		ret = true;
 	}
 
 	if (button2) {
-		m_buttonsPad2 &= ~button2;
-		m_cpu->SetPad2(m_buttonsPad2);
+		m_keys2 &= ~button2;
+		RefreshPads();
 		ret = true;
 	}
 
@@ -429,14 +429,14 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 	}
 
 	if (button1) {
-		m_buttonsPad1 |= button1;
-		m_cpu->SetPad1(m_buttonsPad1);
+		m_keys1 |= button1;
+		RefreshPads();
 		ret = true;
 	}
 
 	if (button2) {
-		m_buttonsPad2 |= button2;
-		m_cpu->SetPad2(m_buttonsPad2);
+		m_keys2 |= button2;
+		RefreshPads();
 		ret = true;
 	}
 
@@ -445,27 +445,25 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 
  bool MasterSystem::OnJoystickDpad(JoystickDpadEventArgs* e) {
 	bool ret = false;
+
 	int direction = e->GetValue();
-	bool up = direction & 1;
-	bool right = direction & 2;
-	bool down = direction & 4;
-	bool left = direction & 8;
-	uint8_t msDir = (up ? 0x01 : 0) |
-					(down ? 0x02 : 0) |
-					(left ? 0x04 : 0) |
-					(right ? 0x08 : 0);
+	uint8_t masterSystemDirection = (direction & 1) |
+									((direction & 12) >> 1) |
+									((direction & 2) << 2);
 
 	switch (e->GetWhich()) {
 		case 0:
-			m_buttonsPad1 = (m_buttonsPad1 & 0xF0) | (0x0F & ~msDir);
-			m_cpu->SetPad1(m_buttonsPad1);
+			m_joys1 = (m_joys1 & 0xF0) | (0x0F & ~masterSystemDirection);
 			ret = true;
 			break;
 		case 1:
-			m_buttonsPad2 = (m_buttonsPad2 & 0xF0) | (0x0F & ~msDir);
-			m_cpu->SetPad2(m_buttonsPad2);
+			m_joys2 = (m_joys2 & 0xF0) | (0x0F & ~masterSystemDirection);
 			ret = true;
 			break;
+	}
+
+	if (ret) {
+			RefreshPads();
 	}
 
 	return ret;
@@ -477,4 +475,9 @@ uint32_t MasterSystem::GetCRC32() {
 
 void MasterSystem::SetSoundEnabled(bool mode) {
 	SoundSDL::Instance()->SetPlayingSound(mode ? m_cpu->GetSound() : 0);
+}
+
+void MasterSystem::RefreshPads() {
+	m_cpu->SetPad1(0xFF & (~(~m_keys1 | ~m_joys1)));
+	m_cpu->SetPad2(0xFF & (~(~m_keys2 | ~m_joys2)));
 }

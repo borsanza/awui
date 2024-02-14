@@ -24,14 +24,18 @@ namespace awui {
 					DebuggerSMS * m_debugger;
 					bool m_pause;
 
-					uint8_t m_buttonsPad1;
-					uint8_t m_buttonsPad2;
+					uint8_t m_keys1;
+					uint8_t m_keys2;
+					uint8_t m_joys1;
+					uint8_t m_joys2;
 
 					int m_first;
 					int m_last;
 					int m_actual;
 					long long m_lastTick;
 					uint8_t * m_savedData[TOTALSAVED];
+
+					void RefreshPads();
 
 				public:
 					MasterSystem();
