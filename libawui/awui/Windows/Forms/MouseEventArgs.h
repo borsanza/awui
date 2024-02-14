@@ -1,18 +1,18 @@
 #pragma once
 
-#include <awui/Object.h>
+#include <awui/Windows/Forms/EventArgs.h>
 
 namespace awui {
 	namespace Windows {
 		namespace Forms {
-			class MouseEventArgs : public Object {
+			class MouseEventArgs : public EventArgs {
 				private:
 					friend class Control;
 
-					int x, y;
-					int delta;
-					int clicks;
-					int button;
+					int m_x, m_y;
+					int m_delta;
+					int m_clicks;
+					int m_button;
 
 				private:
 					void SetX(int x);

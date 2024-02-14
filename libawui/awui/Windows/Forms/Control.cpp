@@ -12,6 +12,7 @@
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/JoystickDpadEventArgs.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <SDL_opengl.h>
 
@@ -20,43 +21,43 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Control::Control() {
-	this->refreshed = 0;
-	this->_lastWidth = 0;
-	this->_lastHeight = 0;
-	this->_lastX = 0;
-	this->_lastY = 0;
-	this->_drawShadow = true;
-	this->tabStop = false;
-	this->bounds = Drawing::Rectangle(0, 0, 100, 100);
-	this->boundsTo = this->bounds;
-	this->controls = new ControlCollection(this);
-	this->mouseEventArgs = new MouseEventArgs();
-	this->mouseControl = NULL;
-	this->parent = NULL;
-	this->focused = NULL;
-	this->needRefresh = 1;
-	this->dock = DockStyle::None;
-	this->backColor = Color::FromArgb(0, 0, 0, 0);
-	this->foreColor = Color::FromArgb(255, 255, 255);
-	this->OnResizePre();
-	this->font = new Font("sans-serif", 12);
-	this->scissorEnabled = true;
-	this->_preventChangeControl = false;
-	this->_visible = true;
+	m_refreshed = 0;
+	m_lastWidth = 0;
+	m_lastHeight = 0;
+	m_lastX = 0;
+	m_lastY = 0;
+	m_drawShadow = true;
+	m_tabStop = false;
+	m_bounds = Drawing::Rectangle(0, 0, 100, 100);
+	m_boundsTo = m_bounds;
+	m_controls = new ControlCollection(this);
+	m_mouseEventArgs = new MouseEventArgs();
+	m_mouseControl = NULL;
+	m_parent = NULL;
+	m_focused = NULL;
+	m_needRefresh = 1;
+	m_dock = DockStyle::None;
+	m_backColor = Color::FromArgb(0, 0, 0, 0);
+	m_foreColor = Color::FromArgb(255, 255, 255);
+	OnResizePre();
+	m_font = new Font("sans-serif", 12);
+	m_scissorEnabled = true;
+	m_preventChangeControl = false;
+	m_visible = true;
 }
 
 Control::~Control() {
-	delete this->font;
-	delete this->mouseEventArgs;
+	delete m_font;
+	delete m_mouseEventArgs;
 
-	while (this->controls->GetCount() > 0) {
-		Control * control = (Control *) this->controls->Get(0);
+	while (m_controls->GetCount() > 0) {
+		Control * control = (Control *) m_controls->Get(0);
 		delete control;
-		this->controls->RemoveAt(0);
+		m_controls->RemoveAt(0);
 	}
 
-	this->controls->Clear();
-	delete this->controls;
+	m_controls->Clear();
+	delete m_controls;
 }
 
 bool Control::IsClass(Classes objectClass) const {
@@ -68,56 +69,56 @@ bool Control::IsClass(Classes objectClass) const {
 }
 
 void Control::SetTop(int y) {
-	this->SetLocation(this->bounds.GetX(), y);
+	SetLocation(m_bounds.GetX(), y);
 }
 
 void Control::SetLeft(int x) {
-	this->SetLocation(x, this->bounds.GetY());
+	SetLocation(x, m_bounds.GetY());
 }
 
 void Control::SetLocation(int x, int y) {
-	this->SetBounds(x, y, this->bounds.GetWidth(), this->bounds.GetHeight());
+	SetBounds(x, y, m_bounds.GetWidth(), m_bounds.GetHeight());
 }
 
 void Control::SetWidth(int width) {
-	this->SetSize(width, this->bounds.GetHeight());
+	SetSize(width, m_bounds.GetHeight());
 }
 
 void Control::SetHeight(int height) {
-	this->SetSize(this->bounds.GetWidth(), height);
+	SetSize(m_bounds.GetWidth(), height);
 }
 
 void Control::SetSize(int width, int height) {
-	this->SetBounds(this->bounds.GetX(), this->bounds.GetY(), width, height);
+	SetBounds(m_bounds.GetX(), m_bounds.GetY(), width, height);
 }
 
 void Control::SetSize(const Size size) {
-	this->SetSize(size.GetWidth(), size.GetHeight());
+	SetSize(size.GetWidth(), size.GetHeight());
 }
 
 void Control::SetBounds(int x, int y, int width, int height) {
-	if (width < this->minimumSize.GetWidth())
-		width = this->minimumSize.GetWidth();
+	if (width < m_minimumSize.GetWidth())
+		width = m_minimumSize.GetWidth();
 
-	if (height < this->minimumSize.GetHeight())
-		height = this->minimumSize.GetHeight();
+	if (height < m_minimumSize.GetHeight())
+		height = m_minimumSize.GetHeight();
 
-	if ((this->bounds.GetX() == x) && (this->bounds.GetY() == y) && (this->bounds.GetWidth() == width) && (this->bounds.GetHeight() == height))
+	if ((m_bounds.GetX() == x) && (m_bounds.GetY() == y) && (m_bounds.GetWidth() == width) && (m_bounds.GetHeight() == height))
 		return;
 
-	this->bounds = Drawing::Rectangle(x, y, width, height);
-	this->boundsTo = this->bounds;
-	this->_lastWidth = width;
-	this->_lastHeight = height;
-	this->_lastX = x;
-	this->_lastY = y;
+	m_bounds = Drawing::Rectangle(x, y, width, height);
+	m_boundsTo = m_bounds;
+	m_lastWidth = width;
+	m_lastHeight = height;
+	m_lastX = x;
+	m_lastY = y;
 
-	this->Refresh();
-	this->OnResizePre();
+	Refresh();
+	OnResizePre();
 }
 
 int Control::GetTop() const {
-	return this->bounds.GetTop();
+	return m_bounds.GetTop();
 }
 
 int Control::GetAbsoluteTop() const {
@@ -126,15 +127,15 @@ int Control::GetAbsoluteTop() const {
 	if (parent)
 		pos = parent->GetAbsoluteTop();
 
-	return this->GetTop() + pos;
+	return GetTop() + pos;
 }
 
 int Control::GetAbsoluteBottom() const {
-	return this->GetAbsoluteTop() + this->GetHeight() - 1;
+	return GetAbsoluteTop() + GetHeight() - 1;
 }
 
 int Control::GetLeft() const {
-	return this->bounds.GetLeft();
+	return m_bounds.GetLeft();
 }
 
 int Control::GetAbsoluteLeft() const {
@@ -143,103 +144,103 @@ int Control::GetAbsoluteLeft() const {
 	if (parent)
 		pos = parent->GetAbsoluteLeft();
 
-	return this->GetLeft() + pos;
+	return GetLeft() + pos;
 }
 
 int Control::GetAbsoluteRight() const {
-	return this->GetAbsoluteLeft() + this->GetWidth() - 1;
+	return GetAbsoluteLeft() + GetWidth() - 1;
 }
 
 int Control::GetRight() const {
-	return this->bounds.GetRight();
+	return m_bounds.GetRight();
 }
 
 int Control::GetBottom() const {
-	return this->bounds.GetBottom();
+	return m_bounds.GetBottom();
 }
 
 const Point Control::GetLocation() const {
-	return this->bounds.GetLocation();
+	return m_bounds.GetLocation();
 }
 
 int Control::GetWidth() const {
-	return this->bounds.GetWidth();
+	return m_bounds.GetWidth();
 }
 
 int Control::GetHeight() const {
-	return this->bounds.GetHeight();
+	return m_bounds.GetHeight();
 }
 
 const Size Control::GetSize() const {
-	return this->bounds.GetSize();
+	return m_bounds.GetSize();
 }
 
 const awui::Drawing::Rectangle Control::GetBounds() const {
-	return this->bounds;
+	return m_bounds;
 }
 
 ControlCollection* Control::GetControls() const {
-	return this->controls;
+	return m_controls;
 }
 
 void Control::OnResizePre() {
-	this->OnResize();
-	this->Layout();
+	OnResize();
+	Layout();
 }
 
 void Control::SetBackColor(const awui::Drawing::Color color) {
-	this->backColor = color;
+	m_backColor = color;
 }
 
 awui::Drawing::Color Control::GetBackColor() {
-	return this->backColor;
+	return m_backColor;
 }
 
 void Control::SetForeColor(const awui::Drawing::Color color) {
-	this->foreColor = color;
+	m_foreColor = color;
 }
 
 awui::Drawing::Color Control::GetForeColor() {
-	return this->foreColor;
+	return m_foreColor;
 }
 
-void Control::SetDock(DockStyle::Enum dock) {
-	if (this->dock != dock) {
-		this->dock = dock;
-		this->Layout();
+void Control::SetDock(DockStyle dock) {
+	if (m_dock != dock) {
+		m_dock = dock;
+		Layout();
 	}
 }
 
-Control::DockStyle::Enum Control::GetDock() const {
-	return this->dock;
+DockStyle Control::GetDock() const {
+	return m_dock;
 }
 
 const Size Control::GetMinimumSize() const {
-	return this->minimumSize;
+	return m_minimumSize;
 }
 
 void Control::SetMinimumSize(Size size) {
-	this->minimumSize = size;
-	this->SetSize(this->GetSize());
+	m_minimumSize = size;
+	SetSize(GetSize());
 }
 
 Control * Control::GetParent() const {
-	return this->parent;
+	return m_parent;
 }
 
 void Control::SetParent(Control * parent) {
-	this->parent = parent;
+	m_parent = parent;
 }
 
 void Control::Layout() {
 	int x1 = 0;
 	int y1 = 0;
-	int x2 = this->GetWidth() - 1;
-	int y2 = this->GetHeight() - 1;
+	int x2 = GetWidth() - 1;
+	int y2 = GetHeight() - 1;
 	int margin = 0;
 
-	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
-		Control * control = (Control *)this->GetControls()->Get(i);
+	for (int i = 0; i < GetControls()->GetCount(); i++) {
+		Control * control = (Control *)GetControls()->Get(i);
 		if (!control->IsVisible())
 			continue;
 
@@ -270,10 +271,10 @@ void Control::Layout() {
 }
 
 void Control::Refresh() {
-	if (this->GetParent())
-		this->GetParent()->Refresh();
+	if (GetParent())
+		GetParent()->Refresh();
 
-	this->needRefresh = 1;
+	m_needRefresh = 1;
 }
 
 int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first) {
@@ -285,52 +286,52 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 
 	Drawing::Rectangle rect2;
 	rect2.SetX(x);
-	rect2.SetY(height - y - this->GetHeight());
-	rect2.SetWidth(this->GetWidth());
-	rect2.SetHeight(this->GetHeight());
+	rect2.SetY(height - y - GetHeight());
+	rect2.SetWidth(GetWidth());
+	rect2.SetHeight(GetHeight());
 	gl->SetClipping(rect2);
 
 	bool disableScissor = false;
-	if (this->scissorEnabled) {
+	if (m_scissorEnabled) {
 		disableScissor = true;
 		glEnable(GL_SCISSOR_TEST);
 		gl->SetClipping();
 	}
 
 	if (!first)
-		switch (this->backColor.GetA()) {
+		switch (m_backColor.GetA()) {
 			case 255:
-				if ((width == this->GetWidth()) && (height == this->GetHeight())) {
-					glClearColor(this->backColor.GetR() / 255.0f, this->backColor.GetG() / 255.0f, this->backColor.GetB() / 255.0f, 1.0f);
+				if ((width == GetWidth()) && (height == GetHeight())) {
+					glClearColor(m_backColor.GetR() / 255.0f, m_backColor.GetG() / 255.0f, m_backColor.GetB() / 255.0f, 1.0f);
 					glClear(GL_COLOR_BUFFER_BIT);
 				} else {
-					glColor3ub(this->backColor.GetR(), this->backColor.GetG(), this->backColor.GetB());
-					GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
+					glColor3ub(m_backColor.GetR(), m_backColor.GetG(), m_backColor.GetB());
+					GL::FillRectangle(0, 0, GetWidth(), GetHeight());
 				}
 				break;
 			case 0:
 				break;
 			default:
-				glColor4ub(this->backColor.GetR(), this->backColor.GetG(), this->backColor.GetB(), this->backColor.GetA());
-				GL::FillRectangle(0, 0, this->GetWidth(), this->GetHeight());
+				glColor4ub(m_backColor.GetR(), m_backColor.GetG(), m_backColor.GetB(), m_backColor.GetA());
+				GL::FillRectangle(0, 0, GetWidth(), GetHeight());
 				break;
 		}
 
 	int r = 0;
 
 	Drawing::Rectangle cr = gl->GetClippingResult();
-	int isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0) && this->_visible;
+	int isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0) && m_visible;
 	if (isVisible) {
 		r++;
-		this->OnPaint(NULL);
+		OnPaint(NULL);
 	}
 
 	if (disableScissor)
 		glDisable(GL_SCISSOR_TEST);
 
 	if (isVisible) {
-		for (int i = 0; i < this->GetControls()->GetCount(); i++) {
-			Control * control = (Control *)this->GetControls()->Get(i);
+		for (int i = 0; i < GetControls()->GetCount(); i++) {
+			Control * control = (Control *)GetControls()->Get(i);
 			if (!control->IsVisible())
 				continue;
 
@@ -356,8 +357,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 	static Control * lastParent = NULL;
 	Control * focused = Form::GetControlSelected();
 
-	for (int i = 0; i < this->GetControls()->GetCount(); i++) {
-		Control * control = (Control *)this->GetControls()->Get(i);
+	for (int i = 0; i < GetControls()->GetCount(); i++) {
+		Control * control = (Control *)GetControls()->Get(i);
 		if (!control->IsVisible())
 			continue;
 
@@ -379,20 +380,20 @@ void Control::OnPaint(OpenGL::GL * gl) {
 
 			bitmap->GetFixedMargins(&x1, &y1, &x2, &y2);
 
-			int width = control->boundsTo.GetWidth() + x1 + x2;
-			int height = control->boundsTo.GetHeight() + y1 + y2;
+			int width = control->m_boundsTo.GetWidth() + x1 + x2;
+			int height = control->m_boundsTo.GetHeight() + y1 + y2;
 
-			lastwidth = this->Interpolate(lastwidth, width, percent);
-			lastheight = this->Interpolate(lastheight, height, percent);
+			lastwidth = Interpolate(lastwidth, width, percent);
+			lastheight = Interpolate(lastheight, height, percent);
 			width = Math::Round(lastwidth);
 			height = Math::Round(lastheight);
 
 			bitmap->SetSize(width, height);
-			int x = control->boundsTo.GetLeft() - x1;
-			int y = control->boundsTo.GetTop() - y1;
+			int x = control->m_boundsTo.GetLeft() - x1;
+			int y = control->m_boundsTo.GetTop() - y1;
 
-			lastx1 = this->Interpolate(lastx1, x, percent);
-			lasty1 = this->Interpolate(lasty1, y, percent);
+			lastx1 = Interpolate(lastx1, x, percent);
+			lasty1 = Interpolate(lasty1, y, percent);
 			x = Math::Round(lastx1);
 			y = Math::Round(lasty1);
 
@@ -404,46 +405,46 @@ void Control::OnPaint(OpenGL::GL * gl) {
 }
 
 void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons) {
-	this->mouseEventArgs->SetLocation(x, y);
+	m_mouseEventArgs->SetLocation(x, y);
 
-	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
-		Control * control = (Control *)this->GetControls()->Get(i);
+	for (int i = GetControls()->GetCount() - 1; i >= 0; i--) {
+		Control * control = (Control *)GetControls()->Get(i);
 		if (!control->IsVisible())
 			continue;
 
-		if (this->mouseControl != NULL) {
-			if (this->mouseControl == control) {
+		if (m_mouseControl != NULL) {
+			if (m_mouseControl == control) {
 				control->OnMouseDownPre(x - control->GetLeft(), y - control->GetTop(), button, buttons);
 				return;
 			}
 		} else {
 			if ((control->GetLeft() <= x) && (x <= control->GetRight()) && (control->GetTop() <= y) && (y <= control->GetBottom())) {
-				this->mouseControl = control;
-				this->ChangeControlOnMouseOver(control);
+				m_mouseControl = control;
+				ChangeControlOnMouseOver(control);
 				control->OnMouseDownPre(x - control->GetLeft(), y - control->GetTop(), button, buttons);
 				return;
 			}
 		}
 	}
 
-	this->mouseEventArgs->SetButton(button);
-	this->OnMouseDown(this->mouseEventArgs);
+	m_mouseEventArgs->SetButton(button);
+	OnMouseDown(m_mouseEventArgs);
 
-//	std::cout << "Down: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "   " << this->mouseEventArgs->GetButton() << "   " << this->GetName() << std::endl;
+//	std::cout << "Down: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
 }
 
 void Control::OnMouseMovePre(int x, int y, int buttons) {
-	this->mouseEventArgs->SetLocation(x, y);
+	m_mouseEventArgs->SetLocation(x, y);
 
-	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
-		Control * control = (Control *)this->GetControls()->Get(i);
+	for (int i = GetControls()->GetCount() - 1; i >= 0; i--) {
+		Control * control = (Control *)GetControls()->Get(i);
 		if (!control->IsVisible())
 			continue;
 
 		int find = 0;
 
-		if (this->mouseControl != NULL) {
-			if (this->mouseControl == control)
+		if (m_mouseControl != NULL) {
+			if (m_mouseControl == control)
 				find = 1;
 		} else {
 			if ((control->GetLeft() <= x) && (x <= control->GetRight()) && (control->GetTop() <= y) && (y <= control->GetBottom()))
@@ -451,49 +452,49 @@ void Control::OnMouseMovePre(int x, int y, int buttons) {
 		}
 
 		if (find) {
-			this->ChangeControlOnMouseOver(control);
+			ChangeControlOnMouseOver(control);
 
 			control->OnMouseMovePre(x - control->GetLeft(), y - control->GetTop(), buttons);
 			return;
 		}
 	}
 
-	this->mouseEventArgs->SetButton(buttons);
-	this->OnMouseMove(this->mouseEventArgs);
-	this->Refresh();
+	m_mouseEventArgs->SetButton(buttons);
+	OnMouseMove(m_mouseEventArgs);
+	Refresh();
 
-//	std::cout << "Move: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "   " << this->mouseEventArgs->GetButton() << "   " << this->GetName() << std::endl;
+//	std::cout << "Move: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
 }
 
 void Control::ChangeControlOnMouseOver(Control * control) {
-	if (this->GetParent()) {
-		this->GetParent()->ChangeControlOnMouseOver(control);
+	if (GetParent()) {
+		GetParent()->ChangeControlOnMouseOver(control);
 		return;
 	}
 
-	if (this->IsClass(Classes::Form)) {
-		if (((Form *) this)->mouseControlOver != control) {
-			if (((Form *) this)->mouseControlOver != NULL)
-				((Form *) this)->mouseControlOver->OnMouseLeave();
+	if (IsClass(Classes::Form)) {
+		if (((Form *) this)->m_mouseControlOver != control) {
+			if (((Form *) this)->m_mouseControlOver != NULL)
+				((Form *) this)->m_mouseControlOver->OnMouseLeave();
 
-			((Form *) this)->mouseControlOver = control;
+			((Form *) this)->m_mouseControlOver = control;
 			control->OnMouseEnter();
 		}
 	}
 }
 
 void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons) {
-	int x = this->mouseEventArgs->GetX();
-	int y = this->mouseEventArgs->GetY();
+	int x = m_mouseEventArgs->GetX();
+	int y = m_mouseEventArgs->GetY();
 
-	for (int i = this->GetControls()->GetCount() - 1; i >= 0; i--) {
-		Control * control = (Control *)this->GetControls()->Get(i);
+	for (int i = GetControls()->GetCount() - 1; i >= 0; i--) {
+		Control * control = (Control *)GetControls()->Get(i);
 		if (!control->IsVisible())
 			continue;
 
-		if (this->mouseControl != NULL) {
-			if (this->mouseControl == control) {
-				this->mouseControl = NULL;
+		if (m_mouseControl != NULL) {
+			if (m_mouseControl == control) {
+				m_mouseControl = NULL;
 				control->OnMouseUpPre(button, buttons);
 				return;
 			}
@@ -505,38 +506,38 @@ void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons) {
 		}
 	}
 
-	this->mouseEventArgs->SetButton(button);
-	this->OnMouseUp(this->mouseEventArgs);
+	m_mouseEventArgs->SetButton(button);
+	OnMouseUp(m_mouseEventArgs);
 
-//	std::cout << "Up: " << this->mouseEventArgs->GetX() << "x" << this->mouseEventArgs->GetY() << "   " << this->mouseEventArgs->GetButton() << "   " << this->GetName() << std::endl;
+//	std::cout << "Up: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
 }
 
 void Control::OnMouseLeave() {
-//	std::cout << "OnMouseLeave: " << this->GetName() << std::endl;
+//	std::cout << "OnMouseLeave: " << GetName() << std::endl;
 }
 
 void Control::OnMouseEnter() {
-//	std::cout << "OnMouseEnter: " << this->GetName() << std::endl;
+//	std::cout << "OnMouseEnter: " << GetName() << std::endl;
 }
 
 void Control::SetName(const String str) {
-	this->name = str;
+	m_name = str;
 }
 
 const awui::String Control::GetName() {
-	return this->name;
+	return m_name;
 }
 
 bool Control::IsVisible() const {
 	bool isVisible = true;
 
-	if (!this->_visible)
+	if (!m_visible)
 		return false;
 
-	if (this->GetParent()) {
-		Drawing::Rectangle pr = this->GetParent()->GetBounds();
+	if (GetParent()) {
+		Drawing::Rectangle pr = GetParent()->GetBounds();
 		pr.SetLocation(0, 0);
-		Drawing::Rectangle cr = Drawing::Rectangle::Intersect(this->bounds, pr);
+		Drawing::Rectangle cr = Drawing::Rectangle::Intersect(m_bounds, pr);
 		isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0);
 	}
 
@@ -545,22 +546,22 @@ bool Control::IsVisible() const {
 
 void Control::OnTickPre() {
 	float percent = 0.16f;
-	_lastWidth = this->Interpolate(_lastWidth, boundsTo.GetWidth(), percent);
-	_lastHeight = this->Interpolate(_lastHeight, boundsTo.GetHeight(), percent);
-	int w = Math::Round(_lastWidth);
-	int h = Math::Round(_lastHeight);
-	_lastX = this->Interpolate(_lastX, boundsTo.GetLeft(), percent);
-	_lastY = this->Interpolate(_lastY, boundsTo.GetTop(), percent);
-	int x = Math::Round(_lastX);
-	int y = Math::Round(_lastY);
-	this->bounds.SetSize(w, h);
-	this->bounds.SetLocation(x, y);
+	m_lastWidth = Interpolate(m_lastWidth, m_boundsTo.GetWidth(), percent);
+	m_lastHeight = Interpolate(m_lastHeight, m_boundsTo.GetHeight(), percent);
+	int w = Math::Round(m_lastWidth);
+	int h = Math::Round(m_lastHeight);
+	m_lastX = Interpolate(m_lastX, m_boundsTo.GetLeft(), percent);
+	m_lastY = Interpolate(m_lastY, m_boundsTo.GetTop(), percent);
+	int x = Math::Round(m_lastX);
+	int y = Math::Round(m_lastY);
+	m_bounds.SetSize(w, h);
+	m_bounds.SetLocation(x, y);
 
-	if (this->IsVisible()) {
-		this->OnTick();
+	if (IsVisible()) {
+		OnTick();
 
-		for (int i = 0; i<this->GetControls()->GetCount(); i++) {
-			Control * control = (Control *)this->GetControls()->Get(i);
+		for (int i = 0; i<GetControls()->GetCount(); i++) {
+			Control * control = (Control *)GetControls()->Get(i);
 			if (!control->IsVisible())
 				continue;
 			control->OnTickPre();
@@ -569,83 +570,96 @@ void Control::OnTickPre() {
 }
 
 awui::Drawing::Font * Control::GetFont() {
-	return this->font;
+	return m_font;
 }
 
 void Control::SetFont(const Drawing::Font font) {
-	*this->font = font;
+	*m_font = font;
 }
 
 void Control::SetScissorEnabled(bool mode) {
-	this->scissorEnabled = mode;
+	m_scissorEnabled = mode;
 }
 
 bool Control::GetScissorEnabled() {
-	return this->scissorEnabled;
+	return m_scissorEnabled;
 }
 
 bool Control::GetTabStop() {
-	return this->tabStop;
+	return m_tabStop;
 }
 
 void Control::SetTabStop(bool tabStop) {
-	this->tabStop = tabStop;
+	m_tabStop = tabStop;
 }
 
 void Control::OnRemoteKeyPressPre(int which, RemoteButtons::Enum button) {
-	bool mustStop = this->OnRemoteKeyPress(which, button);
+	bool mustStop = OnRemoteKeyPress(which, button);
 	if (mustStop)
 		return;
 
-	if (!this->focused)
+	if (!m_focused)
 		Form::SetControlSelected(Form::GetControlSelected());
 
-	if (this->focused)
-		this->focused->OnRemoteKeyPressPre(which, button);
+	if (m_focused)
+		m_focused->OnRemoteKeyPressPre(which, button);
 }
 
 void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
-	bool mustStop = this->OnRemoteKeyUp(which, button);
+	bool mustStop = OnRemoteKeyUp(which, button);
 	if (mustStop)
 		return;
 
-	if (!this->focused)
+	if (!m_focused)
 		Form::SetControlSelected(Form::GetControlSelected());
 
-	if (this->focused)
-		this->focused->OnRemoteKeyUpPre(which, button);
+	if (m_focused)
+		m_focused->OnRemoteKeyUpPre(which, button);
+}
+
+void Control::OnJoystickDpadPre(int which, int hat, int value) {
+	JoystickDpadEventArgs joy(which, hat, value);
+	bool mustStop = OnJoystickDpad(&joy);
+	if (mustStop)
+		return;
+
+	if (!m_focused)
+		Form::SetControlSelected(Form::GetControlSelected());
+
+	if (m_focused)
+		m_focused->OnJoystickDpadPre(which, hat, value);
 }
 
 void Control::OnKeyPressPre(Keys::Enum key) {
-	bool mustStop = this->OnKeyPress(key);
+	bool mustStop = OnKeyPress(key);
 	if (mustStop)
 		return;
 
-	if (!this->focused)
+	if (!m_focused)
 		Form::SetControlSelected(Form::GetControlSelected());
 
-	if (this->focused)
-		this->focused->OnKeyPressPre(key);
+	if (m_focused)
+		m_focused->OnKeyPressPre(key);
 }
 
 void Control::OnKeyUpPre(Keys::Enum key) {
-	bool mustStop = this->OnKeyUp(key);
+	bool mustStop = OnKeyUp(key);
 	if (mustStop)
 		return;
 
-	if (!this->focused)
+	if (!m_focused)
 		Form::SetControlSelected(Form::GetControlSelected());
 
-	if (this->focused)
-		this->focused->OnKeyUpPre(key);
+	if (m_focused)
+		m_focused->OnKeyUpPre(key);
 }
 
 void Control::SetFocus(bool selectControl) {
-	Control * parent = this->GetParent();
+	Control * parent = GetParent();
 	if (parent) {
 		if (selectControl)
 			Form::SetControlSelected(this);
-		parent->focused = this;
+		parent->m_focused = this;
 		parent->SetFocus(false);
 	}
 }
@@ -662,6 +676,10 @@ bool Control::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	return false;
 }
 
+bool Control::OnJoystickDpad(JoystickDpadEventArgs* e) {
+	return false;
+}
+
 bool Control::OnKeyUp(Keys::Enum button) {
 	return false;
 }
@@ -669,9 +687,9 @@ bool Control::OnKeyUp(Keys::Enum button) {
 // Arriba y Abajo: de la fila de items mas cercana el item mas cercano
 // Izquierda y Derecha: De la actual fila, el item mas cercano
 bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
-	if ((Form::GetControlSelected() == this) && (!this->_preventChangeControl)) {
-		Point thisP1(this->GetAbsoluteLeft(), this->GetAbsoluteTop());
-		Point thisP2(this->GetAbsoluteRight(), this->GetAbsoluteBottom());;
+	if ((Form::GetControlSelected() == this) && (!m_preventChangeControl)) {
+		Point thisP1(GetAbsoluteLeft(), GetAbsoluteTop());
+		Point thisP2(GetAbsoluteRight(), GetAbsoluteBottom());;
 		Point thisCenter((thisP1.GetX() + thisP2.GetX()) >> 1, (thisP1.GetY() + thisP2.GetY()) >> 1);
 
 		float distance = 30000;
@@ -679,7 +697,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		Control * selected = NULL;
 
 		ArrayList list;
-		this->GetTopParent()->GetControlsSelectables(&list);
+		GetTopParent()->GetControlsSelectables(&list);
 
 		switch (button) {
 			case RemoteButtons::Left:
@@ -836,25 +854,6 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 		if (selected)
 			Form::SetControlSelected(selected);
-
-		switch (button) {
-			case RemoteButtons::Up:
-			case RemoteButtons::Right:
-			case RemoteButtons::Down:
-			case RemoteButtons::Left:
-				break;
-			case RemoteButtons::Play:
-//				Console::WriteLine("Play");
-				break;
-			case RemoteButtons::Ok:
-//				Console::WriteLine("Ok");
-				break;
-			case RemoteButtons::Menu:
-//				Console::WriteLine("Menu");
-				break;
-			default:
-				break;
-		}
 	}
 
 	return false;
@@ -865,23 +864,23 @@ bool Control::OnKeyPress(Keys::Enum key) {
 }
 
 void Control::GetControlsSelectables(ArrayList * list) {
-	for (int i = 0; i<this->GetControls()->GetCount(); i++) {
-		Control * control = (Control *)this->GetControls()->Get(i);
+	for (int i = 0; i<GetControls()->GetCount(); i++) {
+		Control * control = (Control *)GetControls()->Get(i);
 		control->GetControlsSelectables(list);
 	}
 
-	if (this->GetTabStop())
+	if (GetTabStop())
 		list->Add(this);
 }
 
 void Control::CheckMouseControl() {
-	if (this->GetParent() && this->GetParent()->mouseControl == this)
-		this->GetParent()->CleanMouseControl();
+	if (GetParent() && GetParent()->m_mouseControl == this)
+		GetParent()->CleanMouseControl();
 }
 
 void Control::CleanMouseControl() {
-	if (this->mouseControl != NULL)
-		this->mouseControl->CleanMouseControl();
+	if (m_mouseControl != NULL)
+		m_mouseControl->CleanMouseControl();
 
-	this->mouseControl = NULL;
+	m_mouseControl = NULL;
 }

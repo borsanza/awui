@@ -6,6 +6,8 @@
 
 #include "Form.h"
 
+#include <awui/Console.h>
+#include <awui/Convert.h>
 #include <awui/Diagnostics/Process.h>
 #include <awui/Drawing/Image.h>
 #include <awui/IO/Directory.h>
@@ -22,45 +24,45 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;
 
-Control * Form::controlSelected = NULL;
-Bitmap * Form::selectedBitmap = NULL;
-uint32_t Form::_buttonsPad1 = 0;
-uint32_t Form::_buttonsPad2 = 0;
+Control * Form::m_controlSelected = NULL;
+Bitmap * Form::m_selectedBitmap = NULL;
+uint32_t Form::m_buttonsPad1 = 0;
+uint32_t Form::m_buttonsPad2 = 0;
 
 Form::Form() {
-	this->window = 0;
-	this->context = 0;
-	this->mouseX = 0;
-	this->mouseY = 0;
-	this->text = "";
-	this->SetBackColor(Drawing::Color::FromArgb(192, 192, 192));
+	m_window = 0;
+	m_context = 0;
+	m_mouseX = 0;
+	m_mouseY = 0;
+	m_text = "";
+	SetBackColor(Drawing::Color::FromArgb(192, 192, 192));
 
-	this->SetBounds(100, 100, 300, 300);
-	this->mouseButtons = 0;
-	this->mouseControlOver = NULL;
-	this->initialized = 0;
+	SetBounds(100, 100, 300, 300);
+	m_mouseButtons = 0;
+	m_mouseControlOver = NULL;
+	m_initialized = 0;
 
-	this->lastFullscreenState = -1;
-	this->fullscreen = 1;
-	this->lastWidth = 0;
-	this->lastHeight = 0;
+	m_lastFullscreenState = -1;
+	m_fullscreen = 1;
+	m_lastWidth = 0;
+	m_lastHeight = 0;
 
 	Stats * stats = Stats::Instance();
 	stats->SetDock(DockStyle::None);
-	this->GetControls()->Add(stats);
+	GetControls()->Add(stats);
 
-//	this->remoteProcess = new awui::Diagnostics::Process();
-//	this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
+//	remoteProcess = new awui::Diagnostics::Process();
+//	remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
 }
 
 Form::~Form() {
-	if (this->context)
-		SDL_GL_DeleteContext(this->context);
+	if (m_context)
+		SDL_GL_DeleteContext(m_context);
 
-	if (this->window)
-		SDL_DestroyWindow(this->window);
+	if (m_window)
+		SDL_DestroyWindow(m_window);
 
-//	delete this->remoteProcess;
+//	delete remoteProcess;
 }
 
 bool Form::IsClass(Classes objectClass) const {
@@ -72,9 +74,9 @@ bool Form::IsClass(Classes objectClass) const {
 }
 
 void Form::Init() {
-	this->initialized = 1;
-	this->RefreshVideo();
-	this->SetText(this->text);
+	m_initialized = 1;
+	RefreshVideo();
+	SetText(m_text);
 }
 
 void Form::OnPaintForm() {
@@ -82,8 +84,8 @@ void Form::OnPaintForm() {
 	Drawing::Rectangle rectangle;
 	rectangle.SetX(0);
 	rectangle.SetY(0);
-	rectangle.SetWidth(this->GetWidth());
-	rectangle.SetHeight(this->GetHeight());
+	rectangle.SetWidth(GetWidth());
+	rectangle.SetHeight(GetHeight());
 
 	gl.SetClippingBase(rectangle);
 
@@ -92,7 +94,7 @@ void Form::OnPaintForm() {
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 
-	int r = this->OnPaintPre(0, 0, this->GetWidth(), this->GetHeight(), &gl, true);
+	int r = OnPaintPre(0, 0, GetWidth(), GetHeight(), &gl, true);
 
 	Stats * stats = Stats::Instance();
 	stats->SetDrawedControls(r);
@@ -105,19 +107,19 @@ void Form::OnRemoteHeartbeat() {
 
 void Form::OnTick() {
 	Stats * stats = Stats::Instance();
-	this->GetControls()->MoveToEnd(stats);
-	stats->SetWidth(this->GetWidth());
-	stats->SetLocation(0, this->GetHeight() - stats->GetHeight());
+	GetControls()->MoveToEnd(stats);
+	stats->SetWidth(GetWidth());
+	stats->SetLocation(0, GetHeight() - stats->GetHeight());
 
 	static DateTime lastTime = DateTime::GetNow();
 	DateTime now = DateTime::GetNow();
 	if (lastTime.GetSecond() != now.GetSecond()) {
 		lastTime = now;
 /*
-		if (this->remoteProcess->GetHasExited()) {
-			delete this->remoteProcess;
-			this->remoteProcess = new awui::Diagnostics::Process();
-			this->remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
+		if (remoteProcess->GetHasExited()) {
+			delete remoteProcess;
+			remoteProcess = new awui::Diagnostics::Process();
+			remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
 		}
 */
 	}
@@ -128,8 +130,8 @@ void Form::ProcessEvents() {
 	int resizey = -1;
 	SDL_Event event;
 /*
-	if (this->remoteProcess->GetHasString()) {
-		awui::String line = this->remoteProcess->GetLine();
+	if (remoteProcess->GetHasString()) {
+		awui::String line = remoteProcess->GetLine();
 
 		line = line.Substring(0, 4);
 		if ((line == "lub ") || (line == "dub "))
@@ -150,7 +152,7 @@ void Form::ProcessEvents() {
 		if (line == "10:1")
 			OnRemoteKeyPressPre(0, RemoteButtons::Menu);
 		if (line == "31:1")
-			SetFullscreen(!this->fullscreen);
+			SetFullscreen(!fullscreen);
 		if (line == "32:1")
 			Application::Quit();
 
@@ -173,9 +175,16 @@ void Form::ProcessEvents() {
 	}
 */
 	while (SDL_PollEvent(&event)) {
+		// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
 		switch(event.type) {
+			case SDL_JOYHATMOTION:
+				// Console::WriteLine(String("SDL_JOYHATMOTION[") + Convert::ToString(event.jhat.which) + "]: Hat: " + Convert::ToString(event.jhat.hat) +  " Value: " + Convert::ToString(event.jhat.value));
+				OnJoystickDpadPre(event.jhat.which, event.jhat.hat, event.jhat.value);
+				break;
 			case SDL_JOYBUTTONDOWN:
 				{
+					//Console::WriteLine(String("SDL_JOYBUTTONDOWN[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
+
 					// printf("- %d\n", event.jbutton.button);
 					int which = event.jbutton.which;
 					switch (event.jbutton.button) {
@@ -216,6 +225,7 @@ void Form::ProcessEvents() {
 				break;
 			case SDL_JOYBUTTONUP:
 				{
+					//Console::WriteLine(String("SDL_JOYBUTTONUP[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
 					int which = event.jbutton.which;
 					switch (event.jbutton.button) {
 						case 2:
@@ -256,15 +266,16 @@ void Form::ProcessEvents() {
 
 			case SDL_JOYAXISMOTION:
 				{
+					//Console::WriteLine(String("SDL_JOYAXISMOTION[") + Convert::ToString(event.jaxis.which) + "]: Axis: " + Convert::ToString(event.jaxis.axis) + " Value: " + Convert::ToString(event.jaxis.value));
 					int which = event.jaxis.which;
 					int buttons;
 					switch (which) {
 						default:
 						case 0:
-							buttons = Form::_buttonsPad1;
+							buttons = Form::m_buttonsPad1;
 							break;
 						case 1:
-							buttons = Form::_buttonsPad2;
+							buttons = Form::m_buttonsPad2;
 							break;
 					}
 
@@ -497,7 +508,7 @@ void Form::ProcessEvents() {
 					case SDLK_F10: OnKeyUpPre(Keys::Key_F10); break;
 					case SDLK_F11:
 						OnKeyUpPre(Keys::Key_F11);
-						this->SetFullscreen(!this->GetFullscreen());
+						SetFullscreen(!GetFullscreen());
 						break;
 					case SDLK_F12: OnKeyUpPre(Keys::Key_F12); break;
 
@@ -541,8 +552,8 @@ void Form::ProcessEvents() {
 							break;
 					}
 					if (button) {
-						this->mouseButtons |= button;
-						this->OnMouseDownPre(this->mouseX, this->mouseY, button, this->mouseButtons);
+						m_mouseButtons |= button;
+						OnMouseDownPre(m_mouseX, m_mouseY, button, m_mouseButtons);
 					}
 				}
 				break;
@@ -554,11 +565,11 @@ void Form::ProcessEvents() {
 					button = MouseButtons::XButton1;
 				break;
 				if (button) {
-						this->mouseButtons &= ~button;
-						this->OnMouseUpPre(button, this->mouseButtons);
+						m_mouseButtons &= ~button;
+						OnMouseUpPre(button, m_mouseButtons);
 
-						this->mouseButtons |= button;
-						this->OnMouseDownPre(this->mouseX, this->mouseY, button, this->mouseButtons);
+						m_mouseButtons |= button;
+						OnMouseDownPre(m_mouseX, m_mouseY, button, m_mouseButtons);
 				}
 			}
 
@@ -579,16 +590,16 @@ void Form::ProcessEvents() {
 					}
 
 					if (button) {
-						this->mouseButtons &= ~button;
-						this->OnMouseUpPre(button, this->mouseButtons);
+						m_mouseButtons &= ~button;
+						OnMouseUpPre(button, m_mouseButtons);
 					}
 				}
 				break;
 
 			case SDL_MOUSEMOTION:
-				this->mouseX = event.motion.x;
-				this->mouseY = event.motion.y;
-				this->OnMouseMovePre(this->mouseX, this->mouseY, this->mouseButtons);
+				m_mouseX = event.motion.x;
+				m_mouseY = event.motion.y;
+				OnMouseMovePre(m_mouseX, m_mouseY, m_mouseButtons);
 				break;
 
 			case SDL_WINDOWEVENT:
@@ -604,28 +615,28 @@ void Form::ProcessEvents() {
 	}
 
 	if ((resizex != -1) && (resizey != -1)) {
-		this->SetSize(resizex, resizey);
-		this->RefreshVideo();
+		SetSize(resizex, resizey);
+		RefreshVideo();
 	}
 }
 
 void Form::RefreshVideo() {
-	if (!initialized)
+	if (!m_initialized)
 		return;
 
 	int finalWidth, finalHeight;
 	Uint32 flags = 0;
 
-	if (this->fullscreen) {
+	if (m_fullscreen) {
 		flags |= SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN_DESKTOP;
-		if (this->lastFullscreenState != 1) {
-			this->lastWidth = this->GetWidth();
-			this->lastHeight = this->GetHeight();
+		if (m_lastFullscreenState != 1) {
+			m_lastWidth = GetWidth();
+			m_lastHeight = GetHeight();
 		}
 
 		int windowDisplayIndex = 0;
-		if (this->window)
-			windowDisplayIndex = SDL_GetWindowDisplayIndex(this->window);
+		if (m_window)
+			windowDisplayIndex = SDL_GetWindowDisplayIndex(m_window);
 
 		SDL_DisplayMode current;
 		if (SDL_GetDesktopDisplayMode(windowDisplayIndex, &current) == 0) {
@@ -635,43 +646,43 @@ void Form::RefreshVideo() {
 	} else {
 		flags |= SDL_WINDOW_RESIZABLE;
 
-		if (this->lastFullscreenState <= 0) {
-			finalWidth = this->GetWidth();
-			finalHeight = this->GetHeight();
+		if (m_lastFullscreenState <= 0) {
+			finalWidth = GetWidth();
+			finalHeight = GetHeight();
 		} else {
-			finalWidth = this->lastWidth > 0 ? this->lastWidth : this->GetWidth();
-			finalHeight = this->lastHeight > 0 ? this->lastHeight : this->GetHeight();
+			finalWidth = m_lastWidth > 0 ? m_lastWidth : GetWidth();
+			finalHeight = m_lastHeight > 0 ? m_lastHeight : GetHeight();
 		}
 	}
 
-	if (!this->window) {
+	if (!m_window) {
 		// Crear una nueva ventana si aún no existe
-		this->window = SDL_CreateWindow(this->text.ToCharArray(),
+		m_window = SDL_CreateWindow(m_text.ToCharArray(),
 							SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 							finalWidth, finalHeight, flags | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-		if (this->window == NULL) {
+		if (m_window == NULL) {
 			SDL_Log("[ERROR] SDL_CreateWindow failed: %s", SDL_GetError());
 			return;
 		}
 	}
 	
 	// Actualizar la ventana existente
-	this->lastFullscreenState = this->fullscreen ? 1 : 0;
-	SDL_SetWindowFullscreen(this->window, this->fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+	m_lastFullscreenState = m_fullscreen ? 1 : 0;
+	SDL_SetWindowFullscreen(m_window, m_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 
-	if (!this->context) {
+	if (!m_context) {
 		// Crear un nuevo contexto de renderizado OpenGL si aún no existe
-		this->context = SDL_GL_CreateContext(this->window);
-		if (this->context == NULL) {
+		m_context = SDL_GL_CreateContext(m_window);
+		if (m_context == NULL) {
 			SDL_Log("[ERROR] SDL_GL_CreateContext failed: %s", SDL_GetError());
-			SDL_DestroyWindow(this->window);
+			SDL_DestroyWindow(m_window);
 			SDL_Quit();
-			this->window = 0;
+			m_window = 0;
 			return;
 		}
 	}
 
-	if (SDL_GL_MakeCurrent(this->window, this->context) < 0) {
+	if (SDL_GL_MakeCurrent(m_window, m_context) < 0) {
 		SDL_Log("[ERROR] SDL_GL_MakeCurrent failed: %s", SDL_GetError());
 		return;
 	}
@@ -681,34 +692,34 @@ void Form::RefreshVideo() {
 		return;
 	}
 
-	this->SetSize(finalWidth, finalHeight);
+	SetSize(finalWidth, finalHeight);
 }
 
 void Form::SetFullscreen(int mode) {
-	if (this->fullscreen == mode)
+	if (m_fullscreen == mode)
 		return;
 
-	this->fullscreen = mode;
+	m_fullscreen = mode;
 
 	Bitmap::UnloadAll();
 	Drawing::Image::UnloadAll();
-	this->RefreshVideo();
+	RefreshVideo();
 }
 
 void Form::SetText(String title) {
-	this->text = title;
+	m_text = title;
 
-	if (initialized)
-		SDL_SetWindowTitle(this->window, this->text.ToCharArray());
+	if (m_initialized)
+		SDL_SetWindowTitle(m_window, m_text.ToCharArray());
 }
 
 Control * Form::GetControlSelected() {
-	return Form::controlSelected;
+	return Form::m_controlSelected;
 }
 
 void Form::SetControlSelected(Control * selected) {
 	if (!selected || selected->GetTabStop()) {
-		Form::controlSelected = selected;
+		Form::m_controlSelected = selected;
 		if (selected) {
 			Form::GetSelectedBitmap()->SetParent(selected->GetParent());
 			selected->SetFocus(false);
@@ -717,18 +728,18 @@ void Form::SetControlSelected(Control * selected) {
 }
 
 Bitmap * Form::GetSelectedBitmap() {
-	if (!Form::selectedBitmap) {
+	if (!Form::m_selectedBitmap) {
 		String file = IO::Directory::GetWorkingDirectory();
 		Bitmap * bitmap = new Bitmap(file + "/images/button.png");
-		bitmap->SetDock((DockStyle::Enum) 0);//DockStyle::None);
+		bitmap->SetDock(DockStyle::None);
 		bitmap->SetBackColor(Drawing::Color::FromArgb(0, 0, 0, 0));
 		bitmap->SetFixedMargins(28, 25, 28, 24);
 		bitmap->SetLocation(0, 0);
 		bitmap->SetSize(Drawing::Size(97, 97));
-		Form::selectedBitmap = bitmap;
+		Form::m_selectedBitmap = bitmap;
 	}
 
-	return Form::selectedBitmap;
+	return Form::m_selectedBitmap;
 }
 
 bool Form::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
@@ -736,10 +747,10 @@ bool Form::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	switch (which) {
 		default:
 		case 0:
-			buttons = &Form::_buttonsPad1;
+			buttons = &Form::m_buttonsPad1;
 			break;
 		case 1:
-			buttons = &Form::_buttonsPad2;
+			buttons = &Form::m_buttonsPad2;
 			break;
 	}
 
@@ -753,10 +764,10 @@ bool Form::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	switch (which) {
 		default:
 		case 0:
-			buttons = &Form::_buttonsPad1;
+			buttons = &Form::m_buttonsPad1;
 			break;
 		case 1:
-			buttons = &Form::_buttonsPad2;
+			buttons = &Form::m_buttonsPad2;
 			break;
 	}
 
@@ -766,6 +777,5 @@ bool Form::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 }
 
 void Form::SwapGL() {
-	SDL_GL_SwapWindow(this->window);
+	SDL_GL_SwapWindow(m_window);
 }
-

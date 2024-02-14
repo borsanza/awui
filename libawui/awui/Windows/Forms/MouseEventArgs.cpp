@@ -6,11 +6,11 @@
 using namespace awui::Windows::Forms;
 
 MouseEventArgs::MouseEventArgs() {
-	this->x = 0;
-	this->y = 0;
-	this->delta = 0;
-	this->clicks = 0;
-	this->button = 0;
+	m_x = 0;
+	m_y = 0;
+	m_delta = 0;
+	m_clicks = 0;
+	m_button = 0;
 }
 
 MouseEventArgs::~MouseEventArgs() {
@@ -25,51 +25,51 @@ bool MouseEventArgs::IsClass(Classes objectClass) const {
 }
 
 int MouseEventArgs::GetX() {
-	return this->x;
+	return m_x;
 }
 
 void MouseEventArgs::SetX(int x) {
-	this->x = x;
+	m_x = x;
 }
 
 int MouseEventArgs::GetY() {
-	return this->y;
+	return m_y;
 }
 
 void MouseEventArgs::SetY(int y) {
-	this->y = y;
+	m_y = y;
 }
 
 void MouseEventArgs::GetLocation(int &x, int &y) {
-	x = this->x;
-	y = this->y;
+	x = m_x;
+	y = m_y;
 }
 
 void MouseEventArgs::SetLocation(int x, int y) {
-	this->x = x;
-	this->y = y;
+	m_x = x;
+	m_y = y;
 }
 
 int MouseEventArgs::GetDelta() {
-	return this->delta;
+	return m_delta;
 }
 
 void MouseEventArgs::SetDelta(int delta) {
-	this->delta = delta;
+	m_delta = delta;
 }
 
 int MouseEventArgs::GetClicks() {
-	return this->clicks;
+	return m_clicks;
 }
 
 void MouseEventArgs::SetClicks(int clicks) {
-	this->clicks = clicks;
+	m_clicks = clicks;
 }
 
 int MouseEventArgs::GetButton() {
-	return this->button;
+	return m_button;
 }
 
 void MouseEventArgs::SetButton(int button) {
-	this->button = button;
+	m_button = button;
 }

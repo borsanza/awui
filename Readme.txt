@@ -4,9 +4,10 @@ Windows:
   winget install --id=Ninja-build.Ninja  -e
   winget install --id=MSYS2.MSYS2  -e
 
-  C:\msys64\mingw32.exe
+  Desde terminal de msys64
     pacman -Syu
     pacman -S vim
+
     pacman -S mingw-w64-i686-toolchain
     pacman -S mingw-w64-i686-glew
     pacman -S mingw-w64-i686-SDL2
@@ -14,9 +15,6 @@ Windows:
     pacman -S mingw-w64-i686-cairo
     pacman -S mingw-w64-i686-nlohmann-json
 
-  C:\msys64\mingw64.exe
-    pacman -Syu
-    pacman -S vim
     pacman -S mingw-w64-x86_64-toolchain
     pacman -S mingw-w64-x86_64-glew
     pacman -S mingw-w64-x86_64-SDL2

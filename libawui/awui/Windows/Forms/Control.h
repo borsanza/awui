@@ -20,49 +20,47 @@ namespace awui {
 		namespace Forms {
 			class ControlCollection;
 			class MouseEventArgs;
+			class JoystickDpadEventArgs;
+
+			enum class DockStyle {
+				None,
+				Top,
+				Bottom,
+				Left,
+				Right,
+				Fill,
+			};
 
 			class Control : public Object {
 				friend class Form;
 
-				public:
-					struct DockStyle {
-						enum Enum {
-							None = 0,
-							Top = 1,
-							Bottom = 2,
-							Left = 3,
-							Right = 4,
-							Fill = 5,
-						};
-					};
-
 				private:
-					Control * focused;
-					bool tabStop;
-					bool _drawShadow;
-					bool _preventChangeControl;
-					bool _visible;
-					Drawing::Rectangle bounds;
+					Control * m_focused;
+					bool m_tabStop;
+					bool m_drawShadow;
+					bool m_preventChangeControl;
+					bool m_visible;
+					Drawing::Rectangle m_bounds;
 
-					float _lastWidth;
-					float _lastHeight;
-					float _lastX;
-					float _lastY;
-					Drawing::Rectangle boundsTo;
+					float m_lastWidth;
+					float m_lastHeight;
+					float m_lastX;
+					float m_lastY;
+					Drawing::Rectangle m_boundsTo;
 
-					Drawing::Size minimumSize;
-					int needRefresh;
-					int refreshed;
-					bool scissorEnabled;
-					Drawing::Font * font;
-					DockStyle::Enum dock;
-					ControlCollection * controls;
-					Drawing::Color backColor;
-					Drawing::Color foreColor;
-					Control * parent;
-					MouseEventArgs * mouseEventArgs;
-					Control * mouseControl;
-					String name;
+					Drawing::Size m_minimumSize;
+					int m_needRefresh;
+					int m_refreshed;
+					bool m_scissorEnabled;
+					Drawing::Font * m_font;
+					DockStyle m_dock;
+					ControlCollection * m_controls;
+					Drawing::Color m_backColor;
+					Drawing::Color m_foreColor;
+					Control * m_parent;
+					MouseEventArgs * m_mouseEventArgs;
+					Control * m_mouseControl;
+					String m_name;
 
 					void OnResizePre();
 					int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl, bool first = false);
@@ -82,8 +80,8 @@ namespace awui {
 					const virtual Drawing::Size GetMinimumSize() const;
 					void SetMinimumSize(Drawing::Size size);
 
-					DockStyle::Enum GetDock() const;
-					void SetDock(DockStyle::Enum dock);
+					DockStyle GetDock() const;
+					void SetDock(DockStyle dock);
 
 					const String GetName();
 					void SetName(const String str);
@@ -101,8 +99,8 @@ namespace awui {
 					const Drawing::Point GetLocation() const;
 					void SetLocation(int x, int y);
 
-					inline void SetDrawShadow(bool mode) { this->_drawShadow = mode; }
-					inline bool GetDrawShadow() { return this->_drawShadow; }
+					inline void SetDrawShadow(bool mode) { this->m_drawShadow = mode; }
+					inline bool GetDrawShadow() { return this->m_drawShadow; }
 
 					int GetWidth() const;
 					void SetWidth(int width);
@@ -113,12 +111,12 @@ namespace awui {
 					const Drawing::Size GetSize() const;
 					void SetSize(int width, int height);
 					void SetSize(const Drawing::Size size);
-					inline void SetSizeGo(int w, int h) { this->boundsTo.SetSize(w, h); }
-					inline void SetLocationGo(int x, int y) { this->boundsTo.SetLocation(x, y); }
-					inline int GetLeftGo() { return this->boundsTo.GetLeft(); }
-					inline int GetRightGo() { return this->boundsTo.GetRight(); }
-					inline int GetTopGo() { return this->boundsTo.GetTop(); }
-					inline int GetBottomGo() { return this->boundsTo.GetBottom(); }
+					inline void SetSizeGo(int w, int h) { this->m_boundsTo.SetSize(w, h); }
+					inline void SetLocationGo(int x, int y) { this->m_boundsTo.SetLocation(x, y); }
+					inline int GetLeftGo() { return this->m_boundsTo.GetLeft(); }
+					inline int GetRightGo() { return this->m_boundsTo.GetRight(); }
+					inline int GetTopGo() { return this->m_boundsTo.GetTop(); }
+					inline int GetBottomGo() { return this->m_boundsTo.GetBottom(); }
 
 					const Drawing::Rectangle GetBounds() const;
 					void SetBounds(int x, int y, int width, int height);
@@ -147,6 +145,7 @@ namespace awui {
 					void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
 					void OnRemoteKeyPressPre(int which, RemoteButtons::Enum button);
 					void OnRemoteKeyUpPre(int which, RemoteButtons::Enum button);
+					void OnJoystickDpadPre(int which, int hat, int value);
 					void OnKeyPressPre(Keys::Enum key);
 					void OnKeyUpPre(Keys::Enum key);
 
@@ -156,6 +155,7 @@ namespace awui {
 					virtual void OnMouseUp(MouseEventArgs* e) {}
 					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+					virtual bool OnJoystickDpad(JoystickDpadEventArgs* e);
 					virtual bool OnKeyPress(Keys::Enum key);
 					virtual bool OnKeyUp(Keys::Enum key);
 					virtual void OnRemoteHeartbeat() {}
@@ -171,7 +171,7 @@ namespace awui {
 					void SetTabStop(bool tabStop);
 
 					void SetFocus(bool selectControl = true);
-					inline Control * GetFocused() const { return this->focused; }
+					inline Control * GetFocused() const { return this->m_focused; }
 
 					Control * GetTopParent();
 
@@ -179,9 +179,9 @@ namespace awui {
 
 					float Interpolate(float from, int to, float percent);
 
-					inline void SetPreventChangeControl(bool mode) { this->_preventChangeControl = mode; }
+					inline void SetPreventChangeControl(bool mode) { this->m_preventChangeControl = mode; }
 
-					inline void SetVisible(bool mode) { this->_visible = mode; }
+					inline void SetVisible(bool mode) { this->m_visible = mode; }
 					void CheckMouseControl();
 			};
 		}

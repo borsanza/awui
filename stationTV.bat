@@ -2,7 +2,7 @@
 
 setlocal
 
-call bbr.bat > nul
+rem call bbr.bat > nul
 
 cd build\samples\stationTV
 

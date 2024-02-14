@@ -23,6 +23,8 @@ namespace awui {
 		Graphics,
 		Image,
 		MouseEventArgs,
+		JoystickEventArgs,
+		JoystickMoveEventArgs,
 		Panel,
 		Pen,
 		SplitContainer,
