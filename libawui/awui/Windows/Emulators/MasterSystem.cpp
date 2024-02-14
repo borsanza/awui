@@ -13,6 +13,7 @@
 #include <awui/Emulation/MasterSystem/SoundSDL.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/JoystickDpadEventArgs.h>
+#include <awui/Windows/Forms/JoystickButtonEventArgs.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
 
@@ -443,7 +444,7 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 	return ret;
 }
 
- bool MasterSystem::OnJoystickDpad(JoystickDpadEventArgs* e) {
+bool MasterSystem::OnJoystickDpad(JoystickDpadEventArgs* e) {
 	bool ret = false;
 
 	int direction = e->GetValue();
@@ -467,7 +468,19 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 	}
 
 	return ret;
- }
+}
+
+bool MasterSystem::OnJoystickButtonDown(JoystickButtonEventArgs* e) {
+	bool ret = false;
+
+	return ret;
+}
+
+bool MasterSystem::OnJoystickButtonUp(JoystickButtonEventArgs* e) {
+	bool ret = false;
+
+	return ret;
+}
 
 uint32_t MasterSystem::GetCRC32() {
 	return m_cpu->GetCRC32();

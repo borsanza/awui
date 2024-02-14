@@ -13,6 +13,7 @@
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/JoystickDpadEventArgs.h>
+#include <awui/Windows/Forms/JoystickButtonEventArgs.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <SDL_opengl.h>
 
@@ -630,6 +631,32 @@ void Control::OnJoystickDpadPre(int which, int hat, int value) {
 		m_focused->OnJoystickDpadPre(which, hat, value);
 }
 
+void Control::OnJoystickButtonDownPre(int which, int button) {
+	JoystickButtonEventArgs joy(which, button);
+	bool mustStop = OnJoystickButtonDown(&joy);
+	if (mustStop)
+		return;
+
+	if (!m_focused)
+		Form::SetControlSelected(Form::GetControlSelected());
+
+	if (m_focused)
+		m_focused->OnJoystickButtonDownPre(which, button);
+}
+
+void Control::OnJoystickButtonUpPre(int which, int button) {
+	JoystickButtonEventArgs joy(which, button);
+	bool mustStop = OnJoystickButtonUp(&joy);
+	if (mustStop)
+		return;
+
+	if (!m_focused)
+		Form::SetControlSelected(Form::GetControlSelected());
+
+	if (m_focused)
+		m_focused->OnJoystickButtonUpPre(which, button);
+}
+
 void Control::OnKeyPressPre(Keys::Enum key) {
 	bool mustStop = OnKeyPress(key);
 	if (mustStop)
@@ -677,6 +704,14 @@ bool Control::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 }
 
 bool Control::OnJoystickDpad(JoystickDpadEventArgs* e) {
+	return false;
+}
+
+bool Control::OnJoystickButtonDown(JoystickButtonEventArgs* e) {
+	return false;
+}
+
+bool Control::OnJoystickButtonUp(JoystickButtonEventArgs* e) {
 	return false;
 }
 

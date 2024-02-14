@@ -177,15 +177,21 @@ void Form::ProcessEvents() {
 	while (SDL_PollEvent(&event)) {
 		// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
 		switch(event.type) {
+			case SDL_JOYDEVICEADDED:
+				break;
+			case SDL_JOYDEVICEREMOVED:
+				break;
 			case SDL_JOYHATMOTION:
-				// Console::WriteLine(String("SDL_JOYHATMOTION[") + Convert::ToString(event.jhat.which) + "]: Hat: " + Convert::ToString(event.jhat.hat) +  " Value: " + Convert::ToString(event.jhat.value));
 				OnJoystickDpadPre(event.jhat.which, event.jhat.hat, event.jhat.value);
 				break;
 			case SDL_JOYBUTTONDOWN:
+				OnJoystickButtonDownPre(event.jbutton.which, event.jbutton.button);
+				Console::WriteLine(String("SDL_JOYBUTTONDOWN[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
+				break;
+/*
 				{
 					//Console::WriteLine(String("SDL_JOYBUTTONDOWN[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
 
-					// printf("- %d\n", event.jbutton.button);
 					int which = event.jbutton.which;
 					switch (event.jbutton.button) {
 						case 2:
@@ -223,9 +229,13 @@ void Form::ProcessEvents() {
 					}
 				}
 				break;
+*/
 			case SDL_JOYBUTTONUP:
+				OnJoystickButtonUpPre(event.jbutton.which, event.jbutton.button);
+				Console::WriteLine(String("SDL_JOYBUTTONUP[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
+				break;
+/*
 				{
-					//Console::WriteLine(String("SDL_JOYBUTTONUP[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
 					int which = event.jbutton.which;
 					switch (event.jbutton.button) {
 						case 2:
@@ -263,7 +273,7 @@ void Form::ProcessEvents() {
 					}
 				}
 				break;
-
+*/
 			case SDL_JOYAXISMOTION:
 				{
 					//Console::WriteLine(String("SDL_JOYAXISMOTION[") + Convert::ToString(event.jaxis.which) + "]: Axis: " + Convert::ToString(event.jaxis.axis) + " Value: " + Convert::ToString(event.jaxis.value));
@@ -310,7 +320,6 @@ void Form::ProcessEvents() {
 				break;
 
 			case SDL_KEYDOWN:
-				// printf("%d\n", event.key.keysym.sym);
 				switch (event.key.keysym.sym) {
 					case SDLK_ESCAPE:
 						if (event.key.keysym.mod & KMOD_LCTRL)
@@ -610,6 +619,7 @@ void Form::ProcessEvents() {
 				break;
 
 			default:
+				Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
 				break;
 		}
 	}
@@ -755,7 +765,6 @@ bool Form::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	}
 
 	*buttons |= button;
-	// printf("0x%.4X\n", *buttons);
 	return Control::OnRemoteKeyPress(which, button);
 }
 
@@ -772,7 +781,6 @@ bool Form::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	}
 
 	*buttons &= ~button;
-	// printf("0x%.4X\n", *buttons);
 	return Control::OnRemoteKeyUp(which, button);
 }
 

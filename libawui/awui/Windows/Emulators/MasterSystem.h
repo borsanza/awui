@@ -55,6 +55,8 @@ namespace awui {
 					virtual bool OnKeyPress(Keys::Enum key);
 					virtual bool OnKeyUp(Keys::Enum key);
 					virtual bool OnJoystickDpad(JoystickDpadEventArgs* e);
+					virtual bool OnJoystickButtonDown(JoystickButtonEventArgs* e);
+					virtual bool OnJoystickButtonUp(JoystickButtonEventArgs* e);
 
 					uint32_t GetCRC32();
 
