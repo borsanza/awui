@@ -6,6 +6,9 @@
 
 #include "Application.h"
 
+#include <awui/Collections/ArrayList.h>
+#include <awui/Console.h>
+#include <awui/Convert.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL.h>
@@ -15,8 +18,7 @@ using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;
 
 int Application::quit = 0;
-SDL_Joystick * Application::stick1 = NULL;
-SDL_Joystick * Application::stick2 = NULL;
+ArrayList * Application::m_controllersList = new ArrayList();
 
 bool Application::IsClass(Classes objectClass) const {
 	if (objectClass == Classes::Application) {
@@ -31,7 +33,7 @@ void Application::Quit() {
 }
 
 void Application::Run(Form * form = NULL) {
-	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
 		SDL_Log("[ERROR] SDL_Init failed: %s", SDL_GetError());
 		return;
 	}
@@ -43,11 +45,11 @@ void Application::Run(Form * form = NULL) {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	if (SDL_NumJoysticks() > 0)
-		Application::stick1 = SDL_JoystickOpen(0);
-
-	if (SDL_NumJoysticks() > 1)
-		Application::stick2 = SDL_JoystickOpen(1);
+	for (int i = 0; i < SDL_NumJoysticks(); i++) {
+        if (SDL_IsGameController(i)) {
+			m_controllersList->Add((Object *)SDL_GameControllerOpen(i));
+		}
+	}
 
 	form->Init();
 
@@ -56,7 +58,7 @@ void Application::Run(Form * form = NULL) {
 	Stats * stats = Stats::Instance();
 
 	while (!Application::quit) {
-		form->ProcessEvents();
+		ProcessEvents(form);
 
 		form->OnTickPre();
 
@@ -71,11 +73,110 @@ void Application::Run(Form * form = NULL) {
 		stats->SetTimeAfterIddle();
 	}
 
-	if (Application::stick1)
-		SDL_JoystickClose(stick1);
-
-	if (Application::stick2)
-		SDL_JoystickClose(stick2);
+	for (int i = 0; i < m_controllersList->GetCount(); i++) {
+		SDL_GameController * controller = (SDL_GameController *) m_controllersList->Get(i);
+		SDL_GameControllerClose(controller);
+	}
 
 	SDL_Quit();
+}
+
+int Application::GetControlerOrder(int which) {
+	for (int i = 0; i < m_controllersList->GetCount(); i++) {
+		SDL_GameController * controller = (SDL_GameController *) m_controllersList->Get(i);
+		if (which == SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller))) {
+			return i;
+		}
+	}
+
+	return 99;
+}
+
+void Application::ProcessEvents(Form * form) {
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		bool ret = false;
+		// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
+		for (int i = 0; i < Form::m_formsList->GetCount(); i++) {
+			Form * formW = (Form *)Form::m_formsList->Get(i);
+			switch(event.type) {
+				case SDL_JOYDEVICEADDED:
+					if (m_controllersList->IndexOf((Object *) SDL_GameControllerOpen(event.cdevice.which)) == -1) {
+						m_controllersList->Add((Object *) SDL_GameControllerOpen(event.cdevice.which));
+						ret = true;
+					}
+					break;
+				case SDL_JOYDEVICEREMOVED:
+					for (int i = 0; i < m_controllersList->GetCount(); i++) {
+						SDL_GameController * controller = (SDL_GameController *) m_controllersList->Get(i);
+						if (event.cdevice.which == SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller))) {
+							SDL_GameControllerClose(controller);
+							m_controllersList->RemoveAt(i);
+						}
+					}
+					ret = true;
+					break;
+				case SDL_JOYHATMOTION:
+					formW->OnJoystickDpadPre(GetControlerOrder(event.jhat.which), event.jhat.hat, event.jhat.value);
+					ret = true;
+					break;
+				case SDL_JOYBUTTONDOWN:
+					formW->OnJoystickButtonDownPre(GetControlerOrder(event.jbutton.which), event.jbutton.button);
+					Console::WriteLine(String("SDL_JOYBUTTONDOWN[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
+					ret = true;
+					break;
+				case SDL_JOYBUTTONUP:
+					formW->OnJoystickButtonUpPre(GetControlerOrder(event.jbutton.which), event.jbutton.button);
+					Console::WriteLine(String("SDL_JOYBUTTONUP[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
+					ret = true;
+					break;
+			}
+		}
+
+		if (ret) {
+			continue;
+		}
+
+		Uint32 windowID = 0;
+		switch(event.type) {
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+				windowID = event.key.windowID;
+				break;
+			case SDL_MOUSEWHEEL:
+				windowID = event.wheel.windowID;
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				windowID = event.button.windowID;
+				break;
+			case SDL_MOUSEMOTION:
+				windowID = event.motion.windowID;
+				break;
+			case SDL_WINDOWEVENT:
+				windowID = event.window.windowID;
+				break;
+		}
+
+		if (windowID != 0) {
+			for (int i = 0; i < Form::m_formsList->GetCount(); i++) {
+				Form * formW = (Form *)Form::m_formsList->Get(i);
+				if (windowID == formW->GetWindowID()) {
+					formW->ProcessEvents(&event);
+				}
+			}
+
+			continue;
+		}
+
+		switch(event.type) {
+			case SDL_QUIT:
+				Application::Quit();
+				break;
+
+			default:
+				Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
+				break;
+		}
+	}
 }

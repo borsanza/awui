@@ -4,8 +4,13 @@
 
 typedef struct SDL_Window SDL_Window;
 typedef void *SDL_GLContext;
+typedef union SDL_Event SDL_Event;
 
 namespace awui {
+	namespace Collections {
+		class ArrayList;
+	}
+
 	namespace Diagnostics {
 		class Process;
 	}
@@ -18,6 +23,7 @@ namespace awui {
 				friend class Control;
 
 				private:
+					static ArrayList * m_formsList;
 					static Bitmap * m_selectedBitmap;
 					static Control * m_controlSelected;
 					static uint32_t m_buttonsPad1;
@@ -39,8 +45,6 @@ namespace awui {
 					int m_lastHeight;
 
 					void OnPaintForm();
-
-					void ProcessEvents();
 
 				public:
 					Form();
@@ -67,6 +71,9 @@ namespace awui {
 					inline static uint32_t GetButtonsPad1() { return Form::m_buttonsPad1; }
 					inline static uint32_t GetButtonsPad2() { return Form::m_buttonsPad2; }
 					void SwapGL();
+
+					uint32_t GetWindowID();
+					void ProcessEvents(SDL_Event * event);
 			};
 		}
 	}
