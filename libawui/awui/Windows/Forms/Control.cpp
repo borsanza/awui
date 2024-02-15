@@ -12,7 +12,6 @@
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/JoystickDpadEventArgs.h>
 #include <awui/Windows/Forms/JoystickButtonEventArgs.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <SDL_opengl.h>
@@ -618,21 +617,8 @@ void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
 		m_focused->OnRemoteKeyUpPre(which, button);
 }
 
-void Control::OnJoystickDpadPre(int which, int hat, int value) {
-	JoystickDpadEventArgs joy(which, hat, value);
-	bool mustStop = OnJoystickDpad(&joy);
-	if (mustStop)
-		return;
-
-	if (!m_focused)
-		Form::SetControlSelected(Form::GetControlSelected());
-
-	if (m_focused)
-		m_focused->OnJoystickDpadPre(which, hat, value);
-}
-
-void Control::OnJoystickButtonDownPre(int which, int button) {
-	JoystickButtonEventArgs joy(which, button);
+void Control::OnJoystickButtonDownPre(int which, int button, uint32_t buttons, uint32_t prevButtons) {
+	JoystickButtonEventArgs joy(which, button, buttons, prevButtons);
 	bool mustStop = OnJoystickButtonDown(&joy);
 	if (mustStop)
 		return;
@@ -641,11 +627,11 @@ void Control::OnJoystickButtonDownPre(int which, int button) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (m_focused)
-		m_focused->OnJoystickButtonDownPre(which, button);
+		m_focused->OnJoystickButtonDownPre(which, button, buttons, prevButtons);
 }
 
-void Control::OnJoystickButtonUpPre(int which, int button) {
-	JoystickButtonEventArgs joy(which, button);
+void Control::OnJoystickButtonUpPre(int which, int button, uint32_t buttons, uint32_t prevButtons) {
+	JoystickButtonEventArgs joy(which, button, buttons, prevButtons);
 	bool mustStop = OnJoystickButtonUp(&joy);
 	if (mustStop)
 		return;
@@ -654,7 +640,7 @@ void Control::OnJoystickButtonUpPre(int which, int button) {
 		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (m_focused)
-		m_focused->OnJoystickButtonUpPre(which, button);
+		m_focused->OnJoystickButtonUpPre(which, button, buttons, prevButtons);
 }
 
 void Control::OnKeyPressPre(Keys::Enum key) {
@@ -700,10 +686,6 @@ Control * Control::GetTopParent() {
 }
 
 bool Control::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	return false;
-}
-
-bool Control::OnJoystickDpad(JoystickDpadEventArgs* e) {
 	return false;
 }
 

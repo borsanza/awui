@@ -12,7 +12,7 @@
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/Emulation/MasterSystem/SoundSDL.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/JoystickDpadEventArgs.h>
+#include <awui/Windows/Forms/JoystickButtons.h>
 #include <awui/Windows/Forms/JoystickButtonEventArgs.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
@@ -317,10 +317,7 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			button2 = 0x20;
 			break;
 		case Keys::Key_SPACE:
-			if (!m_pause) {
-				m_pause = true;
-				m_cpu->CallPaused();
-			}
+			Pause(true);
 			ret = true;
 			break;
 		case Keys::Key_BACKSPACE:
@@ -341,20 +338,12 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			}
 			break;
 		case Keys::Key_Q:
-			m_lastTick = DateTime::GetNow().GetTicks();
-			m_actual--;
-			if (m_actual < m_first)
-				m_actual = m_first;
-			m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
+			TimeReverse();
 			RefreshPads();
 			ret = true;
 			break;
 		case Keys::Key_E:
-			m_lastTick = DateTime::GetNow().GetTicks();
-			m_actual++;
-			if (m_actual > m_last)
-				m_actual = m_last;
-			m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
+			TimeForward();
 			RefreshPads();
 			ret = true;
 			break;
@@ -420,7 +409,7 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 			button2 = 0x20;
 			break;
 		case Keys::Key_SPACE:
-			m_pause = false;
+			Pause(false);
 			ret = true;
 			break;
 		case Keys::Key_BACKSPACE:
@@ -444,21 +433,29 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 	return ret;
 }
 
-bool MasterSystem::OnJoystickDpad(JoystickDpadEventArgs* e) {
+bool MasterSystem::RefreshButtons(JoystickButtonEventArgs* e) {
 	bool ret = false;
 
-	int direction = e->GetValue();
-	uint8_t masterSystemDirection = (direction & 1) |
-									((direction & 12) >> 1) |
-									((direction & 2) << 2);
+	uint32_t buttons = e->GetButtons();
+	// printf("Buttons: %x\n", buttons);
+	uint8_t masterButtons = ((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_UP)?    0x01 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_DOWN)?  0x02 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_RIGHT)? 0x08 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_LEFT)?  0x04 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_Y)?          0x10 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_A)?          0x10 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_B)?          0x20 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_X)?          0x20 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_START)?      0x40 : 0);
 
 	switch (e->GetWhich()) {
 		case 0:
-			m_joys1 = (m_joys1 & 0xF0) | (0x0F & ~masterSystemDirection);
+			m_joys1 = ~masterButtons;
+			// printf("RefreshButtons: %x\n", m_joys1);
 			ret = true;
 			break;
 		case 1:
-			m_joys2 = (m_joys2 & 0xF0) | (0x0F & ~masterSystemDirection);
+			m_joys2 = ~masterButtons;
 			ret = true;
 			break;
 	}
@@ -471,19 +468,63 @@ bool MasterSystem::OnJoystickDpad(JoystickDpadEventArgs* e) {
 }
 
 bool MasterSystem::OnJoystickButtonDown(JoystickButtonEventArgs* e) {
-	bool ret = false;
+	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_LEFTSHOULDER) {
+		TimeReverse();
+		return true;
+	}
 
-	return ret;
+	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_RIGHTSHOULDER) {
+		TimeForward();
+		return true;
+	}
+
+	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_START) {
+		Pause(true);
+		return true;
+	}
+
+
+	return RefreshButtons(e);
 }
 
 bool MasterSystem::OnJoystickButtonUp(JoystickButtonEventArgs* e) {
-	bool ret = false;
+	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_START) {
+		Pause(false);
+		return true;
+	}
 
-	return ret;
+	return RefreshButtons(e);
 }
 
 uint32_t MasterSystem::GetCRC32() {
 	return m_cpu->GetCRC32();
+}
+
+void MasterSystem::TimeReverse() {
+	m_lastTick = DateTime::GetNow().GetTicks();
+	m_actual--;
+	if (m_actual < m_first)
+		m_actual = m_first;
+	m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
+}
+
+void MasterSystem::TimeForward() {
+	m_lastTick = DateTime::GetNow().GetTicks();
+	m_actual++;
+	if (m_actual > m_last)
+		m_actual = m_last;
+	m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
+}
+
+void awui::Windows::Emulators::MasterSystem::Pause(bool mode) {
+	if (mode) {
+		if (!m_pause) {
+			m_pause = true;
+			m_cpu->CallPaused();
+		}
+	} else {
+		m_pause = false;
+	}
 }
 
 void MasterSystem::SetSoundEnabled(bool mode) {

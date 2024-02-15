@@ -6,18 +6,32 @@
 
 #include "Controller.h"
 
+#include <awui/Console.h>
+#include <awui/Convert.h>
+#include <awui/String.h>
 #include <awui/Collections/ArrayList.h>
 
 #include <SDL.h>
 
+using namespace awui::Collections;
 using namespace awui::Windows::Forms::Joystick;
+
+ArrayList * Controller::m_controllersList = new ArrayList();
 
 Controller::Controller(SDL_GameController * controller) {
 	m_controller = controller;
 	m_positionOrder = -1;
+	m_buttons = 0;
+	m_prevButtons = 0;
+
+	SDL_Joystick* joystick = SDL_GameControllerGetJoystick(controller);
+	m_which = SDL_JoystickInstanceID(joystick);
+	Console::WriteLine(String("Added Controller: ") + Convert::ToString(m_which));
 }
 
 Controller::~Controller() {
+	Console::WriteLine(String("Removed Controller: ") + Convert::ToString(m_which));
+
 	SDL_GameControllerClose(m_controller);
 }
 
@@ -32,6 +46,19 @@ Controller *Controller::AddOnce(SDL_GameController *gController) {
 
 	controller = new Controller(gController);
 	m_controllersList->Add(controller);
+
+	return controller;
+}
+
+Controller * Controller::GetByWhich(SDL_JoystickID which) {
+	Controller * controller = nullptr;
+
+	for (int i = 0; i < m_controllersList->GetCount(); i++) {
+		controller = (Controller *) m_controllersList->Get(i);
+		if (controller->m_which == which) {
+			break;
+		}
+	}
 
 	return controller;
 }
@@ -63,10 +90,28 @@ void Controller::Refresh() {
 }
 
 void Controller::CloseAll() {
-	for (int i = 0; i < m_controllersList->GetCount(); i++) {
+	for (int i = m_controllersList->GetCount() - 1; i >= 0; i--) {
 		Joystick::Controller * controller = (Joystick::Controller *) m_controllersList->Get(i);
 		delete controller;
 	}
 	
 	m_controllersList->Clear();
+}
+
+void Controller::OnButtonDown(uint32_t button) {
+	uint32_t aux = m_buttons;
+	m_buttons |= button;
+	if (aux != m_buttons) {
+		m_prevButtons = aux;
+	}
+	// printf("OnButtonDown: %X\n", m_buttons);
+}
+
+void Controller::OnButtonUp(uint32_t button) {
+	uint32_t aux = m_buttons;
+	 m_buttons &= ~button;
+	if (aux != m_buttons) {
+		m_prevButtons = aux;
+	}
+	// printf("OnButtonUp: %X\n", m_buttons);
 }

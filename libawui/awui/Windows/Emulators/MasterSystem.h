@@ -54,9 +54,13 @@ namespace awui {
 					virtual void OnPaint(OpenGL::GL* gl);
 					virtual bool OnKeyPress(Keys::Enum key);
 					virtual bool OnKeyUp(Keys::Enum key);
-					virtual bool OnJoystickDpad(JoystickDpadEventArgs* e);
+					bool RefreshButtons(JoystickButtonEventArgs* e);
 					virtual bool OnJoystickButtonDown(JoystickButtonEventArgs* e);
 					virtual bool OnJoystickButtonUp(JoystickButtonEventArgs* e);
+
+					void TimeReverse();
+					void TimeForward();
+					void Pause(bool mode);
 
 					uint32_t GetCRC32();
 

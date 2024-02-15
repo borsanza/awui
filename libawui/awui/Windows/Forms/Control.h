@@ -20,7 +20,6 @@ namespace awui {
 		namespace Forms {
 			class ControlCollection;
 			class MouseEventArgs;
-			class JoystickDpadEventArgs;
 			class JoystickButtonEventArgs;
 
 			enum class DockStyle {
@@ -146,9 +145,8 @@ namespace awui {
 					void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
 					void OnRemoteKeyPressPre(int which, RemoteButtons::Enum button);
 					void OnRemoteKeyUpPre(int which, RemoteButtons::Enum button);
-					void OnJoystickDpadPre(int which, int hat, int value);
-					void OnJoystickButtonDownPre(int which, int button);
-					void OnJoystickButtonUpPre(int which, int button);
+					void OnJoystickButtonDownPre(int which, int button, uint32_t buttons, uint32_t prevButtons);
+					void OnJoystickButtonUpPre(int which, int button, uint32_t buttons, uint32_t prevButtons);
 					void OnKeyPressPre(Keys::Enum key);
 					void OnKeyUpPre(Keys::Enum key);
 
@@ -158,7 +156,6 @@ namespace awui {
 					virtual void OnMouseUp(MouseEventArgs* e) {}
 					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
-					virtual bool OnJoystickDpad(JoystickDpadEventArgs* e);
 					virtual bool OnJoystickButtonDown(JoystickButtonEventArgs* e);
 					virtual bool OnJoystickButtonUp(JoystickButtonEventArgs* e);
 					virtual bool OnKeyPress(Keys::Enum key);

@@ -5,7 +5,7 @@
 namespace awui {
 	class DateTime : public Object {
 		private:
-			long long _time;
+			long long m_time;
 
 		public:
 			DateTime();

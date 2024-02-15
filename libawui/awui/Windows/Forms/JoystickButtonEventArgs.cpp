@@ -5,8 +5,10 @@
 
 using namespace awui::Windows::Forms;
 
-JoystickButtonEventArgs::JoystickButtonEventArgs(int which, int button) : JoystickEventArgs(which) {
+JoystickButtonEventArgs::JoystickButtonEventArgs(int which, int button, uint32_t buttons, uint32_t prevButtons) : JoystickEventArgs(which) {
 	m_button = button;
+	m_buttons = buttons;
+	m_prevButtons = prevButtons;
 }
 
 JoystickButtonEventArgs::~JoystickButtonEventArgs() {
