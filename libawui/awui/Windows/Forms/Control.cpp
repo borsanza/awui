@@ -13,6 +13,7 @@
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/JoystickButtonEventArgs.h>
+#include <awui/Windows/Forms/JoystickAxisMotionEventArgs.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <SDL_opengl.h>
 
@@ -642,6 +643,20 @@ void Control::OnJoystickButtonUpPre(int which, int button, uint32_t buttons, uin
 	if (m_focused)
 		m_focused->OnJoystickButtonUpPre(which, button, buttons, prevButtons);
 }
+void Control::OnJoystickAxisMotionPre(int which, int16_t axisX, int16_t axisY) {
+	JoystickAxisMotionEventArgs joy(which, axisX, axisY);
+	bool mustStop = OnJoystickAxisMotion(&joy);
+	if (mustStop)
+		return;
+
+	if (!m_focused)
+		Form::SetControlSelected(Form::GetControlSelected());
+
+	if (m_focused)
+		m_focused->OnJoystickAxisMotionPre(which, axisX, axisY);
+}
+
+
 
 void Control::OnKeyPressPre(Keys::Enum key) {
 	bool mustStop = OnKeyPress(key);
@@ -694,6 +709,10 @@ bool Control::OnJoystickButtonDown(JoystickButtonEventArgs* e) {
 }
 
 bool Control::OnJoystickButtonUp(JoystickButtonEventArgs* e) {
+	return false;
+}
+
+bool Control::OnJoystickAxisMotion(JoystickAxisMotionEventArgs* e) {
 	return false;
 }
 

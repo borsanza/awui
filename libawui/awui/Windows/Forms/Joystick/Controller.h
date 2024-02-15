@@ -20,6 +20,8 @@ namespace awui {
 				SDL_JoystickID m_which;
 				uint32_t m_buttons;
 				uint32_t m_prevButtons;
+				int16_t m_axisX;
+				int16_t m_axisY;
 				
 				Controller(SDL_GameController * controller);
 				virtual ~Controller();
@@ -30,6 +32,8 @@ namespace awui {
 				int GetOrder() const { return m_positionOrder; }
 				uint32_t GetButtons() const { return m_buttons; }
 				uint32_t GetPrevButtons() const { return m_prevButtons; }
+				int16_t GetAxisX() const { return m_axisX; }
+				int16_t GetAxisY() const { return m_axisY; }
 
 				static Controller * AddOnce(SDL_GameController * controller);
 				static Controller * GetByWhich(SDL_JoystickID which);
@@ -38,6 +42,7 @@ namespace awui {
 
 				void OnButtonDown(uint32_t button);
 				void OnButtonUp(uint32_t button);
+				void OnAxisMotion(uint8_t axis, int16_t value);
 		};
 	}
 }

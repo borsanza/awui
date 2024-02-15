@@ -115,3 +115,11 @@ void Controller::OnButtonUp(uint32_t button) {
 	}
 	// printf("OnButtonUp: %X\n", m_buttons);
 }
+
+void Controller::OnAxisMotion(uint8_t axis, int16_t value) {
+	if ((axis % 2) == 0) {
+		m_axisX = value;
+	} else {
+		m_axisY = value;
+	}
+}

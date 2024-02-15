@@ -12,11 +12,11 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 
 ArcadeContainer::ArcadeContainer() {
-	this->SetBackColor(Color::FromArgb(0, 0, 0));
-	this->SetTabStop(false);
-	this->SetDrawShadow(false);
-	this->SetPreventChangeControl(true);
-	this->_station = NULL;
+	SetBackColor(Color::FromArgb(0, 0, 0));
+	SetTabStop(false);
+	SetDrawShadow(false);
+	SetPreventChangeControl(true);
+	m_station = NULL;
 }
 
 ArcadeContainer::~ArcadeContainer() {
@@ -31,12 +31,12 @@ bool ArcadeContainer::IsClass(Classes objectClass) const {
 }
 
 void ArcadeContainer::SetStationUI(StationUI * station) {
-	this->_station = station;
+	m_station = station;
 }
 
 bool ArcadeContainer::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	if (button & RemoteButtons::Menu)
-		this->_station->ExitingArcade();
+		m_station->ExitingArcade();
 
 	return Button::OnRemoteKeyUp(which, button);
 }

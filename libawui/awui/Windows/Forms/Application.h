@@ -2,24 +2,20 @@
 
 #include <awui/Object.h>
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			class Form;
+namespace awui::Windows::Forms {
+	class Form;
 
-			class Application : public Object {
-				static int quit;
+	class Application : public Object {
+		static int quit;
 
-				private:
-					static void ProcessEvents(Form * form);
+		private:
+			static void ProcessEvents(Form * form);
 
-				public:
-					static void Run(Form * form);
+		public:
+			static void Run(Form * form);
 
-					virtual bool IsClass(Classes objectClass) const override;
+			virtual bool IsClass(Classes objectClass) const override;
 
-					static void Quit();
-			};
-		}
-	}
+			static void Quit();
+	};
 }

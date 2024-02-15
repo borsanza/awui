@@ -83,9 +83,23 @@ void Application::ProcessEvents(Form * form) {
 			switch(event.type) {
 				case SDL_JOYDEVICEADDED:
 				case SDL_JOYDEVICEREMOVED:
+					ret = true;
+					break;
+				case SDL_CONTROLLERDEVICEADDED:
+				case SDL_CONTROLLERDEVICEREMOVED:
 					Joystick::Controller::Refresh();
 					ret = true;
 					break;
+				case SDL_CONTROLLERAXISMOTION: {
+					// Console::WriteLine(String("SDL_CONTROLLERAXISMOTION [") + Convert::ToString((int)event.caxis.axis) + " - " + Convert::ToString((int)event.caxis.value) + "]");
+					Joystick::Controller * controller = Joystick::Controller::GetByWhich(event.cbutton.which);
+					if (controller) {
+						controller->OnAxisMotion(event.caxis.axis, event.caxis.value);
+						formW->OnJoystickAxisMotionPre(controller->GetOrder(), controller->GetAxisX(), controller->GetAxisY());
+						ret = true;
+					}
+					break;
+				}
 				case SDL_CONTROLLERBUTTONDOWN: {
 					Joystick::Controller * controller = Joystick::Controller::GetByWhich(event.cbutton.which);
 					if (controller) {
@@ -104,6 +118,17 @@ void Application::ProcessEvents(Form * form) {
 					}
 					break;
 				}
+				// TODO: Mostrar la bateria del Joystick
+				case SDL_JOYBATTERYUPDATED:
+					ret = true;
+					break;
+				// Ya las he implementado como Controllers
+				case SDL_JOYHATMOTION:
+				case SDL_JOYAXISMOTION:
+				case SDL_JOYBUTTONDOWN:
+				case SDL_JOYBUTTONUP:
+					ret = true;
+					break;
 			}
 		}
 
@@ -149,7 +174,7 @@ void Application::ProcessEvents(Form * form) {
 				break;
 
 			default:
-				// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
+				Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
 				break;
 		}
 	}

@@ -4,46 +4,43 @@
 
 using namespace awui::Windows::Forms;
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			namespace Station {
-				class StationUI;
-			}
-		}
+namespace awui::Windows {
+	namespace Forms::Station {
+		class StationUI;
+	}
 
-		using namespace awui::Windows::Forms::Station;
+	using namespace awui::Windows::Forms::Station;
 
-		namespace Emulators {
-			struct Types {
-				enum Enum {
-					Undefined = 0,
-					Chip8,
-					MasterSystem,
-					GameGear,
-					Spectrum,
-				};
+	namespace Emulators {
+		struct Types {
+			enum Enum {
+				Undefined = 0,
+				Chip8,
+				MasterSystem,
+				GameGear,
+				Spectrum,
 			};
+		};
 
-			class DebuggerSMS;
-			class ArcadeContainer : public Button {
-				protected:
-					StationUI * _station;
+		class DebuggerSMS;
 
-				public:
-					ArcadeContainer();
-					virtual ~ArcadeContainer();
+		class ArcadeContainer : public Button {
+			protected:
+				StationUI * m_station;
 
-					virtual bool IsClass(Classes objectClass) const override;
+			public:
+				ArcadeContainer();
+				virtual ~ArcadeContainer();
 
-					virtual void SetSoundEnabled(bool mode) {}
-					virtual void SetDebugger(DebuggerSMS * debugger) {};
-					virtual int GetType() const = 0;
+				virtual bool IsClass(Classes objectClass) const override;
 
-					void SetStationUI(StationUI * station);
+				virtual void SetSoundEnabled(bool mode) {}
+				virtual void SetDebugger(DebuggerSMS * debugger) {};
+				virtual int GetType() const = 0;
 
-					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
-			};
-		}
+				void SetStationUI(StationUI * station);
+
+				virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+		};
 	}
 }

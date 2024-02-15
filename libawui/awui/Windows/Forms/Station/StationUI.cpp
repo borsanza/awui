@@ -6,15 +6,16 @@
 
  #include "StationUI.h"
 
+#include <awui/Collections/SortedList.h>
 #include <awui/Math.h>
+#include <awui/Windows/Emulators/ArcadeContainer.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
-#include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/ImageFader.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
+#include <awui/Windows/Forms/Station/MenuButton.h>
 #include <awui/Windows/Forms/Station/SettingsWidget.h>
-#include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -24,80 +25,79 @@
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
-using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
 
 StationUI::StationUI() {
-	this->_actual = 0;
-	this->_fade.SetStationUI(this);
-	this->_arcade = NULL;
-	this->_root = NULL;
+	m_actual = 0;
+	m_fade.SetStationUI(this);
+	m_arcade = NULL;
+	m_root = NULL;
 
-	this->_backgroundFader = new ImageFader();
-	this->_backgroundFader->SetTabStop(false);
-	this->_backgroundFader->SetDock(DockStyle::Fill);
-	this->_backgroundFader->SetColor(ColorF::FromArgb(0.25f, 1.0f, 1.0f, 1.0f));
+	m_backgroundFader = new ImageFader();
+	m_backgroundFader->SetTabStop(false);
+	m_backgroundFader->SetDock(DockStyle::Fill);
+	m_backgroundFader->SetColor(ColorF::FromArgb(0.25f, 1.0f, 1.0f, 1.0f));
 
-	this->GetControls()->Add(this->_backgroundFader);
+	GetControls()->Add(m_backgroundFader);
 
-	this->SetTabStop(false);
+	SetTabStop(false);
 
 	Font font = Font("Liberation Sans", 38, FontStyle::Bold);
 	Font font2 = Font("Liberation Sans", 22, FontStyle::Bold);
 	Font fontClock = Font("Liberation Sans", 26, FontStyle::Bold);
-	this->_title = new Label();
-	this->_title->SetText("StationTV");
-	this->_title->SetTextAlign(ContentAlignment::BottomCenter);
-	this->_title->SetFont(font);
-	this->_title->SetDock(DockStyle::None);
+	m_title = new Label();
+	m_title->SetText("StationTV");
+	m_title->SetTextAlign(ContentAlignment::BottomCenter);
+	m_title->SetFont(font);
+	m_title->SetDock(DockStyle::None);
 
-	this->_browser = new Browser::Browser();
-	this->GetControls()->Add(this->_title);
-	this->GetControls()->Add(this->_browser);
+	m_browser = new Browser::Browser();
+	GetControls()->Add(m_title);
+	GetControls()->Add(m_browser);
 
-	this->_settings = new SettingsWidget();
-	this->_settings->SetDock(DockStyle::None);
-	this->_settings->SetFont(font2);
-	this->_settings->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	this->_settings->SetSize(44, 46);
-	this->GetControls()->Add(this->_settings);
+	m_settings = new SettingsWidget();
+	m_settings->SetDock(DockStyle::None);
+	m_settings->SetFont(font2);
+	m_settings->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	m_settings->SetSize(44, 46);
+	GetControls()->Add(m_settings);
 
-	this->_clock = new Label();
-	this->_clock->SetDock(DockStyle::None);
-	this->_clock->SetFont(fontClock);
-	this->_clock->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	this->_clock->SetForeColor(Color::FromArgb(151, 151, 151));
-	this->_clock->SetTextAlign(ContentAlignment::TopCenter);
-	this->_clock->SetText("11:59");
-	this->GetControls()->Add(this->_clock);
+	m_clock = new Label();
+	m_clock->SetDock(DockStyle::None);
+	m_clock->SetFont(fontClock);
+	m_clock->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	m_clock->SetForeColor(Color::FromArgb(151, 151, 151));
+	m_clock->SetTextAlign(ContentAlignment::TopCenter);
+	m_clock->SetText("11:59");
+	GetControls()->Add(m_clock);
 }
 
 StationUI::~StationUI() {
 	// printf("~StationUI\n");
-	if (this->_root)
-		delete this->_root;
+	if (m_root)
+		delete m_root;
 }
 
 void StationUI::SetPath(const String path) {
-	this->_path = path;
+	m_path = path;
 }
 
 void StationUI::Clear() {
-	if (this->_root) {
-		delete this->_root;
-		this->_root = 0;
+	if (m_root) {
+		delete m_root;
+		m_root = 0;
 	}
 }
 
 void StationUI::SetBackground(Bitmap * background) {
-	this->_backgroundFader->SetImage(background);
+	m_backgroundFader->SetImage(background);
 }
 
 void StationUI::RecursiveSearch(NodeFile * parent) {
 	DIR *d;
 	struct dirent *dir;
-	d = opendir(parent->_path.ToCharArray());
+	d = opendir(parent->m_path.ToCharArray());
 	if (d) {
 		while ((dir = readdir(d)) != NULL) {
 			if (strcmp(dir->d_name, ".") == 0)
@@ -107,71 +107,71 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 
 			NodeFile * child = new NodeFile();
 
-			String newFile = parent->_path;
+			String newFile = parent->m_path;
 
-			if (!parent->_path.EndsWith("/"))
+			if (!parent->m_path.EndsWith("/"))
 				newFile += "/";
 
 			newFile += dir->d_name;
-			child->_name = dir->d_name;
-			child->_background = NULL;
+			child->m_name = dir->d_name;
+			child->m_background = NULL;
 
-			child->_button = new MenuButton(this);
-			child->_button->SetNodeFile(child);
-			String name = child->_name;
+			child->m_button = new MenuButton(this);
+			child->m_button->SetNodeFile(child);
+			String name = child->m_name;
 			name = name.Substring(0, name.LastIndexOf("."));
-			child->_button->SetText(name);
+			child->m_button->SetText(name);
 
-			if (parent->_emulator == Types::Undefined) {
-				if (child->_name == "chip8") {
-					child->_emulator = Types::Chip8;
-					child->_button->SetText("CHIP-8");
-					child->_background = new Bitmap("./images/chip8.jpg");
-					child->_background->SetStretchMode(StretchMode::AspectFill);
+			if (parent->m_emulator == Types::Undefined) {
+				if (child->m_name == "chip8") {
+					child->m_emulator = Types::Chip8;
+					child->m_button->SetText("CHIP-8");
+					child->m_background = new Bitmap("./images/chip8.jpg");
+					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
-				if (child->_name == "gamegear") {
-					child->_emulator = Types::GameGear;
-					child->_button->SetText("Game Gear");
-					child->_background = new Bitmap("./images/gamegear.jpg");
-					child->_background->SetStretchMode(StretchMode::AspectFill);
+				if (child->m_name == "gamegear") {
+					child->m_emulator = Types::GameGear;
+					child->m_button->SetText("Game Gear");
+					child->m_background = new Bitmap("./images/gamegear.jpg");
+					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
-				if (child->_name == "mastersystem") {
-					child->_emulator = Types::MasterSystem;
-					child->_button->SetText("Master System");
-					child->_background = new Bitmap("./images/mastersystem.jpg");
-					child->_background->SetStretchMode(StretchMode::AspectFill);
+				if (child->m_name == "mastersystem") {
+					child->m_emulator = Types::MasterSystem;
+					child->m_button->SetText("Master System");
+					child->m_background = new Bitmap("./images/mastersystem.jpg");
+					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
-				if (child->_name == "zxspectrum") {
-					child->_emulator = Types::Spectrum;
-					child->_button->SetText("ZX Spectrum");
-					child->_background = new Bitmap("./images/zxspectrum.jpg");
-					child->_background->SetStretchMode(StretchMode::AspectFill);
+				if (child->m_name == "zxspectrum") {
+					child->m_emulator = Types::Spectrum;
+					child->m_button->SetText("ZX Spectrum");
+					child->m_background = new Bitmap("./images/zxspectrum.jpg");
+					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 			} else {
-				child->_emulator = parent->_emulator;
+				child->m_emulator = parent->m_emulator;
 			}
 
-			if (!parent->_childList)
-				parent->_childList = new SortedList();
+			if (!parent->m_childList)
+				parent->m_childList = new SortedList();
 
-			child->_path = newFile;
-			child->_parent = parent;
+			child->m_path = newFile;
+			child->m_parent = parent;
 
 			bool isDir = false;
 			struct stat statbuf;
 			if (stat(newFile.ToCharArray(), &statbuf) != -1)
 				isDir = S_ISDIR(statbuf.st_mode);
 
-			child->_directory = isDir;
+			child->m_directory = isDir;
 
-			child->_key = String::Concat((child->_directory? "1" : "2") , child->_name);
-			parent->_childList->Add(&child->_key, child);
+			child->m_key = String::Concat((child->m_directory? "1" : "2") , child->m_name);
+			parent->m_childList->Add(&child->m_key, child);
 
-			if (child->_directory)
-				this->RecursiveSearch(child);
+			if (child->m_directory)
+				RecursiveSearch(child);
 		}
 
 		closedir(d);
@@ -181,36 +181,36 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 bool StationUI::Minimize(NodeFile * parent) {
 	int r = false;
 
-	if (parent->_childList) {
-		for (int i = parent->_childList->GetCount() - 1; i >= 0; i--) {
-			NodeFile * child = (NodeFile *)parent->_childList->GetByIndex(i);
+	if (parent->m_childList) {
+		for (int i = parent->m_childList->GetCount() - 1; i >= 0; i--) {
+			NodeFile * child = (NodeFile *)parent->m_childList->GetByIndex(i);
 
-			if (child->_directory) {
+			if (child->m_directory) {
 				r |= Minimize(child);
 
-				if (child->_childList && child->_childList->GetCount() > 0)
+				if (child->m_childList && child->m_childList->GetCount() > 0)
 					continue;
 			} else {
-				switch (child->_emulator) {
+				switch (child->m_emulator) {
 					case Types::Chip8:
-						if (child->_path.EndsWith("ch8")) continue;
-						if (child->_path.EndsWith("c8x")) continue;
+						if (child->m_path.EndsWith("ch8")) continue;
+						if (child->m_path.EndsWith("c8x")) continue;
 						break;
 					case Types::GameGear:
 					case Types::MasterSystem:
-						if (child->_path.EndsWith("sms")) continue;
-						if (child->_path.EndsWith("sg")) continue;
-						if (child->_path.EndsWith("gg")) continue;
+						if (child->m_path.EndsWith("sms")) continue;
+						if (child->m_path.EndsWith("sg")) continue;
+						if (child->m_path.EndsWith("gg")) continue;
 						break;
 					case Types::Spectrum:
-						if (child->_path.EndsWith("rom")) continue;
-						if (child->_path.EndsWith("tap")) continue;
+						if (child->m_path.EndsWith("rom")) continue;
+						if (child->m_path.EndsWith("tap")) continue;
 						break;
 				}
 			}
 
 			delete child;
-			parent->_childList->RemoveAt(i);
+			parent->m_childList->RemoveAt(i);
 			r = true;
 		}
 	}
@@ -219,54 +219,54 @@ bool StationUI::Minimize(NodeFile * parent) {
 }
 
 void StationUI::Refresh() {
-	this->Clear();
-	this->_root = new NodeFile();
-	this->_actual = this->_root;
-	this->_root->_path = this->_path;
-	this->_root->_emulator = Types::Undefined;
-	this->RecursiveSearch(this->_root);
-	while (this->Minimize(this->_root));
+	Clear();
+	m_root = new NodeFile();
+	m_actual = m_root;
+	m_root->m_path = m_path;
+	m_root->m_emulator = Types::Undefined;
+	RecursiveSearch(m_root);
+	while (Minimize(m_root));
 
-	if (!this->_root->_childList) {
-		this->_root->_childList = new SortedList();
+	if (!m_root->m_childList) {
+		m_root->m_childList = new SortedList();
 		NodeFile * child = new NodeFile();
-		child->_name = "No hay roms";
-		child->_directory = false;
-		child->_button = new MenuButton(this);
-		child->_button->SetNodeFile(child);
-		child->_button->SetText(child->_name);
-		this->_root->_childList->Add(&child->_name, child);
+		child->m_name = "No hay roms";
+		child->m_directory = false;
+		child->m_button = new MenuButton(this);
+		child->m_button->SetNodeFile(child);
+		child->m_button->SetText(child->m_name);
+		m_root->m_childList->Add(&child->m_name, child);
 	}
 
-	this->RefreshList();
+	RefreshList();
 }
 
 void StationUI::RefreshList() {
-	if (this->_actual->_page == NULL) {
+	if (m_actual->m_page == NULL) {
 		int y = 25;
-		this->_actual->_page = new Page();
-		for (int i = 0; i < this->_actual->_childList->GetCount(); i++) {
-			NodeFile * child = (NodeFile *)this->_actual->_childList->GetByIndex(i);
-			child->_button->SetHeight(MENUBUTTONHEIGHT);
-			child->_button->SetLocation(40, y);
+		m_actual->m_page = new Page();
+		for (int i = 0; i < m_actual->m_childList->GetCount(); i++) {
+			NodeFile * child = (NodeFile *)m_actual->m_childList->GetByIndex(i);
+			child->m_button->SetHeight(MENUBUTTONHEIGHT);
+			child->m_button->SetLocation(40, y);
 			y += MENUBUTTONHEIGHT;
-			this->_actual->_page->GetControls()->Add(child->_button);
+			m_actual->m_page->GetControls()->Add(child->m_button);
 			if (i == 0)
-				child->_button->SetFocus();
+				child->m_button->SetFocus();
 		}
 
-		this->_actual->_page->SetHeight(y + 25);
+		m_actual->m_page->SetHeight(y + 25);
 	}
 
-	this->_browser->SetPage(this->_actual->_page);
+	m_browser->SetPage(m_actual->m_page);
 }
 
 void StationUI::OnTick() {
 	static Control * lastFocused = NULL;
-	Control * c = this->_actual->_page->GetFocused();
+	Control * c = m_actual->m_page->GetFocused();
 	if (lastFocused != c) {
 		lastFocused = c;
-		this->CheckArcade();
+		CheckArcade();
 	}
 
 	time_t t;
@@ -277,132 +277,132 @@ void StationUI::OnTick() {
 	strftime(hora, sizeof(hora), "%H:%M", tm);
 	String horaS(hora);
 
-	if (this->_clock->GetText().CompareTo(horaS) != 0)
-		this->_clock->SetText(horaS);
+	if (m_clock->GetText().CompareTo(horaS) != 0)
+		m_clock->SetText(horaS);
 
-	this->_settings->SetLocation(this->GetWidth() - 150, 8);
+	m_settings->SetLocation(GetWidth() - 150, 8);
 
-	this->_clock->SetLocation(this->GetWidth() - 80, 16);
-	this->_clock->SetSize(this->_clock->GetLabelWidth(), 45);
+	m_clock->SetLocation(GetWidth() - 80, 16);
+	m_clock->SetSize(m_clock->GetLabelWidth(), 45);
 	
-	this->_title->SetLocation(this->GetWidth() >> 1, 0);
-	this->_title->SetSize(this->GetWidth() >> 1, 69);
-	this->_browser->SetLocation(this->GetWidth() >> 1, 69);
-	this->_browser->SetSize(this->GetWidth() >> 1, this->GetHeight() - (69 + 25));
-	this->_actual->_page->SetWidth(this->_browser->GetWidth());
+	m_title->SetLocation(GetWidth() >> 1, 0);
+	m_title->SetSize(GetWidth() >> 1, 69);
+	m_browser->SetLocation(GetWidth() >> 1, 69);
+	m_browser->SetSize(GetWidth() >> 1, GetHeight() - (69 + 25));
+	m_actual->m_page->SetWidth(m_browser->GetWidth());
 
-	for (int i = 0; i < this->_actual->_page->GetControls()->GetCount(); i++) {
-		Control * child = (Control *)this->_actual->_page->GetControls()->Get(i);
-		child->SetWidth(this->_browser->GetWidth() - 100);
+	for (int i = 0; i < m_actual->m_page->GetControls()->GetCount(); i++) {
+		Control * child = (Control *)m_actual->m_page->GetControls()->Get(i);
+		child->SetWidth(m_browser->GetWidth() - 100);
 	}
 
-	this->_fade.SetBounds(0, 0, this->GetWidth(), this->GetHeight());
+	m_fade.SetBounds(0, 0, GetWidth(), GetHeight());
 
-	if (this->_arcade) {
-		if (this->_fade.IsFullScreen()) {
-			this->_arcade->SetBounds(0, 0, this->GetWidth(), this->GetHeight());
+	if (m_arcade) {
+		if (m_fade.IsFullScreen()) {
+			m_arcade->SetBounds(0, 0, GetWidth(), GetHeight());
 		} else {
-			this->_arcade->SetLocation(BORDERMARGIN, this->_browser->GetTop());
-			this->_arcade->SetSize((this->GetWidth() >> 1) - BORDERMARGIN, this->_browser->GetHeight());
+			m_arcade->SetLocation(BORDERMARGIN, m_browser->GetTop());
+			m_arcade->SetSize((GetWidth() >> 1) - BORDERMARGIN, m_browser->GetHeight());
 		}
 	}
 }
 
 void StationUI::SelectChild(NodeFile * node) {
-	if (node->_directory) {
-		this->_actual = node;
-		this->RefreshList();
-		this->_actual->_page->GetFocused()->SetFocus(true);
-		this->UpdateTitle();
+	if (node->m_directory) {
+		m_actual = node;
+		RefreshList();
+		m_actual->m_page->GetFocused()->SetFocus(true);
+		UpdateTitle();
 	} else {
-		if (node->_emulator != Types::Undefined) {
-			if (!this->_fade.IsStopped())
+		if (node->m_emulator != Types::Undefined) {
+			if (!m_fade.IsStopped())
 				return;
-			if (this->GetControls()->IndexOf(&this->_fade) == -1)
-				this->GetControls()->Add(&this->_fade);
+			if (GetControls()->IndexOf(&m_fade) == -1)
+				GetControls()->Add(&m_fade);
 
-			this->GetControls()->MoveToEnd(&this->_fade);
-			this->_arcade->SetTabStop(true);
-			this->_arcade->SetFocus();
-			this->_fade.ShowFade();
+			GetControls()->MoveToEnd(&m_fade);
+			m_arcade->SetTabStop(true);
+			m_arcade->SetFocus();
+			m_fade.ShowFade();
 		}
 	}
 }
 
 void StationUI::SelectParent() {
-	if (this->_actual != NULL) {
-		if (this->_actual->_parent != NULL) {
-			this->_actual = this->_actual->_parent;
-			this->_browser->SetPage(this->_actual->_page);
-			this->_actual->_page->GetFocused()->SetFocus(true);
-			this->UpdateTitle();
+	if (m_actual != NULL) {
+		if (m_actual->m_parent != NULL) {
+			m_actual = m_actual->m_parent;
+			m_browser->SetPage(m_actual->m_page);
+			m_actual->m_page->GetFocused()->SetFocus(true);
+			UpdateTitle();
 		}
 	}
 }
 
 void StationUI::UpdateTitle() {
-	if (this->_actual == this->_root)
-		this->_title->SetText("StationTV");
+	if (m_actual == m_root)
+		m_title->SetText("StationTV");
 	else
-		this->_title->SetText(this->_actual->_button->GetText());
+		m_title->SetText(m_actual->m_button->GetText());
 }
 
 void StationUI::CheckArcade() {
-	MenuButton * c = (MenuButton *) this->_actual->_page->GetFocused();
+	MenuButton * c = (MenuButton *) m_actual->m_page->GetFocused();
 	if (c)
 		c->CheckArcade();
 }
 
 void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
-	if (this->_arcade == arcade)
+	if (m_arcade == arcade)
 		return;
 
-	this->GetControls()->Replace(this->_arcade, arcade);
+	GetControls()->Replace(m_arcade, arcade);
 
-	if (this->_arcade) {
-		this->_arcade->SetSoundEnabled(false);
-		this->_arcade = NULL;
+	if (m_arcade) {
+		m_arcade->SetSoundEnabled(false);
+		m_arcade = NULL;
 	}
 
 	if (arcade) {
-		this->_arcade = arcade;
-		this->_arcade->SetSoundEnabled(true);
+		m_arcade = arcade;
+		m_arcade->SetSoundEnabled(true);
 	}
 }
 
 void StationUI::SetArcadeFullScreen() {
-	this->GetControls()->Remove(&this->_fade);
-	this->_title->SetVisible(false);
-	this->_browser->SetVisible(false);
+	GetControls()->Remove(&m_fade);
+	m_title->SetVisible(false);
+	m_browser->SetVisible(false);
 }
 
 void StationUI::ExitingArcade() {
-	if (!this->_fade.IsStopped())
+	if (!m_fade.IsStopped())
 		return;
 
-	this->_title->SetVisible(true);
-	this->_browser->SetVisible(true);
-	this->_fade.HideFade();
-	this->GetControls()->Add(&this->_fade);
-	this->_arcade->SetTabStop(false);
-	Control * c = this->_actual->_page->GetFocused();
+	m_title->SetVisible(true);
+	m_browser->SetVisible(true);
+	m_fade.HideFade();
+	GetControls()->Add(&m_fade);
+	m_arcade->SetTabStop(false);
+	Control * c = m_actual->m_page->GetFocused();
 	c->SetFocus(true);
 }
 
 void StationUI::ExitArcade() {
-	this->GetControls()->Remove(&this->_fade);
+	GetControls()->Remove(&m_fade);
 }
 
 bool StationUI::OnKeyPress(Keys::Enum key) {
-	if (this->_arcade && (this->_arcade->GetType() == Types::Chip8))
-		return this->_arcade->OnKeyPress(key);
+	if (m_arcade && (m_arcade->GetType() == Types::Chip8))
+		return m_arcade->OnKeyPress(key);
 
 	return Control::OnKeyPress(key);
 }
 
 bool StationUI::OnKeyUp(Keys::Enum key) {
-	if (this->_arcade && (this->_arcade->GetType() == Types::Chip8))
-		return this->_arcade->OnKeyUp(key);
+	if (m_arcade && (m_arcade->GetType() == Types::Chip8))
+		return m_arcade->OnKeyUp(key);
 
 	return Control::OnKeyUp(key);
 }
@@ -410,66 +410,66 @@ bool StationUI::OnKeyUp(Keys::Enum key) {
 /********************************* FadePanel **********************************/
 
 FadePanel::FadePanel() {
-	this->_station = NULL;
-	this->_showing = false;
-	this->_status = 0.0f;
+	m_station = NULL;
+	m_showing = false;
+	m_status = 0.0f;
 }
 
 FadePanel::~FadePanel() {
 }
 
 void FadePanel::ShowFade() {
-	this->_showing = true;
+	m_showing = true;
 }
 
 void FadePanel::HideFade() {
-	this->_showing = false;
+	m_showing = false;
 }
 
 void FadePanel::OnTick() {
-	if (this->_showing) {
-		this->_status += 10;
-		if (Math::Round(this->_status) >= 200.0f) {
-			this->_status = 200.0f;
-			this->_station->SetArcadeFullScreen();
+	if (m_showing) {
+		m_status += 10;
+		if (Math::Round(m_status) >= 200.0f) {
+			m_status = 200.0f;
+			m_station->SetArcadeFullScreen();
 		}
 	} else {
-		this->_status -= 10;
-		if (Math::Round(this->_status) <= 0.0f) {
-			this->_status = 0.0f;
-			this->_station->ExitArcade();
+		m_status -= 10;
+		if (Math::Round(m_status) <= 0.0f) {
+			m_status = 0.0f;
+			m_station->ExitArcade();
 		}
 	}
 
-	if (this->_status <= 100.0f)
-		this->SetBackColor(Color::FromArgb(this->_status * 2.55f, 0, 0, 0));
+	if (m_status <= 100.0f)
+		SetBackColor(Color::FromArgb(m_status * 2.55f, 0, 0, 0));
 	else
-		this->SetBackColor(Color::FromArgb((200.0f - this->_status) * 2.55f, 0, 0, 0));
+		SetBackColor(Color::FromArgb((200.0f - m_status) * 2.55f, 0, 0, 0));
 }
 
 /********************************** NodeFile **********************************/
 
 NodeFile::NodeFile() {
-	this->_parent = 0;
-	this->_childList = 0;
-	this->_directory = true;
-	this->_emulator = Types::Undefined;
-	this->_button = NULL;
-	this->_page = NULL;
-	this->_arcade = NULL;
+	m_parent = 0;
+	m_childList = 0;
+	m_directory = true;
+	m_emulator = Types::Undefined;
+	m_button = NULL;
+	m_page = NULL;
+	m_arcade = NULL;
 }
 
 NodeFile::~NodeFile() {
-	// printf("%d) ~NodeFile:  %s\n", this->_emulator, this->_path.ToCharArray());
-	if (this->_childList) {
-		for (int i = 0; i < this->_childList->GetCount(); i++) {
-			NodeFile * object = (NodeFile *)this->_childList->GetByIndex(i);
+	// printf("%d) ~NodeFile:  %s\n", _emulator, _path.ToCharArray());
+	if (m_childList) {
+		for (int i = 0; i < m_childList->GetCount(); i++) {
+			NodeFile * object = (NodeFile *)m_childList->GetByIndex(i);
 			delete object;
 		}
 
-		delete this->_childList;
+		delete m_childList;
 	}
 
-	if (this->_button)
-		delete this->_button;
+	if (m_button)
+		delete m_button;
 }

@@ -10,6 +10,7 @@
 #include <awui/Windows/Forms/Station/StationUI.h>
 
 using namespace awui::Drawing;
+using namespace awui::Windows::Forms;
 
 FormArcade::FormArcade() {
 	m_station = NULL;

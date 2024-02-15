@@ -15,16 +15,16 @@ using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 
-bool Chip8::_invertedColors = false;
+bool Chip8::m_invertedColors = false;
 
 Chip8::Chip8() {
-	this->_image = new Drawing::Image(64, 32);
-	this->_cpu = new CPU();
-	this->_lastInverted = Chip8::_invertedColors;
+	m_image = new Drawing::Image(64, 32);
+	m_cpu = new CPU();
+	m_lastInverted = Chip8::m_invertedColors;
 }
 
 Chip8::~Chip8() {
-	delete this->_cpu;
+	delete m_cpu;
 }
 
 bool Chip8::IsClass(Classes objectClass) const {
@@ -36,77 +36,77 @@ bool Chip8::IsClass(Classes objectClass) const {
 }
 
 void Chip8::CheckBackcolor() {
-	if (this->_cpu->GetChip8Mode() == MEGACHIP8)
-		this->SetBackColor(Color::FromArgb(0, 0, 0));
+	if (m_cpu->GetChip8Mode() == MEGACHIP8)
+		SetBackColor(Color::FromArgb(0, 0, 0));
 	else {
-		if (!Chip8::_invertedColors)
-			this->SetBackColor(Color::FromArgb(163, 218, 2));
+		if (!Chip8::m_invertedColors)
+			SetBackColor(Color::FromArgb(163, 218, 2));
 		else
-			this->SetBackColor(Color::FromArgb(0, 0, 0));
+			SetBackColor(Color::FromArgb(0, 0, 0));
 	}
 }
 
 void Chip8::LoadRom(const String file) {
-	this->_cpu->LoadRom(file);
-	this->SetName(file);
+	m_cpu->LoadRom(file);
+	SetName(file);
 
-	this->_cpu->OnTick();
-	this->CheckBackcolor();
+	m_cpu->OnTick();
+	CheckBackcolor();
 }
 
 void Chip8::OnTick() {
-	if (this->_lastInverted != Chip8::_invertedColors) {
-		this->UpdateImage();
-		this->_lastInverted = Chip8::_invertedColors;
+	if (m_lastInverted != Chip8::m_invertedColors) {
+		UpdateImage();
+		m_lastInverted = Chip8::m_invertedColors;
 	}
 
-	this->_cpu->OnTick();
+	m_cpu->OnTick();
 }
 
 void Chip8::UpdateImage() {
-	Screen * screen = this->_cpu->GetScreen();
+	Screen * screen = m_cpu->GetScreen();
 
-	this->CheckBackcolor();
+	CheckBackcolor();
 
-	if ((screen->GetWidth() != this->_image->GetWidth()) || (screen->GetHeight() != this->_image->GetHeight())) {
-		delete this->_image;
-		this->_image = new Drawing::Image(screen->GetWidth(), screen->GetHeight());
+	if ((screen->GetWidth() != m_image->GetWidth()) || (screen->GetHeight() != m_image->GetHeight())) {
+		delete m_image;
+		m_image = new Drawing::Image(screen->GetWidth(), screen->GetHeight());
 	}
 
-	if (this->_cpu->GetChip8Mode() == MEGACHIP8) {
+	if (m_cpu->GetChip8Mode() == MEGACHIP8) {
 		for (int y = 0; y < screen->GetHeight(); y++) {
 			for (int x = 0; x < screen->GetWidth(); x++) {
 				uint32_t pixel = screen->GetPixel(x, y);
-				this->_image->SetPixel(x, y, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF, 255);
+				m_image->SetPixel(x, y, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF, 255);
 			}
 		}
 	} else {
 		for (int y = 0; y < screen->GetHeight(); y++) {
 			for (int x = 0; x < screen->GetWidth(); x++) {
-				if (!Chip8::_invertedColors) {
+				if (!Chip8::m_invertedColors) {
 					if (screen->GetPixel(x, y))
-						this->_image->SetPixel(x, y, 50, 88, 4, 255);
+						m_image->SetPixel(x, y, 50, 88, 4, 255);
 					else
-						this->_image->SetPixel(x, y, 128, 185, 0, 255);
+						m_image->SetPixel(x, y, 128, 185, 0, 255);
 				} else {
 					if (screen->GetPixel(x, y))
-						this->_image->SetPixel(x, y, 255, 255, 255, 255);
+						m_image->SetPixel(x, y, 255, 255, 255, 255);
 					else
-						this->_image->SetPixel(x, y, 0, 0, 0, 255);
+						m_image->SetPixel(x, y, 0, 0, 0, 255);
 				}
 			}
 		}
 	}
 
-	this->_image->Update();
-	this->_cpu->SetImageUpdated(false);
+	m_image->Update();
+	m_cpu->SetImageUpdated(false);
 }
 
 void Chip8::OnPaint(GL* gl) {
-	Screen * screen = this->_cpu->GetScreen();
+	Screen * screen = m_cpu->GetScreen();
 
-	if (this->_cpu->GetImageUpdated())
-		this->UpdateImage();
+	if (m_cpu->GetImageUpdated())
+		UpdateImage();
 
 	int width = screen->GetWidth();
 	int height = screen->GetHeight();
@@ -115,12 +115,12 @@ void Chip8::OnPaint(GL* gl) {
 	float h = height;
 
 	float ratio = w / h;
-	w = this->GetWidth();
-	h = this->GetWidth() / ratio;
+	w = GetWidth();
+	h = GetWidth() / ratio;
 
-	if (h > this->GetHeight()) {
-		h = this->GetHeight();
-		w = this->GetHeight() * ratio;
+	if (h > GetHeight()) {
+		h = GetHeight();
+		w = GetHeight() * ratio;
 	}
 
 	int ratio2 = w / width;
@@ -129,11 +129,11 @@ void Chip8::OnPaint(GL* gl) {
 		h = height * ratio2;
 	}
 
-	GL::DrawImageGL(this->_image, int(this->GetWidth() - w) >> 1, int(this->GetHeight() - h) >> 1, w, h);
+	GL::DrawImageGL(m_image, int(GetWidth() - w) >> 1, int(GetHeight() - h) >> 1, w, h);
 }
 
-int Chip8::GetChip8Mode() {
-	return this->_cpu->GetChip8Mode();
+int Chip8::GetChip8Mode() const {
+	return m_cpu->GetChip8Mode();
 }
 
 int Chip8::ConvertKeyAwToChip8(Keys::Enum key) {
@@ -254,34 +254,34 @@ int Chip8::ConvertRemoteKeyToChip8(RemoteButtons::Enum button) {
 }
 
 bool Chip8::OnKeyPress(Keys::Enum key) {
-	int keypressed = this->ConvertKeyAwToChip8(key);
+	int keypressed = ConvertKeyAwToChip8(key);
 	if (keypressed >= 0)
-		this->_cpu->KeyDown(keypressed);
+		m_cpu->KeyDown(keypressed);
 
 	if (key == Keys::Key_I)
-		this->SetInvertedColors(!Chip8::_invertedColors);
+		SetInvertedColors(!Chip8::m_invertedColors);
 
 	return true;
 }
 
 bool Chip8::OnKeyUp(Keys::Enum key) {
-	int keypressed = this->ConvertKeyAwToChip8(key);
+	int keypressed = ConvertKeyAwToChip8(key);
 	if (keypressed >= 0)
-		this->_cpu->KeyUp(keypressed);
+		m_cpu->KeyUp(keypressed);
 
 	return true;
 }
 
 void Chip8::SetInvertedColors(bool mode) {
-	Chip8::_invertedColors = mode;
-	this->UpdateImage();
+	Chip8::m_invertedColors = mode;
+	UpdateImage();
 }
 
 
 bool Chip8::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
-	int keypressed = this->ConvertRemoteKeyToChip8(button);
+	int keypressed = ConvertRemoteKeyToChip8(button);
 	if (keypressed >= 0) {
-		this->_cpu->KeyDown(keypressed);
+		m_cpu->KeyDown(keypressed);
 		return true;
 	}
 
@@ -289,9 +289,9 @@ bool Chip8::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 }
 
 bool Chip8::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	int keypressed = this->ConvertRemoteKeyToChip8(button);
+	int keypressed = ConvertRemoteKeyToChip8(button);
 	if (keypressed >= 0) {
-		this->_cpu->KeyUp(keypressed);
+		m_cpu->KeyUp(keypressed);
 		return true;
 	}
 

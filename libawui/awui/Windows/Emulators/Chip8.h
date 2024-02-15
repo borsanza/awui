@@ -3,49 +3,45 @@
 #include "ArcadeContainer.h"
 
 namespace awui {
-	namespace Emulation {
-		namespace Chip8 {
-			class CPU;
-		}
+	namespace Emulation::Chip8 {
+		class CPU;
 	}
 
 	using namespace awui::Emulation::Chip8;
 
-	namespace Windows {
-		namespace Emulators {
-			class Chip8 : public ArcadeContainer {
-				private:
-					static bool _invertedColors;
-					bool _lastInverted;
+	namespace Windows::Emulators {
+		class Chip8 : public ArcadeContainer {
+			private:
+				static bool m_invertedColors;
+				bool m_lastInverted;
 
-					CPU * _cpu;
-					Drawing::Image * _image;
+				CPU * m_cpu;
+				Drawing::Image * m_image;
 
-					int ConvertKeyAwToChip8(Keys::Enum key);
-					int ConvertRemoteKeyToChip8(RemoteButtons::Enum button);
-					void CheckBackcolor();
-					void UpdateImage();
+				int ConvertKeyAwToChip8(Keys::Enum key);
+				int ConvertRemoteKeyToChip8(RemoteButtons::Enum button);
+				void CheckBackcolor();
+				void UpdateImage();
 
-				public:
-					Chip8();
-					virtual ~Chip8();
+			public:
+				Chip8();
+				virtual ~Chip8();
 
-					virtual bool IsClass(Classes objectClass) const override;
+				virtual bool IsClass(Classes objectClass) const override;
 
-					virtual int GetType() const { return Types::Chip8;}
+				virtual int GetType() const { return Types::Chip8;}
 
-					void LoadRom(const String file);
+				void LoadRom(const String file);
 
-					virtual void OnTick();
-					virtual void OnPaint(OpenGL::GL* gl);
-					int GetChip8Mode();
-					void SetInvertedColors(bool mode);
+				virtual void OnTick();
+				virtual void OnPaint(OpenGL::GL* gl);
+				int GetChip8Mode() const;
+				void SetInvertedColors(bool mode);
 
-					virtual bool OnKeyPress(Keys::Enum key);
-					virtual bool OnKeyUp(Keys::Enum key);
-					bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-					bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
-			};
-		}
+				virtual bool OnKeyPress(Keys::Enum key);
+				virtual bool OnKeyUp(Keys::Enum key);
+				bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
+				bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+		};
 	}
 }

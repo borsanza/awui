@@ -6,28 +6,32 @@
 
 #include "MasterSystem.h"
 
-#include <awui/Drawing/Image.h>
 #include <awui/DateTime.h>
+#include <awui/Drawing/Image.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
-#include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/Emulation/MasterSystem/SoundSDL.h>
-#include <awui/Windows/Forms/Form.h>
+#include <awui/Emulation/MasterSystem/VDP.h>
+#include <awui/OpenGL/GL.h>
+#include <awui/Windows/Forms/JoystickAxisMotionEventArgs.h>
 #include <awui/Windows/Forms/JoystickButtons.h>
 #include <awui/Windows/Forms/JoystickButtonEventArgs.h>
-#include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
 
-using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;
+
+const int DEADZONE = 8192;
 
 MasterSystem::MasterSystem() {
 	m_keys1 = 0xFF;
 	m_keys2 = 0xFF;
 	m_joys1 = 0xFF;
 	m_joys2 = 0xFF;
+	m_axis1 = 0xFF;
+	m_axis2 = 0xFF;
 	m_pause = false;
+	m_invertButtons = false;
 
 	SetSize(1, 1);
 	m_image = new Drawing::Image(1, 1);
@@ -442,10 +446,10 @@ bool MasterSystem::RefreshButtons(JoystickButtonEventArgs* e) {
 							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_DOWN)?  0x02 : 0) |
 							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_RIGHT)? 0x08 : 0) |
 							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_LEFT)?  0x04 : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_Y)?          0x10 : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_A)?          0x10 : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_B)?          0x20 : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_X)?          0x20 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_Y)?          (m_invertButtons ? 0x20 : 0x10) : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_A)?          (m_invertButtons ? 0x20 : 0x10) : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_B)?          (m_invertButtons ? 0x10 : 0x20) : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_X)?          (m_invertButtons ? 0x10 : 0x20) : 0) |
 							((buttons & JoystickButtons::JOYSTICK_BUTTON_START)?      0x40 : 0);
 
 	switch (e->GetWhich()) {
@@ -483,6 +487,10 @@ bool MasterSystem::OnJoystickButtonDown(JoystickButtonEventArgs* e) {
 		return true;
 	}
 
+	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_BACK) {
+		m_invertButtons = !m_invertButtons;
+		return true;
+	}
 
 	return RefreshButtons(e);
 }
@@ -494,6 +502,33 @@ bool MasterSystem::OnJoystickButtonUp(JoystickButtonEventArgs* e) {
 	}
 
 	return RefreshButtons(e);
+}
+
+bool MasterSystem::OnJoystickAxisMotion(JoystickAxisMotionEventArgs* e) {
+	bool ret = false;
+
+	uint8_t masterButtons = ((e->GetAxisY() < -DEADZONE)?    0x01 : 0) |
+							((e->GetAxisY() >  DEADZONE)?    0x02 : 0) |
+							((e->GetAxisX() < -DEADZONE)?    0x04 : 0) |
+							((e->GetAxisX() >  DEADZONE)?    0x08 : 0);
+
+	switch (e->GetWhich()) {
+		case 0:
+			m_axis1 = ~masterButtons;
+			// printf("RefreshButtons: %x\n", m_joys1);
+			ret = true;
+			break;
+		case 1:
+			m_axis2 = ~masterButtons;
+			ret = true;
+			break;
+	}
+
+	if (ret) {
+			RefreshPads();
+	}
+
+	return ret;
 }
 
 uint32_t MasterSystem::GetCRC32() {
@@ -532,6 +567,6 @@ void MasterSystem::SetSoundEnabled(bool mode) {
 }
 
 void MasterSystem::RefreshPads() {
-	m_cpu->SetPad1(0xFF & (~(~m_keys1 | ~m_joys1)));
-	m_cpu->SetPad2(0xFF & (~(~m_keys2 | ~m_joys2)));
+	m_cpu->SetPad1(0xFF & (~(~m_keys1 | ~m_joys1 | ~m_axis1)));
+	m_cpu->SetPad2(0xFF & (~(~m_keys2 | ~m_joys2 | ~m_axis2)));
 }

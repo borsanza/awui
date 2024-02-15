@@ -71,7 +71,7 @@ void MenuButton::OnPaint(GL* gl) {
 	else
 		this->SetForeColor(Color::FromArgb(199, 199, 199));
 
-	if (this->_node->_directory) {
+	if (this->_node->m_directory) {
 		glLineWidth(2.5f);
 
 		float x = this->GetWidth() - 22.0f;
@@ -136,29 +136,29 @@ void MenuButton::SetNodeFile(NodeFile * node) {
 }
 
 void MenuButton::CheckArcade() {
-	if (this->_node->_background)
-		this->_station->SetBackground(this->_node->_background);
+	if (this->_node->m_background)
+		this->_station->SetBackground(this->_node->m_background);
 
-	if (!this->_node->_directory) {
-		if (this->_node->_arcade == NULL) {
-			switch (this->_node->_emulator) {
+	if (!this->_node->m_directory) {
+		if (this->_node->m_arcade == NULL) {
+			switch (this->_node->m_emulator) {
 				case 2:
 				case 3: {
 					MasterSystem * sms = new MasterSystem();
-					sms->LoadRom(this->_node->_path);
-					this->_node->_arcade = sms;
+					sms->LoadRom(this->_node->m_path);
+					this->_node->m_arcade = sms;
 					break;
 				}
 				case 4: {
 					Spectrum * szx = new Spectrum();
-					szx->LoadRom(this->_node->_path);
-					this->_node->_arcade = szx;
+					szx->LoadRom(this->_node->m_path);
+					this->_node->m_arcade = szx;
 					break;
 				}
 				case 1: {
 					Chip8 * ch8 = new Chip8();
-					ch8->LoadRom(this->_node->_path);
-					this->_node->_arcade = ch8;
+					ch8->LoadRom(this->_node->m_path);
+					this->_node->m_arcade = ch8;
 					break;
 				}
 				default:
@@ -167,16 +167,16 @@ void MenuButton::CheckArcade() {
 		}
 	}
 
-	if (this->_node->_arcade)
-		this->_node->_arcade->SetStationUI(this->_station);
+	if (this->_node->m_arcade)
+		this->_node->m_arcade->SetStationUI(this->_station);
 
-	this->_station->SetArcade(this->_node->_arcade);
+	this->_station->SetArcade(this->_node->m_arcade);
 }
 
 void MenuButton::OnResize() {
 	this->_label.SetLocation(23, 0);
 
-	if (this->_node->_directory)
+	if (this->_node->m_directory)
 		this->_label.SetSize(this->GetWidth() - (50 + this->_label.GetLeft()), this->GetHeight());
 	else
 		this->_label.SetSize(this->GetWidth() - (0 + this->_label.GetLeft()), this->GetHeight());
