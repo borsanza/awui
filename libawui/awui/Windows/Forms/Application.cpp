@@ -10,6 +10,7 @@
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/Joystick/Controller.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
@@ -47,7 +48,8 @@ void Application::Run(Form * form = NULL) {
 
 	for (int i = 0; i < SDL_NumJoysticks(); i++) {
         if (SDL_IsGameController(i)) {
-			m_controllersList->Add((Object *)SDL_GameControllerOpen(i));
+			Joystick::Controller * controller = new Joystick::Controller(SDL_GameControllerOpen(i));
+			m_controllersList->Add(controller);
 		}
 	}
 
@@ -74,8 +76,8 @@ void Application::Run(Form * form = NULL) {
 	}
 
 	for (int i = 0; i < m_controllersList->GetCount(); i++) {
-		SDL_GameController * controller = (SDL_GameController *) m_controllersList->Get(i);
-		SDL_GameControllerClose(controller);
+		Joystick::Controller * controller = (Joystick::Controller *) m_controllersList->Get(i);
+		delete controller;
 	}
 
 	SDL_Quit();
@@ -120,14 +122,24 @@ void Application::ProcessEvents(Form * form) {
 					formW->OnJoystickDpadPre(GetControlerOrder(event.jhat.which), event.jhat.hat, event.jhat.value);
 					ret = true;
 					break;
-				case SDL_JOYBUTTONDOWN:
-					formW->OnJoystickButtonDownPre(GetControlerOrder(event.jbutton.which), event.jbutton.button);
-					Console::WriteLine(String("SDL_JOYBUTTONDOWN[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
+				case SDL_CONTROLLERBUTTONDOWN:
+					for (int i = 0; i < m_controllersList->GetCount(); i++) {
+						SDL_GameController * controller = (SDL_GameController *) m_controllersList->Get(i);
+						if (event.cbutton.which == SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller))) {
+							for (int j = 0; j < SDL_CONTROLLER_BUTTON_MAX; j++) {
+								if (SDL_GameControllerGetButton(controller, (SDL_GameControllerButton) j)) {
+			 						printf("%d was pressed!\n", j);
+								}
+							}
+						}
+					}
+					formW->OnJoystickButtonDownPre(GetControlerOrder(event.cbutton.which), event.cbutton.button);
+					Console::WriteLine(String("SDL_CONTROLLERBUTTONDOWN[") + Convert::ToString(event.cbutton.which) + "]: " + Convert::ToString(event.cbutton.button));
 					ret = true;
 					break;
-				case SDL_JOYBUTTONUP:
-					formW->OnJoystickButtonUpPre(GetControlerOrder(event.jbutton.which), event.jbutton.button);
-					Console::WriteLine(String("SDL_JOYBUTTONUP[") + Convert::ToString(event.jbutton.which) + "]: " + Convert::ToString(event.jbutton.button));
+				case SDL_CONTROLLERBUTTONUP:
+					formW->OnJoystickButtonUpPre(GetControlerOrder(event.cbutton.which), event.cbutton.button);
+					Console::WriteLine(String("SDL_CONTROLLERBUTTONUP[") + Convert::ToString(event.cbutton.which) + "]: " + Convert::ToString(event.cbutton.button));
 					ret = true;
 					break;
 			}
