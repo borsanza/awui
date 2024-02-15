@@ -46,12 +46,7 @@ void Application::Run(Form * form = NULL) {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	for (int i = 0; i < SDL_NumJoysticks(); i++) {
-        if (SDL_IsGameController(i)) {
-			Joystick::Controller * controller = new Joystick::Controller(SDL_GameControllerOpen(i));
-			m_controllersList->Add(controller);
-		}
-	}
+	Joystick::Controller::Refresh();
 
 	form->Init();
 
@@ -75,10 +70,7 @@ void Application::Run(Form * form = NULL) {
 		stats->SetTimeAfterIddle();
 	}
 
-	for (int i = 0; i < m_controllersList->GetCount(); i++) {
-		Joystick::Controller * controller = (Joystick::Controller *) m_controllersList->Get(i);
-		delete controller;
-	}
+	Joystick::Controller::CloseAll();
 
 	SDL_Quit();
 }
@@ -103,19 +95,8 @@ void Application::ProcessEvents(Form * form) {
 			Form * formW = (Form *)Form::m_formsList->Get(i);
 			switch(event.type) {
 				case SDL_JOYDEVICEADDED:
-					if (m_controllersList->IndexOf((Object *) SDL_GameControllerOpen(event.cdevice.which)) == -1) {
-						m_controllersList->Add((Object *) SDL_GameControllerOpen(event.cdevice.which));
-						ret = true;
-					}
-					break;
 				case SDL_JOYDEVICEREMOVED:
-					for (int i = 0; i < m_controllersList->GetCount(); i++) {
-						SDL_GameController * controller = (SDL_GameController *) m_controllersList->Get(i);
-						if (event.cdevice.which == SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller))) {
-							SDL_GameControllerClose(controller);
-							m_controllersList->RemoveAt(i);
-						}
-					}
+					Joystick::Controller::Refresh();
 					ret = true;
 					break;
 				case SDL_JOYHATMOTION:
@@ -123,16 +104,6 @@ void Application::ProcessEvents(Form * form) {
 					ret = true;
 					break;
 				case SDL_CONTROLLERBUTTONDOWN:
-					for (int i = 0; i < m_controllersList->GetCount(); i++) {
-						SDL_GameController * controller = (SDL_GameController *) m_controllersList->Get(i);
-						if (event.cbutton.which == SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller))) {
-							for (int j = 0; j < SDL_CONTROLLER_BUTTON_MAX; j++) {
-								if (SDL_GameControllerGetButton(controller, (SDL_GameControllerButton) j)) {
-			 						printf("%d was pressed!\n", j);
-								}
-							}
-						}
-					}
 					formW->OnJoystickButtonDownPre(GetControlerOrder(event.cbutton.which), event.cbutton.button);
 					Console::WriteLine(String("SDL_CONTROLLERBUTTONDOWN[") + Convert::ToString(event.cbutton.which) + "]: " + Convert::ToString(event.cbutton.button));
 					ret = true;
