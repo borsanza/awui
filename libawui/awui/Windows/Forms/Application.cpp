@@ -174,7 +174,7 @@ void Application::ProcessEvents() {
 				break;
 
 			default:
-				// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
+				// Console::WriteLine("Event [%d]", event.type);
 				break;
 		}
 	}
