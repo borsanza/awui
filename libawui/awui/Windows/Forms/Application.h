@@ -9,7 +9,7 @@ namespace awui::Windows::Forms {
 		static int quit;
 
 		private:
-			static void ProcessEvents(Form * form);
+			static void ProcessEvents();
 
 		public:
 			static void Run(Form * form);

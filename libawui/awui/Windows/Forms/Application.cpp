@@ -53,7 +53,7 @@ void Application::Run(Form * form = NULL) {
 	Stats * stats = Stats::Instance();
 
 	while (!Application::quit) {
-		ProcessEvents(form);
+		ProcessEvents();
 
 		form->OnTickPre();
 
@@ -73,7 +73,7 @@ void Application::Run(Form * form = NULL) {
 	SDL_Quit();
 }
 
-void Application::ProcessEvents(Form * form) {
+void Application::ProcessEvents() {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		bool ret = false;
@@ -174,7 +174,7 @@ void Application::ProcessEvents(Form * form) {
 				break;
 
 			default:
-				Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
+				// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
 				break;
 		}
 	}
