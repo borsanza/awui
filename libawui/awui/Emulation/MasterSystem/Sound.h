@@ -40,22 +40,23 @@ namespace awui {
 
 			class Sound : public Object {
 				private:
-					uint16_t _channel;
-					uint8_t _type; // 1: Volumen, 0: Tone/Noise
+					uint16_t m_channel;
+					uint8_t m_type; // 1: Volumen, 0: Tone/Noise
+					Motherboard * m_cpu;
 
 					int GetPosBuffer(Motherboard * cpu);
-					Motherboard * _cpu;
 
 				public:
-					uint16_t _noiseData;
-					Channel _channels[4];
+					uint16_t m_noiseData;
+					Channel m_channels[4];
 
 					Sound();
 
-					inline void SetCPU(Motherboard * cpu) { this->_cpu = cpu; }
-					inline Motherboard * GetCPU() { return this->_cpu; }
+					inline void SetCPU(Motherboard * cpu) { m_cpu = cpu; }
+					inline Motherboard * GetCPU() const { return m_cpu; }
 
 					void WriteByte(Motherboard * cpu, uint8_t value);
+
 			};
 		}
 	}

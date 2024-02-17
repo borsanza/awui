@@ -44,22 +44,21 @@ namespace awui {
 						Ports _ports;
 						uint8_t _boardram[32768];
 						uint8_t _ram[8192];
-					} d;
+					} m_saveData;
 
 					// No se guarda
-					bool _showLog:1;
-					bool _showLogInt:1;
-					bool _showNotImplemented:1;
-					Common::Rom * _rom;
+					bool m_showLog:1;
+					bool m_showLogInt:1;
+					bool m_showNotImplemented:1;
+					Common::Rom * m_rom;
 
-					double _initFrame;
-					double _percFrame;
+					double m_initFrame;
+					double m_percFrame;
 
-					VDP * _vdp;
-					Sound * _sound;
-					Processors::Z80::CPU _z80;
+					VDP * m_vdp;
+					Sound * m_sound;
+					Processors::Z80::CPU m_z80;
 
-					void Print(const char * str, ...);
 					void CheckInterrupts();
 
 				public:
@@ -77,16 +76,16 @@ namespace awui {
 
 					void CallPaused();
 
-					inline VDP * GetVDP() const { return this->_vdp; }
-					inline Sound * GetSound() const { return this->_sound; }
-					inline void SetPad1(uint8_t pad1) { this->d._pad1 = pad1; }
-					inline void SetPad2(uint8_t pad2) { this->d._pad2 = pad2; }
-					inline uint8_t GetPad1() const { return this->d._pad1; }
-					inline uint8_t GetPad2() const { return this->d._pad2; }
+					inline VDP * GetVDP() const { return this->m_vdp; }
+					inline Sound * GetSound() const { return this->m_sound; }
+					inline void SetPad1(uint8_t pad1) { this->m_saveData._pad1 = pad1; }
+					inline void SetPad2(uint8_t pad2) { this->m_saveData._pad2 = pad2; }
+					inline uint8_t GetPad1() const { return this->m_saveData._pad1; }
+					inline uint8_t GetPad2() const { return this->m_saveData._pad2; }
 
 					uint32_t GetCRC32();
 					void SetMapper(uint8_t mapper);
-					inline uint16_t GetPC() const { return this->_z80.GetPC();}
+					inline uint16_t GetPC() const { return this->m_z80.GetPC();}
 
 					static int GetSaveSize();
 					void LoadState(uint8_t * data);

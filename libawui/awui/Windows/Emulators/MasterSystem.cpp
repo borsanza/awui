@@ -351,6 +351,22 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			RefreshPads();
 			ret = true;
 			break;
+		case Keys::Key_1:
+			SoundSDL::ToggleChannel(0);
+			ret = true;
+			break;
+		case Keys::Key_2:
+			SoundSDL::ToggleChannel(1);
+			ret = true;
+			break;
+		case Keys::Key_3:
+			SoundSDL::ToggleChannel(2);
+			ret = true;
+			break;
+		case Keys::Key_4:
+			SoundSDL::ToggleChannel(3);
+			ret = true;
+			break;
 	}
 
 	if (button1) {

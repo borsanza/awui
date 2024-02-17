@@ -30,6 +30,7 @@ namespace awui {
 					awui::Collections::ArrayList _arraySound;
 					Sound * _playing;
  					void ResetChannels(Sound * sound);
+					static uint8_t m_disabledChannels;
 
 				public:
 					SoundSDL();
@@ -42,6 +43,8 @@ namespace awui {
 					void AddSound(Sound * sound);
 
 					inline void SetPlayingSound(Sound * sound) { this->_playing = sound; }
+
+					static void ToggleChannel(int channel);
 			};
 		}
 	}

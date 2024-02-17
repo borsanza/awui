@@ -6,6 +6,7 @@
 
 #include "SoundSDL.h"
 
+#include <awui/Console.h>
 #include <awui/DateTime.h>
 #include <awui/Object.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
@@ -17,6 +18,7 @@ using namespace awui::Collections;
 
 extern void FillAudioMasterSystemCB(void *udata, Uint8 *stream, int len);
 
+uint8_t	SoundSDL::m_disabledChannels = 0x00;
 SoundSDL* SoundSDL::_instance = 0;
 
 const char* GetAudioFormatName(SDL_AudioFormat format) {
@@ -153,7 +155,11 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 
 		// Tone
 		for (int j = 0; j <= 2; j++) {
-			Channel * channel = &sound->_channels[j];
+			if (SoundSDL::m_disabledChannels & (1 << j)) {
+				continue;
+			}
+
+			Channel * channel = &sound->m_channels[j];
 
 			if (channel->_buffer[bufferPos]._changeTone) {
 				channel->_buffer[bufferPos]._changeTone = false;
@@ -194,14 +200,14 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 		}
 
 		// Noise
-		{
-			Channel * channel = &sound->_channels[3];
+		if ((SoundSDL::m_disabledChannels & 0x08) == 0) {
+			Channel * channel = &sound->m_channels[3];
 
 			if (channel->_buffer[bufferPos]._changeTone) {
 				channel->_buffer[bufferPos]._changeTone = false;
 				channel->_last._tone = channel->_buffer[bufferPos]._tone;
 				channel->_count = 0;
-				sound->_noiseData = 0x8000;
+				sound->m_noiseData = 0x8000;
 			}
 
 
@@ -216,22 +222,22 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 						case 0: channel->_count = 0x10; break;
 						case 1: channel->_count = 0x20; break;
 						case 2: channel->_count = 0x40; break;
-						case 3: channel->_count = sound->_channels[2]._last._tone; break;
+						case 3: channel->_count = sound->m_channels[2]._last._tone; break;
 					}
 
 					bool carry = false;
 					if (channel->_last._tone & 0x4) {
-						uint8_t v = sound->_noiseData & 0x9;
+						uint8_t v = sound->m_noiseData & 0x9;
 						carry = (v == 0x1) || (v == 0x8);
 					} else
-						carry = sound->_noiseData & 1;
-					sound->_noiseData = (sound->_noiseData >> 1) | (carry ? 0x8000 : 0);
+						carry = sound->m_noiseData & 1;
+					sound->m_noiseData = (sound->m_noiseData >> 1) | (carry ? 0x8000 : 0);
 				}
 
 				if (channel->_count > 0)
 					channel->_count--;
 
-				if (sound->_noiseData & 1)
+				if (sound->m_noiseData & 1)
 					outputValue += channel->_last._volume;
 				else
 					outputValue -= channel->_last._volume;
@@ -266,4 +272,9 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 void SoundSDL::AddSound(Sound * sound) {
 	if (this->_arraySound.IndexOf(sound) == -1)
 		this->_arraySound.Add(sound);
+}
+
+void SoundSDL::ToggleChannel(int channel) {
+	m_disabledChannels ^= 1 << channel;
+//	Console::WriteLine("%x", m_disabledChannels);
 }
