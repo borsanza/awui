@@ -36,9 +36,8 @@ Sound::Sound() {
 }
 
 int Sound::GetPosBuffer(Motherboard * cpu) {
-	SoundSDL * soundSDL = SoundSDL::Instance();
 	double now = cpu->GetVirtualTime();
-	now = now - soundSDL->GetInitTimeSound();
+	now = now - SoundSDL::Instance().GetInitTimeSound();
 	float timeFrame = SOUNDSAMPLES / (SOUNDFREQ * 2.0f);
 	int frame = (int(now / timeFrame)) % TOTALFRAMES;
 
@@ -93,8 +92,6 @@ void Sound::WriteByte(Motherboard * cpu, uint8_t value) {
 	}
 
 	if (changeTone || changeVolume || useModulation) {
-		SoundSDL * soundSDL = SoundSDL::Instance();
-
 		int pos = GetPosBuffer(cpu);
 		if (changeTone) {
 			channel->_buffer[pos]._tone = (((channel->_tone != 0) || (m_channel == 3)) ? channel->_tone : 1);
@@ -116,7 +113,7 @@ void Sound::WriteByte(Motherboard * cpu, uint8_t value) {
 			channel->_buffer[pos]._changeVolume = true;
 		}
 
-		soundSDL->AddSound(this);
+		SoundSDL::Instance().AddSound(this);
 	}
 
 	// printf("Channel: %d Volumen: %.2X\n", m_channel, channel->_volume);

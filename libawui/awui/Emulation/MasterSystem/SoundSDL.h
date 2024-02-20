@@ -21,7 +21,6 @@ namespace awui {
 
 			class SoundSDL {
 				private:
-					static SoundSDL* _instance;
 					int _frame;
 					double _initTimeSound;
 					SDL_AudioSpec _obtained;
@@ -32,12 +31,16 @@ namespace awui {
  					void ResetChannels(Sound * sound);
 					static uint8_t m_disabledChannels;
 
+					SoundSDL(const SoundSDL&) = delete;
+					SoundSDL& operator=(const SoundSDL&) = delete;
+
 				public:
 					SoundSDL();
+					~SoundSDL() = default;
 
 					inline double GetInitTimeSound() { return this->_initTimeSound; }
 
-					static SoundSDL* Instance();
+					static SoundSDL& Instance();
 					void FillAudio(Uint8 *stream, int len);
 					void FillAudioSDL(Sound * sound, Uint8 *stream, int len);
 					void AddSound(Sound * sound);

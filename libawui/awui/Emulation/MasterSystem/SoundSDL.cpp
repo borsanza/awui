@@ -19,7 +19,6 @@ using namespace awui::Collections;
 extern void FillAudioMasterSystemCB(void *udata, Uint8 *stream, int len);
 
 uint8_t	SoundSDL::m_disabledChannels = 0x00;
-SoundSDL* SoundSDL::_instance = 0;
 
 const char* GetAudioFormatName(SDL_AudioFormat format) {
 	switch (format) {
@@ -72,15 +71,13 @@ SoundSDL::SoundSDL() {
 	}
 }
 
-SoundSDL* SoundSDL::Instance() {
-	if (SoundSDL::_instance == 0)
-		SoundSDL::_instance = new SoundSDL();
-
-	return SoundSDL::_instance;
+SoundSDL& SoundSDL::Instance() {
+    static SoundSDL instance;
+    return instance;
 }
 
 void FillAudioMasterSystemCB(void *userdata, Uint8 *stream, int len) {
-	SoundSDL::Instance()->FillAudio(stream, len);
+	SoundSDL::Instance().FillAudio(stream, len);
 }
 
 void SoundSDL::FillAudio(Uint8 *stream, int len) {

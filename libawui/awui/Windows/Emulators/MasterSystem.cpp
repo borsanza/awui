@@ -579,7 +579,7 @@ void awui::Windows::Emulators::MasterSystem::Pause(bool mode) {
 }
 
 void MasterSystem::SetSoundEnabled(bool mode) {
-	SoundSDL::Instance()->SetPlayingSound(mode ? m_cpu->GetSound() : 0);
+	SoundSDL::Instance().SetPlayingSound(mode ? m_cpu->GetSound() : 0);
 }
 
 void MasterSystem::RefreshPads() {

@@ -7,8 +7,10 @@
 #include <awui/Windows/Forms/Statistics/Heartbeat.h>
 #include <awui/Windows/Forms/Statistics/Spinner.h>
 
-//#define SHOW_PERCENT 1
-//#define SHOW_SPINNER 1
+#define SHOW_PERCENT 1
+#define SHOW_SPINNER 1
+#define SHOW_WIDGETS 1
+#define SHOW_FPS 1
 
 #ifndef NDEBUG
 	#define SHOW_WIDGETS 1

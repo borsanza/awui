@@ -20,15 +20,14 @@ file(GLOB_RECURSE LIBAWUI_SOURCES awui/*.cpp )
 file(GLOB_RECURSE LIBAWUI_HEADERS awui/*.h )
 
 # Organiza los archivos en grupos visuales para IDEs
-source_group("Source" FILES ${LIBAWUI_SOURCES})
-source_group("Headers" FILES ${LIBAWUI_HEADERS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/awui" FILES ${LIBAWUI_SOURCES} ${LIBAWUI_HEADERS})
 
 # Define el target de la biblioteca
 add_library(awui SHARED ${LIBAWUI_SOURCES} ${LIBAWUI_HEADERS})
 
 # Especifica directorios de inclusión para el target
 target_include_directories(awui PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
+  "${CMAKE_CURRENT_SOURCE_DIR}"
   ${CAIRO_INCLUDE_DIRS}
   ${GLEW_INCLUDE_DIRS}
   ${OPENGL_INCLUDE_DIR}
@@ -48,3 +47,12 @@ target_link_libraries(awui PRIVATE
 
 # Agrega definiciones de compilación para el target
 target_compile_definitions(awui PRIVATE ${CAIRO_CFLAGS_OTHER})
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(MSVC)
+    target_compile_options(awui PRIVATE /Od /Zi)
+    target_link_options(awui PRIVATE /DEBUG)
+  else()
+    target_compile_options(awui PRIVATE -O0 -g)
+  endif()
+endif()
