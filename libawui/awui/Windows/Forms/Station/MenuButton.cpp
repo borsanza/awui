@@ -200,7 +200,7 @@ void LabelButton::OnMouseDown(MouseEventArgs * e) {
 	GetParent()->OnMouseDown(e);
 }
 
-void LabelButton::OnTick(float deltaTime) {
+void LabelButton::OnTick(float deltaSeconds) {
 	bool selected = (Form::GetControlSelected() == GetParent());
 
 	if (m_lastSelected != selected) {
@@ -213,7 +213,7 @@ void LabelButton::OnTick(float deltaTime) {
 			SetScrolled(0.0f);
 		} else {
 			float prev = GetScrolled();
-			SetScrolled(prev - (deltaTime * 120.0f));
+			SetScrolled(prev - (deltaSeconds * 120.0f));
 			float after = GetScrolled();
 			if (after > prev) {
 				SetScrolled(0.0f);
@@ -221,7 +221,7 @@ void LabelButton::OnTick(float deltaTime) {
 			}
 		}
 
-		m_time += deltaTime;
+		m_time += deltaSeconds;
 	} else {
 		float scrolled = GetScrolled();
 		if (scrolled != 0) {
@@ -230,7 +230,7 @@ void LabelButton::OnTick(float deltaTime) {
 			if ((GetLabelWidth() >> 1) < -scrolled)
 				dst = min;
 
-			dst = Interpolate(scrolled, dst, deltaTime * 10.0f);
+			dst = Interpolate(scrolled, dst, deltaSeconds * 10.0f);
 			if ((fabs(dst) <= 1) || ((dst - 1) <= min))
 				dst = 0;
 

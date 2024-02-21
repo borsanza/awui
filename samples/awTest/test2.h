@@ -29,7 +29,7 @@ class Test2: public awui::Windows::Forms::Control {
 		Test2();
 		virtual ~Test2();
 
-		virtual void OnTick(float deltaTime);
+		virtual void OnTick(float deltaSeconds);
 
 		void CheckMame();
 		void CheckGames();

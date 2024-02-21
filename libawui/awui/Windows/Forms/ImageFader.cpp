@@ -57,7 +57,7 @@ void ImageFader::SetImage(Bitmap * image) {
     }
 }
 
-void ImageFader::OnTick(float deltaTime) {
+void ImageFader::OnTick(float deltaSeconds) {
 	if (m_imageShowing) {
 		m_imageShowing->SetSize(GetWidth(), GetHeight());
 	}
@@ -66,7 +66,7 @@ void ImageFader::OnTick(float deltaTime) {
 		case State::Paused:
 			break;
 		case State::FadeOut:
-			m_percentage -= m_speedFadeOut * deltaTime;
+			m_percentage -= m_speedFadeOut * deltaSeconds;
 			if (m_percentage <= 0.0f) {
 				m_percentage = 0.0f;
 				m_state = State::FadeIn;
@@ -75,7 +75,7 @@ void ImageFader::OnTick(float deltaTime) {
 			}
 			break;
 		case State::FadeIn:
-			m_percentage += m_speedFadeIn * deltaTime;
+			m_percentage += m_speedFadeIn * deltaSeconds;
 			if (m_percentage >= 1.0f) {
 				m_percentage = 1.0f;
 				m_state = State::Paused;

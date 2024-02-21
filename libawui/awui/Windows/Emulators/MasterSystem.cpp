@@ -213,7 +213,7 @@ void MasterSystem::OnTick(float deltaTime) {
 		m_cpu->SaveState(m_savedData[m_actual % TOTALSAVED]);
 	}
 
-	m_cpu->OnTick();
+	m_cpu->OnTick(deltaTime);
 }
 
 void MasterSystem::RunOpcode() {

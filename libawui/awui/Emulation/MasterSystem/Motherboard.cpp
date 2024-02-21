@@ -96,7 +96,7 @@ void Motherboard::RunOpcode() {
 // http://www.smspower.org/forums/viewtopic.php?p=69680
 // 53693175 / (15 * 228 * 262) ~ 59.922743404 frames per second for NTSC
 // 53203424 / (15 * 228 * 313) ~ 49.7014591858 frames per second for PAL
-void Motherboard::OnTick() {
+void Motherboard::OnTick(float deltaSeconds) {
 	m_initFrame = DateTime::GetTotalSeconds();
 
 	double fps = m_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;

@@ -14,7 +14,7 @@ class FormTIS100 : public awui::Windows::Forms::Form {
 		FormTIS100();
 		virtual ~FormTIS100();
 
-		virtual void OnTick(float deltaTime);
+		virtual void OnTick(float deltaSeconds);
 };
 
 #endif

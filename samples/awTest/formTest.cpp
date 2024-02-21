@@ -56,7 +56,7 @@ void FormTest::InitializeComponent() {
 	this->SetFullscreen(0);
 }
 
-void FormTest::OnTick(float deltaTime) {
+void FormTest::OnTick(float deltaSeconds) {
 	switch (buttonPressed) {
 		case RemoteButtons::Enum::Left:
 			buttonL->SetLeft(buttonL->GetLeft() - 5);
@@ -74,5 +74,5 @@ void FormTest::OnTick(float deltaTime) {
 			break;
 	}
 
-	Form::OnTick(deltaTime);
+	Form::OnTick(deltaSeconds);
 }

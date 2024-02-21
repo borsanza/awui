@@ -16,6 +16,6 @@ namespace awui {
 
 			void StartNew();
 			void Stop();
-			float GetDeltaTime() const;
+			float GetDeltaSeconds() const;
 	};
 }

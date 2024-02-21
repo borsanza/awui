@@ -28,5 +28,5 @@ void FormTIS100::InitializeComponent() {
 	this->SetText("awTIS100");
 }
 
-void FormTIS100::OnTick(float deltaTime) {
+void FormTIS100::OnTick(float deltaSeconds) {
 }

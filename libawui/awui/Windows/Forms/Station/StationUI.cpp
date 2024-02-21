@@ -261,7 +261,7 @@ void StationUI::RefreshList() {
 	m_browser->SetPage(m_actual->m_page);
 }
 
-void StationUI::OnTick(float deltaTime) {
+void StationUI::OnTick(float deltaSeconds) {
 	static Control * lastFocused = NULL;
 	Control * c = m_actual->m_page->GetFocused();
 	if (lastFocused != c) {
@@ -426,7 +426,7 @@ void FadePanel::HideFade() {
 	m_showing = false;
 }
 
-void FadePanel::OnTick(float deltaTime) {
+void FadePanel::OnTick(float deltaSeconds) {
 	if (m_showing) {
 		m_status += 10;
 		if (Math::Round(m_status) >= 200.0f) {

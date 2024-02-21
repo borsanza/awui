@@ -23,7 +23,7 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Control::Control() {
-	m_deltaTime = 0.0f;
+	m_deltaSeconds = 0.0f;
 	m_refreshed = 0;
 	m_lastWidth = 0;
 	m_lastHeight = 0;
@@ -368,7 +368,7 @@ void Control::OnPaint(OpenGL::GL * gl) {
 		if ((focused == control) && (control->GetDrawShadow())) {
 			int x1, y1, x2, y2;
 			Bitmap * bitmap = Form::GetSelectedBitmap();
-			float percent = m_deltaTime * 10.0f;
+			float percent = m_deltaSeconds * 10.0f;
 
 			// Esto solo lo hago porque en la inicializacion del programa
 			// no habia nada seleccionado y hay que actualizar esta variable
@@ -549,9 +549,9 @@ bool Control::IsVisible() const {
 
 #include <inttypes.h>
 
-void Control::OnTickPre(float deltaTime) {
-	m_deltaTime = deltaTime;
-	double percent = 10.0f * deltaTime;
+void Control::OnTickPre(float deltaSeconds) {
+	m_deltaSeconds = deltaSeconds;
+	double percent = 10.0f * deltaSeconds;
 	//awui::Console::WriteLine("%lld %.3f", ellapsed, percent);
 
 	m_lastWidth = Interpolate(m_lastWidth, m_boundsTo.GetWidth(), percent);
@@ -566,13 +566,13 @@ void Control::OnTickPre(float deltaTime) {
 	m_bounds.SetLocation(x, y);
 
 	if (IsVisible()) {
-		OnTick(deltaTime);
+		OnTick(deltaSeconds);
 
 		for (int i = 0; i<GetControls()->GetCount(); i++) {
 			Control * control = (Control *)GetControls()->Get(i);
 			if (!control->IsVisible())
 				continue;
-			control->OnTickPre(deltaTime);
+			control->OnTickPre(deltaSeconds);
 		}
 	}
 }

@@ -40,7 +40,7 @@ namespace awui {
 					void SetSpeedFadeOut(float speed) { m_speedFadeOut = speed; }
 					void SetSpeedFadeIn(float speed) { m_speedFadeIn = speed; }
 
-					virtual void OnTick(float deltaTime) override;
+					virtual void OnTick(float deltaSeconds) override;
 
 					virtual void OnPaint(OpenGL::GL* gl) override;
 			};

@@ -25,7 +25,7 @@ class TestWidget : public Button {
 
 //		virtual int IsClass(Classes::Enum objectClass) const;
 
-		virtual void OnTick(float deltaTime);
+		virtual void OnTick(float deltaSeconds);
 
 		virtual void OnPaint(OpenGL::GL* gl);
 };

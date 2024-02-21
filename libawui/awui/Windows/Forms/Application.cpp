@@ -61,10 +61,10 @@ void Application::Run(Form * form = NULL) {
 		ProcessEvents();
 
 		stopwatch.Stop();
-		float deltaTime = stopwatch.GetDeltaTime();
+		float deltaSeconds = stopwatch.GetDeltaSeconds();
 		stopwatch.StartNew();
 
-		form->OnTickPre(deltaTime);
+		form->OnTickPre(deltaSeconds);
 
 		glViewport(0, 0, form->GetWidth(), form->GetHeight());
 		glClearColor(form->GetBackColor().GetR() / 255.0f, form->GetBackColor().GetG() / 255.0f, form->GetBackColor().GetB() / 255.0f, 1.0f);

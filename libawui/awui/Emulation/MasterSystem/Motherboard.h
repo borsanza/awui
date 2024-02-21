@@ -66,7 +66,7 @@ namespace awui {
 					virtual ~Motherboard();
 
 					void LoadRom(const String file);
-					void OnTick();
+					void OnTick(float deltaSeconds);
 					bool IsEndlessLoop() const;
 
 					uint16_t GetAddressBus() const;

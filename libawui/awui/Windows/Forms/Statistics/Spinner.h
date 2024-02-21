@@ -14,7 +14,7 @@ namespace awui {
 						Spinner();
 						virtual ~Spinner();
 
-						virtual void OnTick(float deltaTime);
+						virtual void OnTick(float deltaSeconds);
 						virtual void OnPaint(OpenGL::GL * gl);
 				};
 			}

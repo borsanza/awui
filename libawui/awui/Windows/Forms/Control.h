@@ -63,7 +63,7 @@ namespace awui {
 					Control * m_mouseControl;
 					String m_name;
 
-					float m_deltaTime;
+					float m_deltaSeconds;
 
 					void OnResizePre();
 					int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl, bool first = false);
@@ -72,7 +72,7 @@ namespace awui {
 					void CleanMouseControl();
 
 				protected:
-					void OnTickPre(float deltaTime);
+					void OnTickPre(float deltaSeconds);
 
 				public:
 					Control();
@@ -170,7 +170,7 @@ namespace awui {
 					virtual void OnMouseLeave();
 					virtual void OnPaint(OpenGL::GL * gl);
 					virtual void OnResize() {}
-					virtual void OnTick(float deltaTime) {}
+					virtual void OnTick(float deltaSeconds) {}
 					void SetScissorEnabled(bool mode);
 					bool GetScissorEnabled();
 

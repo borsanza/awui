@@ -20,7 +20,7 @@ void Stopwatch::Stop() {
 }
 
 // Retorna la cantidad de milisegundos transcurridos
-float Stopwatch::GetDeltaTime() const {
+float Stopwatch::GetDeltaSeconds() const {
 	auto end = m_running ? std::chrono::steady_clock::now() : m_end_time;
 	return std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_start_time).count() / 1000000000.0f;
 }

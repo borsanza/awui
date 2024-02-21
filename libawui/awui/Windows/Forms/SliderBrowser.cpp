@@ -32,7 +32,7 @@ void SliderBrowser::SetMargin(int margin) {
 	this->_margin = margin;
 }
 
-void SliderBrowser::OnTick(float deltaTime) {
+void SliderBrowser::OnTick(float deltaSeconds) {
 	int posSelected = this->GetControls()->IndexOf(Form::GetControlSelected());
 
 	if (posSelected != -1)

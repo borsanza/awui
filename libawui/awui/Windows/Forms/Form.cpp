@@ -115,7 +115,7 @@ void Form::OnRemoteHeartbeat() {
 	stats->OnRemoteHeartbeat();
 }
 
-void Form::OnTick(float deltaTime) {
+void Form::OnTick(float deltaSeconds) {
 	Stats * stats = Stats::Instance();
 	GetControls()->MoveToEnd(stats);
 	stats->SetWidth(GetWidth());

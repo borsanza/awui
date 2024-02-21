@@ -104,7 +104,7 @@ void Spectrum::LoadRom(const String file) {
 void Spectrum::CheckLimits() {
 }
 
-void Spectrum::OnTick(float deltaTime) {
+void Spectrum::OnTick(float deltaSeconds) {
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET)
 		this->_motherboard->Reset();
 

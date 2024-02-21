@@ -23,7 +23,7 @@ namespace awui {
 						void SetColorGo(int pos, const Drawing::ColorF color);
 
 						virtual void OnPaint(OpenGL::GL* gl);
-						virtual void OnTick(float deltaTime);
+						virtual void OnTick(float deltaSeconds);
 				};
 			}
 		}

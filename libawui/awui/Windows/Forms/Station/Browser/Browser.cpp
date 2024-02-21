@@ -52,7 +52,7 @@ Browser::Browser() {
 Browser::~Browser() {
 }
 
-void Browser::OnTick(float deltaTime) {
+void Browser::OnTick(float deltaSeconds) {
 	Control * selected = Form::GetControlSelected();
 
 	if (selected->GetParent() != this->_page)

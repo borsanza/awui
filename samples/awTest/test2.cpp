@@ -45,7 +45,7 @@ void Test2::InitializeComponent() {
 	this->GetControls()->Add(this->listbox);
 }
 
-void Test2::OnTick(float deltaTime) {
+void Test2::OnTick(float deltaSeconds) {
 	if (!this->endMame) {
 		this->CheckMame();
 		this->CheckGames();

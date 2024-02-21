@@ -17,7 +17,7 @@ Spinner::Spinner() {
 Spinner::~Spinner() {
 }
 
-void Spinner::OnTick(float deltaTime) {
+void Spinner::OnTick(float deltaSeconds) {
 	static int mode = 0;
 
 	mode++;

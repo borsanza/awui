@@ -14,7 +14,7 @@ namespace awui {
 							Page();
 							virtual ~Page();
 
-							virtual void OnTick(float deltaTime);
+							virtual void OnTick(float deltaSeconds);
 					};
 				}
 			}

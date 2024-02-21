@@ -45,7 +45,7 @@ namespace awui {
 
 					void LoadRom(const String file);
 
-					virtual void OnTick(float deltaTime);
+					virtual void OnTick(float deltaSeconds);
 
 					awui::Emulation::Spectrum::Motherboard * GetCPU();
 

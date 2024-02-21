@@ -17,7 +17,7 @@ namespace awui::Windows::Forms::Station {
 			virtual ~LabelButton();
 
 			virtual void OnMouseDown(MouseEventArgs* e);
-			virtual void OnTick(float deltaTime);
+			virtual void OnTick(float deltaSeconds);
 	};
 
 	class MenuButton : public Control {
