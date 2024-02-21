@@ -50,7 +50,7 @@ void Chip8::LoadRom(const String file) {
 	m_cpu->LoadRom(file);
 	SetName(file);
 
-	m_cpu->OnTick();
+	m_cpu->OnTick(0.16f);
 	CheckBackcolor();
 }
 
@@ -60,7 +60,7 @@ void Chip8::OnTick(float deltaSeconds) {
 		m_lastInverted = Chip8::m_invertedColors;
 	}
 
-	m_cpu->OnTick();
+	m_cpu->OnTick(deltaSeconds);
 }
 
 void Chip8::UpdateImage() {

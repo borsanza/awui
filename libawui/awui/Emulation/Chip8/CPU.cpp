@@ -22,6 +22,8 @@
 using namespace awui::Emulation::Chip8;
 
 CPU::CPU() {
+	m_seconds = 0.0f;
+	m_nextTick = 0.0f;
 	this->_spriteWidth = 0;
 	this->_spriteHeight = 0;
 	this->_pc = 0;
@@ -125,7 +127,19 @@ void CPU::Reset() {
 		this->_memory->WriteByte(i + 256, superFontHex[i]);
 }
 
-void CPU::OnTick() {
+void CPU::OnTick(float deltaSeconds) {
+	m_seconds += deltaSeconds;
+	if (m_seconds < m_nextTick) {
+		return;
+	}
+
+	while (m_seconds >= m_nextTick) {
+		m_nextTick += 1.0f / 60.0f;
+		DoTick();
+	}
+}
+
+void CPU::DoTick() {
 	this->_frameCounter++;
 
 	if (_firstTime) {
@@ -161,7 +175,6 @@ void CPU::OnTick() {
 
 	int i;
 	int iterations = (int) Math::Round(ticks / 60.0f);
-//	iterations = 2;
 
 	for (i = 0; i < iterations; i++) {
 		if (this->_finished)

@@ -31,6 +31,10 @@ namespace awui {
 					uint16_t _spriteWidth;
 					uint16_t _spriteHeight;
 					uint16_t _frameCounter;
+
+					float m_seconds;
+					float m_nextTick;
+
 					int _finished;
 					bool _imageUpdated;
 
@@ -41,13 +45,14 @@ namespace awui {
 
 					int RunOpcode(int iteration);
 					void ChangeResolution(uint16_t width, uint16_t height);
+					void DoTick();
 
 				public:
 					CPU();
 					virtual ~CPU();
 
 					void LoadRom(const String file);
-					void OnTick();
+					void OnTick(float deltaSeconds);
 
 					Screen * GetScreen();
 

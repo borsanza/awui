@@ -203,7 +203,7 @@ void MasterSystem::LoadRom(const String file) {
 	}
 }
 
-void MasterSystem::OnTick(float deltaTime) {
+void MasterSystem::OnTick(float deltaSeconds) {
 	long long now = DateTime::GetNow().GetTicks();
 	if ((now - m_lastTick) > 10000000) {
 		m_lastTick = now;
@@ -213,7 +213,7 @@ void MasterSystem::OnTick(float deltaTime) {
 		m_cpu->SaveState(m_savedData[m_actual % TOTALSAVED]);
 	}
 
-	m_cpu->OnTick(deltaTime);
+	m_cpu->OnTick(deltaSeconds);
 }
 
 void MasterSystem::RunOpcode() {
