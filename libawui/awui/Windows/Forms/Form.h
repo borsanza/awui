@@ -43,6 +43,7 @@ namespace awui {
 					int m_lastFullscreenState;
 					int m_lastWidth;
 					int m_lastHeight;
+					bool m_swapInterval;
 
 					void OnPaintForm();
 
@@ -74,6 +75,9 @@ namespace awui {
 
 					uint32_t GetWindowID();
 					void ProcessEvents(SDL_Event * event);
+
+					bool SetSwapInterval(bool mode);
+					bool GetSwapInterval();
 			};
 		}
 	}

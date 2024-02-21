@@ -35,3 +35,15 @@ void FormArcade::InitializeComponent() {
 	SetFullscreen(0);
 	SetText("StationTV");
 }
+
+bool FormArcade::OnKeyPress(Keys::Enum key) {
+	bool ret = false;
+	switch (key) {
+		case Keys::Key_5:
+			SetSwapInterval(!GetSwapInterval());
+			ret = true;
+			break;
+	}
+
+	return ret;
+}

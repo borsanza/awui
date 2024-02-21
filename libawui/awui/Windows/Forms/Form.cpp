@@ -39,6 +39,8 @@ Form::Form() {
 	m_mouseX = 0;
 	m_mouseY = 0;
 	m_text = "";
+	m_swapInterval = true;
+
 	SetBackColor(Drawing::Color::FromArgb(192, 192, 192));
 
 	SetBounds(100, 100, 300, 300);
@@ -200,12 +202,25 @@ void Form::RefreshVideo() {
 		return;
 	}
 
-	if (SDL_GL_SetSwapInterval(1) < 0) {
-		SDL_Log("[ERROR] SDL_GL_SetSwapInterval failed: %s", SDL_GetError());
+	if (!SetSwapInterval(m_swapInterval)) {
 		return;
 	}
 
 	SetSize(finalWidth, finalHeight);
+}
+
+bool Form::SetSwapInterval(bool mode) {
+	m_swapInterval = mode;
+	if (SDL_GL_SetSwapInterval(m_swapInterval? 1 : 0) < 0) {
+		SDL_Log("[ERROR] SDL_GL_SetSwapInterval failed: %s", SDL_GetError());
+		return false;
+	}
+
+	return true;
+}
+
+bool Form::GetSwapInterval() {
+	return m_swapInterval;
 }
 
 void Form::SetFullscreen(int mode) {

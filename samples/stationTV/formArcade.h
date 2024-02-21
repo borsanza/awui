@@ -3,6 +3,8 @@
 #include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>
 
+#include <awui/Windows/Forms/Keys.h>
+
 namespace awui {
 	namespace Windows {
 		namespace Forms {
@@ -13,6 +15,7 @@ namespace awui {
 	}
 }
 
+using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Station;
 
 class FormArcade : public awui::Windows::Forms::Form {
@@ -24,4 +27,6 @@ class FormArcade : public awui::Windows::Forms::Form {
 	public:
 		FormArcade();
 		virtual ~FormArcade();
+
+		bool OnKeyPress(Keys::Enum key);
 };
