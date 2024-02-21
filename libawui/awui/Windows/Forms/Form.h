@@ -63,7 +63,7 @@ namespace awui {
 					static Bitmap * GetSelectedBitmap();
 					virtual void OnRemoteHeartbeat();
 
-					virtual void OnTick();
+					virtual void OnTick(float deltaTime);
 
 					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);

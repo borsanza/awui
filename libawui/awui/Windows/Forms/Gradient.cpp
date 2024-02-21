@@ -67,7 +67,7 @@ awui::Drawing::ColorF Gradient::InterpolateColor(Drawing::ColorF * c1, Drawing::
 		this->Interpolate(c1->GetB(), c2->GetB(), percent));
 }
 
-void Gradient::OnTick() {
+void Gradient::OnTick(float deltaTime) {
 	for (int i = 0; i < 4; i++)
 		this->_color[i] = this->InterpolateColor(&this->_color[i], &this->_colorGo[i], 0.02f);
 }

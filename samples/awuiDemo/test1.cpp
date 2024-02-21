@@ -89,7 +89,7 @@ void Test1::AddButtonEffect(Effect * effect, Control * control, int posy) {
 	}
 }
 
-void Test1::OnTick() {
+void Test1::OnTick(float deltaTime) {
 	static float py1 = 0.0f;
 	static float py2 = 0.0f;
 	static int sube1 = 1;

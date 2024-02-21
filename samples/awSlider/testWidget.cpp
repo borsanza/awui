@@ -23,7 +23,7 @@ TestWidget::~TestWidget() {
 	delete this->_image;
 }
 
-void TestWidget::OnTick() {
+void TestWidget::OnTick(float deltaTime) {
 //	printf("%d\n", this->GetParent()->GetControls()->IndexOf(this));
 }
 

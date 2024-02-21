@@ -14,8 +14,8 @@ ImageFader::ImageFader() {
 	m_imageShowing = nullptr;
 	m_state = State::FadeIn;
 	m_percentage = 0.0f;
-	m_speedFadeOut = 0.15f;
-	m_speedFadeIn = 0.05f;
+	m_speedFadeOut = 5.0f;
+	m_speedFadeIn = 2.0f;
 	m_color = Drawing::ColorF::FromArgb(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
@@ -57,7 +57,7 @@ void ImageFader::SetImage(Bitmap * image) {
     }
 }
 
-void ImageFader::OnTick() {
+void ImageFader::OnTick(float deltaTime) {
 	if (m_imageShowing) {
 		m_imageShowing->SetSize(GetWidth(), GetHeight());
 	}
@@ -66,7 +66,7 @@ void ImageFader::OnTick() {
 		case State::Paused:
 			break;
 		case State::FadeOut:
-			m_percentage -= m_speedFadeOut;
+			m_percentage -= m_speedFadeOut * deltaTime;
 			if (m_percentage <= 0.0f) {
 				m_percentage = 0.0f;
 				m_state = State::FadeIn;
@@ -75,7 +75,7 @@ void ImageFader::OnTick() {
 			}
 			break;
 		case State::FadeIn:
-			m_percentage += m_speedFadeIn;
+			m_percentage += m_speedFadeIn * deltaTime;
 			if (m_percentage >= 1.0f) {
 				m_percentage = 1.0f;
 				m_state = State::Paused;

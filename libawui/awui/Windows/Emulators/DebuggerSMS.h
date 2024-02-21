@@ -27,7 +27,7 @@ namespace awui {
 
 					virtual bool IsClass(Classes objectClass) const override;
 
-					virtual void OnTick();
+					virtual void OnTick(float deltaTime);
 
 					virtual void OnPaint(OpenGL::GL * gl);
 

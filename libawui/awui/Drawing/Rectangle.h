@@ -9,50 +9,45 @@ namespace awui {
 	namespace Drawing {
 		class Rectangle {
 			private:
-				Point location;
-				Size size;
+				Point m_location;
+				Size m_size;
 
 			public:
 				Rectangle();
-				Rectangle(const Point location, const Size size);
-				Rectangle(int x, int y, int width, int height);
+				Rectangle(const Point& location, const Size& size);
+				Rectangle(float x, float y, float width, float height);
 				virtual ~Rectangle();
 
-				inline int GetWidth() const { return this->size.GetWidth(); }
-				void SetWidth(int width);
+				inline float GetWidth() const { return m_size.GetWidth(); }
+				inline float GetHeight() const { return m_size.GetHeight(); }
+				inline float GetX() const { return m_location.GetX(); }
+				inline float GetY() const { return m_location.GetY(); }
 
-				inline int GetHeight() const { return this->size.GetHeight(); }
-				void SetHeight(int height);
+				void SetWidth(float width);
+				void SetHeight(float height);
+				void SetX(float x);
+				void SetY(float y);
+				void SetLocation(const Point& location);
+				void SetSize(const Size& size);
 
-				inline int GetX() const { return this->location.GetX(); }
-				void SetX(int x);
-
-				inline int GetY() const { return this->location.GetY(); }
-				void SetY(int y);
-
-				int GetBottom() const;
-				inline int GetLeft() const { return this->location.GetX(); }
-				int GetRight() const;
-				inline int GetTop() const { return this->location.GetY(); }
+				float GetBottom() const;
+				inline float GetLeft() const { return m_location.GetX(); }
+				float GetRight() const;
+				inline float GetTop() const { return m_location.GetY(); }
 				Point GetLocation() const;
-
 				Size GetSize() const;
-				void SetLocation(const Point location);
-				void SetLocation(int x, int y) { this->SetLocation(Point(x, y)); }
-				void SetSize(const Size size);
-				void SetSize(int width, int height);
+				void SetLocation(float x, float y) { SetLocation(Point(x, y)); }
+				void SetSize(float width, float height);
+				void Inflate(const Size& size);
+				void Inflate(float width, float height);
+				void Offset(const Point& pos);
+				void Offset(float x, float y);
 
-				void Inflate(const Size size);
-				void Inflate(int width, int height);
+				static Rectangle FromLTRB(float left, float top, float right, float bottom);
+				static Rectangle Intersect(const Rectangle& rectangle1, const Rectangle& rectangle2);
+				void Intersect(const Rectangle& rectangle);
 
-				void Offset(const Point pos);
-				void Offset(int x, int y);
-
-				static Rectangle FromLTRB(int left, int top, int right, int bottom);
-				static Rectangle Intersect(const Rectangle rectangle1, const Rectangle rectangle2);
-				void Intersect(const Rectangle rectangle);
-
-				Rectangle & operator=(const Rectangle & other);
+				Rectangle& operator=(const Rectangle& other);
 
 				virtual String ToString();
 		};

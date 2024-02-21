@@ -6,6 +6,7 @@
 
 #include "Control.h"
 
+#include <awui/Console.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
@@ -22,6 +23,7 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 Control::Control() {
+	m_deltaTime = 0.0f;
 	m_refreshed = 0;
 	m_lastWidth = 0;
 	m_lastHeight = 0;
@@ -345,9 +347,9 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 	return r;
 }
 
-float Control::Interpolate(float from, int to, float percent) {
-	if (awui::Math::Round(from) == to)
-		return from;
+float Control::Interpolate(float from, float to, float percent) {
+	if (awui::Math::Round(from) == awui::Math::Round(to))
+		return to;
 
 	return from + ((to - from) * percent);
 }
@@ -366,7 +368,7 @@ void Control::OnPaint(OpenGL::GL * gl) {
 		if ((focused == control) && (control->GetDrawShadow())) {
 			int x1, y1, x2, y2;
 			Bitmap * bitmap = Form::GetSelectedBitmap();
-			float percent = 0.16f;
+			float percent = m_deltaTime * 10.0f;
 
 			// Esto solo lo hago porque en la inicializacion del programa
 			// no habia nada seleccionado y hay que actualizar esta variable
@@ -545,27 +547,32 @@ bool Control::IsVisible() const {
 	return isVisible;
 }
 
-void Control::OnTickPre() {
-	float percent = 0.16f;
+#include <inttypes.h>
+
+void Control::OnTickPre(float deltaTime) {
+	m_deltaTime = deltaTime;
+	double percent = 10.0f * deltaTime;
+	//awui::Console::WriteLine("%lld %.3f", ellapsed, percent);
+
 	m_lastWidth = Interpolate(m_lastWidth, m_boundsTo.GetWidth(), percent);
 	m_lastHeight = Interpolate(m_lastHeight, m_boundsTo.GetHeight(), percent);
-	int w = Math::Round(m_lastWidth);
-	int h = Math::Round(m_lastHeight);
+	int w = m_lastWidth;  //Math::Round(m_lastWidth);
+	int h = m_lastHeight; //Math::Round(m_lastHeight);
 	m_lastX = Interpolate(m_lastX, m_boundsTo.GetLeft(), percent);
 	m_lastY = Interpolate(m_lastY, m_boundsTo.GetTop(), percent);
-	int x = Math::Round(m_lastX);
-	int y = Math::Round(m_lastY);
+	int x = m_lastX; // Math::Round(m_lastX);
+	int y = m_lastY; // Math::Round(m_lastY);
 	m_bounds.SetSize(w, h);
 	m_bounds.SetLocation(x, y);
 
 	if (IsVisible()) {
-		OnTick();
+		OnTick(deltaTime);
 
 		for (int i = 0; i<GetControls()->GetCount(); i++) {
 			Control * control = (Control *)GetControls()->Get(i);
 			if (!control->IsVisible())
 				continue;
-			control->OnTickPre();
+			control->OnTickPre(deltaTime);
 		}
 	}
 }
@@ -726,7 +733,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	if ((Form::GetControlSelected() == this) && (!m_preventChangeControl)) {
 		Point thisP1(GetAbsoluteLeft(), GetAbsoluteTop());
 		Point thisP2(GetAbsoluteRight(), GetAbsoluteBottom());;
-		Point thisCenter((thisP1.GetX() + thisP2.GetX()) >> 1, (thisP1.GetY() + thisP2.GetY()) >> 1);
+		Point thisCenter((thisP1.GetX() + thisP2.GetX()) / 2.0, (thisP1.GetY() + thisP2.GetY()) / 2.0);
 
 		float distance = 30000;
 		float distance2 = 30000;
@@ -743,7 +750,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
-					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
 					if ((controlCenter.GetX()  < thisCenter.GetX()) &&
 						(controlP1.GetTop()    < thisP2.GetBottom()) &&
@@ -763,7 +770,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
-					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
 					if ((controlCenter.GetX()  > thisCenter.GetX()) &&
 						(controlP1.GetTop()    < thisP2.GetBottom()) &&
@@ -785,7 +792,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
-					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
 					if (controlP1.GetTop() > thisP1.GetBottom()) {
 						float calc = controlP1.GetTop() - thisP1.GetTop();
@@ -816,7 +823,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
-					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
 					if ((controlP1.GetTop()    < selectedAux->GetAbsoluteBottom()) &&
 					    (controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
@@ -839,7 +846,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
-					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
 					if (controlP2.GetBottom() < thisP2.GetTop()) {
 						float calc = thisP2.GetBottom() - controlP2.GetBottom();
@@ -870,7 +877,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
-					Point controlCenter((controlP1.GetX() + controlP2.GetX()) >> 1, (controlP1.GetY() + controlP2.GetY()) >> 1);
+					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
 					if ((controlP1.GetTop()    < selectedAux->GetAbsoluteBottom()) &&
 						(controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&

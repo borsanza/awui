@@ -16,5 +16,5 @@ Page::Page() {
 Page::~Page() {
 }
 
-void Page::OnTick() {
+void Page::OnTick(float deltaTime) {
 }

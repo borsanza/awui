@@ -14,41 +14,41 @@
 using namespace awui::Drawing;
 
 Point::Point() {
-	this->_x = 0;
-	this->_y = 0;
+	m_x = 0.0f;
+	m_y = 0.0f;
 }
 
 Point::Point(const Size sz) {
-	this->_x = sz.GetWidth();
-	this->_y = sz.GetHeight();
+	m_x = sz.GetWidth();
+	m_y = sz.GetHeight();
 }
 
-Point::Point(int x, int y) {
-	this->_x = x;
-	this->_y = y;
+Point::Point(float x, float y) {
+	m_x = x;
+	m_y = y;
 }
 
 Point::~Point() {
 }
 
-void Point::SetX(int x) {
-	this->_x = x;
+void Point::SetX(float x) {
+	m_x = x;
 }
 
-void Point::SetY(int y) {
-	this->_y = y;
+void Point::SetY(float y) {
+	m_y = y;
 }
 
 Point & Point::operator= (const Point & other) {
-	this->_x = other._x;
-	this->_y = other._y;
+	m_x = other.m_x;
+	m_y = other.m_y;
 
 	return *this;
 }
 
 awui::String Point::ToString() {
 	String value;
-	value = String("{X=") + Convert::ToString(this->_x) + ",Y=" + Convert::ToString(this->_y) + "}";
+	value = String("{X=") + Convert::ToString(m_x) + ",Y=" + Convert::ToString(m_y) + "}";
 	return value;
 }
 

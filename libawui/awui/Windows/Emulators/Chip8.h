@@ -33,7 +33,7 @@ namespace awui {
 
 				void LoadRom(const String file);
 
-				virtual void OnTick();
+				virtual void OnTick(float deltaTime);
 				virtual void OnPaint(OpenGL::GL* gl);
 				int GetChip8Mode() const;
 				void SetInvertedColors(bool mode);

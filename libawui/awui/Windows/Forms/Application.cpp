@@ -8,12 +8,14 @@
 
 #include <awui/Console.h>
 #include <awui/Convert.h>
+#include <awui/Stopwatch.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Joystick/Controller.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+using namespace awui;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;
 
@@ -52,10 +54,17 @@ void Application::Run(Form * form = NULL) {
 
 	Stats * stats = Stats::Instance();
 
+	Stopwatch stopwatch;
+
+	stopwatch.StartNew();
 	while (!Application::quit) {
 		ProcessEvents();
 
-		form->OnTickPre();
+		stopwatch.Stop();
+		float deltaTime = stopwatch.GetDeltaTime();
+		stopwatch.StartNew();
+
+		form->OnTickPre(deltaTime);
 
 		glViewport(0, 0, form->GetWidth(), form->GetHeight());
 		glClearColor(form->GetBackColor().GetR() / 255.0f, form->GetBackColor().GetG() / 255.0f, form->GetBackColor().GetB() / 255.0f, 1.0f);

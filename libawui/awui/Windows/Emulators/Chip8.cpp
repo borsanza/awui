@@ -54,7 +54,7 @@ void Chip8::LoadRom(const String file) {
 	CheckBackcolor();
 }
 
-void Chip8::OnTick() {
+void Chip8::OnTick(float deltaTime) {
 	if (m_lastInverted != Chip8::m_invertedColors) {
 		UpdateImage();
 		m_lastInverted = Chip8::m_invertedColors;

@@ -8,20 +8,20 @@ namespace awui {
 
 		class Size {
 			private:
-				int width;
-				int height;
+				float m_width;
+				float m_height;
 
 			public:
 				Size();
 				Size(const Point pt);
-				Size(int width, int height);
+				Size(float width, float height);
 				virtual ~Size();
 
-				int GetWidth() const;
-				void SetWidth(int width);
+				float GetWidth() const;
+				void SetWidth(float width);
 
-				int GetHeight() const;
-				void SetHeight(int height);
+				float GetHeight() const;
+				void SetHeight(float height);
 
 				Size & operator= (const Size & other);
 

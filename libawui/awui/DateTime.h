@@ -2,23 +2,25 @@
 
 #include <awui/Object.h>
 
+#include <chrono>
+
 namespace awui {
 	class DateTime : public Object {
 		private:
-			long long m_time;
+			std::chrono::microseconds m_time;
 
 		public:
 			DateTime();
-			DateTime(long long time);
+			DateTime(std::chrono::microseconds time);
 			virtual ~DateTime();
 
 			static DateTime GetNow();
-			long long GetTicks();
+			long long GetTicks() const;
 			static double GetTotalSeconds();
 
-			unsigned int GetMillisecond();
-			unsigned char GetSecond();
-			unsigned char GetMinute();
-			unsigned char GetHour();
+			unsigned int GetMillisecond() const;
+			unsigned char GetSecond() const;
+			unsigned char GetMinute() const;
+			unsigned char GetHour() const;
 	};
 }

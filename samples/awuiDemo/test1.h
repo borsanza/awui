@@ -33,5 +33,5 @@ class Test1 : public awui::Windows::Forms::Control {
 		void InitializeComponent();
 		void AddButtonEffect(awui::Effects::Effect * effect, Control * control, int posy = -1);
 
-		virtual void OnTick();
+		virtual void OnTick(float deltaTime);
 };

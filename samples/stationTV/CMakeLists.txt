@@ -11,9 +11,9 @@ file(GLOB STATIONTV_SOURCES *.cpp)
 
 add_executable(stationTV ${STATIONTV_SOURCES})
 
-if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    set_target_properties(stationTV PROPERTIES WIN32_EXECUTABLE TRUE)
-endif()
+#if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
+#    set_target_properties(stationTV PROPERTIES WIN32_EXECUTABLE TRUE)
+#endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     if(MSVC)

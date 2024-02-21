@@ -203,7 +203,7 @@ void MasterSystem::LoadRom(const String file) {
 	}
 }
 
-void MasterSystem::OnTick() {
+void MasterSystem::OnTick(float deltaTime) {
 	long long now = DateTime::GetNow().GetTicks();
 	if ((now - m_lastTick) > 10000000) {
 		m_lastTick = now;

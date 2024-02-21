@@ -43,7 +43,7 @@ namespace awui {
 						inline bool IsShowing() const { return m_status > 0.0f; }
 						inline bool IsFullScreen() const { return m_status >= 100.0f; }
 						inline bool IsStopped() const { return ((m_status == 0.0f) || (m_status == 200.0f)); }
-						virtual void OnTick();
+						virtual void OnTick(float deltaTime);
 
 						inline void SetStationUI(StationUI * station) { m_station = station; }
 
@@ -99,7 +99,7 @@ namespace awui {
 
 						void Refresh();
 						// void GetList(ArrayList * list, NodeFile * parent);
-						virtual void OnTick();
+						virtual void OnTick(float deltaTime);
 
 						void SelectChild(NodeFile * node);
 						void SelectParent();

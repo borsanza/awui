@@ -10,60 +10,48 @@
 using namespace awui::Drawing;
 
 Size::Size() {
-	this->width = 0;
-	this->height = 0;
-	this->SetWidth(0);
-	this->SetHeight(0);
+	m_width = 0.0f;
+	m_height = 0.0f;
 }
 
 Size::Size(const Point pt) {
-	this->width = 0;
-	this->height = 0;
-	this->SetWidth(pt.GetX());
-	this->SetHeight(pt.GetY());
+	m_width = pt.GetX();
+	m_height = pt.GetY();
 }
 
-Size::Size(int width, int height) {
-	this->width = 0;
-	this->height = 0;
-	this->SetWidth(width);
-	this->SetHeight(height);
+Size::Size(float width, float height) {
+	m_width = width;
+	m_height = height;
 }
 
 Size::~Size() {
 }
 
-int Size::GetWidth() const {
-	return this->width;
+float Size::GetWidth() const {
+	return m_width;
 }
 
-void Size::SetWidth(int width) {
-	if (width < 0)
-		width = 0;
-
-	this->width = width;
+void Size::SetWidth(float width) {
+	m_width = width < 0.0f ? 0.0f : width;
 }
 
-int Size::GetHeight() const {
-	return this->height;
+float Size::GetHeight() const {
+	return m_height;
 }
 
-void Size::SetHeight(int height) {
-	if (height < 0)
-		height = 0;
-
-	this->height = height;
+void Size::SetHeight(float height) {
+	m_height = (height < 0.0f) ? 0.0f : height;
 }
 
 Size & Size::operator= (const Size & other) {
-	this->width = other.width;
-	this->height = other.height;
+	m_width = other.m_width;
+	m_height = other.m_height;
 
 	return *this;
 }
 
 awui::String Size::ToString() {
 	String value;
-	value = String("{Width=") + Convert::ToString(this->width) + ", Height=" + Convert::ToString(this->height) + "}";
+	value = String("{Width=") + Convert::ToString(m_width) + ", Height=" + Convert::ToString(m_height) + "}";
 	return value;
 }

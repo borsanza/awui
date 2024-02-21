@@ -115,9 +115,6 @@ void Label::OnPaint(GL* gl) {
 
 	if (scrolled != 0)
 		this->Draw(scrolled + (this->GetLabelWidth() + SCROLLMARGIN), 0, this->GetWidth(), this->GetHeight());
-	else
-		if (this->_scrolled)
-			this->_scrolled = 0;
 }
 
 void Label::DrawLines(int x, int y) {

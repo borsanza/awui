@@ -24,7 +24,7 @@ namespace awui {
 
 					void SetMargin(int margin);
 
-					virtual void OnTick();
+					virtual void OnTick(float deltaTime);
 
 					Control * GetControlSelected() const;
 			};

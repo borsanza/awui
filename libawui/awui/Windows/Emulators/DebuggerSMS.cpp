@@ -36,7 +36,7 @@ bool DebuggerSMS::IsClass(Classes objectClass) const {
 	return Button::IsClass(objectClass);
 }
 
-void DebuggerSMS::OnTick() {
+void DebuggerSMS::OnTick(float deltaTime) {
 	int newWidth = this->GetWidth();
 	if (!this->_show) {
 		if (this->_width != 1) {

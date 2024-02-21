@@ -23,7 +23,7 @@ namespace awui {
 
 							void SetPage(Page * page);
 
-							virtual void OnTick();
+							virtual void OnTick(float deltaTime);
 					};
 				}
 			}

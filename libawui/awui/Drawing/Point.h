@@ -8,24 +8,24 @@ namespace awui {
 
 		class Point {
 			private:
-				int _x;
-				int _y;
+				float m_x;
+				float m_y;
 
 			public:
 				Point();
 				Point(const Size sz);
-				Point(int x, int y);
+				Point(float x, float y);
 				virtual ~Point();
 
-				inline int GetX() const { return this->_x; }
-				inline int GetLeft() const { return this->_x; }
-				inline int GetRight() const { return this->_x; }
-				void SetX(int x);
+				inline float GetX() const { return m_x; }
+				inline float GetLeft() const { return m_x; }
+				inline float GetRight() const { return m_x; }
+				void SetX(float x);
 
-				inline int GetY() const { return this->_y; }
-				inline int GetTop() const { return this->_y; }
-				inline int GetBottom() const { return this->_y; }
-				void SetY(int y);
+				inline float GetY() const { return m_y; }
+				inline float GetTop() const { return m_y; }
+				inline float GetBottom() const { return m_y; }
+				void SetY(float y);
 
 				Point & operator= (const Point & other);
 
