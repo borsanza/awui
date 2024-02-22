@@ -25,6 +25,9 @@ void MasterGearWritePortCB(uint8_t port, uint8_t value, void * data) { ((Motherb
 uint8_t MasterGearReadPortCB(uint8_t port, void * data) { return ((Motherboard *) data)->ReadPort(port); }
 
 Motherboard::Motherboard() {
+	m_seconds = 0.0f;
+	m_nextTick = 0.0f;
+
 	m_z80.SetWriteMemoryCB(MasterGearWriteMemoryCB, this);
 	m_z80.SetReadMemoryCB(MasterGearReadMemoryCB, this);
 	m_z80.SetWritePortCB(MasterGearWritePortCB, this);
@@ -96,7 +99,20 @@ void Motherboard::RunOpcode() {
 // http://www.smspower.org/forums/viewtopic.php?p=69680
 // 53693175 / (15 * 228 * 262) ~ 59.922743404 frames per second for NTSC
 // 53203424 / (15 * 228 * 313) ~ 49.7014591858 frames per second for PAL
+
 void Motherboard::OnTick(float deltaSeconds) {
+	m_seconds += deltaSeconds;
+	if (m_seconds < m_nextTick) {
+		return;
+	}
+
+	while (m_seconds >= m_nextTick) {
+		m_nextTick += 1.0f / 60.0f;
+		DoTick();
+	}
+}
+
+void Motherboard::DoTick() {
 	m_initFrame = DateTime::GetTotalSeconds();
 
 	double fps = m_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;

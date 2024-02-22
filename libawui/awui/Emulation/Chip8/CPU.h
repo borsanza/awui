@@ -6,66 +6,64 @@
 namespace awui {
 	class Random;
 
-	namespace Emulation {
-		namespace Chip8 {
-			class Input;
-			class Memory;
-			class Registers;
-			class Screen;
-			class Stack;
-			class Sound;
+	namespace Emulation::Chip8 {
+		class Input;
+		class Memory;
+		class Registers;
+		class Screen;
+		class Stack;
+		class Sound;
 
-			class CPU {
-				private:
-					int16_t _pc;
-					Screen * _screen;
-					Registers * _registers;
-					Memory * _memory;
-					Random * _random;
-					Input * _input;
-					Stack * _stack;
-					Sound * _sound;
-					uint8_t _chip8mode;
-					uint8_t _delayTimer;
-					uint8_t _soundTimer;
-					uint16_t _spriteWidth;
-					uint16_t _spriteHeight;
-					uint16_t _frameCounter;
+		class CPU {
+			private:
+				int16_t m_pc;
+				Screen * m_screen;
+				Registers * m_registers;
+				Memory * m_memory;
+				Random * m_random;
+				Input * m_input;
+				Stack * m_stack;
+				Sound * m_sound;
+				uint8_t m_chip8mode;
+				uint8_t m_delayTimer;
+				uint8_t m_soundTimer;
+				uint16_t m_spriteWidth;
+				uint16_t m_spriteHeight;
+				uint16_t m_frameCounter;
 
-					float m_seconds;
-					float m_nextTick;
+				float m_seconds;
+				float m_nextTick;
 
-					int _finished;
-					bool _imageUpdated;
+				int m_finished;
+				bool m_imageUpdated;
 
-					bool _firstTime;
-					Opcode _opcode;
+				bool m_firstTime;
+				Opcode m_opcode;
 
-					uint32_t * _colors;
+				uint32_t * m_colors;
 
-					int RunOpcode(int iteration);
-					void ChangeResolution(uint16_t width, uint16_t height);
-					void DoTick();
+				int RunOpcode(int iteration);
+				void ChangeResolution(uint16_t width, uint16_t height);
+				void DoTick();
 
-				public:
-					CPU();
-					virtual ~CPU();
+			public:
+				CPU();
+				virtual ~CPU();
 
-					void LoadRom(const String file);
-					void OnTick(float deltaSeconds);
+				void LoadRom(const String file);
+				void OnTick(float deltaSeconds);
 
-					Screen * GetScreen();
+				Screen * GetScreen();
 
-					bool GetImageUpdated() const;
-					void SetImageUpdated(bool mode);
+				bool GetImageUpdated() const;
+				void SetImageUpdated(bool mode);
 
-					uint8_t GetChip8Mode() const;
+				uint8_t GetChip8Mode() const;
 
-					void Reset();
+				void Reset();
 
-					void KeyDown(uint8_t key);
-					void KeyUp(uint8_t key);
-			};
-		}
+				void KeyDown(uint8_t key);
+				void KeyUp(uint8_t key);
+		};
 	}
 }
