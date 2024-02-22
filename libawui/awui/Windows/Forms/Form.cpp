@@ -121,18 +121,18 @@ void Form::OnTick(float deltaSeconds) {
 	stats->SetWidth(GetWidth());
 	stats->SetLocation(0, GetHeight() - stats->GetHeight());
 
+/*
 	static DateTime lastTime = DateTime::GetNow();
 	DateTime now = DateTime::GetNow();
 	if (lastTime.GetSecond() != now.GetSecond()) {
 		lastTime = now;
-/*
 		if (remoteProcess->GetHasExited()) {
 			delete remoteProcess;
 			remoteProcess = new awui::Diagnostics::Process();
 			remoteProcess->Start("cat", "/dev/ttyUSB0 2> /dev/null");
 		}
-*/
 	}
+*/
 }
 
 void Form::RefreshVideo() {
