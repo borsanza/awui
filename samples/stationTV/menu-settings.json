@@ -1,0 +1,85 @@
+{
+    "Settings": {
+        "General": {
+            "language": {
+                "name": "Language",
+                "description": "Interface language of the program.",
+                "type": "list",
+                "defaultValue": "en",
+                "options": [
+                    {
+                        "code": "en",
+                        "name": "English"
+                    },
+                    {
+                        "code": "es",
+                        "name": "Spanish"
+                    }
+                ]
+            }
+        },
+        "Video": {
+            "fullScreen": {
+                "name": "Fullscreen",
+                "description": "Enable to use the program in full-screen mode.",
+                "type": "boolean",
+                "defaultValue": false
+            },
+            "vsync": {
+                "name": "Vertical synchronization",
+                "description": "Vertical synchronization to reduce screen tearing.",
+                "type": "boolean",
+                "defaultValue": true
+            }
+        },
+        "Audio": {
+            "activeAudioChannels": {
+                "name": "Active audio channels",
+                "description": "Active audio channels. Up to 4 channels can be activated.",
+                "type": "range",
+                "defaultValue": {
+                    "channel1": true,
+                    "channel2": true,
+                    "channel3": true,
+                    "channel4": true
+                }
+            }
+        },
+        "Advanced": {
+            "clock": {
+                "name": "clock",
+                "description": "Show or hide the display of a clock within the program.",
+                "type": "boolean",
+                "defaultValue": true
+            },
+            "timeFormat": {
+                "name": "Time Format",
+                "description": "Choose between a 12-hour or 24-hour clock format.",
+                "type": "list",
+                "defaultValue": "24",
+                "options": [
+                    {
+                        "code": "12",
+                        "name": "12 hour"
+                    },
+                    {
+                        "code": "24",
+                        "name": "24 hour"
+                    }
+                ]
+            }
+        },
+        "About": {
+            "appName": {
+                "name": "App Name",
+                "type": "label",
+                "defaultValue": "Station TV"
+            },
+            "version": {
+                "name": "Version",
+                "type": "label",
+                "defaultValue": "0.1"
+            }
+        }
+    }
+}

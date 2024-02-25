@@ -36,4 +36,9 @@ if(WIN32)
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 			${DLLS_PATH}
 			$<TARGET_FILE_DIR:stationTV>)
+
+	add_custom_command(TARGET stationTV POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			${CMAKE_CURRENT_SOURCE_DIR}/menu-settings.json
+			$<TARGET_FILE_DIR:stationTV>)
 endif()
