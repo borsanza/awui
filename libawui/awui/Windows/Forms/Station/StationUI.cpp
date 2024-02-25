@@ -6,6 +6,7 @@
 
  #include "StationUI.h"
 
+#include <awui/Console.h>
 #include <awui/Collections/SortedList.h>
 #include <awui/Math.h>
 #include <awui/Windows/Emulators/ArcadeContainer.h>
@@ -16,6 +17,7 @@
 #include <awui/Windows/Forms/Station/Browser/Page.h>
 #include <awui/Windows/Forms/Station/MenuButton.h>
 #include <awui/Windows/Forms/Station/SettingsWidget.h>
+#include <awui/Windows/Forms/Station/SettingsUI.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -29,17 +31,20 @@ using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
 
 StationUI::StationUI() {
+	m_controlBase = new Control();
+
 	m_actual = 0;
 	m_fade.SetStationUI(this);
-	m_arcade = NULL;
-	m_root = NULL;
+	m_arcade = nullptr;
+	m_root = nullptr;
+	m_settingsUI = nullptr;
 
 	m_backgroundFader = new ImageFader();
 	m_backgroundFader->SetTabStop(false);
 	m_backgroundFader->SetDock(DockStyle::Fill);
 	m_backgroundFader->SetColor(ColorF::FromArgb(0.25f, 1.0f, 1.0f, 1.0f));
 
-	GetControls()->Add(m_backgroundFader);
+	m_controlBase->GetControls()->Add(m_backgroundFader);
 
 	SetTabStop(false);
 
@@ -53,15 +58,17 @@ StationUI::StationUI() {
 	m_title->SetDock(DockStyle::None);
 
 	m_browser = new Browser::Browser();
-	GetControls()->Add(m_title);
-	GetControls()->Add(m_browser);
+	m_controlBase->GetControls()->Add(m_title);
+	m_controlBase->GetControls()->Add(m_browser);
+
 
 	m_settings = new SettingsWidget();
+	m_settings->AddOnClickListener(this);
 	m_settings->SetDock(DockStyle::None);
 	m_settings->SetFont(font2);
 	m_settings->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	m_settings->SetSize(44, 46);
-	GetControls()->Add(m_settings);
+	m_controlBase->GetControls()->Add(m_settings);
 
 	m_clock = new Label();
 	m_clock->SetDock(DockStyle::None);
@@ -70,13 +77,18 @@ StationUI::StationUI() {
 	m_clock->SetForeColor(Color::FromArgb(151, 151, 151));
 	m_clock->SetTextAlign(ContentAlignment::TopCenter);
 	m_clock->SetText("11:59");
-	GetControls()->Add(m_clock);
+	m_controlBase->GetControls()->Add(m_clock);
+
+	GetControls()->Add(m_controlBase);
+	m_controlBase->SetDock(DockStyle::Fill);
 }
 
 StationUI::~StationUI() {
 	// printf("~StationUI\n");
-	if (m_root)
+	if (m_root) {
 		delete m_root;
+		m_root = nullptr;
+	}
 }
 
 void StationUI::SetPath(const String path) {
@@ -99,7 +111,7 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 	struct dirent *dir;
 	d = opendir(parent->m_path.ToCharArray());
 	if (d) {
-		while ((dir = readdir(d)) != NULL) {
+		while ((dir = readdir(d)) != nullptr) {
 			if (strcmp(dir->d_name, ".") == 0)
 				continue;
 			if (strcmp(dir->d_name, "..") == 0)
@@ -114,7 +126,7 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 
 			newFile += dir->d_name;
 			child->m_name = dir->d_name;
-			child->m_background = NULL;
+			child->m_background = nullptr;
 
 			child->m_button = new MenuButton(this);
 			child->m_button->SetNodeFile(child);
@@ -242,7 +254,7 @@ void StationUI::Refresh() {
 }
 
 void StationUI::RefreshList() {
-	if (m_actual->m_page == NULL) {
+	if (m_actual->m_page == nullptr) {
 		int y = 25;
 		m_actual->m_page = new Page();
 		for (int i = 0; i < m_actual->m_childList->GetCount(); i++) {
@@ -262,7 +274,7 @@ void StationUI::RefreshList() {
 }
 
 void StationUI::OnTick(float deltaSeconds) {
-	static Control * lastFocused = NULL;
+	static Control * lastFocused = nullptr;
 	Control * c = m_actual->m_page->GetFocused();
 	if (lastFocused != c) {
 		lastFocused = c;
@@ -316,10 +328,13 @@ void StationUI::SelectChild(NodeFile * node) {
 		UpdateTitle();
 	} else {
 		if (node->m_emulator != Types::Undefined) {
-			if (!m_fade.IsStopped())
+			if (!m_fade.IsStopped()) {
 				return;
-			if (GetControls()->IndexOf(&m_fade) == -1)
+			}
+
+			if (GetControls()->IndexOf(&m_fade) == -1) {
 				GetControls()->Add(&m_fade);
+			}
 
 			GetControls()->MoveToEnd(&m_fade);
 			m_arcade->SetTabStop(true);
@@ -330,8 +345,8 @@ void StationUI::SelectChild(NodeFile * node) {
 }
 
 void StationUI::SelectParent() {
-	if (m_actual != NULL) {
-		if (m_actual->m_parent != NULL) {
+	if (m_actual != nullptr) {
+		if (m_actual->m_parent != nullptr) {
 			m_actual = m_actual->m_parent;
 			m_browser->SetPage(m_actual->m_page);
 			m_actual->m_page->GetFocused()->SetFocus(true);
@@ -361,7 +376,7 @@ void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
 
 	if (m_arcade) {
 		m_arcade->SetSoundEnabled(false);
-		m_arcade = NULL;
+		m_arcade = nullptr;
 	}
 
 	if (arcade) {
@@ -372,16 +387,15 @@ void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
 
 void StationUI::SetArcadeFullScreen() {
 	GetControls()->Remove(&m_fade);
-	m_title->SetVisible(false);
-	m_browser->SetVisible(false);
+	m_controlBase->SetVisible(false);
 }
 
 void StationUI::ExitingArcade() {
 	if (!m_fade.IsStopped())
 		return;
 
-	m_title->SetVisible(true);
-	m_browser->SetVisible(true);
+	m_controlBase->SetVisible(true);
+
 	m_fade.HideFade();
 	GetControls()->Add(&m_fade);
 	m_arcade->SetTabStop(false);
@@ -393,24 +407,18 @@ void StationUI::ExitArcade() {
 	GetControls()->Remove(&m_fade);
 }
 
-bool StationUI::OnKeyPress(Keys::Enum key) {
-	if (m_arcade && (m_arcade->GetType() == Types::Chip8))
-		return m_arcade->OnKeyPress(key);
-
-	return Control::OnKeyPress(key);
-}
-
-bool StationUI::OnKeyUp(Keys::Enum key) {
-	if (m_arcade && (m_arcade->GetType() == Types::Chip8))
-		return m_arcade->OnKeyUp(key);
-
-	return Control::OnKeyUp(key);
+void StationUI::OnClick(Control *sender) {
+	Console::WriteLine("Click %s", sender->ToString());
+	m_settingsUI = new SettingsUI();
+	m_settingsUI->SetDock(DockStyle::Fill);
+	GetControls()->Add(m_settingsUI);
+	m_controlBase->SetVisible(false);
 }
 
 /********************************* FadePanel **********************************/
 
 FadePanel::FadePanel() {
-	m_station = NULL;
+	m_station = nullptr;
 	m_showing = false;
 	m_status = 0.0f;
 }
@@ -454,9 +462,9 @@ NodeFile::NodeFile() {
 	m_childList = 0;
 	m_directory = true;
 	m_emulator = Types::Undefined;
-	m_button = NULL;
-	m_page = NULL;
-	m_arcade = NULL;
+	m_button = nullptr;
+	m_page = nullptr;
+	m_arcade = nullptr;
 }
 
 NodeFile::~NodeFile() {

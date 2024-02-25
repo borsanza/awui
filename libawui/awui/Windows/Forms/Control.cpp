@@ -534,14 +534,15 @@ const awui::String Control::GetName() {
 bool Control::IsVisible() const {
 	bool isVisible = true;
 
-	if (!m_visible)
+	if (!m_visible) {
 		return false;
+	}
 
 	if (GetParent()) {
 		Drawing::Rectangle pr = GetParent()->GetBounds();
 		pr.SetLocation(0, 0);
 		Drawing::Rectangle cr = Drawing::Rectangle::Intersect(m_bounds, pr);
-		isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0);
+		isVisible = GetParent()->IsVisible() && ((cr.GetWidth() > 0) && (cr.GetHeight() > 0));
 	}
 
 	return isVisible;
@@ -602,26 +603,26 @@ void Control::SetTabStop(bool tabStop) {
 }
 
 void Control::OnRemoteKeyPressPre(int which, RemoteButtons::Enum button) {
-	bool mustStop = OnRemoteKeyPress(which, button);
+	bool mustStop = IsVisible() && OnRemoteKeyPress(which, button);
 	if (mustStop)
 		return;
 
 	if (!m_focused)
 		Form::SetControlSelected(Form::GetControlSelected());
 
-	if (m_focused)
+	if (m_focused && m_focused->IsVisible())
 		m_focused->OnRemoteKeyPressPre(which, button);
 }
 
 void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
-	bool mustStop = OnRemoteKeyUp(which, button);
+	bool mustStop = IsVisible() && OnRemoteKeyUp(which, button);
 	if (mustStop)
 		return;
 
 	if (!m_focused)
 		Form::SetControlSelected(Form::GetControlSelected());
 
-	if (m_focused)
+	if (m_focused && m_focused->IsVisible())
 		m_focused->OnRemoteKeyUpPre(which, button);
 }
 
@@ -666,26 +667,26 @@ void Control::OnJoystickAxisMotionPre(int which, int16_t axisX, int16_t axisY) {
 
 
 void Control::OnKeyPressPre(Keys::Enum key) {
-	bool mustStop = OnKeyPress(key);
+	bool mustStop = IsVisible() && OnKeyPress(key);
 	if (mustStop)
 		return;
 
 	if (!m_focused)
 		Form::SetControlSelected(Form::GetControlSelected());
 
-	if (m_focused)
+	if (m_focused && m_focused->IsVisible())
 		m_focused->OnKeyPressPre(key);
 }
 
 void Control::OnKeyUpPre(Keys::Enum key) {
-	bool mustStop = OnKeyUp(key);
+	bool mustStop = IsVisible() && OnKeyUp(key);
 	if (mustStop)
 		return;
 
 	if (!m_focused)
 		Form::SetControlSelected(Form::GetControlSelected());
 
-	if (m_focused)
+	if (m_focused && m_focused->IsVisible())
 		m_focused->OnKeyUpPre(key);
 }
 

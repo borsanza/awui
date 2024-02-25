@@ -11,11 +11,11 @@ namespace awui {
 
 					class Browser : public Control {
 						private:
-							Gradient _gradientUp;
-							Gradient _gradientBottom;
-							Gradient _gradientLeft;
-							Gradient _gradientRight;
-							Page * _page;
+							Gradient m_gradientUp;
+							Gradient m_gradientBottom;
+							Gradient m_gradientLeft;
+							Gradient m_gradientRight;
+							Page * m_page;
 
 						public:
 							Browser();

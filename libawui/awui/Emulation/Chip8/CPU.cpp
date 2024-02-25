@@ -712,7 +712,7 @@ int CPU::RunOpcode(int iteration) {
 
 		default:
 		case OxNOTIMPLEMENTED:
-//			_opcode.ShowLog(_pc, enumopcode);
+			m_opcode.ShowLog(m_pc, enumopcode);
 //			assert(0);
 			break;
 	}

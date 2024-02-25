@@ -1,6 +1,7 @@
 #pragma once
 
 #include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/Listeners/IButtonListener.h>
 
 class SettingsWidget;
 
@@ -22,6 +23,7 @@ namespace awui {
 			namespace Station {
 				class MenuButton;
 				class StationUI;
+				class SettingsUI;
 
 				namespace Browser {
 					class Browser;
@@ -68,7 +70,9 @@ namespace awui {
 						virtual ~NodeFile();
 				};
 
-				class StationUI : public Control {
+				using namespace awui::Windows::Forms::Listeners;
+
+				class StationUI : public Control, IButtonListener {
 					private:
 						FadePanel m_fade;
 						String m_path;
@@ -81,6 +85,8 @@ namespace awui {
 						SettingsWidget * m_settings;
 						Label * m_clock;
 						ImageFader * m_backgroundFader;
+						SettingsUI * m_settingsUI;
+						Control * m_controlBase;
 
 						void RecursiveSearch(NodeFile * parent);
 						bool Minimize(NodeFile * parent);
@@ -111,8 +117,7 @@ namespace awui {
 
 						void SetBackground(Bitmap * background);
 
-						virtual bool OnKeyPress(Keys::Enum key);
-						virtual bool OnKeyUp(Keys::Enum key);
+						virtual void OnClick(Control* sender) override;
 				};
 			}
 		}

@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <awui/Object.h>
 
 namespace awui::Windows::Forms::Listeners {

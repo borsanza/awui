@@ -6,7 +6,6 @@
 
 #include "SettingsWidget.h"
 
-#include <awui/Console.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
@@ -20,8 +19,6 @@ SettingsWidget::SettingsWidget() {
 
 	m_bitmap->SetLocation(0, 0);
 	m_bitmap->SetSize(43, 46);
-
-	AddOnClickListener(this);
 }
 
 SettingsWidget::~SettingsWidget() {
@@ -30,8 +27,4 @@ SettingsWidget::~SettingsWidget() {
 
 void SettingsWidget::OnPaint(GL* gl) {
 	m_bitmap->OnPaint(gl);
-}
-
-void SettingsWidget::OnClick(Control *sender) {
-	Console::WriteLine("Click");
 }

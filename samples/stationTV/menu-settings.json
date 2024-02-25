@@ -47,10 +47,16 @@
         },
         "Advanced": {
             "clock": {
-                "name": "clock",
+                "name": "Clock",
                 "description": "Show or hide the display of a clock within the program.",
                 "type": "boolean",
                 "defaultValue": true
+            },
+            "fps": {
+                "name": "FPS",
+                "description": "Show or hide the Frames per second.",
+                "type": "boolean",
+                "defaultValue": false
             },
             "timeFormat": {
                 "name": "Time Format",
