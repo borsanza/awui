@@ -20,7 +20,7 @@ using namespace awui::Windows::Forms::Station;
 
 class FormArcade : public awui::Windows::Forms::Form {
 	private:
-		StationUI * m_station;
+		StationUI * m_stationUI;
 
 		void InitializeComponent();
 

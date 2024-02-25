@@ -6,26 +6,26 @@
 
 #include "Button.h"
 
-#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
-#include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/MouseEventArgs.h>
+#include <awui/Windows/Forms/Listeners/IButtonListener.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Listeners;
 
 Button::Button() {
-	this->label.SetDock(DockStyle::Fill);
-	this->label.SetTextAlign(ContentAlignment::MiddleCenter);
+	m_label.SetDock(DockStyle::Fill);
+	m_label.SetTextAlign(ContentAlignment::MiddleCenter);
 
-	this->SetSize(75, 23);
-	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	this->SetTabStop(true);
+	SetSize(75, 23);
+	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetTabStop(true);
 }
 
 Button::~Button() {
+	RemoveAllListeners();
 }
 
 bool Button::IsClass(Classes objectClass) const {
@@ -47,29 +47,67 @@ void Button::OnMouseMove(MouseEventArgs* e) {
 	Form::SetControlSelected(this);
 }
 
+void Button::OnMouseUp(MouseEventArgs* e) {
+	Click();
+}
+
+bool awui::Windows::Forms::Button::OnKeyPress(Keys::Enum key) {
+	bool ret = false;
+	switch (key) {
+		case Keys::Key_ENTER:
+		case Keys::Key_SPACE:
+			Click();
+	    	ret = true;
+			break;
+		
+		default:
+			break;
+	}
+
+    return ret;
+}
+
 void Button::OnPaint(GL* gl) {
-	this->label.SetSize(this->GetWidth(), this->GetHeight());
-	this->label.OnPaint(gl);
+	m_label.SetSize(GetWidth(), GetHeight());
+	m_label.OnPaint(gl);
 }
 
 void Button::SetText(const String str) {
-	this->label.SetText(str);
+	m_label.SetText(str);
 }
 
 const awui::String Button::GetText() {
-	return this->label.GetText();
+	return m_label.GetText();
 }
 
 void Button::SetForeColor(const Drawing::Color color) {
 	Control::SetForeColor(color);
-	this->label.SetForeColor(this->GetForeColor());
+	m_label.SetForeColor(GetForeColor());
 }
 
 void Button::SetFont(const Drawing::Font font) {
 	Control::SetFont(font);
-	this->label.SetFont(font);
+	m_label.SetFont(font);
 }
 
 int Button::GetLabelWidth() const {
-	return this->label.GetLabelWidth();
+	return m_label.GetLabelWidth();
+}
+
+void Button::Click() {
+	for (auto* listener : m_listeners) {
+		listener->OnClick(this);
+	}
+}
+
+void Button::AddOnClickListener(IButtonListener * listener) {
+	m_listeners.push_back(listener);
+}
+
+void Button::RemoveOnClickListener(IButtonListener* listener) {
+	m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), listener), m_listeners.end());
+}
+
+void Button::RemoveAllListeners() {
+	m_listeners.clear();
 }

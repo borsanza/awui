@@ -13,23 +13,23 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 FormArcade::FormArcade() {
-	m_station = NULL;
+	m_stationUI = NULL;
 	InitializeComponent();
 }
 
 FormArcade::~FormArcade() {
-	delete m_station;
+	delete m_stationUI;
 }
 
 void FormArcade::InitializeComponent() {
 	SetBackColor(Color::FromArgb(0, 0, 0));
 
-	m_station = new StationUI();
-	m_station->SetPath("./roms/");
-	m_station->Refresh();
-	m_station->SetDock(DockStyle::Fill);
+	m_stationUI = new StationUI();
+	m_stationUI->SetPath("./roms/");
+	m_stationUI->Refresh();
+	m_stationUI->SetDock(DockStyle::Fill);
 
-	GetControls()->Add(m_station);
+	GetControls()->Add(m_stationUI);
 
 	SetSize(1280, 720);
 	SetFullscreen(0);

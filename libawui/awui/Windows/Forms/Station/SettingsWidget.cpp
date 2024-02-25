@@ -6,6 +6,7 @@
 
 #include "SettingsWidget.h"
 
+#include <awui/Console.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
@@ -14,17 +15,23 @@ using namespace awui::Drawing;
 using namespace awui::OpenGL;
 
 SettingsWidget::SettingsWidget() {
-	this->_bitmap = new Bitmap("images/settings.png");
-	this->SetTabStop(true);
+	m_bitmap = new Bitmap("images/settings.png");
+	SetTabStop(true);
 
-	this->_bitmap->SetLocation(0, 0);
-	this->_bitmap->SetSize(43, 46);
+	m_bitmap->SetLocation(0, 0);
+	m_bitmap->SetSize(43, 46);
+
+	AddOnClickListener(this);
 }
 
 SettingsWidget::~SettingsWidget() {
-	delete this->_bitmap;
+	delete m_bitmap;
 }
 
 void SettingsWidget::OnPaint(GL* gl) {
-	this->_bitmap->OnPaint(gl);
+	m_bitmap->OnPaint(gl);
+}
+
+void SettingsWidget::OnClick(Control *sender) {
+	Console::WriteLine("Click");
 }
