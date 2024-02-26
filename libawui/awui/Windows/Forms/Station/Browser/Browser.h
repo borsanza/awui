@@ -2,31 +2,23 @@
 
 #include <awui/Windows/Forms/Gradient.h>
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			namespace Station {
-				namespace Browser {
-					class Page;
+namespace awui::Windows::Forms::Station::Browser {
+	class Page;
 
-					class Browser : public Control {
-						private:
-							Gradient m_gradientUp;
-							Gradient m_gradientBottom;
-							Gradient m_gradientLeft;
-							Gradient m_gradientRight;
-							Page * m_page;
+	class Browser : public Control {
+		private:
+			Gradient m_gradientUp;
+			Gradient m_gradientBottom;
+			Gradient m_gradientLeft;
+			Gradient m_gradientRight;
+			Page * m_page;
 
-						public:
-							Browser();
-							virtual ~Browser();
+		public:
+			Browser();
+			virtual ~Browser();
 
-							void SetPage(Page * page);
+			void SetPage(Page * page);
 
-							virtual void OnTick(float deltaSeconds);
-					};
-				}
-			}
-		}
-	}
+			virtual void OnTick(float deltaSeconds);
+	};
 }

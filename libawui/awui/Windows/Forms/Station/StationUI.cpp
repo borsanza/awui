@@ -112,17 +112,18 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 	d = opendir(parent->m_path.ToCharArray());
 	if (d) {
 		while ((dir = readdir(d)) != nullptr) {
-			if (strcmp(dir->d_name, ".") == 0)
+			if ((strcmp(dir->d_name, "." ) == 0) ||
+				(strcmp(dir->d_name, "..") == 0)) {
 				continue;
-			if (strcmp(dir->d_name, "..") == 0)
-				continue;
+			}
 
 			NodeFile * child = new NodeFile();
 
 			String newFile = parent->m_path;
 
-			if (!parent->m_path.EndsWith("/"))
+			if (!parent->m_path.EndsWith("/")) {
 				newFile += "/";
+			}
 
 			newFile += dir->d_name;
 			child->m_name = dir->d_name;
@@ -166,24 +167,27 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 				child->m_emulator = parent->m_emulator;
 			}
 
-			if (!parent->m_childList)
+			if (!parent->m_childList) {
 				parent->m_childList = new SortedList();
+			}
 
 			child->m_path = newFile;
 			child->m_parent = parent;
 
 			bool isDir = false;
 			struct stat statbuf;
-			if (stat(newFile.ToCharArray(), &statbuf) != -1)
+			if (stat(newFile.ToCharArray(), &statbuf) != -1) {
 				isDir = S_ISDIR(statbuf.st_mode);
+			}
 
 			child->m_directory = isDir;
 
 			child->m_key = String::Concat((child->m_directory? "1" : "2") , child->m_name);
 			parent->m_childList->Add(&child->m_key, child);
 
-			if (child->m_directory)
+			if (child->m_directory) {
 				RecursiveSearch(child);
+			}
 		}
 
 		closedir(d);
@@ -200,23 +204,30 @@ bool StationUI::Minimize(NodeFile * parent) {
 			if (child->m_directory) {
 				r |= Minimize(child);
 
-				if (child->m_childList && child->m_childList->GetCount() > 0)
+				if (child->m_childList && child->m_childList->GetCount() > 0) {
 					continue;
+				}
 			} else {
 				switch (child->m_emulator) {
 					case Types::Chip8:
-						if (child->m_path.EndsWith("ch8")) continue;
-						if (child->m_path.EndsWith("c8x")) continue;
+						if (child->m_path.EndsWith("ch8") ||
+							child->m_path.EndsWith("c8x")) {
+								continue;
+							}
 						break;
 					case Types::GameGear:
 					case Types::MasterSystem:
-						if (child->m_path.EndsWith("sms")) continue;
-						if (child->m_path.EndsWith("sg")) continue;
-						if (child->m_path.EndsWith("gg")) continue;
+						if (child->m_path.EndsWith("sms") ||
+							child->m_path.EndsWith("sg")  ||
+							child->m_path.EndsWith("gg")) {
+								continue;
+							}
 						break;
 					case Types::Spectrum:
-						if (child->m_path.EndsWith("rom")) continue;
-						if (child->m_path.EndsWith("tap")) continue;
+						if (child->m_path.EndsWith("rom") ||
+							child->m_path.EndsWith("tap")) {
+								continue;
+							}
 						break;
 				}
 			}
@@ -263,8 +274,9 @@ void StationUI::RefreshList() {
 			child->m_button->SetLocation(40, y);
 			y += MENUBUTTONHEIGHT;
 			m_actual->m_page->GetControls()->Add(child->m_button);
-			if (i == 0)
+			if (i == 0) {
 				child->m_button->SetFocus();
+			}
 		}
 
 		m_actual->m_page->SetHeight(y + 25);
@@ -289,8 +301,9 @@ void StationUI::OnTick(float deltaSeconds) {
 	strftime(hora, sizeof(hora), "%H:%M", tm);
 	String horaS(hora);
 
-	if (m_clock->GetText().CompareTo(horaS) != 0)
+	if (m_clock->GetText().CompareTo(horaS) != 0) {
 		m_clock->SetText(horaS);
+	}
 
 	m_settings->SetLocation(GetWidth() - 150, 8);
 
@@ -356,21 +369,24 @@ void StationUI::SelectParent() {
 }
 
 void StationUI::UpdateTitle() {
-	if (m_actual == m_root)
+	if (m_actual == m_root) {
 		m_title->SetText("StationTV");
-	else
+	} else {
 		m_title->SetText(m_actual->m_button->GetText());
+	}
 }
 
 void StationUI::CheckArcade() {
 	MenuButton * c = (MenuButton *) m_actual->m_page->GetFocused();
-	if (c)
+	if (c) {
 		c->CheckArcade();
+	}
 }
 
 void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
-	if (m_arcade == arcade)
+	if (m_arcade == arcade) {
 		return;
+	}
 
 	GetControls()->Replace(m_arcade, arcade);
 
@@ -391,8 +407,9 @@ void StationUI::SetArcadeFullScreen() {
 }
 
 void StationUI::ExitingArcade() {
-	if (!m_fade.IsStopped())
+	if (!m_fade.IsStopped()) {
 		return;
+	}
 
 	m_controlBase->SetVisible(true);
 
@@ -449,10 +466,11 @@ void FadePanel::OnTick(float deltaSeconds) {
 		}
 	}
 
-	if (m_status <= 100.0f)
+	if (m_status <= 100.0f) {
 		SetBackColor(Color::FromArgb(m_status * 2.55f, 0, 0, 0));
-	else
+	} else {
 		SetBackColor(Color::FromArgb((200.0f - m_status) * 2.55f, 0, 0, 0));
+	}
 }
 
 /********************************** NodeFile **********************************/
@@ -478,6 +496,7 @@ NodeFile::~NodeFile() {
 		delete m_childList;
 	}
 
-	if (m_button)
+	if (m_button) {
 		delete m_button;
+	}
 }

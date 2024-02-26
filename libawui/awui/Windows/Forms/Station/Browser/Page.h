@@ -1,23 +1,8 @@
 #pragma once
 
-#include <awui/Windows/Forms/Gradient.h>
+#include <awui/Windows/Forms/Control.h>
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			namespace Station {
-				namespace Browser {
-					class Page : public Control {
-						private:
-
-						public:
-							Page();
-							virtual ~Page();
-
-							virtual void OnTick(float deltaSeconds);
-					};
-				}
-			}
-		}
-	}
+namespace awui::Windows::Forms::Station::Browser {
+	class Page : public Control {
+	};
 }

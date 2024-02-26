@@ -39,6 +39,11 @@ void Test2::InitializeComponent() {
 	keyboard->SetSize(480, 480);
 	this->GetControls()->Add(keyboard);
 
+	Keyboard * keyboard2 = new Keyboard();
+	keyboard2->SetDock(DockStyle::Top);
+	keyboard2->SetSize(480, 480);
+	this->GetControls()->Add(keyboard2);
+
 	this->listbox = new ListBox();
 	this->listbox->SetDock(DockStyle::Right);
 	this->listbox->SetSize(480, 480);

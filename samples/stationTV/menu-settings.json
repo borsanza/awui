@@ -1,39 +1,50 @@
-{
-    "Settings": {
-        "General": {
-            "language": {
+[
+    {
+        "section": "General",
+        "items": [
+            {
+                "key": "language",
                 "name": "Language",
                 "description": "Interface language of the program.",
                 "type": "list",
-                "defaultValue": "en",
+                "defaultValue": "en_US",
                 "options": [
                     {
-                        "code": "en",
-                        "name": "English"
+                        "code": "en_US",
+                        "name": "English (US)"
                     },
                     {
-                        "code": "es",
-                        "name": "Spanish"
+                        "code": "es_ES",
+                        "name": "Spanish / Español"
                     }
                 ]
             }
-        },
-        "Video": {
-            "fullScreen": {
+        ]
+    },
+    {
+        "section": "Video",
+        "items": [
+            {
+                "key": "fullScreen",
                 "name": "Fullscreen",
                 "description": "Enable to use the program in full-screen mode.",
                 "type": "boolean",
                 "defaultValue": false
             },
-            "vsync": {
+            {
+                "key": "vsync",
                 "name": "Vertical synchronization",
                 "description": "Vertical synchronization to reduce screen tearing.",
                 "type": "boolean",
                 "defaultValue": true
             }
-        },
-        "Audio": {
-            "activeAudioChannels": {
+        ]
+    },
+    {
+        "section": "Audio",
+        "items": [
+            {
+                "key": "activeAudioChannels",
                 "name": "Active audio channels",
                 "description": "Active audio channels. Up to 4 channels can be activated.",
                 "type": "range",
@@ -44,21 +55,27 @@
                     "channel4": true
                 }
             }
-        },
-        "Advanced": {
-            "clock": {
+        ]
+    },
+    {
+        "section": "Advanced",
+        "items": [
+            {
+                "key": "clock",
                 "name": "Clock",
                 "description": "Show or hide the display of a clock within the program.",
                 "type": "boolean",
                 "defaultValue": true
             },
-            "fps": {
+            {
+                "key": "fps",
                 "name": "FPS",
                 "description": "Show or hide the Frames per second.",
                 "type": "boolean",
                 "defaultValue": false
             },
-            "timeFormat": {
+            {
+                "key": "timeFormat",
                 "name": "Time Format",
                 "description": "Choose between a 12-hour or 24-hour clock format.",
                 "type": "list",
@@ -74,18 +91,23 @@
                     }
                 ]
             }
-        },
-        "About": {
-            "appName": {
+        ]
+    },
+    {
+        "section": "About",
+        "items": [
+            {
+                "key": "appName",
                 "name": "App Name",
                 "type": "label",
                 "defaultValue": "Station TV"
             },
-            "version": {
+            {
+                "key": "version",
                 "name": "Version",
                 "type": "label",
                 "defaultValue": "0.1"
             }
-        }
+        ]
     }
-}
+]
