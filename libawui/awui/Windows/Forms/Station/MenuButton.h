@@ -1,24 +1,11 @@
 #pragma once
 
 #include <awui/Drawing/Font.h>
-#include <awui/Windows/Forms/Label.h>
+#include <awui/Windows/Forms/Station/LabelButton.h>
 
 namespace awui::Windows::Forms::Station {
 	class NodeFile;
 	class StationUI;
-
-	class LabelButton : public Label {
-		private:
-			bool m_lastSelected;
-			float m_time;
-
-		public:
-			LabelButton();
-			virtual ~LabelButton();
-
-			virtual void OnMouseDown(MouseEventArgs* e);
-			virtual void OnTick(float deltaSeconds);
-	};
 
 	class MenuButton : public Control {
 		private:
@@ -35,7 +22,6 @@ namespace awui::Windows::Forms::Station {
 			const String GetText();
 			void SetText(const String str);
 
-			virtual void OnMouseLeave();
 			virtual void OnMouseDown(MouseEventArgs* e);
 			virtual void OnPaint(OpenGL::GL* gl);
 			virtual void SetForeColor(const Drawing::Color color);

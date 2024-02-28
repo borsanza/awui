@@ -12,6 +12,7 @@
 #include <awui/Windows/Emulators/ArcadeContainer.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/ControlCollection.h>
+#include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/ImageFader.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
@@ -337,7 +338,7 @@ void StationUI::SelectChild(NodeFile * node) {
 	if (node->m_directory) {
 		m_actual = node;
 		RefreshList();
-		m_actual->m_page->GetFocused()->SetFocus(true);
+		m_actual->m_page->GetFocused()->SetFocus();
 		UpdateTitle();
 	} else {
 		if (node->m_emulator != Types::Undefined) {
@@ -362,7 +363,7 @@ void StationUI::SelectParent() {
 		if (m_actual->m_parent != nullptr) {
 			m_actual = m_actual->m_parent;
 			m_browser->SetPage(m_actual->m_page);
-			m_actual->m_page->GetFocused()->SetFocus(true);
+			m_actual->m_page->GetFocused()->SetFocus();
 			UpdateTitle();
 		}
 	}
@@ -417,7 +418,7 @@ void StationUI::ExitingArcade() {
 	GetControls()->Add(&m_fade);
 	m_arcade->SetTabStop(false);
 	Control * c = m_actual->m_page->GetFocused();
-	c->SetFocus(true);
+	c->SetFocus();
 }
 
 void StationUI::ExitArcade() {
@@ -425,11 +426,20 @@ void StationUI::ExitArcade() {
 }
 
 void StationUI::OnClick(Control *sender) {
+	m_controlBase->SetVisible(false);
 	Console::WriteLine("Click %s", sender->ToString());
+	if (m_settingsUI) {
+		GetControls()->Remove(m_settingsUI);
+		delete m_settingsUI;
+		m_settingsUI = nullptr;
+	}
+
 	m_settingsUI = new SettingsUI();
 	m_settingsUI->SetDock(DockStyle::Fill);
 	GetControls()->Add(m_settingsUI);
-	m_controlBase->SetVisible(false);
+
+	m_settingsUI->InitializeComponent();
+	//Form::SetControlSelected(m_settingsUI);
 }
 
 /********************************* FadePanel **********************************/

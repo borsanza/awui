@@ -49,9 +49,6 @@ Browser::Browser() {
 	GetControls()->Add(&m_gradientRight);
 }
 
-Browser::~Browser() {
-}
-
 void Browser::OnTick(float deltaSeconds) {
 	Control * selected = Form::GetControlSelected();
 

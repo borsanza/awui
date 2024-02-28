@@ -1,6 +1,7 @@
 [
     {
-        "section": "General",
+        "name": "General",
+        "type": "group",
         "items": [
             {
                 "key": "language",
@@ -22,7 +23,8 @@
         ]
     },
     {
-        "section": "Video",
+        "name": "Video",
+        "type": "group",
         "items": [
             {
                 "key": "fullScreen",
@@ -41,24 +43,42 @@
         ]
     },
     {
-        "section": "Audio",
+        "name": "Audio",
+        "type": "group",
         "items": [
             {
-                "key": "activeAudioChannels",
-                "name": "Active audio channels",
-                "description": "Active audio channels. Up to 4 channels can be activated.",
-                "type": "range",
-                "defaultValue": {
-                    "channel1": true,
-                    "channel2": true,
-                    "channel3": true,
-                    "channel4": true
-                }
+                "key": "channel1",
+                "name": "Channel 1",
+                "description": "Enable/Disable audio channel 1",
+                "type": "boolean",
+                "defaultValue": true
+            },
+            {
+                "key": "channel2",
+                "name": "Channel 2",
+                "description": "Enable/Disable audio channel 2",
+                "type": "boolean",
+                "defaultValue": true
+            },
+            {
+                "key": "channel3",
+                "name": "Channel 3",
+                "description": "Enable/Disable audio channel 3",
+                "type": "boolean",
+                "defaultValue": true
+            },
+            {
+                "key": "channel4",
+                "name": "Channel 4",
+                "description": "Enable/Disable audio channel 4",
+                "type": "boolean",
+                "defaultValue": true
             }
         ]
     },
     {
-        "section": "Advanced",
+        "name": "Advanced",
+        "type": "group",
         "items": [
             {
                 "key": "clock",
@@ -94,7 +114,8 @@
         ]
     },
     {
-        "section": "About",
+        "name": "About",
+        "type": "group",
         "items": [
             {
                 "key": "appName",

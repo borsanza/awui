@@ -102,8 +102,8 @@ namespace awui {
 					const Drawing::Point GetLocation() const;
 					void SetLocation(int x, int y);
 
-					inline void SetDrawShadow(bool mode) { this->m_drawShadow = mode; }
-					inline bool GetDrawShadow() { return this->m_drawShadow; }
+					inline void SetDrawShadow(bool mode) { m_drawShadow = mode; }
+					inline bool GetDrawShadow() { return m_drawShadow; }
 
 					int GetWidth() const;
 					void SetWidth(int width);
@@ -114,12 +114,12 @@ namespace awui {
 					const Drawing::Size GetSize() const;
 					void SetSize(int width, int height);
 					void SetSize(const Drawing::Size size);
-					inline void SetSizeGo(int w, int h) { this->m_boundsTo.SetSize(w, h); }
-					inline void SetLocationGo(int x, int y) { this->m_boundsTo.SetLocation(x, y); }
-					inline int GetLeftGo() { return this->m_boundsTo.GetLeft(); }
-					inline int GetRightGo() { return this->m_boundsTo.GetRight(); }
-					inline int GetTopGo() { return this->m_boundsTo.GetTop(); }
-					inline int GetBottomGo() { return this->m_boundsTo.GetBottom(); }
+					inline void SetSizeGo(int w, int h) { m_boundsTo.SetSize(w, h); }
+					inline void SetLocationGo(int x, int y) { m_boundsTo.SetLocation(x, y); }
+					inline int GetLeftGo() { return m_boundsTo.GetLeft(); }
+					inline int GetRightGo() { return m_boundsTo.GetRight(); }
+					inline int GetTopGo() { return m_boundsTo.GetTop(); }
+					inline int GetBottomGo() { return m_boundsTo.GetBottom(); }
 
 					const Drawing::Rectangle GetBounds() const;
 					void SetBounds(int x, int y, int width, int height);
@@ -178,7 +178,7 @@ namespace awui {
 					void SetTabStop(bool tabStop);
 
 					void SetFocus(bool selectControl = true);
-					inline Control * GetFocused() const { return this->m_focused; }
+					inline Control * GetFocused() const { return m_focused; }
 
 					Control * GetTopParent();
 
@@ -186,9 +186,9 @@ namespace awui {
 
 					float Interpolate(float from, float to, float percent);
 
-					inline void SetPreventChangeControl(bool mode) { this->m_preventChangeControl = mode; }
+					inline void SetPreventChangeControl(bool mode) { m_preventChangeControl = mode; }
 
-					inline void SetVisible(bool mode) { this->m_visible = mode; }
+					inline void SetVisible(bool mode) { m_visible = mode; }
 					void CheckMouseControl();
 			};
 		}

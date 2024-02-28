@@ -41,6 +41,7 @@ namespace awui {
 		MenuButton,
 		Shader,
 		ArcadeContainer,
+		ConfigButton
 	};
 
 	class Object {

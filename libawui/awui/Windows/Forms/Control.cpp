@@ -244,8 +244,9 @@ void Control::Layout() {
 
 	for (int i = 0; i < GetControls()->GetCount(); i++) {
 		Control * control = (Control *)GetControls()->Get(i);
-		if (!control->IsVisible())
+		if (!control->IsVisible()) {
 			continue;
+		}
 
 		switch (control->GetDock()) {
 			case DockStyle::None:
@@ -571,8 +572,9 @@ void Control::OnTickPre(float deltaSeconds) {
 
 		for (int i = 0; i<GetControls()->GetCount(); i++) {
 			Control * control = (Control *)GetControls()->Get(i);
-			if (!control->IsVisible())
+			if (!control->IsVisible()) {
 				continue;
+			}
 			control->OnTickPre(deltaSeconds);
 		}
 	}
@@ -604,26 +606,32 @@ void Control::SetTabStop(bool tabStop) {
 
 void Control::OnRemoteKeyPressPre(int which, RemoteButtons::Enum button) {
 	bool mustStop = IsVisible() && OnRemoteKeyPress(which, button);
-	if (mustStop)
+	if (mustStop) {
 		return;
+	}
 
-	if (!m_focused)
+	if (!m_focused) {
 		Form::SetControlSelected(Form::GetControlSelected());
+	}
 
-	if (m_focused && m_focused->IsVisible())
+	if (m_focused && m_focused->IsVisible()) {
 		m_focused->OnRemoteKeyPressPre(which, button);
+	}
 }
 
 void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
 	bool mustStop = IsVisible() && OnRemoteKeyUp(which, button);
-	if (mustStop)
+	if (mustStop) {
 		return;
+	}
 
-	if (!m_focused)
+	if (!m_focused) {
 		Form::SetControlSelected(Form::GetControlSelected());
+	}
 
-	if (m_focused && m_focused->IsVisible())
+	if (m_focused && m_focused->IsVisible()) {
 		m_focused->OnRemoteKeyUpPre(which, button);
+	}
 }
 
 void Control::OnJoystickButtonDownPre(int which, int button, uint32_t buttons, uint32_t prevButtons) {
@@ -747,7 +755,9 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 			case RemoteButtons::Left:
 				for (int i = 0; i<list.GetCount(); i++) {
 					Control * control = (Control *)list.Get(i);
-					if (control == this) continue;
+					if (!control->IsVisible() || (control == this)) {
+						continue;
+					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
@@ -767,7 +777,9 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 			case RemoteButtons::Right:
 				for (int i = 0; i<list.GetCount(); i++) {
 					Control * control = (Control *)list.Get(i);
-					if (control == this) continue;
+					if (!control->IsVisible() || (control == this)) {
+						continue;
+					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
@@ -789,7 +801,9 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				// Primero busco el mas cercano en Y por abajo
 				for (int i = 0; i<list.GetCount(); i++) {
 					Control * control = (Control *)list.Get(i);
-					if (control == this) continue;
+					if (!control->IsVisible() || (control == this)) {
+						continue;
+					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
@@ -820,7 +834,9 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				// Y que ademas este por debajo del actual
 				for (int i = 0; i<list.GetCount(); i++) {
 					Control * control = (Control *)list.Get(i);
-					if (control == this) continue;
+					if (!control->IsVisible() || (control == this)) {
+						continue;
+					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
@@ -843,7 +859,9 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				// Primero busco el mas cercano en Y por arriba
 				for (int i = 0; i<list.GetCount(); i++) {
 					Control * control = (Control *)list.Get(i);
-					if (control == this) continue;
+					if (!control->IsVisible() || (control == this)) {
+						continue;
+					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
@@ -874,7 +892,9 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				// Y ademas que este por arriba del actual
 				for (int i = 0; i<list.GetCount(); i++) {
 					Control * control = (Control *)list.Get(i);
-					if (control == this) continue;
+					if (!control->IsVisible() || (control == this)) {
+						continue;
+					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;

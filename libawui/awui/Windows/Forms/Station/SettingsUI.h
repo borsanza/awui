@@ -2,11 +2,32 @@
 
 #include <awui/Windows/Forms/Control.h>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 class SettingsWidget;
 
-namespace awui::Windows::Forms::Station {
-	class SettingsUI : public Control {
-		public:
-			SettingsUI();
-	};
+namespace awui::Windows::Forms {
+	class Label;
+
+	namespace Station {
+		namespace Browser {
+			class Browser;
+			class Page;
+		}
+
+		class SettingsUI : public Control {
+			private:
+				Browser::Browser * m_browser;
+				Label * m_title;
+
+				Browser::Page * ProcessJson(const json& j, int depth = 0);
+
+			public:
+				SettingsUI();
+				void InitializeComponent();
+
+				virtual void OnTick(float deltaSeconds) override;
+		};
+	}
 }

@@ -15,10 +15,11 @@ namespace awui::Windows::Forms::Station::Browser {
 
 		public:
 			Browser();
-			virtual ~Browser();
+			virtual ~Browser() = default;
 
 			void SetPage(Page * page);
+			Page * GetPage() const { return m_page; };
 
-			virtual void OnTick(float deltaSeconds);
+			virtual void OnTick(float deltaSeconds) override;
 	};
 }

@@ -6,7 +6,6 @@
 
 #include "MenuButton.h"
 
-#include <awui/Console.h>
 #include <awui/Windows/Emulators/Chip8.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Emulators/Spectrum.h>
@@ -15,12 +14,13 @@
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/Station/StationUI.h>
 #include <SDL_opengl.h>
-#include <math.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms::Station;
+
+#define OFFSET 0.5f
 
 MenuButton::MenuButton(StationUI * station) {
 	m_node = NULL;
@@ -45,9 +45,6 @@ bool MenuButton::IsClass(Classes objectClass) const {
 	return Control::IsClass(objectClass);
 }
 
-void MenuButton::OnMouseLeave() {
-}
-
 void MenuButton::OnMouseDown(MouseEventArgs * e) {
 	switch (e->GetButton()) {
 		case MouseButtons::Left:
@@ -63,8 +60,6 @@ void MenuButton::OnMouseDown(MouseEventArgs * e) {
 			break;
 	}
 }
-
-#define OFFSET 0.5f
 
 void MenuButton::OnPaint(GL* gl) {
 	if (Form::GetControlSelected() == this)
@@ -181,65 +176,4 @@ void MenuButton::OnResize() {
 		m_label.SetSize(GetWidth() - (50 + m_label.GetLeft()), GetHeight());
 	else
 		m_label.SetSize(GetWidth() - (0 + m_label.GetLeft()), GetHeight());
-}
-
-/******************************** LabelButton *********************************/
-
-LabelButton::LabelButton() {
-	m_time = 0.0f;
-	m_lastSelected = false;
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	SetTextAlign(ContentAlignment::MiddleLeft);
-	SetTabStop(false);
-}
-
-LabelButton::~LabelButton() {
-}
-
-void LabelButton::OnMouseDown(MouseEventArgs * e) {
-	GetParent()->OnMouseDown(e);
-}
-
-void LabelButton::OnTick(float deltaSeconds) {
-	bool selected = (Form::GetControlSelected() == GetParent());
-
-	if (m_lastSelected != selected) {
-		m_lastSelected = selected;
-		m_time = 0.0f;
-	}
-
-	if (selected && (GetLabelWidth() > GetWidth())) {
-		if (m_time < 2.0f) {
-			SetScrolled(0.0f);
-		} else {
-			float prev = GetScrolled();
-			SetScrolled(prev - (deltaSeconds * 120.0f));
-			float after = GetScrolled();
-			if (after > prev) {
-				SetScrolled(0.0f);
-				m_time = 0.0f;
-			}
-		}
-
-		m_time += deltaSeconds;
-	} else {
-		float scrolled = GetScrolled();
-		if (scrolled != 0) {
-			float dst = 0;
-			float min = -(GetLabelWidth() + 80);
-			if ((GetLabelWidth() >> 1) < -scrolled)
-				dst = min;
-
-			dst = Interpolate(scrolled, dst, deltaSeconds * 10.0f);
-			if ((fabs(dst) <= 1) || ((dst - 1) <= min))
-				dst = 0;
-
-			if ((dst <= -80) && (dst >= (min + 80)))
-				dst = 0;
-
-			SetScrolled(dst);
-		}
-
-		m_time = 0.0f;
-	}
 }
