@@ -43,10 +43,10 @@ namespace awui {
 					bool m_visible;
 					Drawing::Rectangle m_bounds;
 
-					float m_lastWidth;
-					float m_lastHeight;
-					float m_lastX;
-					float m_lastY;
+					float m_lastRight;
+					float m_lastBottom;
+					float m_lastTop;
+					float m_lastLeft;
 					Drawing::Rectangle m_boundsTo;
 
 					Drawing::Size m_minimumSize;

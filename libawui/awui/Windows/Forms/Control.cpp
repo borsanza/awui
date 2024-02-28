@@ -25,10 +25,10 @@ using namespace awui::Windows::Forms;
 Control::Control() {
 	m_deltaSeconds = 0.0f;
 	m_refreshed = 0;
-	m_lastWidth = 0;
-	m_lastHeight = 0;
-	m_lastX = 0;
-	m_lastY = 0;
+	m_lastRight = 0;
+	m_lastBottom = 0;
+	m_lastLeft = 0;
+	m_lastTop = 0;
 	m_drawShadow = true;
 	m_tabStop = false;
 	m_bounds = Drawing::Rectangle(0, 0, 100, 100);
@@ -111,10 +111,10 @@ void Control::SetBounds(int x, int y, int width, int height) {
 
 	m_bounds = Drawing::Rectangle(x, y, width, height);
 	m_boundsTo = m_bounds;
-	m_lastWidth = width;
-	m_lastHeight = height;
-	m_lastX = x;
-	m_lastY = y;
+	m_lastRight = m_bounds.GetRight();
+	m_lastBottom = m_bounds.GetBottom();
+	m_lastLeft = m_bounds.GetLeft();
+	m_lastTop = m_bounds.GetTop();
 
 	Refresh();
 	OnResizePre();
@@ -383,9 +383,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 			}
 
 			bitmap->GetFixedMargins(&x1, &y1, &x2, &y2);
-
-			int width = control->m_boundsTo.GetWidth() + x1 + x2;
-			int height = control->m_boundsTo.GetHeight() + y1 + y2;
+			int width = x1 + control->m_boundsTo.GetWidth() + x2;
+			int height = y1 + control->m_boundsTo.GetHeight() + y2;
 
 			lastwidth = Interpolate(lastwidth, width, percent);
 			lastheight = Interpolate(lastheight, height, percent);
@@ -556,16 +555,12 @@ void Control::OnTickPre(float deltaSeconds) {
 	double percent = 10.0f * deltaSeconds;
 	//awui::Console::WriteLine("%lld %.3f", ellapsed, percent);
 
-	m_lastWidth = Interpolate(m_lastWidth, m_boundsTo.GetWidth(), percent);
-	m_lastHeight = Interpolate(m_lastHeight, m_boundsTo.GetHeight(), percent);
-	int w = m_lastWidth;  //Math::Round(m_lastWidth);
-	int h = m_lastHeight; //Math::Round(m_lastHeight);
-	m_lastX = Interpolate(m_lastX, m_boundsTo.GetLeft(), percent);
-	m_lastY = Interpolate(m_lastY, m_boundsTo.GetTop(), percent);
-	int x = m_lastX; // Math::Round(m_lastX);
-	int y = m_lastY; // Math::Round(m_lastY);
-	m_bounds.SetSize(w, h);
-	m_bounds.SetLocation(x, y);
+	m_lastRight = Interpolate(m_lastRight, m_boundsTo.GetRight(), percent);
+	m_lastBottom = Interpolate(m_lastBottom, m_boundsTo.GetBottom(), percent);
+	m_lastLeft = Interpolate(m_lastLeft, m_boundsTo.GetLeft(), percent);
+	m_lastTop = Interpolate(m_lastTop, m_boundsTo.GetTop(), percent);
+	m_bounds.SetSize(m_lastRight - m_lastLeft + 1, m_lastBottom - m_lastTop + 1);
+	m_bounds.SetLocation(m_lastLeft, m_lastTop);
 
 	if (IsVisible()) {
 		OnTick(deltaSeconds);

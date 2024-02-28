@@ -24,6 +24,8 @@ ConfigButton::ConfigButton() {
 	SetDock(DockStyle::None);
 
 	GetControls()->Add(&m_label);
+
+	// SetBackColor(Color::FromArgb(0, 255, 0));
 }
 
 ConfigButton::~ConfigButton() {
@@ -91,5 +93,9 @@ int ConfigButton::GetLabelWidth() const {
 
 void ConfigButton::OnResize() {
 	m_label.SetLocation(23, 0);
-    m_label.SetSize(GetWidth() - (0 + m_label.GetLeft()), GetHeight());
+	if (m_group) {
+		m_label.SetSize(GetWidth() - (50 + m_label.GetLeft()), GetHeight());
+	} else {
+		m_label.SetSize(GetWidth() - (0 + m_label.GetLeft()), GetHeight());
+	}
 }
