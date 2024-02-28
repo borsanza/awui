@@ -106,7 +106,7 @@ void Browser::SetPage(Page * page) {
 		GetControls()->Remove(m_page);
 
 	m_page = page;
-	GetControls()->Add(m_page);
+	GetControls()->Add(m_page, true);
 
 	GetControls()->MoveToEnd(&m_gradientUp);
 	GetControls()->MoveToEnd(&m_gradientBottom);

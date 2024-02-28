@@ -28,10 +28,13 @@ Control * ControlCollection::GetOwner() {
 	return this->owner;
 }
 
-void ControlCollection::Add(Control * item) {
+void ControlCollection::Add(Control * item, bool fixSelected) {
 	ArrayList::Add(item);
-	item->SetParent(this->owner);
-	this->owner->Layout();
+	item->SetParent(owner);
+	owner->Layout();
+
+	if (fixSelected && item->GetFocused())
+		item->SetFocus(false);
 }
 
 void ControlCollection::Remove(Control * item) {

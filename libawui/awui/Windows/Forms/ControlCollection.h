@@ -18,7 +18,7 @@ namespace awui {
 					virtual bool IsClass(Classes objectClass) const override;
 
 					Control * GetOwner();
-					virtual void Add(Control * item);
+					virtual void Add(Control * item, bool fixSelected = false);
 					virtual void Remove(Control * item);
 
 					void MoveToEnd(Control * item);

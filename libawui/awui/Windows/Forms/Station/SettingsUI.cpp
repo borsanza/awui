@@ -53,17 +53,6 @@ void SettingsUI::InitializeComponent() {
 	// m_browser->SetBackColor(Color::FromArgb(0, 0, 255));
 
 	page->SetWidth(m_browser->GetWidth());
-
-	if (page) {
-		for (int i = 0; i < page->GetControls()->GetCount(); i++) {
-			Control * child = (Control *)page->GetControls()->Get(i);
-			if (child->IsClass(Classes::ConfigButton)) {
-				child->SetFocus();
-				break;
-			}
-		}
-	}
-
 }
 
 // types:
@@ -108,7 +97,7 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 						}
 					}
 					if (element.contains("items")) {
-						//ProcessJson(element["items"], depth + 1);
+						ProcessJson(element["items"], depth + 1);
 					}
 				}
 					break;
