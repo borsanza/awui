@@ -357,7 +357,7 @@ float Control::Interpolate(float from, float to, float percent) {
 
 // Lo usamos para dibujar el skin
 void Control::OnPaint(OpenGL::GL * gl) {
-	static float lastx1, lasty1, lastwidth, lastheight;
+	static float lastx1, lasty1, lastright, lastbottom;
 	static Control * lastParent = NULL;
 	Control * focused = Form::GetControlSelected();
 
@@ -383,26 +383,20 @@ void Control::OnPaint(OpenGL::GL * gl) {
 			}
 
 			bitmap->GetFixedMargins(&x1, &y1, &x2, &y2);
-			int width = x1 + control->m_boundsTo.GetWidth() + x2;
-			int height = y1 + control->m_boundsTo.GetHeight() + y2;
+			float right = control->m_bounds.GetRight() + x2;
+			float bottom = control->m_bounds.GetBottom() + y2;
 
-			lastwidth = Interpolate(lastwidth, width, percent);
-			lastheight = Interpolate(lastheight, height, percent);
-			width = Math::Round(lastwidth);
-			height = Math::Round(lastheight);
+			lastright = Interpolate(lastright, right, percent);
+			lastbottom = Interpolate(lastbottom, bottom, percent);
 
-			bitmap->SetSize(width, height);
-			int x = control->m_boundsTo.GetLeft() - x1;
-			int y = control->m_boundsTo.GetTop() - y1;
+			lastx1 = Interpolate(lastx1, control->m_bounds.GetLeft() - x1, percent);
+			lasty1 = Interpolate(lasty1, control->m_bounds.GetTop() - y1, percent);
 
-			lastx1 = Interpolate(lastx1, x, percent);
-			lasty1 = Interpolate(lasty1, y, percent);
-			x = Math::Round(lastx1);
-			y = Math::Round(lasty1);
+			bitmap->SetSize(Math::Round(lastright - lastx1 + 1.0f), Math::Round(lastbottom - lasty1 + 1.0f));
 
-			glTranslatef(x, y, 0);
+			glTranslatef(Math::Round(lastx1), Math::Round(lasty1), 0);
 			bitmap->OnPaint(NULL);
-			glTranslatef(-x, -y, 0);
+			glTranslatef(-Math::Round(lastx1), -Math::Round(lasty1), 0);
 		}
 	}
 }
