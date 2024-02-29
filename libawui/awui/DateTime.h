@@ -12,7 +12,7 @@ namespace awui {
 		public:
 			DateTime();
 			DateTime(std::chrono::microseconds time);
-			virtual ~DateTime();
+			virtual ~DateTime() = default;
 
 			static DateTime GetNow();
 			long long GetTicks() const;

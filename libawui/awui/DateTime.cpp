@@ -13,9 +13,6 @@ DateTime::DateTime() : m_time(0) {
 DateTime::DateTime(std::chrono::microseconds time) : m_time(time) {
 }
 
-DateTime::~DateTime() {
-}
-
 // Método estático para obtener el momento actual.
 DateTime DateTime::GetNow() {
 	auto now = std::chrono::system_clock::now().time_since_epoch();
