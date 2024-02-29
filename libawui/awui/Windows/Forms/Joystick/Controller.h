@@ -1,6 +1,7 @@
 #pragma once
 
 #include <awui/Object.h>
+#include <cstdint>
 
 typedef struct _SDL_GameController SDL_GameController;
 typedef int32_t Sint32;

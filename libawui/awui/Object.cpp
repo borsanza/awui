@@ -10,19 +10,8 @@
 
 using namespace awui;
 
-Object::Object() {
-  
-}
-
-Object::~Object() {
-}
-
 bool Object::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Object) {
-		return true;
-	}
-
-	return false;
+	return objectClass == Classes::Object;
 }
 
 String Object::ToString() const {

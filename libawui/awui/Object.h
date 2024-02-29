@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 namespace awui {
 	class String;
 
@@ -46,8 +44,8 @@ namespace awui {
 
 	class Object {
 		public:
-			Object();
-			virtual ~Object();
+			Object() = default;
+			virtual ~Object() = default;
 
 			virtual bool IsClass(Classes objectClass) const;
 

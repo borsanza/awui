@@ -6,6 +6,7 @@
 #include <awui/Windows/Forms/Keys.h>
 #include <awui/Windows/Forms/MouseButtons.h>
 #include <awui/Windows/Forms/RemoteButtons.h>
+#include <cstdint>
 
 namespace awui {
 	namespace Drawing {

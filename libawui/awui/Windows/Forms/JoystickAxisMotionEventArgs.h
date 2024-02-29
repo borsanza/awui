@@ -1,6 +1,7 @@
 #pragma once
 
 #include <awui/Windows/Forms/JoystickEventArgs.h>
+#include <cstdint>
 
 namespace awui {
 	namespace Windows {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <awui/String.h>
+#include <cstdint>
 
 namespace awui {
 	namespace Emulation {
