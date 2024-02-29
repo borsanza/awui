@@ -6,35 +6,11 @@
 
 #include "Random.h"
 
-#include <awui/Math.h>
-#include <stdlib.h>
-
 using namespace awui;
 
-Random::Random() {
-	this->seed = 0;
-}
-
-Random::Random(unsigned int seed) {
-	this->seed = seed;
-}
-
-Random::~Random() {
-}
-
 int Random::Next() {
-	if (this->seed)
-		srand(this->seed);
-
-	return rand();
-}
-
-/**
-[0, max[
-max es exclusivo
-*/
-int Random::Next(int exclusive_max) {
-	return this->Next(0, exclusive_max);
+	std::uniform_int_distribution<int> dist;
+	return dist(m_rng);
 }
 
 /**
@@ -42,10 +18,18 @@ int Random::Next(int exclusive_max) {
 max es exclusivo
 */
 int Random::Next(int min, int exclusive_max) {
-	double value = (double) this->Next() / RAND_MAX;
-	return min + Math::Round(value * ((exclusive_max - 1) - min));
+	std::uniform_int_distribution<int> dist(min, exclusive_max - 1);
+	return dist(m_rng);
 }
 
-int Random::NextByte() {
-	return this->Next(0, 256);
+/**
+[0, max[
+max es exclusivo
+*/
+int Random::Next(int exclusive_max) {
+	return Next(0, exclusive_max);
+}
+
+uint8_t Random::NextByte() {
+	return Next(0, 256);
 }

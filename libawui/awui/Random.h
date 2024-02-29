@@ -1,19 +1,21 @@
 #pragma once
 
+#include <random>
+#include <cstdint>
+
 namespace awui {
 	class Random {
 		private:
-			unsigned int seed;
+			std::mt19937 m_rng;
 
 		public:
-			Random();
-			Random(unsigned int seed);
-			virtual ~Random();
+			Random(unsigned int seed = std::random_device{}()) : m_rng(seed) {};
+			~Random() = default;
 
 		public:
 			int Next();
-			int Next(int exclusive_max);
 			int Next(int min, int exclusive_max);
-			int NextByte();
+			int Next(int exclusive_max);
+			uint8_t NextByte();
 	};
 }
