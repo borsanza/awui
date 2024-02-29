@@ -14,13 +14,13 @@ namespace awui {
 			String();
 			String(const char);
 			String(const char * value);
-			virtual ~String();
+			virtual ~String() = default;
 
 			int GetLength() const;
 
 			const char * ToCharArray() const;
 
-			static int Compare(const String &strA, const String &strB);
+			static int Compare(const String& strA, const String& strB);
 			int IndexOf(const String &value, int startIndex = 0) const;
 			int LastIndexOf(const String &value) const;
 			int CompareTo(const String &strB) const;
@@ -40,17 +40,17 @@ namespace awui {
 			String ToUpper() const;
 			String ToLower() const;
 
-			static String Concat(const String &str0, const String &str1);
-			static String Concat(const String &str0, const String &str1, const String &str2);
-			static String Concat(const String &str0, const String &str1, const String &str2, const String &str3);
+			static String Concat(const String& str0, const String& str1);
+			static String Concat(const String& str0, const String& str1, const String& str2);
+			static String Concat(const String& str0, const String& str1, const String& str2, const String& str3);
 
-			bool Contains(const String &strB) const;
+			bool Contains(const String& strB) const;
 
 			String Substring(int startIndex) const;
 			String Substring(int startIndex, int length) const;
 
-			ArrayList Split(const String &value) const;
+			ArrayList Split(const String& value) const;
 
-			virtual String ToString();
+			virtual String ToString() const override;
 	};
 }

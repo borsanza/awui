@@ -1,5 +1,6 @@
 #pragma once
 
+#include <awui/Object.h>
 #include <awui/Drawing/Point.h>
 #include <awui/Drawing/Size.h>
 
@@ -7,7 +8,7 @@ namespace awui {
 	class String;
 
 	namespace Drawing {
-		class Rectangle {
+		class Rectangle : public Object {
 			private:
 				Point m_location;
 				Size m_size;
@@ -49,7 +50,7 @@ namespace awui {
 
 				Rectangle& operator=(const Rectangle& other);
 
-				virtual String ToString();
+				virtual String ToString() const override;
 		};
 	}
 }

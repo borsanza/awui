@@ -12,7 +12,7 @@ namespace awui {
 				ColorF();
 
 				virtual bool IsClass(Classes objectClass) const override;
-				virtual String ToString();
+				virtual String ToString() const override;
 
 				float GetA() const;
 				float GetR() const;

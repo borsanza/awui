@@ -43,7 +43,7 @@ const awui::String Font::GetFont() const {
 	return this->font;
 }
 
-awui::String Font::ToString() {
+awui::String Font::ToString() const {
 	String value;
 	value = String("[Font: Name=") + this->font + ", Size=" + Convert::ToString(this->size) + "]";
 	return value;

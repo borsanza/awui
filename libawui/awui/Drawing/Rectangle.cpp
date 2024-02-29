@@ -117,7 +117,7 @@ void Rectangle::Intersect(const Rectangle& rectangle) {
 	*this = Rectangle::Intersect(*this, rectangle);
 }
 
-awui::String Rectangle::ToString() {
+awui::String Rectangle::ToString() const {
 	String value;
 	value = String("{X=") + Convert::ToString(m_location.GetX()) + ",Y=" + Convert::ToString(m_location.GetY()) + ",Width=" + Convert::ToString(m_size.GetWidth()) + ", Height=" + Convert::ToString(m_size.GetHeight()) + "}";
 	return value;

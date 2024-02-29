@@ -29,7 +29,7 @@ bool SortedList::IsClass(Classes objectClass) const {
 	return Object::IsClass(objectClass);
 }
 
-awui::String SortedList::ToString() {
+awui::String SortedList::ToString() const {
 	return "awui.Collections.SortedList";
 }
 

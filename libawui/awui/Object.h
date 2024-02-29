@@ -51,6 +51,6 @@ namespace awui {
 
 			virtual bool IsClass(Classes objectClass) const;
 
-			virtual String ToString();
+			virtual String ToString() const;
 	};
 }

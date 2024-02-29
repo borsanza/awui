@@ -10,75 +10,70 @@
 
 using namespace awui;
 
-String::String() {
+String::String() : m_string("") {
 }
 
-String::String(const char * value) {
-	m_string.assign(value);
+String::String(const char * value) : m_string(value) {
 }
 
 String::String(const char value) {
 	m_string = std::string(1, value);
 }
 
-String::~String() {
-}
-
 int String::GetLength() const {
-	return this->m_string.length();
+	return m_string.length();
 }
 
 const char * String::ToCharArray() const {
 	return m_string.c_str();
 }
 
-int awui::String::Compare(const String &strA, const String &strB) {
+int awui::String::Compare(const String& strA, const String& strB) {
 	return strA.m_string.compare(strB.m_string);
 }
 
-int String::CompareTo(const String &strB) const {
+int String::CompareTo(const String& strB) const {
 	return m_string.compare(strB.m_string);
 }
 
-bool String::EndsWith(const String &value) const {
-	return (IndexOf(value, this->GetLength() - value.GetLength()) != -1);
+bool String::EndsWith(const String& value) const {
+	return (IndexOf(value, GetLength() - value.GetLength()) != -1);
 }
 
-bool String::operator==(const String &value) const {
-	return (this->CompareTo(value) == 0);
+bool String::operator==(const String& value) const {
+	return (CompareTo(value) == 0);
 }
 
-bool String::operator!=(const String &value) const {
-	return (this->CompareTo(value) != 0);
+bool String::operator!=(const String& value) const {
+	return (CompareTo(value) != 0);
 }
 
-bool String::operator>(const String &value) const {
-	return (this->CompareTo(value) > 0);
+bool String::operator>(const String& value) const {
+	return (CompareTo(value) > 0);
 }
 
-bool String::operator>=(const String &value) const {
-	return (this->CompareTo(value) >= 0);
+bool String::operator>=(const String& value) const {
+	return (CompareTo(value) >= 0);
 }
 
-bool String::operator<(const String &value) const {
-	return (this->CompareTo(value) < 0);
+bool String::operator<(const String& value) const {
+	return (CompareTo(value) < 0);
 }
 
-bool String::operator<=(const String &value) const {
-	return (this->CompareTo(value) <= 0);
+bool String::operator<=(const String& value) const {
+	return (CompareTo(value) <= 0);
 }
 
-String String::operator+(const String &strB) const {
+String String::operator+(const String& strB) const {
 	return String((m_string + strB.m_string).c_str());
 }
 
-void String::operator+=(const String &strB) {
+void String::operator+=(const String& strB) {
 	*this = *this + strB;
 }
 
 String String::operator+(Object *value) const {
-	String a = *this + value->ToString();
-	return a;
+	return *this + value->ToString();
 }
 
 char String::operator[](int pos) const {
@@ -87,6 +82,7 @@ char String::operator[](int pos) const {
 
 String String::ToUpper() const {
 	String str2;
+	str2.m_string.reserve(m_string.length());
 	std::transform(m_string.begin(), m_string.end(), std::back_inserter(str2.m_string), ::toupper);
 	
 	return str2;
@@ -94,6 +90,7 @@ String String::ToUpper() const {
 
 String String::ToLower() const {
 	String str2;
+	str2.m_string.reserve(m_string.length());
 	std::transform(m_string.begin(), m_string.end(), std::back_inserter(str2.m_string), ::tolower);
 
 	return str2;
@@ -112,9 +109,7 @@ String String::Concat(const String &str0, const String &str1, const String &str2
 }
 
 bool String::Contains(const String &strB) const {
-	int pos = m_string.find(strB.m_string);
-
-	return ((pos >=0) && (pos < this->GetLength()));
+	return m_string.find(strB.m_string) != std::string::npos;
 }
 
 String String::Substring(int startIndex) const {
@@ -125,48 +120,36 @@ String String::Substring(int startIndex, int length) const {
 	return String(m_string.substr(startIndex, length).c_str());
 }
 
-String String::ToString() {
+String String::ToString() const {
 	return String(m_string.c_str());
 }
 
-int String::IndexOf(const String &value, int startIndex) const
-{
-    std::string::size_type loc = m_string.find(value.m_string, startIndex);
-	if (loc != std::string::npos)
-		return loc;
-
-	return -1;
+int String::IndexOf(const String& value, int startIndex) const {
+    size_t pos = m_string.find(value.m_string, startIndex);
+	return (pos != std::string::npos) ? pos : -1;
 }
 
 int String::LastIndexOf(const String &value) const {
-	std::string::size_type loc = m_string.find_last_of(value.m_string);
-	if (loc != std::string::npos)
-		return loc;
-
-	return -1;
+	size_t pos = m_string.rfind(value.m_string);
+	return (pos != std::string::npos) ? pos : -1;
 }
 
-ArrayList String::Split(const String &value) const {
+ArrayList String::Split(const String &delimiter) const {
 	ArrayList list;
+	size_t startPos = 0;
+	size_t endPos;
 
-	int pre = 0;
-	int pos = 0;
-	do {
-		String pru;
-		pos = this->IndexOf(value, pos);
-		if (pos == -1) {
-			pru = this->Substring(pre);
-		} else {
-			pru = this->Substring(pre, pos - pre);
-		}
+	while ((endPos = m_string.find(delimiter.m_string, startPos)) != std::string::npos) {
+		String token(m_string.substr(startPos, endPos - startPos).c_str());
+		list.Add(new String(token));
+		startPos = endPos + delimiter.GetLength();
+	}
 
-		pre = pos + 1;
-
-		if (pos != -1)
-			pos++;
-
-		list.Add(new String(pru));
-	} while (pos != -1);
+	// Agrega el último token
+	if (startPos < m_string.length()) { // Asegurarse de que hay algo que agregar
+		String token(m_string.substr(startPos).c_str());
+		list.Add(new String(token));
+	}
 
 	return list;
 }

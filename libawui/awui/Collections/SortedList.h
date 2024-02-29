@@ -22,7 +22,7 @@ namespace awui {
 
 				virtual bool IsClass(Classes objectClass) const override;
 
-				virtual String ToString();
+				virtual String ToString() const override;
 
 				virtual void Add(Object * key, Object * value);
 				int GetCount();

@@ -31,7 +31,7 @@ namespace awui {
 				bool GetUnderline();
 				bool GetStrikeout();
 				float GetSize();
-				virtual String ToString();
+				virtual String ToString() const override;
 
 				Font & operator=(const Font & other);
 		};

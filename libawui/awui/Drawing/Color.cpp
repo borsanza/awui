@@ -29,7 +29,7 @@ bool Color::IsClass(Classes objectClass) const {
 	return Object::IsClass(objectClass);
 }
 
-awui::String Color::ToString() {
+awui::String Color::ToString() const {
 	String value;
 	value = String("Color [A=") + Convert::ToString(this->a) +
 				", R=" + Convert::ToString(this->r) +

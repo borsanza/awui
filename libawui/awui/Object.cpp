@@ -25,6 +25,6 @@ bool Object::IsClass(Classes objectClass) const {
 	return false;
 }
 
-String Object::ToString() {
+String Object::ToString() const {
 	return "awui.Object";
 }
