@@ -19,7 +19,6 @@ class Test2: public awui::Windows::Forms::Control {
 	private:
 		bool runMame;
 		bool endMame;
-//		awui::Diagnostics::Process* mameProcess;
 		awui::Collections::SortedList games;
 		awui::Windows::Forms::ListBox *listbox;
 

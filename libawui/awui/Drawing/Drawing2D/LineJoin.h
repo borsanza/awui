@@ -1,15 +1,9 @@
 #pragma once
 
-namespace awui {
-	namespace Drawing {
-		namespace Drawing2D {
-			struct LineJoin {
-				enum Enum {
-					Miter = 0,
-					Bevel = 1,
-					Round = 2,
-				};
-			};
-		}
-	}
+namespace awui::Drawing::Drawing2D {
+	enum class LineJoin {
+		Miter = 0,
+		Bevel = 1,
+		Round = 2,
+	};
 }

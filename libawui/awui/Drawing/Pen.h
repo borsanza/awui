@@ -9,10 +9,10 @@ namespace awui {
 	namespace Drawing {
 		class Pen : public Object {
 			private:
-				awui::Drawing::Color color;
-				float width;
-				Drawing2D::LineCap::Enum lineCap;
-				Drawing2D::LineJoin::Enum lineJoin;
+				awui::Drawing::Color m_color;
+				float m_width;
+				Drawing2D::LineCap m_lineCap;
+				Drawing2D::LineJoin m_lineJoin;
 
 			public:
 				Pen(awui::Drawing::Color color);
@@ -27,11 +27,11 @@ namespace awui {
 				float GetWidth();
 				void SetWidth(float width);
 
-				void SetLineJoin(Drawing2D::LineJoin::Enum lineJoin);
-				Drawing2D::LineJoin::Enum GetLineJoin();
+				void SetLineJoin(Drawing2D::LineJoin lineJoin);
+				Drawing2D::LineJoin GetLineJoin();
 
-				void SetLineCap(Drawing2D::LineCap::Enum lineCap);
-				Drawing2D::LineCap::Enum GetLineCap();
+				void SetLineCap(Drawing2D::LineCap lineCap);
+				Drawing2D::LineCap GetLineCap();
 		};
 	}
 }

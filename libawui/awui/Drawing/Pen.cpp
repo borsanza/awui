@@ -11,17 +11,17 @@ using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
 
 Pen::Pen(Drawing::Color color) {
-	this->color = color;
-	this->width = 1;
-	this->lineCap = LineCap::Butt;
-	this->lineJoin = LineJoin::Miter;
+	m_color = color;
+	m_width = 1;
+	m_lineCap = LineCap::Butt;
+	m_lineJoin = LineJoin::Miter;
 }
 
 Pen::Pen(Drawing::Color color, float width) {
-	this->color = color;
-	this->width = width;
-	this->lineCap = LineCap::Butt;
-	this->lineJoin = LineJoin::Miter;
+	m_color = color;
+	m_width = width;
+	m_lineCap = LineCap::Butt;
+	m_lineJoin = LineJoin::Miter;
 }
 
 Pen::~Pen() {
@@ -36,33 +36,33 @@ bool Pen::IsClass(Classes objectClass) const {
 }
 
 Color Pen::GetColor() {
-	return this->color;
+	return m_color;
 }
 
 void Pen::SetColor(Drawing::Color color) {
-	this->color = color;
+	m_color = color;
 }
 
 float Pen::GetWidth() {
-	return this->width;
+	return m_width;
 }
 
 void Pen::SetWidth(float width) {
-	this->width = width;
+	m_width = width;
 }
 
-void Pen::SetLineJoin(LineJoin::Enum lineJoin) {
-	this->lineJoin = lineJoin;
+void Pen::SetLineJoin(LineJoin lineJoin) {
+	m_lineJoin = lineJoin;
 }
 
-LineJoin::Enum Pen::GetLineJoin() {
-	return this->lineJoin;
+LineJoin Pen::GetLineJoin() {
+	return m_lineJoin;
 }
 
-void Pen::SetLineCap(LineCap::Enum lineCap) {
-	this->lineCap = lineCap;
+void Pen::SetLineCap(LineCap lineCap) {
+	m_lineCap = lineCap;
 }
 
-LineCap::Enum Pen::GetLineCap() {
-	return this->lineCap;
+LineCap Pen::GetLineCap() {
+	return m_lineCap;
 }

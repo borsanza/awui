@@ -9,77 +9,67 @@
 #include <awui/Convert.h>
 #include <awui/Math.h>
 #include <awui/String.h>
-#include <math.h>
-#include <stdlib.h>
 
 using namespace awui::Drawing;
 
-Color::Color() {
-	this->a = 0;
-	this->r = 0;
-	this->g = 0;
-	this->b = 0;
+Color::Color() : m_a(0), m_r(0), m_g(0), m_b(0) {
 }
 
 bool Color::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Color) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::Color) || Object::IsClass(objectClass);
 }
 
 awui::String Color::ToString() const {
 	String value;
-	value = String("Color [A=") + Convert::ToString(this->a) +
-				", R=" + Convert::ToString(this->r) +
-				", G=" + Convert::ToString(this->g) +
-				", B=" + Convert::ToString(this->b) + "]";
+	value = String("Color [A=") + Convert::ToString(m_a) +
+				", R=" + Convert::ToString(m_r) +
+				", G=" + Convert::ToString(m_g) +
+				", B=" + Convert::ToString(m_b) + "]";
 	return value;
 }
 
-unsigned char Color::GetA() const {
-	return this->a;
+uint8_t Color::GetA() const {
+	return m_a;
 }
 
-unsigned char Color::GetR() const {
-	return this->r;
+uint8_t Color::GetR() const {
+	return m_r;
 }
 
-unsigned char Color::GetG() const {
-	return this->g;
+uint8_t Color::GetG() const {
+	return m_g;
 }
 
-unsigned char Color::GetB() const {
-	return this->b;
+uint8_t Color::GetB() const {
+	return m_b;
 }
 
-int Color::ToArgb() const {
-	return (((((this->a << 8) + this->r) << 8) + this->g) << 8) + this->b;
+uint32_t Color::ToArgb() const {
+	return (m_a << 24) | (m_r << 16) | (m_g << 8) | m_b;
 }
 
 float Color::GetBrightness() const {
-	int M = Math::Max(Math::Max(this->r, this->g), this->b);
-	int m = Math::Min(Math::Min(this->r, this->g), this->b);
+	int M = Math::Max(Math::Max(m_r, m_g), m_b);
+	int m = Math::Min(Math::Min(m_r, m_g), m_b);
 
 	return ((M + m) / 2.0f) / 255.0f;
 }
 
 float Color::GetHue() const {
-	int M = Math::Max(Math::Max(this->r, this->g), this->b);
-	int m = Math::Min(Math::Min(this->r, this->g), this->b);
+	int M = Math::Max(Math::Max(m_r, m_g), m_b);
+	int m = Math::Min(Math::Min(m_r, m_g), m_b);
 
 	double C = M - m;
 
 	double H;
 	if (C == 0)
 		H = 0.0;
-	else if (M == this->r)
-		H = Math::FMod((this->g - this->b) / C, 6);
-	else if (M == this->g)
-		H = ((this->b - this->r) / C) + 2.0;
+	else if (M == m_r)
+		H = Math::FMod((m_g - m_b) / C, 6);
+	else if (M == m_g)
+		H = ((m_b - m_r) / C) + 2.0;
 	else
-		H = ((this->r - this->g) / C) + 4.0;
+		H = ((m_r - m_g) / C) + 4.0;
 
 	H = (60.0 * H);
 
@@ -90,65 +80,57 @@ float Color::GetHue() const {
 }
 
 float Color::GetSaturation() const {
-	int M = Math::Max(Math::Max(this->r, this->g), this->b);
-	int m = Math::Min(Math::Min(this->r, this->g), this->b);
+	int M = Math::Max(Math::Max(m_r, m_g), m_b);
+	int m = Math::Min(Math::Min(m_r, m_g), m_b);
 
 	double C = M - m;
 
 	double L = ((M + m) / 2.0) / 255.0;
 
-	double value = C / (1 - fabs((2 * L) - 1));
+	double value = C / (1.0 - Math::Abs((2.0 * L) - 1.0));
 
 	value /= 255.0;
 
 	return (float)value;
 }
 
-Color Color::FromArgb(int argb) {
-	unsigned char a;
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
-
-	b = argb % 256;
-	argb = argb >> 8;
-	g = argb % 256;
-	argb = argb >> 8;
-	r = argb % 256;
-	argb = argb >> 8;
-	a = argb % 256;
+Color Color::FromArgb(uint32_t argb) {
+	auto a = static_cast<std::uint8_t>((argb >> 24) & 0xFF);
+    auto r = static_cast<std::uint8_t>((argb >> 16) & 0xFF);
+    auto g = static_cast<std::uint8_t>((argb >> 8) & 0xFF);
+    auto b = static_cast<std::uint8_t>(argb & 0xFF);
 
 	return Color::FromArgb(a, r, g, b);
 }
 
-Color Color::FromArgb(int alpha, const Color baseColor) {
-	return Color::FromArgb(alpha, baseColor.r, baseColor.g, baseColor.b);
+Color Color::FromArgb(uint8_t alpha, const Color baseColor) {
+	return Color::FromArgb(alpha, baseColor.m_r, baseColor.m_g, baseColor.m_b);
 }
 
-Color Color::FromArgb(int red, int green, int blue) {
+Color Color::FromArgb(uint8_t red, uint8_t green, uint8_t blue) {
 	return Color::FromArgb(255, red, green, blue);
 }
 
-Color Color::FromArgb(int alpha, int red, int green, int blue) {
+Color Color::FromArgb(uint8_t alpha, uint8_t red, uint8_t green, uint8_t blue) {
 	Color color;
 
-	color.a = Math::Clamp(alpha, 0, 255);
-	color.r = Math::Clamp(red, 0, 255);
-	color.g = Math::Clamp(green, 0, 255);
-	color.b = Math::Clamp(blue, 0, 255);
+	color.m_a = Math::Clamp(alpha, 0, 255);
+	color.m_r = Math::Clamp(red, 0, 255);
+	color.m_g = Math::Clamp(green, 0, 255);
+	color.m_b = Math::Clamp(blue, 0, 255);
 
 	return color;
 }
 
 Color & Color::operator=(const Color & other) {
-	this->r = other.r;
-	this->g = other.g;
-	this->b = other.b;
-	this->a = other.a;
+	m_r = other.m_r;
+	m_g = other.m_g;
+	m_b = other.m_b;
+	m_a = other.m_a;
 
 	return *this;
 }
 
 bool Color::operator !=(const Color &b) const {
-	return ((this->r != b.r) || (this->g != b.g) || (this->b != b.b) || (this->a != b.a));
+	return ((m_r != b.m_r) || (m_g != b.m_g) || (m_b != b.m_b) || (m_a != b.m_a));
 }
