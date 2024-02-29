@@ -30,7 +30,7 @@ bool ArrayList::IsClass(Classes objectClass) const {
 	return Object::IsClass(objectClass);
 }
 
-awui::String ArrayList::ToString() {
+awui::String ArrayList::ToString() const {
 	return "awui.Collections.ArrayList";
 }
 

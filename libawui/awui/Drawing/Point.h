@@ -1,12 +1,14 @@
 #pragma once
 
+#include <awui/Object.h>
+
 namespace awui {
 	class String;
 
 	namespace Drawing {
 		class Size;
 
-		class Point {
+		class Point : public Object {
 			private:
 				float m_x;
 				float m_y;
@@ -29,7 +31,7 @@ namespace awui {
 
 				Point & operator= (const Point & other);
 
-				virtual String ToString();
+				virtual String ToString() const override;
 
 				static float Distance(Point * p1, Point * p2);
 		};

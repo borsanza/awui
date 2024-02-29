@@ -16,7 +16,7 @@ namespace awui {
 
 				virtual bool IsClass(Classes objectClass) const override;
 
-				virtual String ToString();
+				virtual String ToString() const override;
 
 				virtual void Add(Object * item);
 				inline int GetCount() const { return this->_count; }

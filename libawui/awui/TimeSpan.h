@@ -15,7 +15,7 @@ namespace awui {
 		private:
 			long long ticks;
 
-			String ConvertDecimals(int value, int decimals);
+			String ConvertDecimals(int value, int decimals) const;
 
 		public:
 			TimeSpan();
@@ -23,7 +23,7 @@ namespace awui {
 			TimeSpan(int hours, int minutes, int seconds);
 			TimeSpan(int days, int hours, int minutes, int seconds);
 			TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds);
-			virtual ~TimeSpan();
+			virtual ~TimeSpan() = default;
 
 			long long GetTicks() const;
 			double GetTotalMilliseconds() const;
@@ -38,7 +38,7 @@ namespace awui {
 			int GetHours() const;
 			int GetDays() const;
 
-			virtual String ToString();
+			virtual String ToString() const override;
 
 			TimeSpan & operator= (const TimeSpan & other);
 	};

@@ -1,12 +1,14 @@
 #pragma once
 
+#include <awui/Object.h>
+
 namespace awui {
 	class String;
 
 	namespace Drawing {
 		class Point;
 
-		class Size {
+		class Size : public Object {
 			private:
 				float m_width;
 				float m_height;
@@ -25,7 +27,7 @@ namespace awui {
 
 				Size & operator= (const Size & other);
 
-				virtual String ToString();
+				virtual String ToString() const override;
 		};
 	}
 }

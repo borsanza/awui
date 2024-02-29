@@ -50,7 +50,7 @@ Size & Size::operator= (const Size & other) {
 	return *this;
 }
 
-awui::String Size::ToString() {
+awui::String Size::ToString() const {
 	String value;
 	value = String("{Width=") + Convert::ToString(m_width) + ", Height=" + Convert::ToString(m_height) + "}";
 	return value;

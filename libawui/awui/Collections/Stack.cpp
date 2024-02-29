@@ -28,7 +28,7 @@ bool Stack::IsClass(Classes objectClass) const {
 	return Object::IsClass(objectClass);
 }
 
-awui::String Stack::ToString() {
+awui::String Stack::ToString() const {
 	return "awui.Collections.Stack";
 }
 

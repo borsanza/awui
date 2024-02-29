@@ -46,7 +46,7 @@ Point & Point::operator= (const Point & other) {
 	return *this;
 }
 
-awui::String Point::ToString() {
+awui::String Point::ToString() const {
 	String value;
 	value = String("{X=") + Convert::ToString(m_x) + ",Y=" + Convert::ToString(m_y) + "}";
 	return value;

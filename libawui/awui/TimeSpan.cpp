@@ -29,9 +29,6 @@ TimeSpan::TimeSpan(int days, int hours, int minutes, int seconds, int millisecon
 	this->ticks = (days*TicksPerDay) + (hours*TicksPerHour) + (minutes*TicksPerMinute) + (seconds*TicksPerSecond) + (milliseconds*TicksPerMillisecond);
 }
 
-TimeSpan::~TimeSpan() {
-}
-
 long long TimeSpan::GetTicks() const {
 	return this->ticks;
 }
@@ -76,7 +73,7 @@ int TimeSpan::GetDays() const {
 	return Math::Floor(this->GetTotalDays());
 }
 
-awui::String TimeSpan::ConvertDecimals(int value, int decimals) {
+awui::String TimeSpan::ConvertDecimals(int value, int decimals) const {
 	String output = "";
 	for (int i=0; i < decimals; i++) {
 		output = Convert::ToString(value % 10) + output;
@@ -86,7 +83,7 @@ awui::String TimeSpan::ConvertDecimals(int value, int decimals) {
 	return output;
 }
 
-awui::String TimeSpan::ToString() {
+awui::String TimeSpan::ToString() const {
 	String output = "";
 
 	int value = GetDays();
