@@ -13,7 +13,7 @@
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
-using namespace awui::Windows::Forms::Station::Browser;
+using namespace awui::Windows::Forms::Station::Settings;
 
 #define OFFSET 0.5f
 

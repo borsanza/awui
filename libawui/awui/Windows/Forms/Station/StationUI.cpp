@@ -18,7 +18,7 @@
 #include <awui/Windows/Forms/Station/Browser/Page.h>
 #include <awui/Windows/Forms/Station/MenuButton.h>
 #include <awui/Windows/Forms/Station/SettingsWidget.h>
-#include <awui/Windows/Forms/Station/SettingsUI.h>
+#include <awui/Windows/Forms/Station/Settings/SettingsUI.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -30,6 +30,7 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
+using namespace awui::Windows::Forms::Station::Settings;
 
 StationUI::StationUI() {
 	m_controlBase = new Control();

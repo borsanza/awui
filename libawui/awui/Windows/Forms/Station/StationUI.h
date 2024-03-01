@@ -23,7 +23,10 @@ namespace awui {
 			namespace Station {
 				class MenuButton;
 				class StationUI;
-				class SettingsUI;
+
+				namespace Settings {
+					class SettingsUI;
+				}
 
 				namespace Browser {
 					class Browser;
@@ -85,7 +88,7 @@ namespace awui {
 						SettingsWidget * m_settings;
 						Label * m_clock;
 						ImageFader * m_backgroundFader;
-						SettingsUI * m_settingsUI;
+						Settings::SettingsUI * m_settingsUI;
 						Control * m_controlBase;
 
 						void RecursiveSearch(NodeFile * parent);

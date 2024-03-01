@@ -14,7 +14,7 @@
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
-#include <awui/Windows/Forms/Station/Browser/ConfigButton.h>
+#include <awui/Windows/Forms/Station/Settings/ConfigButton.h>
 
 #include <fstream>
 #include <iostream>
@@ -22,6 +22,7 @@
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Browser;
+using namespace awui::Windows::Forms::Station::Settings;
 
 #define MENUBUTTONHEIGHT 70
 

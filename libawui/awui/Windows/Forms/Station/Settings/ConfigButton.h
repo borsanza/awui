@@ -3,7 +3,7 @@
 #include <awui/Windows/Forms/Control.h>
 #include <awui/Windows/Forms/Station/LabelButton.h>
 
-namespace awui::Windows::Forms::Station::Browser {
+namespace awui::Windows::Forms::Station::Settings {
 	class ConfigButton : public Control {
 		private:
 			LabelButton m_label;
