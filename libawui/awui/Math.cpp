@@ -4,7 +4,6 @@
 #include "Math.h"
 
 #include <math.h>
-#include <stdlib.h>
 
 using namespace awui;
 
@@ -226,4 +225,8 @@ double Math::Tanh(double value) {
 
 float Math::Tanh(float value) {
 	return tanhf(value);
+}
+
+float Math::Interpolate(float from, float to, float percent, bool rounding) {
+	return (rounding && (Round(from) == Round(to))) ? to : from + ((to - from) * percent);
 }

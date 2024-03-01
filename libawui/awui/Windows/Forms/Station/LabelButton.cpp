@@ -7,7 +7,7 @@
 #include "LabelButton.h"
 
 #include <awui/Windows/Forms/Form.h>
-#include <math.h>
+#include <awui/Math.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Station;
@@ -54,8 +54,8 @@ void LabelButton::OnTick(float deltaSeconds) {
 			if ((GetLabelWidth() >> 1) < -scrolled)
 				dst = min;
 
-			dst = Interpolate(scrolled, dst, deltaSeconds * 10.0f);
-			if ((fabs(dst) <= 1) || ((dst - 1) <= min))
+			dst = Math::Interpolate(scrolled, dst, deltaSeconds * 10.0f);
+			if ((Math::Abs(dst) <= 1) || ((dst - 1) <= min))
 				dst = 0;
 
 			if ((dst <= -80) && (dst >= (min + 80)))

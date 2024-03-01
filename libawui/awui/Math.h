@@ -84,5 +84,7 @@ namespace awui {
 
 			static double Tanh(double value);
 			static float Tanh(float value);
+
+			static float Interpolate(float from, float to, float percent, bool rounding = true);
 	};
 }

@@ -6,6 +6,7 @@
 
 #include "Gradient.h"
 
+#include <awui/Math.h>
 #include <SDL_opengl.h>
 
 using namespace awui::Drawing;
@@ -61,10 +62,10 @@ void Gradient::OnPaint(GL* gl) {
 
 awui::Drawing::ColorF Gradient::InterpolateColor(Drawing::ColorF * c1, Drawing::ColorF * c2, float percent) {
 	return ColorF::FromArgb(
-		this->Interpolate(c1->GetA(), c2->GetA(), percent),
-		this->Interpolate(c1->GetR(), c2->GetR(), percent),
-		this->Interpolate(c1->GetG(), c2->GetG(), percent),
-		this->Interpolate(c1->GetB(), c2->GetB(), percent));
+		Math::Interpolate(c1->GetA(), c2->GetA(), percent),
+		Math::Interpolate(c1->GetR(), c2->GetR(), percent),
+		Math::Interpolate(c1->GetG(), c2->GetG(), percent),
+		Math::Interpolate(c1->GetB(), c2->GetB(), percent));
 }
 
 void Gradient::OnTick(float deltaSeconds) {

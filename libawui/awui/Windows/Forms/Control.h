@@ -185,8 +185,6 @@ namespace awui {
 
 					void GetControlsSelectables(Collections::ArrayList * list);
 
-					float Interpolate(float from, float to, float percent);
-
 					inline void SetPreventChangeControl(bool mode) { m_preventChangeControl = mode; }
 
 					inline void SetVisible(bool mode) { m_visible = mode; }

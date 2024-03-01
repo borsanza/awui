@@ -9,7 +9,6 @@
 #include <awui/Convert.h>
 #include <awui/Math.h>
 #include <awui/String.h>
-#include <math.h>
 #include <stdlib.h>
 
 using namespace awui::Drawing;
@@ -97,7 +96,7 @@ float ColorF::GetSaturation() const {
 
 	double L = ((M + m) / 2.0) / 255.0;
 
-	double value = C / (1 - fabs((2 * L) - 1));
+	double value = C / (1 - Math::Abs((2.0 * L) - 1.0));
 
 	value /= 255.0;
 

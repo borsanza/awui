@@ -348,13 +348,6 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 	return r;
 }
 
-float Control::Interpolate(float from, float to, float percent) {
-	if (awui::Math::Round(from) == awui::Math::Round(to))
-		return to;
-
-	return from + ((to - from) * percent);
-}
-
 // Lo usamos para dibujar el skin
 void Control::OnPaint(OpenGL::GL * gl) {
 	static float lastx1, lasty1, lastright, lastbottom;
@@ -386,11 +379,11 @@ void Control::OnPaint(OpenGL::GL * gl) {
 			float right = control->m_bounds.GetRight() + x2;
 			float bottom = control->m_bounds.GetBottom() + y2;
 
-			lastright = Interpolate(lastright, right, percent);
-			lastbottom = Interpolate(lastbottom, bottom, percent);
+			lastright = Math::Interpolate(lastright, right, percent);
+			lastbottom = Math::Interpolate(lastbottom, bottom, percent);
 
-			lastx1 = Interpolate(lastx1, control->m_bounds.GetLeft() - x1, percent);
-			lasty1 = Interpolate(lasty1, control->m_bounds.GetTop() - y1, percent);
+			lastx1 = Math::Interpolate(lastx1, control->m_bounds.GetLeft() - x1, percent);
+			lasty1 = Math::Interpolate(lasty1, control->m_bounds.GetTop() - y1, percent);
 
 			bitmap->SetSize(Math::Round(lastright - lastx1 + 1.0f), Math::Round(lastbottom - lasty1 + 1.0f));
 
@@ -549,10 +542,10 @@ void Control::OnTickPre(float deltaSeconds) {
 	double percent = 10.0f * deltaSeconds;
 	//awui::Console::WriteLine("%lld %.3f", ellapsed, percent);
 
-	m_lastRight = Interpolate(m_lastRight, m_boundsTo.GetRight(), percent);
-	m_lastBottom = Interpolate(m_lastBottom, m_boundsTo.GetBottom(), percent);
-	m_lastLeft = Interpolate(m_lastLeft, m_boundsTo.GetLeft(), percent);
-	m_lastTop = Interpolate(m_lastTop, m_boundsTo.GetTop(), percent);
+	m_lastRight = Math::Interpolate(m_lastRight, m_boundsTo.GetRight(), percent);
+	m_lastBottom = Math::Interpolate(m_lastBottom, m_boundsTo.GetBottom(), percent);
+	m_lastLeft = Math::Interpolate(m_lastLeft, m_boundsTo.GetLeft(), percent);
+	m_lastTop = Math::Interpolate(m_lastTop, m_boundsTo.GetTop(), percent);
 	m_bounds.SetSize(m_lastRight - m_lastLeft + 1, m_lastBottom - m_lastTop + 1);
 	m_bounds.SetLocation(m_lastLeft, m_lastTop);
 
