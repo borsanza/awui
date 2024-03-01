@@ -15,6 +15,7 @@
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
 #include <awui/Windows/Forms/Station/Settings/ConfigButton.h>
+#include <awui/Windows/Forms/Station/Settings/TypeConfigButton.h>
 
 #include <fstream>
 #include <iostream>
@@ -75,12 +76,12 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 				continue;
 			}
 
-			int type =   element["type"] == "group" ?   1 :
-						(element["type"] == "boolean" ? 2 :
-						(element["type"] == "list" ?    3 : 4));
+			TypeButton type = element["type"] == "group" ?   TypeButton::Group :
+							 (element["type"] == "boolean" ? TypeButton::Boolean :
+							 (element["type"] == "list" ?    TypeButton::List : TypeButton::Label));
 
 			switch (type) {
-				case 1: // Group
+				case TypeButton::Group:
 				{
 					ConfigButton * button = new ConfigButton();
 					if (element.contains("name")) {
@@ -102,7 +103,7 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 					}
 				}
 					break;
-				case 2: // Boolean
+				case TypeButton::Boolean:
 					std::cout << std::string(depth * 2, ' ');
 
 					if (element.contains("name")) {
@@ -115,7 +116,7 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 						std::cout << element["defaultValue"] << std::endl;
 					}
 					break;
-				case 3: // List
+				case TypeButton::List:
 					std::cout << std::string(depth * 2, ' ');
 					if (element.contains("name")) {
 						std::cout << element["name"] << ": " ;
@@ -138,7 +139,7 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 						std::cout << std::endl;
 					}
 					break;
-				case 4: // Label
+				case TypeButton::Label:
 					std::cout << std::string(depth * 2, ' ');
 
 					if (element.contains("name")) {
