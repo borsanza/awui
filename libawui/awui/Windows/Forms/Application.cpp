@@ -12,6 +12,7 @@
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Joystick/Controller.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
+#include <awui/Math.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 
@@ -57,6 +58,9 @@ void Application::Run(Form * form = NULL) {
 	Stopwatch stopwatch;
 
 	stopwatch.StartNew();
+
+	// Lo inicializo en una frecuencia de 60Hz
+	float lastDeltaSeconds = 1.0f/60.0f;
 	while (!Application::quit) {
 		ProcessEvents();
 
@@ -64,7 +68,10 @@ void Application::Run(Form * form = NULL) {
 		float deltaSeconds = stopwatch.GetDeltaSeconds();
 		stopwatch.StartNew();
 
-		form->OnTickPre(deltaSeconds);
+		// Se comporta mejor en fullscreen si amortiguo el deltaseconds
+		lastDeltaSeconds = Math::Interpolate(lastDeltaSeconds, deltaSeconds, 0.2, false);
+
+		form->OnTickPre(lastDeltaSeconds);
 
 		glViewport(0, 0, form->GetWidth(), form->GetHeight());
 		glClearColor(form->GetBackColor().GetR() / 255.0f, form->GetBackColor().GetG() / 255.0f, form->GetBackColor().GetB() / 255.0f, 1.0f);
