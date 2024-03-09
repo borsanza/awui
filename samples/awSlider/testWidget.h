@@ -17,7 +17,7 @@ using namespace awui;
 
 class TestWidget : public Button {
 	private:
-		Drawing::Image * _image;
+		Drawing::Image * m_image;
 
 	public:
 		TestWidget();

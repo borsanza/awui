@@ -8,18 +8,24 @@
 
 #include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/Listeners/IButtonListener.h>
+#include <awui/Windows/Forms/Station/Browser/Page.h>
 #include <awui/Drawing/Font.h>
 #include <SDL_opengl.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
+using namespace awui::Windows::Forms::Listeners;
 using namespace awui::Windows::Forms::Station::Settings;
 
 #define OFFSET 0.5f
 
-ConfigButton::ConfigButton() {
+ConfigButton::ConfigButton(TypeButton typeButton) {
+	m_typeButton = typeButton;
+	m_subpage = nullptr;
+
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	SetTabStop(true);
+	SetSelectable(true);
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
 
@@ -98,4 +104,42 @@ void ConfigButton::OnResize() {
 	} else {
 		m_label.SetSize(GetWidth() - (0 + m_label.GetLeft()), GetHeight());
 	}
+}
+
+void ConfigButton::Click() {
+	for (auto* listener : m_listeners) {
+		listener->OnClick(this);
+	}
+}
+
+void ConfigButton::AddOnClickListener(IButtonListener * listener) {
+	m_listeners.push_back(listener);
+}
+
+void ConfigButton::RemoveOnClickListener(IButtonListener* listener) {
+	m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), listener), m_listeners.end());
+}
+
+void ConfigButton::RemoveAllListeners() {
+	m_listeners.clear();
+}
+
+void ConfigButton::OnMouseUp(MouseEventArgs* e) {
+	Click();
+}
+
+bool ConfigButton::OnKeyPress(Keys::Enum key) {
+	bool ret = false;
+	switch (key) {
+		case Keys::Key_ENTER:
+		case Keys::Key_SPACE:
+			Click();
+	    	ret = true;
+			break;
+		
+		default:
+			break;
+	}
+
+    return ret;
 }

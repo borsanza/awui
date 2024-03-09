@@ -17,7 +17,6 @@ using namespace awui::Windows::Forms;
 SliderBrowser::SliderBrowser() {
 	this->_margin = 8;
 	this->_effect = new EffectLinear();
-	this->SetTabStop(false);
 	this->_lastControl = NULL;
 	this->_lastTime = 0;
 	this->_initPos = 0;

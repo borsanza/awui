@@ -4,6 +4,13 @@
         "type": "group",
         "items": [
             {
+                "name": "Test1",
+                "type": "group",
+                "items": [
+                    {}
+                ]
+            },
+            {
                 "key": "language",
                 "name": "Language",
                 "description": "Interface language of the program.",

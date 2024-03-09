@@ -42,13 +42,10 @@ StationUI::StationUI() {
 	m_settingsUI = nullptr;
 
 	m_backgroundFader = new ImageFader();
-	m_backgroundFader->SetTabStop(false);
 	m_backgroundFader->SetDock(DockStyle::Fill);
 	m_backgroundFader->SetColor(ColorF::FromArgb(0.25f, 1.0f, 1.0f, 1.0f));
 
 	m_controlBase->GetControls()->Add(m_backgroundFader);
-
-	SetTabStop(false);
 
 	Font font = Font("Liberation Sans", 38, FontStyle::Bold);
 	Font font2 = Font("Liberation Sans", 22, FontStyle::Bold);
@@ -352,7 +349,7 @@ void StationUI::SelectChild(NodeFile * node) {
 			}
 
 			GetControls()->MoveToEnd(&m_fade);
-			m_arcade->SetTabStop(true);
+			m_arcade->SetSelectable(true);
 			m_arcade->SetFocus();
 			m_fade.ShowFade();
 		}
@@ -417,7 +414,7 @@ void StationUI::ExitingArcade() {
 
 	m_fade.HideFade();
 	GetControls()->Add(&m_fade);
-	m_arcade->SetTabStop(false);
+	m_arcade->SetSelectable(false);
 	Control * c = m_actual->m_page->GetFocused();
 	c->SetFocus();
 }
@@ -437,9 +434,8 @@ void StationUI::OnClick(Control *sender) {
 
 	m_settingsUI = new SettingsUI();
 	m_settingsUI->SetDock(DockStyle::Fill);
-	GetControls()->Add(m_settingsUI);
-
 	m_settingsUI->InitializeComponent();
+	GetControls()->Add(m_settingsUI);
 	//Form::SetControlSelected(m_settingsUI);
 }
 

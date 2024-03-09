@@ -26,7 +26,7 @@ MenuButton::MenuButton(StationUI * station) {
 	m_node = NULL;
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	m_station = station;
-	SetTabStop(true);
+	SetSelectable(true);
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
 

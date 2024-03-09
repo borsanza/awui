@@ -30,7 +30,7 @@ Control::Control() {
 	m_lastLeft = 0;
 	m_lastTop = 0;
 	m_drawShadow = true;
-	m_tabStop = false;
+	m_selectable = false;
 	m_bounds = Drawing::Rectangle(0, 0, 100, 100);
 	m_boundsTo = m_bounds;
 	m_controls = new ControlCollection(this);
@@ -578,12 +578,12 @@ bool Control::GetScissorEnabled() {
 	return m_scissorEnabled;
 }
 
-bool Control::GetTabStop() {
-	return m_tabStop;
+bool Control::IsSelectable() {
+	return m_selectable;
 }
 
-void Control::SetTabStop(bool tabStop) {
-	m_tabStop = tabStop;
+void Control::SetSelectable(bool selectable) {
+	m_selectable = selectable;
 }
 
 void Control::OnRemoteKeyPressPre(int which, RemoteButtons::Enum button) {
@@ -915,7 +915,7 @@ void Control::GetControlsSelectables(ArrayList * list) {
 		control->GetControlsSelectables(list);
 	}
 
-	if (GetTabStop())
+	if (IsSelectable())
 		list->Add(this);
 }
 

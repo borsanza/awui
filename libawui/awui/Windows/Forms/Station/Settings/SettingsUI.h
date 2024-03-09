@@ -1,6 +1,7 @@
 #pragma once
 
 #include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/Listeners/IButtonListener.h>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
@@ -17,7 +18,7 @@ namespace awui::Windows::Forms {
 		}
 
 		namespace Settings {
-			class SettingsUI : public Control {
+			class SettingsUI : public Control, Listeners::IButtonListener {
 				private:
 					Browser::Browser * m_browser;
 					Label * m_title;
@@ -29,6 +30,8 @@ namespace awui::Windows::Forms {
 					void InitializeComponent();
 
 					virtual void OnTick(float deltaSeconds) override;
+
+					virtual void OnClick(Control* sender) override;
 			};
 		}
 	}

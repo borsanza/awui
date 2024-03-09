@@ -45,7 +45,6 @@ void SettingsUI::InitializeComponent() {
 	GetControls()->Add(m_title);
 
 	// SetBackColor(Color::FromArgb(0, 255, 0));
-	SetTabStop(false);
 	Browser::Page * page = ProcessJson(j);
 
 	m_browser = new Browser::Browser();
@@ -83,7 +82,7 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 			switch (type) {
 				case TypeButton::Group:
 				{
-					ConfigButton * button = new ConfigButton();
+					ConfigButton * button = new ConfigButton(TypeButton::Group);
 					if (element.contains("name")) {
 						std::cout << std::string(depth * 2, ' ') << element["name"] << ":" << std::endl;
 						std::string test = element["name"].get<std::string>();
@@ -97,9 +96,11 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 							button->SetFocus();
 							added = true;
 						}
-					}
-					if (element.contains("items")) {
-						ProcessJson(element["items"], depth + 1);
+
+						if (element.contains("items")) {
+							button->SetSubPage(ProcessJson(element["items"], depth + 1));
+							button->AddOnClickListener(this);
+						}
 					}
 				}
 					break;
@@ -174,6 +175,19 @@ void SettingsUI::OnTick(float deltaSeconds) {
 		for (int i = 0; i < page->GetControls()->GetCount(); i++) {
 			Control * child = (Control *)page->GetControls()->Get(i);
 			child->SetWidth(m_browser->GetWidth() - 80);
+		}
+	}
+}
+
+void SettingsUI::OnClick(Control* sender) {
+	if (sender->IsClass(Classes::ConfigButton)) {
+		ConfigButton * button = (ConfigButton *) sender;
+		switch (button->GetTypeButton()) {
+			case TypeButton::Group:
+				Page * page = button->GetSubPage();
+				m_browser->SetPage(page);
+				page->SetWidth(m_browser->GetWidth());
+				break;
 		}
 	}
 }

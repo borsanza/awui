@@ -15,7 +15,7 @@ using namespace awui::OpenGL;
 
 SettingsWidget::SettingsWidget() {
 	m_bitmap = new Bitmap("images/settings.png");
-	SetTabStop(true);
+	SetSelectable(true);
 
 	m_bitmap->SetLocation(0, 0);
 	m_bitmap->SetSize(43, 46);

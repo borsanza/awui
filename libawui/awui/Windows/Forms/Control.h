@@ -38,7 +38,7 @@ namespace awui {
 
 				private:
 					Control * m_focused;
-					bool m_tabStop;
+					bool m_selectable;
 					bool m_drawShadow;
 					bool m_preventChangeControl;
 					bool m_visible;
@@ -175,8 +175,8 @@ namespace awui {
 					void SetScissorEnabled(bool mode);
 					bool GetScissorEnabled();
 
-					bool GetTabStop();
-					void SetTabStop(bool tabStop);
+					bool IsSelectable();
+					void SetSelectable(bool selectable);
 
 					void SetFocus(bool selectControl = true);
 					inline Control * GetFocused() const { return m_focused; }

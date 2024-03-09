@@ -70,6 +70,7 @@ void Application::Run(Form * form = NULL) {
 
 		// Se comporta mejor en fullscreen si amortiguo el deltaseconds
 		lastDeltaSeconds = Math::Interpolate(lastDeltaSeconds, deltaSeconds, 0.2, false);
+		// lastDeltaSeconds = 1.0 / 60.0;
 
 		form->OnTickPre(lastDeltaSeconds);
 

@@ -13,7 +13,6 @@ using namespace awui::Windows::Emulators;
 
 ArcadeContainer::ArcadeContainer() {
 	SetBackColor(Color::FromArgb(0, 0, 0));
-	SetTabStop(false);
 	SetDrawShadow(false);
 	SetPreventChangeControl(true);
 	m_station = NULL;

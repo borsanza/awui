@@ -21,7 +21,7 @@ Button::Button() {
 
 	SetSize(75, 23);
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	SetTabStop(true);
+	SetSelectable(true);
 }
 
 Button::~Button() {
@@ -51,7 +51,7 @@ void Button::OnMouseUp(MouseEventArgs* e) {
 	Click();
 }
 
-bool awui::Windows::Forms::Button::OnKeyPress(Keys::Enum key) {
+bool Button::OnKeyPress(Keys::Enum key) {
 	bool ret = false;
 	switch (key) {
 		case Keys::Key_ENTER:

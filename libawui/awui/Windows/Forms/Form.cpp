@@ -226,12 +226,12 @@ Control * Form::GetControlSelected() {
 	return Form::m_controlSelected;
 }
 
-void Form::SetControlSelected(Control * selected) {
-	if (!selected || selected->GetTabStop()) {
-		Form::m_controlSelected = selected;
-		if (selected) {
-			Form::GetSelectedBitmap()->SetParent(selected->GetParent());
-			selected->SetFocus(false);
+void Form::SetControlSelected(Control * control) {
+	if (!control || control->IsSelectable()) {
+		Form::m_controlSelected = control;
+		if (control) {
+			Form::GetSelectedBitmap()->SetParent(control->GetParent());
+			control->SetFocus(false);
 		}
 	}
 }

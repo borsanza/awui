@@ -14,7 +14,6 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Station;
 
 Gradient::Gradient() {
-	this->SetTabStop(false);
 }
 
 Gradient::~Gradient() {

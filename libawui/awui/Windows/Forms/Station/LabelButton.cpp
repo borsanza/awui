@@ -17,7 +17,10 @@ LabelButton::LabelButton() {
 	m_lastSelected = false;
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	SetTextAlign(ContentAlignment::MiddleLeft);
-	SetTabStop(false);
+}
+
+void LabelButton::OnMouseUp(MouseEventArgs * e) {
+	GetParent()->OnMouseUp(e);
 }
 
 void LabelButton::OnMouseDown(MouseEventArgs * e) {

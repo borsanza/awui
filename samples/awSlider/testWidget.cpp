@@ -14,19 +14,19 @@ using namespace awui::Drawing;
 using namespace awui::OpenGL;
 
 TestWidget::TestWidget() {
-	this->SetSize(1, 1);
-	this->_image = new Drawing::Image(1, 1);
-	this->SetTabStop(true);
+	SetSize(1, 1);
+	m_image = new Drawing::Image(1, 1);
+	SetSelectable(true);
 }
 
 TestWidget::~TestWidget() {
-	delete this->_image;
+	delete m_image;
 }
 
 void TestWidget::OnTick(float deltaSeconds) {
-//	printf("%d\n", this->GetParent()->GetControls()->IndexOf(this));
+//	printf("%d\n", GetParent()->GetControls()->IndexOf(this));
 }
 
 void TestWidget::OnPaint(GL* gl) {
-	this->SetBackColor(Color::FromArgb(255, 255, 0, 0));
+	SetBackColor(Color::FromArgb(255, 255, 0, 0));
 }

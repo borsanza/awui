@@ -33,7 +33,7 @@ void FormSlider::InitializeComponent() {
 		w->SetSize(342, 262);
 		w->SetLocation(25, 0);
 		this->_slider->GetControls()->Add(w);
-		w->SetTabStop(true);
+		w->SetSelectable(true);
 		if (Form::GetControlSelected() == NULL)
 			Form::SetControlSelected(w);
 	}
