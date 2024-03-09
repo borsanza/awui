@@ -23,11 +23,7 @@ ArrayList::~ArrayList() {
 }
 
 bool ArrayList::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::ArrayList) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::ArrayList) || Object::IsClass(objectClass);
 }
 
 awui::String ArrayList::ToString() const {
@@ -59,11 +55,12 @@ int ArrayList::IndexOf(Object * item) const {
 }
 
 awui::Object * ArrayList::Get(int index) const {
-	if (index < m_count)
-		return m_data[index];
+	if ((index < 0) || (index >= m_count)) {
+		assert(0);
+		return nullptr;
+	}
 
-	assert(0);
-	return NULL;
+	return m_data[index];
 }
 
 void ArrayList::Remove(Object * item) {
