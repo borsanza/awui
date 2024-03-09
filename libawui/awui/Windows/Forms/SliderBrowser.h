@@ -11,12 +11,12 @@ namespace awui {
 		namespace Forms {
 			class SliderBrowser : public Control {
 				private:
-					int _margin;
-					awui::Effects::Effect * _effect;
-					Control * _lastControl;
-					float _lastTime;
-					int _initPos;
-					int _selected;
+					int m_margin;
+					awui::Effects::Effect * m_effect;
+					Control * m_lastControl;
+					float m_lastTime;
+					int m_initPos;
+					int m_selected;
 
 				public:
 					SliderBrowser();

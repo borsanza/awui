@@ -9,7 +9,6 @@
 #include <awui/TimeSpan.h>
 #include <awui/Console.h>
 #include <awui/Windows/Forms/Button.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Keyboard.h>
 #include <awui/Windows/Forms/ListBox.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
@@ -18,47 +17,43 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Test2::Test2() {
-	this->listbox = NULL;
-	this->runMame = true;
-	this->endMame = false;
-	this->InitializeComponent();
-}
-
-Test2::~Test2() {
+	m_listbox = NULL;
+	m_runMame = true;
+	m_endMame = false;
+	InitializeComponent();
 }
 
 void Test2::InitializeComponent() {
-	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	this->SetDock(DockStyle::Left);
-	this->SetSize(480, 400);
+	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetDock(DockStyle::Left);
+	SetSize(480, 400);
 
 	Keyboard * keyboard = new Keyboard();
 	keyboard->SetDock(DockStyle::Top);
 	keyboard->SetSize(480, 480);
-	this->GetControls()->Add(keyboard);
+	AddWidget(keyboard);
 
 	Keyboard * keyboard2 = new Keyboard();
 	keyboard2->SetDock(DockStyle::Top);
 	keyboard2->SetSize(480, 480);
-	this->GetControls()->Add(keyboard2);
+	AddWidget(keyboard2);
 
-	this->listbox = new ListBox();
-	this->listbox->SetDock(DockStyle::Right);
-	this->listbox->SetSize(480, 480);
-	this->GetControls()->Add(this->listbox);
+	m_listbox = new ListBox();
+	m_listbox->SetDock(DockStyle::Right);
+	m_listbox->SetSize(480, 480);
+	AddWidget(m_listbox);
 }
 
 void Test2::OnTick(float deltaSeconds) {
-	if (!this->endMame) {
-		this->CheckMame();
-		this->CheckGames();
+	if (!m_endMame) {
+		CheckMame();
+		CheckGames();
 	}
 }
 
 void Test2::CheckMame() {
-	if (this->runMame) {
-		this->runMame = false;
-		this->games.Clear();
+	if (m_runMame) {
+		m_runMame = false;
 	}
 }
 
@@ -85,7 +80,7 @@ void Test2::CheckGames() {
 
 	if (reRun) {
 		lines = 0;
-		this->runMame = true;
+		m_runMame = true;
 		Console::WriteLine("-");
 	}
 }

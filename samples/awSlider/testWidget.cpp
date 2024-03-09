@@ -8,7 +8,6 @@
 
 #include <awui/Drawing/Image.h>
 #include <awui/OpenGL/GL.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;

@@ -11,7 +11,6 @@
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Bitmap.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/JoystickButtonEventArgs.h>
 #include <awui/Windows/Forms/JoystickAxisMotionEventArgs.h>
@@ -33,7 +32,7 @@ Control::Control() {
 	m_selectable = false;
 	m_bounds = Drawing::Rectangle(0, 0, 100, 100);
 	m_boundsTo = m_bounds;
-	m_controls = new ControlCollection(this);
+	m_controls = new ArrayList();
 	m_mouseEventArgs = new MouseEventArgs();
 	m_mouseControl = NULL;
 	m_parent = NULL;
@@ -182,8 +181,37 @@ const awui::Drawing::Rectangle Control::GetBounds() const {
 	return m_bounds;
 }
 
-ControlCollection* Control::GetControls() const {
-	return m_controls;
+void Control::AddWidget(Control * control, bool fixSelected) {
+	m_controls->Add(control);
+
+	control->SetParent(this);
+	Layout();
+
+	if (fixSelected && control->GetFocused()) {
+		control->SetFocus(false);
+	}
+}
+
+void Control::RemoveWidget(Control * control) {
+	m_controls->Remove(control);
+}
+
+void Control::MoveToEnd(Control * item) {
+	RemoveWidget(item);
+	AddWidget(item);
+}
+
+void Control::ReplaceWidget(Control * oldControl, Control * newControl) {
+	if (oldControl) {
+		oldControl->CheckMouseControl();
+		oldControl->SetParent(nullptr);
+	}
+
+	m_controls->Replace(oldControl, newControl);
+
+	if (newControl) {
+		newControl->SetParent(this);
+	}
 }
 
 void Control::OnResizePre() {
@@ -242,8 +270,8 @@ void Control::Layout() {
 	int y2 = GetHeight() - 1;
 	int margin = 0;
 
-	for (int i = 0; i < GetControls()->GetCount(); i++) {
-		Control * control = (Control *)GetControls()->Get(i);
+	for (int i = 0; i < GetCount(); i++) {
+		Control * control = Get(i);
 		if (!control->IsVisible()) {
 			continue;
 		}
@@ -334,8 +362,8 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 		glDisable(GL_SCISSOR_TEST);
 
 	if (isVisible) {
-		for (int i = 0; i < GetControls()->GetCount(); i++) {
-			Control * control = (Control *)GetControls()->Get(i);
+		for (int i = 0; i < GetCount(); i++) {
+			Control * control = Get(i);
 			if (!control->IsVisible())
 				continue;
 
@@ -354,8 +382,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 	static Control * lastParent = NULL;
 	Control * focused = Form::GetControlSelected();
 
-	for (int i = 0; i < GetControls()->GetCount(); i++) {
-		Control * control = (Control *)GetControls()->Get(i);
+	for (int i = 0; i < GetCount(); i++) {
+		Control * control = Get(i);
 		if (!control->IsVisible())
 			continue;
 
@@ -397,8 +425,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons) {
 	m_mouseEventArgs->SetLocation(x, y);
 
-	for (int i = GetControls()->GetCount() - 1; i >= 0; i--) {
-		Control * control = (Control *)GetControls()->Get(i);
+	for (int i = GetCount() - 1; i >= 0; i--) {
+		Control * control = Get(i);
 		if (!control->IsVisible())
 			continue;
 
@@ -426,8 +454,8 @@ void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int button
 void Control::OnMouseMovePre(int x, int y, int buttons) {
 	m_mouseEventArgs->SetLocation(x, y);
 
-	for (int i = GetControls()->GetCount() - 1; i >= 0; i--) {
-		Control * control = (Control *)GetControls()->Get(i);
+	for (int i = GetCount() - 1; i >= 0; i--) {
+		Control * control = Get(i);
 		if (!control->IsVisible())
 			continue;
 
@@ -477,8 +505,8 @@ void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons) {
 	int x = m_mouseEventArgs->GetX();
 	int y = m_mouseEventArgs->GetY();
 
-	for (int i = GetControls()->GetCount() - 1; i >= 0; i--) {
-		Control * control = (Control *)GetControls()->Get(i);
+	for (int i = GetCount() - 1; i >= 0; i--) {
+		Control * control = Get(i);
 		if (!control->IsVisible())
 			continue;
 
@@ -552,8 +580,8 @@ void Control::OnTickPre(float deltaSeconds) {
 	if (IsVisible()) {
 		OnTick(deltaSeconds);
 
-		for (int i = 0; i<GetControls()->GetCount(); i++) {
-			Control * control = (Control *)GetControls()->Get(i);
+		for (int i = 0; i < GetCount(); i++) {
+			Control * control = Get(i);
 			if (!control->IsVisible()) {
 				continue;
 			}
@@ -910,8 +938,8 @@ bool Control::OnKeyPress(Keys::Enum key) {
 }
 
 void Control::GetControlsSelectables(ArrayList * list) {
-	for (int i = 0; i<GetControls()->GetCount(); i++) {
-		Control * control = (Control *)GetControls()->Get(i);
+	for (int i = 0; i < GetCount(); i++) {
+		Control * control = Get(i);
 		control->GetControlsSelectables(list);
 	}
 

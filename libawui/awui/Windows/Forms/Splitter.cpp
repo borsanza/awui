@@ -13,14 +13,11 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Splitter::Splitter() {
-	this->orientation = SplitContainer::Orientation::Horizontal;
-	this->SetBackColor(Color::FromArgb(255, 255, 255));
-	this->SetName("Splitter");
-	this->SetSize(20, 200);
-	this->mouseActive = 0;
-}
-
-Splitter::~Splitter() {
+	m_orientation = SplitContainer::Orientation::Horizontal;
+	SetBackColor(Color::FromArgb(255, 255, 255));
+	SetName("Splitter");
+	SetSize(20, 200);
+	m_mouseActive = false;
 }
 
 bool Splitter::IsClass(Classes objectClass) const {
@@ -31,35 +28,35 @@ bool Splitter::IsClass(Classes objectClass) const {
 	return Control::IsClass(objectClass);
 }
 
-SplitContainer::Orientation::Enum Splitter::GetOrientation() {
-	return this->orientation;
+SplitContainer::Orientation Splitter::GetOrientation() const {
+	return m_orientation;
 }
 
-void Splitter::SetOrientation(SplitContainer::Orientation::Enum orientation) {
-	this->orientation = orientation;
+void Splitter::SetOrientation(SplitContainer::Orientation orientation) {
+	m_orientation = orientation;
 }
 
 void Splitter::OnMouseDown(MouseEventArgs * e) {
 	if (e->GetButton() == MouseButtons::Left)
-		this->mouseActive = 1;
+		m_mouseActive = true;
 }
 
 void Splitter::OnMouseMove(MouseEventArgs * e) {
-	if (!this->mouseActive)
+	if (!m_mouseActive)
 		return;
 
-	if (this->GetParent()->IsClass(Classes::SplitContainer)) {
-		if (this->orientation == SplitContainer::Orientation::Vertical)
-			((SplitContainer *) this->GetParent())->SetSplitterDistance(this->GetLeft() + e->GetX());
+	if (GetParent()->IsClass(Classes::SplitContainer)) {
+		if (m_orientation == SplitContainer::Orientation::Vertical)
+			((SplitContainer *) GetParent())->SetSplitterDistance(GetLeft() + e->GetX());
 		else
-			((SplitContainer *) this->GetParent())->SetSplitterDistance(this->GetTop() + e->GetY());
+			((SplitContainer *) GetParent())->SetSplitterDistance(GetTop() + e->GetY());
 	}
 
-//	std::cout << "Motion: " << e->GetX() << "x" << e->GetY() << "   " << this->GetName() << std::endl;
+//	std::cout << "Motion: " << e->GetX() << "x" << e->GetY() << "   " << GetName() << std::endl;
 }
 
 void Splitter::OnMouseUp(MouseEventArgs * e) {
-	this->mouseActive = 0;
+	m_mouseActive = false;
 }
 
 void Splitter::OnMouseEnter() {

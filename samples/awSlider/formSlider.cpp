@@ -8,38 +8,34 @@
 #include "testWidget.h"
 
 #include <awui/Drawing/Color.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/SliderBrowser.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 FormSlider::FormSlider() {
-	this->_slider = NULL;
-	this->InitializeComponent();
-}
-
-FormSlider::~FormSlider() {
+	m_slider = NULL;
+	InitializeComponent();
 }
 
 void FormSlider::InitializeComponent() {
-	this->_slider = new SliderBrowser();
-	this->_slider->SetDock(DockStyle::Fill);
-	this->_slider->SetMargin(25);
-	this->GetControls()->Add(_slider);
+	m_slider = new SliderBrowser();
+	m_slider->SetDock(DockStyle::Fill);
+	m_slider->SetMargin(25);
+	AddWidget(m_slider);
 	
 	for (int i = 0; i < 512; i++) {
 		TestWidget * w = new TestWidget();
 		w->SetSize(342, 262);
 		w->SetLocation(25, 0);
-		this->_slider->GetControls()->Add(w);
+		m_slider->AddWidget(w);
 		w->SetSelectable(true);
 		if (Form::GetControlSelected() == NULL)
 			Form::SetControlSelected(w);
 	}
 
-	this->SetText("Test FormSlider");
-	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
-	this->SetSize(1200, 850);
-	this->SetFullscreen(0);
+	SetText("Test FormSlider");
+	SetBackColor(Color::FromArgb(255, 0, 0, 0));
+	SetSize(1200, 850);
+	SetFullscreen(0);
 }

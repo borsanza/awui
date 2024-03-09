@@ -8,90 +8,89 @@
 
 #include <awui/Console.h>
 #include <awui/Effects/Effect.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 
 using namespace awui::Effects;
 using namespace awui::Windows::Forms;
 
 SliderBrowser::SliderBrowser() {
-	this->_margin = 8;
-	this->_effect = new EffectLinear();
-	this->_lastControl = NULL;
-	this->_lastTime = 0;
-	this->_initPos = 0;
-	this->_selected = -1;
+	m_margin = 8;
+	m_effect = new EffectLinear();
+	m_lastControl = NULL;
+	m_lastTime = 0;
+	m_initPos = 0;
+	m_selected = -1;
 }
 
 SliderBrowser::~SliderBrowser() {
-	delete this->_effect;
+	delete m_effect;
 }
 
 void SliderBrowser::SetMargin(int margin) {
-	this->_margin = margin;
+	m_margin = margin;
 }
 
 void SliderBrowser::OnTick(float deltaSeconds) {
-	int posSelected = this->GetControls()->IndexOf(Form::GetControlSelected());
+	int posSelected = IndexOf(Form::GetControlSelected());
 
 	if (posSelected != -1)
-		if (this->_selected != posSelected)
-			this->_selected = posSelected;
+		if (m_selected != posSelected)
+			m_selected = posSelected;
 
-	if (this->_selected == -1)
-		this->_selected = 0;
+	if (m_selected == -1)
+		m_selected = 0;
 
-	if (this->_selected >= this->GetControls()->GetCount())
+	if (m_selected >= GetCount())
 		return;
 
-	Control * w = (Control *)this->GetControls()->Get(this->_selected);
+	Control * w = Get(m_selected);
 
-	bool leftOut = (w->GetLeft() - this->_margin) <= 0;
-	bool rightOut = (w->GetRight() + this->_margin) >= this->GetWidth();
+	bool leftOut = (w->GetLeft() - m_margin) <= 0;
+	bool rightOut = (w->GetRight() + m_margin) >= GetWidth();
 	if (leftOut || rightOut) {
 		int left;
 		if (leftOut)
-			left = this->_margin;
+			left = m_margin;
 		else
-			left = this->GetWidth() - (w->GetWidth() + this->_margin);
+			left = GetWidth() - (w->GetWidth() + m_margin);
 
-		if (this->_lastControl != w) {
-			this->_lastControl = w;
-			this->_lastTime = 0;
-			this->_initPos = w->GetLeft();
+		if (m_lastControl != w) {
+			m_lastControl = w;
+			m_lastTime = 0;
+			m_initPos = w->GetLeft();
 		}
 
-		if (this->_lastTime < 10) {
-			this->_lastTime++;
-			float p = this->_effect->Calculate(this->_lastTime / 10.0f);
-			left = this->_initPos + ((left - this->_initPos) * p);
+		if (m_lastTime < 10) {
+			m_lastTime++;
+			float p = m_effect->Calculate(m_lastTime / 10.0f);
+			left = m_initPos + ((left - m_initPos) * p);
 		}
 
 		w->SetLeft(left);
 	}
 
-	w->SetTop((this->GetHeight() - w->GetHeight()) >> 1);
+	w->SetTop((GetHeight() - w->GetHeight()) >> 1);
 
-	int x = w->GetLeft() + w->GetWidth() + this->_margin;
-	for (int i = this->_selected + 1; i< this->GetControls()->GetCount(); i++) {
-		x += this->_margin;
-		Control * w2 = (Control *)this->GetControls()->Get(i);
-		w2->SetLocation(x, (this->GetHeight() - w2->GetHeight()) >> 1);
-		x += w2->GetWidth() + this->_margin;
+	int x = w->GetLeft() + w->GetWidth() + m_margin;
+	for (int i = m_selected + 1; i< GetCount(); i++) {
+		x += m_margin;
+		Control * w2 = Get(i);
+		w2->SetLocation(x, (GetHeight() - w2->GetHeight()) >> 1);
+		x += w2->GetWidth() + m_margin;
 	}
 
-	x = w->GetLeft() - this->_margin;
-	for (int i = this->_selected - 1; i >= 0; i--) {
-		Control * w2 = (Control *)this->GetControls()->Get(i);
-		x -= (this->_margin + w2->GetWidth());
-		w2->SetLocation(x, (this->GetHeight() - w2->GetHeight()) >> 1);
-		x -= this->_margin;
+	x = w->GetLeft() - m_margin;
+	for (int i = m_selected - 1; i >= 0; i--) {
+		Control * w2 = Get(i);
+		x -= (m_margin + w2->GetWidth());
+		w2->SetLocation(x, (GetHeight() - w2->GetHeight()) >> 1);
+		x -= m_margin;
 	}
 }
 
 Control * SliderBrowser::GetControlSelected() const {
-	if ((this->_selected >= 0) && (this->_selected < this->GetControls()->GetCount()))
-		return (Control *) this->GetControls()->Get(this->_selected);
+	if ((m_selected >= 0) && (m_selected < GetCount()))
+		return Get(m_selected);
 
 	return NULL;
 }

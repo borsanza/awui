@@ -8,7 +8,6 @@
 #include <awui/Effects/Effect.h>
 #include <awui/Math.h>
 #include <awui/Windows/Forms/Button.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Panel.h>
 #include <awui/Windows/Forms/SplitContainer.h>
@@ -18,48 +17,45 @@ using namespace awui::Effects;
 using namespace awui::Windows::Forms;
 
 Test1::Test1() {
-	this->_buttons = NULL;
-	this->_effects = NULL;
-	this->_splitter = NULL;
-	this->InitializeComponent();
-}
-
-Test1::~Test1() {
+	m_buttons = NULL;
+	m_effects = NULL;
+	m_splitter = NULL;
+	InitializeComponent();
 }
 
 void Test1::InitializeComponent() {
-	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	this->SetDock(DockStyle::Fill);
+	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetDock(DockStyle::Fill);
 
-	this->_splitter = new SplitContainer();
-	this->_splitter->SetName("SplitContainer");
-	this->_splitter->SetDock(DockStyle::Fill);
-	this->_splitter->SetOrientation(SplitContainer::Orientation::Vertical);
-	this->_splitter->SetSplitterDistance(630);
+	m_splitter = new SplitContainer();
+	m_splitter->SetName("SplitContainer");
+	m_splitter->SetDock(DockStyle::Fill);
+	m_splitter->SetOrientation(SplitContainer::Orientation::Vertical);
+	m_splitter->SetSplitterDistance(630);
 
-	this->GetControls()->Add(this->_splitter);
+	AddWidget(m_splitter);
 
-	Control * control1 = this->_splitter->GetPanel1();
-	Control * control2 = this->_splitter->GetPanel2();
+	Control * control1 = m_splitter->GetPanel1();
+	Control * control2 = m_splitter->GetPanel2();
 	control1->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	control2->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 
-	this->_buttons = new awui::Collections::ArrayList();
-	this->_effects = new awui::Collections::ArrayList();
+	m_buttons = new awui::Collections::ArrayList();
+	m_effects = new awui::Collections::ArrayList();
 
-	this->AddButtonEffect(new EffectLinear(), control1, 5);
-	this->AddButtonEffect(new EffectSwing(), control1);
-	this->AddButtonEffect(new EffectQuad(), control1);
-	this->AddButtonEffect(new EffectCubic(), control1);
-	this->AddButtonEffect(new EffectQuart(), control1);
-	this->AddButtonEffect(new EffectQuint(), control1);
+	AddButtonEffect(new EffectLinear(), control1, 5);
+	AddButtonEffect(new EffectSwing(), control1);
+	AddButtonEffect(new EffectQuad(), control1);
+	AddButtonEffect(new EffectCubic(), control1);
+	AddButtonEffect(new EffectQuart(), control1);
+	AddButtonEffect(new EffectQuint(), control1);
 
-	this->AddButtonEffect(new EffectExpo(), control2, 5);
-	this->AddButtonEffect(new EffectSine(), control2);
-	this->AddButtonEffect(new EffectCirc(), control2);
-	this->AddButtonEffect(new EffectElastic(), control2);
-	this->AddButtonEffect(new EffectBack(), control2);
-	this->AddButtonEffect(new EffectBounce(), control2);
+	AddButtonEffect(new EffectExpo(), control2, 5);
+	AddButtonEffect(new EffectSine(), control2);
+	AddButtonEffect(new EffectCirc(), control2);
+	AddButtonEffect(new EffectElastic(), control2);
+	AddButtonEffect(new EffectBack(), control2);
+	AddButtonEffect(new EffectBounce(), control2);
 }
 
 void Test1::AddButtonEffect(Effect * effect, Control * control, int posy) {
@@ -77,10 +73,10 @@ void Test1::AddButtonEffect(Effect * effect, Control * control, int posy) {
 		button->SetForeColor(Color::FromArgb(255, 255, 255));
 		button->SetFont(Font("Monospace", 20, FontStyle::Bold));
 		button->SetTop(y);
-		control->GetControls()->Add(button);
+		control->AddWidget(button);
 
-		this->_buttons->Add(button);
-		this->_effects->Add(effect);
+		m_buttons->Add(button);
+		m_effects->Add(effect);
 
 		y += button->GetHeight();
 
@@ -98,7 +94,7 @@ void Test1::OnTick(float deltaSeconds) {
 	py2++;
 
 	// Controles 1
-	Control * control = ((Control *)this->_buttons->Get(0))->GetParent();
+	Control * control = ((Control *)m_buttons->Get(0))->GetParent();
 	int time = control->GetWidth() / 3;
 
 	if (py1 > time) {
@@ -108,7 +104,7 @@ void Test1::OnTick(float deltaSeconds) {
 
 	float value1 = py1 / time;
 
-	control = ((Control *)this->_buttons->Get(18))->GetParent();
+	control = ((Control *)m_buttons->Get(18))->GetParent();
 	time = control->GetWidth() / 3;
 
 	if (py2 > time) {
@@ -118,9 +114,9 @@ void Test1::OnTick(float deltaSeconds) {
 
 	float value2 = py2 / time;
 
-	for (int i=0; i<this->_buttons->GetCount(); i++) {
-		Effect * effect = (Effect *)this->_effects->Get(i);
-		Button * button = (Button *)this->_buttons->Get(i);
+	for (int i=0; i<m_buttons->GetCount(); i++) {
+		Effect * effect = (Effect *)m_effects->Get(i);
+		Button * button = (Button *)m_buttons->Get(i);
 
 		float value3 = 0.0f;
 

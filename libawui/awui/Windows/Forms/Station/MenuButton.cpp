@@ -9,7 +9,6 @@
 #include <awui/Windows/Emulators/Chip8.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Emulators/Spectrum.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/Station/StationUI.h>
@@ -30,11 +29,11 @@ MenuButton::MenuButton(StationUI * station) {
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
 
-	GetControls()->Add(&m_label);
+	AddWidget(&m_label);
 }
 
 MenuButton::~MenuButton() {
-	GetControls()->Remove(&m_label);
+	RemoveWidget(&m_label);
 }
 
 bool MenuButton::IsClass(Classes objectClass) const {

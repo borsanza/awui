@@ -7,68 +7,64 @@
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Button.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 FormTest::FormTest() {
-	this->buttonPressed = RemoteButtons::None;
-	this->buttonL = NULL;
-	this->InitializeComponent();
-}
-
-FormTest::~FormTest() {
+	m_buttonPressed = RemoteButtons::None;
+	m_buttonL = NULL;
+	InitializeComponent();
 }
 
 bool FormTest::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
-	buttonPressed = button;
+	m_buttonPressed = button;
 
-	if (buttonPressed == RemoteButtons::Enum::Ok)
-		buttonL->SetForeColor(Color::FromArgb(rand.Next(3) * 128 - 1, rand.Next(3) * 128 - 1, rand.Next(3) * 128 - 1));
+	if (m_buttonPressed == RemoteButtons::Enum::Ok)
+		m_buttonL->SetForeColor(Color::FromArgb(m_rand.Next(3) * 128 - 1, m_rand.Next(3) * 128 - 1, m_rand.Next(3) * 128 - 1));
 
 	return 0;
 }
 
 bool FormTest::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	buttonPressed = RemoteButtons::Enum::None;
+	m_buttonPressed = RemoteButtons::Enum::None;
 	return 0;
 }
 
 void FormTest::InitializeComponent() {
-	this->SetText("Test FormTest");
-	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
+	SetText("Test FormTest");
+	SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
 	Test2 *test2 = new Test2();
-	this->GetControls()->Add(test2);
+	AddWidget(test2);
 
 	Font font = Font("sans-serif", 34, FontStyle::Bold);
-	buttonL = new Button();
-	buttonL->SetDock(DockStyle::None);
-	buttonL->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	buttonL->SetLocation(500, 50);
-	buttonL->SetSize(Size(200, 48));
-	buttonL->SetText("SILVIA");
-	buttonL->SetFont(font);
-	this->GetControls()->Add(buttonL);
+	m_buttonL = new Button();
+	m_buttonL->SetDock(DockStyle::None);
+	m_buttonL->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	m_buttonL->SetLocation(500, 50);
+	m_buttonL->SetSize(Size(200, 48));
+	m_buttonL->SetText("SILVIA");
+	m_buttonL->SetFont(font);
+	AddWidget(m_buttonL);
 
-	this->SetSize(460, 460);
-	this->SetFullscreen(0);
+	SetSize(460, 460);
+	SetFullscreen(0);
 }
 
 void FormTest::OnTick(float deltaSeconds) {
-	switch (buttonPressed) {
+	switch (m_buttonPressed) {
 		case RemoteButtons::Enum::Left:
-			buttonL->SetLeft(buttonL->GetLeft() - 5);
+			m_buttonL->SetLeft(m_buttonL->GetLeft() - 5);
 			break;
 		case RemoteButtons::Enum::Up:
-			buttonL->SetTop(buttonL->GetTop() - 5);
+			m_buttonL->SetTop(m_buttonL->GetTop() - 5);
 			break;
 		case RemoteButtons::Enum::Right:
-			buttonL->SetLeft(buttonL->GetLeft() + 5);
+			m_buttonL->SetLeft(m_buttonL->GetLeft() + 5);
 			break;
 		case RemoteButtons::Enum::Down:
-			buttonL->SetTop(buttonL->GetTop() + 5);
+			m_buttonL->SetTop(m_buttonL->GetTop() + 5);
 			break;
 		default:
 			break;

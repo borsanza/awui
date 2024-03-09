@@ -4,11 +4,8 @@
 #include "Stats.h"
 
 #include <awui/Convert.h>
-//#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Math.h>
-//#include <awui/TimeSpan.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Statistics;
@@ -34,7 +31,7 @@ Stats::Stats() {
 	this->_heartbeat->SetDock(DockStyle::Left);
 	this->_heartbeat->SetBackColor(backColor);
 	this->_heartbeat->SetForeColor(foreColor);
-	this->GetControls()->Add(this->_heartbeat);
+	AddWidget(this->_heartbeat);
 #endif // SHOW_HEARTBEAT
 
 #ifdef SHOW_SPINNER
@@ -42,7 +39,7 @@ Stats::Stats() {
 	this->_spinner->SetDock(DockStyle::Right);
 	this->_spinner->SetBackColor(backColor);
 	this->_spinner->SetForeColor(foreColor);
-	this->GetControls()->Add(this->_spinner);
+	AddWidget(this->_spinner);
 #endif // SHOW_SPINNER
 
 #ifdef SHOW_FPS
@@ -55,7 +52,7 @@ Stats::Stats() {
 	this->_labelFPS->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->_labelFPS->SetForeColor(foreColor);
 	this->_labelFPS->SetWidth(90);
-	this->GetControls()->Add(this->_labelFPS);
+	AddWidget(this->_labelFPS);
 #endif // SHOW_FPS
 
 #ifdef SHOW_PERCENT
@@ -67,7 +64,7 @@ Stats::Stats() {
 	this->_labelPercent->SetBackColor(backColor);
 	this->_labelPercent->SetForeColor(foreColor);
 	this->_labelPercent->SetWidth(70);
-	this->GetControls()->Add(this->_labelPercent);
+	AddWidget(this->_labelPercent);
 #endif // SHOW_PERCENT
 
 #ifdef SHOW_WIDGETS
@@ -79,7 +76,7 @@ Stats::Stats() {
 	this->_labelControls->SetBackColor(Color::FromArgb(0, 0, 0));
 	this->_labelControls->SetForeColor(foreColor);
 	this->_labelControls->SetWidth(100);
-	this->GetControls()->Add(this->_labelControls);
+	AddWidget(this->_labelControls);
 #endif // SHOW_WIDGETS
 
 	this->SetHeight(24);

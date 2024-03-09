@@ -4,7 +4,6 @@
 #include "Panel.h"
 
 #include <awui/Drawing/Color.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Control.h>
 
 using namespace awui::Drawing;
@@ -31,9 +30,9 @@ const Size Panel::GetMinimumSize() const {
 	minSize.SetWidth(0);
 	minSize.SetHeight(0);
 
-	int count = this->GetControls()->GetCount();
+	int count = GetCount();
 	for (int i = 0; i < count; i++) {
-		Control * control = (Control *)this->GetControls()->Get(i);
+		Control * control = Get(i);
 		switch (control->GetDock()) {
 			case DockStyle::None:
 				break;

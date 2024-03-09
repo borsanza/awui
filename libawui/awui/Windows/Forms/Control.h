@@ -9,6 +9,10 @@
 #include <cstdint>
 
 namespace awui {
+	namespace Collections {
+		class ArrayList;
+	}
+
 	namespace Drawing {
 		class Font;
 	}
@@ -19,7 +23,6 @@ namespace awui {
 
 	namespace Windows {
 		namespace Forms {
-			class ControlCollection;
 			class MouseEventArgs;
 			class JoystickButtonEventArgs;
 			class JoystickAxisMotionEventArgs;
@@ -56,7 +59,7 @@ namespace awui {
 					bool m_scissorEnabled;
 					Drawing::Font * m_font;
 					DockStyle m_dock;
-					ControlCollection * m_controls;
+					ArrayList * m_controls;
 					Drawing::Color m_backColor;
 					Drawing::Color m_foreColor;
 					Control * m_parent;
@@ -128,7 +131,13 @@ namespace awui {
 					int GetRight() const;
 					int GetBottom() const;
 
-					ControlCollection * GetControls() const;
+					void AddWidget(Control * control, bool fixSelected = false);
+					void RemoveWidget(Control * control);
+					int GetCount() const { return m_controls->GetCount(); }
+					int IndexOf(Control * control) const { return m_controls->IndexOf(control); }
+					Control * Get(int index) const { return (Control *) m_controls->Get(index); }
+					void MoveToEnd(Control * item);
+					void ReplaceWidget(Control * oldItem, Control * newItem);
 
 					Drawing::Color GetBackColor();
 					void SetBackColor(const Drawing::Color color);

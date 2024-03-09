@@ -11,27 +11,25 @@ namespace awui {
 		class Effect;
 	}
 
-	namespace Windows {
-		namespace Forms {
-			class SplitContainer;
-		}
+	namespace Windows::Forms {
+		class SplitContainer;
 	}
 }
 
 class Test1 : public awui::Windows::Forms::Control {
 	private:
-		awui::Windows::Forms::SplitContainer * _splitter;
+		awui::Windows::Forms::SplitContainer * m_splitter;
 
-		awui::Collections::ArrayList * _buttons;
-		awui::Collections::ArrayList * _effects;
+		awui::Collections::ArrayList * m_buttons;
+		awui::Collections::ArrayList * m_effects;
 
 	public:
 		Test1();
-		virtual ~Test1();
+		virtual ~Test1() = default;
 
 	private:
 		void InitializeComponent();
 		void AddButtonEffect(awui::Effects::Effect * effect, Control * control, int posy = -1);
 
-		virtual void OnTick(float deltaSeconds);
+		virtual void OnTick(float deltaSeconds) override;
 };

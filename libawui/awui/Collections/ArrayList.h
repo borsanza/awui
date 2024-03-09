@@ -6,9 +6,9 @@ namespace awui {
 	namespace Collections {
 		class ArrayList : public Object {
 			private:
-				Object ** _data;
-				int _count;
-				int _size;
+				Object ** m_data;
+				int m_count;
+				int m_size;
 
 			public:
 				ArrayList();
@@ -19,11 +19,11 @@ namespace awui {
 				virtual String ToString() const override;
 
 				virtual void Add(Object * item);
-				inline int GetCount() const { return this->_count; }
+				inline int GetCount() const { return m_count; }
 
 				void Clear();
-				Object * Get(int index);
-				int IndexOf(Object * item);
+				Object * Get(int index) const;
+				int IndexOf(Object * item) const;
 				void Remove(Object * item);
 				void RemoveAt(int index);
 				void SetChildIndex(Object * item, int index);

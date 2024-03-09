@@ -6,7 +6,6 @@
 
 #include "formArcade.h"
 
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Station/StationUI.h>
 
 using namespace awui::Drawing;
@@ -29,7 +28,7 @@ void FormArcade::InitializeComponent() {
 	m_stationUI->Refresh();
 	m_stationUI->SetDock(DockStyle::Fill);
 
-	GetControls()->Add(m_stationUI);
+	AddWidget(m_stationUI);
 
 	SetSize(1280, 720);
 	SetFullscreen(0);

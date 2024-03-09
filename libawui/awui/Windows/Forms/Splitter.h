@@ -3,29 +3,25 @@
 #include <awui/Windows/Forms/Control.h>
 #include <awui/Windows/Forms/SplitContainer.h>
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			class Splitter : public Control {
-				private:
-						SplitContainer::Orientation::Enum orientation;
-						int mouseActive;
+namespace awui::Windows::Forms {
+	class Splitter : public Control {
+		private:
+			SplitContainer::Orientation m_orientation;
+			bool m_mouseActive;
 
-				public:
-					Splitter();
-					virtual ~Splitter();
+		public:
+			Splitter();
+			virtual ~Splitter() = default;
 
-					virtual bool IsClass(Classes objectClass) const override;
+			virtual bool IsClass(Classes objectClass) const override;
 
-					SplitContainer::Orientation::Enum GetOrientation();
-					void SetOrientation(SplitContainer::Orientation::Enum orientation);
+			SplitContainer::Orientation GetOrientation() const;
+			void SetOrientation(SplitContainer::Orientation orientation);
 
-					virtual void OnMouseDown(MouseEventArgs * e);
-					virtual void OnMouseMove(MouseEventArgs * e);
-					virtual void OnMouseUp(MouseEventArgs * e);
-					virtual void OnMouseEnter();
-					virtual void OnMouseLeave();
-			};
-		}
-	}
+			virtual void OnMouseDown(MouseEventArgs * e) override;
+			virtual void OnMouseMove(MouseEventArgs * e) override;
+			virtual void OnMouseUp(MouseEventArgs * e) override;
+			virtual void OnMouseEnter() override;
+			virtual void OnMouseLeave() override;
+	};
 }

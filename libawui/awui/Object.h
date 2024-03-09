@@ -16,7 +16,6 @@ namespace awui {
 		Color,
 		ColorF,
 		Control,
-		ControlCollection,
 		Form,
 		Graphics,
 		Image,

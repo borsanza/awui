@@ -10,7 +10,6 @@
 #include <awui/String.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
@@ -42,14 +41,14 @@ void SettingsUI::InitializeComponent() {
 	m_title->SetFont(font);
 	m_title->SetDock(DockStyle::None);
 	m_title->SetForeColor(Color::FromArgb(120, 120, 120));
-	GetControls()->Add(m_title);
+	AddWidget(m_title);
 
 	// SetBackColor(Color::FromArgb(0, 255, 0));
 	Browser::Page * page = ProcessJson(j);
 
 	m_browser = new Browser::Browser();
 	m_browser->SetDock(DockStyle::None);
-	GetControls()->Add(m_browser);
+	AddWidget(m_browser);
 	m_browser->SetPage(page);
 	// m_browser->SetBackColor(Color::FromArgb(0, 0, 255));
 
@@ -91,7 +90,7 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 						button->SetGroup(true);
 						button->SetLocation(40, posY);
 						posY += MENUBUTTONHEIGHT;
-						page->GetControls()->Add(button);
+						page->AddWidget(button);
 						if (!added) {
 							button->SetFocus();
 							added = true;
@@ -172,8 +171,8 @@ void SettingsUI::OnTick(float deltaSeconds) {
 		// Console::WriteLine("%d", m_browser->GetWidth());
 		page->SetWidth(m_browser->GetWidth());
 
-		for (int i = 0; i < page->GetControls()->GetCount(); i++) {
-			Control * child = (Control *)page->GetControls()->Get(i);
+		for (int i = 0; i < page->GetCount(); i++) {
+			Control * child = page->Get(i);
 			child->SetWidth(m_browser->GetWidth() - 80);
 		}
 	}

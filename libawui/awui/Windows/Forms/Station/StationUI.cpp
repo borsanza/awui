@@ -11,7 +11,6 @@
 #include <awui/Math.h>
 #include <awui/Windows/Emulators/ArcadeContainer.h>
 #include <awui/Windows/Forms/Bitmap.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/ImageFader.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
@@ -45,7 +44,7 @@ StationUI::StationUI() {
 	m_backgroundFader->SetDock(DockStyle::Fill);
 	m_backgroundFader->SetColor(ColorF::FromArgb(0.25f, 1.0f, 1.0f, 1.0f));
 
-	m_controlBase->GetControls()->Add(m_backgroundFader);
+	m_controlBase->AddWidget(m_backgroundFader);
 
 	Font font = Font("Liberation Sans", 38, FontStyle::Bold);
 	Font font2 = Font("Liberation Sans", 22, FontStyle::Bold);
@@ -57,8 +56,8 @@ StationUI::StationUI() {
 	m_title->SetDock(DockStyle::None);
 
 	m_browser = new Browser::Browser();
-	m_controlBase->GetControls()->Add(m_title);
-	m_controlBase->GetControls()->Add(m_browser);
+	m_controlBase->AddWidget(m_title);
+	m_controlBase->AddWidget(m_browser);
 
 
 	m_settings = new SettingsWidget();
@@ -67,7 +66,7 @@ StationUI::StationUI() {
 	m_settings->SetFont(font2);
 	m_settings->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	m_settings->SetSize(44, 46);
-	m_controlBase->GetControls()->Add(m_settings);
+	m_controlBase->AddWidget(m_settings);
 
 	m_clock = new Label();
 	m_clock->SetDock(DockStyle::None);
@@ -76,9 +75,9 @@ StationUI::StationUI() {
 	m_clock->SetForeColor(Color::FromArgb(151, 151, 151));
 	m_clock->SetTextAlign(ContentAlignment::TopCenter);
 	m_clock->SetText("11:59");
-	m_controlBase->GetControls()->Add(m_clock);
+	m_controlBase->AddWidget(m_clock);
 
-	GetControls()->Add(m_controlBase);
+	AddWidget(m_controlBase);
 	m_controlBase->SetDock(DockStyle::Fill);
 }
 
@@ -272,7 +271,7 @@ void StationUI::RefreshList() {
 			child->m_button->SetHeight(MENUBUTTONHEIGHT);
 			child->m_button->SetLocation(40, y);
 			y += MENUBUTTONHEIGHT;
-			m_actual->m_page->GetControls()->Add(child->m_button);
+			m_actual->m_page->AddWidget(child->m_button);
 			if (i == 0) {
 				child->m_button->SetFocus();
 			}
@@ -315,8 +314,8 @@ void StationUI::OnTick(float deltaSeconds) {
 	m_browser->SetSize(GetWidth() >> 1, GetHeight() - (69 + 25));
 	m_actual->m_page->SetWidth(m_browser->GetWidth());
 
-	for (int i = 0; i < m_actual->m_page->GetControls()->GetCount(); i++) {
-		Control * child = (Control *)m_actual->m_page->GetControls()->Get(i);
+	for (int i = 0; i < m_actual->m_page->GetCount(); i++) {
+		Control * child = m_actual->m_page->Get(i);
 		child->SetWidth(m_browser->GetWidth() - 100);
 	}
 
@@ -344,11 +343,11 @@ void StationUI::SelectChild(NodeFile * node) {
 				return;
 			}
 
-			if (GetControls()->IndexOf(&m_fade) == -1) {
-				GetControls()->Add(&m_fade);
+			if (IndexOf(&m_fade) == -1) {
+				AddWidget(&m_fade);
 			}
 
-			GetControls()->MoveToEnd(&m_fade);
+			MoveToEnd(&m_fade);
 			m_arcade->SetSelectable(true);
 			m_arcade->SetFocus();
 			m_fade.ShowFade();
@@ -387,7 +386,7 @@ void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
 		return;
 	}
 
-	GetControls()->Replace(m_arcade, arcade);
+	ReplaceWidget(m_arcade, arcade);
 
 	if (m_arcade) {
 		m_arcade->SetSoundEnabled(false);
@@ -401,7 +400,7 @@ void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
 }
 
 void StationUI::SetArcadeFullScreen() {
-	GetControls()->Remove(&m_fade);
+	RemoveWidget(&m_fade);
 	m_controlBase->SetVisible(false);
 }
 
@@ -413,21 +412,21 @@ void StationUI::ExitingArcade() {
 	m_controlBase->SetVisible(true);
 
 	m_fade.HideFade();
-	GetControls()->Add(&m_fade);
+	AddWidget(&m_fade);
 	m_arcade->SetSelectable(false);
 	Control * c = m_actual->m_page->GetFocused();
 	c->SetFocus();
 }
 
 void StationUI::ExitArcade() {
-	GetControls()->Remove(&m_fade);
+	RemoveWidget(&m_fade);
 }
 
 void StationUI::OnClick(Control *sender) {
 	m_controlBase->SetVisible(false);
 	Console::WriteLine("Click %s", sender->ToString());
 	if (m_settingsUI) {
-		GetControls()->Remove(m_settingsUI);
+		RemoveWidget(m_settingsUI);
 		delete m_settingsUI;
 		m_settingsUI = nullptr;
 	}
@@ -435,7 +434,7 @@ void StationUI::OnClick(Control *sender) {
 	m_settingsUI = new SettingsUI();
 	m_settingsUI->SetDock(DockStyle::Fill);
 	m_settingsUI->InitializeComponent();
-	GetControls()->Add(m_settingsUI);
+	AddWidget(m_settingsUI);
 	//Form::SetControlSelected(m_settingsUI);
 }
 

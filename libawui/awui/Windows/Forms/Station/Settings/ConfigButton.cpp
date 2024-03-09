@@ -6,7 +6,6 @@
 
 #include "ConfigButton.h"
 
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Listeners/IButtonListener.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
@@ -29,13 +28,13 @@ ConfigButton::ConfigButton(TypeButton typeButton) {
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
 
-	GetControls()->Add(&m_label);
+	AddWidget(&m_label);
 
 	// SetBackColor(Color::FromArgb(0, 255, 0));
 }
 
 ConfigButton::~ConfigButton() {
-	GetControls()->Remove(&m_label);
+	RemoveWidget(&m_label);
 }
 
 bool ConfigButton::IsClass(Classes objectClass) const {

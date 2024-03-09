@@ -2,23 +2,17 @@
 
 #include <awui/Windows/Forms/Form.h>
 
-using namespace awui::Windows::Forms;
-
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			class SliderBrowser;
-		}
-	}
+namespace awui::Windows::Forms {
+	class SliderBrowser;
 }
 
 class FormSlider : public awui::Windows::Forms::Form {
 	private:
-		SliderBrowser * _slider;
+		awui::Windows::Forms::SliderBrowser * m_slider;
 
 		void InitializeComponent();
 
 	public:
 		FormSlider();
-		virtual ~FormSlider();
+		virtual ~FormSlider() = default;
 };

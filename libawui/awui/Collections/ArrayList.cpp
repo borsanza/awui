@@ -13,13 +13,13 @@
 using namespace awui::Collections;
 
 ArrayList::ArrayList() {
-	this->_count = 0;
-	this->_size = 8;
-	this->_data = (Object **) malloc (this->_size * sizeof(Object *));
+	m_count = 0;
+	m_size = 8;
+	m_data = (Object **) malloc (m_size * sizeof(Object *));
 }
 
 ArrayList::~ArrayList() {
-	free(this->_data);
+	free(m_data);
 }
 
 bool ArrayList::IsClass(Classes objectClass) const {
@@ -35,89 +35,89 @@ awui::String ArrayList::ToString() const {
 }
 
 void ArrayList::Add(Object * item) {
-	if (this->_count == this->_size) {
-		this->_size = this->_size * 2;
-		this->_data = (Object **) realloc (this->_data, this->_size * sizeof(Object *));
+	if (m_count == m_size) {
+		m_size = m_size * 2;
+		m_data = (Object **) realloc (m_data, m_size * sizeof(Object *));
 	}
 
-	this->_data[this->_count] = item;
-	this->_count++;
+	m_data[m_count] = item;
+	m_count++;
 }
 
 void ArrayList::Clear() {
-	this->_count = 0;
-	this->_size = 8;
-	this->_data = (Object **) realloc (this->_data, this->_size * sizeof(Object *));
+	m_count = 0;
+	m_size = 8;
+	m_data = (Object **) realloc (m_data, m_size * sizeof(Object *));
 }
 
-int ArrayList::IndexOf(Object * item) {
-	for (int i = 0; i < this->_count; i++)
-		if (this->_data[i] == item)
+int ArrayList::IndexOf(Object * item) const {
+	for (int i = 0; i < m_count; i++)
+		if (m_data[i] == item)
 			return i;
 
 	return -1;
 }
 
-awui::Object * ArrayList::Get(int index) {
-	if (index < this->_count)
-		return this->_data[index];
+awui::Object * ArrayList::Get(int index) const {
+	if (index < m_count)
+		return m_data[index];
 
 	assert(0);
 	return NULL;
 }
 
 void ArrayList::Remove(Object * item) {
-	int pos = this->IndexOf(item);
+	int pos = IndexOf(item);
 
 	if (pos != -1)
-		this->RemoveAt(pos);
+		RemoveAt(pos);
 }
 
 void ArrayList::RemoveAt(int index) {
-	for (int i = index + 1; i < this->_count; i++)
-		this->_data[i - 1] = this->_data[i];
+	for (int i = index + 1; i < m_count; i++)
+		m_data[i - 1] = m_data[i];
 
-	if (index < this->_count) {
-		this->_count--;
+	if (index < m_count) {
+		m_count--;
 
-		if ((this->_size > 8) && ((this->_size >> 1) > this->_count)) {
-			this->_size = this->_size >> 1;
-			this->_data = (Object **) realloc (this->_data, this->_size * sizeof(Object *));
+		if ((m_size > 8) && ((m_size >> 1) > m_count)) {
+			m_size = m_size >> 1;
+			m_data = (Object **) realloc (m_data, m_size * sizeof(Object *));
 		}
 	}
 }
 
 void ArrayList::SetChildIndex(Object * item, int newIndex) {
 	// newIndex no puede ser mayor que el tamaño
-	if (newIndex >= this->_count)
+	if (newIndex >= m_count)
 		return;
 
 	// Sino encontramos el item, no se mueve nada
-	int oldIndex = this->IndexOf(item);
+	int oldIndex = IndexOf(item);
 	if (oldIndex == -1)
 		return;
 
 	for (int i = oldIndex; i < newIndex; i++)
-		this->_data[i] = this->_data[i + 1];
+		m_data[i] = m_data[i + 1];
 
 	for (int i = oldIndex; i > newIndex; i--)
-		this->_data[i] = this->_data[i - 1];
+		m_data[i] = m_data[i - 1];
 
-	this->_data[newIndex] = item;
+	m_data[newIndex] = item;
 }
 
 void ArrayList::Replace(Object * oldItem, Object * newItem) {
 	if (oldItem && newItem) {
-		int index = this->IndexOf(oldItem);
+		int index = IndexOf(oldItem);
 
 		if (index != -1)
-			this->_data[index] = newItem;
+			m_data[index] = newItem;
 		else
-			this->Add(newItem);
+			Add(newItem);
 	} else {
 		if (oldItem)
-			this->Remove(oldItem);
+			Remove(oldItem);
 		if (newItem)
-			this->Add(newItem);
+			Add(newItem);
 	}
 }

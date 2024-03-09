@@ -2,17 +2,10 @@
 
 #include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>
-
 #include <awui/Windows/Forms/Keys.h>
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			namespace Station {
-				class StationUI;
-			}
-		}
-	}
+namespace awui::Windows::Forms::Station {
+	class StationUI;
 }
 
 using namespace awui::Windows::Forms;

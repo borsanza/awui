@@ -14,7 +14,6 @@
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Application.h>
 #include <awui/Windows/Forms/Bitmap.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 
 #include <SDL.h>
@@ -54,7 +53,7 @@ Form::Form() {
 
 	Stats * stats = Stats::Instance();
 	stats->SetDock(DockStyle::None);
-	GetControls()->Add(stats);
+	AddWidget(stats);
 }
 
 Form::~Form() {
@@ -111,7 +110,7 @@ void Form::OnRemoteHeartbeat() {
 
 void Form::OnTick(float deltaSeconds) {
 	Stats * stats = Stats::Instance();
-	GetControls()->MoveToEnd(stats);
+	MoveToEnd(stats);
 	stats->SetWidth(GetWidth());
 	stats->SetLocation(0, GetHeight() - stats->GetHeight());
 }

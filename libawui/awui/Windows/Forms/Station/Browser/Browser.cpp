@@ -6,7 +6,6 @@
 
 #include "Browser.h"
 
-#include <awui/Windows/Forms/ControlCollection.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
 
@@ -43,10 +42,10 @@ Browser::Browser() {
 	m_gradientRight.SetColor(3, ColorF::FromArgb(0, 0, 0, 0));
 	m_gradientRight.SetDock(DockStyle::None);
 
-	GetControls()->Add(&m_gradientUp);
-	GetControls()->Add(&m_gradientBottom);
-	GetControls()->Add(&m_gradientLeft);
-	GetControls()->Add(&m_gradientRight);
+	AddWidget(&m_gradientUp);
+	AddWidget(&m_gradientBottom);
+	AddWidget(&m_gradientLeft);
+	AddWidget(&m_gradientRight);
 }
 
 void Browser::OnTick(float deltaSeconds) {
@@ -103,13 +102,13 @@ void Browser::SetPage(Page * page) {
 		return;
 
 	if (m_page)
-		GetControls()->Remove(m_page);
+		RemoveWidget(m_page);
 
 	m_page = page;
-	GetControls()->Add(m_page, true);
+	AddWidget(m_page, true);
 
-	GetControls()->MoveToEnd(&m_gradientUp);
-	GetControls()->MoveToEnd(&m_gradientBottom);
-	GetControls()->MoveToEnd(&m_gradientLeft);
-	GetControls()->MoveToEnd(&m_gradientRight);
+	MoveToEnd(&m_gradientUp);
+	MoveToEnd(&m_gradientBottom);
+	MoveToEnd(&m_gradientLeft);
+	MoveToEnd(&m_gradientRight);
 }

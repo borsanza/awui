@@ -1,14 +1,9 @@
 #pragma once
 
-#include <awui/Collections/SortedList.h>
 #include <awui/Windows/Forms/Control.h>
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			class ListBox;
-		}
-	}
+namespace awui::Windows::Forms {
+	class ListBox;
 
 	namespace Diagnostics {
 		class Process;
@@ -17,18 +12,17 @@ namespace awui {
 
 class Test2: public awui::Windows::Forms::Control {
 	private:
-		bool runMame;
-		bool endMame;
-		awui::Collections::SortedList games;
-		awui::Windows::Forms::ListBox *listbox;
+		bool m_runMame;
+		bool m_endMame;
+		awui::Windows::Forms::ListBox *m_listbox;
 
 		void InitializeComponent();
 
 	public:
 		Test2();
-		virtual ~Test2();
+		virtual ~Test2() = default;
 
-		virtual void OnTick(float deltaSeconds);
+		virtual void OnTick(float deltaSeconds) override;
 
 		void CheckMame();
 		void CheckGames();

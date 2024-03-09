@@ -5,26 +5,22 @@
 
 #include "test1.h"
 #include <awui/Drawing/Color.h>
-#include <awui/Windows/Forms/ControlCollection.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Form1::Form1() {
-	this->bitmap2 = NULL;
-	this->InitializeComponent();
-}
-
-Form1::~Form1() {
+	m_bitmap2 = nullptr;
+	InitializeComponent();
 }
 
 void Form1::InitializeComponent() {
-	this->SetText("Test Form1");
-	this->SetBackColor(Color::FromArgb(255, 0, 0, 0));
+	SetText("Test Form1");
+	SetBackColor(Color::FromArgb(255, 0, 0, 0));
 
 	Test1 *test1 = new Test1();
-	this->GetControls()->Add(test1);
+	AddWidget(test1);
 
-	this->SetSize(460, 532);
-	this->SetFullscreen(0);
+	SetSize(460, 532);
+	SetFullscreen(0);
 }
