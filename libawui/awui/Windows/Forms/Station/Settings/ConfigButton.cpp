@@ -24,7 +24,7 @@ ConfigButton::ConfigButton(TypeButton typeButton) {
 	m_subpage = nullptr;
 
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	SetSelectable(true);
+	SetFocusable(true);
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
 
@@ -46,10 +46,12 @@ bool ConfigButton::IsClass(Classes objectClass) const {
 }
 
 void ConfigButton::OnPaint(GL* gl) {
-	if (Form::GetControlSelected() == this)
+	Form * form = GetForm();
+	if (form && (form->GetChildFocused() == this)) {
 		SetForeColor(Color::FromArgb(255, 255, 255));
-	else
+	} else {
 		SetForeColor(Color::FromArgb(199, 199, 199));
+	}
 
 	if (m_group) {
 		glLineWidth(2.5f);
@@ -57,10 +59,12 @@ void ConfigButton::OnPaint(GL* gl) {
 		float x = GetWidth() - 22.0f;
 		float y = (GetHeight() / 2.0f) - 0.5f;
 
-		if (Form::GetControlSelected() == this)
+		Form * form = GetForm();
+		if (form && (form->GetChildFocused() == this)) {
 			glColor3ub(255, 255, 255);
-		else
+		} else {
 			glColor3ub(199, 199, 199);
+		}
 
 		glEnable( GL_LINE_SMOOTH );
 		glBegin(GL_LINE_STRIP);

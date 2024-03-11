@@ -6,6 +6,7 @@
 #include <awui/Windows/Forms/Keys.h>
 #include <awui/Windows/Forms/MouseButtons.h>
 #include <awui/Windows/Forms/RemoteButtons.h>
+
 #include <cstdint>
 
 namespace awui {
@@ -21,184 +22,199 @@ namespace awui {
 		class GL;
 	}
 
-	namespace Windows {
-		namespace Forms {
-			class MouseEventArgs;
-			class JoystickButtonEventArgs;
-			class JoystickAxisMotionEventArgs;
+	namespace Windows::Forms {
+		class Bitmap;
+		class Form;
+		class MouseEventArgs;
+		class JoystickButtonEventArgs;
+		class JoystickAxisMotionEventArgs;
 
-			enum class DockStyle {
-				None,
-				Top,
-				Bottom,
-				Left,
-				Right,
-				Fill,
-			};
+		enum class DockStyle {
+			None,
+			Top,
+			Bottom,
+			Left,
+			Right,
+			Fill,
+		};
 
-			class Control : public Object {
-				friend class Form;
+		class Control : public Object {
+			friend class Form;
 
-				private:
-					Control * m_focused;
-					bool m_selectable;
-					bool m_drawShadow;
-					bool m_preventChangeControl;
-					bool m_visible;
-					Drawing::Rectangle m_bounds;
+			private:
+				ArrayList * m_controls;
+				Control * m_parent;
+				static Bitmap * m_selectedBitmap;
 
-					float m_lastRight;
-					float m_lastBottom;
-					float m_lastTop;
-					float m_lastLeft;
-					Drawing::Rectangle m_boundsTo;
+				// Sirve para saber en que orden se han insertado los componentes
+				static int32_t lastTabIndex;
+				// Sirve para saber en que orden se hizo un focus
+				static int32_t countFocused;
 
-					Drawing::Size m_minimumSize;
-					int m_needRefresh;
-					int m_refreshed;
-					bool m_scissorEnabled;
-					Drawing::Font * m_font;
-					DockStyle m_dock;
-					ArrayList * m_controls;
-					Drawing::Color m_backColor;
-					Drawing::Color m_foreColor;
-					Control * m_parent;
-					MouseEventArgs * m_mouseEventArgs;
-					Control * m_mouseControl;
-					String m_name;
+				int32_t m_tabIndex;
+				Control * m_focused;
+				int32_t m_focusedTime;
+				bool m_focusable;
 
-					float m_deltaSeconds;
+				bool m_drawShadow;
+				bool m_preventChangeControl;
+				bool m_visible;
+				Drawing::Rectangle m_bounds;
 
-					void OnResizePre();
-					int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl, bool first = false);
-					void ChangeControlOnMouseOver(Control * control);
-					bool IsVisible() const;
-					void CleanMouseControl();
+				float m_lastRight;
+				float m_lastBottom;
+				float m_lastTop;
+				float m_lastLeft;
+				Drawing::Rectangle m_boundsTo;
 
-				protected:
-					void OnTickPre(float deltaSeconds);
+				Drawing::Size m_minimumSize;
+				int m_needRefresh;
+				int m_refreshed;
+				bool m_scissorEnabled;
+				Drawing::Font * m_font;
+				DockStyle m_dock;
+				Drawing::Color m_backColor;
+				Drawing::Color m_foreColor;
+				MouseEventArgs * m_mouseEventArgs;
+				Control * m_mouseControl;
+				String m_name;
 
-				public:
-					Control();
-					virtual ~Control();
+				float m_deltaSeconds;
 
-					virtual bool IsClass(Classes objectClass) const override;
+				void OnResizePre();
+				int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl, bool first = false);
+				void ChangeControlOnMouseOver(Control * control);
+				bool IsVisible() const;
+				void CleanMouseControl();
 
-					const virtual Drawing::Size GetMinimumSize() const;
-					void SetMinimumSize(Drawing::Size size);
+			protected:
+				void OnTickPre(float deltaSeconds);
 
-					DockStyle GetDock() const;
-					void SetDock(DockStyle dock);
+			public:
+				Control();
+				virtual ~Control();
 
-					const String GetName();
-					void SetName(const String str);
+				virtual bool IsClass(Classes objectClass) const override;
 
-					int GetLeft() const;
-					int GetAbsoluteLeft() const;
-					int GetAbsoluteRight() const;
-					void SetLeft(int x);
+				const virtual Drawing::Size GetMinimumSize() const;
+				void SetMinimumSize(Drawing::Size size);
 
-					int GetTop() const;
-					int GetAbsoluteTop() const;
-					int GetAbsoluteBottom() const;
-					void SetTop(int y);
+				DockStyle GetDock() const;
+				void SetDock(DockStyle dock);
 
-					const Drawing::Point GetLocation() const;
-					void SetLocation(int x, int y);
+				const String GetName();
+				void SetName(const String str);
 
-					inline void SetDrawShadow(bool mode) { m_drawShadow = mode; }
-					inline bool GetDrawShadow() { return m_drawShadow; }
+				int GetLeft() const;
+				int GetAbsoluteLeft() const;
+				int GetAbsoluteRight() const;
+				void SetLeft(int x);
 
-					int GetWidth() const;
-					void SetWidth(int width);
+				int GetTop() const;
+				int GetAbsoluteTop() const;
+				int GetAbsoluteBottom() const;
+				void SetTop(int y);
 
-					int GetHeight() const;
-					void SetHeight(int height);
+				const Drawing::Point GetLocation() const;
+				void SetLocation(int x, int y);
 
-					const Drawing::Size GetSize() const;
-					void SetSize(int width, int height);
-					void SetSize(const Drawing::Size size);
-					inline void SetSizeGo(int w, int h) { m_boundsTo.SetSize(w, h); }
-					inline void SetLocationGo(int x, int y) { m_boundsTo.SetLocation(x, y); }
-					inline int GetLeftGo() { return m_boundsTo.GetLeft(); }
-					inline int GetRightGo() { return m_boundsTo.GetRight(); }
-					inline int GetTopGo() { return m_boundsTo.GetTop(); }
-					inline int GetBottomGo() { return m_boundsTo.GetBottom(); }
+				inline void SetDrawShadow(bool mode) { m_drawShadow = mode; }
+				inline bool GetDrawShadow() { return m_drawShadow; }
 
-					const Drawing::Rectangle GetBounds() const;
-					void SetBounds(int x, int y, int width, int height);
+				int GetWidth() const;
+				void SetWidth(int width);
 
-					int GetRight() const;
-					int GetBottom() const;
+				int GetHeight() const;
+				void SetHeight(int height);
 
-					void AddWidget(Control * control, bool fixSelected = false);
-					void RemoveWidget(Control * control);
-					int GetCount() const { return m_controls->GetCount(); }
-					int IndexOf(Control * control) const { return m_controls->IndexOf(control); }
-					Control * Get(int index) const { return (Control *) m_controls->Get(index); }
-					void MoveToEnd(Control * item);
-					void ReplaceWidget(Control * oldItem, Control * newItem);
+				const Drawing::Size GetSize() const;
+				void SetSize(int width, int height);
+				void SetSize(const Drawing::Size size);
+				inline void SetSizeGo(int w, int h) { m_boundsTo.SetSize(w, h); }
+				inline void SetLocationGo(int x, int y) { m_boundsTo.SetLocation(x, y); }
+				inline int GetLeftGo() { return m_boundsTo.GetLeft(); }
+				inline int GetRightGo() { return m_boundsTo.GetRight(); }
+				inline int GetTopGo() { return m_boundsTo.GetTop(); }
+				inline int GetBottomGo() { return m_boundsTo.GetBottom(); }
 
-					Drawing::Color GetBackColor();
-					void SetBackColor(const Drawing::Color color);
+				const Drawing::Rectangle GetBounds() const;
+				void SetBounds(int x, int y, int width, int height);
 
-					Drawing::Color GetForeColor();
-					virtual void SetForeColor(const Drawing::Color color);
+				int GetRight() const;
+				int GetBottom() const;
 
-					Drawing::Font * GetFont();
-					virtual void SetFont(const Drawing::Font font);
+				void AddWidget(Control * control);
+				void RemoveWidget(Control * control);
+				int GetCount() const { return m_controls->GetCount(); }
+				int IndexOf(Control * control) const { return m_controls->IndexOf(control); }
+				Control * Get(int index) const { return (Control *) m_controls->Get(index); }
+				void MoveToEnd(Control * item);
+				void ReplaceWidget(Control * oldItem, Control * newItem);
 
-					void Refresh();
+				Drawing::Color GetBackColor();
+				void SetBackColor(const Drawing::Color color);
 
-					Control * GetParent() const;
-					void SetParent(Control * parent);
+				Drawing::Color GetForeColor();
+				virtual void SetForeColor(const Drawing::Color color);
 
-					void OnMouseMovePre(int x, int y, int buttons);
-					void OnMouseUpPre(MouseButtons::Enum button, int buttons);
-					void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
-					void OnRemoteKeyPressPre(int which, RemoteButtons::Enum button);
-					void OnRemoteKeyUpPre(int which, RemoteButtons::Enum button);
-					void OnJoystickButtonDownPre(int which, int button, uint32_t buttons, uint32_t prevButtons);
-					void OnJoystickButtonUpPre(int which, int button, uint32_t buttons, uint32_t prevButtons);
-					void OnJoystickAxisMotionPre(int which, int16_t axisX, int16_t axisY);
-					void OnKeyPressPre(Keys::Enum key);
-					void OnKeyUpPre(Keys::Enum key);
+				Drawing::Font * GetFont();
+				virtual void SetFont(const Drawing::Font font);
 
-					virtual void Layout();
-					virtual void OnMouseDown(MouseEventArgs* e) {}
-					virtual void OnMouseMove(MouseEventArgs* e) {}
-					virtual void OnMouseUp(MouseEventArgs* e) {}
-					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
-					virtual bool OnJoystickButtonDown(JoystickButtonEventArgs* e);
-					virtual bool OnJoystickButtonUp(JoystickButtonEventArgs* e);
-					virtual bool OnJoystickAxisMotion(JoystickAxisMotionEventArgs* e);
-					virtual bool OnKeyPress(Keys::Enum key);
-					virtual bool OnKeyUp(Keys::Enum key);
-					virtual void OnRemoteHeartbeat() {}
-					virtual void OnMouseEnter();
-					virtual void OnMouseLeave();
-					virtual void OnPaint(OpenGL::GL * gl);
-					virtual void OnResize() {}
-					virtual void OnTick(float deltaSeconds) {}
-					void SetScissorEnabled(bool mode);
-					bool GetScissorEnabled();
+				void Refresh();
 
-					bool IsSelectable();
-					void SetSelectable(bool selectable);
+				Control * GetParent() const;
+				void SetParent(Control * parent);
 
-					void SetFocus(bool selectControl = true);
-					inline Control * GetFocused() const { return m_focused; }
+				void OnMouseMovePre(int x, int y, int buttons);
+				void OnMouseUpPre(MouseButtons::Enum button, int buttons);
+				void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
+				void OnRemoteKeyPressPre(int which, RemoteButtons::Enum button);
+				void OnRemoteKeyUpPre(int which, RemoteButtons::Enum button);
+				void OnJoystickButtonDownPre(int which, int button, uint32_t buttons, uint32_t prevButtons);
+				void OnJoystickButtonUpPre(int which, int button, uint32_t buttons, uint32_t prevButtons);
+				void OnJoystickAxisMotionPre(int which, int16_t axisX, int16_t axisY);
+				void OnKeyPressPre(Keys::Enum key);
+				void OnKeyUpPre(Keys::Enum key);
 
-					Control * GetTopParent();
+				virtual void Layout();
+				virtual void OnMouseDown(MouseEventArgs* e) {}
+				virtual void OnMouseMove(MouseEventArgs* e) {}
+				virtual void OnMouseUp(MouseEventArgs* e) {}
+				virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
+				virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+				virtual bool OnJoystickButtonDown(JoystickButtonEventArgs* e);
+				virtual bool OnJoystickButtonUp(JoystickButtonEventArgs* e);
+				virtual bool OnJoystickAxisMotion(JoystickAxisMotionEventArgs* e);
+				virtual bool OnKeyPress(Keys::Enum key);
+				virtual bool OnKeyUp(Keys::Enum key);
+				virtual void OnRemoteHeartbeat() {}
+				virtual void OnMouseEnter();
+				virtual void OnMouseLeave();
+				virtual void OnPaint(OpenGL::GL * gl);
+				virtual void OnResize() {}
+				virtual void OnTick(float deltaSeconds) {}
+				void SetScissorEnabled(bool mode);
+				bool GetScissorEnabled();
 
-					void GetControlsSelectables(Collections::ArrayList * list);
+				bool IsFocusable();
+				void SetFocusable(bool focusable);
 
-					inline void SetPreventChangeControl(bool mode) { m_preventChangeControl = mode; }
+				void SetFocus();
+				inline Control * GetFocused() const { return m_focused; }
+				Control * GetChildFocused();
+				bool IsFocused() const;
 
-					inline void SetVisible(bool mode) { m_visible = mode; }
-					void CheckMouseControl();
-			};
-		}
+				Control * GetRoot();
+				Form * GetForm();
+
+				void GetControlsSelectables(Collections::ArrayList * list);
+
+				inline void SetPreventChangeControl(bool mode) { m_preventChangeControl = mode; }
+
+				inline void SetVisible(bool mode) { m_visible = mode; }
+				void CheckMouseControl();
+
+				static Bitmap * GetSelectedBitmap();
+		};
 	}
 }

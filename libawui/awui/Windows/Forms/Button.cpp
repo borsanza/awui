@@ -21,7 +21,7 @@ Button::Button() {
 
 	SetSize(75, 23);
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	SetSelectable(true);
+	SetFocusable(true);
 }
 
 Button::~Button() {
@@ -40,11 +40,11 @@ void Button::OnMouseLeave() {
 }
 
 void Button::OnMouseDown(MouseEventArgs* e) {
-	Form::SetControlSelected(this);
+	SetFocus();
 }
 
 void Button::OnMouseMove(MouseEventArgs* e) {
-	Form::SetControlSelected(this);
+	SetFocus();
 }
 
 void Button::OnMouseUp(MouseEventArgs* e) {

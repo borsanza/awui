@@ -15,7 +15,7 @@ using namespace awui::OpenGL;
 TestWidget::TestWidget() {
 	SetSize(1, 1);
 	m_image = new Drawing::Image(1, 1);
-	SetSelectable(true);
+	SetFocusable(true);
 }
 
 TestWidget::~TestWidget() {

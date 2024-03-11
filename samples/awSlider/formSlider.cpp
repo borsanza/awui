@@ -24,14 +24,21 @@ void FormSlider::InitializeComponent() {
 	m_slider->SetMargin(25);
 	AddWidget(m_slider);
 	
+	TestWidget * focused = nullptr;
 	for (int i = 0; i < 512; i++) {
 		TestWidget * w = new TestWidget();
 		w->SetSize(342, 262);
 		w->SetLocation(25, 0);
 		m_slider->AddWidget(w);
-		w->SetSelectable(true);
-		if (Form::GetControlSelected() == NULL)
-			Form::SetControlSelected(w);
+		w->SetFocusable(true);
+
+		if (!focused) {
+			focused = w;
+		}
+	}
+
+	if (focused) {
+		focused->SetFocus();
 	}
 
 	SetText("Test FormSlider");

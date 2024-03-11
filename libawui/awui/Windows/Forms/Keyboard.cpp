@@ -19,6 +19,7 @@ Keyboard::Keyboard() {
 	int pos = 0;
 	const char * letras = "abcdefghijklmnopqrstuvwxyz1234567890";
 
+	Button * focused = nullptr;
 	Font font = Font("sans-serif", 34, FontStyle::Bold);
 	for (int i=0; i<6; i++) {
 		for (int j=0; j<6; j++) {
@@ -35,11 +36,16 @@ Keyboard::Keyboard() {
 			button->SetText(frase);
 			AddWidget(button);
 
-			if (Form::GetControlSelected() == NULL)
-				Form::SetControlSelected(button);
+			if (!focused) {
+				focused = button;
+			}
 
 			pos++;
 		}
+	}
+
+	if (focused) {
+		focused->SetFocus();
 	}
 
 	font = Font("sans-serif", 25, FontStyle::Bold);

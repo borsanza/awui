@@ -335,7 +335,6 @@ void StationUI::SelectChild(NodeFile * node) {
 	if (node->m_directory) {
 		m_actual = node;
 		RefreshList();
-		m_actual->m_page->GetFocused()->SetFocus();
 		UpdateTitle();
 	} else {
 		if (node->m_emulator != Types::Undefined) {
@@ -348,7 +347,7 @@ void StationUI::SelectChild(NodeFile * node) {
 			}
 
 			MoveToEnd(&m_fade);
-			m_arcade->SetSelectable(true);
+			m_arcade->SetFocusable(true);
 			m_arcade->SetFocus();
 			m_fade.ShowFade();
 		}
@@ -360,7 +359,6 @@ void StationUI::SelectParent() {
 		if (m_actual->m_parent != nullptr) {
 			m_actual = m_actual->m_parent;
 			m_browser->SetPage(m_actual->m_page);
-			m_actual->m_page->GetFocused()->SetFocus();
 			UpdateTitle();
 		}
 	}
@@ -413,9 +411,7 @@ void StationUI::ExitingArcade() {
 
 	m_fade.HideFade();
 	AddWidget(&m_fade);
-	m_arcade->SetSelectable(false);
-	Control * c = m_actual->m_page->GetFocused();
-	c->SetFocus();
+	m_arcade->SetFocusable(false);
 }
 
 void StationUI::ExitArcade() {

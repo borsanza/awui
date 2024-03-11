@@ -8,6 +8,7 @@
 
 #include <awui/Console.h>
 #include <awui/Drawing/Font.h>
+#include <awui/IO/Directory.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Bitmap.h>
@@ -16,12 +17,20 @@
 #include <awui/Windows/Forms/JoystickAxisMotionEventArgs.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <SDL_opengl.h>
+#include <assert.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
+Bitmap * Control::m_selectedBitmap = NULL;
+int32_t Control::lastTabIndex = 10000;
+int32_t Control::countFocused = 1000;
+
 Control::Control() {
+	m_tabIndex = -1;
+	m_focusedTime = -1;
+
 	m_deltaSeconds = 0.0f;
 	m_refreshed = 0;
 	m_lastRight = 0;
@@ -29,7 +38,7 @@ Control::Control() {
 	m_lastLeft = 0;
 	m_lastTop = 0;
 	m_drawShadow = true;
-	m_selectable = false;
+	m_focusable = false;
 	m_bounds = Drawing::Rectangle(0, 0, 100, 100);
 	m_boundsTo = m_bounds;
 	m_controls = new ArrayList();
@@ -181,19 +190,52 @@ const awui::Drawing::Rectangle Control::GetBounds() const {
 	return m_bounds;
 }
 
-void Control::AddWidget(Control * control, bool fixSelected) {
-	m_controls->Add(control);
-
-	control->SetParent(this);
-	Layout();
-
-	if (fixSelected && control->GetFocused()) {
-		control->SetFocus(false);
+void Control::AddWidget(Control * control) {
+	if (!control) {
+		return;
 	}
+
+	if (control->m_tabIndex == -1) {
+		control->m_tabIndex = lastTabIndex;
+		lastTabIndex++;
+	}
+
+	m_controls->Add(control);
+	control->SetParent(this);
+
+	if (!m_focused || (m_focused->m_focusedTime < control->m_focusedTime)) {
+		m_focused = control;
+		m_focusedTime = control->m_focusedTime;
+		SetFocus();
+	}
+
+	Layout();
 }
 
 void Control::RemoveWidget(Control * control) {
+	if (!control) {
+		return;
+	}
+
 	m_controls->Remove(control);
+	control->SetParent(nullptr);
+
+	if (m_focused == control) {
+		m_focused = nullptr;
+		m_focusedTime = -1;
+
+		for (int i = 0; i < m_controls->GetCount(); i++) {
+			Control * aux = (Control *) m_controls->Get(i);
+			if (!m_focused || (aux->m_focusedTime > m_focusedTime)) {
+				m_focused = aux;
+				m_focusedTime = aux->m_focusedTime;
+			}
+		}
+
+		if (m_focused) {
+			SetFocus();
+		}
+	}
 }
 
 void Control::MoveToEnd(Control * item) {
@@ -208,6 +250,13 @@ void Control::ReplaceWidget(Control * oldControl, Control * newControl) {
 	}
 
 	m_controls->Replace(oldControl, newControl);
+
+	if (m_focused == oldControl) {
+		m_focused = newControl;
+		if (newControl) {
+			m_focusedTime = newControl->m_focusedTime;
+		}
+	}
 
 	if (newControl) {
 		newControl->SetParent(this);
@@ -380,7 +429,11 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 void Control::OnPaint(OpenGL::GL * gl) {
 	static float lastx1, lasty1, lastright, lastbottom;
 	static Control * lastParent = NULL;
-	Control * focused = Form::GetControlSelected();
+	Control * focused = nullptr;
+	Form * form = GetForm();
+	if (form) {
+		focused = form->GetChildFocused();
+	}
 
 	for (int i = 0; i < GetCount(); i++) {
 		Control * control = Get(i);
@@ -389,17 +442,11 @@ void Control::OnPaint(OpenGL::GL * gl) {
 
 		if ((focused == control) && (control->GetDrawShadow())) {
 			int x1, y1, x2, y2;
-			Bitmap * bitmap = Form::GetSelectedBitmap();
+			Bitmap * bitmap = Control::GetSelectedBitmap();
 			float percent = m_deltaSeconds * 10.0f;
 
-			// Esto solo lo hago porque en la inicializacion del programa
-			// no habia nada seleccionado y hay que actualizar esta variable
-			// estatica
-			if (lastParent == NULL)
-				Form::SetControlSelected(control);
-
-			if (lastParent != bitmap->GetParent()) {
-				lastParent = bitmap->GetParent();
+			if (lastParent != control->GetParent()) {
+				lastParent = control->GetParent();
 				percent = 1.0f;
 			}
 
@@ -606,22 +653,18 @@ bool Control::GetScissorEnabled() {
 	return m_scissorEnabled;
 }
 
-bool Control::IsSelectable() {
-	return m_selectable;
+bool Control::IsFocusable() {
+	return m_focusable;
 }
 
-void Control::SetSelectable(bool selectable) {
-	m_selectable = selectable;
+void Control::SetFocusable(bool focusable) {
+	m_focusable = focusable;
 }
 
 void Control::OnRemoteKeyPressPre(int which, RemoteButtons::Enum button) {
 	bool mustStop = IsVisible() && OnRemoteKeyPress(which, button);
 	if (mustStop) {
 		return;
-	}
-
-	if (!m_focused) {
-		Form::SetControlSelected(Form::GetControlSelected());
 	}
 
 	if (m_focused && m_focused->IsVisible()) {
@@ -635,10 +678,6 @@ void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
 		return;
 	}
 
-	if (!m_focused) {
-		Form::SetControlSelected(Form::GetControlSelected());
-	}
-
 	if (m_focused && m_focused->IsVisible()) {
 		m_focused->OnRemoteKeyUpPre(which, button);
 	}
@@ -650,9 +689,6 @@ void Control::OnJoystickButtonDownPre(int which, int button, uint32_t buttons, u
 	if (mustStop)
 		return;
 
-	if (!m_focused)
-		Form::SetControlSelected(Form::GetControlSelected());
-
 	if (m_focused)
 		m_focused->OnJoystickButtonDownPre(which, button, buttons, prevButtons);
 }
@@ -663,9 +699,6 @@ void Control::OnJoystickButtonUpPre(int which, int button, uint32_t buttons, uin
 	if (mustStop)
 		return;
 
-	if (!m_focused)
-		Form::SetControlSelected(Form::GetControlSelected());
-
 	if (m_focused)
 		m_focused->OnJoystickButtonUpPre(which, button, buttons, prevButtons);
 }
@@ -674,9 +707,6 @@ void Control::OnJoystickAxisMotionPre(int which, int16_t axisX, int16_t axisY) {
 	bool mustStop = OnJoystickAxisMotion(&joy);
 	if (mustStop)
 		return;
-
-	if (!m_focused)
-		Form::SetControlSelected(Form::GetControlSelected());
 
 	if (m_focused)
 		m_focused->OnJoystickAxisMotionPre(which, axisX, axisY);
@@ -689,9 +719,6 @@ void Control::OnKeyPressPre(Keys::Enum key) {
 	if (mustStop)
 		return;
 
-	if (!m_focused)
-		Form::SetControlSelected(Form::GetControlSelected());
-
 	if (m_focused && m_focused->IsVisible())
 		m_focused->OnKeyPressPre(key);
 }
@@ -701,29 +728,54 @@ void Control::OnKeyUpPre(Keys::Enum key) {
 	if (mustStop)
 		return;
 
-	if (!m_focused)
-		Form::SetControlSelected(Form::GetControlSelected());
-
 	if (m_focused && m_focused->IsVisible())
 		m_focused->OnKeyUpPre(key);
 }
 
-void Control::SetFocus(bool selectControl) {
+void Control::SetFocus() {
+	m_focusedTime = countFocused;
+	countFocused++;
+
 	Control * parent = GetParent();
 	if (parent) {
-		if (selectControl)
-			Form::SetControlSelected(this);
 		parent->m_focused = this;
-		parent->SetFocus(false);
+		parent->SetFocus();
 	}
 }
 
-Control * Control::GetTopParent() {
-	Control * parent = GetParent();
-	if (parent)
-		return parent->GetTopParent();
+Control * Control::GetChildFocused() {
+	if (m_focused) {
+		return m_focused->GetChildFocused();
+	}
 
 	return this;
+}
+
+bool Control::IsFocused() const {
+	Control * parent = GetParent();
+	if (parent) {
+		return (parent->m_focused == this) && parent->IsFocused();
+	}
+
+	return IsClass(Classes::Form);
+}
+
+Control * Control::GetRoot() {
+	if (m_parent) {
+		return m_parent->GetRoot();
+	}
+
+	return this;
+}
+
+Form * Control::GetForm() {
+	const Control * root = GetRoot();
+
+	if (!root->IsClass(Classes::Form)) {
+		return nullptr;
+	};
+
+	return (Form *)root;
 }
 
 bool Control::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
@@ -749,7 +801,12 @@ bool Control::OnKeyUp(Keys::Enum button) {
 // Arriba y Abajo: de la fila de items mas cercana el item mas cercano
 // Izquierda y Derecha: De la actual fila, el item mas cercano
 bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
-	if ((Form::GetControlSelected() == this) && (!m_preventChangeControl)) {
+	Form * form = GetForm();
+	if (!form) {
+		return false;
+	}
+
+	if ((form->GetChildFocused() == this) && (!m_preventChangeControl)) {
 		Point thisP1(GetAbsoluteLeft(), GetAbsoluteTop());
 		Point thisP2(GetAbsoluteRight(), GetAbsoluteBottom());;
 		Point thisCenter((thisP1.GetX() + thisP2.GetX()) / 2.0, (thisP1.GetY() + thisP2.GetY()) / 2.0);
@@ -759,7 +816,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		Control * selected = NULL;
 
 		ArrayList list;
-		GetTopParent()->GetControlsSelectables(&list);
+		GetRoot()->GetControlsSelectables(&list);
 
 		switch (button) {
 			case RemoteButtons::Left:
@@ -926,8 +983,9 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				break;
 		}
 
-		if (selected)
-			Form::SetControlSelected(selected);
+		if (selected) {
+			selected->SetFocus();
+		}
 	}
 
 	return false;
@@ -943,7 +1001,7 @@ void Control::GetControlsSelectables(ArrayList * list) {
 		control->GetControlsSelectables(list);
 	}
 
-	if (IsSelectable())
+	if (IsFocusable())
 		list->Add(this);
 }
 
@@ -957,4 +1015,19 @@ void Control::CleanMouseControl() {
 		m_mouseControl->CleanMouseControl();
 
 	m_mouseControl = NULL;
+}
+
+Bitmap * Control::GetSelectedBitmap() {
+	if (!Control::m_selectedBitmap) {
+		String file = IO::Directory::GetWorkingDirectory();
+		Bitmap * bitmap = new Bitmap(file + "/images/button.png");
+		bitmap->SetDock(DockStyle::None);
+		bitmap->SetBackColor(Drawing::Color::FromArgb(0, 0, 0, 0));
+		bitmap->SetFixedMargins(28, 25, 28, 24);
+		bitmap->SetLocation(0, 0);
+		bitmap->SetSize(Drawing::Size(97, 97));
+		Control::m_selectedBitmap = bitmap;
+	}
+
+	return Control::m_selectedBitmap;
 }

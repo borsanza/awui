@@ -25,7 +25,7 @@ MenuButton::MenuButton(StationUI * station) {
 	m_node = NULL;
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	m_station = station;
-	SetSelectable(true);
+	SetFocusable(true);
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
 
@@ -46,11 +46,13 @@ bool MenuButton::IsClass(Classes objectClass) const {
 
 void MenuButton::OnMouseDown(MouseEventArgs * e) {
 	switch (e->GetButton()) {
-		case MouseButtons::Left:
-			if (Form::GetControlSelected() != this)
-				Form::SetControlSelected(this);
-			else
+		case MouseButtons::Left: {
+			if (!IsFocused()) {
+				SetFocus();
+			} else {
 				OnRemoteKeyUp(0, RemoteButtons::Ok);
+			}
+		}
 			break;
 		case MouseButtons::Right:
 			OnRemoteKeyUp(0, RemoteButtons::Menu);
@@ -61,10 +63,12 @@ void MenuButton::OnMouseDown(MouseEventArgs * e) {
 }
 
 void MenuButton::OnPaint(GL* gl) {
-	if (Form::GetControlSelected() == this)
+	Form * form = GetForm();
+	if (form && (form->GetChildFocused() == this)) {
 		SetForeColor(Color::FromArgb(255, 255, 255));
-	else
+	} else {
 		SetForeColor(Color::FromArgb(199, 199, 199));
+	}
 
 	if (m_node->m_directory) {
 		glLineWidth(2.5f);
@@ -72,10 +76,12 @@ void MenuButton::OnPaint(GL* gl) {
 		float x = GetWidth() - 22.0f;
 		float y = (GetHeight() / 2.0f) - 0.5f;
 
-		if (Form::GetControlSelected() == this)
+		Form * form = GetForm();
+		if (form && (form->GetChildFocused() == this)) {
 			glColor3ub(255, 255, 255);
-		else
+		} else {
 			glColor3ub(199, 199, 199);
+		}
 
 		glEnable( GL_LINE_SMOOTH );
 		glBegin(GL_LINE_STRIP);

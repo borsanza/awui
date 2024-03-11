@@ -49,9 +49,14 @@ Browser::Browser() {
 }
 
 void Browser::OnTick(float deltaSeconds) {
-	Control * selected = Form::GetControlSelected();
+	Control * selected = nullptr;
+	
+	Form * form = GetForm();
+	if (form) {
+		selected = form->GetChildFocused();
+	}
 
-	if (selected->GetParent() != m_page) {
+	if (!selected || (selected->GetParent() != m_page)) {
 		return;
 	}
 
@@ -105,7 +110,7 @@ void Browser::SetPage(Page * page) {
 		RemoveWidget(m_page);
 
 	m_page = page;
-	AddWidget(m_page, true);
+	AddWidget(m_page);
 
 	MoveToEnd(&m_gradientUp);
 	MoveToEnd(&m_gradientBottom);

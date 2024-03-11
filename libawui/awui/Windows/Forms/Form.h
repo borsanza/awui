@@ -15,71 +15,63 @@ namespace awui {
 		class Process;
 	}
 
-	namespace Windows {
-		namespace Forms {
-			class Bitmap;
-			class Form : public Control {
-				friend class Application;
-				friend class Control;
+	namespace Windows::Forms {
+		class Form : public Control {
+			friend class Application;
+			friend class Control;
 
-				private:
-					static ArrayList * m_formsList;
-					static Bitmap * m_selectedBitmap;
-					static Control * m_controlSelected;
-					static uint32_t m_buttonsPad1;
-					static uint32_t m_buttonsPad2;
-					Control * m_mouseControlOver;
-					//awui::Diagnostics::Process* remoteProcess;
-					String m_text;
-					SDL_Window * m_window;
-					SDL_GLContext m_context;
+			private:
+				static ArrayList * m_formsList;
+				static uint32_t m_buttonsPad1;
+				static uint32_t m_buttonsPad2;
+				Control * m_mouseControlOver;
+				//awui::Diagnostics::Process* remoteProcess;
+				String m_text;
+				SDL_Window * m_window;
+				SDL_GLContext m_context;
 
-					int m_mouseX;
-					int m_mouseY;
-					int m_mouseButtons;
-					int m_initialized;
+				int m_mouseX;
+				int m_mouseY;
+				int m_mouseButtons;
+				int m_initialized;
 
-					int m_fullscreen;
-					int m_lastFullscreenState;
-					int m_lastWidth;
-					int m_lastHeight;
-					bool m_swapInterval;
+				int m_fullscreen;
+				int m_lastFullscreenState;
+				int m_lastWidth;
+				int m_lastHeight;
+				bool m_swapInterval;
 
-					void OnPaintForm();
+				void OnPaintForm();
 
-				public:
-					Form();
-					virtual ~Form();
+			public:
+				Form();
+				virtual ~Form();
 
-					virtual bool IsClass(Classes objectClass) const override;
+				virtual bool IsClass(Classes objectClass) const override;
 
-					void Init();
-					void SetText(String title);
-					void RefreshVideo();
-					void SetFullscreen(int mode);
-					inline int GetFullscreen() { return m_fullscreen; }
+				void Init();
+				void SetText(String title);
+				void RefreshVideo();
+				void SetFullscreen(int mode);
+				inline int GetFullscreen() { return m_fullscreen; }
 
-					static Control * GetControlSelected();
-					static void SetControlSelected(Control * selected);
-					static Bitmap * GetSelectedBitmap();
-					virtual void OnRemoteHeartbeat();
+				virtual void OnRemoteHeartbeat();
 
-					virtual void OnTick(float deltaSeconds);
+				virtual void OnTick(float deltaSeconds);
 
-					virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+				virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
+				virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 
-					inline static uint32_t GetButtonsPad1() { return Form::m_buttonsPad1; }
-					inline static uint32_t GetButtonsPad2() { return Form::m_buttonsPad2; }
-					void SwapGL();
+				inline static uint32_t GetButtonsPad1() { return Form::m_buttonsPad1; }
+				inline static uint32_t GetButtonsPad2() { return Form::m_buttonsPad2; }
+				void SwapGL();
 
-					uint32_t GetWindowID();
-					void ProcessEvents(SDL_Event * event);
+				uint32_t GetWindowID();
+				void ProcessEvents(SDL_Event * event);
 
-					bool SetSwapInterval(bool mode);
-					bool GetSwapInterval();
-			};
-		}
+				bool SetSwapInterval(bool mode);
+				bool GetSwapInterval();
+		};
 	}
 }
 

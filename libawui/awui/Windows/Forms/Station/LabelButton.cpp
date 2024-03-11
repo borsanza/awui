@@ -28,7 +28,12 @@ void LabelButton::OnMouseDown(MouseEventArgs * e) {
 }
 
 void LabelButton::OnTick(float deltaSeconds) {
-	bool selected = (Form::GetControlSelected() == GetParent());
+	Form * form = GetForm();
+	if (!form) {
+		return;
+	}
+
+	bool selected = (form->GetChildFocused() == GetParent());
 
 	if (m_lastSelected != selected) {
 		m_lastSelected = selected;

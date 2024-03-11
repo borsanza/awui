@@ -31,7 +31,12 @@ void SliderBrowser::SetMargin(int margin) {
 }
 
 void SliderBrowser::OnTick(float deltaSeconds) {
-	int posSelected = IndexOf(Form::GetControlSelected());
+	Form * form = GetForm();
+	if (!form) {
+		return;
+	}
+
+	int posSelected = IndexOf(form->GetChildFocused());
 
 	if (posSelected != -1)
 		if (m_selected != posSelected)

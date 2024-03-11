@@ -64,6 +64,7 @@ void Test1::AddButtonEffect(Effect * effect, Control * control, int posy) {
 	if (posy != -1)
 		y = 5;
 
+	Button * focused = nullptr;
 	for (int i = 0; i<=2; i++) {
 		Button * button = new Button();
 		button->SetDock(DockStyle::None);
@@ -80,8 +81,13 @@ void Test1::AddButtonEffect(Effect * effect, Control * control, int posy) {
 
 		y += button->GetHeight();
 
-		if (Form::GetControlSelected() == NULL)
-			Form::SetControlSelected(button);
+		if (!focused) {
+			focused = button;
+		}
+	}
+
+	if (focused) {
+		focused->SetFocus();
 	}
 }
 

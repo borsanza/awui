@@ -10,10 +10,9 @@
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Drawing/Image.h>
-#include <awui/IO/Directory.h>
 #include <awui/OpenGL/GL.h>
-#include <awui/Windows/Forms/Application.h>
 #include <awui/Windows/Forms/Bitmap.h>
+#include <awui/Windows/Forms/Application.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 
 #include <SDL.h>
@@ -24,14 +23,13 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;
 
-Control * Form::m_controlSelected = NULL;
-Bitmap * Form::m_selectedBitmap = NULL;
 uint32_t Form::m_buttonsPad1 = 0;
 uint32_t Form::m_buttonsPad2 = 0;
 ArrayList * Form::m_formsList = new ArrayList();
 
 Form::Form() {
 	m_formsList->Add(this);
+
 	m_window = 0;
 	m_context = 0;
 	m_mouseX = 0;
@@ -219,35 +217,6 @@ void Form::SetText(String title) {
 
 	if (m_initialized)
 		SDL_SetWindowTitle(m_window, m_text.ToCharArray());
-}
-
-Control * Form::GetControlSelected() {
-	return Form::m_controlSelected;
-}
-
-void Form::SetControlSelected(Control * control) {
-	if (!control || control->IsSelectable()) {
-		Form::m_controlSelected = control;
-		if (control) {
-			Form::GetSelectedBitmap()->SetParent(control->GetParent());
-			control->SetFocus(false);
-		}
-	}
-}
-
-Bitmap * Form::GetSelectedBitmap() {
-	if (!Form::m_selectedBitmap) {
-		String file = IO::Directory::GetWorkingDirectory();
-		Bitmap * bitmap = new Bitmap(file + "/images/button.png");
-		bitmap->SetDock(DockStyle::None);
-		bitmap->SetBackColor(Drawing::Color::FromArgb(0, 0, 0, 0));
-		bitmap->SetFixedMargins(28, 25, 28, 24);
-		bitmap->SetLocation(0, 0);
-		bitmap->SetSize(Drawing::Size(97, 97));
-		Form::m_selectedBitmap = bitmap;
-	}
-
-	return Form::m_selectedBitmap;
 }
 
 bool Form::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
