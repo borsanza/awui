@@ -40,7 +40,10 @@ namespace awui {
 		Shader,
 		ArcadeContainer,
 		ConfigButton,
-		SettingsUI
+		SettingsUI,
+		Browser,
+		Page,
+		Font
 	};
 
 	class Object {

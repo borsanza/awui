@@ -17,6 +17,8 @@ namespace awui::Windows::Forms::Station::Browser {
 			Browser();
 			virtual ~Browser() = default;
 
+			virtual bool IsClass(Classes objectClass) const override;
+
 			void SetPage(Page * page);
 			Page * GetPage() const { return m_page; };
 

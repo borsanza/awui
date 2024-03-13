@@ -15,6 +15,7 @@ using namespace awui::Windows::Forms::Station::Browser;
 #define GRADIENT_WIDTH 64
 
 Browser::Browser() {
+	m_class = Classes::Browser;
 	// SetBackColor(Color::FromArgb(0, 0, 0));
 	m_page = NULL;
 
@@ -46,6 +47,10 @@ Browser::Browser() {
 	AddWidget(&m_gradientBottom);
 	AddWidget(&m_gradientLeft);
 	AddWidget(&m_gradientRight);
+}
+
+bool Browser::IsClass(Classes objectClass) const {
+	return (objectClass == Classes::Browser) || Control::IsClass(objectClass);
 }
 
 void Browser::OnTick(float deltaSeconds) {
@@ -102,8 +107,8 @@ void Browser::OnTick(float deltaSeconds) {
 	m_gradientRight.SetWidth(alpha ? GRADIENT_WIDTH : 0);
 }
 
-void Browser::SetPage(Page * page) {
-	if (m_page == page)
+void Browser::SetPage(Page *page) {
+    if (m_page == page)
 		return;
 
 	if (m_page)
