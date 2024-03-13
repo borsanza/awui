@@ -12,20 +12,17 @@
 using namespace awui::Collections;
 
 Stack::Stack() {
-	this->_last = NULL;
-	this->_count = 0;
+	m_class = Classes::Stack;
+	m_last = NULL;
+	m_count = 0;
 }
 
 Stack::~Stack() {
-	this->Clear();
+	Clear();
 }
 
 bool Stack::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Stack) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::Stack) || Object::IsClass(objectClass);
 }
 
 awui::String Stack::ToString() const {
@@ -35,32 +32,32 @@ awui::String Stack::ToString() const {
 void Stack::Push(Object * item) {
 	StackItem * itemList = (StackItem *) malloc(sizeof (struct StackItem));
 	itemList->object = item;
-	itemList->prev = this->_last;
-	this->_count++;
-	this->_last = itemList;
+	itemList->prev = m_last;
+	m_count++;
+	m_last = itemList;
 }
 
 int Stack::GetCount() {
-	return this->_count;
+	return m_count;
 }
 
 void Stack::Clear() {
-	while (this->GetCount() > 0)
-		this->Pop();
+	while (GetCount() > 0)
+		Pop();
 }
 
 awui::Object * Stack::Pop() {
-	if (!this->_last)
+	if (!m_last)
 		return NULL;
 
-	Object * r = this->_last->object;
+	Object * r = m_last->object;
 
-	StackItem * prev = this->_last->prev;
+	StackItem * prev = m_last->prev;
 
-	free(this->_last);
-	this->_count--;
+	free(m_last);
+	m_count--;
 
-	this->_last = prev;
+	m_last = prev;
 
 	return r;
 }

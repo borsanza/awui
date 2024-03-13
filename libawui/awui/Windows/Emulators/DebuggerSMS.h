@@ -15,15 +15,15 @@ namespace awui {
 
 			class DebuggerSMS : public Button {
 				private:
-					MasterSystem * _rom;
-					Drawing::Image * _tiles;
-					Drawing::Image * _colors;
-					bool _show;
-					float _width;
+					MasterSystem * m_rom;
+					Drawing::Image * m_tiles;
+					Drawing::Image * m_colors;
+					bool m_show;
+					float m_width;
 
 				public:
 					DebuggerSMS();
-					virtual ~DebuggerSMS();
+					virtual ~DebuggerSMS() = default;
 
 					virtual bool IsClass(Classes objectClass) const override;
 
@@ -32,8 +32,8 @@ namespace awui {
 					virtual void OnPaint(OpenGL::GL * gl);
 
 					void SetRom(MasterSystem * rom);
-					bool GetShow() { return _show; }
-					void SetShow(bool show) { _show = show; }
+					bool GetShow() { return m_show; }
+					void SetShow(bool show) { m_show = show; }
 			};
 		}
 	}

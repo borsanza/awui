@@ -16,17 +16,17 @@ namespace awui {
 		namespace Emulators {
 			class Spectrum : public ArcadeContainer {
 				private:
-					awui::Emulation::Spectrum::Motherboard * _motherboard;
-					bool _pause;
-					int _fileSlot;
+					awui::Emulation::Spectrum::Motherboard * m_motherboard;
+					bool m_pause;
+					int m_fileSlot;
 
-					awui::Emulation::Spectrum::TapeCorder * _tapecorder;
+					awui::Emulation::Spectrum::TapeCorder * m_tapecorder;
 
 					uint8_t GetPad() const;
 
-					int _first;
-					int _last;
-					long long _lastTick;
+					int m_first;
+					int m_last;
+					long long m_lastTick;
 					void CheckLimits();
 
 					void CallKey(int key, bool pressed);
@@ -57,8 +57,8 @@ namespace awui {
 					virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 					virtual void SetSoundEnabled(bool mode);
 
-					awui::Emulation::Spectrum::TapeCorder * GetTapeCorder() { return this->_tapecorder; }
-					awui::Emulation::Spectrum::Motherboard * GetMotherboard() { return this->_motherboard; }
+					awui::Emulation::Spectrum::TapeCorder * GetTapeCorder() { return this->m_tapecorder; }
+					awui::Emulation::Spectrum::Motherboard * GetMotherboard() { return this->m_motherboard; }
 			};
 		}
 	}

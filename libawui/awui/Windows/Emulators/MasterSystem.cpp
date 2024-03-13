@@ -24,6 +24,7 @@ using namespace awui::Emulation::MasterSystem;
 const int DEADZONE = 8192;
 
 MasterSystem::MasterSystem() {
+	m_class = Classes::MasterSystem;
 	m_keys1 = 0xFF;
 	m_keys2 = 0xFF;
 	m_joys1 = 0xFF;
@@ -56,11 +57,7 @@ MasterSystem::~MasterSystem() {
 }
 
 bool MasterSystem::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::MasterSystem) {
-		return true;
-	}
-
-	return ArcadeContainer::IsClass(objectClass);
+	return (objectClass == Classes::MasterSystem) || ArcadeContainer::IsClass(objectClass);
 }
 
 void MasterSystem::LoadRom(const String file) {

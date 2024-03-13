@@ -22,20 +22,21 @@ using namespace awui::Windows::Forms::Statistics;
 
 int Application::quit = 0;
 
-bool Application::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Application) {
-		return true;
-	}
+Application::Application() {
+	m_class = Classes::Application;
+}
 
-	return Object::IsClass(objectClass);
+bool Application::IsClass(Classes objectClass) const {
+	return (objectClass == Classes::Application) || Object::IsClass(objectClass);
 }
 
 void Application::Quit() {
 	Application::quit = 1;
 }
 
-void Application::Run(Form * form = NULL) {
-	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
+void Application::Run(Form *form = NULL)
+{
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
 		SDL_Log("[ERROR] SDL_Init failed: %s", SDL_GetError());
 		return;
 	}

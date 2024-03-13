@@ -12,21 +12,15 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 
 ArcadeContainer::ArcadeContainer() {
+	m_class = Classes::ArcadeContainer;
 	SetBackColor(Color::FromArgb(0, 0, 0));
 	SetDrawShadow(false);
 	SetPreventChangeControl(true);
 	m_station = NULL;
 }
 
-ArcadeContainer::~ArcadeContainer() {
-}
-
 bool ArcadeContainer::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::ArcadeContainer) {
-		return true;
-	}
-
-	return Button::IsClass(objectClass);
+	return (objectClass == Classes::ArcadeContainer) || Button::IsClass(objectClass);
 }
 
 void ArcadeContainer::SetStationUI(StationUI * station) {

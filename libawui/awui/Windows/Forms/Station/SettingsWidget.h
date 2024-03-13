@@ -26,4 +26,6 @@ class SettingsWidget : public Button {
 		virtual ~SettingsWidget();
 
 		virtual void OnPaint(OpenGL::GL* gl);
+
+		String ToString() const override;
 };

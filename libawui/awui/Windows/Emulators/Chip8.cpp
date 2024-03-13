@@ -18,6 +18,7 @@ using namespace awui::Windows::Emulators;
 bool Chip8::m_invertedColors = false;
 
 Chip8::Chip8() {
+	m_class = Classes::Chip8;
 	m_image = new Drawing::Image(64, 32);
 	m_cpu = new CPU();
 	m_lastInverted = Chip8::m_invertedColors;
@@ -28,11 +29,7 @@ Chip8::~Chip8() {
 }
 
 bool Chip8::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Chip8) {
-		return true;
-	}
-
-	return ArcadeContainer::IsClass(objectClass);
+	return (objectClass == Classes::Chip8) || ArcadeContainer::IsClass(objectClass);
 }
 
 void Chip8::CheckBackcolor() {

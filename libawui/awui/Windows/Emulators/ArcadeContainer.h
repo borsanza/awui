@@ -30,7 +30,7 @@ namespace awui::Windows {
 
 			public:
 				ArcadeContainer();
-				virtual ~ArcadeContainer();
+				virtual ~ArcadeContainer() = default;
 
 				virtual bool IsClass(Classes objectClass) const override;
 

@@ -17,7 +17,7 @@ namespace awui {
 			public:
 				Pen(awui::Drawing::Color color);
 				Pen(awui::Drawing::Color color, float width);
-				virtual ~Pen();
+				virtual ~Pen() = default;
 
 				virtual bool IsClass(Classes objectClass) const override;
 

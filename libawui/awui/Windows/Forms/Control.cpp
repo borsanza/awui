@@ -28,6 +28,7 @@ int32_t Control::lastTabIndex = 10000;
 int32_t Control::countFocused = 1000;
 
 Control::Control() {
+	m_class = Classes::Control;
 	m_tabIndex = -1;
 	m_focusedTime = -1;
 
@@ -72,11 +73,7 @@ Control::~Control() {
 }
 
 bool Control::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Control) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::Control) || Object::IsClass(objectClass);
 }
 
 void Control::SetTop(int y) {
@@ -203,10 +200,10 @@ void Control::AddWidget(Control * control) {
 	m_controls->Add(control);
 	control->SetParent(this);
 
-	if (!m_focused || (m_focused->m_focusedTime < control->m_focusedTime)) {
+	if (!m_focused || (m_focusedTime < control->m_focusedTime)) {
 		m_focused = control;
-		m_focusedTime = control->m_focusedTime;
-		SetFocus();
+		// m_focusedTime = control->m_focusedTime;
+		m_focused->SetFocus(false);
 	}
 
 	Layout();
@@ -233,7 +230,7 @@ void Control::RemoveWidget(Control * control) {
 		}
 
 		if (m_focused) {
-			SetFocus();
+			m_focused->SetFocus(false);
 		}
 	}
 }
@@ -445,8 +442,8 @@ void Control::OnPaint(OpenGL::GL * gl) {
 			Bitmap * bitmap = Control::GetSelectedBitmap();
 			float percent = m_deltaSeconds * 10.0f;
 
-			if (lastParent != control->GetParent()) {
-				lastParent = control->GetParent();
+			if (lastParent != this) {
+				lastParent = this;
 				percent = 1.0f;
 			}
 
@@ -732,23 +729,82 @@ void Control::OnKeyUpPre(Keys::Enum key) {
 		m_focused->OnKeyUpPre(key);
 }
 
-void Control::SetFocus() {
-	m_focusedTime = countFocused;
-	countFocused++;
-
+void Control::SetFocusImpl(bool forced, int32_t time) {
+/*
+	if (m_controls->GetCount() <= 0 || forced) {
+		Console::WriteLine("SetFocus(%d): %s", forced, ToString().ToCharArray());
+	}
+*/
 	Control * parent = GetParent();
-	if (parent) {
-		parent->m_focused = this;
-		parent->SetFocus();
+
+	if (forced) {
+		m_focusedTime = time;
+		if (parent) {
+			parent->m_focused = this;
+			parent->SetFocusImpl(forced, time);
+		}
+	} else {
+		if (time > m_focusedTime) {
+			m_focusedTime = time;
+		}
+
+		if (parent) {
+			if (parent->m_focused == nullptr) {
+				parent->m_focused = this;
+				parent->SetFocusImpl(forced, time);
+			} else {
+				if (parent->m_focused->m_focusedTime < time) {
+					parent->m_focused = this;
+					parent->SetFocusImpl(forced, time);
+				}
+			}
+		}
+	}
+
+/*
+	Control* parent = GetParent();
+
+	// Actualizar el tiempo de enfoque si es forzado o si el nuevo tiempo es mayor.
+	if (forced || time >= m_focusedTime) {
+		m_focusedTime = time;
+
+		if (parent) {
+			// Si forzado o si el padre no tiene un control enfocado o si este control debe tomar el foco.
+			if (forced || parent->m_focused == nullptr || parent->m_focused->m_focusedTime < time) {
+				parent->m_focused = this;
+				parent->SetFocusImpl(forced, time); // Propagar el enfoque hacia arriba solo si es necesario.
+			}
+		}
+	}
+*/
+}
+
+void Control::SetFocus(bool forced) {
+/*
+	if (m_controls->GetCount() <= 0 || forced) {
+		Console::WriteLine("SetFocus(%d): %s", forced, ToString().ToCharArray());
+	}
+*/
+	SetFocusImpl(forced, forced ? countFocused : m_focusedTime);
+
+	if (forced) {
+		countFocused++;
 	}
 }
 
-Control * Control::GetChildFocused() {
+Control * Control::GetChildFocusedImp(Control * focused) {
+	if (IsFocusable())
+		focused = this;
+
 	if (m_focused) {
-		return m_focused->GetChildFocused();
+		return m_focused->GetChildFocusedImp(focused);
 	}
 
-	return this;
+	return focused;
+}
+
+Control * Control::GetChildFocused() {
+	return GetChildFocusedImp(nullptr);
 }
 
 bool Control::IsFocused() const {
@@ -1030,4 +1086,8 @@ Bitmap * Control::GetSelectedBitmap() {
 	}
 
 	return Control::m_selectedBitmap;
+}
+
+awui::String Control::ToString() const {
+	return "awui::Windows::Forms::Control";
 }

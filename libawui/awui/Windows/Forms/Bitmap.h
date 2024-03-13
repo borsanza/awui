@@ -25,18 +25,18 @@ namespace awui {
 			class Bitmap : public Control {
 				private:
 					static Collections::ArrayList list;
-					GLuint texture;
-					int textureWidth;
-					int textureHeight;
-					int fixX1;
-					int fixX2;
-					int fixY1;
-					int fixY2;
-					StretchMode::Enum stretchMode;
-					Drawing::ColorF _color;
+					GLuint m_texture;
+					int m_textureWidth;
+					int m_textureHeight;
+					int m_fixX1;
+					int m_fixX2;
+					int m_fixY1;
+					int m_fixY2;
+					StretchMode::Enum m_stretchMode;
+					Drawing::ColorF m_color;
 
-					String file;
-					bool loaded;
+					String m_file;
+					bool m_loaded;
 
 					void Load();
 					void Unload();

@@ -12,9 +12,9 @@ namespace awui {
 					SortedListItem * next;
 				};
 
-				SortedListItem * first;
-				SortedListItem * last;
-				int count;
+				SortedListItem * m_first;
+				SortedListItem * m_last;
+				int m_count;
 
 			public:
 				SortedList();

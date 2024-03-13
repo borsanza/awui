@@ -18,52 +18,46 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 
 DebuggerSMS::DebuggerSMS() {
-	this->_width = 0;
-	this->_rom = NULL;
-	this->_tiles = new Drawing::Image(128, 256);
-	this->_colors = new Drawing::Image(32, 1);
-	this->_show = true;
-}
-
-DebuggerSMS::~DebuggerSMS() {
+	m_class = Classes::DebuggerSMS;
+	m_width = 0;
+	m_rom = NULL;
+	m_tiles = new Drawing::Image(128, 256);
+	m_colors = new Drawing::Image(32, 1);
+	m_show = true;
 }
 
 bool DebuggerSMS::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::DebuggerSMS) {
-		return true;
-	}
-
-	return Button::IsClass(objectClass);
+	return (objectClass == Classes::DebuggerSMS) || Button::IsClass(objectClass);
 }
 
 void DebuggerSMS::OnTick(float deltaSeconds) {
-	int newWidth = this->GetWidth();
-	if (!this->_show) {
-		if (this->_width != 1) {
-			this->_width = this->_width + ((0.0f - this->_width) * 0.25f);
-			if (this->_width < 1) this->_width = 1;
-			newWidth = this->_width;
+	int newWidth = GetWidth();
+	if (!m_show) {
+		if (m_width != 1) {
+			m_width = m_width + ((0.0f - m_width) * 0.25f);
+			if (m_width < 1) m_width = 1;
+			newWidth = m_width;
 		}
 	} else {
-		this->_width = this->_width + ((194.0f - this->_width) * 0.25f);
-		newWidth = this->_width;
+		m_width = m_width + ((194.0f - m_width) * 0.25f);
+		newWidth = m_width;
 	}
 
-	if (newWidth != this->GetWidth()) {
-		this->SetWidth(newWidth);
-		this->GetParent()->Layout();
+	if (newWidth != GetWidth()) {
+		SetWidth(newWidth);
+		GetParent()->Layout();
 	}
 
-	if (this->_width == 1)
+	if (m_width == 1)
 		return;
 
-	if (!this->_rom)
+	if (!m_rom)
 		return;
 
 	uint8_t c, r, g, b;
 	uint8_t color[4] {0, 85, 170, 255};
 
-	VDP * vdp = this->_rom->GetCPU()->GetVDP();
+	VDP * vdp = m_rom->GetCPU()->GetVDP();
 	const uint8_t * colors = vdp->GetColors();
 
 	for (int i=0; i<32; i++) {
@@ -71,10 +65,10 @@ void DebuggerSMS::OnTick(float deltaSeconds) {
 		r = color[c & 0x3];
 		g = color[(c >> 2) & 0x3];
 		b = color[(c >> 4) & 0x3];
-		this->_colors->SetPixel(i, 0, r, g, b);
+		m_colors->SetPixel(i, 0, r, g, b);
 	}
 
-	this->_colors->Update();
+	m_colors->Update();
 
 	uint8_t * ram = vdp->GetVram();
 
@@ -103,31 +97,31 @@ void DebuggerSMS::OnTick(float deltaSeconds) {
 				int ox = ((sprite % 16) * 8) + x;
 				int oy = ((sprite >> 4) * 8) + y;
 
-				this->_tiles->SetPixel(ox, oy, r, g, b);
+				m_tiles->SetPixel(ox, oy, r, g, b);
 
 				mask = mask >> 1;
 			}
 		}
 	}
 
-	this->_tiles->Update();
+	m_tiles->Update();
 }
 
 void DebuggerSMS::OnPaint(OpenGL::GL * gl) {
-	if (this->_width == 1)
+	if (m_width == 1)
 		return;
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	GL::DrawRectangle(0, 0, 193, 51);
-	GL::DrawImageGL(this->_colors, 1, 1, 192, 50);
+	GL::DrawImageGL(m_colors, 1, 1, 192, 50);
 
-	int left = (this->GetWidth() - 128) >> 1;
+	int left = (GetWidth() - 128) >> 1;
 	int top = 100;
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	GL::DrawRectangle(left - 1, top - 1, left + 128, top + 256);
-	GL::DrawImageGL(this->_tiles, left, top);
+	GL::DrawImageGL(m_tiles, left, top);
 }
 
 void DebuggerSMS::SetRom(MasterSystem * rom) {
-	this->_rom = rom;
+	m_rom = rom;
 }

@@ -10,13 +10,13 @@ namespace awui {
 	namespace Drawing {
 		class Shader : public Object {
 			private:
-				GLuint _gProgramID;
+				GLuint m_gProgramID;
 
 				void printShaderLog(GLuint shader);
 
 			public:
 				Shader();
-				virtual ~Shader();
+				virtual ~Shader() = default;
 
 				virtual bool IsClass(Classes objectClass) const override;
 				GLuint LoadShaderFromFile(std::string path, GLenum shaderType);

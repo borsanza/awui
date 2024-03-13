@@ -6,7 +6,7 @@ namespace awui {
 	namespace Drawing {
 		class ColorF : public Object {
 			private:
-				float a, r, g, b;
+				float m_a, m_r, m_g, m_b;
 
 			public:
 				ColorF();

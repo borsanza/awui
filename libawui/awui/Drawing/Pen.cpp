@@ -11,6 +11,7 @@ using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
 
 Pen::Pen(Drawing::Color color) {
+	m_class = Classes::Pen;
 	m_color = color;
 	m_width = 1;
 	m_lineCap = LineCap::Butt;
@@ -18,21 +19,15 @@ Pen::Pen(Drawing::Color color) {
 }
 
 Pen::Pen(Drawing::Color color, float width) {
+	m_class = Classes::Pen;
 	m_color = color;
 	m_width = width;
 	m_lineCap = LineCap::Butt;
 	m_lineJoin = LineJoin::Miter;
 }
 
-Pen::~Pen() {
-}
-
 bool Pen::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Pen) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::Pen) || Object::IsClass(objectClass);
 }
 
 Color Pen::GetColor() {

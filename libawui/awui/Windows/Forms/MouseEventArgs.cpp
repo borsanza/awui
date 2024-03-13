@@ -6,6 +6,7 @@
 using namespace awui::Windows::Forms;
 
 MouseEventArgs::MouseEventArgs() {
+	m_class = Classes::MouseEventArgs;
 	m_x = 0;
 	m_y = 0;
 	m_delta = 0;
@@ -13,15 +14,8 @@ MouseEventArgs::MouseEventArgs() {
 	m_button = 0;
 }
 
-MouseEventArgs::~MouseEventArgs() {
-}
-
 bool MouseEventArgs::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::MouseEventArgs) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::MouseEventArgs) || EventArgs::IsClass(objectClass);
 }
 
 int MouseEventArgs::GetX() {

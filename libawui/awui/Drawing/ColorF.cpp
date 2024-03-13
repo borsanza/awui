@@ -14,71 +14,68 @@
 using namespace awui::Drawing;
 
 ColorF::ColorF() {
-	this->a = 0.0f;
-	this->r = 0.0f;
-	this->g = 0.0f;
-	this->b = 0.0f;
+	m_class = Classes::ColorF;
+	m_a = 0.0f;
+	m_r = 0.0f;
+	m_g = 0.0f;
+	m_b = 0.0f;
 }
 
 bool ColorF::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::ColorF) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::ColorF) || Object::IsClass(objectClass);
 }
 
 awui::String ColorF::ToString() const {
 	String value;
-	value = String("ColorF [A=") + Convert::ToString(this->a) +
-				", R=" + Convert::ToString(this->r) +
-				", G=" + Convert::ToString(this->g) +
-				", B=" + Convert::ToString(this->b) + "]";
+	value = String("ColorF [A=") + Convert::ToString(m_a) +
+				", R=" + Convert::ToString(m_r) +
+				", G=" + Convert::ToString(m_g) +
+				", B=" + Convert::ToString(m_b) + "]";
 	return value;
 }
 
 float ColorF::GetA() const {
-	return this->a;
+	return m_a;
 }
 
 float ColorF::GetR() const {
-	return this->r;
+	return m_r;
 }
 
 float ColorF::GetG() const {
-	return this->g;
+	return m_g;
 }
 
 float ColorF::GetB() const {
-	return this->b;
+	return m_b;
 }
 
 int ColorF::ToArgb() const {
-	return (((((this->a * 256) + this->r) * 256) + this->g) * 256) + this->b;
+	return (((((m_a * 256) + m_r) * 256) + m_g) * 256) + m_b;
 }
 
 float ColorF::GetBrightness() const {
-	int M = Math::Max(Math::Max(this->r, this->g), this->b);
-	int m = Math::Min(Math::Min(this->r, this->g), this->b);
+	int M = Math::Max(Math::Max(m_r, m_g), m_b);
+	int m = Math::Min(Math::Min(m_r, m_g), m_b);
 
 	return ((M + m) / 2.0f) / 255.0f;
 }
 
 float ColorF::GetHue() const {
-	int M = Math::Max(Math::Max(this->r, this->g), this->b);
-	int m = Math::Min(Math::Min(this->r, this->g), this->b);
+	int M = Math::Max(Math::Max(m_r, m_g), m_b);
+	int m = Math::Min(Math::Min(m_r, m_g), m_b);
 
 	double C = M - m;
 
 	double H;
 	if (C == 0)
 		H = 0.0;
-	else if (M == this->r)
-		H = Math::FMod((this->g - this->b) / C, 6);
-	else if (M == this->g)
-		H = ((this->b - this->r) / C) + 2.0;
+	else if (M == m_r)
+		H = Math::FMod((m_g - m_b) / C, 6);
+	else if (M == m_g)
+		H = ((m_b - m_r) / C) + 2.0;
 	else
-		H = ((this->r - this->g) / C) + 4.0;
+		H = ((m_r - m_g) / C) + 4.0;
 
 	H = (60.0 * H);
 
@@ -89,8 +86,8 @@ float ColorF::GetHue() const {
 }
 
 float ColorF::GetSaturation() const {
-	int M = Math::Max(Math::Max(this->r, this->g), this->b);
-	int m = Math::Min(Math::Min(this->r, this->g), this->b);
+	int M = Math::Max(Math::Max(m_r, m_g), m_b);
+	int m = Math::Min(Math::Min(m_r, m_g), m_b);
 
 	double C = M - m;
 
@@ -121,7 +118,7 @@ ColorF ColorF::FromArgb(int argb) {
 }
 
 ColorF ColorF::FromArgb(float alpha, const ColorF baseColor) {
-	return ColorF::FromArgb(alpha, baseColor.r, baseColor.g, baseColor.b);
+	return ColorF::FromArgb(alpha, baseColor.m_r, baseColor.m_g, baseColor.m_b);
 }
 
 ColorF ColorF::FromArgb(float red, float green, float blue) {
@@ -131,23 +128,23 @@ ColorF ColorF::FromArgb(float red, float green, float blue) {
 ColorF ColorF::FromArgb(float alpha, float red, float green, float blue) {
 	ColorF color;
 
-	color.a = Math::Clamp(alpha, 0.0f, 255.0f);
-	color.r = Math::Clamp(red, 0.0f, 255.0f);
-	color.g = Math::Clamp(green, 0.0f, 255.0f);
-	color.b = Math::Clamp(blue, 0.0f, 255.0f);
+	color.m_a = Math::Clamp(alpha, 0.0f, 255.0f);
+	color.m_r = Math::Clamp(red, 0.0f, 255.0f);
+	color.m_g = Math::Clamp(green, 0.0f, 255.0f);
+	color.m_b = Math::Clamp(blue, 0.0f, 255.0f);
 
 	return color;
 }
 
 ColorF & ColorF::operator=(const ColorF & other) {
-	this->r = other.r;
-	this->g = other.g;
-	this->b = other.b;
-	this->a = other.a;
+	m_r = other.m_r;
+	m_g = other.m_g;
+	m_b = other.m_b;
+	m_a = other.m_a;
 
 	return *this;
 }
 
 bool ColorF::operator !=(const ColorF &b) const {
-	return ((this->r != b.r) || (this->g != b.g) || (this->b != b.b) || (this->a != b.a));
+	return ((m_r != b.m_r) || (m_g != b.m_g) || (m_b != b.m_b) || (m_a != b.m_a));
 }

@@ -31,7 +31,7 @@ namespace awui {
 
 				public:
 					ImageFader();
-					virtual ~ImageFader();
+					virtual ~ImageFader() = default;
 
 					virtual bool IsClass(Classes objectClass) const override;
 

@@ -9,58 +9,55 @@ using namespace awui::Collections;
 using namespace awui::Windows::Forms;
 
 ListBox::ListBox() {
-	this->collection = new ObjectCollection(this);
+	m_class = Classes::ListBox;
+	m_collection = new ObjectCollection(this);
 }
 
 ListBox::~ListBox() {
-	delete this->collection;
+	delete m_collection;
 }
 
 bool ListBox::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::ListBox) {
-		return true;
-	}
-
-	return Control::IsClass(objectClass);
+	return (objectClass == Classes::ListBox) || Control::IsClass(objectClass);
 }
 
 ObjectCollection * ListBox::GetItems() const {
-	return this->collection;
+	return m_collection;
 }
 
 ObjectCollection::ObjectCollection(ListBox * owner) : Object() {
-	this->listbox = owner;
-	this->arraylist = new ArrayList();
+	listbox = owner;
+	arraylist = new ArrayList();
 }
 
 ObjectCollection::~ObjectCollection() {
-	delete this->arraylist;
+	delete arraylist;
 }
 
 int ObjectCollection::GetCount() const {
-	return this->arraylist->GetCount();
+	return arraylist->GetCount();
 }
 
 void ObjectCollection::Add(Object * item) {
-	this->arraylist->Add(item);
+	arraylist->Add(item);
 }
 
 void ObjectCollection::Clear() {
-	this->arraylist->Clear();
+	arraylist->Clear();
 }
 
 bool ObjectCollection::Contains(Object * value) const {
-	return (this->arraylist->IndexOf(value) != -1);
+	return (arraylist->IndexOf(value) != -1);
 }
 
 int ObjectCollection::IndexOf(Object * value) const {
-	return this->arraylist->IndexOf(value);
+	return arraylist->IndexOf(value);
 }
 
 void ObjectCollection::Remove(Object * value) {
-	this->arraylist->Remove(value);
+	arraylist->Remove(value);
 }
 
 void ObjectCollection::RemoveAt(int index) {
-	this->arraylist->RemoveAt(index);
+	arraylist->RemoveAt(index);
 }

@@ -13,7 +13,7 @@ namespace awui {
 
 				public:
 					JoystickAxisMotionEventArgs(int which, int16_t axisX, int16_t axisY);
-					virtual ~JoystickAxisMotionEventArgs();
+					virtual ~JoystickAxisMotionEventArgs() = default;
 
 					virtual bool IsClass(Classes objectClass) const override;
 

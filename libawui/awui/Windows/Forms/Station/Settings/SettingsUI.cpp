@@ -27,6 +27,11 @@ using namespace awui::Windows::Forms::Station::Settings;
 #define MENUBUTTONHEIGHT 70
 
 SettingsUI::SettingsUI() {
+	m_class = Classes::SettingsUI;
+}
+
+bool SettingsUI::IsClass(Classes objectClass) const {
+	return (objectClass == Classes::SettingsUI) || Control::IsClass(objectClass);
 }
 
 void SettingsUI::InitializeComponent() {
@@ -48,8 +53,14 @@ void SettingsUI::InitializeComponent() {
 
 	m_browser = new Browser::Browser();
 	m_browser->SetDock(DockStyle::None);
+
 	AddWidget(m_browser);
+	Console::WriteLine("d) %s", page->GetChildFocused()->ToString().ToCharArray());
+	//m_browser->SetFocus();
 	m_browser->SetPage(page);
+	Console::WriteLine("e) %s", page->GetChildFocused()->ToString().ToCharArray());
+	Console::WriteLine("f) %s", m_browser->GetChildFocused()->ToString().ToCharArray());
+	Console::WriteLine("g) %s", GetChildFocused()->ToString().ToCharArray());
 	// m_browser->SetBackColor(Color::FromArgb(0, 0, 255));
 
 	page->SetWidth(m_browser->GetWidth());
@@ -83,18 +94,28 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 				{
 					ConfigButton * button = new ConfigButton(TypeButton::Group);
 					if (element.contains("name")) {
-						std::cout << std::string(depth * 2, ' ') << element["name"] << ":" << std::endl;
+						//std::cout << std::string(depth * 2, ' ') << element["name"] << ":" << std::endl;
 						std::string test = element["name"].get<std::string>();
 						button->SetText(test.c_str());
 						button->SetHeight(MENUBUTTONHEIGHT);
 						button->SetGroup(true);
 						button->SetLocation(40, posY);
 						posY += MENUBUTTONHEIGHT;
+
+						if (page->GetChildFocused())
+							Console::WriteLine("a) %s", page->GetChildFocused()->ToString().ToCharArray());
 						page->AddWidget(button);
+
+						if (page->GetChildFocused())
+							Console::WriteLine("b) %s", page->GetChildFocused()->ToString().ToCharArray());
+
 						if (!added) {
 							button->SetFocus();
 							added = true;
 						}
+
+						if (page->GetChildFocused())
+							Console::WriteLine("c) %s", page->GetChildFocused()->ToString().ToCharArray());
 
 						if (element.contains("items")) {
 							button->SetSubPage(ProcessJson(element["items"], depth + 1));
@@ -104,52 +125,52 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 				}
 					break;
 				case TypeButton::Boolean:
-					std::cout << std::string(depth * 2, ' ');
+					// std::cout << std::string(depth * 2, ' ');
 
 					if (element.contains("name")) {
-						std::cout << element["name"] << ": " ;
+						// std::cout << element["name"] << ": " ;
 					}
 					if (element.contains("key")) {
-						std::cout << element["key"] << ": " ;
+						// std::cout << element["key"] << ": " ;
 					}
 					if (element.contains("defaultValue")) {
-						std::cout << element["defaultValue"] << std::endl;
+						// std::cout << element["defaultValue"] << std::endl;
 					}
 					break;
 				case TypeButton::List:
-					std::cout << std::string(depth * 2, ' ');
+					// std::cout << std::string(depth * 2, ' ');
 					if (element.contains("name")) {
-						std::cout << element["name"] << ": " ;
+						// std::cout << element["name"] << ": " ;
 					}
 					if (element.contains("key")) {
-						std::cout << element["key"] << ": " ;
+						// std::cout << element["key"] << ": " ;
 					}
 					if (element.contains("defaultValue")) {
-						std::cout << element["defaultValue"] << std::endl;
+						// std::cout << element["defaultValue"] << std::endl;
 					}
 
 					for (const auto& option : element["options"]) {
-						std::cout << std::string((depth + 1) * 2, ' ');
+						// std::cout << std::string((depth + 1) * 2, ' ');
 						if (option.contains("code")) {
-							std::cout << option["code"] << ": " ;
+							// std::cout << option["code"] << ": " ;
 						}
 						if (option.contains("name")) {
-							std::cout << option["name"];
+							// std::cout << option["name"];
 						}
-						std::cout << std::endl;
+						// std::cout << std::endl;
 					}
 					break;
 				case TypeButton::Label:
-					std::cout << std::string(depth * 2, ' ');
+					// std::cout << std::string(depth * 2, ' ');
 
 					if (element.contains("name")) {
-						std::cout << element["name"] << ": " ;
+						// std::cout << element["name"] << ": " ;
 					}
 					if (element.contains("key")) {
-						std::cout << element["key"] << ": " ;
+						// std::cout << element["key"] << ": " ;
 					}
 					if (element.contains("defaultValue")) {
-						std::cout << element["defaultValue"] << std::endl;
+						// std::cout << element["defaultValue"] << std::endl;
 					}
 					break;
 			}

@@ -34,7 +34,7 @@ namespace awui::Windows::Forms {
 
 					virtual bool IsClass(Classes objectClass) const override;
 
-					const String GetText();
+					const String GetText() const;
 					void SetText(const String str);
 
 					virtual void OnPaint(OpenGL::GL* gl);
@@ -57,6 +57,8 @@ namespace awui::Windows::Forms {
 					void RemoveAllListeners();
 					void OnMouseUp(MouseEventArgs* e);
 					bool OnKeyPress(Keys::Enum key);
+
+					String ToString() const override;
 			};
 		}
 	}

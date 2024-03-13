@@ -11,6 +11,7 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 ImageFader::ImageFader() {
+	m_class = Classes::ImageFader;
 	m_imageShowing = nullptr;
 	m_state = State::FadeIn;
 	m_percentage = 0.0f;
@@ -19,15 +20,8 @@ ImageFader::ImageFader() {
 	m_color = Drawing::ColorF::FromArgb(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-ImageFader::~ImageFader() {
-}
-
 bool ImageFader::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::ImageFader) {
-		return true;
-	}
-
-	return Control::IsClass(objectClass);
+	return (objectClass == Classes::ImageFader) || Control::IsClass(objectClass);
 }
 
 void ImageFader::SetColor(Drawing::ColorF color) {

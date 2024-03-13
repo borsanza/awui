@@ -22,6 +22,7 @@ using namespace awui::Windows::Forms::Station;
 #define OFFSET 0.5f
 
 MenuButton::MenuButton(StationUI * station) {
+	m_class = Classes::MenuButton;
 	m_node = NULL;
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	m_station = station;
@@ -37,11 +38,7 @@ MenuButton::~MenuButton() {
 }
 
 bool MenuButton::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::MenuButton) {
-		return true;
-	}
-
-	return Control::IsClass(objectClass);
+	return (objectClass == Classes::MenuButton) || Control::IsClass(objectClass);
 }
 
 void MenuButton::OnMouseDown(MouseEventArgs * e) {
@@ -104,7 +101,7 @@ void MenuButton::SetForeColor(const Drawing::Color color) {
 	}
 }
 
-const awui::String MenuButton::GetText() {
+const awui::String MenuButton::GetText() const {
 	return m_label.GetText();
 }
 
@@ -181,4 +178,11 @@ void MenuButton::OnResize() {
 		m_label.SetSize(GetWidth() - (50 + m_label.GetLeft()), GetHeight());
 	else
 		m_label.SetSize(GetWidth() - (0 + m_label.GetLeft()), GetHeight());
+}
+
+awui::String MenuButton::ToString() const {
+    String a = awui::String("awui::Windows::Forms::Station::MenuButton (");
+	a += GetText();
+	a += awui::String(")");
+	return a;
 }

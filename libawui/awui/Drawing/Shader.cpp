@@ -14,24 +14,18 @@
 using namespace awui::Drawing;
 
 Shader::Shader() {
+	m_class = Classes::Shader;
 	glewInit();
-	this->_gProgramID = glCreateProgram();
-	GLuint fragmentShader = this->LoadShaderFromFile("shader.glfs", GL_FRAGMENT_SHADER);
-	glAttachShader(this->_gProgramID, fragmentShader);
-	glLinkProgram(this->_gProgramID);
-	glUseProgram(this->_gProgramID);
-	//int texcoord_index = glGetAttribLocation(this->_gProgramID, "in_coord");
-}
-
-Shader::~Shader() {
+	m_gProgramID = glCreateProgram();
+	GLuint fragmentShader = LoadShaderFromFile("shader.glfs", GL_FRAGMENT_SHADER);
+	glAttachShader(m_gProgramID, fragmentShader);
+	glLinkProgram(m_gProgramID);
+	glUseProgram(m_gProgramID);
+	//int texcoord_index = glGetAttribLocation(_gProgramID, "in_coord");
 }
 
 bool Shader::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Shader) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::Shader) || Object::IsClass(objectClass);
 }
 
 void Shader::printShaderLog(GLuint shader) {

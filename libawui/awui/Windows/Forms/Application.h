@@ -12,6 +12,8 @@ namespace awui::Windows::Forms {
 			static void ProcessEvents();
 
 		public:
+			Application();
+
 			static void Run(Form * form);
 
 			virtual bool IsClass(Classes objectClass) const override;

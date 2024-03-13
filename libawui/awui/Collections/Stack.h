@@ -11,8 +11,8 @@ namespace awui {
 					StackItem * prev;
 				};
 
-				StackItem * _last;
-				int _count;
+				StackItem * m_last;
+				int m_count;
 
 			public:
 				Stack();

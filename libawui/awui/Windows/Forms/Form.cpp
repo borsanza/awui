@@ -28,6 +28,8 @@ uint32_t Form::m_buttonsPad2 = 0;
 ArrayList * Form::m_formsList = new ArrayList();
 
 Form::Form() {
+	m_class = Classes::Form;
+
 	m_formsList->Add(this);
 
 	m_window = 0;
@@ -67,11 +69,7 @@ Form::~Form() {
 }
 
 bool Form::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Form) {
-		return true;
-	}
-
-	return Control::IsClass(objectClass);
+	return (objectClass == Classes::Form) || Control::IsClass(objectClass);
 }
 
 void Form::Init() {
@@ -111,6 +109,13 @@ void Form::OnTick(float deltaSeconds) {
 	MoveToEnd(stats);
 	stats->SetWidth(GetWidth());
 	stats->SetLocation(0, GetHeight() - stats->GetHeight());
+
+	static Control * lastControl = nullptr;
+	Control * control = GetChildFocused();
+	if (control && (control != lastControl)) {
+		lastControl = control;
+		Console::WriteLine("%s", control->ToString().ToCharArray());
+	}
 }
 
 void Form::RefreshVideo() {

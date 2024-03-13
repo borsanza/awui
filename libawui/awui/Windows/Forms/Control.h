@@ -87,6 +87,9 @@ namespace awui {
 				bool IsVisible() const;
 				void CleanMouseControl();
 
+				Control * GetChildFocusedImp(Control * focused);
+				void SetFocusImpl(bool forced, int32_t time);
+
 			protected:
 				void OnTickPre(float deltaSeconds);
 
@@ -199,7 +202,7 @@ namespace awui {
 				bool IsFocusable();
 				void SetFocusable(bool focusable);
 
-				void SetFocus();
+				void SetFocus(bool forced = true);
 				inline Control * GetFocused() const { return m_focused; }
 				Control * GetChildFocused();
 				bool IsFocused() const;
@@ -215,6 +218,8 @@ namespace awui {
 				void CheckMouseControl();
 
 				static Bitmap * GetSelectedBitmap();
+
+				virtual String ToString() const override;
 		};
 	}
 }

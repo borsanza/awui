@@ -13,13 +13,13 @@ namespace awui {
 		namespace Forms {
 			class Label : public Control {
 				private:
-					String text;
-					Drawing::ContentAlignment::Enum textAlign;
+					String m_text;
+					Drawing::ContentAlignment::Enum m_textAlign;
 
-					Drawing::Image * image;
-					Drawing::Graphics *g;
-					Drawing::GlyphMetrics metrics;
-					float _scrolled;
+					Drawing::Image * m_image;
+					Drawing::Graphics *m_g;
+					Drawing::GlyphMetrics m_metrics;
+					float m_scrolled;
 
 					void UpdateBufferText();
 
@@ -29,7 +29,7 @@ namespace awui {
 
 					virtual bool IsClass(Classes objectClass) const override;
 
-					const String GetText();
+					const String GetText() const;
 					void SetText(const String str);
 
 					const Drawing::ContentAlignment::Enum GetTextAlign();

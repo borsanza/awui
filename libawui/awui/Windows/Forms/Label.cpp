@@ -22,79 +22,76 @@ using namespace awui::Windows::Forms;
 #define SCROLLMARGIN 80
 
 Label::Label() {
-	this->_scrolled = 0;
-	this->image = NULL;
-	this->g = NULL;
-	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	this->SetSize(75, 23);
-	this->textAlign = ContentAlignment::TopLeft;
-	this->SetForeColor(Color::FromArgb(255, 255, 255));
+	m_class = Classes::Label;
+	m_scrolled = 0;
+	m_image = NULL;
+	m_g = NULL;
+	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetSize(75, 23);
+	m_textAlign = ContentAlignment::TopLeft;
+	SetForeColor(Color::FromArgb(255, 255, 255));
 }
 
 Label::~Label() {
-	if (this->g)
-		delete this->g;
+	if (m_g)
+		delete m_g;
 
-	if (this->image)
-		delete this->image;
+	if (m_image)
+		delete m_image;
 }
 
 bool Label::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Label) {
-		return true;
-	}
-
-	return Control::IsClass(objectClass);
+	return (objectClass == Classes::Label) || Control::IsClass(objectClass);
 }
 
 int Label::GetLabelWidth() const {
-	return this->metrics.GetAdvanceX() + this->metrics.GetBearingX();
+	return m_metrics.GetAdvanceX() + m_metrics.GetBearingX();
 }
 
 #define BORDER 2
 
 void Label::Draw(int x, int y, int width, int height) {
-	if (this->image) {
+	if (m_image) {
 		float posX = x;
 		float posY = y;
 
-		switch (this->textAlign) {
+		switch (m_textAlign) {
 			case ContentAlignment::TopLeft:
 			case ContentAlignment::TopCenter:
 			case ContentAlignment::TopRight:
-				posY += this->metrics.GetAscent();
+				posY += m_metrics.GetAscent();
 				break;
 			case ContentAlignment::MiddleLeft:
 			case ContentAlignment::MiddleCenter:
 			case ContentAlignment::MiddleRight:
-				posY += this->metrics.GetAscent();
-				posY += height - this->metrics.GetDescent() - 1;
+				posY += m_metrics.GetAscent();
+				posY += height - m_metrics.GetDescent() - 1;
 				posY /= 2.0f;
 				break;
 			case ContentAlignment::BottomLeft:
 			case ContentAlignment::BottomCenter:
 			case ContentAlignment::BottomRight:
-				posY += height - this->metrics.GetDescent() - 1;
+				posY += height - m_metrics.GetDescent() - 1;
 				break;
 		}
 
-		switch (this->textAlign) {
+		switch (m_textAlign) {
 			case ContentAlignment::TopLeft:
 			case ContentAlignment::MiddleLeft:
 			case ContentAlignment::BottomLeft:
-				posX += this->metrics.GetBearingX();
+				posX += m_metrics.GetBearingX();
 				break;
 			case ContentAlignment::TopCenter:
 			case ContentAlignment::MiddleCenter:
 			case ContentAlignment::BottomCenter:
-				posX += width - this->GetLabelWidth() - 1;
-				posX += this->metrics.GetBearingX();
+				posX += width - GetLabelWidth() - 1;
+				posX += m_metrics.GetBearingX();
 				posX /= 2.0f;
 				break;
 			case ContentAlignment::TopRight:
 			case ContentAlignment::MiddleRight:
 			case ContentAlignment::BottomRight:
-				posX += width - this->GetLabelWidth() - 1;
+				posX += width - GetLabelWidth() - 1;
 				break;
 		}
 
@@ -102,92 +99,92 @@ void Label::Draw(int x, int y, int width, int height) {
 		posY = Math::Round(posY);
 
 		int correctPosX = posX - BORDER;
-		int correctPosY = posY + this->metrics.GetBearingY() - BORDER;
+		int correctPosY = posY + m_metrics.GetBearingY() - BORDER;
 
-		GL::DrawImageGL(this->image, correctPosX, correctPosY);
-//		this->DrawLines(posX, posY);
+		GL::DrawImageGL(m_image, correctPosX, correctPosY);
+//		DrawLines(posX, posY);
 	}
 }
 
 void Label::OnPaint(GL* gl) {
-	int scrolled = Math::Round(this->_scrolled);
-	this->Draw(scrolled, 0, this->GetWidth(), this->GetHeight());
+	int scrolled = Math::Round(m_scrolled);
+	Draw(scrolled, 0, GetWidth(), GetHeight());
 
 	if (scrolled != 0)
-		this->Draw(scrolled + (this->GetLabelWidth() + SCROLLMARGIN), 0, this->GetWidth(), this->GetHeight());
+		Draw(scrolled + (GetLabelWidth() + SCROLLMARGIN), 0, GetWidth(), GetHeight());
 }
 
 void Label::DrawLines(int x, int y) {
 	int posBaseline = y;
-	int posAscent = posBaseline - this->metrics.GetAscent();
-	int posDescent = posBaseline + this->metrics.GetDescent();
+	int posAscent = posBaseline - m_metrics.GetAscent();
+	int posDescent = posBaseline + m_metrics.GetDescent();
 
 	glColor3f(0.0f, 1.0f, 0.0f);
-	GL::DrawLine(0, posBaseline, this->GetWidth(), posBaseline);
+	GL::DrawLine(0, posBaseline, GetWidth(), posBaseline);
 
 	glColor3f(1.0f, 0.0f, 1.0f);
-	GL::DrawLine(0, posAscent, this->GetWidth(), posAscent);
+	GL::DrawLine(0, posAscent, GetWidth(), posAscent);
 
 	glColor3f(1.0f, 0.0f, 1.0f);
-	GL::DrawLine(0, posDescent, this->GetWidth(), posDescent);
+	GL::DrawLine(0, posDescent, GetWidth(), posDescent);
 
 	glColor3f(1.0f, 0.0f, 0.0f);
-	GL::DrawLine(x, 0, x, this->GetHeight());
-	GL::DrawLine(0, y, this->GetWidth(), y);
+	GL::DrawLine(x, 0, x, GetHeight());
+	GL::DrawLine(0, y, GetWidth(), y);
 }
 
 void Label::SetText(const String str) {
-	this->text = str;
-	this->UpdateBufferText();
+	m_text = str;
+	UpdateBufferText();
 }
 
-const awui::String Label::GetText() {
-	return this->text;
+const awui::String Label::GetText() const {
+	return m_text;
 }
 
 const awui::Drawing::ContentAlignment::Enum Label::GetTextAlign() {
-	return this->textAlign;
+	return m_textAlign;
 }
 
 void Label::SetTextAlign(Drawing::ContentAlignment::Enum textAlign) {
-	this->textAlign = textAlign;
+	m_textAlign = textAlign;
 }
 
 void Label::SetForeColor(const Drawing::Color color) {
 	Control::SetForeColor(color);
-	this->UpdateBufferText();
+	UpdateBufferText();
 }
 
 void Label::SetFont(const Drawing::Font font) {
 	Control::SetFont(font);
-	this->UpdateBufferText();
+	UpdateBufferText();
 }
 
 void Label::UpdateBufferText() {
-	if (this->g)
-		delete this->g;
+	if (m_g)
+		delete m_g;
 
-	if (this->image)
-		delete this->image;
+	if (m_image)
+		delete m_image;
 
-	Font font = *this->GetFont();
-	this->metrics = TextRenderer::GetMeasureText(this->text, &font);
+	Font font = *GetFont();
+	m_metrics = TextRenderer::GetMeasureText(m_text, &font);
 
-	this->image = new Drawing::Image(this->metrics.GetWidth(), this->metrics.GetHeight());
-	this->g = Drawing::Graphics::FromImage(this->image);
+	m_image = new Drawing::Image(m_metrics.GetWidth(), m_metrics.GetHeight());
+	m_g = Drawing::Graphics::FromImage(m_image);
 
-	this->g->DrawString(this->text, &font, this->GetForeColor(), 0, 0);
+	m_g->DrawString(m_text, &font, GetForeColor(), 0, 0);
 }
 
 void Label::SetScrolled(float scroll) {
-	this->_scrolled = scroll;
-	while (this->_scrolled <= -(this->GetLabelWidth() + SCROLLMARGIN))
-		this->_scrolled += this->GetLabelWidth() + SCROLLMARGIN;
+	m_scrolled = scroll;
+	while (m_scrolled <= -(GetLabelWidth() + SCROLLMARGIN))
+		m_scrolled += GetLabelWidth() + SCROLLMARGIN;
 
-	while (this->_scrolled >= (this->GetLabelWidth() + SCROLLMARGIN))
-		this->_scrolled -= this->GetLabelWidth() + SCROLLMARGIN;
+	while (m_scrolled >= (GetLabelWidth() + SCROLLMARGIN))
+		m_scrolled -= GetLabelWidth() + SCROLLMARGIN;
 }
 
 float Label::GetScrolled() const {
-	return this->_scrolled;
+	return m_scrolled;
 }

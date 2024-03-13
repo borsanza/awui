@@ -14,25 +14,19 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Station;
 
 Gradient::Gradient() {
-}
-
-Gradient::~Gradient() {
+	m_class = Classes::Gradient;
 }
 
 bool Gradient::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Gradient) {
-		return true;
-	}
-
-	return Control::IsClass(objectClass);
+	return (objectClass == Classes::Gradient) || Control::IsClass(objectClass);
 }
 
 void Gradient::SetColor(int pos, const Drawing::ColorF color) {
-	this->_color[pos] = this->_colorGo[pos] = color;
+	this->m_color[pos] = this->m_colorGo[pos] = color;
 }
 
 void Gradient::SetColorGo(int pos, const Drawing::ColorF color) {
-	this->_colorGo[pos] = color;
+	this->m_colorGo[pos] = color;
 }
 
 void Gradient::OnPaint(GL* gl) {
@@ -40,19 +34,19 @@ void Gradient::OnPaint(GL* gl) {
 
 	glBegin(GL_QUADS);
 
-	c = &this->_color[0];
+	c = &this->m_color[0];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
 	glVertex3f(0.0f, 0.0f, 0.0f);
 
-	c = &this->_color[1];
+	c = &this->m_color[1];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
 	glVertex3f(this->GetWidth(), 0.0f, 0.0f);
 
-	c = &this->_color[2];
+	c = &this->m_color[2];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
 	glVertex3f(this->GetWidth(), this->GetHeight(), 0.0f);
 
-	c = &this->_color[3];
+	c = &this->m_color[3];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
 	glVertex3f(0.0f, this->GetHeight(), 0.0f);
 
@@ -69,5 +63,5 @@ awui::Drawing::ColorF Gradient::InterpolateColor(Drawing::ColorF * c1, Drawing::
 
 void Gradient::OnTick(float deltaSeconds) {
 	for (int i = 0; i < 4; i++)
-		this->_color[i] = this->InterpolateColor(&this->_color[i], &this->_colorGo[i], 0.02f);
+		this->m_color[i] = this->InterpolateColor(&this->m_color[i], &this->m_colorGo[i], 0.02f);
 }

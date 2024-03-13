@@ -17,14 +17,14 @@ namespace awui {
 
 		class Graphics : public Object {
 			private:
-				cairo_surface_t *cairo_surface;
-				cairo_t *cr;
+				cairo_surface_t *m_cairo_surface;
+				cairo_t *m_cr;
 
 				void SetPen(Drawing::Pen * pen);
 				Graphics();
 
 			public:
-				virtual ~Graphics();
+				virtual ~Graphics() = default;
 
 				virtual bool IsClass(Classes objectClass) const override;
 

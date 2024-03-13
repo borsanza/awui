@@ -12,21 +12,19 @@
 using namespace awui::Collections;
 
 SortedList::SortedList() {
-	this->first = NULL;
-	this->last = NULL;
-	this->count = 0;
+	m_class = Classes::SortedList;
+
+	m_first = NULL;
+	m_last = NULL;
+	m_count = 0;
 }
 
 SortedList::~SortedList() {
-	this->Clear();
+	Clear();
 }
 
 bool SortedList::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::SortedList) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::SortedList) || Object::IsClass(objectClass);
 }
 
 awui::String SortedList::ToString() const {
@@ -38,23 +36,23 @@ void SortedList::Add(Object * key, Object * value) {
 	itemList->key = key;
 	itemList->value = value;
 	itemList->next = NULL;
-	this->count++;
+	m_count++;
 
-	if (this->first == NULL) {
-		this->first = itemList;
-		this->last = itemList;
+	if (m_first == NULL) {
+		m_first = itemList;
+		m_last = itemList;
 		return;
 	}
 
 	// Para acelerar inserciones, miramos si lo podemos insertar en ultima posicion
 	// Este algoritmo es super optimizable, pero para salir del paso lo dejo asi
-	if (key->ToString() >= this->last->key->ToString()) {
-		this->last->next = itemList;
-		this->last = itemList;
+	if (key->ToString() >= m_last->key->ToString()) {
+		m_last->next = itemList;
+		m_last = itemList;
 		return;
 	}
 
-	SortedListItem * itemListAux = this->first;
+	SortedListItem * itemListAux = m_first;
 	while (itemListAux->next != NULL) {
 		if (key->ToString() < itemListAux->key->ToString())
 			break;
@@ -70,22 +68,22 @@ void SortedList::Add(Object * key, Object * value) {
 	itemList->next = itemListAux->next;
 	itemListAux->next = itemList;
 
-	while (this->last->next) this->last = this->last->next;
+	while (m_last->next) m_last = m_last->next;
 }
 
 int SortedList::GetCount() {
-	return this->count;
+	return m_count;
 }
 
 void SortedList::Clear() {
-	while (this->GetCount() > 0)
-		this->RemoveAt(0);
+	while (GetCount() > 0)
+		RemoveAt(0);
 }
 
 awui::Object * SortedList::GetKey(int index) {
 	int pos = 0;
 
-	SortedListItem * itemListAux = this->first;
+	SortedListItem * itemListAux = m_first;
 
 	while (itemListAux != NULL) {
 		if (pos == index)
@@ -101,7 +99,7 @@ awui::Object * SortedList::GetKey(int index) {
 awui::Object * SortedList::GetByIndex(int index) {
 	int pos = 0;
 
-	SortedListItem * itemListAux = this->first;
+	SortedListItem * itemListAux = m_first;
 
 	while (itemListAux != NULL) {
 		if (pos == index)
@@ -116,15 +114,15 @@ awui::Object * SortedList::GetByIndex(int index) {
 
 void SortedList::RemoveAt(int index) {
 	int pos = 0;
-	SortedListItem * itemListAux = this->first;
+	SortedListItem * itemListAux = m_first;
 	SortedListItem * last = NULL;
 
 	while (itemListAux != NULL) {
 		if (pos == index) {
-			this->count--;
+			m_count--;
 
 			if (last == NULL)
-				this->first = itemListAux->next;
+				m_first = itemListAux->next;
 			else
 				last->next = itemListAux->next;
 

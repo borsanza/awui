@@ -19,7 +19,7 @@ namespace awui::Windows::Forms::Station {
 
 			virtual bool IsClass(Classes objectClass) const override;
 
-			const String GetText();
+			const String GetText() const;
 			void SetText(const String str);
 
 			virtual void OnMouseDown(MouseEventArgs* e);
@@ -34,5 +34,7 @@ namespace awui::Windows::Forms::Station {
 			void CheckArcade();
 
 			virtual void OnResize();
+
+			virtual String ToString() const override;
 	};
 }

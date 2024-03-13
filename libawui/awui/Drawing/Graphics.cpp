@@ -17,88 +17,82 @@ using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
 
 Graphics::Graphics() {
-	this->cairo_surface = NULL;
-	this->cr = NULL;
-}
-
-Graphics::~Graphics() {
+	m_class = Classes::Graphics;
+	m_cairo_surface = NULL;
+	m_cr = NULL;
 }
 
 bool Graphics::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Graphics) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::Graphics) || Object::IsClass(objectClass);
 }
 
 Graphics * Graphics::FromImage(Drawing::Image *image) {
 	Graphics * graphics = new Graphics();
-	graphics->cairo_surface = image->cairo_surface;
-	graphics->cr = image->cr;
+	graphics->m_cairo_surface = image->m_cairo_surface;
+	graphics->m_cr = image->m_cr;
 
 	return graphics;
 }
 
 void Graphics::DrawRectangle(Drawing::Pen * pen, float x, float y, float width, float height) {
-	this->SetPen(pen);
-	cairo_rectangle(this->cr, x, y, width, height);
-	cairo_stroke(this->cr);
+	SetPen(pen);
+	cairo_rectangle(m_cr, x, y, width, height);
+	cairo_stroke(m_cr);
 }
 
 void Graphics::Clear(const Drawing::Color color) {
-	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
-	cairo_paint(this->cr);
+	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
+	cairo_paint(m_cr);
 }
 
 void Graphics::FillRectangle(const Drawing::Color color, float x, float y, float width, float height) {
-	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
-	cairo_rectangle(this->cr, x, y, width, height);
-	cairo_fill(this->cr);
+	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
+	cairo_rectangle(m_cr, x, y, width, height);
+	cairo_fill(m_cr);
 }
 
 void Graphics::DrawImage(Drawing::Image * image, float x, float y) {
-	this->DrawImage(image, x, y, (float)image->GetWidth(), (float)image->GetHeight());
+	DrawImage(image, x, y, (float)image->GetWidth(), (float)image->GetHeight());
 }
 
 void Graphics::DrawImage(Drawing::Image * image, float x, float y, float width, float height) {
-	cairo_surface_t *surfaceAux = image->cairo_surface;
+	cairo_surface_t *surfaceAux = image->m_cairo_surface;
 
-	cairo_save(this->cr);
-	cairo_translate(this->cr, x, y);
-	cairo_scale(this->cr, image->GetWidth() / width, image->GetHeight() / height);
+	cairo_save(m_cr);
+	cairo_translate(m_cr, x, y);
+	cairo_scale(m_cr, image->GetWidth() / width, image->GetHeight() / height);
 
-	cairo_set_source_surface(this->cr, surfaceAux, 0, 0);
-	cairo_paint(this->cr);
-	cairo_restore(this->cr);
+	cairo_set_source_surface(m_cr, surfaceAux, 0, 0);
+	cairo_paint(m_cr);
+	cairo_restore(m_cr);
 }
 
 void Graphics::SetPen(Drawing::Pen * pen) {
 	Drawing::Color color = pen->GetColor();
-	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
+	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 
-	cairo_set_line_width(this->cr, pen->GetWidth());
+	cairo_set_line_width(m_cr, pen->GetWidth());
 
 	switch (pen->GetLineCap()) {
 		case LineCap::Butt:
-			cairo_set_line_cap(this->cr, CAIRO_LINE_CAP_BUTT);
+			cairo_set_line_cap(m_cr, CAIRO_LINE_CAP_BUTT);
 			break;
 		case LineCap::Round:
-			cairo_set_line_cap(this->cr, CAIRO_LINE_CAP_ROUND);
+			cairo_set_line_cap(m_cr, CAIRO_LINE_CAP_ROUND);
 			break;
 		case LineCap::Square:
-			cairo_set_line_cap(this->cr, CAIRO_LINE_CAP_SQUARE);
+			cairo_set_line_cap(m_cr, CAIRO_LINE_CAP_SQUARE);
 			break;
 	}
 }
 
 void Graphics::DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float y2) {
-	this->SetPen(pen);
-	cairo_save(this->cr);
-	cairo_move_to(this->cr, x1, y1);
-	cairo_line_to(this->cr, x2, y2);
-	cairo_stroke(this->cr);
-	cairo_restore(this->cr);
+	SetPen(pen);
+	cairo_save(m_cr);
+	cairo_move_to(m_cr, x1, y1);
+	cairo_line_to(m_cr, x2, y2);
+	cairo_stroke(m_cr);
+	cairo_restore(m_cr);
 }
 
 #define BORDER 2
@@ -120,12 +114,12 @@ GlyphMetrics Graphics::GetMeasureText(const String text, Drawing::Font *font) co
 	cairo_text_extents_t extents;
 	cairo_font_extents_t fontExtents;
 
-	cairo_save(this->cr);
-	cairo_select_font_face(this->cr, font->GetFont().ToCharArray(), slant, weight);
-	cairo_set_font_size(this->cr, font->GetSize());
-	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
-	cairo_font_extents(this->cr, &fontExtents);
-	cairo_restore(this->cr);
+	cairo_save(m_cr);
+	cairo_select_font_face(m_cr, font->GetFont().ToCharArray(), slant, weight);
+	cairo_set_font_size(m_cr, font->GetSize());
+	cairo_text_extents(m_cr, text.ToCharArray(), &extents);
+	cairo_font_extents(m_cr, &fontExtents);
+	cairo_restore(m_cr);
 
 	GlyphMetrics metrics;
 	metrics.SetWidth(extents.width + BORDER * 2);
@@ -141,7 +135,7 @@ GlyphMetrics Graphics::GetMeasureText(const String text, Drawing::Font *font) co
 }
 
 void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y) {
-	cairo_set_source_rgba(this->cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
+	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 
 	cairo_font_weight_t weight;
 	cairo_font_slant_t slant;
@@ -157,35 +151,35 @@ void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing
 		slant = CAIRO_FONT_SLANT_NORMAL;
 
 	cairo_text_extents_t extents;
-	cairo_save(this->cr);
-	cairo_select_font_face(this->cr, font->GetFont().ToCharArray(), slant, weight);
-	cairo_set_font_size(this->cr, font->GetSize());
-	cairo_text_extents(this->cr, text.ToCharArray(), &extents);
+	cairo_save(m_cr);
+	cairo_select_font_face(m_cr, font->GetFont().ToCharArray(), slant, weight);
+	cairo_set_font_size(m_cr, font->GetSize());
+	cairo_text_extents(m_cr, text.ToCharArray(), &extents);
 
 	int posx = x - extents.x_bearing + BORDER;
 	int posy = y - extents.y_bearing + BORDER;
-	cairo_move_to(this->cr, posx, posy);
-	cairo_show_text(this->cr, text.ToCharArray());
-	cairo_restore(this->cr);
+	cairo_move_to(m_cr, posx, posy);
+	cairo_show_text(m_cr, text.ToCharArray());
+	cairo_restore(m_cr);
 
 	float size = font->GetSize() * 0.07f;
 	size = Math::Max(Math::Round(size), 1.0f);
 	Pen pen = Pen(color, size);
 
-	cairo_antialias_t old = cairo_get_antialias(this->cr);
-	cairo_set_antialias(this->cr, cairo_antialias_t::CAIRO_ANTIALIAS_NONE);
+	cairo_antialias_t old = cairo_get_antialias(m_cr);
+	cairo_set_antialias(m_cr, cairo_antialias_t::CAIRO_ANTIALIAS_NONE);
 
 	if (font->GetStrikeout()) {
 		float posy =  y - (extents.y_bearing / 2.0f) + BORDER;;
 		posy = Math::Round(posy);
-		this->DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
+		DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
 	}
 
 	if (font->GetUnderline()) {
 		float posy =  y - extents.y_bearing + BORDER + (size * 1.5f);
 		posy = Math::Round(posy);
-		this->DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
+		DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
 	}
 
-	cairo_set_antialias(this->cr, old);
+	cairo_set_antialias(m_cr, old);
 }

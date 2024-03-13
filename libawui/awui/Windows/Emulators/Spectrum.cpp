@@ -41,36 +41,33 @@ void FinishCassetteCB(void * data) {
 }
 
 Spectrum::Spectrum() {
-	this->SetSize(1, 1);
-	this->_motherboard = new Motherboard();
-	this->_motherboard->SetWriteCassetteCB(WriteCassetteCB, this);
-	this->_motherboard->SetReadCassetteCB(ReadCassetteCB, this);
+	m_class = Classes::Spectrum;
+	SetSize(1, 1);
+	m_motherboard = new Motherboard();
+	m_motherboard->SetWriteCassetteCB(WriteCassetteCB, this);
+	m_motherboard->SetReadCassetteCB(ReadCassetteCB, this);
 
-	this->_pause = false;
+	m_pause = false;
 
-	this->_first = -1;
-	this->_last = -1;
-	this->_lastTick = 0;
-	this->_fileSlot = 0;
-	this->_tapecorder = new TapeCorder();
-	this->_tapecorder->SetFinishCassetteCB(FinishCassetteCB, this);
+	m_first = -1;
+	m_last = -1;
+	m_lastTick = 0;
+	m_fileSlot = 0;
+	m_tapecorder = new TapeCorder();
+	m_tapecorder->SetFinishCassetteCB(FinishCassetteCB, this);
 }
 
 Spectrum::~Spectrum() {
-	delete this->_motherboard;
+	delete m_motherboard;
 }
 
 bool Spectrum::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Spectrum) {
-		return true;
-	}
-
-	return ArcadeContainer::IsClass(objectClass);
+	return (objectClass == Classes::Spectrum) || ArcadeContainer::IsClass(objectClass);
 }
 
 void Spectrum::LoadRom(const String file) {
 	if (file.EndsWith(".rom"))
-		this->_motherboard->LoadRom(file);
+		m_motherboard->LoadRom(file);
 
 	if (file.EndsWith(".tap")) {
 		String rom = "roms/zxspectrum/48.rom";
@@ -92,13 +89,13 @@ void Spectrum::LoadRom(const String file) {
 		if (found != -1)
 			rom = String::Concat("roms/zxspectrum/", system);
 
-		this->_motherboard->LoadRom(rom);
-		this->_tapecorder->LoadFile(file);
+		m_motherboard->LoadRom(rom);
+		m_tapecorder->LoadFile(file);
 	}
 
-	this->_first = 0;
-	this->_last = 0;
-	this->_lastTick = DateTime::GetNow().GetTicks();
+	m_first = 0;
+	m_last = 0;
+	m_lastTick = DateTime::GetNow().GetTicks();
 }
 
 void Spectrum::CheckLimits() {
@@ -106,13 +103,13 @@ void Spectrum::CheckLimits() {
 
 void Spectrum::OnTick(float deltaSeconds) {
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET)
-		this->_motherboard->Reset();
+		m_motherboard->Reset();
 
-	this->_motherboard->OnTick();
+	m_motherboard->OnTick();
 }
 
 Motherboard * Spectrum::GetCPU() {
-	return this->_motherboard;
+	return m_motherboard;
 }
 
 // Interface:
@@ -124,23 +121,23 @@ Motherboard * Spectrum::GetCPU() {
 // 7100 pixel stretch, 16 bytes.
 
 void Spectrum::OnPaint(GL* gl) {
-	ULA * ula = this->_motherboard->GetULA();
+	ULA * ula = m_motherboard->GetULA();
 
 	int width = ula->GetImage()->GetWidth();
 	int height = ula->GetImage()->GetHeight();
 
 
-	//GL::DrawImageGL(ula->GetImage(), 0, 0, this->GetWidth(), this->GetHeight());
+	//GL::DrawImageGL(ula->GetImage(), 0, 0, GetWidth(), GetHeight());
 
 	float w = width;
 	float h = height;
 	float ratio = w / h;
-	w = this->GetWidth();
-	h = this->GetWidth() / ratio;
+	w = GetWidth();
+	h = GetWidth() / ratio;
 
-	if (h > this->GetHeight()) {
-		h = this->GetHeight();
-		w = this->GetHeight() * ratio;
+	if (h > GetHeight()) {
+		h = GetHeight();
+		w = GetHeight() * ratio;
 	}
 
 	int ratio2 = w / width;
@@ -149,128 +146,128 @@ void Spectrum::OnPaint(GL* gl) {
 		h = height * ratio2;
 	}
 
-	GL::DrawImageGL(ula->GetImage(), int(this->GetWidth() - w) >> 1, int(this->GetHeight() - h) >> 1, w, h);
+	GL::DrawImageGL(ula->GetImage(), int(GetWidth() - w) >> 1, int(GetHeight() - h) >> 1, w, h);
 }
 
 void Spectrum::CallKey(int key, bool pressed) {
 	if (pressed)
-		this->_motherboard->OnKeyPress(key / 10, 1 << (key % 10));
+		m_motherboard->OnKeyPress(key / 10, 1 << (key % 10));
 	else
-		this->_motherboard->OnKeyUp(key / 10, 1 << (key % 10));
+		m_motherboard->OnKeyUp(key / 10, 1 << (key % 10));
 }
 
 void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 	switch (key) {
-		case Keys::Key_F2:     if (pressed) this->SaveState(); break;
-		case Keys::Key_F4:     if (pressed) this->LoadState(); break;
-		case Keys::Key_F8:     if (pressed) this->_motherboard->SetFast(!this->_motherboard->GetFast()); break;
+		case Keys::Key_F2:     if (pressed) SaveState(); break;
+		case Keys::Key_F4:     if (pressed) LoadState(); break;
+		case Keys::Key_F8:     if (pressed) m_motherboard->SetFast(!m_motherboard->GetFast()); break;
 		case Keys::Key_F9:
 			if (pressed) {
-				if (!this->_tapecorder->IsPlaying()) {
-					this->_tapecorder->Rewind();
-					this->_tapecorder->Play();
+				if (!m_tapecorder->IsPlaying()) {
+					m_tapecorder->Rewind();
+					m_tapecorder->Play();
 				} else
-					this->_tapecorder->Stop();
+					m_tapecorder->Stop();
 			}
 			break;
 		case Keys::Key_LSHIFT:
-		case Keys::Key_RSHIFT: this->CallKey(00, pressed); break;
-		case Keys::Key_Z:      this->CallKey(01, pressed); break;
-		case Keys::Key_X:      this->CallKey(02, pressed); break;
-		case Keys::Key_C:      this->CallKey(03, pressed); break;
-		case Keys::Key_V:      this->CallKey(04, pressed); break;
-		case Keys::Key_A:      this->CallKey(10, pressed); break;
-		case Keys::Key_S:      this->CallKey(11, pressed); break;
-		case Keys::Key_D:      this->CallKey(12, pressed); break;
-		case Keys::Key_F:      this->CallKey(13, pressed); break;
-		case Keys::Key_G:      this->CallKey(14, pressed); break;
-		case Keys::Key_Q:      this->CallKey(20, pressed); break;
-		case Keys::Key_W:      this->CallKey(21, pressed); break;
-		case Keys::Key_E:      this->CallKey(22, pressed); break;
-		case Keys::Key_R:      this->CallKey(23, pressed); break;
-		case Keys::Key_T:      this->CallKey(24, pressed); break;
+		case Keys::Key_RSHIFT: CallKey(00, pressed); break;
+		case Keys::Key_Z:      CallKey(01, pressed); break;
+		case Keys::Key_X:      CallKey(02, pressed); break;
+		case Keys::Key_C:      CallKey(03, pressed); break;
+		case Keys::Key_V:      CallKey(04, pressed); break;
+		case Keys::Key_A:      CallKey(10, pressed); break;
+		case Keys::Key_S:      CallKey(11, pressed); break;
+		case Keys::Key_D:      CallKey(12, pressed); break;
+		case Keys::Key_F:      CallKey(13, pressed); break;
+		case Keys::Key_G:      CallKey(14, pressed); break;
+		case Keys::Key_Q:      CallKey(20, pressed); break;
+		case Keys::Key_W:      CallKey(21, pressed); break;
+		case Keys::Key_E:      CallKey(22, pressed); break;
+		case Keys::Key_R:      CallKey(23, pressed); break;
+		case Keys::Key_T:      CallKey(24, pressed); break;
 		case Keys::Key_KP1:
-		case Keys::Key_1:      this->CallKey(30, pressed); break;
+		case Keys::Key_1:      CallKey(30, pressed); break;
 		case Keys::Key_KP2:
-		case Keys::Key_2:      this->CallKey(31, pressed); break;
+		case Keys::Key_2:      CallKey(31, pressed); break;
 		case Keys::Key_KP3:
-		case Keys::Key_3:      this->CallKey(32, pressed); break;
+		case Keys::Key_3:      CallKey(32, pressed); break;
 		case Keys::Key_KP4:
-		case Keys::Key_4:      this->CallKey(33, pressed); break;
+		case Keys::Key_4:      CallKey(33, pressed); break;
 		case Keys::Key_KP5:
-		case Keys::Key_5:      this->CallKey(34, pressed); break;
+		case Keys::Key_5:      CallKey(34, pressed); break;
 		case Keys::Key_KP0:
-		case Keys::Key_0:      this->CallKey(40, pressed); break;
+		case Keys::Key_0:      CallKey(40, pressed); break;
 		case Keys::Key_KP9:
-		case Keys::Key_9:      this->CallKey(41, pressed); break;
+		case Keys::Key_9:      CallKey(41, pressed); break;
 		case Keys::Key_KP8:
-		case Keys::Key_8:      this->CallKey(42, pressed); break;
+		case Keys::Key_8:      CallKey(42, pressed); break;
 		case Keys::Key_KP7:
-		case Keys::Key_7:      this->CallKey(43, pressed); break;
+		case Keys::Key_7:      CallKey(43, pressed); break;
 		case Keys::Key_KP6:
-		case Keys::Key_6:      this->CallKey(44, pressed); break;
-		case Keys::Key_P:      this->CallKey(50, pressed); break;
-		case Keys::Key_O:      this->CallKey(51, pressed); break;
-		case Keys::Key_I:      this->CallKey(52, pressed); break;
-		case Keys::Key_U:      this->CallKey(53, pressed); break;
-		case Keys::Key_Y:      this->CallKey(54, pressed); break;
+		case Keys::Key_6:      CallKey(44, pressed); break;
+		case Keys::Key_P:      CallKey(50, pressed); break;
+		case Keys::Key_O:      CallKey(51, pressed); break;
+		case Keys::Key_I:      CallKey(52, pressed); break;
+		case Keys::Key_U:      CallKey(53, pressed); break;
+		case Keys::Key_Y:      CallKey(54, pressed); break;
 		case Keys::Key_KP_ENTER:
-		case Keys::Key_ENTER:  this->CallKey(60, pressed); break;
-		case Keys::Key_L:      this->CallKey(61, pressed); break;
-		case Keys::Key_K:      this->CallKey(62, pressed); break;
-		case Keys::Key_J:      this->CallKey(63, pressed); break;
-		case Keys::Key_H:      this->CallKey(64, pressed); break;
-		case Keys::Key_SPACE:  this->CallKey(70, pressed); break;
-		case Keys::Key_LALT:   this->CallKey(71, pressed); break;
-		case Keys::Key_M:      this->CallKey(72, pressed); break;
-		case Keys::Key_N:      this->CallKey(73, pressed); break;
-		case Keys::Key_B:      this->CallKey(74, pressed); break;
+		case Keys::Key_ENTER:  CallKey(60, pressed); break;
+		case Keys::Key_L:      CallKey(61, pressed); break;
+		case Keys::Key_K:      CallKey(62, pressed); break;
+		case Keys::Key_J:      CallKey(63, pressed); break;
+		case Keys::Key_H:      CallKey(64, pressed); break;
+		case Keys::Key_SPACE:  CallKey(70, pressed); break;
+		case Keys::Key_LALT:   CallKey(71, pressed); break;
+		case Keys::Key_M:      CallKey(72, pressed); break;
+		case Keys::Key_N:      CallKey(73, pressed); break;
+		case Keys::Key_B:      CallKey(74, pressed); break;
 
 		case Keys::Key_COMMA:
-			this->CallKey(71, pressed);
-			this->CallKey(73, pressed);
+			CallKey(71, pressed);
+			CallKey(73, pressed);
 			break;
 
 		case Keys::Key_QUOTE:
-			this->CallKey(71, pressed);
-			this->CallKey(43, pressed);
+			CallKey(71, pressed);
+			CallKey(43, pressed);
 			break;
 
 		case Keys::Key_KP_MINUS:
 		case Keys::Key_MINUS:
-			this->CallKey(71, pressed);
-			this->CallKey(63, pressed);
+			CallKey(71, pressed);
+			CallKey(63, pressed);
 			break;
 
 		case Keys::Key_KP_PLUS:
-			this->CallKey(71, pressed);
-			this->CallKey(62, pressed);
+			CallKey(71, pressed);
+			CallKey(62, pressed);
 			break;
 
 		case Keys::Key_KP_DIVIDE:
-			this->CallKey(71, pressed);
-			this->CallKey(04, pressed);
+			CallKey(71, pressed);
+			CallKey(04, pressed);
 			break;
 
 		case Keys::Key_KP_MULTIPLY:
-			this->CallKey(71, pressed);
-			this->CallKey(74, pressed);
+			CallKey(71, pressed);
+			CallKey(74, pressed);
 			break;
 
 		case Keys::Key_KP_PERIOD:
 		case Keys::Key_PERIOD:
-			this->CallKey(71, pressed);
-			this->CallKey(72, pressed);
+			CallKey(71, pressed);
+			CallKey(72, pressed);
 			break;
 
 		case Keys::Key_BACKSPACE:
-			this->CallKey(00, pressed);
-			this->CallKey(40, pressed);
+			CallKey(00, pressed);
+			CallKey(40, pressed);
 			break;
 
 		case Keys::Key_F5:
-			this->CallKey(00, pressed);
-			this->CallKey(30, pressed);
+			CallKey(00, pressed);
+			CallKey(30, pressed);
 			break;
 
 		default: break;
@@ -280,20 +277,20 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 void Spectrum::DoRemoteKey(RemoteButtons::Enum button, bool pressed) {
 	switch (button) {
 		case RemoteButtons::Up:
-			this->CallKey(00, pressed);
-			this->CallKey(43, pressed);
+			CallKey(00, pressed);
+			CallKey(43, pressed);
 			break;
 		case RemoteButtons::Down:
-			this->CallKey(00, pressed);
-			this->CallKey(44, pressed);
+			CallKey(00, pressed);
+			CallKey(44, pressed);
 			break;
 		case RemoteButtons::Left:
-			this->CallKey(00, pressed);
-			this->CallKey(34, pressed);
+			CallKey(00, pressed);
+			CallKey(34, pressed);
 			break;
 		case RemoteButtons::Right:
-			this->CallKey(00, pressed);
-			this->CallKey(42, pressed);
+			CallKey(00, pressed);
+			CallKey(42, pressed);
 			break;
 		default:
 			break;
@@ -301,12 +298,12 @@ void Spectrum::DoRemoteKey(RemoteButtons::Enum button, bool pressed) {
 }
 
 bool Spectrum::OnKeyPress(Keys::Enum key) {
-	this->DoKey(key, true);
+	DoKey(key, true);
 	return true;
 }
 
 bool Spectrum::OnKeyUp(Keys::Enum key) {
-	this->DoKey(key, false);
+	DoKey(key, false);
 	return true;
 }
 
@@ -339,30 +336,30 @@ uint8_t Spectrum::GetPad() const {
 bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	bool ret = false;
 
-	if (_fileSlot > 0 && (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_DECREASE)) {
-		_fileSlot--;
+	if (m_fileSlot > 0 && (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_DECREASE)) {
+		m_fileSlot--;
 		Console::Write("Estado: ");
-		Console::WriteLine(Convert::ToString(_fileSlot));
+		Console::WriteLine(Convert::ToString(m_fileSlot));
 	}
 
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_INCREASE) {
-		_fileSlot++;
+		m_fileSlot++;
 		Console::Write("Estado: ");
-		Console::WriteLine(Convert::ToString(_fileSlot));
+		Console::WriteLine(Convert::ToString(m_fileSlot));
 	}
 
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_LOAD)
-		this->LoadState();
+		LoadState();
 
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SAVE)
-		this->SaveState();
+		SaveState();
 
 	if (ret)
 		return ret;
 
-	this->DoRemoteKey(button, true);
-	uint8_t pad1 = this->GetPad();
-	this->_motherboard->OnPadEvent(pad1);
+	DoRemoteKey(button, true);
+	uint8_t pad1 = GetPad();
+	m_motherboard->OnPadEvent(pad1);
 
 	return true;
 }
@@ -371,26 +368,26 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	if (ArcadeContainer::OnRemoteKeyUp(which, button))
 		return true;
 
-	uint8_t pad1 = this->GetPad();
+	uint8_t pad1 = GetPad();
 
 	bool paused = ((pad1 & 0x40) == 0);
 	if (!paused)
-		this->_pause = false;
+		m_pause = false;
 
-	this->DoRemoteKey(button, false);
-	this->_motherboard->OnPadEvent(pad1);
+	DoRemoteKey(button, false);
+	m_motherboard->OnPadEvent(pad1);
 
 	return true;
 }
 
 void Spectrum::SetSoundEnabled(bool mode) {
-	SoundSDL::Instance()->SetPlayingSound(mode ? this->_motherboard->GetSound() : 0);
+	SoundSDL::Instance()->SetPlayingSound(mode ? m_motherboard->GetSound() : 0);
 }
 
 void Spectrum::LoadState() {
 	String name = "file.state";
-	if (_fileSlot > 0)
-		name = String::Concat(name, Convert::ToString(_fileSlot));
+	if (m_fileSlot > 0)
+		name = String::Concat(name, Convert::ToString(m_fileSlot));
 
 	if (File::Exists(name)) {
 		Console::Write("Cargando: ");
@@ -403,22 +400,22 @@ void Spectrum::LoadState() {
 		file->Close();
 		delete file;
 
-		this->_motherboard->LoadState(savedData);
+		m_motherboard->LoadState(savedData);
 		free(savedData);
 	}
 }
 
 void Spectrum::SaveState() {
 	String name = "file.state";
-	if (_fileSlot > 0)
-		name = String::Concat(name, Convert::ToString(_fileSlot));
+	if (m_fileSlot > 0)
+		name = String::Concat(name, Convert::ToString(m_fileSlot));
 
 	Console::Write("Guardando: ");
 	Console::WriteLine(name);
 
 	uint8_t * savedData = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
 	FileStream * file = new FileStream(name, FileMode::Truncate, FileAccess::Write);
-	this->_motherboard->SaveState(savedData);
+	m_motherboard->SaveState(savedData);
 
 	for (int i = 0; i < Motherboard::GetSaveSize(); i++)
 		file->WriteByte(savedData[i]);

@@ -27,3 +27,7 @@ SettingsWidget::~SettingsWidget() {
 void SettingsWidget::OnPaint(GL* gl) {
 	m_bitmap->OnPaint(gl);
 }
+
+awui::String SettingsWidget::ToString() const {
+	return "awui::Windows::Forms::Station::SettingsWidget";
+}

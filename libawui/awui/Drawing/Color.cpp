@@ -13,6 +13,7 @@
 using namespace awui::Drawing;
 
 Color::Color() : m_a(0), m_r(0), m_g(0), m_b(0) {
+	m_class = Classes::Color;
 }
 
 bool Color::IsClass(Classes objectClass) const {

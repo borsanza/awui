@@ -19,6 +19,7 @@ namespace awui {
 		Form,
 		Graphics,
 		Image,
+		EventArgs,
 		MouseEventArgs,
 		JoystickEventArgs,
 		JoystickMoveEventArgs,
@@ -38,12 +39,16 @@ namespace awui {
 		MenuButton,
 		Shader,
 		ArcadeContainer,
-		ConfigButton
+		ConfigButton,
+		SettingsUI
 	};
 
 	class Object {
+		protected:
+			Classes m_class;
+
 		public:
-			Object() = default;
+			Object();
 			virtual ~Object() = default;
 
 			virtual bool IsClass(Classes objectClass) const;

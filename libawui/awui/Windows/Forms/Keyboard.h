@@ -2,16 +2,12 @@
 
 #include <awui/Windows/Forms/Control.h>
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			class Keyboard : public Control {
-				public:
-					Keyboard();
-					virtual ~Keyboard();
+namespace awui::Windows::Forms {
+	class Keyboard : public Control {
+		public:
+			Keyboard();
+			virtual ~Keyboard() = default;
 
-					virtual bool IsClass(Classes objectClass) const override;
-			};
-		}
-	}
+			virtual bool IsClass(Classes objectClass) const override;
+	};
 }

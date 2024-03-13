@@ -10,17 +10,11 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Panel::Panel() {
-}
-
-Panel::~Panel() {
+	m_class = Classes::Panel;
 }
 
 bool Panel::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::Panel) {
-		return true;
-	}
-
-	return Control::IsClass(objectClass);
+	return (objectClass == Classes::Panel) || Control::IsClass(objectClass);
 }
 
 const Size Panel::GetMinimumSize() const {

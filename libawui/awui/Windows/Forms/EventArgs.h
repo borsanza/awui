@@ -2,11 +2,10 @@
 
 #include <awui/Object.h>
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			class EventArgs : public Object {
-			};
-		}
-	}
+namespace awui::Windows::Forms {
+	class EventArgs : public Object {
+		public:
+			EventArgs();
+			virtual bool IsClass(Classes objectClass) const override;
+	};
 }

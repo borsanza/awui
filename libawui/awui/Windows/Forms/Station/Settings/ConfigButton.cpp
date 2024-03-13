@@ -20,17 +20,16 @@ using namespace awui::Windows::Forms::Station::Settings;
 #define OFFSET 0.5f
 
 ConfigButton::ConfigButton(TypeButton typeButton) {
+	m_class = Classes::ConfigButton;
 	m_typeButton = typeButton;
 	m_subpage = nullptr;
 
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	SetFocusable(true);
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
+	SetFocusable(true);
 
 	AddWidget(&m_label);
-
-	// SetBackColor(Color::FromArgb(0, 255, 0));
 }
 
 ConfigButton::~ConfigButton() {
@@ -38,11 +37,7 @@ ConfigButton::~ConfigButton() {
 }
 
 bool ConfigButton::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::ConfigButton) {
-		return true;
-	}
-
-	return Control::IsClass(objectClass);
+	return (objectClass == Classes::ConfigButton) || Control::IsClass(objectClass);
 }
 
 void ConfigButton::OnPaint(GL* gl) {
@@ -87,7 +82,7 @@ void ConfigButton::SetForeColor(const Drawing::Color color) {
 	}
 }
 
-const awui::String ConfigButton::GetText() {
+const awui::String ConfigButton::GetText() const {
 	return m_label.GetText();
 }
 
@@ -145,4 +140,11 @@ bool ConfigButton::OnKeyPress(Keys::Enum key) {
 	}
 
     return ret;
+}
+
+awui::String ConfigButton::ToString() const {
+    String a = awui::String("awui::Windows::Forms::Station::Settings::ConfigButton (");
+	a += GetText();
+	a += awui::String(")");
+	return a;
 }

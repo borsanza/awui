@@ -17,13 +17,13 @@ namespace awui {
 
 			private:
 				static Collections::ArrayList list;
-				int width;
-				int height;
-				cairo_surface_t *cairo_surface;
-				cairo_t *cr;
-				unsigned char *image;
-				bool loaded;
-				GLuint texture;
+				int m_width;
+				int m_height;
+				cairo_surface_t *m_cairo_surface;
+				cairo_t *m_cr;
+				unsigned char *m_image;
+				bool m_loaded;
+				GLuint m_texture;
 
 			public:
 				Image(int width, int height);

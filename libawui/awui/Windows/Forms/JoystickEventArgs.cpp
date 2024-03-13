@@ -6,16 +6,10 @@
 using namespace awui::Windows::Forms;
 
 JoystickEventArgs::JoystickEventArgs(int which) {
+	m_class = Classes::JoystickEventArgs;
 	m_which = which;
 }
 
-JoystickEventArgs::~JoystickEventArgs() {
-}
-
 bool JoystickEventArgs::IsClass(Classes objectClass) const {
-	if (objectClass == Classes::JoystickEventArgs) {
-		return true;
-	}
-
-	return Object::IsClass(objectClass);
+	return (objectClass == Classes::JoystickEventArgs) || EventArgs::IsClass(objectClass);
 }

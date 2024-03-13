@@ -14,7 +14,7 @@ namespace awui {
 
 				public:
 					JoystickButtonEventArgs(int which, int button, uint32_t buttons, uint32_t prevButtons);
-					virtual ~JoystickButtonEventArgs();
+					virtual ~JoystickButtonEventArgs() = default;
 
 					virtual bool IsClass(Classes objectClass) const override;
 

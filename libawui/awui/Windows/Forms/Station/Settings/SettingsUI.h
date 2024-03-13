@@ -27,6 +27,9 @@ namespace awui::Windows::Forms {
 
 				public:
 					SettingsUI();
+
+					virtual bool IsClass(Classes objectClass) const override;
+					
 					void InitializeComponent();
 
 					virtual void OnTick(float deltaSeconds) override;
