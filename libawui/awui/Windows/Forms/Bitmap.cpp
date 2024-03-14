@@ -5,8 +5,8 @@
 #include <awui/Math.h>
 
 #include <SDL.h>
-#include <SDL_opengl.h>
 #include <SDL_image.h>
+#include <SDL_opengl.h>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
@@ -98,7 +98,7 @@ void Bitmap::Unload() {
 
 void Bitmap::UnloadAll() {
 	for (int i = 0; i < Bitmap::list.GetCount(); i++) {
-		Bitmap * bitmap = (Bitmap *)Bitmap::list.Get(i);
+		Bitmap * bitmap = (Bitmap *) Bitmap::list.Get(i);
 		bitmap->Unload();
 	}
 }
@@ -109,10 +109,14 @@ void Bitmap::PaintNoResized() {
 	y1 = Math::Round((GetHeight() - m_textureHeight) / 2.0f);
 	x2 = x1 + m_textureWidth;
 	y2 = y1 + m_textureHeight;
-	glTexCoord2f(0.0f, 0.0f); glVertex2i(x1, y1); // Left Top
-	glTexCoord2f(1.0f, 0.0f); glVertex2i(x2, y1); // Right Top
-	glTexCoord2f(1.0f, 1.0f); glVertex2i(x2, y2); // Right Bottom
-	glTexCoord2f(0.0f, 1.0f); glVertex2i(x1, y2); // Left Bottom
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2i(x1, y1); // Left Top
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2i(x2, y1); // Right Top
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2i(x2, y2); // Right Bottom
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2i(x1, y2); // Left Bottom
 }
 
 void Bitmap::PaintTiled() {
@@ -130,50 +134,66 @@ void Bitmap::PaintTiled() {
 	y2 = GetHeight() - m_fixY2;
 	y3 = GetHeight();
 	tx0 = 0.0f;
-	tx1 = (float)(m_fixX1) / (float)m_textureWidth;
-	tx2 = (float)(m_textureWidth - m_fixX2) / (float)m_textureWidth;
+	tx1 = (float) (m_fixX1) / (float) m_textureWidth;
+	tx2 = (float) (m_textureWidth - m_fixX2) / (float) m_textureWidth;
 	tx3 = 1.0f;
 	ty0 = 0.0f;
-	ty1 = (float)m_fixY1 / (float)m_textureHeight;
-	ty2 = (float)(m_textureHeight - m_fixY2) / (float)m_textureHeight;
+	ty1 = (float) m_fixY1 / (float) m_textureHeight;
+	ty2 = (float) (m_textureHeight - m_fixY2) / (float) m_textureHeight;
 	ty3 = 1.0f;
 
-// 0 | 1 | 2
-//-----------
-// 3 | 4 | 5
-//-----------
-// 6 | 7 | 8
+	// 0 | 1 | 2
+	//-----------
+	// 3 | 4 | 5
+	//-----------
+	// 6 | 7 | 8
 
 	// 0
 	if ((m_fixX1 > 0) && (m_fixY1 > 0)) {
-		glTexCoord2f(tx0, ty0); glVertex2i(x0, y0); // Left Top
-		glTexCoord2f(tx1, ty0); glVertex2i(x1, y0); // Right Top
-		glTexCoord2f(tx1, ty1); glVertex2i(x1, y1); // Right Bottom
-		glTexCoord2f(tx0, ty1); glVertex2i(x0, y1); // Left Bottom
+		glTexCoord2f(tx0, ty0);
+		glVertex2i(x0, y0); // Left Top
+		glTexCoord2f(tx1, ty0);
+		glVertex2i(x1, y0); // Right Top
+		glTexCoord2f(tx1, ty1);
+		glVertex2i(x1, y1); // Right Bottom
+		glTexCoord2f(tx0, ty1);
+		glVertex2i(x0, y1); // Left Bottom
 	}
 
 	// 2
 	if ((m_fixX2 > 0) && (m_fixY1 > 0)) {
-		glTexCoord2f(tx2, ty0); glVertex2i(x2, y0); // Left Top
-		glTexCoord2f(tx3, ty0); glVertex2i(x3, y0); // Right Top
-		glTexCoord2f(tx3, ty1); glVertex2i(x3, y1); // Right Bottom
-		glTexCoord2f(tx2, ty1); glVertex2i(x2, y1); // Left Bottom
+		glTexCoord2f(tx2, ty0);
+		glVertex2i(x2, y0); // Left Top
+		glTexCoord2f(tx3, ty0);
+		glVertex2i(x3, y0); // Right Top
+		glTexCoord2f(tx3, ty1);
+		glVertex2i(x3, y1); // Right Bottom
+		glTexCoord2f(tx2, ty1);
+		glVertex2i(x2, y1); // Left Bottom
 	}
 
 	// 6
 	if ((m_fixX1 > 0) && (m_fixY2 > 0)) {
-		glTexCoord2f(tx0, ty2); glVertex2i(x0, y2); // Left Top
-		glTexCoord2f(tx1, ty2); glVertex2i(x1, y2); // Right Top
-		glTexCoord2f(tx1, ty3); glVertex2i(x1, y3); // Right Bottom
-		glTexCoord2f(tx0, ty3); glVertex2i(x0, y3); // Left Bottom
+		glTexCoord2f(tx0, ty2);
+		glVertex2i(x0, y2); // Left Top
+		glTexCoord2f(tx1, ty2);
+		glVertex2i(x1, y2); // Right Top
+		glTexCoord2f(tx1, ty3);
+		glVertex2i(x1, y3); // Right Bottom
+		glTexCoord2f(tx0, ty3);
+		glVertex2i(x0, y3); // Left Bottom
 	}
 
 	// 8
 	if ((m_fixX2 > 0) && (m_fixY2 > 0)) {
-		glTexCoord2f(tx2, ty2); glVertex2i(x2, y2); // Left Top
-		glTexCoord2f(tx3, ty2); glVertex2i(x3, y2); // Right Top
-		glTexCoord2f(tx3, ty3); glVertex2i(x3, y3); // Right Bottom
-		glTexCoord2f(tx2, ty3); glVertex2i(x2, y3); // Left Bottom
+		glTexCoord2f(tx2, ty2);
+		glVertex2i(x2, y2); // Left Top
+		glTexCoord2f(tx3, ty2);
+		glVertex2i(x3, y2); // Right Top
+		glTexCoord2f(tx3, ty3);
+		glVertex2i(x3, y3); // Right Bottom
+		glTexCoord2f(tx2, ty3);
+		glVertex2i(x2, y3); // Left Bottom
 	}
 
 	// 1
@@ -181,20 +201,28 @@ void Bitmap::PaintTiled() {
 		int xn1 = m_fixX1;
 		int xn2 = xn1 + (m_textureWidth - m_fixX1 - m_fixX2);
 		while (xn2 < (GetWidth() - m_fixX2)) {
-			glTexCoord2f(tx1, ty0); glVertex2i(xn1, y0); // Left Top
-			glTexCoord2f(tx2, ty0); glVertex2i(xn2, y0); // Right Top
-			glTexCoord2f(tx2, ty1); glVertex2i(xn2, y1); // Right Bottom
-			glTexCoord2f(tx1, ty1); glVertex2i(xn1, y1); // Left Bottom
+			glTexCoord2f(tx1, ty0);
+			glVertex2i(xn1, y0); // Left Top
+			glTexCoord2f(tx2, ty0);
+			glVertex2i(xn2, y0); // Right Top
+			glTexCoord2f(tx2, ty1);
+			glVertex2i(xn2, y1); // Right Bottom
+			glTexCoord2f(tx1, ty1);
+			glVertex2i(xn1, y1); // Left Bottom
 			xn1 = xn2;
 			xn2 = xn1 + (m_textureWidth - m_fixX1 - m_fixX2);
 		}
 
 		// Recalcular tx2
 		xn2 = GetWidth() - m_fixX2;
-		glTexCoord2f(tx1, ty0); glVertex2i(xn1, y0); // Left Top
-		glTexCoord2f(tx2, ty0); glVertex2i(xn2, y0); // Right Top
-		glTexCoord2f(tx2, ty1); glVertex2i(xn2, y1); // Right Bottom
-		glTexCoord2f(tx1, ty1); glVertex2i(xn1, y1); // Left Bottom
+		glTexCoord2f(tx1, ty0);
+		glVertex2i(xn1, y0); // Left Top
+		glTexCoord2f(tx2, ty0);
+		glVertex2i(xn2, y0); // Right Top
+		glTexCoord2f(tx2, ty1);
+		glVertex2i(xn2, y1); // Right Bottom
+		glTexCoord2f(tx1, ty1);
+		glVertex2i(xn1, y1); // Left Bottom
 	}
 
 	// 3
@@ -202,20 +230,28 @@ void Bitmap::PaintTiled() {
 		int yn1 = m_fixY1;
 		int yn2 = yn1 + (m_textureHeight - m_fixY1 - m_fixY2);
 		while (yn2 < (GetHeight() - m_fixY2)) {
-			glTexCoord2f(tx0, ty1); glVertex2i(x0, yn1); // Left Top
-			glTexCoord2f(tx1, ty1); glVertex2i(x1, yn1); // Right Top
-			glTexCoord2f(tx1, ty2); glVertex2i(x1, yn2); // Right Bottom
-			glTexCoord2f(tx0, ty2); glVertex2i(x0, yn2); // Left Bottom
+			glTexCoord2f(tx0, ty1);
+			glVertex2i(x0, yn1); // Left Top
+			glTexCoord2f(tx1, ty1);
+			glVertex2i(x1, yn1); // Right Top
+			glTexCoord2f(tx1, ty2);
+			glVertex2i(x1, yn2); // Right Bottom
+			glTexCoord2f(tx0, ty2);
+			glVertex2i(x0, yn2); // Left Bottom
 			yn1 = yn2;
 			yn2 = yn1 + (m_textureHeight - m_fixY1 - m_fixY2);
 		}
 
 		// Recalcular ty2
 		yn2 = GetHeight() - m_fixY2;
-		glTexCoord2f(tx0, ty1); glVertex2i(x0, yn1); // Left Top
-		glTexCoord2f(tx1, ty1); glVertex2i(x1, yn1); // Right Top
-		glTexCoord2f(tx1, ty2); glVertex2i(x1, yn2); // Right Bottom
-		glTexCoord2f(tx0, ty2); glVertex2i(x0, yn2); // Left Bottom
+		glTexCoord2f(tx0, ty1);
+		glVertex2i(x0, yn1); // Left Top
+		glTexCoord2f(tx1, ty1);
+		glVertex2i(x1, yn1); // Right Top
+		glTexCoord2f(tx1, ty2);
+		glVertex2i(x1, yn2); // Right Bottom
+		glTexCoord2f(tx0, ty2);
+		glVertex2i(x0, yn2); // Left Bottom
 	}
 
 	// 5
@@ -223,20 +259,28 @@ void Bitmap::PaintTiled() {
 		int yn1 = m_fixY1;
 		int yn2 = yn1 + (m_textureHeight - m_fixY1 - m_fixY2);
 		while (yn2 < (GetHeight() - m_fixY2)) {
-			glTexCoord2f(tx2, ty1); glVertex2i(x2, yn1); // Left Top
-			glTexCoord2f(tx3, ty1); glVertex2i(x3, yn1); // Right Top
-			glTexCoord2f(tx3, ty2); glVertex2i(x3, yn2); // Right Bottom
-			glTexCoord2f(tx2, ty2); glVertex2i(x2, yn2); // Left Bottom
+			glTexCoord2f(tx2, ty1);
+			glVertex2i(x2, yn1); // Left Top
+			glTexCoord2f(tx3, ty1);
+			glVertex2i(x3, yn1); // Right Top
+			glTexCoord2f(tx3, ty2);
+			glVertex2i(x3, yn2); // Right Bottom
+			glTexCoord2f(tx2, ty2);
+			glVertex2i(x2, yn2); // Left Bottom
 			yn1 = yn2;
 			yn2 = yn1 + (m_textureHeight - m_fixY1 - m_fixY2);
 		}
 
 		// Recalcular la ty2
 		yn2 = GetHeight() - m_fixY2;
-		glTexCoord2f(tx2, ty1); glVertex2i(x2, yn1); // Left Top
-		glTexCoord2f(tx3, ty1); glVertex2i(x3, yn1); // Right Top
-		glTexCoord2f(tx3, ty2); glVertex2i(x3, yn2); // Right Bottom
-		glTexCoord2f(tx2, ty2); glVertex2i(x2, yn2); // Left Bottom
+		glTexCoord2f(tx2, ty1);
+		glVertex2i(x2, yn1); // Left Top
+		glTexCoord2f(tx3, ty1);
+		glVertex2i(x3, yn1); // Right Top
+		glTexCoord2f(tx3, ty2);
+		glVertex2i(x3, yn2); // Right Bottom
+		glTexCoord2f(tx2, ty2);
+		glVertex2i(x2, yn2); // Left Bottom
 	}
 
 	// 7
@@ -244,20 +288,28 @@ void Bitmap::PaintTiled() {
 		int xn1 = m_fixX1;
 		int xn2 = xn1 + (m_textureWidth - m_fixX1 - m_fixX2);
 		while (xn2 < (GetWidth() - m_fixX2)) {
-			glTexCoord2f(tx1, ty2); glVertex2i(xn1, y2); // Left Top
-			glTexCoord2f(tx2, ty2); glVertex2i(xn2, y2); // Right Top
-			glTexCoord2f(tx2, ty3); glVertex2i(xn2, y3); // Right Bottom
-			glTexCoord2f(tx1, ty3); glVertex2i(xn1, y3); // Left Bottom
+			glTexCoord2f(tx1, ty2);
+			glVertex2i(xn1, y2); // Left Top
+			glTexCoord2f(tx2, ty2);
+			glVertex2i(xn2, y2); // Right Top
+			glTexCoord2f(tx2, ty3);
+			glVertex2i(xn2, y3); // Right Bottom
+			glTexCoord2f(tx1, ty3);
+			glVertex2i(xn1, y3); // Left Bottom
 			xn1 = xn2;
 			xn2 = xn1 + (m_textureWidth - m_fixX1 - m_fixX2);
 		}
 
 		// Recalcular la tx2;
 		xn2 = GetWidth() - m_fixX2;
-		glTexCoord2f(tx1, ty2); glVertex2i(xn1, y2); // Left Top
-		glTexCoord2f(tx2, ty2); glVertex2i(xn2, y2); // Right Top
-		glTexCoord2f(tx2, ty3); glVertex2i(xn2, y3); // Right Bottom
-		glTexCoord2f(tx1, ty3); glVertex2i(xn1, y3); // Left Bottom
+		glTexCoord2f(tx1, ty2);
+		glVertex2i(xn1, y2); // Left Top
+		glTexCoord2f(tx2, ty2);
+		glVertex2i(xn2, y2); // Right Top
+		glTexCoord2f(tx2, ty3);
+		glVertex2i(xn2, y3); // Right Bottom
+		glTexCoord2f(tx1, ty3);
+		glVertex2i(xn1, y3); // Left Bottom
 	}
 
 	// 4
@@ -268,10 +320,14 @@ void Bitmap::PaintTiled() {
 		xn1 = m_fixX1;
 		xn2 = xn1 + (m_textureWidth - m_fixX1 - m_fixX2);
 		while (xn2 < (GetWidth() - m_fixX2)) {
-			glTexCoord2f(tx1, ty1); glVertex2i(xn1, yn1); // Left Top
-			glTexCoord2f(tx2, ty1); glVertex2i(xn2, yn1); // Right Top
-			glTexCoord2f(tx2, ty2); glVertex2i(xn2, yn2); // Right Bottom
-			glTexCoord2f(tx1, ty2); glVertex2i(xn1, yn2); // Left Bottom
+			glTexCoord2f(tx1, ty1);
+			glVertex2i(xn1, yn1); // Left Top
+			glTexCoord2f(tx2, ty1);
+			glVertex2i(xn2, yn1); // Right Top
+			glTexCoord2f(tx2, ty2);
+			glVertex2i(xn2, yn2); // Right Bottom
+			glTexCoord2f(tx1, ty2);
+			glVertex2i(xn1, yn2); // Left Bottom
 			xn1 = xn2;
 			xn2 = xn1 + (m_textureWidth - m_fixX1 - m_fixX2);
 		}
@@ -284,10 +340,14 @@ void Bitmap::PaintTiled() {
 	xn2 = xn1 + (m_textureWidth - m_fixX1 - m_fixX2);
 	yn2 = GetHeight() - m_fixY2;
 	while (xn2 < (GetWidth() - m_fixX2)) {
-		glTexCoord2f(tx1, ty1); glVertex2i(xn1, yn1); // Left Top
-		glTexCoord2f(tx2, ty1); glVertex2i(xn2, yn1); // Right Top
-		glTexCoord2f(tx2, ty2); glVertex2i(xn2, yn2); // Right Bottom
-		glTexCoord2f(tx1, ty2); glVertex2i(xn1, yn2); // Left Bottom
+		glTexCoord2f(tx1, ty1);
+		glVertex2i(xn1, yn1); // Left Top
+		glTexCoord2f(tx2, ty1);
+		glVertex2i(xn2, yn1); // Right Top
+		glTexCoord2f(tx2, ty2);
+		glVertex2i(xn2, yn2); // Right Bottom
+		glTexCoord2f(tx1, ty2);
+		glVertex2i(xn1, yn2); // Left Bottom
 		xn1 = xn2;
 		xn2 = xn1 + (m_textureWidth - m_fixX1 - m_fixX2);
 	}
@@ -297,10 +357,14 @@ void Bitmap::PaintTiled() {
 	yn2 = yn1 + (m_textureHeight - m_fixY1 - m_fixY2);
 	xn2 = GetWidth() - m_fixX2;
 	while (yn2 < (GetHeight() - m_fixY2)) {
-		glTexCoord2f(tx1, ty1); glVertex2i(xn1, yn1); // Left Top
-		glTexCoord2f(tx2, ty1); glVertex2i(xn2, yn1); // Right Top
-		glTexCoord2f(tx2, ty2); glVertex2i(xn2, yn2); // Right Bottom
-		glTexCoord2f(tx1, ty2); glVertex2i(xn1, yn2); // Left Bottom
+		glTexCoord2f(tx1, ty1);
+		glVertex2i(xn1, yn1); // Left Top
+		glTexCoord2f(tx2, ty1);
+		glVertex2i(xn2, yn1); // Right Top
+		glTexCoord2f(tx2, ty2);
+		glVertex2i(xn2, yn2); // Right Bottom
+		glTexCoord2f(tx1, ty2);
+		glVertex2i(xn1, yn2); // Left Bottom
 		yn1 = yn2;
 		yn2 = yn1 + (m_textureHeight - m_fixY1 - m_fixY2);
 	}
@@ -308,12 +372,15 @@ void Bitmap::PaintTiled() {
 	// Recalcular la tx2 y la ty2
 	xn2 = GetWidth() - m_fixX2;
 	yn2 = GetHeight() - m_fixY2;
-	glTexCoord2f(tx1, ty1); glVertex2i(xn1, yn1); // Left Top
-	glTexCoord2f(tx2, ty1); glVertex2i(xn2, yn1); // Right Top
-	glTexCoord2f(tx2, ty2); glVertex2i(xn2, yn2); // Right Bottom
-	glTexCoord2f(tx1, ty2); glVertex2i(xn1, yn2); // Left Bottom
+	glTexCoord2f(tx1, ty1);
+	glVertex2i(xn1, yn1); // Left Top
+	glTexCoord2f(tx2, ty1);
+	glVertex2i(xn2, yn1); // Right Top
+	glTexCoord2f(tx2, ty2);
+	glVertex2i(xn2, yn2); // Right Bottom
+	glTexCoord2f(tx1, ty2);
+	glVertex2i(xn1, yn2); // Left Bottom
 }
-
 
 void Bitmap::PaintTexture(int left, int top, int right, int bottom) {
 	int x0, x1, x2, x3;
@@ -330,88 +397,124 @@ void Bitmap::PaintTexture(int left, int top, int right, int bottom) {
 	y2 = bottom - m_fixY2;
 	y3 = bottom;
 	tx0 = 0.0f;
-	tx1 = (float)(m_fixX1) / (float)m_textureWidth;
-	tx2 = (float)(m_textureWidth - m_fixX2) / (float)m_textureWidth;
+	tx1 = (float) (m_fixX1) / (float) m_textureWidth;
+	tx2 = (float) (m_textureWidth - m_fixX2) / (float) m_textureWidth;
 	tx3 = 1.0f;
 	ty0 = 0.0f;
-	ty1 = (float)m_fixY1 / (float)m_textureHeight;
-	ty2 = (float)(m_textureHeight - m_fixY2) / (float)m_textureHeight;
+	ty1 = (float) m_fixY1 / (float) m_textureHeight;
+	ty2 = (float) (m_textureHeight - m_fixY2) / (float) m_textureHeight;
 	ty3 = 1.0f;
 
-// 0 | 1 | 2
-//-----------
-// 3 | 4 | 5
-//-----------
-// 6 | 7 | 8
+	// 0 | 1 | 2
+	//-----------
+	// 3 | 4 | 5
+	//-----------
+	// 6 | 7 | 8
 
 	// 0
 	if ((m_fixX1 > 0) && (m_fixY1 > 0)) {
-		glTexCoord2f(tx0, ty0); glVertex2i(x0, y0); // Left Top
-		glTexCoord2f(tx1, ty0); glVertex2i(x1, y0); // Right Top
-		glTexCoord2f(tx1, ty1); glVertex2i(x1, y1); // Right Bottom
-		glTexCoord2f(tx0, ty1); glVertex2i(x0, y1); // Left Bottom
+		glTexCoord2f(tx0, ty0);
+		glVertex2i(x0, y0); // Left Top
+		glTexCoord2f(tx1, ty0);
+		glVertex2i(x1, y0); // Right Top
+		glTexCoord2f(tx1, ty1);
+		glVertex2i(x1, y1); // Right Bottom
+		glTexCoord2f(tx0, ty1);
+		glVertex2i(x0, y1); // Left Bottom
 	}
 
 	// 1
 	if (m_fixY1 > 0) {
-		glTexCoord2f(tx1, ty0); glVertex2i(x1, y0); // Left Top
-		glTexCoord2f(tx2, ty0); glVertex2i(x2, y0); // Right Top
-		glTexCoord2f(tx2, ty1); glVertex2i(x2, y1); // Right Bottom
-		glTexCoord2f(tx1, ty1); glVertex2i(x1, y1); // Left Bottom
+		glTexCoord2f(tx1, ty0);
+		glVertex2i(x1, y0); // Left Top
+		glTexCoord2f(tx2, ty0);
+		glVertex2i(x2, y0); // Right Top
+		glTexCoord2f(tx2, ty1);
+		glVertex2i(x2, y1); // Right Bottom
+		glTexCoord2f(tx1, ty1);
+		glVertex2i(x1, y1); // Left Bottom
 	}
 
 	// 2
 	if ((m_fixX2 > 0) && (m_fixY1 > 0)) {
-		glTexCoord2f(tx2, ty0); glVertex2i(x2, y0); // Left Top
-		glTexCoord2f(tx3, ty0); glVertex2i(x3, y0); // Right Top
-		glTexCoord2f(tx3, ty1); glVertex2i(x3, y1); // Right Bottom
-		glTexCoord2f(tx2, ty1); glVertex2i(x2, y1); // Left Bottom
+		glTexCoord2f(tx2, ty0);
+		glVertex2i(x2, y0); // Left Top
+		glTexCoord2f(tx3, ty0);
+		glVertex2i(x3, y0); // Right Top
+		glTexCoord2f(tx3, ty1);
+		glVertex2i(x3, y1); // Right Bottom
+		glTexCoord2f(tx2, ty1);
+		glVertex2i(x2, y1); // Left Bottom
 	}
 
 	// 3
 	if (m_fixX1 > 0) {
-		glTexCoord2f(tx0, ty1); glVertex2i(x0, y1); // Left Top
-		glTexCoord2f(tx1, ty1); glVertex2i(x1, y1); // Right Top
-		glTexCoord2f(tx1, ty2); glVertex2i(x1, y2); // Right Bottom
-		glTexCoord2f(tx0, ty2); glVertex2i(x0, y2); // Left Bottom
+		glTexCoord2f(tx0, ty1);
+		glVertex2i(x0, y1); // Left Top
+		glTexCoord2f(tx1, ty1);
+		glVertex2i(x1, y1); // Right Top
+		glTexCoord2f(tx1, ty2);
+		glVertex2i(x1, y2); // Right Bottom
+		glTexCoord2f(tx0, ty2);
+		glVertex2i(x0, y2); // Left Bottom
 	}
 
 	// 4
-	glTexCoord2f(tx1, ty1); glVertex2i(x1, y1); // Left Top
-	glTexCoord2f(tx2, ty1); glVertex2i(x2, y1); // Right Top
-	glTexCoord2f(tx2, ty2); glVertex2i(x2, y2); // Right Bottom
-	glTexCoord2f(tx1, ty2); glVertex2i(x1, y2); // Left Bottom
+	glTexCoord2f(tx1, ty1);
+	glVertex2i(x1, y1); // Left Top
+	glTexCoord2f(tx2, ty1);
+	glVertex2i(x2, y1); // Right Top
+	glTexCoord2f(tx2, ty2);
+	glVertex2i(x2, y2); // Right Bottom
+	glTexCoord2f(tx1, ty2);
+	glVertex2i(x1, y2); // Left Bottom
 
 	// 5
 	if (m_fixX2 > 0) {
-		glTexCoord2f(tx2, ty1); glVertex2i(x2, y1); // Left Top
-		glTexCoord2f(tx3, ty1); glVertex2i(x3, y1); // Right Top
-		glTexCoord2f(tx3, ty2); glVertex2i(x3, y2); // Right Bottom
-		glTexCoord2f(tx2, ty2); glVertex2i(x2, y2); // Left Bottom
+		glTexCoord2f(tx2, ty1);
+		glVertex2i(x2, y1); // Left Top
+		glTexCoord2f(tx3, ty1);
+		glVertex2i(x3, y1); // Right Top
+		glTexCoord2f(tx3, ty2);
+		glVertex2i(x3, y2); // Right Bottom
+		glTexCoord2f(tx2, ty2);
+		glVertex2i(x2, y2); // Left Bottom
 	}
 
 	// 6
 	if ((m_fixX1 > 0) && (m_fixY2 > 0)) {
-		glTexCoord2f(tx0, ty2); glVertex2i(x0, y2); // Left Top
-		glTexCoord2f(tx1, ty2); glVertex2i(x1, y2); // Right Top
-		glTexCoord2f(tx1, ty3); glVertex2i(x1, y3); // Right Bottom
-		glTexCoord2f(tx0, ty3); glVertex2i(x0, y3); // Left Bottom
+		glTexCoord2f(tx0, ty2);
+		glVertex2i(x0, y2); // Left Top
+		glTexCoord2f(tx1, ty2);
+		glVertex2i(x1, y2); // Right Top
+		glTexCoord2f(tx1, ty3);
+		glVertex2i(x1, y3); // Right Bottom
+		glTexCoord2f(tx0, ty3);
+		glVertex2i(x0, y3); // Left Bottom
 	}
 
 	// 7
 	if (m_fixY2 > 0) {
-		glTexCoord2f(tx1, ty2); glVertex2i(x1, y2); // Left Top
-		glTexCoord2f(tx2, ty2); glVertex2i(x2, y2); // Right Top
-		glTexCoord2f(tx2, ty3); glVertex2i(x2, y3); // Right Bottom
-		glTexCoord2f(tx1, ty3); glVertex2i(x1, y3); // Left Bottom
+		glTexCoord2f(tx1, ty2);
+		glVertex2i(x1, y2); // Left Top
+		glTexCoord2f(tx2, ty2);
+		glVertex2i(x2, y2); // Right Top
+		glTexCoord2f(tx2, ty3);
+		glVertex2i(x2, y3); // Right Bottom
+		glTexCoord2f(tx1, ty3);
+		glVertex2i(x1, y3); // Left Bottom
 	}
 
 	// 8
 	if ((m_fixX2 > 0) && (m_fixY2 > 0)) {
-		glTexCoord2f(tx2, ty2); glVertex2i(x2, y2); // Left Top
-		glTexCoord2f(tx3, ty2); glVertex2i(x3, y2); // Right Top
-		glTexCoord2f(tx3, ty3); glVertex2i(x3, y3); // Right Bottom
-		glTexCoord2f(tx2, ty3); glVertex2i(x2, y3); // Left Bottom
+		glTexCoord2f(tx2, ty2);
+		glVertex2i(x2, y2); // Left Top
+		glTexCoord2f(tx3, ty2);
+		glVertex2i(x3, y2); // Right Top
+		glTexCoord2f(tx3, ty3);
+		glVertex2i(x3, y3); // Right Bottom
+		glTexCoord2f(tx2, ty3);
+		glVertex2i(x2, y3); // Left Bottom
 	}
 }
 
@@ -430,14 +533,11 @@ void Bitmap::PaintAspectFit() {
 
 	int drawWidth, drawHeight;
 
-	if (destAspectRatio > imageAspectRatio)
-	{
+	if (destAspectRatio > imageAspectRatio) {
 		// El área de destino es más ancha en proporción a la imagen: ajustar por altura
 		drawHeight = destHeight;
 		drawWidth = static_cast<int>(imageAspectRatio * drawHeight);
-	}
-	else
-	{
+	} else {
 		// El área de destino es más alta en proporción, o igual: ajustar por ancho
 		drawWidth = destWidth;
 		drawHeight = static_cast<int>(drawWidth / imageAspectRatio);
@@ -454,41 +554,41 @@ void Bitmap::PaintAspectFit() {
 }
 
 void Bitmap::PaintAspectFill() {
-    // Obtener dimensiones del área de destino
-    int destWidth = GetRight();
-    int destHeight = GetBottom();
+	// Obtener dimensiones del área de destino
+	int destWidth = GetRight();
+	int destHeight = GetBottom();
 
-    // Calcular la relación de aspecto de la imagen y del destino
-    float imageAspectRatio = static_cast<float>(m_textureWidth) / m_textureHeight;
-    float destAspectRatio = static_cast<float>(destWidth) / destHeight;
+	// Calcular la relación de aspecto de la imagen y del destino
+	float imageAspectRatio = static_cast<float>(m_textureWidth) / m_textureHeight;
+	float destAspectRatio = static_cast<float>(destWidth) / destHeight;
 
-    int drawWidth, drawHeight;
+	int drawWidth, drawHeight;
 
-    if (destAspectRatio > imageAspectRatio) {
-        // El área de destino es más ancha en proporción a la imagen: ajustar por ancho
-        drawWidth = destWidth;
-        drawHeight = static_cast<int>(drawWidth / imageAspectRatio);
-    } else {
-        // El área de destino es más alta en proporción, o igual: ajustar por altura
-        drawHeight = destHeight;
-        drawWidth = static_cast<int>(imageAspectRatio * drawHeight);
-    }
+	if (destAspectRatio > imageAspectRatio) {
+		// El área de destino es más ancha en proporción a la imagen: ajustar por ancho
+		drawWidth = destWidth;
+		drawHeight = static_cast<int>(drawWidth / imageAspectRatio);
+	} else {
+		// El área de destino es más alta en proporción, o igual: ajustar por altura
+		drawHeight = destHeight;
+		drawWidth = static_cast<int>(imageAspectRatio * drawHeight);
+	}
 
-    // Calcular posición inicial para asegurar que la imagen esté centrada
-    int left = (destWidth - drawWidth) / 2;
-    int top = (destHeight - drawHeight) / 2;
-    int right = left + drawWidth;
-    int bottom = top + drawHeight;
+	// Calcular posición inicial para asegurar que la imagen esté centrada
+	int left = (destWidth - drawWidth) / 2;
+	int top = (destHeight - drawHeight) / 2;
+	int right = left + drawWidth;
+	int bottom = top + drawHeight;
 
-    // Pintar la textura ajustada y centrada, permitiendo que se extienda fuera del área visible si es necesario
-    PaintTexture(left, top, right, bottom);
+	// Pintar la textura ajustada y centrada, permitiendo que se extienda fuera del área visible si es necesario
+	PaintTexture(left, top, right, bottom);
 }
 
 void Bitmap::SetColor(Drawing::ColorF color) {
 	m_color = color;
 }
 
-void Bitmap::OnPaint(GL* gl) {
+void Bitmap::OnPaint(GL * gl) {
 	Load();
 
 	if ((m_textureWidth == 0) || (m_textureHeight == 0))
@@ -507,7 +607,7 @@ void Bitmap::OnPaint(GL* gl) {
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 
 	glPushMatrix();
-	glColor4f(m_color.GetR(), m_color.GetG(),m_color.GetB(), m_color.GetA());
+	glColor4f(m_color.GetR(), m_color.GetG(), m_color.GetB(), m_color.GetA());
 
 	glBegin(GL_QUADS);
 

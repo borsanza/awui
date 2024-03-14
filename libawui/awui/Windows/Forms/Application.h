@@ -8,16 +8,16 @@ namespace awui::Windows::Forms {
 	class Application : public Object {
 		static int quit;
 
-		private:
-			static void ProcessEvents();
+	  private:
+		static void ProcessEvents();
 
-		public:
-			Application();
+	  public:
+		Application();
 
-			static void Run(Form * form);
+		static void Run(Form * form);
 
-			virtual bool IsClass(Classes objectClass) const override;
+		virtual bool IsClass(Classes objectClass) const override;
 
-			static void Quit();
+		static void Quit();
 	};
-}
+} // namespace awui::Windows::Forms

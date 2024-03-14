@@ -6,6 +6,8 @@
 
 #include "Control.h"
 
+#include <SDL_opengl.h>
+#include <assert.h>
 #include <awui/Console.h>
 #include <awui/Drawing/Font.h>
 #include <awui/IO/Directory.h>
@@ -13,11 +15,9 @@
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/JoystickButtonEventArgs.h>
 #include <awui/Windows/Forms/JoystickAxisMotionEventArgs.h>
+#include <awui/Windows/Forms/JoystickButtonEventArgs.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
-#include <SDL_opengl.h>
-#include <assert.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -492,7 +492,7 @@ void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int button
 	m_mouseEventArgs->SetButton(button);
 	OnMouseDown(m_mouseEventArgs);
 
-//	std::cout << "Down: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
+	//	std::cout << "Down: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
 }
 
 void Control::OnMouseMovePre(int x, int y, int buttons) {
@@ -525,7 +525,7 @@ void Control::OnMouseMovePre(int x, int y, int buttons) {
 	OnMouseMove(m_mouseEventArgs);
 	Refresh();
 
-//	std::cout << "Move: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
+	//	std::cout << "Move: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
 }
 
 void Control::ChangeControlOnMouseOver(Control * control) {
@@ -571,15 +571,15 @@ void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons) {
 	m_mouseEventArgs->SetButton(button);
 	OnMouseUp(m_mouseEventArgs);
 
-//	std::cout << "Up: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
+	//	std::cout << "Up: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
 }
 
 void Control::OnMouseLeave() {
-//	std::cout << "OnMouseLeave: " << GetName() << std::endl;
+	//	std::cout << "OnMouseLeave: " << GetName() << std::endl;
 }
 
 void Control::OnMouseEnter() {
-//	std::cout << "OnMouseEnter: " << GetName() << std::endl;
+	//	std::cout << "OnMouseEnter: " << GetName() << std::endl;
 }
 
 void Control::SetName(const String str) {
@@ -612,7 +612,7 @@ bool Control::IsVisible() const {
 void Control::OnTickPre(float deltaSeconds) {
 	m_deltaSeconds = deltaSeconds;
 	double percent = 10.0f * deltaSeconds;
-	//awui::Console::WriteLine("%lld %.3f", ellapsed, percent);
+	// awui::Console::WriteLine("%lld %.3f", ellapsed, percent);
 
 	m_lastRight = Math::Interpolate(m_lastRight, m_boundsTo.GetRight(), percent);
 	m_lastBottom = Math::Interpolate(m_lastBottom, m_boundsTo.GetBottom(), percent);
@@ -709,8 +709,6 @@ void Control::OnJoystickAxisMotionPre(int which, int16_t axisX, int16_t axisY) {
 		m_focused->OnJoystickAxisMotionPre(which, axisX, axisY);
 }
 
-
-
 void Control::OnKeyPressPre(Keys::Enum key) {
 	bool mustStop = IsVisible() && OnKeyPress(key);
 	if (mustStop)
@@ -730,11 +728,11 @@ void Control::OnKeyUpPre(Keys::Enum key) {
 }
 
 void Control::SetFocusImpl(bool forced, int32_t time) {
-/*
-	if (m_controls->GetCount() <= 0 || forced) {
-		Console::WriteLine("SetFocus(%d): %s", forced, ToString().ToCharArray());
-	}
-*/
+	/*
+		if (m_controls->GetCount() <= 0 || forced) {
+			Console::WriteLine("SetFocus(%d): %s", forced, ToString().ToCharArray());
+		}
+	*/
 	Control * parent = GetParent();
 
 	if (forced) {
@@ -761,30 +759,30 @@ void Control::SetFocusImpl(bool forced, int32_t time) {
 		}
 	}
 
-/*
-	Control* parent = GetParent();
+	/*
+		Control* parent = GetParent();
 
-	// Actualizar el tiempo de enfoque si es forzado o si el nuevo tiempo es mayor.
-	if (forced || time >= m_focusedTime) {
-		m_focusedTime = time;
+		// Actualizar el tiempo de enfoque si es forzado o si el nuevo tiempo es mayor.
+		if (forced || time >= m_focusedTime) {
+			m_focusedTime = time;
 
-		if (parent) {
-			// Si forzado o si el padre no tiene un control enfocado o si este control debe tomar el foco.
-			if (forced || parent->m_focused == nullptr || parent->m_focused->m_focusedTime < time) {
-				parent->m_focused = this;
-				parent->SetFocusImpl(forced, time); // Propagar el enfoque hacia arriba solo si es necesario.
+			if (parent) {
+				// Si forzado o si el padre no tiene un control enfocado o si este control debe tomar el foco.
+				if (forced || parent->m_focused == nullptr || parent->m_focused->m_focusedTime < time) {
+					parent->m_focused = this;
+					parent->SetFocusImpl(forced, time); // Propagar el enfoque hacia arriba solo si es necesario.
+				}
 			}
 		}
-	}
-*/
+	*/
 }
 
 void Control::SetFocus(bool forced) {
-/*
-	if (m_controls->GetCount() <= 0 || forced) {
-		Console::WriteLine("SetFocus(%d): %s", forced, ToString().ToCharArray());
-	}
-*/
+	/*
+		if (m_controls->GetCount() <= 0 || forced) {
+			Console::WriteLine("SetFocus(%d): %s", forced, ToString().ToCharArray());
+		}
+	*/
 	SetFocusImpl(forced, forced ? countFocused : m_focusedTime);
 
 	if (forced) {
@@ -831,22 +829,22 @@ Form * Control::GetForm() {
 		return nullptr;
 	};
 
-	return (Form *)root;
+	return (Form *) root;
 }
 
 bool Control::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	return false;
 }
 
-bool Control::OnJoystickButtonDown(JoystickButtonEventArgs* e) {
+bool Control::OnJoystickButtonDown(JoystickButtonEventArgs * e) {
 	return false;
 }
 
-bool Control::OnJoystickButtonUp(JoystickButtonEventArgs* e) {
+bool Control::OnJoystickButtonUp(JoystickButtonEventArgs * e) {
 	return false;
 }
 
-bool Control::OnJoystickAxisMotion(JoystickAxisMotionEventArgs* e) {
+bool Control::OnJoystickAxisMotion(JoystickAxisMotionEventArgs * e) {
 	return false;
 }
 
@@ -864,7 +862,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 	if ((form->GetChildFocused() == this) && (!m_preventChangeControl)) {
 		Point thisP1(GetAbsoluteLeft(), GetAbsoluteTop());
-		Point thisP2(GetAbsoluteRight(), GetAbsoluteBottom());;
+		Point thisP2(GetAbsoluteRight(), GetAbsoluteBottom());
 		Point thisCenter((thisP1.GetX() + thisP2.GetX()) / 2.0, (thisP1.GetY() + thisP2.GetY()) / 2.0);
 
 		float distance = 30000;
@@ -876,18 +874,18 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 		switch (button) {
 			case RemoteButtons::Left:
-				for (int i = 0; i<list.GetCount(); i++) {
-					Control * control = (Control *)list.Get(i);
+				for (int i = 0; i < list.GetCount(); i++) {
+					Control * control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
-					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlCenter.GetX()  < thisCenter.GetX()) &&
-						(controlP1.GetTop()    < thisP2.GetBottom()) &&
+					if ((controlCenter.GetX() < thisCenter.GetX()) &&
+						(controlP1.GetTop() < thisP2.GetBottom()) &&
 						(controlP2.GetBottom() > thisP1.GetTop())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
@@ -898,18 +896,18 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				}
 				break;
 			case RemoteButtons::Right:
-				for (int i = 0; i<list.GetCount(); i++) {
-					Control * control = (Control *)list.Get(i);
+				for (int i = 0; i < list.GetCount(); i++) {
+					Control * control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
-					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlCenter.GetX()  > thisCenter.GetX()) &&
-						(controlP1.GetTop()    < thisP2.GetBottom()) &&
+					if ((controlCenter.GetX() > thisCenter.GetX()) &&
+						(controlP1.GetTop() < thisP2.GetBottom()) &&
 						(controlP2.GetBottom() > thisP1.GetTop())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
@@ -922,14 +920,14 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 			case RemoteButtons::Down: {
 				Control * selectedAux = NULL;
 				// Primero busco el mas cercano en Y por abajo
-				for (int i = 0; i<list.GetCount(); i++) {
-					Control * control = (Control *)list.Get(i);
+				for (int i = 0; i < list.GetCount(); i++) {
+					Control * control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
-					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
 					if (controlP1.GetTop() > thisP1.GetBottom()) {
@@ -950,24 +948,27 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 					}
 				}
 
-				if (!selectedAux) break;
+				if (!selectedAux) {
+					break;
+				}
+
 				distance = 30000;
 
 				// Ahora busco de ese cercano, uno que este en la misma horizontal y mas cerca del actual
 				// Y que ademas este por debajo del actual
-				for (int i = 0; i<list.GetCount(); i++) {
-					Control * control = (Control *)list.Get(i);
+				for (int i = 0; i < list.GetCount(); i++) {
+					Control * control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
-					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlP1.GetTop()    < selectedAux->GetAbsoluteBottom()) &&
-					    (controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
-						(controlP1.GetTop()    > thisP1.GetBottom())) {
+					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) &&
+						(controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
+						(controlP1.GetTop() > thisP1.GetBottom())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
 							distance = calc;
@@ -975,19 +976,19 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 						}
 					}
 				}
-			}
 				break;
+			}
 			case RemoteButtons::Up: {
 				Control * selectedAux = NULL;
 				// Primero busco el mas cercano en Y por arriba
-				for (int i = 0; i<list.GetCount(); i++) {
-					Control * control = (Control *)list.Get(i);
+				for (int i = 0; i < list.GetCount(); i++) {
+					Control * control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
-					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
 					if (controlP2.GetBottom() < thisP2.GetTop()) {
@@ -1008,24 +1009,27 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 					}
 				}
 
-				if (!selectedAux) break;
+				if (!selectedAux) {
+					break;
+				}
+
 				distance = 30000;
 
 				// Ahora busco de ese cercano, uno que este en la misma horizontal y mas cerca del actual
 				// Y ademas que este por arriba del actual
-				for (int i = 0; i<list.GetCount(); i++) {
-					Control * control = (Control *)list.Get(i);
+				for (int i = 0; i < list.GetCount(); i++) {
+					Control * control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
 
 					Point controlP1(control->GetAbsoluteLeft(), control->GetAbsoluteTop());
-					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());;
+					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlP1.GetTop()    < selectedAux->GetAbsoluteBottom()) &&
+					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) &&
 						(controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
-					 	(controlP2.GetBottom() < thisP2.GetTop())) {
+						(controlP2.GetBottom() < thisP2.GetTop())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
 							distance = calc;
@@ -1033,8 +1037,8 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 						}
 					}
 				}
-			}
 				break;
+			}
 			default:
 				break;
 		}

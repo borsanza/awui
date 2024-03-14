@@ -47,15 +47,15 @@ namespace awui {
 	};
 
 	class Object {
-		protected:
-			Classes m_class;
+	  protected:
+		Classes m_class;
 
-		public:
-			Object();
-			virtual ~Object() = default;
+	  public:
+		Object();
+		virtual ~Object() = default;
 
-			virtual bool IsClass(Classes objectClass) const;
+		virtual bool IsClass(Classes objectClass) const;
 
-			virtual String ToString() const;
+		virtual String ToString() const;
 	};
-}
+} // namespace awui

@@ -6,15 +6,15 @@
 
 #include "Application.h"
 
+#include <SDL.h>
+#include <SDL_opengl.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
+#include <awui/Math.h>
 #include <awui/Stopwatch.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Joystick/Controller.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
-#include <awui/Math.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
 
 using namespace awui;
 using namespace awui::Windows::Forms;
@@ -34,9 +34,8 @@ void Application::Quit() {
 	Application::quit = 1;
 }
 
-void Application::Run(Form *form = NULL)
-{
-    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
+void Application::Run(Form * form = NULL) {
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
 		SDL_Log("[ERROR] SDL_Init failed: %s", SDL_GetError());
 		return;
 	}
@@ -61,7 +60,7 @@ void Application::Run(Form *form = NULL)
 	stopwatch.StartNew();
 
 	// Lo inicializo en una frecuencia de 60Hz
-	float lastDeltaSeconds = 1.0f/60.0f;
+	float lastDeltaSeconds = 1.0f / 60.0f;
 	while (!Application::quit) {
 		ProcessEvents();
 
@@ -97,8 +96,8 @@ void Application::ProcessEvents() {
 		bool ret = false;
 		// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
 		for (int i = 0; i < Form::m_formsList->GetCount(); i++) {
-			Form * formW = (Form *)Form::m_formsList->Get(i);
-			switch(event.type) {
+			Form * formW = (Form *) Form::m_formsList->Get(i);
+			switch (event.type) {
 				case SDL_JOYDEVICEADDED:
 				case SDL_JOYDEVICEREMOVED:
 					ret = true;
@@ -155,7 +154,7 @@ void Application::ProcessEvents() {
 		}
 
 		Uint32 windowID = 0;
-		switch(event.type) {
+		switch (event.type) {
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
 				windowID = event.key.windowID;
@@ -177,7 +176,7 @@ void Application::ProcessEvents() {
 
 		if (windowID != 0) {
 			for (int i = 0; i < Form::m_formsList->GetCount(); i++) {
-				Form * formW = (Form *)Form::m_formsList->Get(i);
+				Form * formW = (Form *) Form::m_formsList->Get(i);
 				if (windowID == formW->GetWindowID()) {
 					formW->ProcessEvents(&event);
 				}
@@ -186,7 +185,7 @@ void Application::ProcessEvents() {
 			continue;
 		}
 
-		switch(event.type) {
+		switch (event.type) {
 			case SDL_QUIT:
 				Application::Quit();
 				break;
