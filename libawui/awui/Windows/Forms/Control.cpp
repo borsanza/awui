@@ -221,11 +221,11 @@ void Control::RemoveWidget(Control * control) {
 		m_focused = nullptr;
 		m_focusedTime = -1;
 
-		for (int i = 0; i < m_controls->GetCount(); i++) {
-			Control * aux = (Control *) m_controls->Get(i);
-			if (!m_focused || (aux->m_focusedTime > m_focusedTime)) {
-				m_focused = aux;
-				m_focusedTime = aux->m_focusedTime;
+		for (auto aux : *m_controls) {
+			Control * control = (Control *) aux;
+			if (!m_focused || (control->m_focusedTime > m_focusedTime)) {
+				m_focused = control;
+				m_focusedTime = control->m_focusedTime;
 			}
 		}
 
