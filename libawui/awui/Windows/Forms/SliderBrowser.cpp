@@ -31,7 +31,7 @@ void SliderBrowser::SetMargin(int margin) {
 }
 
 void SliderBrowser::OnTick(float deltaSeconds) {
-	Form * form = GetForm();
+	Form *form = GetForm();
 	if (!form) {
 		return;
 	}
@@ -48,7 +48,7 @@ void SliderBrowser::OnTick(float deltaSeconds) {
 	if (m_selected >= GetCount())
 		return;
 
-	Control * w = Get(m_selected);
+	Control *w = Get(m_selected);
 
 	bool leftOut = (w->GetLeft() - m_margin) <= 0;
 	bool rightOut = (w->GetRight() + m_margin) >= GetWidth();
@@ -77,23 +77,23 @@ void SliderBrowser::OnTick(float deltaSeconds) {
 	w->SetTop((GetHeight() - w->GetHeight()) >> 1);
 
 	int x = w->GetLeft() + w->GetWidth() + m_margin;
-	for (int i = m_selected + 1; i< GetCount(); i++) {
+	for (int i = m_selected + 1; i < GetCount(); i++) {
 		x += m_margin;
-		Control * w2 = Get(i);
+		Control *w2 = Get(i);
 		w2->SetLocation(x, (GetHeight() - w2->GetHeight()) >> 1);
 		x += w2->GetWidth() + m_margin;
 	}
 
 	x = w->GetLeft() - m_margin;
 	for (int i = m_selected - 1; i >= 0; i--) {
-		Control * w2 = Get(i);
+		Control *w2 = Get(i);
 		x -= (m_margin + w2->GetWidth());
 		w2->SetLocation(x, (GetHeight() - w2->GetHeight()) >> 1);
 		x -= m_margin;
 	}
 }
 
-Control * SliderBrowser::GetControlSelected() const {
+Control *SliderBrowser::GetControlSelected() const {
 	if ((m_selected >= 0) && (m_selected < GetCount()))
 		return Get(m_selected);
 

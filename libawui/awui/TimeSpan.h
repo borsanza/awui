@@ -6,40 +6,41 @@ namespace awui {
 	class String;
 
 	class TimeSpan : public Object {
-		public:
-			const long long TicksPerDay = 864000000000;
-			const long long TicksPerHour = 36000000000;
-			const long TicksPerMillisecond = 10000;
-			const long TicksPerMinute = 600000000;
-			const long TicksPerSecond = 10000000;
-		private:
-			long long ticks;
+	  public:
+		const long long TicksPerDay = 864000000000;
+		const long long TicksPerHour = 36000000000;
+		const long TicksPerMillisecond = 10000;
+		const long TicksPerMinute = 600000000;
+		const long TicksPerSecond = 10000000;
 
-			String ConvertDecimals(int value, int decimals) const;
+	  private:
+		long long ticks;
 
-		public:
-			TimeSpan();
-			TimeSpan(long long ticks);
-			TimeSpan(int hours, int minutes, int seconds);
-			TimeSpan(int days, int hours, int minutes, int seconds);
-			TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds);
-			virtual ~TimeSpan() = default;
+		String ConvertDecimals(int value, int decimals) const;
 
-			long long GetTicks() const;
-			double GetTotalMilliseconds() const;
-			double GetTotalSeconds() const;
-			double GetTotalMinutes() const;
-			double GetTotalHours() const;
-			double GetTotalDays() const;
+	  public:
+		TimeSpan();
+		TimeSpan(long long ticks);
+		TimeSpan(int hours, int minutes, int seconds);
+		TimeSpan(int days, int hours, int minutes, int seconds);
+		TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds);
+		virtual ~TimeSpan() = default;
 
-			int GetMilliseconds() const;
-			int GetSeconds() const;
-			int GetMinutes() const;
-			int GetHours() const;
-			int GetDays() const;
+		long long GetTicks() const;
+		double GetTotalMilliseconds() const;
+		double GetTotalSeconds() const;
+		double GetTotalMinutes() const;
+		double GetTotalHours() const;
+		double GetTotalDays() const;
 
-			virtual String ToString() const override;
+		int GetMilliseconds() const;
+		int GetSeconds() const;
+		int GetMinutes() const;
+		int GetHours() const;
+		int GetDays() const;
 
-			TimeSpan & operator= (const TimeSpan & other);
+		virtual String ToString() const override;
+
+		TimeSpan &operator=(const TimeSpan &other);
 	};
-}
+} // namespace awui

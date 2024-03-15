@@ -10,12 +10,12 @@
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Statistics;
 
-Stats* Stats::_instance = 0;
+Stats *Stats::_instance = 0;
 
 Stats::Stats() {
 #if defined(SHOW_FPS) || defined(SHOW_PERCENT)
 	this->_lastSecond = -1;
-#endif // defined
+#endif
 
 	this->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	this->_idle = TimeSpan(0.0f);
@@ -32,7 +32,7 @@ Stats::Stats() {
 	this->_heartbeat->SetBackColor(backColor);
 	this->_heartbeat->SetForeColor(foreColor);
 	AddWidget(this->_heartbeat);
-#endif // SHOW_HEARTBEAT
+#endif
 
 #ifdef SHOW_SPINNER
 	this->_spinner = new Spinner();
@@ -40,7 +40,7 @@ Stats::Stats() {
 	this->_spinner->SetBackColor(backColor);
 	this->_spinner->SetForeColor(foreColor);
 	AddWidget(this->_spinner);
-#endif // SHOW_SPINNER
+#endif
 
 #ifdef SHOW_FPS
 	this->_fps = 0;
@@ -53,7 +53,7 @@ Stats::Stats() {
 	this->_labelFPS->SetForeColor(foreColor);
 	this->_labelFPS->SetWidth(90);
 	AddWidget(this->_labelFPS);
-#endif // SHOW_FPS
+#endif
 
 #ifdef SHOW_PERCENT
 	this->_percent = 0;
@@ -65,7 +65,7 @@ Stats::Stats() {
 	this->_labelPercent->SetForeColor(foreColor);
 	this->_labelPercent->SetWidth(70);
 	AddWidget(this->_labelPercent);
-#endif // SHOW_PERCENT
+#endif
 
 #ifdef SHOW_WIDGETS
 	this->_drawedControls = 0;
@@ -77,7 +77,7 @@ Stats::Stats() {
 	this->_labelControls->SetForeColor(foreColor);
 	this->_labelControls->SetWidth(100);
 	AddWidget(this->_labelControls);
-#endif // SHOW_WIDGETS
+#endif
 
 	this->SetHeight(24);
 }
@@ -93,7 +93,7 @@ void Stats::SetTimeBeforeIddle() {
 
 #ifdef SHOW_PERCENT
 	this->_timeUsed += this->_beforeSync.GetTicks() - this->_afterSync.GetTicks();
-#endif // SHOW_PERCENT
+#endif
 }
 
 awui::TimeSpan Stats::GetIdle() {
@@ -105,7 +105,7 @@ void Stats::SetTimeAfterIddle() {
 
 #ifdef SHOW_FPS
 	this->_fps++;
-#endif // SHOW_FPS
+#endif
 
 #if defined(SHOW_FPS) || defined(SHOW_PERCENT)
 	int second = this->_afterSync.GetSecond();
@@ -124,7 +124,7 @@ void Stats::SetTimeAfterIddle() {
 		}
 
 		this->_fps = 0;
-#endif // SHOW_FPS
+#endif
 
 		this->_lastTime = this->_afterSync;
 
@@ -137,12 +137,12 @@ void Stats::SetTimeAfterIddle() {
 			}
 		}
 		this->_timeUsed = 0;
-#endif // SHOW_PERCENT
+#endif
 	}
-#endif // defined
+#endif
 }
 
-Stats* Stats::Instance() {
+Stats *Stats::Instance() {
 	if (Stats::_instance == 0)
 		Stats::_instance = new Stats;
 
@@ -152,7 +152,7 @@ Stats* Stats::Instance() {
 void Stats::OnRemoteHeartbeat() {
 #ifdef SHOW_HEARTBEAT
 	this->_heartbeat->OnRemoteHeartbeat();
-#endif // SHOW_HEARTBEAT
+#endif
 }
 
 void Stats::SetDrawedControls(int drawedControls) {
@@ -161,5 +161,5 @@ void Stats::SetDrawedControls(int drawedControls) {
 		this->_drawedControls = drawedControls;
 		this->_labelControls->SetText(Convert::ToString(this->_drawedControls) + String(" widgets"));
 	}
-#endif // SHOW_WIDGETS
+#endif
 }

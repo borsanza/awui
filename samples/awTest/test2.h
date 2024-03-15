@@ -8,22 +8,22 @@ namespace awui::Windows::Forms {
 	namespace Diagnostics {
 		class Process;
 	}
-}
+} // namespace awui::Windows::Forms
 
-class Test2: public awui::Windows::Forms::Control {
-	private:
-		bool m_runMame;
-		bool m_endMame;
-		awui::Windows::Forms::ListBox *m_listbox;
+class Test2 : public awui::Windows::Forms::Control {
+  private:
+	bool m_runMame;
+	bool m_endMame;
+	awui::Windows::Forms::ListBox *m_listbox;
 
-		void InitializeComponent();
+	void InitializeComponent();
 
-	public:
-		Test2();
-		virtual ~Test2() = default;
+  public:
+	Test2();
+	virtual ~Test2() = default;
 
-		virtual void OnTick(float deltaSeconds) override;
+	virtual void OnTick(float deltaSeconds) override;
 
-		void CheckMame();
-		void CheckGames();
+	void CheckMame();
+	void CheckGames();
 };

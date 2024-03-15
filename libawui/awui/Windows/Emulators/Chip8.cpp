@@ -61,7 +61,7 @@ void Chip8::OnTick(float deltaSeconds) {
 }
 
 void Chip8::UpdateImage() {
-	Screen * screen = m_cpu->GetScreen();
+	Screen *screen = m_cpu->GetScreen();
 
 	CheckBackcolor();
 
@@ -99,8 +99,8 @@ void Chip8::UpdateImage() {
 	m_cpu->SetImageUpdated(false);
 }
 
-void Chip8::OnPaint(GL* gl) {
-	Screen * screen = m_cpu->GetScreen();
+void Chip8::OnPaint(GL *gl) {
+	Screen *screen = m_cpu->GetScreen();
 
 	if (m_cpu->GetImageUpdated())
 		UpdateImage();
@@ -273,7 +273,6 @@ void Chip8::SetInvertedColors(bool mode) {
 	Chip8::m_invertedColors = mode;
 	UpdateImage();
 }
-
 
 bool Chip8::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	int keypressed = ConvertRemoteKeyToChip8(button);

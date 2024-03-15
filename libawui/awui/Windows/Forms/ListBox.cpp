@@ -21,11 +21,11 @@ bool ListBox::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::ListBox) || Control::IsClass(objectClass);
 }
 
-ObjectCollection * ListBox::GetItems() const {
+ObjectCollection *ListBox::GetItems() const {
 	return m_collection;
 }
 
-ObjectCollection::ObjectCollection(ListBox * owner) : Object() {
+ObjectCollection::ObjectCollection(ListBox *owner) : Object() {
 	listbox = owner;
 	arraylist = new ArrayList();
 }
@@ -38,7 +38,7 @@ int ObjectCollection::GetCount() const {
 	return arraylist->GetCount();
 }
 
-void ObjectCollection::Add(Object * item) {
+void ObjectCollection::Add(Object *item) {
 	arraylist->Add(item);
 }
 
@@ -46,15 +46,15 @@ void ObjectCollection::Clear() {
 	arraylist->Clear();
 }
 
-bool ObjectCollection::Contains(Object * value) const {
+bool ObjectCollection::Contains(Object *value) const {
 	return (arraylist->IndexOf(value) != -1);
 }
 
-int ObjectCollection::IndexOf(Object * value) const {
+int ObjectCollection::IndexOf(Object *value) const {
 	return arraylist->IndexOf(value);
 }
 
-void ObjectCollection::Remove(Object * value) {
+void ObjectCollection::Remove(Object *value) {
 	arraylist->Remove(value);
 }
 

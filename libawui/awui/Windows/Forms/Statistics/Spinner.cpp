@@ -2,9 +2,10 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "Spinner.h"
+
+#include <SDL_opengl.h>
 #include <awui/Drawing/Color.h>
 #include <awui/OpenGL/GL.h>
-#include <SDL_opengl.h>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Statistics;
@@ -21,10 +22,10 @@ void Spinner::OnTick(float deltaSeconds) {
 	static int mode = 0;
 
 	mode++;
-	this->position = (mode/4%4);
+	this->position = (mode / 4 % 4);
 }
 
-void Spinner::OnPaint(OpenGL::GL * gl) {
+void Spinner::OnPaint(OpenGL::GL *gl) {
 	int size = 15;
 	int left = (this->GetWidth() - size) / 2;
 	int top = (this->GetHeight() - size) / 2;

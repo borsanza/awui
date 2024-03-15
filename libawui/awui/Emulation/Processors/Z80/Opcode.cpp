@@ -24,487 +24,963 @@ Opcode::~Opcode() {
 int Opcode::GetEnum() {
 	this->_advance = 0;
 	switch (this->_byte1) {
-		case 0x00: return Ox00;
-		case 0x01: return Ox01;
-		case 0x02: return Ox02;
-		case 0x03: return Ox03;
-		case 0x04: return Ox04;
-		case 0x05: return Ox05;
-		case 0x06: return Ox06;
-		case 0x07: return Ox07;
-		case 0x08: return Ox08;
-		case 0x09: return Ox09;
-		case 0x0A: return Ox0A;
-		case 0x0B: return Ox0B;
-		case 0x0C: return Ox0C;
-		case 0x0D: return Ox0D;
-		case 0x0E: return Ox0E;
-		case 0x0F: return Ox0F;
-		case 0x10: return Ox10;
-		case 0x11: return Ox11;
-		case 0x12: return Ox12;
-		case 0x13: return Ox13;
-		case 0x14: return Ox14;
-		case 0x15: return Ox15;
-		case 0x16: return Ox16;
-		case 0x17: return Ox17;
-		case 0x18: return Ox18;
-		case 0x19: return Ox19;
-		case 0x1A: return Ox1A;
-		case 0x1B: return Ox1B;
-		case 0x1C: return Ox1C;
-		case 0x1D: return Ox1D;
-		case 0x1E: return Ox1E;
-		case 0x1F: return Ox1F;
-		case 0x20: return Ox20;
-		case 0x21: return Ox21;
-		case 0x22: return Ox22;
-		case 0x23: return Ox23;
-		case 0x24: return Ox24;
-		case 0x25: return Ox25;
-		case 0x26: return Ox26;
-		case 0x27: return Ox27;
-		case 0x28: return Ox28;
-		case 0x29: return Ox29;
-		case 0x2A: return Ox2A;
-		case 0x2B: return Ox2B;
-		case 0x2C: return Ox2C;
-		case 0x2D: return Ox2D;
-		case 0x2E: return Ox2E;
-		case 0x2F: return Ox2F;
-		case 0x30: return Ox30;
-		case 0x31: return Ox31;
-		case 0x32: return Ox32;
-		case 0x33: return Ox33;
-		case 0x34: return Ox34;
-		case 0x35: return Ox35;
-		case 0x36: return Ox36;
-		case 0x37: return Ox37;
-		case 0x38: return Ox38;
-		case 0x39: return Ox39;
-		case 0x3A: return Ox3A;
-		case 0x3B: return Ox3B;
-		case 0x3C: return Ox3C;
-		case 0x3D: return Ox3D;
-		case 0x3E: return Ox3E;
-		case 0x3F: return Ox3F;
-		case 0x40: return Ox40;
-		case 0x41: return Ox41;
-		case 0x42: return Ox42;
-		case 0x43: return Ox43;
-		case 0x44: return Ox44;
-		case 0x45: return Ox45;
-		case 0x46: return Ox46;
-		case 0x47: return Ox47;
-		case 0x48: return Ox48;
-		case 0x49: return Ox49;
-		case 0x4A: return Ox4A;
-		case 0x4B: return Ox4B;
-		case 0x4C: return Ox4C;
-		case 0x4D: return Ox4D;
-		case 0x4E: return Ox4E;
-		case 0x4F: return Ox4F;
-		case 0x50: return Ox50;
-		case 0x51: return Ox51;
-		case 0x52: return Ox52;
-		case 0x53: return Ox53;
-		case 0x54: return Ox54;
-		case 0x55: return Ox55;
-		case 0x56: return Ox56;
-		case 0x57: return Ox57;
-		case 0x58: return Ox58;
-		case 0x59: return Ox59;
-		case 0x5A: return Ox5A;
-		case 0x5B: return Ox5B;
-		case 0x5C: return Ox5C;
-		case 0x5D: return Ox5D;
-		case 0x5E: return Ox5E;
-		case 0x5F: return Ox5F;
-		case 0x60: return Ox60;
-		case 0x61: return Ox61;
-		case 0x62: return Ox62;
-		case 0x63: return Ox63;
-		case 0x64: return Ox64;
-		case 0x65: return Ox65;
-		case 0x66: return Ox66;
-		case 0x67: return Ox67;
-		case 0x68: return Ox68;
-		case 0x69: return Ox69;
-		case 0x6A: return Ox6A;
-		case 0x6B: return Ox6B;
-		case 0x6C: return Ox6C;
-		case 0x6D: return Ox6D;
-		case 0x6E: return Ox6E;
-		case 0x6F: return Ox6F;
-		case 0x70: return Ox70;
-		case 0x71: return Ox71;
-		case 0x72: return Ox72;
-		case 0x73: return Ox73;
-		case 0x74: return Ox74;
-		case 0x75: return Ox75;
-		case 0x76: return Ox76;
-		case 0x77: return Ox77;
-		case 0x78: return Ox78;
-		case 0x79: return Ox79;
-		case 0x7A: return Ox7A;
-		case 0x7B: return Ox7B;
-		case 0x7C: return Ox7C;
-		case 0x7D: return Ox7D;
-		case 0x7E: return Ox7E;
-		case 0x7F: return Ox7F;
-		case 0x80: return Ox80;
-		case 0x81: return Ox81;
-		case 0x82: return Ox82;
-		case 0x83: return Ox83;
-		case 0x84: return Ox84;
-		case 0x85: return Ox85;
-		case 0x86: return Ox86;
-		case 0x87: return Ox87;
-		case 0x88: return Ox88;
-		case 0x89: return Ox89;
-		case 0x8A: return Ox8A;
-		case 0x8B: return Ox8B;
-		case 0x8C: return Ox8C;
-		case 0x8D: return Ox8D;
-		case 0x8E: return Ox8E;
-		case 0x8F: return Ox8F;
-		case 0x90: return Ox90;
-		case 0x91: return Ox91;
-		case 0x92: return Ox92;
-		case 0x93: return Ox93;
-		case 0x94: return Ox94;
-		case 0x95: return Ox95;
-		case 0x96: return Ox96;
-		case 0x97: return Ox97;
-		case 0x98: return Ox98;
-		case 0x99: return Ox99;
-		case 0x9A: return Ox9A;
-		case 0x9B: return Ox9B;
-		case 0x9C: return Ox9C;
-		case 0x9D: return Ox9D;
-		case 0x9E: return Ox9E;
-		case 0x9F: return Ox9F;
-		case 0xA0: return OxA0;
-		case 0xA1: return OxA1;
-		case 0xA2: return OxA2;
-		case 0xA3: return OxA3;
-		case 0xA4: return OxA4;
-		case 0xA5: return OxA5;
-		case 0xA6: return OxA6;
-		case 0xA7: return OxA7;
-		case 0xA8: return OxA8;
-		case 0xA9: return OxA9;
-		case 0xAA: return OxAA;
-		case 0xAB: return OxAB;
-		case 0xAC: return OxAC;
-		case 0xAD: return OxAD;
-		case 0xAE: return OxAE;
-		case 0xAF: return OxAF;
-		case 0xB0: return OxB0;
-		case 0xB1: return OxB1;
-		case 0xB2: return OxB2;
-		case 0xB3: return OxB3;
-		case 0xB4: return OxB4;
-		case 0xB5: return OxB5;
-		case 0xB6: return OxB6;
-		case 0xB7: return OxB7;
-		case 0xB8: return OxB8;
-		case 0xB9: return OxB9;
-		case 0xBA: return OxBA;
-		case 0xBB: return OxBB;
-		case 0xBC: return OxBC;
-		case 0xBD: return OxBD;
-		case 0xBE: return OxBE;
-		case 0xBF: return OxBF;
-		case 0xC0: return OxC0;
-		case 0xC1: return OxC1;
-		case 0xC2: return OxC2;
-		case 0xC3: return OxC3;
-		case 0xC4: return OxC4;
-		case 0xC5: return OxC5;
-		case 0xC6: return OxC6;
-		case 0xC7: return OxC7;
-		case 0xC8: return OxC8;
-		case 0xC9: return OxC9;
-		case 0xCA: return OxCA;
+		case 0x00:
+			return Ox00;
+		case 0x01:
+			return Ox01;
+		case 0x02:
+			return Ox02;
+		case 0x03:
+			return Ox03;
+		case 0x04:
+			return Ox04;
+		case 0x05:
+			return Ox05;
+		case 0x06:
+			return Ox06;
+		case 0x07:
+			return Ox07;
+		case 0x08:
+			return Ox08;
+		case 0x09:
+			return Ox09;
+		case 0x0A:
+			return Ox0A;
+		case 0x0B:
+			return Ox0B;
+		case 0x0C:
+			return Ox0C;
+		case 0x0D:
+			return Ox0D;
+		case 0x0E:
+			return Ox0E;
+		case 0x0F:
+			return Ox0F;
+		case 0x10:
+			return Ox10;
+		case 0x11:
+			return Ox11;
+		case 0x12:
+			return Ox12;
+		case 0x13:
+			return Ox13;
+		case 0x14:
+			return Ox14;
+		case 0x15:
+			return Ox15;
+		case 0x16:
+			return Ox16;
+		case 0x17:
+			return Ox17;
+		case 0x18:
+			return Ox18;
+		case 0x19:
+			return Ox19;
+		case 0x1A:
+			return Ox1A;
+		case 0x1B:
+			return Ox1B;
+		case 0x1C:
+			return Ox1C;
+		case 0x1D:
+			return Ox1D;
+		case 0x1E:
+			return Ox1E;
+		case 0x1F:
+			return Ox1F;
+		case 0x20:
+			return Ox20;
+		case 0x21:
+			return Ox21;
+		case 0x22:
+			return Ox22;
+		case 0x23:
+			return Ox23;
+		case 0x24:
+			return Ox24;
+		case 0x25:
+			return Ox25;
+		case 0x26:
+			return Ox26;
+		case 0x27:
+			return Ox27;
+		case 0x28:
+			return Ox28;
+		case 0x29:
+			return Ox29;
+		case 0x2A:
+			return Ox2A;
+		case 0x2B:
+			return Ox2B;
+		case 0x2C:
+			return Ox2C;
+		case 0x2D:
+			return Ox2D;
+		case 0x2E:
+			return Ox2E;
+		case 0x2F:
+			return Ox2F;
+		case 0x30:
+			return Ox30;
+		case 0x31:
+			return Ox31;
+		case 0x32:
+			return Ox32;
+		case 0x33:
+			return Ox33;
+		case 0x34:
+			return Ox34;
+		case 0x35:
+			return Ox35;
+		case 0x36:
+			return Ox36;
+		case 0x37:
+			return Ox37;
+		case 0x38:
+			return Ox38;
+		case 0x39:
+			return Ox39;
+		case 0x3A:
+			return Ox3A;
+		case 0x3B:
+			return Ox3B;
+		case 0x3C:
+			return Ox3C;
+		case 0x3D:
+			return Ox3D;
+		case 0x3E:
+			return Ox3E;
+		case 0x3F:
+			return Ox3F;
+		case 0x40:
+			return Ox40;
+		case 0x41:
+			return Ox41;
+		case 0x42:
+			return Ox42;
+		case 0x43:
+			return Ox43;
+		case 0x44:
+			return Ox44;
+		case 0x45:
+			return Ox45;
+		case 0x46:
+			return Ox46;
+		case 0x47:
+			return Ox47;
+		case 0x48:
+			return Ox48;
+		case 0x49:
+			return Ox49;
+		case 0x4A:
+			return Ox4A;
+		case 0x4B:
+			return Ox4B;
+		case 0x4C:
+			return Ox4C;
+		case 0x4D:
+			return Ox4D;
+		case 0x4E:
+			return Ox4E;
+		case 0x4F:
+			return Ox4F;
+		case 0x50:
+			return Ox50;
+		case 0x51:
+			return Ox51;
+		case 0x52:
+			return Ox52;
+		case 0x53:
+			return Ox53;
+		case 0x54:
+			return Ox54;
+		case 0x55:
+			return Ox55;
+		case 0x56:
+			return Ox56;
+		case 0x57:
+			return Ox57;
+		case 0x58:
+			return Ox58;
+		case 0x59:
+			return Ox59;
+		case 0x5A:
+			return Ox5A;
+		case 0x5B:
+			return Ox5B;
+		case 0x5C:
+			return Ox5C;
+		case 0x5D:
+			return Ox5D;
+		case 0x5E:
+			return Ox5E;
+		case 0x5F:
+			return Ox5F;
+		case 0x60:
+			return Ox60;
+		case 0x61:
+			return Ox61;
+		case 0x62:
+			return Ox62;
+		case 0x63:
+			return Ox63;
+		case 0x64:
+			return Ox64;
+		case 0x65:
+			return Ox65;
+		case 0x66:
+			return Ox66;
+		case 0x67:
+			return Ox67;
+		case 0x68:
+			return Ox68;
+		case 0x69:
+			return Ox69;
+		case 0x6A:
+			return Ox6A;
+		case 0x6B:
+			return Ox6B;
+		case 0x6C:
+			return Ox6C;
+		case 0x6D:
+			return Ox6D;
+		case 0x6E:
+			return Ox6E;
+		case 0x6F:
+			return Ox6F;
+		case 0x70:
+			return Ox70;
+		case 0x71:
+			return Ox71;
+		case 0x72:
+			return Ox72;
+		case 0x73:
+			return Ox73;
+		case 0x74:
+			return Ox74;
+		case 0x75:
+			return Ox75;
+		case 0x76:
+			return Ox76;
+		case 0x77:
+			return Ox77;
+		case 0x78:
+			return Ox78;
+		case 0x79:
+			return Ox79;
+		case 0x7A:
+			return Ox7A;
+		case 0x7B:
+			return Ox7B;
+		case 0x7C:
+			return Ox7C;
+		case 0x7D:
+			return Ox7D;
+		case 0x7E:
+			return Ox7E;
+		case 0x7F:
+			return Ox7F;
+		case 0x80:
+			return Ox80;
+		case 0x81:
+			return Ox81;
+		case 0x82:
+			return Ox82;
+		case 0x83:
+			return Ox83;
+		case 0x84:
+			return Ox84;
+		case 0x85:
+			return Ox85;
+		case 0x86:
+			return Ox86;
+		case 0x87:
+			return Ox87;
+		case 0x88:
+			return Ox88;
+		case 0x89:
+			return Ox89;
+		case 0x8A:
+			return Ox8A;
+		case 0x8B:
+			return Ox8B;
+		case 0x8C:
+			return Ox8C;
+		case 0x8D:
+			return Ox8D;
+		case 0x8E:
+			return Ox8E;
+		case 0x8F:
+			return Ox8F;
+		case 0x90:
+			return Ox90;
+		case 0x91:
+			return Ox91;
+		case 0x92:
+			return Ox92;
+		case 0x93:
+			return Ox93;
+		case 0x94:
+			return Ox94;
+		case 0x95:
+			return Ox95;
+		case 0x96:
+			return Ox96;
+		case 0x97:
+			return Ox97;
+		case 0x98:
+			return Ox98;
+		case 0x99:
+			return Ox99;
+		case 0x9A:
+			return Ox9A;
+		case 0x9B:
+			return Ox9B;
+		case 0x9C:
+			return Ox9C;
+		case 0x9D:
+			return Ox9D;
+		case 0x9E:
+			return Ox9E;
+		case 0x9F:
+			return Ox9F;
+		case 0xA0:
+			return OxA0;
+		case 0xA1:
+			return OxA1;
+		case 0xA2:
+			return OxA2;
+		case 0xA3:
+			return OxA3;
+		case 0xA4:
+			return OxA4;
+		case 0xA5:
+			return OxA5;
+		case 0xA6:
+			return OxA6;
+		case 0xA7:
+			return OxA7;
+		case 0xA8:
+			return OxA8;
+		case 0xA9:
+			return OxA9;
+		case 0xAA:
+			return OxAA;
+		case 0xAB:
+			return OxAB;
+		case 0xAC:
+			return OxAC;
+		case 0xAD:
+			return OxAD;
+		case 0xAE:
+			return OxAE;
+		case 0xAF:
+			return OxAF;
+		case 0xB0:
+			return OxB0;
+		case 0xB1:
+			return OxB1;
+		case 0xB2:
+			return OxB2;
+		case 0xB3:
+			return OxB3;
+		case 0xB4:
+			return OxB4;
+		case 0xB5:
+			return OxB5;
+		case 0xB6:
+			return OxB6;
+		case 0xB7:
+			return OxB7;
+		case 0xB8:
+			return OxB8;
+		case 0xB9:
+			return OxB9;
+		case 0xBA:
+			return OxBA;
+		case 0xBB:
+			return OxBB;
+		case 0xBC:
+			return OxBC;
+		case 0xBD:
+			return OxBD;
+		case 0xBE:
+			return OxBE;
+		case 0xBF:
+			return OxBF;
+		case 0xC0:
+			return OxC0;
+		case 0xC1:
+			return OxC1;
+		case 0xC2:
+			return OxC2;
+		case 0xC3:
+			return OxC3;
+		case 0xC4:
+			return OxC4;
+		case 0xC5:
+			return OxC5;
+		case 0xC6:
+			return OxC6;
+		case 0xC7:
+			return OxC7;
+		case 0xC8:
+			return OxC8;
+		case 0xC9:
+			return OxC9;
+		case 0xCA:
+			return OxCA;
 		case 0xCB:
 			switch (this->_byte2) {
-				case 0x00: return OxCB00;
-				case 0x01: return OxCB01;
-				case 0x02: return OxCB02;
-				case 0x03: return OxCB03;
-				case 0x04: return OxCB04;
-				case 0x05: return OxCB05;
-				case 0x06: return OxCB06;
-				case 0x07: return OxCB07;
-				case 0x08: return OxCB08;
-				case 0x09: return OxCB09;
-				case 0x0A: return OxCB0A;
-				case 0x0B: return OxCB0B;
-				case 0x0C: return OxCB0C;
-				case 0x0D: return OxCB0D;
-				case 0x0E: return OxCB0E;
-				case 0x0F: return OxCB0F;
-				case 0x10: return OxCB10;
-				case 0x11: return OxCB11;
-				case 0x12: return OxCB12;
-				case 0x13: return OxCB13;
-				case 0x14: return OxCB14;
-				case 0x15: return OxCB15;
-				case 0x16: return OxCB16;
-				case 0x17: return OxCB17;
-				case 0x18: return OxCB18;
-				case 0x19: return OxCB19;
-				case 0x1A: return OxCB1A;
-				case 0x1B: return OxCB1B;
-				case 0x1C: return OxCB1C;
-				case 0x1D: return OxCB1D;
-				case 0x1E: return OxCB1E;
-				case 0x1F: return OxCB1F;
-				case 0x20: return OxCB20;
-				case 0x21: return OxCB21;
-				case 0x22: return OxCB22;
-				case 0x23: return OxCB23;
-				case 0x24: return OxCB24;
-				case 0x25: return OxCB25;
-				case 0x26: return OxCB26;
-				case 0x27: return OxCB27;
-				case 0x28: return OxCB28;
-				case 0x29: return OxCB29;
-				case 0x2A: return OxCB2A;
-				case 0x2B: return OxCB2B;
-				case 0x2C: return OxCB2C;
-				case 0x2D: return OxCB2D;
-				case 0x2E: return OxCB2E;
-				case 0x2F: return OxCB2F;
-				case 0x30: return OxCB30;
-				case 0x31: return OxCB31;
-				case 0x32: return OxCB32;
-				case 0x33: return OxCB33;
-				case 0x34: return OxCB34;
-				case 0x35: return OxCB35;
-				case 0x36: return OxCB36;
-				case 0x37: return OxCB37;
-				case 0x38: return OxCB38;
-				case 0x39: return OxCB39;
-				case 0x3A: return OxCB3A;
-				case 0x3B: return OxCB3B;
-				case 0x3C: return OxCB3C;
-				case 0x3D: return OxCB3D;
-				case 0x3E: return OxCB3E;
-				case 0x3F: return OxCB3F;
-				case 0x40: return OxCB40;
-				case 0x41: return OxCB41;
-				case 0x42: return OxCB42;
-				case 0x43: return OxCB43;
-				case 0x44: return OxCB44;
-				case 0x45: return OxCB45;
-				case 0x46: return OxCB46;
-				case 0x47: return OxCB47;
-				case 0x48: return OxCB48;
-				case 0x49: return OxCB49;
-				case 0x4A: return OxCB4A;
-				case 0x4B: return OxCB4B;
-				case 0x4C: return OxCB4C;
-				case 0x4D: return OxCB4D;
-				case 0x4E: return OxCB4E;
-				case 0x4F: return OxCB4F;
-				case 0x50: return OxCB50;
-				case 0x51: return OxCB51;
-				case 0x52: return OxCB52;
-				case 0x53: return OxCB53;
-				case 0x54: return OxCB54;
-				case 0x55: return OxCB55;
-				case 0x56: return OxCB56;
-				case 0x57: return OxCB57;
-				case 0x58: return OxCB58;
-				case 0x59: return OxCB59;
-				case 0x5A: return OxCB5A;
-				case 0x5B: return OxCB5B;
-				case 0x5C: return OxCB5C;
-				case 0x5D: return OxCB5D;
-				case 0x5E: return OxCB5E;
-				case 0x5F: return OxCB5F;
-				case 0x60: return OxCB60;
-				case 0x61: return OxCB61;
-				case 0x62: return OxCB62;
-				case 0x63: return OxCB63;
-				case 0x64: return OxCB64;
-				case 0x65: return OxCB65;
-				case 0x66: return OxCB66;
-				case 0x67: return OxCB67;
-				case 0x68: return OxCB68;
-				case 0x69: return OxCB69;
-				case 0x6A: return OxCB6A;
-				case 0x6B: return OxCB6B;
-				case 0x6C: return OxCB6C;
-				case 0x6D: return OxCB6D;
-				case 0x6E: return OxCB6E;
-				case 0x6F: return OxCB6F;
-				case 0x70: return OxCB70;
-				case 0x71: return OxCB71;
-				case 0x72: return OxCB72;
-				case 0x73: return OxCB73;
-				case 0x74: return OxCB74;
-				case 0x75: return OxCB75;
-				case 0x76: return OxCB76;
-				case 0x77: return OxCB77;
-				case 0x78: return OxCB78;
-				case 0x79: return OxCB79;
-				case 0x7A: return OxCB7A;
-				case 0x7B: return OxCB7B;
-				case 0x7C: return OxCB7C;
-				case 0x7D: return OxCB7D;
-				case 0x7E: return OxCB7E;
-				case 0x7F: return OxCB7F;
-				case 0x80: return OxCB80;
-				case 0x81: return OxCB81;
-				case 0x82: return OxCB82;
-				case 0x83: return OxCB83;
-				case 0x84: return OxCB84;
-				case 0x85: return OxCB85;
-				case 0x86: return OxCB86;
-				case 0x87: return OxCB87;
-				case 0x88: return OxCB88;
-				case 0x89: return OxCB89;
-				case 0x8A: return OxCB8A;
-				case 0x8B: return OxCB8B;
-				case 0x8C: return OxCB8C;
-				case 0x8D: return OxCB8D;
-				case 0x8E: return OxCB8E;
-				case 0x8F: return OxCB8F;
-				case 0x90: return OxCB90;
-				case 0x91: return OxCB91;
-				case 0x92: return OxCB92;
-				case 0x93: return OxCB93;
-				case 0x94: return OxCB94;
-				case 0x95: return OxCB95;
-				case 0x96: return OxCB96;
-				case 0x97: return OxCB97;
-				case 0x98: return OxCB98;
-				case 0x99: return OxCB99;
-				case 0x9A: return OxCB9A;
-				case 0x9B: return OxCB9B;
-				case 0x9C: return OxCB9C;
-				case 0x9D: return OxCB9D;
-				case 0x9E: return OxCB9E;
-				case 0x9F: return OxCB9F;
-				case 0xA0: return OxCBA0;
-				case 0xA1: return OxCBA1;
-				case 0xA2: return OxCBA2;
-				case 0xA3: return OxCBA3;
-				case 0xA4: return OxCBA4;
-				case 0xA5: return OxCBA5;
-				case 0xA6: return OxCBA6;
-				case 0xA7: return OxCBA7;
-				case 0xA8: return OxCBA8;
-				case 0xA9: return OxCBA9;
-				case 0xAA: return OxCBAA;
-				case 0xAB: return OxCBAB;
-				case 0xAC: return OxCBAC;
-				case 0xAD: return OxCBAD;
-				case 0xAE: return OxCBAE;
-				case 0xAF: return OxCBAF;
-				case 0xB0: return OxCBB0;
-				case 0xB1: return OxCBB1;
-				case 0xB2: return OxCBB2;
-				case 0xB3: return OxCBB3;
-				case 0xB4: return OxCBB4;
-				case 0xB5: return OxCBB5;
-				case 0xB6: return OxCBB6;
-				case 0xB7: return OxCBB7;
-				case 0xB8: return OxCBB8;
-				case 0xB9: return OxCBB9;
-				case 0xBA: return OxCBBA;
-				case 0xBB: return OxCBBB;
-				case 0xBC: return OxCBBC;
-				case 0xBD: return OxCBBD;
-				case 0xBE: return OxCBBE;
-				case 0xBF: return OxCBBF;
-				case 0xC0: return OxCBC0;
-				case 0xC1: return OxCBC1;
-				case 0xC2: return OxCBC2;
-				case 0xC3: return OxCBC3;
-				case 0xC4: return OxCBC4;
-				case 0xC5: return OxCBC5;
-				case 0xC6: return OxCBC6;
-				case 0xC7: return OxCBC7;
-				case 0xC8: return OxCBC8;
-				case 0xC9: return OxCBC9;
-				case 0xCA: return OxCBCA;
-				case 0xCB: return OxCBCB;
-				case 0xCC: return OxCBCC;
-				case 0xCD: return OxCBCD;
-				case 0xCE: return OxCBCE;
-				case 0xCF: return OxCBCF;
-				case 0xD0: return OxCBD0;
-				case 0xD1: return OxCBD1;
-				case 0xD2: return OxCBD2;
-				case 0xD3: return OxCBD3;
-				case 0xD4: return OxCBD4;
-				case 0xD5: return OxCBD5;
-				case 0xD6: return OxCBD6;
-				case 0xD7: return OxCBD7;
-				case 0xD8: return OxCBD8;
-				case 0xD9: return OxCBD9;
-				case 0xDA: return OxCBDA;
-				case 0xDB: return OxCBDB;
-				case 0xDC: return OxCBDC;
-				case 0xDD: return OxCBDD;
-				case 0xDE: return OxCBDE;
-				case 0xDF: return OxCBDF;
-				case 0xE0: return OxCBE0;
-				case 0xE1: return OxCBE1;
-				case 0xE2: return OxCBE2;
-				case 0xE3: return OxCBE3;
-				case 0xE4: return OxCBE4;
-				case 0xE5: return OxCBE5;
-				case 0xE6: return OxCBE6;
-				case 0xE7: return OxCBE7;
-				case 0xE8: return OxCBE8;
-				case 0xE9: return OxCBE9;
-				case 0xEA: return OxCBEA;
-				case 0xEB: return OxCBEB;
-				case 0xEC: return OxCBEC;
-				case 0xED: return OxCBED;
-				case 0xEE: return OxCBEE;
-				case 0xEF: return OxCBEF;
-				case 0xF0: return OxCBF0;
-				case 0xF1: return OxCBF1;
-				case 0xF2: return OxCBF2;
-				case 0xF3: return OxCBF3;
-				case 0xF4: return OxCBF4;
-				case 0xF5: return OxCBF5;
-				case 0xF6: return OxCBF6;
-				case 0xF7: return OxCBF7;
-				case 0xF8: return OxCBF8;
-				case 0xF9: return OxCBF9;
-				case 0xFA: return OxCBFA;
-				case 0xFB: return OxCBFB;
-				case 0xFC: return OxCBFC;
-				case 0xFD: return OxCBFD;
-				case 0xFE: return OxCBFE;
-				case 0xFF: return OxCBFF;
+				case 0x00:
+					return OxCB00;
+				case 0x01:
+					return OxCB01;
+				case 0x02:
+					return OxCB02;
+				case 0x03:
+					return OxCB03;
+				case 0x04:
+					return OxCB04;
+				case 0x05:
+					return OxCB05;
+				case 0x06:
+					return OxCB06;
+				case 0x07:
+					return OxCB07;
+				case 0x08:
+					return OxCB08;
+				case 0x09:
+					return OxCB09;
+				case 0x0A:
+					return OxCB0A;
+				case 0x0B:
+					return OxCB0B;
+				case 0x0C:
+					return OxCB0C;
+				case 0x0D:
+					return OxCB0D;
+				case 0x0E:
+					return OxCB0E;
+				case 0x0F:
+					return OxCB0F;
+				case 0x10:
+					return OxCB10;
+				case 0x11:
+					return OxCB11;
+				case 0x12:
+					return OxCB12;
+				case 0x13:
+					return OxCB13;
+				case 0x14:
+					return OxCB14;
+				case 0x15:
+					return OxCB15;
+				case 0x16:
+					return OxCB16;
+				case 0x17:
+					return OxCB17;
+				case 0x18:
+					return OxCB18;
+				case 0x19:
+					return OxCB19;
+				case 0x1A:
+					return OxCB1A;
+				case 0x1B:
+					return OxCB1B;
+				case 0x1C:
+					return OxCB1C;
+				case 0x1D:
+					return OxCB1D;
+				case 0x1E:
+					return OxCB1E;
+				case 0x1F:
+					return OxCB1F;
+				case 0x20:
+					return OxCB20;
+				case 0x21:
+					return OxCB21;
+				case 0x22:
+					return OxCB22;
+				case 0x23:
+					return OxCB23;
+				case 0x24:
+					return OxCB24;
+				case 0x25:
+					return OxCB25;
+				case 0x26:
+					return OxCB26;
+				case 0x27:
+					return OxCB27;
+				case 0x28:
+					return OxCB28;
+				case 0x29:
+					return OxCB29;
+				case 0x2A:
+					return OxCB2A;
+				case 0x2B:
+					return OxCB2B;
+				case 0x2C:
+					return OxCB2C;
+				case 0x2D:
+					return OxCB2D;
+				case 0x2E:
+					return OxCB2E;
+				case 0x2F:
+					return OxCB2F;
+				case 0x30:
+					return OxCB30;
+				case 0x31:
+					return OxCB31;
+				case 0x32:
+					return OxCB32;
+				case 0x33:
+					return OxCB33;
+				case 0x34:
+					return OxCB34;
+				case 0x35:
+					return OxCB35;
+				case 0x36:
+					return OxCB36;
+				case 0x37:
+					return OxCB37;
+				case 0x38:
+					return OxCB38;
+				case 0x39:
+					return OxCB39;
+				case 0x3A:
+					return OxCB3A;
+				case 0x3B:
+					return OxCB3B;
+				case 0x3C:
+					return OxCB3C;
+				case 0x3D:
+					return OxCB3D;
+				case 0x3E:
+					return OxCB3E;
+				case 0x3F:
+					return OxCB3F;
+				case 0x40:
+					return OxCB40;
+				case 0x41:
+					return OxCB41;
+				case 0x42:
+					return OxCB42;
+				case 0x43:
+					return OxCB43;
+				case 0x44:
+					return OxCB44;
+				case 0x45:
+					return OxCB45;
+				case 0x46:
+					return OxCB46;
+				case 0x47:
+					return OxCB47;
+				case 0x48:
+					return OxCB48;
+				case 0x49:
+					return OxCB49;
+				case 0x4A:
+					return OxCB4A;
+				case 0x4B:
+					return OxCB4B;
+				case 0x4C:
+					return OxCB4C;
+				case 0x4D:
+					return OxCB4D;
+				case 0x4E:
+					return OxCB4E;
+				case 0x4F:
+					return OxCB4F;
+				case 0x50:
+					return OxCB50;
+				case 0x51:
+					return OxCB51;
+				case 0x52:
+					return OxCB52;
+				case 0x53:
+					return OxCB53;
+				case 0x54:
+					return OxCB54;
+				case 0x55:
+					return OxCB55;
+				case 0x56:
+					return OxCB56;
+				case 0x57:
+					return OxCB57;
+				case 0x58:
+					return OxCB58;
+				case 0x59:
+					return OxCB59;
+				case 0x5A:
+					return OxCB5A;
+				case 0x5B:
+					return OxCB5B;
+				case 0x5C:
+					return OxCB5C;
+				case 0x5D:
+					return OxCB5D;
+				case 0x5E:
+					return OxCB5E;
+				case 0x5F:
+					return OxCB5F;
+				case 0x60:
+					return OxCB60;
+				case 0x61:
+					return OxCB61;
+				case 0x62:
+					return OxCB62;
+				case 0x63:
+					return OxCB63;
+				case 0x64:
+					return OxCB64;
+				case 0x65:
+					return OxCB65;
+				case 0x66:
+					return OxCB66;
+				case 0x67:
+					return OxCB67;
+				case 0x68:
+					return OxCB68;
+				case 0x69:
+					return OxCB69;
+				case 0x6A:
+					return OxCB6A;
+				case 0x6B:
+					return OxCB6B;
+				case 0x6C:
+					return OxCB6C;
+				case 0x6D:
+					return OxCB6D;
+				case 0x6E:
+					return OxCB6E;
+				case 0x6F:
+					return OxCB6F;
+				case 0x70:
+					return OxCB70;
+				case 0x71:
+					return OxCB71;
+				case 0x72:
+					return OxCB72;
+				case 0x73:
+					return OxCB73;
+				case 0x74:
+					return OxCB74;
+				case 0x75:
+					return OxCB75;
+				case 0x76:
+					return OxCB76;
+				case 0x77:
+					return OxCB77;
+				case 0x78:
+					return OxCB78;
+				case 0x79:
+					return OxCB79;
+				case 0x7A:
+					return OxCB7A;
+				case 0x7B:
+					return OxCB7B;
+				case 0x7C:
+					return OxCB7C;
+				case 0x7D:
+					return OxCB7D;
+				case 0x7E:
+					return OxCB7E;
+				case 0x7F:
+					return OxCB7F;
+				case 0x80:
+					return OxCB80;
+				case 0x81:
+					return OxCB81;
+				case 0x82:
+					return OxCB82;
+				case 0x83:
+					return OxCB83;
+				case 0x84:
+					return OxCB84;
+				case 0x85:
+					return OxCB85;
+				case 0x86:
+					return OxCB86;
+				case 0x87:
+					return OxCB87;
+				case 0x88:
+					return OxCB88;
+				case 0x89:
+					return OxCB89;
+				case 0x8A:
+					return OxCB8A;
+				case 0x8B:
+					return OxCB8B;
+				case 0x8C:
+					return OxCB8C;
+				case 0x8D:
+					return OxCB8D;
+				case 0x8E:
+					return OxCB8E;
+				case 0x8F:
+					return OxCB8F;
+				case 0x90:
+					return OxCB90;
+				case 0x91:
+					return OxCB91;
+				case 0x92:
+					return OxCB92;
+				case 0x93:
+					return OxCB93;
+				case 0x94:
+					return OxCB94;
+				case 0x95:
+					return OxCB95;
+				case 0x96:
+					return OxCB96;
+				case 0x97:
+					return OxCB97;
+				case 0x98:
+					return OxCB98;
+				case 0x99:
+					return OxCB99;
+				case 0x9A:
+					return OxCB9A;
+				case 0x9B:
+					return OxCB9B;
+				case 0x9C:
+					return OxCB9C;
+				case 0x9D:
+					return OxCB9D;
+				case 0x9E:
+					return OxCB9E;
+				case 0x9F:
+					return OxCB9F;
+				case 0xA0:
+					return OxCBA0;
+				case 0xA1:
+					return OxCBA1;
+				case 0xA2:
+					return OxCBA2;
+				case 0xA3:
+					return OxCBA3;
+				case 0xA4:
+					return OxCBA4;
+				case 0xA5:
+					return OxCBA5;
+				case 0xA6:
+					return OxCBA6;
+				case 0xA7:
+					return OxCBA7;
+				case 0xA8:
+					return OxCBA8;
+				case 0xA9:
+					return OxCBA9;
+				case 0xAA:
+					return OxCBAA;
+				case 0xAB:
+					return OxCBAB;
+				case 0xAC:
+					return OxCBAC;
+				case 0xAD:
+					return OxCBAD;
+				case 0xAE:
+					return OxCBAE;
+				case 0xAF:
+					return OxCBAF;
+				case 0xB0:
+					return OxCBB0;
+				case 0xB1:
+					return OxCBB1;
+				case 0xB2:
+					return OxCBB2;
+				case 0xB3:
+					return OxCBB3;
+				case 0xB4:
+					return OxCBB4;
+				case 0xB5:
+					return OxCBB5;
+				case 0xB6:
+					return OxCBB6;
+				case 0xB7:
+					return OxCBB7;
+				case 0xB8:
+					return OxCBB8;
+				case 0xB9:
+					return OxCBB9;
+				case 0xBA:
+					return OxCBBA;
+				case 0xBB:
+					return OxCBBB;
+				case 0xBC:
+					return OxCBBC;
+				case 0xBD:
+					return OxCBBD;
+				case 0xBE:
+					return OxCBBE;
+				case 0xBF:
+					return OxCBBF;
+				case 0xC0:
+					return OxCBC0;
+				case 0xC1:
+					return OxCBC1;
+				case 0xC2:
+					return OxCBC2;
+				case 0xC3:
+					return OxCBC3;
+				case 0xC4:
+					return OxCBC4;
+				case 0xC5:
+					return OxCBC5;
+				case 0xC6:
+					return OxCBC6;
+				case 0xC7:
+					return OxCBC7;
+				case 0xC8:
+					return OxCBC8;
+				case 0xC9:
+					return OxCBC9;
+				case 0xCA:
+					return OxCBCA;
+				case 0xCB:
+					return OxCBCB;
+				case 0xCC:
+					return OxCBCC;
+				case 0xCD:
+					return OxCBCD;
+				case 0xCE:
+					return OxCBCE;
+				case 0xCF:
+					return OxCBCF;
+				case 0xD0:
+					return OxCBD0;
+				case 0xD1:
+					return OxCBD1;
+				case 0xD2:
+					return OxCBD2;
+				case 0xD3:
+					return OxCBD3;
+				case 0xD4:
+					return OxCBD4;
+				case 0xD5:
+					return OxCBD5;
+				case 0xD6:
+					return OxCBD6;
+				case 0xD7:
+					return OxCBD7;
+				case 0xD8:
+					return OxCBD8;
+				case 0xD9:
+					return OxCBD9;
+				case 0xDA:
+					return OxCBDA;
+				case 0xDB:
+					return OxCBDB;
+				case 0xDC:
+					return OxCBDC;
+				case 0xDD:
+					return OxCBDD;
+				case 0xDE:
+					return OxCBDE;
+				case 0xDF:
+					return OxCBDF;
+				case 0xE0:
+					return OxCBE0;
+				case 0xE1:
+					return OxCBE1;
+				case 0xE2:
+					return OxCBE2;
+				case 0xE3:
+					return OxCBE3;
+				case 0xE4:
+					return OxCBE4;
+				case 0xE5:
+					return OxCBE5;
+				case 0xE6:
+					return OxCBE6;
+				case 0xE7:
+					return OxCBE7;
+				case 0xE8:
+					return OxCBE8;
+				case 0xE9:
+					return OxCBE9;
+				case 0xEA:
+					return OxCBEA;
+				case 0xEB:
+					return OxCBEB;
+				case 0xEC:
+					return OxCBEC;
+				case 0xED:
+					return OxCBED;
+				case 0xEE:
+					return OxCBEE;
+				case 0xEF:
+					return OxCBEF;
+				case 0xF0:
+					return OxCBF0;
+				case 0xF1:
+					return OxCBF1;
+				case 0xF2:
+					return OxCBF2;
+				case 0xF3:
+					return OxCBF3;
+				case 0xF4:
+					return OxCBF4;
+				case 0xF5:
+					return OxCBF5;
+				case 0xF6:
+					return OxCBF6;
+				case 0xF7:
+					return OxCBF7;
+				case 0xF8:
+					return OxCBF8;
+				case 0xF9:
+					return OxCBF9;
+				case 0xFA:
+					return OxCBFA;
+				case 0xFB:
+					return OxCBFB;
+				case 0xFC:
+					return OxCBFC;
+				case 0xFD:
+					return OxCBFD;
+				case 0xFE:
+					return OxCBFE;
+				case 0xFF:
+					return OxCBFF;
 			}
 			break;
 
-		case 0xCC: return OxCC;
-		case 0xCD: return OxCD;
-		case 0xCE: return OxCE;
-		case 0xCF: return OxCF;
-		case 0xD0: return OxD0;
-		case 0xD1: return OxD1;
-		case 0xD2: return OxD2;
-		case 0xD3: return OxD3;
-		case 0xD4: return OxD4;
-		case 0xD5: return OxD5;
-		case 0xD6: return OxD6;
-		case 0xD7: return OxD7;
-		case 0xD8: return OxD8;
-		case 0xD9: return OxD9;
-		case 0xDA: return OxDA;
-		case 0xDB: return OxDB;
-		case 0xDC: return OxDC;
+		case 0xCC:
+			return OxCC;
+		case 0xCD:
+			return OxCD;
+		case 0xCE:
+			return OxCE;
+		case 0xCF:
+			return OxCF;
+		case 0xD0:
+			return OxD0;
+		case 0xD1:
+			return OxD1;
+		case 0xD2:
+			return OxD2;
+		case 0xD3:
+			return OxD3;
+		case 0xD4:
+			return OxD4;
+		case 0xD5:
+			return OxD5;
+		case 0xD6:
+			return OxD6;
+		case 0xD7:
+			return OxD7;
+		case 0xD8:
+			return OxD8;
+		case 0xD9:
+			return OxD9;
+		case 0xDA:
+			return OxDA;
+		case 0xDB:
+			return OxDB;
+		case 0xDC:
+			return OxDC;
 		case 0xDD:
 			switch (this->_byte2) {
 				case 0x40:
@@ -536,468 +1012,917 @@ int Opcode::GetEnum() {
 					this->_advance = 1;
 					return 0;
 
-				case 0x09: return OxDD09;
-				case 0x19: return OxDD19;
-				case 0x21: return OxDD21;
-				case 0x22: return OxDD22;
-				case 0x23: return OxDD23;
-				case 0x24: return OxDD24;
-				case 0x25: return OxDD25;
-				case 0x26: return OxDD26;
-				case 0x29: return OxDD29;
-				case 0x2A: return OxDD2A;
-				case 0x2B: return OxDD2B;
-				case 0x2C: return OxDD2C;
-				case 0x2D: return OxDD2D;
-				case 0x2E: return OxDD2E;
-				case 0x34: return OxDD34;
-				case 0x35: return OxDD35;
-				case 0x36: return OxDD36;
-				case 0x39: return OxDD39;
-				case 0x44: return OxDD44;
-				case 0x45: return OxDD45;
-				case 0x46: return OxDD46;
-				case 0x4C: return OxDD4C;
-				case 0x4D: return OxDD4D;
-				case 0x4E: return OxDD4E;
-				case 0x54: return OxDD54;
-				case 0x55: return OxDD55;
-				case 0x56: return OxDD56;
-				case 0x5C: return OxDD5C;
-				case 0x5D: return OxDD5D;
-				case 0x5E: return OxDD5E;
-				case 0x60: return OxDD60;
-				case 0x61: return OxDD61;
-				case 0x62: return OxDD62;
-				case 0x63: return OxDD63;
-				case 0x64: return OxDD64;
-				case 0x65: return OxDD65;
-				case 0x66: return OxDD66;
-				case 0x67: return OxDD67;
-				case 0x68: return OxDD68;
-				case 0x69: return OxDD69;
-				case 0x6A: return OxDD6A;
-				case 0x6B: return OxDD6B;
-				case 0x6C: return OxDD6C;
-				case 0x6D: return OxDD6D;
-				case 0x6E: return OxDD6E;
-				case 0x6F: return OxDD6F;
-				case 0x70: return OxDD70;
-				case 0x71: return OxDD71;
-				case 0x72: return OxDD72;
-				case 0x73: return OxDD73;
-				case 0x74: return OxDD74;
-				case 0x75: return OxDD75;
-				case 0x77: return OxDD77;
-				case 0x7C: return OxDD7C;
-				case 0x7D: return OxDD7D;
-				case 0x7E: return OxDD7E;
-				case 0x84: return OxDD84;
-				case 0x85: return OxDD85;
-				case 0x86: return OxDD86;
-				case 0x8C: return OxDD8C;
-				case 0x8D: return OxDD8D;
-				case 0x8E: return OxDD8E;
-				case 0x94: return OxDD94;
-				case 0x95: return OxDD95;
-				case 0x96: return OxDD96;
-				case 0x9C: return OxDD9C;
-				case 0x9D: return OxDD9D;
-				case 0x9E: return OxDD9E;
-				case 0xA4: return OxDDA4;
-				case 0xA5: return OxDDA5;
-				case 0xA6: return OxDDA6;
-				case 0xAC: return OxDDAC;
-				case 0xAD: return OxDDAD;
-				case 0xAE: return OxDDAE;
-				case 0xB4: return OxDDB4;
-				case 0xB5: return OxDDB5;
-				case 0xB6: return OxDDB6;
-				case 0xBC: return OxDDBC;
-				case 0xBD: return OxDDBD;
-				case 0xBE: return OxDDBE;
+				case 0x09:
+					return OxDD09;
+				case 0x19:
+					return OxDD19;
+				case 0x21:
+					return OxDD21;
+				case 0x22:
+					return OxDD22;
+				case 0x23:
+					return OxDD23;
+				case 0x24:
+					return OxDD24;
+				case 0x25:
+					return OxDD25;
+				case 0x26:
+					return OxDD26;
+				case 0x29:
+					return OxDD29;
+				case 0x2A:
+					return OxDD2A;
+				case 0x2B:
+					return OxDD2B;
+				case 0x2C:
+					return OxDD2C;
+				case 0x2D:
+					return OxDD2D;
+				case 0x2E:
+					return OxDD2E;
+				case 0x34:
+					return OxDD34;
+				case 0x35:
+					return OxDD35;
+				case 0x36:
+					return OxDD36;
+				case 0x39:
+					return OxDD39;
+				case 0x44:
+					return OxDD44;
+				case 0x45:
+					return OxDD45;
+				case 0x46:
+					return OxDD46;
+				case 0x4C:
+					return OxDD4C;
+				case 0x4D:
+					return OxDD4D;
+				case 0x4E:
+					return OxDD4E;
+				case 0x54:
+					return OxDD54;
+				case 0x55:
+					return OxDD55;
+				case 0x56:
+					return OxDD56;
+				case 0x5C:
+					return OxDD5C;
+				case 0x5D:
+					return OxDD5D;
+				case 0x5E:
+					return OxDD5E;
+				case 0x60:
+					return OxDD60;
+				case 0x61:
+					return OxDD61;
+				case 0x62:
+					return OxDD62;
+				case 0x63:
+					return OxDD63;
+				case 0x64:
+					return OxDD64;
+				case 0x65:
+					return OxDD65;
+				case 0x66:
+					return OxDD66;
+				case 0x67:
+					return OxDD67;
+				case 0x68:
+					return OxDD68;
+				case 0x69:
+					return OxDD69;
+				case 0x6A:
+					return OxDD6A;
+				case 0x6B:
+					return OxDD6B;
+				case 0x6C:
+					return OxDD6C;
+				case 0x6D:
+					return OxDD6D;
+				case 0x6E:
+					return OxDD6E;
+				case 0x6F:
+					return OxDD6F;
+				case 0x70:
+					return OxDD70;
+				case 0x71:
+					return OxDD71;
+				case 0x72:
+					return OxDD72;
+				case 0x73:
+					return OxDD73;
+				case 0x74:
+					return OxDD74;
+				case 0x75:
+					return OxDD75;
+				case 0x77:
+					return OxDD77;
+				case 0x7C:
+					return OxDD7C;
+				case 0x7D:
+					return OxDD7D;
+				case 0x7E:
+					return OxDD7E;
+				case 0x84:
+					return OxDD84;
+				case 0x85:
+					return OxDD85;
+				case 0x86:
+					return OxDD86;
+				case 0x8C:
+					return OxDD8C;
+				case 0x8D:
+					return OxDD8D;
+				case 0x8E:
+					return OxDD8E;
+				case 0x94:
+					return OxDD94;
+				case 0x95:
+					return OxDD95;
+				case 0x96:
+					return OxDD96;
+				case 0x9C:
+					return OxDD9C;
+				case 0x9D:
+					return OxDD9D;
+				case 0x9E:
+					return OxDD9E;
+				case 0xA4:
+					return OxDDA4;
+				case 0xA5:
+					return OxDDA5;
+				case 0xA6:
+					return OxDDA6;
+				case 0xAC:
+					return OxDDAC;
+				case 0xAD:
+					return OxDDAD;
+				case 0xAE:
+					return OxDDAE;
+				case 0xB4:
+					return OxDDB4;
+				case 0xB5:
+					return OxDDB5;
+				case 0xB6:
+					return OxDDB6;
+				case 0xBC:
+					return OxDDBC;
+				case 0xBD:
+					return OxDDBD;
+				case 0xBE:
+					return OxDDBE;
 				case 0xCB:
 					switch (this->_byte4) {
-						case 0x00: return OxDDCBnn00;
-						case 0x01: return OxDDCBnn01;
-						case 0x02: return OxDDCBnn02;
-						case 0x03: return OxDDCBnn03;
-						case 0x04: return OxDDCBnn04;
-						case 0x05: return OxDDCBnn05;
-						case 0x06: return OxDDCBnn06;
-						case 0x07: return OxDDCBnn07;
-						case 0x08: return OxDDCBnn08;
-						case 0x09: return OxDDCBnn09;
-						case 0x0A: return OxDDCBnn0A;
-						case 0x0B: return OxDDCBnn0B;
-						case 0x0C: return OxDDCBnn0C;
-						case 0x0D: return OxDDCBnn0D;
-						case 0x0E: return OxDDCBnn0E;
-						case 0x0F: return OxDDCBnn0F;
-						case 0x10: return OxDDCBnn10;
-						case 0x11: return OxDDCBnn11;
-						case 0x12: return OxDDCBnn12;
-						case 0x13: return OxDDCBnn13;
-						case 0x14: return OxDDCBnn14;
-						case 0x15: return OxDDCBnn15;
-						case 0x16: return OxDDCBnn16;
-						case 0x17: return OxDDCBnn17;
-						case 0x18: return OxDDCBnn18;
-						case 0x19: return OxDDCBnn19;
-						case 0x1A: return OxDDCBnn1A;
-						case 0x1B: return OxDDCBnn1B;
-						case 0x1C: return OxDDCBnn1C;
-						case 0x1D: return OxDDCBnn1D;
-						case 0x1E: return OxDDCBnn1E;
-						case 0x1F: return OxDDCBnn1F;
-						case 0x20: return OxDDCBnn20;
-						case 0x21: return OxDDCBnn21;
-						case 0x22: return OxDDCBnn22;
-						case 0x23: return OxDDCBnn23;
-						case 0x24: return OxDDCBnn24;
-						case 0x25: return OxDDCBnn25;
-						case 0x26: return OxDDCBnn26;
-						case 0x27: return OxDDCBnn27;
-						case 0x28: return OxDDCBnn28;
-						case 0x29: return OxDDCBnn29;
-						case 0x2A: return OxDDCBnn2A;
-						case 0x2B: return OxDDCBnn2B;
-						case 0x2C: return OxDDCBnn2C;
-						case 0x2D: return OxDDCBnn2D;
-						case 0x2E: return OxDDCBnn2E;
-						case 0x2F: return OxDDCBnn2F;
-						case 0x30: return OxDDCBnn30;
-						case 0x31: return OxDDCBnn31;
-						case 0x32: return OxDDCBnn32;
-						case 0x33: return OxDDCBnn33;
-						case 0x34: return OxDDCBnn34;
-						case 0x35: return OxDDCBnn35;
-						case 0x36: return OxDDCBnn36;
-						case 0x37: return OxDDCBnn37;
-						case 0x38: return OxDDCBnn38;
-						case 0x39: return OxDDCBnn39;
-						case 0x3A: return OxDDCBnn3A;
-						case 0x3B: return OxDDCBnn3B;
-						case 0x3C: return OxDDCBnn3C;
-						case 0x3D: return OxDDCBnn3D;
-						case 0x3E: return OxDDCBnn3E;
-						case 0x3F: return OxDDCBnn3F;
-						case 0x40: return OxDDCBnn40;
-						case 0x41: return OxDDCBnn41;
-						case 0x42: return OxDDCBnn42;
-						case 0x43: return OxDDCBnn43;
-						case 0x44: return OxDDCBnn44;
-						case 0x45: return OxDDCBnn45;
-						case 0x46: return OxDDCBnn46;
-						case 0x47: return OxDDCBnn47;
-						case 0x48: return OxDDCBnn48;
-						case 0x49: return OxDDCBnn49;
-						case 0x4A: return OxDDCBnn4A;
-						case 0x4B: return OxDDCBnn4B;
-						case 0x4C: return OxDDCBnn4C;
-						case 0x4D: return OxDDCBnn4D;
-						case 0x4E: return OxDDCBnn4E;
-						case 0x4F: return OxDDCBnn4F;
-						case 0x50: return OxDDCBnn50;
-						case 0x51: return OxDDCBnn51;
-						case 0x52: return OxDDCBnn52;
-						case 0x53: return OxDDCBnn53;
-						case 0x54: return OxDDCBnn54;
-						case 0x55: return OxDDCBnn55;
-						case 0x56: return OxDDCBnn56;
-						case 0x57: return OxDDCBnn57;
-						case 0x58: return OxDDCBnn58;
-						case 0x59: return OxDDCBnn59;
-						case 0x5A: return OxDDCBnn5A;
-						case 0x5B: return OxDDCBnn5B;
-						case 0x5C: return OxDDCBnn5C;
-						case 0x5D: return OxDDCBnn5D;
-						case 0x5E: return OxDDCBnn5E;
-						case 0x5F: return OxDDCBnn5F;
-						case 0x60: return OxDDCBnn60;
-						case 0x61: return OxDDCBnn61;
-						case 0x62: return OxDDCBnn62;
-						case 0x63: return OxDDCBnn63;
-						case 0x64: return OxDDCBnn64;
-						case 0x65: return OxDDCBnn65;
-						case 0x66: return OxDDCBnn66;
-						case 0x67: return OxDDCBnn67;
-						case 0x68: return OxDDCBnn68;
-						case 0x69: return OxDDCBnn69;
-						case 0x6A: return OxDDCBnn6A;
-						case 0x6B: return OxDDCBnn6B;
-						case 0x6C: return OxDDCBnn6C;
-						case 0x6D: return OxDDCBnn6D;
-						case 0x6E: return OxDDCBnn6E;
-						case 0x6F: return OxDDCBnn6F;
-						case 0x70: return OxDDCBnn70;
-						case 0x71: return OxDDCBnn71;
-						case 0x72: return OxDDCBnn72;
-						case 0x73: return OxDDCBnn73;
-						case 0x74: return OxDDCBnn74;
-						case 0x75: return OxDDCBnn75;
-						case 0x76: return OxDDCBnn76;
-						case 0x77: return OxDDCBnn77;
-						case 0x78: return OxDDCBnn78;
-						case 0x79: return OxDDCBnn79;
-						case 0x7A: return OxDDCBnn7A;
-						case 0x7B: return OxDDCBnn7B;
-						case 0x7C: return OxDDCBnn7C;
-						case 0x7D: return OxDDCBnn7D;
-						case 0x7E: return OxDDCBnn7E;
-						case 0x7F: return OxDDCBnn7F;
-						case 0x80: return OxDDCBnn80;
-						case 0x81: return OxDDCBnn81;
-						case 0x82: return OxDDCBnn82;
-						case 0x83: return OxDDCBnn83;
-						case 0x84: return OxDDCBnn84;
-						case 0x85: return OxDDCBnn85;
-						case 0x86: return OxDDCBnn86;
-						case 0x87: return OxDDCBnn87;
-						case 0x88: return OxDDCBnn88;
-						case 0x89: return OxDDCBnn89;
-						case 0x8A: return OxDDCBnn8A;
-						case 0x8B: return OxDDCBnn8B;
-						case 0x8C: return OxDDCBnn8C;
-						case 0x8D: return OxDDCBnn8D;
-						case 0x8E: return OxDDCBnn8E;
-						case 0x8F: return OxDDCBnn8F;
-						case 0x90: return OxDDCBnn90;
-						case 0x91: return OxDDCBnn91;
-						case 0x92: return OxDDCBnn92;
-						case 0x93: return OxDDCBnn93;
-						case 0x94: return OxDDCBnn94;
-						case 0x95: return OxDDCBnn95;
-						case 0x96: return OxDDCBnn96;
-						case 0x97: return OxDDCBnn97;
-						case 0x98: return OxDDCBnn98;
-						case 0x99: return OxDDCBnn99;
-						case 0x9A: return OxDDCBnn9A;
-						case 0x9B: return OxDDCBnn9B;
-						case 0x9C: return OxDDCBnn9C;
-						case 0x9D: return OxDDCBnn9D;
-						case 0x9E: return OxDDCBnn9E;
-						case 0x9F: return OxDDCBnn9F;
-						case 0xA0: return OxDDCBnnA0;
-						case 0xA1: return OxDDCBnnA1;
-						case 0xA2: return OxDDCBnnA2;
-						case 0xA3: return OxDDCBnnA3;
-						case 0xA4: return OxDDCBnnA4;
-						case 0xA5: return OxDDCBnnA5;
-						case 0xA6: return OxDDCBnnA6;
-						case 0xA7: return OxDDCBnnA7;
-						case 0xA8: return OxDDCBnnA8;
-						case 0xA9: return OxDDCBnnA9;
-						case 0xAA: return OxDDCBnnAA;
-						case 0xAB: return OxDDCBnnAB;
-						case 0xAC: return OxDDCBnnAC;
-						case 0xAD: return OxDDCBnnAD;
-						case 0xAE: return OxDDCBnnAE;
-						case 0xAF: return OxDDCBnnAF;
-						case 0xB0: return OxDDCBnnB0;
-						case 0xB1: return OxDDCBnnB1;
-						case 0xB2: return OxDDCBnnB2;
-						case 0xB3: return OxDDCBnnB3;
-						case 0xB4: return OxDDCBnnB4;
-						case 0xB5: return OxDDCBnnB5;
-						case 0xB6: return OxDDCBnnB6;
-						case 0xB7: return OxDDCBnnB7;
-						case 0xB8: return OxDDCBnnB8;
-						case 0xB9: return OxDDCBnnB9;
-						case 0xBA: return OxDDCBnnBA;
-						case 0xBB: return OxDDCBnnBB;
-						case 0xBC: return OxDDCBnnBC;
-						case 0xBD: return OxDDCBnnBD;
-						case 0xBE: return OxDDCBnnBE;
-						case 0xBF: return OxDDCBnnBF;
-						case 0xC0: return OxDDCBnnC0;
-						case 0xC1: return OxDDCBnnC1;
-						case 0xC2: return OxDDCBnnC2;
-						case 0xC3: return OxDDCBnnC3;
-						case 0xC4: return OxDDCBnnC4;
-						case 0xC5: return OxDDCBnnC5;
-						case 0xC6: return OxDDCBnnC6;
-						case 0xC7: return OxDDCBnnC7;
-						case 0xC8: return OxDDCBnnC8;
-						case 0xC9: return OxDDCBnnC9;
-						case 0xCA: return OxDDCBnnCA;
-						case 0xCB: return OxDDCBnnCB;
-						case 0xCC: return OxDDCBnnCC;
-						case 0xCD: return OxDDCBnnCD;
-						case 0xCE: return OxDDCBnnCE;
-						case 0xCF: return OxDDCBnnCF;
-						case 0xD0: return OxDDCBnnD0;
-						case 0xD1: return OxDDCBnnD1;
-						case 0xD2: return OxDDCBnnD2;
-						case 0xD3: return OxDDCBnnD3;
-						case 0xD4: return OxDDCBnnD4;
-						case 0xD5: return OxDDCBnnD5;
-						case 0xD6: return OxDDCBnnD6;
-						case 0xD7: return OxDDCBnnD7;
-						case 0xD8: return OxDDCBnnD8;
-						case 0xD9: return OxDDCBnnD9;
-						case 0xDA: return OxDDCBnnDA;
-						case 0xDB: return OxDDCBnnDB;
-						case 0xDC: return OxDDCBnnDC;
-						case 0xDD: return OxDDCBnnDD;
-						case 0xDE: return OxDDCBnnDE;
-						case 0xDF: return OxDDCBnnDF;
-						case 0xE0: return OxDDCBnnE0;
-						case 0xE1: return OxDDCBnnE1;
-						case 0xE2: return OxDDCBnnE2;
-						case 0xE3: return OxDDCBnnE3;
-						case 0xE4: return OxDDCBnnE4;
-						case 0xE5: return OxDDCBnnE5;
-						case 0xE6: return OxDDCBnnE6;
-						case 0xE7: return OxDDCBnnE7;
-						case 0xE8: return OxDDCBnnE8;
-						case 0xE9: return OxDDCBnnE9;
-						case 0xEA: return OxDDCBnnEA;
-						case 0xEB: return OxDDCBnnEB;
-						case 0xEC: return OxDDCBnnEC;
-						case 0xED: return OxDDCBnnED;
-						case 0xEE: return OxDDCBnnEE;
-						case 0xEF: return OxDDCBnnEF;
-						case 0xF0: return OxDDCBnnF0;
-						case 0xF1: return OxDDCBnnF1;
-						case 0xF2: return OxDDCBnnF2;
-						case 0xF3: return OxDDCBnnF3;
-						case 0xF4: return OxDDCBnnF4;
-						case 0xF5: return OxDDCBnnF5;
-						case 0xF6: return OxDDCBnnF6;
-						case 0xF7: return OxDDCBnnF7;
-						case 0xF8: return OxDDCBnnF8;
-						case 0xF9: return OxDDCBnnF9;
-						case 0xFA: return OxDDCBnnFA;
-						case 0xFB: return OxDDCBnnFB;
-						case 0xFC: return OxDDCBnnFC;
-						case 0xFD: return OxDDCBnnFD;
-						case 0xFE: return OxDDCBnnFE;
-						case 0xFF: return OxDDCBnnFF;
+						case 0x00:
+							return OxDDCBnn00;
+						case 0x01:
+							return OxDDCBnn01;
+						case 0x02:
+							return OxDDCBnn02;
+						case 0x03:
+							return OxDDCBnn03;
+						case 0x04:
+							return OxDDCBnn04;
+						case 0x05:
+							return OxDDCBnn05;
+						case 0x06:
+							return OxDDCBnn06;
+						case 0x07:
+							return OxDDCBnn07;
+						case 0x08:
+							return OxDDCBnn08;
+						case 0x09:
+							return OxDDCBnn09;
+						case 0x0A:
+							return OxDDCBnn0A;
+						case 0x0B:
+							return OxDDCBnn0B;
+						case 0x0C:
+							return OxDDCBnn0C;
+						case 0x0D:
+							return OxDDCBnn0D;
+						case 0x0E:
+							return OxDDCBnn0E;
+						case 0x0F:
+							return OxDDCBnn0F;
+						case 0x10:
+							return OxDDCBnn10;
+						case 0x11:
+							return OxDDCBnn11;
+						case 0x12:
+							return OxDDCBnn12;
+						case 0x13:
+							return OxDDCBnn13;
+						case 0x14:
+							return OxDDCBnn14;
+						case 0x15:
+							return OxDDCBnn15;
+						case 0x16:
+							return OxDDCBnn16;
+						case 0x17:
+							return OxDDCBnn17;
+						case 0x18:
+							return OxDDCBnn18;
+						case 0x19:
+							return OxDDCBnn19;
+						case 0x1A:
+							return OxDDCBnn1A;
+						case 0x1B:
+							return OxDDCBnn1B;
+						case 0x1C:
+							return OxDDCBnn1C;
+						case 0x1D:
+							return OxDDCBnn1D;
+						case 0x1E:
+							return OxDDCBnn1E;
+						case 0x1F:
+							return OxDDCBnn1F;
+						case 0x20:
+							return OxDDCBnn20;
+						case 0x21:
+							return OxDDCBnn21;
+						case 0x22:
+							return OxDDCBnn22;
+						case 0x23:
+							return OxDDCBnn23;
+						case 0x24:
+							return OxDDCBnn24;
+						case 0x25:
+							return OxDDCBnn25;
+						case 0x26:
+							return OxDDCBnn26;
+						case 0x27:
+							return OxDDCBnn27;
+						case 0x28:
+							return OxDDCBnn28;
+						case 0x29:
+							return OxDDCBnn29;
+						case 0x2A:
+							return OxDDCBnn2A;
+						case 0x2B:
+							return OxDDCBnn2B;
+						case 0x2C:
+							return OxDDCBnn2C;
+						case 0x2D:
+							return OxDDCBnn2D;
+						case 0x2E:
+							return OxDDCBnn2E;
+						case 0x2F:
+							return OxDDCBnn2F;
+						case 0x30:
+							return OxDDCBnn30;
+						case 0x31:
+							return OxDDCBnn31;
+						case 0x32:
+							return OxDDCBnn32;
+						case 0x33:
+							return OxDDCBnn33;
+						case 0x34:
+							return OxDDCBnn34;
+						case 0x35:
+							return OxDDCBnn35;
+						case 0x36:
+							return OxDDCBnn36;
+						case 0x37:
+							return OxDDCBnn37;
+						case 0x38:
+							return OxDDCBnn38;
+						case 0x39:
+							return OxDDCBnn39;
+						case 0x3A:
+							return OxDDCBnn3A;
+						case 0x3B:
+							return OxDDCBnn3B;
+						case 0x3C:
+							return OxDDCBnn3C;
+						case 0x3D:
+							return OxDDCBnn3D;
+						case 0x3E:
+							return OxDDCBnn3E;
+						case 0x3F:
+							return OxDDCBnn3F;
+						case 0x40:
+							return OxDDCBnn40;
+						case 0x41:
+							return OxDDCBnn41;
+						case 0x42:
+							return OxDDCBnn42;
+						case 0x43:
+							return OxDDCBnn43;
+						case 0x44:
+							return OxDDCBnn44;
+						case 0x45:
+							return OxDDCBnn45;
+						case 0x46:
+							return OxDDCBnn46;
+						case 0x47:
+							return OxDDCBnn47;
+						case 0x48:
+							return OxDDCBnn48;
+						case 0x49:
+							return OxDDCBnn49;
+						case 0x4A:
+							return OxDDCBnn4A;
+						case 0x4B:
+							return OxDDCBnn4B;
+						case 0x4C:
+							return OxDDCBnn4C;
+						case 0x4D:
+							return OxDDCBnn4D;
+						case 0x4E:
+							return OxDDCBnn4E;
+						case 0x4F:
+							return OxDDCBnn4F;
+						case 0x50:
+							return OxDDCBnn50;
+						case 0x51:
+							return OxDDCBnn51;
+						case 0x52:
+							return OxDDCBnn52;
+						case 0x53:
+							return OxDDCBnn53;
+						case 0x54:
+							return OxDDCBnn54;
+						case 0x55:
+							return OxDDCBnn55;
+						case 0x56:
+							return OxDDCBnn56;
+						case 0x57:
+							return OxDDCBnn57;
+						case 0x58:
+							return OxDDCBnn58;
+						case 0x59:
+							return OxDDCBnn59;
+						case 0x5A:
+							return OxDDCBnn5A;
+						case 0x5B:
+							return OxDDCBnn5B;
+						case 0x5C:
+							return OxDDCBnn5C;
+						case 0x5D:
+							return OxDDCBnn5D;
+						case 0x5E:
+							return OxDDCBnn5E;
+						case 0x5F:
+							return OxDDCBnn5F;
+						case 0x60:
+							return OxDDCBnn60;
+						case 0x61:
+							return OxDDCBnn61;
+						case 0x62:
+							return OxDDCBnn62;
+						case 0x63:
+							return OxDDCBnn63;
+						case 0x64:
+							return OxDDCBnn64;
+						case 0x65:
+							return OxDDCBnn65;
+						case 0x66:
+							return OxDDCBnn66;
+						case 0x67:
+							return OxDDCBnn67;
+						case 0x68:
+							return OxDDCBnn68;
+						case 0x69:
+							return OxDDCBnn69;
+						case 0x6A:
+							return OxDDCBnn6A;
+						case 0x6B:
+							return OxDDCBnn6B;
+						case 0x6C:
+							return OxDDCBnn6C;
+						case 0x6D:
+							return OxDDCBnn6D;
+						case 0x6E:
+							return OxDDCBnn6E;
+						case 0x6F:
+							return OxDDCBnn6F;
+						case 0x70:
+							return OxDDCBnn70;
+						case 0x71:
+							return OxDDCBnn71;
+						case 0x72:
+							return OxDDCBnn72;
+						case 0x73:
+							return OxDDCBnn73;
+						case 0x74:
+							return OxDDCBnn74;
+						case 0x75:
+							return OxDDCBnn75;
+						case 0x76:
+							return OxDDCBnn76;
+						case 0x77:
+							return OxDDCBnn77;
+						case 0x78:
+							return OxDDCBnn78;
+						case 0x79:
+							return OxDDCBnn79;
+						case 0x7A:
+							return OxDDCBnn7A;
+						case 0x7B:
+							return OxDDCBnn7B;
+						case 0x7C:
+							return OxDDCBnn7C;
+						case 0x7D:
+							return OxDDCBnn7D;
+						case 0x7E:
+							return OxDDCBnn7E;
+						case 0x7F:
+							return OxDDCBnn7F;
+						case 0x80:
+							return OxDDCBnn80;
+						case 0x81:
+							return OxDDCBnn81;
+						case 0x82:
+							return OxDDCBnn82;
+						case 0x83:
+							return OxDDCBnn83;
+						case 0x84:
+							return OxDDCBnn84;
+						case 0x85:
+							return OxDDCBnn85;
+						case 0x86:
+							return OxDDCBnn86;
+						case 0x87:
+							return OxDDCBnn87;
+						case 0x88:
+							return OxDDCBnn88;
+						case 0x89:
+							return OxDDCBnn89;
+						case 0x8A:
+							return OxDDCBnn8A;
+						case 0x8B:
+							return OxDDCBnn8B;
+						case 0x8C:
+							return OxDDCBnn8C;
+						case 0x8D:
+							return OxDDCBnn8D;
+						case 0x8E:
+							return OxDDCBnn8E;
+						case 0x8F:
+							return OxDDCBnn8F;
+						case 0x90:
+							return OxDDCBnn90;
+						case 0x91:
+							return OxDDCBnn91;
+						case 0x92:
+							return OxDDCBnn92;
+						case 0x93:
+							return OxDDCBnn93;
+						case 0x94:
+							return OxDDCBnn94;
+						case 0x95:
+							return OxDDCBnn95;
+						case 0x96:
+							return OxDDCBnn96;
+						case 0x97:
+							return OxDDCBnn97;
+						case 0x98:
+							return OxDDCBnn98;
+						case 0x99:
+							return OxDDCBnn99;
+						case 0x9A:
+							return OxDDCBnn9A;
+						case 0x9B:
+							return OxDDCBnn9B;
+						case 0x9C:
+							return OxDDCBnn9C;
+						case 0x9D:
+							return OxDDCBnn9D;
+						case 0x9E:
+							return OxDDCBnn9E;
+						case 0x9F:
+							return OxDDCBnn9F;
+						case 0xA0:
+							return OxDDCBnnA0;
+						case 0xA1:
+							return OxDDCBnnA1;
+						case 0xA2:
+							return OxDDCBnnA2;
+						case 0xA3:
+							return OxDDCBnnA3;
+						case 0xA4:
+							return OxDDCBnnA4;
+						case 0xA5:
+							return OxDDCBnnA5;
+						case 0xA6:
+							return OxDDCBnnA6;
+						case 0xA7:
+							return OxDDCBnnA7;
+						case 0xA8:
+							return OxDDCBnnA8;
+						case 0xA9:
+							return OxDDCBnnA9;
+						case 0xAA:
+							return OxDDCBnnAA;
+						case 0xAB:
+							return OxDDCBnnAB;
+						case 0xAC:
+							return OxDDCBnnAC;
+						case 0xAD:
+							return OxDDCBnnAD;
+						case 0xAE:
+							return OxDDCBnnAE;
+						case 0xAF:
+							return OxDDCBnnAF;
+						case 0xB0:
+							return OxDDCBnnB0;
+						case 0xB1:
+							return OxDDCBnnB1;
+						case 0xB2:
+							return OxDDCBnnB2;
+						case 0xB3:
+							return OxDDCBnnB3;
+						case 0xB4:
+							return OxDDCBnnB4;
+						case 0xB5:
+							return OxDDCBnnB5;
+						case 0xB6:
+							return OxDDCBnnB6;
+						case 0xB7:
+							return OxDDCBnnB7;
+						case 0xB8:
+							return OxDDCBnnB8;
+						case 0xB9:
+							return OxDDCBnnB9;
+						case 0xBA:
+							return OxDDCBnnBA;
+						case 0xBB:
+							return OxDDCBnnBB;
+						case 0xBC:
+							return OxDDCBnnBC;
+						case 0xBD:
+							return OxDDCBnnBD;
+						case 0xBE:
+							return OxDDCBnnBE;
+						case 0xBF:
+							return OxDDCBnnBF;
+						case 0xC0:
+							return OxDDCBnnC0;
+						case 0xC1:
+							return OxDDCBnnC1;
+						case 0xC2:
+							return OxDDCBnnC2;
+						case 0xC3:
+							return OxDDCBnnC3;
+						case 0xC4:
+							return OxDDCBnnC4;
+						case 0xC5:
+							return OxDDCBnnC5;
+						case 0xC6:
+							return OxDDCBnnC6;
+						case 0xC7:
+							return OxDDCBnnC7;
+						case 0xC8:
+							return OxDDCBnnC8;
+						case 0xC9:
+							return OxDDCBnnC9;
+						case 0xCA:
+							return OxDDCBnnCA;
+						case 0xCB:
+							return OxDDCBnnCB;
+						case 0xCC:
+							return OxDDCBnnCC;
+						case 0xCD:
+							return OxDDCBnnCD;
+						case 0xCE:
+							return OxDDCBnnCE;
+						case 0xCF:
+							return OxDDCBnnCF;
+						case 0xD0:
+							return OxDDCBnnD0;
+						case 0xD1:
+							return OxDDCBnnD1;
+						case 0xD2:
+							return OxDDCBnnD2;
+						case 0xD3:
+							return OxDDCBnnD3;
+						case 0xD4:
+							return OxDDCBnnD4;
+						case 0xD5:
+							return OxDDCBnnD5;
+						case 0xD6:
+							return OxDDCBnnD6;
+						case 0xD7:
+							return OxDDCBnnD7;
+						case 0xD8:
+							return OxDDCBnnD8;
+						case 0xD9:
+							return OxDDCBnnD9;
+						case 0xDA:
+							return OxDDCBnnDA;
+						case 0xDB:
+							return OxDDCBnnDB;
+						case 0xDC:
+							return OxDDCBnnDC;
+						case 0xDD:
+							return OxDDCBnnDD;
+						case 0xDE:
+							return OxDDCBnnDE;
+						case 0xDF:
+							return OxDDCBnnDF;
+						case 0xE0:
+							return OxDDCBnnE0;
+						case 0xE1:
+							return OxDDCBnnE1;
+						case 0xE2:
+							return OxDDCBnnE2;
+						case 0xE3:
+							return OxDDCBnnE3;
+						case 0xE4:
+							return OxDDCBnnE4;
+						case 0xE5:
+							return OxDDCBnnE5;
+						case 0xE6:
+							return OxDDCBnnE6;
+						case 0xE7:
+							return OxDDCBnnE7;
+						case 0xE8:
+							return OxDDCBnnE8;
+						case 0xE9:
+							return OxDDCBnnE9;
+						case 0xEA:
+							return OxDDCBnnEA;
+						case 0xEB:
+							return OxDDCBnnEB;
+						case 0xEC:
+							return OxDDCBnnEC;
+						case 0xED:
+							return OxDDCBnnED;
+						case 0xEE:
+							return OxDDCBnnEE;
+						case 0xEF:
+							return OxDDCBnnEF;
+						case 0xF0:
+							return OxDDCBnnF0;
+						case 0xF1:
+							return OxDDCBnnF1;
+						case 0xF2:
+							return OxDDCBnnF2;
+						case 0xF3:
+							return OxDDCBnnF3;
+						case 0xF4:
+							return OxDDCBnnF4;
+						case 0xF5:
+							return OxDDCBnnF5;
+						case 0xF6:
+							return OxDDCBnnF6;
+						case 0xF7:
+							return OxDDCBnnF7;
+						case 0xF8:
+							return OxDDCBnnF8;
+						case 0xF9:
+							return OxDDCBnnF9;
+						case 0xFA:
+							return OxDDCBnnFA;
+						case 0xFB:
+							return OxDDCBnnFB;
+						case 0xFC:
+							return OxDDCBnnFC;
+						case 0xFD:
+							return OxDDCBnnFD;
+						case 0xFE:
+							return OxDDCBnnFE;
+						case 0xFF:
+							return OxDDCBnnFF;
 					}
 					break;
 
-				case 0xE1: return OxDDE1;
-				case 0xE3: return OxDDE3;
-				case 0xE5: return OxDDE5;
-				case 0xE9: return OxDDE9;
-				case 0xF9: return OxDDF9;
+				case 0xE1:
+					return OxDDE1;
+				case 0xE3:
+					return OxDDE3;
+				case 0xE5:
+					return OxDDE5;
+				case 0xE9:
+					return OxDDE9;
+				case 0xF9:
+					return OxDDF9;
 			}
 			break;
 
-		case 0xDE: return OxDE;
-		case 0xDF: return OxDF;
-		case 0xE0: return OxE0;
-		case 0xE1: return OxE1;
-		case 0xE2: return OxE2;
-		case 0xE3: return OxE3;
-		case 0xE4: return OxE4;
-		case 0xE5: return OxE5;
-		case 0xE6: return OxE6;
-		case 0xE7: return OxE7;
-		case 0xE8: return OxE8;
-		case 0xE9: return OxE9;
-		case 0xEA: return OxEA;
-		case 0xEB: return OxEB;
-		case 0xEC: return OxEC;
+		case 0xDE:
+			return OxDE;
+		case 0xDF:
+			return OxDF;
+		case 0xE0:
+			return OxE0;
+		case 0xE1:
+			return OxE1;
+		case 0xE2:
+			return OxE2;
+		case 0xE3:
+			return OxE3;
+		case 0xE4:
+			return OxE4;
+		case 0xE5:
+			return OxE5;
+		case 0xE6:
+			return OxE6;
+		case 0xE7:
+			return OxE7;
+		case 0xE8:
+			return OxE8;
+		case 0xE9:
+			return OxE9;
+		case 0xEA:
+			return OxEA;
+		case 0xEB:
+			return OxEB;
+		case 0xEC:
+			return OxEC;
 		case 0xED:
 			switch (this->_byte2) {
-				case 0x40: return OxED40;
-				case 0x41: return OxED41;
-				case 0x42: return OxED42;
-				case 0x43: return OxED43;
-				case 0x44: return OxED44;
-				case 0x45: return OxED45;
-				case 0x46: return OxED46;
-				case 0x47: return OxED47;
-				case 0x48: return OxED48;
-				case 0x49: return OxED49;
-				case 0x4A: return OxED4A;
-				case 0x4B: return OxED4B;
-				case 0x4C: return OxED4C;
-				case 0x4D: return OxED4D;
-				case 0x4E: return OxED4E;
-				case 0x4F: return OxED4F;
-				case 0x50: return OxED50;
-				case 0x51: return OxED51;
-				case 0x52: return OxED52;
-				case 0x53: return OxED53;
-				case 0x54: return OxED54;
-				case 0x55: return OxED55;
-				case 0x56: return OxED56;
-				case 0x57: return OxED57;
-				case 0x58: return OxED58;
-				case 0x59: return OxED59;
-				case 0x5A: return OxED5A;
-				case 0x5B: return OxED5B;
-				case 0x5C: return OxED5C;
-				case 0x5D: return OxED5D;
-				case 0x5E: return OxED5E;
-				case 0x5F: return OxED5F;
-				case 0x60: return OxED60;
-				case 0x61: return OxED61;
-				case 0x62: return OxED62;
-				case 0x63: return OxED63;
-				case 0x64: return OxED64;
-				case 0x65: return OxED65;
-				case 0x66: return OxED66;
-				case 0x67: return OxED67;
-				case 0x68: return OxED68;
-				case 0x69: return OxED69;
-				case 0x6A: return OxED6A;
-				case 0x6B: return OxED6B;
-				case 0x6C: return OxED6C;
-				case 0x6D: return OxED6D;
-				case 0x6E: return OxED6E;
-				case 0x6F: return OxED6F;
-				case 0x70: return OxED70;
-				case 0x71: return OxED71;
-				case 0x72: return OxED72;
-				case 0x73: return OxED73;
-				case 0x74: return OxED74;
-				case 0x75: return OxED75;
-				case 0x76: return OxED76;
-				case 0x78: return OxED78;
-				case 0x79: return OxED79;
-				case 0x7A: return OxED7A;
-				case 0x7B: return OxED7B;
-				case 0x7C: return OxED7C;
-				case 0x7D: return OxED7D;
-				case 0x7E: return OxED7E;
-				case 0xA0: return OxEDA0;
-				case 0xA1: return OxEDA1;
-				case 0xA2: return OxEDA2;
-				case 0xA3: return OxEDA3;
-				case 0xA8: return OxEDA8;
-				case 0xA9: return OxEDA9;
-				case 0xAA: return OxEDAA;
-				case 0xAB: return OxEDAB;
-				case 0xB0: return OxEDB0;
-				case 0xB1: return OxEDB1;
-				case 0xB2: return OxEDB2;
-				case 0xB3: return OxEDB3;
-				case 0xB8: return OxEDB8;
-				case 0xB9: return OxEDB9;
-				case 0xBA: return OxEDBA;
-				case 0xBB: return OxEDBB;
+				case 0x40:
+					return OxED40;
+				case 0x41:
+					return OxED41;
+				case 0x42:
+					return OxED42;
+				case 0x43:
+					return OxED43;
+				case 0x44:
+					return OxED44;
+				case 0x45:
+					return OxED45;
+				case 0x46:
+					return OxED46;
+				case 0x47:
+					return OxED47;
+				case 0x48:
+					return OxED48;
+				case 0x49:
+					return OxED49;
+				case 0x4A:
+					return OxED4A;
+				case 0x4B:
+					return OxED4B;
+				case 0x4C:
+					return OxED4C;
+				case 0x4D:
+					return OxED4D;
+				case 0x4E:
+					return OxED4E;
+				case 0x4F:
+					return OxED4F;
+				case 0x50:
+					return OxED50;
+				case 0x51:
+					return OxED51;
+				case 0x52:
+					return OxED52;
+				case 0x53:
+					return OxED53;
+				case 0x54:
+					return OxED54;
+				case 0x55:
+					return OxED55;
+				case 0x56:
+					return OxED56;
+				case 0x57:
+					return OxED57;
+				case 0x58:
+					return OxED58;
+				case 0x59:
+					return OxED59;
+				case 0x5A:
+					return OxED5A;
+				case 0x5B:
+					return OxED5B;
+				case 0x5C:
+					return OxED5C;
+				case 0x5D:
+					return OxED5D;
+				case 0x5E:
+					return OxED5E;
+				case 0x5F:
+					return OxED5F;
+				case 0x60:
+					return OxED60;
+				case 0x61:
+					return OxED61;
+				case 0x62:
+					return OxED62;
+				case 0x63:
+					return OxED63;
+				case 0x64:
+					return OxED64;
+				case 0x65:
+					return OxED65;
+				case 0x66:
+					return OxED66;
+				case 0x67:
+					return OxED67;
+				case 0x68:
+					return OxED68;
+				case 0x69:
+					return OxED69;
+				case 0x6A:
+					return OxED6A;
+				case 0x6B:
+					return OxED6B;
+				case 0x6C:
+					return OxED6C;
+				case 0x6D:
+					return OxED6D;
+				case 0x6E:
+					return OxED6E;
+				case 0x6F:
+					return OxED6F;
+				case 0x70:
+					return OxED70;
+				case 0x71:
+					return OxED71;
+				case 0x72:
+					return OxED72;
+				case 0x73:
+					return OxED73;
+				case 0x74:
+					return OxED74;
+				case 0x75:
+					return OxED75;
+				case 0x76:
+					return OxED76;
+				case 0x78:
+					return OxED78;
+				case 0x79:
+					return OxED79;
+				case 0x7A:
+					return OxED7A;
+				case 0x7B:
+					return OxED7B;
+				case 0x7C:
+					return OxED7C;
+				case 0x7D:
+					return OxED7D;
+				case 0x7E:
+					return OxED7E;
+				case 0xA0:
+					return OxEDA0;
+				case 0xA1:
+					return OxEDA1;
+				case 0xA2:
+					return OxEDA2;
+				case 0xA3:
+					return OxEDA3;
+				case 0xA8:
+					return OxEDA8;
+				case 0xA9:
+					return OxEDA9;
+				case 0xAA:
+					return OxEDAA;
+				case 0xAB:
+					return OxEDAB;
+				case 0xB0:
+					return OxEDB0;
+				case 0xB1:
+					return OxEDB1;
+				case 0xB2:
+					return OxEDB2;
+				case 0xB3:
+					return OxEDB3;
+				case 0xB8:
+					return OxEDB8;
+				case 0xB9:
+					return OxEDB9;
+				case 0xBA:
+					return OxEDBA;
+				case 0xBB:
+					return OxEDBB;
 			}
 			break;
 
-		case 0xEE: return OxEE;
-		case 0xEF: return OxEF;
-		case 0xF0: return OxF0;
-		case 0xF1: return OxF1;
-		case 0xF2: return OxF2;
-		case 0xF3: return OxF3;
-		case 0xF4: return OxF4;
-		case 0xF5: return OxF5;
-		case 0xF6: return OxF6;
-		case 0xF7: return OxF7;
-		case 0xF8: return OxF8;
-		case 0xF9: return OxF9;
-		case 0xFA: return OxFA;
-		case 0xFB: return OxFB;
-		case 0xFC: return OxFC;
+		case 0xEE:
+			return OxEE;
+		case 0xEF:
+			return OxEF;
+		case 0xF0:
+			return OxF0;
+		case 0xF1:
+			return OxF1;
+		case 0xF2:
+			return OxF2;
+		case 0xF3:
+			return OxF3;
+		case 0xF4:
+			return OxF4;
+		case 0xF5:
+			return OxF5;
+		case 0xF6:
+			return OxF6;
+		case 0xF7:
+			return OxF7;
+		case 0xF8:
+			return OxF8;
+		case 0xF9:
+			return OxF9;
+		case 0xFA:
+			return OxFA;
+		case 0xFB:
+			return OxFB;
+		case 0xFC:
+			return OxFC;
 		case 0xFD:
 			switch (this->_byte2) {
 				case 0x40:
@@ -1029,364 +1954,707 @@ int Opcode::GetEnum() {
 					this->_advance = 1;
 					return 0;
 
-				case 0x09: return OxFD09;
-				case 0x19: return OxFD19;
-				case 0x21: return OxFD21;
-				case 0x22: return OxFD22;
-				case 0x23: return OxFD23;
-				case 0x24: return OxFD24;
-				case 0x25: return OxFD25;
-				case 0x26: return OxFD26;
-				case 0x29: return OxFD29;
-				case 0x2A: return OxFD2A;
-				case 0x2B: return OxFD2B;
-				case 0x2C: return OxFD2C;
-				case 0x2D: return OxFD2D;
-				case 0x2E: return OxFD2E;
-				case 0x34: return OxFD34;
-				case 0x35: return OxFD35;
-				case 0x36: return OxFD36;
-				case 0x39: return OxFD39;
-				case 0x44: return OxFD44;
-				case 0x45: return OxFD45;
-				case 0x46: return OxFD46;
-				case 0x4C: return OxFD4C;
-				case 0x4D: return OxFD4D;
-				case 0x4E: return OxFD4E;
-				case 0x54: return OxFD54;
-				case 0x55: return OxFD55;
-				case 0x56: return OxFD56;
-				case 0x5C: return OxFD5C;
-				case 0x5D: return OxFD5D;
-				case 0x5E: return OxFD5E;
-				case 0x60: return OxFD60;
-				case 0x61: return OxFD61;
-				case 0x62: return OxFD62;
-				case 0x63: return OxFD63;
-				case 0x64: return OxFD64;
-				case 0x65: return OxFD65;
-				case 0x66: return OxFD66;
-				case 0x67: return OxFD67;
-				case 0x68: return OxFD68;
-				case 0x69: return OxFD69;
-				case 0x6A: return OxFD6A;
-				case 0x6B: return OxFD6B;
-				case 0x6C: return OxFD6C;
-				case 0x6D: return OxFD6D;
-				case 0x6E: return OxFD6E;
-				case 0x6F: return OxFD6F;
-				case 0x70: return OxFD70;
-				case 0x71: return OxFD71;
-				case 0x72: return OxFD72;
-				case 0x73: return OxFD73;
-				case 0x74: return OxFD74;
-				case 0x75: return OxFD75;
-				case 0x77: return OxFD77;
-				case 0x7C: return OxFD7C;
-				case 0x7D: return OxFD7D;
-				case 0x7E: return OxFD7E;
-				case 0x84: return OxFD84;
-				case 0x85: return OxFD85;
-				case 0x86: return OxFD86;
-				case 0x8C: return OxFD8C;
-				case 0x8D: return OxFD8D;
-				case 0x8E: return OxFD8E;
-				case 0x94: return OxFD94;
-				case 0x95: return OxFD95;
-				case 0x96: return OxFD96;
-				case 0x9C: return OxFD9C;
-				case 0x9D: return OxFD9D;
-				case 0x9E: return OxFD9E;
-				case 0xA4: return OxFDA4;
-				case 0xA5: return OxFDA5;
-				case 0xA6: return OxFDA6;
-				case 0xAC: return OxFDAC;
-				case 0xAD: return OxFDAD;
-				case 0xAE: return OxFDAE;
-				case 0xB4: return OxFDB4;
-				case 0xB5: return OxFDB5;
-				case 0xB6: return OxFDB6;
-				case 0xBC: return OxFDBC;
-				case 0xBD: return OxFDBD;
-				case 0xBE: return OxFDBE;
+				case 0x09:
+					return OxFD09;
+				case 0x19:
+					return OxFD19;
+				case 0x21:
+					return OxFD21;
+				case 0x22:
+					return OxFD22;
+				case 0x23:
+					return OxFD23;
+				case 0x24:
+					return OxFD24;
+				case 0x25:
+					return OxFD25;
+				case 0x26:
+					return OxFD26;
+				case 0x29:
+					return OxFD29;
+				case 0x2A:
+					return OxFD2A;
+				case 0x2B:
+					return OxFD2B;
+				case 0x2C:
+					return OxFD2C;
+				case 0x2D:
+					return OxFD2D;
+				case 0x2E:
+					return OxFD2E;
+				case 0x34:
+					return OxFD34;
+				case 0x35:
+					return OxFD35;
+				case 0x36:
+					return OxFD36;
+				case 0x39:
+					return OxFD39;
+				case 0x44:
+					return OxFD44;
+				case 0x45:
+					return OxFD45;
+				case 0x46:
+					return OxFD46;
+				case 0x4C:
+					return OxFD4C;
+				case 0x4D:
+					return OxFD4D;
+				case 0x4E:
+					return OxFD4E;
+				case 0x54:
+					return OxFD54;
+				case 0x55:
+					return OxFD55;
+				case 0x56:
+					return OxFD56;
+				case 0x5C:
+					return OxFD5C;
+				case 0x5D:
+					return OxFD5D;
+				case 0x5E:
+					return OxFD5E;
+				case 0x60:
+					return OxFD60;
+				case 0x61:
+					return OxFD61;
+				case 0x62:
+					return OxFD62;
+				case 0x63:
+					return OxFD63;
+				case 0x64:
+					return OxFD64;
+				case 0x65:
+					return OxFD65;
+				case 0x66:
+					return OxFD66;
+				case 0x67:
+					return OxFD67;
+				case 0x68:
+					return OxFD68;
+				case 0x69:
+					return OxFD69;
+				case 0x6A:
+					return OxFD6A;
+				case 0x6B:
+					return OxFD6B;
+				case 0x6C:
+					return OxFD6C;
+				case 0x6D:
+					return OxFD6D;
+				case 0x6E:
+					return OxFD6E;
+				case 0x6F:
+					return OxFD6F;
+				case 0x70:
+					return OxFD70;
+				case 0x71:
+					return OxFD71;
+				case 0x72:
+					return OxFD72;
+				case 0x73:
+					return OxFD73;
+				case 0x74:
+					return OxFD74;
+				case 0x75:
+					return OxFD75;
+				case 0x77:
+					return OxFD77;
+				case 0x7C:
+					return OxFD7C;
+				case 0x7D:
+					return OxFD7D;
+				case 0x7E:
+					return OxFD7E;
+				case 0x84:
+					return OxFD84;
+				case 0x85:
+					return OxFD85;
+				case 0x86:
+					return OxFD86;
+				case 0x8C:
+					return OxFD8C;
+				case 0x8D:
+					return OxFD8D;
+				case 0x8E:
+					return OxFD8E;
+				case 0x94:
+					return OxFD94;
+				case 0x95:
+					return OxFD95;
+				case 0x96:
+					return OxFD96;
+				case 0x9C:
+					return OxFD9C;
+				case 0x9D:
+					return OxFD9D;
+				case 0x9E:
+					return OxFD9E;
+				case 0xA4:
+					return OxFDA4;
+				case 0xA5:
+					return OxFDA5;
+				case 0xA6:
+					return OxFDA6;
+				case 0xAC:
+					return OxFDAC;
+				case 0xAD:
+					return OxFDAD;
+				case 0xAE:
+					return OxFDAE;
+				case 0xB4:
+					return OxFDB4;
+				case 0xB5:
+					return OxFDB5;
+				case 0xB6:
+					return OxFDB6;
+				case 0xBC:
+					return OxFDBC;
+				case 0xBD:
+					return OxFDBD;
+				case 0xBE:
+					return OxFDBE;
 				case 0xCB:
 					switch (this->_byte4) {
-						case 0x00: return OxFDCBnn00;
-						case 0x01: return OxFDCBnn01;
-						case 0x02: return OxFDCBnn02;
-						case 0x03: return OxFDCBnn03;
-						case 0x04: return OxFDCBnn04;
-						case 0x05: return OxFDCBnn05;
-						case 0x06: return OxFDCBnn06;
-						case 0x07: return OxFDCBnn07;
-						case 0x08: return OxFDCBnn08;
-						case 0x09: return OxFDCBnn09;
-						case 0x0A: return OxFDCBnn0A;
-						case 0x0B: return OxFDCBnn0B;
-						case 0x0C: return OxFDCBnn0C;
-						case 0x0D: return OxFDCBnn0D;
-						case 0x0E: return OxFDCBnn0E;
-						case 0x0F: return OxFDCBnn0F;
-						case 0x10: return OxFDCBnn10;
-						case 0x11: return OxFDCBnn11;
-						case 0x12: return OxFDCBnn12;
-						case 0x13: return OxFDCBnn13;
-						case 0x14: return OxFDCBnn14;
-						case 0x15: return OxFDCBnn15;
-						case 0x16: return OxFDCBnn16;
-						case 0x17: return OxFDCBnn17;
-						case 0x18: return OxFDCBnn18;
-						case 0x19: return OxFDCBnn19;
-						case 0x1A: return OxFDCBnn1A;
-						case 0x1B: return OxFDCBnn1B;
-						case 0x1C: return OxFDCBnn1C;
-						case 0x1D: return OxFDCBnn1D;
-						case 0x1E: return OxFDCBnn1E;
-						case 0x1F: return OxFDCBnn1F;
-						case 0x20: return OxFDCBnn20;
-						case 0x21: return OxFDCBnn21;
-						case 0x22: return OxFDCBnn22;
-						case 0x23: return OxFDCBnn23;
-						case 0x24: return OxFDCBnn24;
-						case 0x25: return OxFDCBnn25;
-						case 0x26: return OxFDCBnn26;
-						case 0x27: return OxFDCBnn27;
-						case 0x28: return OxFDCBnn28;
-						case 0x29: return OxFDCBnn29;
-						case 0x2A: return OxFDCBnn2A;
-						case 0x2B: return OxFDCBnn2B;
-						case 0x2C: return OxFDCBnn2C;
-						case 0x2D: return OxFDCBnn2D;
-						case 0x2E: return OxFDCBnn2E;
-						case 0x2F: return OxFDCBnn2F;
-						case 0x30: return OxFDCBnn30;
-						case 0x31: return OxFDCBnn31;
-						case 0x32: return OxFDCBnn32;
-						case 0x33: return OxFDCBnn33;
-						case 0x34: return OxFDCBnn34;
-						case 0x35: return OxFDCBnn35;
-						case 0x36: return OxFDCBnn36;
-						case 0x37: return OxFDCBnn37;
-						case 0x38: return OxFDCBnn38;
-						case 0x39: return OxFDCBnn39;
-						case 0x3A: return OxFDCBnn3A;
-						case 0x3B: return OxFDCBnn3B;
-						case 0x3C: return OxFDCBnn3C;
-						case 0x3D: return OxFDCBnn3D;
-						case 0x3E: return OxFDCBnn3E;
-						case 0x3F: return OxFDCBnn3F;
-						case 0x40: return OxFDCBnn40;
-						case 0x41: return OxFDCBnn41;
-						case 0x42: return OxFDCBnn42;
-						case 0x43: return OxFDCBnn43;
-						case 0x44: return OxFDCBnn44;
-						case 0x45: return OxFDCBnn45;
-						case 0x46: return OxFDCBnn46;
-						case 0x47: return OxFDCBnn47;
-						case 0x48: return OxFDCBnn48;
-						case 0x49: return OxFDCBnn49;
-						case 0x4A: return OxFDCBnn4A;
-						case 0x4B: return OxFDCBnn4B;
-						case 0x4C: return OxFDCBnn4C;
-						case 0x4D: return OxFDCBnn4D;
-						case 0x4E: return OxFDCBnn4E;
-						case 0x4F: return OxFDCBnn4F;
-						case 0x50: return OxFDCBnn50;
-						case 0x51: return OxFDCBnn51;
-						case 0x52: return OxFDCBnn52;
-						case 0x53: return OxFDCBnn53;
-						case 0x54: return OxFDCBnn54;
-						case 0x55: return OxFDCBnn55;
-						case 0x56: return OxFDCBnn56;
-						case 0x57: return OxFDCBnn57;
-						case 0x58: return OxFDCBnn58;
-						case 0x59: return OxFDCBnn59;
-						case 0x5A: return OxFDCBnn5A;
-						case 0x5B: return OxFDCBnn5B;
-						case 0x5C: return OxFDCBnn5C;
-						case 0x5D: return OxFDCBnn5D;
-						case 0x5E: return OxFDCBnn5E;
-						case 0x5F: return OxFDCBnn5F;
-						case 0x60: return OxFDCBnn60;
-						case 0x61: return OxFDCBnn61;
-						case 0x62: return OxFDCBnn62;
-						case 0x63: return OxFDCBnn63;
-						case 0x64: return OxFDCBnn64;
-						case 0x65: return OxFDCBnn65;
-						case 0x66: return OxFDCBnn66;
-						case 0x67: return OxFDCBnn67;
-						case 0x68: return OxFDCBnn68;
-						case 0x69: return OxFDCBnn69;
-						case 0x6A: return OxFDCBnn6A;
-						case 0x6B: return OxFDCBnn6B;
-						case 0x6C: return OxFDCBnn6C;
-						case 0x6D: return OxFDCBnn6D;
-						case 0x6E: return OxFDCBnn6E;
-						case 0x6F: return OxFDCBnn6F;
-						case 0x70: return OxFDCBnn70;
-						case 0x71: return OxFDCBnn71;
-						case 0x72: return OxFDCBnn72;
-						case 0x73: return OxFDCBnn73;
-						case 0x74: return OxFDCBnn74;
-						case 0x75: return OxFDCBnn75;
-						case 0x76: return OxFDCBnn76;
-						case 0x77: return OxFDCBnn77;
-						case 0x78: return OxFDCBnn78;
-						case 0x79: return OxFDCBnn79;
-						case 0x7A: return OxFDCBnn7A;
-						case 0x7B: return OxFDCBnn7B;
-						case 0x7C: return OxFDCBnn7C;
-						case 0x7D: return OxFDCBnn7D;
-						case 0x7E: return OxFDCBnn7E;
-						case 0x7F: return OxFDCBnn7F;
-						case 0x80: return OxFDCBnn80;
-						case 0x81: return OxFDCBnn81;
-						case 0x82: return OxFDCBnn82;
-						case 0x83: return OxFDCBnn83;
-						case 0x84: return OxFDCBnn84;
-						case 0x85: return OxFDCBnn85;
-						case 0x86: return OxFDCBnn86;
-						case 0x87: return OxFDCBnn87;
-						case 0x88: return OxFDCBnn88;
-						case 0x89: return OxFDCBnn89;
-						case 0x8A: return OxFDCBnn8A;
-						case 0x8B: return OxFDCBnn8B;
-						case 0x8C: return OxFDCBnn8C;
-						case 0x8D: return OxFDCBnn8D;
-						case 0x8E: return OxFDCBnn8E;
-						case 0x8F: return OxFDCBnn8F;
-						case 0x90: return OxFDCBnn90;
-						case 0x91: return OxFDCBnn91;
-						case 0x92: return OxFDCBnn92;
-						case 0x93: return OxFDCBnn93;
-						case 0x94: return OxFDCBnn94;
-						case 0x95: return OxFDCBnn95;
-						case 0x96: return OxFDCBnn96;
-						case 0x97: return OxFDCBnn97;
-						case 0x98: return OxFDCBnn98;
-						case 0x99: return OxFDCBnn99;
-						case 0x9A: return OxFDCBnn9A;
-						case 0x9B: return OxFDCBnn9B;
-						case 0x9C: return OxFDCBnn9C;
-						case 0x9D: return OxFDCBnn9D;
-						case 0x9E: return OxFDCBnn9E;
-						case 0x9F: return OxFDCBnn9F;
-						case 0xA0: return OxFDCBnnA0;
-						case 0xA1: return OxFDCBnnA1;
-						case 0xA2: return OxFDCBnnA2;
-						case 0xA3: return OxFDCBnnA3;
-						case 0xA4: return OxFDCBnnA4;
-						case 0xA5: return OxFDCBnnA5;
-						case 0xA6: return OxFDCBnnA6;
-						case 0xA7: return OxFDCBnnA7;
-						case 0xA8: return OxFDCBnnA8;
-						case 0xA9: return OxFDCBnnA9;
-						case 0xAA: return OxFDCBnnAA;
-						case 0xAB: return OxFDCBnnAB;
-						case 0xAC: return OxFDCBnnAC;
-						case 0xAD: return OxFDCBnnAD;
-						case 0xAE: return OxFDCBnnAE;
-						case 0xAF: return OxFDCBnnAF;
-						case 0xB0: return OxFDCBnnB0;
-						case 0xB1: return OxFDCBnnB1;
-						case 0xB2: return OxFDCBnnB2;
-						case 0xB3: return OxFDCBnnB3;
-						case 0xB4: return OxFDCBnnB4;
-						case 0xB5: return OxFDCBnnB5;
-						case 0xB6: return OxFDCBnnB6;
-						case 0xB7: return OxFDCBnnB7;
-						case 0xB8: return OxFDCBnnB8;
-						case 0xB9: return OxFDCBnnB9;
-						case 0xBA: return OxFDCBnnBA;
-						case 0xBB: return OxFDCBnnBB;
-						case 0xBC: return OxFDCBnnBC;
-						case 0xBD: return OxFDCBnnBD;
-						case 0xBE: return OxFDCBnnBE;
-						case 0xBF: return OxFDCBnnBF;
-						case 0xC0: return OxFDCBnnC0;
-						case 0xC1: return OxFDCBnnC1;
-						case 0xC2: return OxFDCBnnC2;
-						case 0xC3: return OxFDCBnnC3;
-						case 0xC4: return OxFDCBnnC4;
-						case 0xC5: return OxFDCBnnC5;
-						case 0xC6: return OxFDCBnnC6;
-						case 0xC7: return OxFDCBnnC7;
-						case 0xC8: return OxFDCBnnC8;
-						case 0xC9: return OxFDCBnnC9;
-						case 0xCA: return OxFDCBnnCA;
-						case 0xCB: return OxFDCBnnCB;
-						case 0xCC: return OxFDCBnnCC;
-						case 0xCD: return OxFDCBnnCD;
-						case 0xCE: return OxFDCBnnCE;
-						case 0xCF: return OxFDCBnnCF;
-						case 0xD0: return OxFDCBnnD0;
-						case 0xD1: return OxFDCBnnD1;
-						case 0xD2: return OxFDCBnnD2;
-						case 0xD3: return OxFDCBnnD3;
-						case 0xD4: return OxFDCBnnD4;
-						case 0xD5: return OxFDCBnnD5;
-						case 0xD6: return OxFDCBnnD6;
-						case 0xD7: return OxFDCBnnD7;
-						case 0xD8: return OxFDCBnnD8;
-						case 0xD9: return OxFDCBnnD9;
-						case 0xDA: return OxFDCBnnDA;
-						case 0xDB: return OxFDCBnnDB;
-						case 0xDC: return OxFDCBnnDC;
-						case 0xDD: return OxFDCBnnDD;
-						case 0xDE: return OxFDCBnnDE;
-						case 0xDF: return OxFDCBnnDF;
-						case 0xE0: return OxFDCBnnE0;
-						case 0xE1: return OxFDCBnnE1;
-						case 0xE2: return OxFDCBnnE2;
-						case 0xE3: return OxFDCBnnE3;
-						case 0xE4: return OxFDCBnnE4;
-						case 0xE5: return OxFDCBnnE5;
-						case 0xE6: return OxFDCBnnE6;
-						case 0xE7: return OxFDCBnnE7;
-						case 0xE8: return OxFDCBnnE8;
-						case 0xE9: return OxFDCBnnE9;
-						case 0xEA: return OxFDCBnnEA;
-						case 0xEB: return OxFDCBnnEB;
-						case 0xEC: return OxFDCBnnEC;
-						case 0xED: return OxFDCBnnED;
-						case 0xEE: return OxFDCBnnEE;
-						case 0xEF: return OxFDCBnnEF;
-						case 0xF0: return OxFDCBnnF0;
-						case 0xF1: return OxFDCBnnF1;
-						case 0xF2: return OxFDCBnnF2;
-						case 0xF3: return OxFDCBnnF3;
-						case 0xF4: return OxFDCBnnF4;
-						case 0xF5: return OxFDCBnnF5;
-						case 0xF6: return OxFDCBnnF6;
-						case 0xF7: return OxFDCBnnF7;
-						case 0xF8: return OxFDCBnnF8;
-						case 0xF9: return OxFDCBnnF9;
-						case 0xFA: return OxFDCBnnFA;
-						case 0xFB: return OxFDCBnnFB;
-						case 0xFC: return OxFDCBnnFC;
-						case 0xFD: return OxFDCBnnFD;
-						case 0xFE: return OxFDCBnnFE;
-						case 0xFF: return OxFDCBnnFF;
+						case 0x00:
+							return OxFDCBnn00;
+						case 0x01:
+							return OxFDCBnn01;
+						case 0x02:
+							return OxFDCBnn02;
+						case 0x03:
+							return OxFDCBnn03;
+						case 0x04:
+							return OxFDCBnn04;
+						case 0x05:
+							return OxFDCBnn05;
+						case 0x06:
+							return OxFDCBnn06;
+						case 0x07:
+							return OxFDCBnn07;
+						case 0x08:
+							return OxFDCBnn08;
+						case 0x09:
+							return OxFDCBnn09;
+						case 0x0A:
+							return OxFDCBnn0A;
+						case 0x0B:
+							return OxFDCBnn0B;
+						case 0x0C:
+							return OxFDCBnn0C;
+						case 0x0D:
+							return OxFDCBnn0D;
+						case 0x0E:
+							return OxFDCBnn0E;
+						case 0x0F:
+							return OxFDCBnn0F;
+						case 0x10:
+							return OxFDCBnn10;
+						case 0x11:
+							return OxFDCBnn11;
+						case 0x12:
+							return OxFDCBnn12;
+						case 0x13:
+							return OxFDCBnn13;
+						case 0x14:
+							return OxFDCBnn14;
+						case 0x15:
+							return OxFDCBnn15;
+						case 0x16:
+							return OxFDCBnn16;
+						case 0x17:
+							return OxFDCBnn17;
+						case 0x18:
+							return OxFDCBnn18;
+						case 0x19:
+							return OxFDCBnn19;
+						case 0x1A:
+							return OxFDCBnn1A;
+						case 0x1B:
+							return OxFDCBnn1B;
+						case 0x1C:
+							return OxFDCBnn1C;
+						case 0x1D:
+							return OxFDCBnn1D;
+						case 0x1E:
+							return OxFDCBnn1E;
+						case 0x1F:
+							return OxFDCBnn1F;
+						case 0x20:
+							return OxFDCBnn20;
+						case 0x21:
+							return OxFDCBnn21;
+						case 0x22:
+							return OxFDCBnn22;
+						case 0x23:
+							return OxFDCBnn23;
+						case 0x24:
+							return OxFDCBnn24;
+						case 0x25:
+							return OxFDCBnn25;
+						case 0x26:
+							return OxFDCBnn26;
+						case 0x27:
+							return OxFDCBnn27;
+						case 0x28:
+							return OxFDCBnn28;
+						case 0x29:
+							return OxFDCBnn29;
+						case 0x2A:
+							return OxFDCBnn2A;
+						case 0x2B:
+							return OxFDCBnn2B;
+						case 0x2C:
+							return OxFDCBnn2C;
+						case 0x2D:
+							return OxFDCBnn2D;
+						case 0x2E:
+							return OxFDCBnn2E;
+						case 0x2F:
+							return OxFDCBnn2F;
+						case 0x30:
+							return OxFDCBnn30;
+						case 0x31:
+							return OxFDCBnn31;
+						case 0x32:
+							return OxFDCBnn32;
+						case 0x33:
+							return OxFDCBnn33;
+						case 0x34:
+							return OxFDCBnn34;
+						case 0x35:
+							return OxFDCBnn35;
+						case 0x36:
+							return OxFDCBnn36;
+						case 0x37:
+							return OxFDCBnn37;
+						case 0x38:
+							return OxFDCBnn38;
+						case 0x39:
+							return OxFDCBnn39;
+						case 0x3A:
+							return OxFDCBnn3A;
+						case 0x3B:
+							return OxFDCBnn3B;
+						case 0x3C:
+							return OxFDCBnn3C;
+						case 0x3D:
+							return OxFDCBnn3D;
+						case 0x3E:
+							return OxFDCBnn3E;
+						case 0x3F:
+							return OxFDCBnn3F;
+						case 0x40:
+							return OxFDCBnn40;
+						case 0x41:
+							return OxFDCBnn41;
+						case 0x42:
+							return OxFDCBnn42;
+						case 0x43:
+							return OxFDCBnn43;
+						case 0x44:
+							return OxFDCBnn44;
+						case 0x45:
+							return OxFDCBnn45;
+						case 0x46:
+							return OxFDCBnn46;
+						case 0x47:
+							return OxFDCBnn47;
+						case 0x48:
+							return OxFDCBnn48;
+						case 0x49:
+							return OxFDCBnn49;
+						case 0x4A:
+							return OxFDCBnn4A;
+						case 0x4B:
+							return OxFDCBnn4B;
+						case 0x4C:
+							return OxFDCBnn4C;
+						case 0x4D:
+							return OxFDCBnn4D;
+						case 0x4E:
+							return OxFDCBnn4E;
+						case 0x4F:
+							return OxFDCBnn4F;
+						case 0x50:
+							return OxFDCBnn50;
+						case 0x51:
+							return OxFDCBnn51;
+						case 0x52:
+							return OxFDCBnn52;
+						case 0x53:
+							return OxFDCBnn53;
+						case 0x54:
+							return OxFDCBnn54;
+						case 0x55:
+							return OxFDCBnn55;
+						case 0x56:
+							return OxFDCBnn56;
+						case 0x57:
+							return OxFDCBnn57;
+						case 0x58:
+							return OxFDCBnn58;
+						case 0x59:
+							return OxFDCBnn59;
+						case 0x5A:
+							return OxFDCBnn5A;
+						case 0x5B:
+							return OxFDCBnn5B;
+						case 0x5C:
+							return OxFDCBnn5C;
+						case 0x5D:
+							return OxFDCBnn5D;
+						case 0x5E:
+							return OxFDCBnn5E;
+						case 0x5F:
+							return OxFDCBnn5F;
+						case 0x60:
+							return OxFDCBnn60;
+						case 0x61:
+							return OxFDCBnn61;
+						case 0x62:
+							return OxFDCBnn62;
+						case 0x63:
+							return OxFDCBnn63;
+						case 0x64:
+							return OxFDCBnn64;
+						case 0x65:
+							return OxFDCBnn65;
+						case 0x66:
+							return OxFDCBnn66;
+						case 0x67:
+							return OxFDCBnn67;
+						case 0x68:
+							return OxFDCBnn68;
+						case 0x69:
+							return OxFDCBnn69;
+						case 0x6A:
+							return OxFDCBnn6A;
+						case 0x6B:
+							return OxFDCBnn6B;
+						case 0x6C:
+							return OxFDCBnn6C;
+						case 0x6D:
+							return OxFDCBnn6D;
+						case 0x6E:
+							return OxFDCBnn6E;
+						case 0x6F:
+							return OxFDCBnn6F;
+						case 0x70:
+							return OxFDCBnn70;
+						case 0x71:
+							return OxFDCBnn71;
+						case 0x72:
+							return OxFDCBnn72;
+						case 0x73:
+							return OxFDCBnn73;
+						case 0x74:
+							return OxFDCBnn74;
+						case 0x75:
+							return OxFDCBnn75;
+						case 0x76:
+							return OxFDCBnn76;
+						case 0x77:
+							return OxFDCBnn77;
+						case 0x78:
+							return OxFDCBnn78;
+						case 0x79:
+							return OxFDCBnn79;
+						case 0x7A:
+							return OxFDCBnn7A;
+						case 0x7B:
+							return OxFDCBnn7B;
+						case 0x7C:
+							return OxFDCBnn7C;
+						case 0x7D:
+							return OxFDCBnn7D;
+						case 0x7E:
+							return OxFDCBnn7E;
+						case 0x7F:
+							return OxFDCBnn7F;
+						case 0x80:
+							return OxFDCBnn80;
+						case 0x81:
+							return OxFDCBnn81;
+						case 0x82:
+							return OxFDCBnn82;
+						case 0x83:
+							return OxFDCBnn83;
+						case 0x84:
+							return OxFDCBnn84;
+						case 0x85:
+							return OxFDCBnn85;
+						case 0x86:
+							return OxFDCBnn86;
+						case 0x87:
+							return OxFDCBnn87;
+						case 0x88:
+							return OxFDCBnn88;
+						case 0x89:
+							return OxFDCBnn89;
+						case 0x8A:
+							return OxFDCBnn8A;
+						case 0x8B:
+							return OxFDCBnn8B;
+						case 0x8C:
+							return OxFDCBnn8C;
+						case 0x8D:
+							return OxFDCBnn8D;
+						case 0x8E:
+							return OxFDCBnn8E;
+						case 0x8F:
+							return OxFDCBnn8F;
+						case 0x90:
+							return OxFDCBnn90;
+						case 0x91:
+							return OxFDCBnn91;
+						case 0x92:
+							return OxFDCBnn92;
+						case 0x93:
+							return OxFDCBnn93;
+						case 0x94:
+							return OxFDCBnn94;
+						case 0x95:
+							return OxFDCBnn95;
+						case 0x96:
+							return OxFDCBnn96;
+						case 0x97:
+							return OxFDCBnn97;
+						case 0x98:
+							return OxFDCBnn98;
+						case 0x99:
+							return OxFDCBnn99;
+						case 0x9A:
+							return OxFDCBnn9A;
+						case 0x9B:
+							return OxFDCBnn9B;
+						case 0x9C:
+							return OxFDCBnn9C;
+						case 0x9D:
+							return OxFDCBnn9D;
+						case 0x9E:
+							return OxFDCBnn9E;
+						case 0x9F:
+							return OxFDCBnn9F;
+						case 0xA0:
+							return OxFDCBnnA0;
+						case 0xA1:
+							return OxFDCBnnA1;
+						case 0xA2:
+							return OxFDCBnnA2;
+						case 0xA3:
+							return OxFDCBnnA3;
+						case 0xA4:
+							return OxFDCBnnA4;
+						case 0xA5:
+							return OxFDCBnnA5;
+						case 0xA6:
+							return OxFDCBnnA6;
+						case 0xA7:
+							return OxFDCBnnA7;
+						case 0xA8:
+							return OxFDCBnnA8;
+						case 0xA9:
+							return OxFDCBnnA9;
+						case 0xAA:
+							return OxFDCBnnAA;
+						case 0xAB:
+							return OxFDCBnnAB;
+						case 0xAC:
+							return OxFDCBnnAC;
+						case 0xAD:
+							return OxFDCBnnAD;
+						case 0xAE:
+							return OxFDCBnnAE;
+						case 0xAF:
+							return OxFDCBnnAF;
+						case 0xB0:
+							return OxFDCBnnB0;
+						case 0xB1:
+							return OxFDCBnnB1;
+						case 0xB2:
+							return OxFDCBnnB2;
+						case 0xB3:
+							return OxFDCBnnB3;
+						case 0xB4:
+							return OxFDCBnnB4;
+						case 0xB5:
+							return OxFDCBnnB5;
+						case 0xB6:
+							return OxFDCBnnB6;
+						case 0xB7:
+							return OxFDCBnnB7;
+						case 0xB8:
+							return OxFDCBnnB8;
+						case 0xB9:
+							return OxFDCBnnB9;
+						case 0xBA:
+							return OxFDCBnnBA;
+						case 0xBB:
+							return OxFDCBnnBB;
+						case 0xBC:
+							return OxFDCBnnBC;
+						case 0xBD:
+							return OxFDCBnnBD;
+						case 0xBE:
+							return OxFDCBnnBE;
+						case 0xBF:
+							return OxFDCBnnBF;
+						case 0xC0:
+							return OxFDCBnnC0;
+						case 0xC1:
+							return OxFDCBnnC1;
+						case 0xC2:
+							return OxFDCBnnC2;
+						case 0xC3:
+							return OxFDCBnnC3;
+						case 0xC4:
+							return OxFDCBnnC4;
+						case 0xC5:
+							return OxFDCBnnC5;
+						case 0xC6:
+							return OxFDCBnnC6;
+						case 0xC7:
+							return OxFDCBnnC7;
+						case 0xC8:
+							return OxFDCBnnC8;
+						case 0xC9:
+							return OxFDCBnnC9;
+						case 0xCA:
+							return OxFDCBnnCA;
+						case 0xCB:
+							return OxFDCBnnCB;
+						case 0xCC:
+							return OxFDCBnnCC;
+						case 0xCD:
+							return OxFDCBnnCD;
+						case 0xCE:
+							return OxFDCBnnCE;
+						case 0xCF:
+							return OxFDCBnnCF;
+						case 0xD0:
+							return OxFDCBnnD0;
+						case 0xD1:
+							return OxFDCBnnD1;
+						case 0xD2:
+							return OxFDCBnnD2;
+						case 0xD3:
+							return OxFDCBnnD3;
+						case 0xD4:
+							return OxFDCBnnD4;
+						case 0xD5:
+							return OxFDCBnnD5;
+						case 0xD6:
+							return OxFDCBnnD6;
+						case 0xD7:
+							return OxFDCBnnD7;
+						case 0xD8:
+							return OxFDCBnnD8;
+						case 0xD9:
+							return OxFDCBnnD9;
+						case 0xDA:
+							return OxFDCBnnDA;
+						case 0xDB:
+							return OxFDCBnnDB;
+						case 0xDC:
+							return OxFDCBnnDC;
+						case 0xDD:
+							return OxFDCBnnDD;
+						case 0xDE:
+							return OxFDCBnnDE;
+						case 0xDF:
+							return OxFDCBnnDF;
+						case 0xE0:
+							return OxFDCBnnE0;
+						case 0xE1:
+							return OxFDCBnnE1;
+						case 0xE2:
+							return OxFDCBnnE2;
+						case 0xE3:
+							return OxFDCBnnE3;
+						case 0xE4:
+							return OxFDCBnnE4;
+						case 0xE5:
+							return OxFDCBnnE5;
+						case 0xE6:
+							return OxFDCBnnE6;
+						case 0xE7:
+							return OxFDCBnnE7;
+						case 0xE8:
+							return OxFDCBnnE8;
+						case 0xE9:
+							return OxFDCBnnE9;
+						case 0xEA:
+							return OxFDCBnnEA;
+						case 0xEB:
+							return OxFDCBnnEB;
+						case 0xEC:
+							return OxFDCBnnEC;
+						case 0xED:
+							return OxFDCBnnED;
+						case 0xEE:
+							return OxFDCBnnEE;
+						case 0xEF:
+							return OxFDCBnnEF;
+						case 0xF0:
+							return OxFDCBnnF0;
+						case 0xF1:
+							return OxFDCBnnF1;
+						case 0xF2:
+							return OxFDCBnnF2;
+						case 0xF3:
+							return OxFDCBnnF3;
+						case 0xF4:
+							return OxFDCBnnF4;
+						case 0xF5:
+							return OxFDCBnnF5;
+						case 0xF6:
+							return OxFDCBnnF6;
+						case 0xF7:
+							return OxFDCBnnF7;
+						case 0xF8:
+							return OxFDCBnnF8;
+						case 0xF9:
+							return OxFDCBnnF9;
+						case 0xFA:
+							return OxFDCBnnFA;
+						case 0xFB:
+							return OxFDCBnnFB;
+						case 0xFC:
+							return OxFDCBnnFC;
+						case 0xFD:
+							return OxFDCBnnFD;
+						case 0xFE:
+							return OxFDCBnnFE;
+						case 0xFF:
+							return OxFDCBnnFF;
 					}
 					break;
 
-				case 0xE1: return OxFDE1;
-				case 0xE3: return OxFDE3;
-				case 0xE5: return OxFDE5;
-				case 0xE9: return OxFDE9;
-				case 0xF9: return OxFDF9;
+				case 0xE1:
+					return OxFDE1;
+				case 0xE3:
+					return OxFDE3;
+				case 0xE5:
+					return OxFDE5;
+				case 0xE9:
+					return OxFDE9;
+				case 0xF9:
+					return OxFDF9;
 			}
 			break;
 
-		case 0xFE: return OxFE;
-		case 0xFF: return OxFF;
+		case 0xFE:
+			return OxFE;
+		case 0xFF:
+			return OxFF;
 	}
 
 	return OxNOTIMPLEMENTED;
 }
 
-void Opcode::ShowLogOpcode(CPUInst * cpu, uint16_t enumOpcode) {
-//	printf(" %3d x %3d ", this->_cpu->GetVDP()->GetLine(), this->_cpu->GetVDP()->GetColumn());
+void Opcode::ShowLogOpcode(CPUInst *cpu, uint16_t enumOpcode) {
+	//	printf(" %3d x %3d ", this->_cpu->GetVDP()->GetLine(), this->_cpu->GetVDP()->GetColumn());
 	uint16_t pc = cpu->GetPC();
 	uint8_t opcode2 = cpu->ReadMemory(pc + 1);
 	uint8_t opcode3 = cpu->ReadMemory(pc + 2);
@@ -1394,1308 +2662,3844 @@ void Opcode::ShowLogOpcode(CPUInst * cpu, uint16_t enumOpcode) {
 
 	switch (enumOpcode) {
 
-/******************************************************************************/
-/***************************** Main instructions ******************************/
-/******************************************************************************/
+			/******************************************************************************/
+			/***************************** Main instructions ******************************/
+			/******************************************************************************/
 
-		case Ox00: printf("NOP"); break;
-		case Ox01: printf("LD BC, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case Ox02: printf("LD (BC), A"); break;
-		case Ox03: printf("INC BC"); break;
-		case Ox04: printf("INC B"); break;
-		case Ox05: printf("DEC B"); break;
-		case Ox06: printf("LD B, %.2Xh", opcode2); break;
-		case Ox07: printf("RLCA"); break;
-		case Ox08: printf("EX AF, AF'"); break;
-		case Ox09: printf("ADD HL, BC"); break;
-		case Ox0A: printf("LD A, (BC)"); break;
-		case Ox0B: printf("DEC BC"); break;
-		case Ox0C: printf("INC C"); break;
-		case Ox0D: printf("DEC C"); break;
-		case Ox0E: printf("LD C, %.2Xh", opcode2); break;
-		case Ox0F: printf("RRCA"); break;
-		case Ox10: printf("DJNZ %.4Xh", pc + (int8_t(opcode2) + 2)); break;
-		case Ox11: printf("LD DE, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case Ox12: printf("LD (DE), A"); break;
-		case Ox13: printf("INC DE"); break;
-		case Ox14: printf("INC D"); break;
-		case Ox15: printf("DEC D"); break;
-		case Ox16: printf("LD D, %.2Xh", opcode2); break;
-		case Ox17: printf("RLA"); break;
-		case Ox18: printf("JR %.2Xh", opcode2); break;
-		case Ox19: printf("ADD HL, DE"); break;
-		case Ox1A: printf("LD A, (DE)"); break;
-		case Ox1B: printf("DEC DE"); break;
-		case Ox1C: printf("INC E"); break;
-		case Ox1D: printf("DEC E"); break;
-		case Ox1E: printf("LD E, %.2Xh", opcode2); break;
-		case Ox1F: printf("RRA"); break;
-		case Ox20: printf("JR NZ, %.4Xh", pc + (int8_t(opcode2) + 2)); break;
-		case Ox21: printf("LD HL, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case Ox22: printf("LD (%.4Xh), HL", ((opcode3 << 8) | opcode2)); break;
-		case Ox23: printf("INC HL"); break;
-		case Ox24: printf("INC H"); break;
-		case Ox25: printf("DEC H"); break;
-		case Ox26: printf("LD H, %.2Xh", opcode2); break;
-		case Ox27: printf("DAA"); break;
-		case Ox28: printf("JR Z, %.4Xh", pc + (int8_t(opcode2) + 2)); break;
-		case Ox29: printf("ADD HL, HL"); break;
-		case Ox2A: printf("LD HL, (%.4Xh)", ((opcode3 << 8) | opcode2)); break;
-		case Ox2B: printf("DEC HL"); break;
-		case Ox2C: printf("INC L"); break;
-		case Ox2D: printf("DEC L"); break;
-		case Ox2E: printf("LD L, %.2Xh", opcode2); break;
-		case Ox2F: printf("CPL"); break;
-		case Ox30: printf("JR NC, %.4Xh", pc + (int8_t(opcode2) + 2)); break;
-		case Ox31: printf("LD SP, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case Ox32: printf("LD (%.4Xh), A", ((opcode3 << 8) | opcode2)); break;
-		case Ox33: printf("INC SP"); break;
-		case Ox34: printf("INC (HL)"); break;
-		case Ox35: printf("DEC (HL)"); break;
-		case Ox36: printf("LD (HL), %.2Xh", opcode2); break;
-		case Ox37: printf("SCF"); break;
-		case Ox38: printf("JR C, %.2Xh", opcode2); break;
-		case Ox39: printf("ADD HL, SP"); break;
-		case Ox3A: printf("LD A, (%.4Xh)", ((opcode3 << 8) | opcode2)); break;
-		case Ox3B: printf("DEC SP"); break;
-		case Ox3C: printf("INC A"); break;
-		case Ox3D: printf("DEC A"); break;
-		case Ox3E: printf("LD A, %.2Xh", opcode2); break;
-		case Ox3F: printf("CCF"); break;
-		case Ox40: printf("LD B, B"); break;
-		case Ox41: printf("LD B, C"); break;
-		case Ox42: printf("LD B, D"); break;
-		case Ox43: printf("LD B, E"); break;
-		case Ox44: printf("LD B, H"); break;
-		case Ox45: printf("LD B, L"); break;
-		case Ox46: printf("LD B, (HL)"); break;
-		case Ox47: printf("LD B, A"); break;
-		case Ox48: printf("LD C, B"); break;
-		case Ox49: printf("LD C, C"); break;
-		case Ox4A: printf("LD C, D"); break;
-		case Ox4B: printf("LD C, E"); break;
-		case Ox4C: printf("LD C, H"); break;
-		case Ox4D: printf("LD C, L"); break;
-		case Ox4E: printf("LD C, (HL)"); break;
-		case Ox4F: printf("LD C, A"); break;
-		case Ox50: printf("LD D, B"); break;
-		case Ox51: printf("LD D, C"); break;
-		case Ox52: printf("LD D, D"); break;
-		case Ox53: printf("LD D, E"); break;
-		case Ox54: printf("LD D, H"); break;
-		case Ox55: printf("LD D, L"); break;
-		case Ox56: printf("LD D, (HL)"); break;
-		case Ox57: printf("LD D, A"); break;
-		case Ox58: printf("LD E, B"); break;
-		case Ox59: printf("LD E, C"); break;
-		case Ox5A: printf("LD E, D"); break;
-		case Ox5B: printf("LD E, E"); break;
-		case Ox5C: printf("LD E, H"); break;
-		case Ox5D: printf("LD E, L"); break;
-		case Ox5E: printf("LD E, (HL)"); break;
-		case Ox5F: printf("LD E, A"); break;
-		case Ox60: printf("LD H, B"); break;
-		case Ox61: printf("LD H, C"); break;
-		case Ox62: printf("LD H, D"); break;
-		case Ox63: printf("LD H, E"); break;
-		case Ox64: printf("LD H, H"); break;
-		case Ox65: printf("LD H, L"); break;
-		case Ox66: printf("LD H, (HL)"); break;
-		case Ox67: printf("LD H, A"); break;
-		case Ox68: printf("LD L, B"); break;
-		case Ox69: printf("LD L, C"); break;
-		case Ox6A: printf("LD L, D"); break;
-		case Ox6B: printf("LD L, E"); break;
-		case Ox6C: printf("LD L, H"); break;
-		case Ox6D: printf("LD L, L"); break;
-		case Ox6E: printf("LD L, (HL)"); break;
-		case Ox6F: printf("LD L, A"); break;
-		case Ox70: printf("LD (HL), B"); break;
-		case Ox71: printf("LD (HL), C"); break;
-		case Ox72: printf("LD (HL), D"); break;
-		case Ox73: printf("LD (HL), E"); break;
-		case Ox74: printf("LD (HL), H"); break;
-		case Ox75: printf("LD (HL), L"); break;
-		case Ox76: printf("HALT"); break;
-		case Ox77: printf("LD (HL), A"); break;
-		case Ox78: printf("LD A, B"); break;
-		case Ox79: printf("LD A, C"); break;
-		case Ox7A: printf("LD A, D"); break;
-		case Ox7B: printf("LD A, E"); break;
-		case Ox7C: printf("LD A, H"); break;
-		case Ox7D: printf("LD A, L"); break;
-		case Ox7E: printf("LD A, (HL)"); break;
-		case Ox7F: printf("LD A, A"); break;
-		case Ox80: printf("ADD A, B"); break;
-		case Ox81: printf("ADD A, C"); break;
-		case Ox82: printf("ADD A, D"); break;
-		case Ox83: printf("ADD A, E"); break;
-		case Ox84: printf("ADD A, H"); break;
-		case Ox85: printf("ADD A, L"); break;
-		case Ox86: printf("ADD A, (HL)"); break;
-		case Ox87: printf("ADD A, A"); break;
-		case Ox88: printf("ADC A, B"); break;
-		case Ox89: printf("ADC A, C"); break;
-		case Ox8A: printf("ADC A, D"); break;
-		case Ox8B: printf("ADC A, E"); break;
-		case Ox8C: printf("ADC A, H"); break;
-		case Ox8D: printf("ADC A, L"); break;
-		case Ox8E: printf("ADC A, (HL)"); break;
-		case Ox8F: printf("ADC A, A"); break;
-		case Ox90: printf("SUB A, B"); break;
-		case Ox91: printf("SUB A, C"); break;
-		case Ox92: printf("SUB A, D"); break;
-		case Ox93: printf("SUB A, E"); break;
-		case Ox94: printf("SUB A, H"); break;
-		case Ox95: printf("SUB A, L"); break;
-		case Ox96: printf("SUB A, (HL)"); break;
-		case Ox97: printf("SUB A, A"); break;
-		case Ox98: printf("SBC A, B"); break;
-		case Ox99: printf("SBC A, C"); break;
-		case Ox9A: printf("SBC A, D"); break;
-		case Ox9B: printf("SBC A, E"); break;
-		case Ox9C: printf("SBC A, H"); break;
-		case Ox9D: printf("SBC A, L"); break;
-		case Ox9E: printf("SBC A, (HL)"); break;
-		case Ox9F: printf("SBC A, A"); break;
-		case OxA0: printf("AND A, B"); break;
-		case OxA1: printf("AND A, C"); break;
-		case OxA2: printf("AND A, D"); break;
-		case OxA3: printf("AND A, E"); break;
-		case OxA4: printf("AND A, H"); break;
-		case OxA5: printf("AND A, L"); break;
-		case OxA6: printf("AND A, (HL)"); break;
-		case OxA7: printf("AND A, A"); break;
-		case OxA8: printf("XOR A, B"); break;
-		case OxA9: printf("XOR A, C"); break;
-		case OxAA: printf("XOR A, D"); break;
-		case OxAB: printf("XOR A, E"); break;
-		case OxAC: printf("XOR A, H"); break;
-		case OxAD: printf("XOR A, L"); break;
-		case OxAE: printf("XOR A, (HL)"); break;
-		case OxAF: printf("XOR A, A"); break;
-		case OxB0: printf("OR A, B"); break;
-		case OxB1: printf("OR A, C"); break;
-		case OxB2: printf("OR A, D"); break;
-		case OxB3: printf("OR A, E"); break;
-		case OxB4: printf("OR A, H"); break;
-		case OxB5: printf("OR A, L"); break;
-		case OxB6: printf("OR A, (HL)"); break;
-		case OxB7: printf("OR A, A"); break;
-		case OxB8: printf("CP A, B"); break;
-		case OxB9: printf("CP A, C"); break;
-		case OxBA: printf("CP A, D"); break;
-		case OxBB: printf("CP A, E"); break;
-		case OxBC: printf("CP A, H"); break;
-		case OxBD: printf("CP A, L"); break;
-		case OxBE: printf("CP A, (HL)"); break;
-		case OxBF: printf("CP A, A"); break;
-		case OxC0: printf("RET NZ"); break;
-		case OxC1: printf("POP BC"); break;
-		case OxC2: printf("JP NZ, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxC3: printf("JP %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxC4: printf("CALL NZ, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxC5: printf("PUSH BC"); break;
-		case OxC6: printf("ADD A, %.2Xh", opcode2); break;
-		case OxC7: printf("RST 00h"); break;
-		case OxC8: printf("RET Z"); break;
-		case OxC9: printf("RET"); break;
-		case OxCA: printf("JP Z, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxCC: printf("CALL Z, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxCD: printf("CALL %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxCE: printf("ADC A, %.2Xh", opcode2); break;
-		case OxCF: printf("RST 08h"); break;
-		case OxD0: printf("RET NC"); break;
-		case OxD1: printf("POP DE"); break;
-		case OxD2: printf("JP NC, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxD3: printf("OUT (%.2Xh), A", opcode2); break;
-		case OxD4: printf("CALL NC, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxD5: printf("PUSH DE"); break;
-		case OxD6: printf("SUB %.2Xh", opcode2); break;
-		case OxD7: printf("RST 10h"); break;
-		case OxD8: printf("RET C"); break;
-		case OxD9: printf("EXX"); break;
-		case OxDA: printf("JP C, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxDB: printf("IN A, (%.2Xh)", opcode2); break;
-		case OxDC: printf("CALL C, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxDE: printf("SBC A, %.2Xh", opcode2); break;
-		case OxDF: printf("RST 18h"); break;
-		case OxE0: printf("RET PO"); break;
-		case OxE1: printf("POP HL"); break;
-		case OxE2: printf("JP PO, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxE3: printf("EX (SP), HL"); break;
-		case OxE4: printf("CALL PO, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxE5: printf("PUSH HL"); break;
-		case OxE6: printf("AND %.2Xh", opcode2); break;
-		case OxE7: printf("RST 20h"); break;
-		case OxE8: printf("RET PE"); break;
-		case OxE9: printf("JP HL"); break;
-		case OxEA: printf("JP PE, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxEB: printf("EX DE, HL"); break;
-		case OxEC: printf("CALL PE, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxEE: printf("XOR %.2Xh", opcode2); break;
-		case OxEF: printf("RST 28h"); break;
-		case OxF0: printf("RET P"); break;
-		case OxF1: printf("POP AF"); break;
-		case OxF2: printf("JP P, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxF3: printf("DI"); break;
-		case OxF4: printf("CALL P, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxF5: printf("PUSH AF"); break;
-		case OxF6: printf("OR %.2Xh", opcode2); break;
-		case OxF7: printf("RST 30h"); break;
-		case OxF8: printf("RET M"); break;
-		case OxF9: printf("LD SP, HL"); break;
-		case OxFA: printf("JP M, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxFB: printf("EI"); break;
-		case OxFC: printf("CALL M, %.4Xh", ((opcode3 << 8) | opcode2)); break;
-		case OxFE: printf("CP %.2Xh", opcode2); break;
-		case OxFF: printf("RST 38h"); break;
+		case Ox00:
+			printf("NOP");
+			break;
+		case Ox01:
+			printf("LD BC, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case Ox02:
+			printf("LD (BC), A");
+			break;
+		case Ox03:
+			printf("INC BC");
+			break;
+		case Ox04:
+			printf("INC B");
+			break;
+		case Ox05:
+			printf("DEC B");
+			break;
+		case Ox06:
+			printf("LD B, %.2Xh", opcode2);
+			break;
+		case Ox07:
+			printf("RLCA");
+			break;
+		case Ox08:
+			printf("EX AF, AF'");
+			break;
+		case Ox09:
+			printf("ADD HL, BC");
+			break;
+		case Ox0A:
+			printf("LD A, (BC)");
+			break;
+		case Ox0B:
+			printf("DEC BC");
+			break;
+		case Ox0C:
+			printf("INC C");
+			break;
+		case Ox0D:
+			printf("DEC C");
+			break;
+		case Ox0E:
+			printf("LD C, %.2Xh", opcode2);
+			break;
+		case Ox0F:
+			printf("RRCA");
+			break;
+		case Ox10:
+			printf("DJNZ %.4Xh", pc + (int8_t(opcode2) + 2));
+			break;
+		case Ox11:
+			printf("LD DE, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case Ox12:
+			printf("LD (DE), A");
+			break;
+		case Ox13:
+			printf("INC DE");
+			break;
+		case Ox14:
+			printf("INC D");
+			break;
+		case Ox15:
+			printf("DEC D");
+			break;
+		case Ox16:
+			printf("LD D, %.2Xh", opcode2);
+			break;
+		case Ox17:
+			printf("RLA");
+			break;
+		case Ox18:
+			printf("JR %.2Xh", opcode2);
+			break;
+		case Ox19:
+			printf("ADD HL, DE");
+			break;
+		case Ox1A:
+			printf("LD A, (DE)");
+			break;
+		case Ox1B:
+			printf("DEC DE");
+			break;
+		case Ox1C:
+			printf("INC E");
+			break;
+		case Ox1D:
+			printf("DEC E");
+			break;
+		case Ox1E:
+			printf("LD E, %.2Xh", opcode2);
+			break;
+		case Ox1F:
+			printf("RRA");
+			break;
+		case Ox20:
+			printf("JR NZ, %.4Xh", pc + (int8_t(opcode2) + 2));
+			break;
+		case Ox21:
+			printf("LD HL, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case Ox22:
+			printf("LD (%.4Xh), HL", ((opcode3 << 8) | opcode2));
+			break;
+		case Ox23:
+			printf("INC HL");
+			break;
+		case Ox24:
+			printf("INC H");
+			break;
+		case Ox25:
+			printf("DEC H");
+			break;
+		case Ox26:
+			printf("LD H, %.2Xh", opcode2);
+			break;
+		case Ox27:
+			printf("DAA");
+			break;
+		case Ox28:
+			printf("JR Z, %.4Xh", pc + (int8_t(opcode2) + 2));
+			break;
+		case Ox29:
+			printf("ADD HL, HL");
+			break;
+		case Ox2A:
+			printf("LD HL, (%.4Xh)", ((opcode3 << 8) | opcode2));
+			break;
+		case Ox2B:
+			printf("DEC HL");
+			break;
+		case Ox2C:
+			printf("INC L");
+			break;
+		case Ox2D:
+			printf("DEC L");
+			break;
+		case Ox2E:
+			printf("LD L, %.2Xh", opcode2);
+			break;
+		case Ox2F:
+			printf("CPL");
+			break;
+		case Ox30:
+			printf("JR NC, %.4Xh", pc + (int8_t(opcode2) + 2));
+			break;
+		case Ox31:
+			printf("LD SP, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case Ox32:
+			printf("LD (%.4Xh), A", ((opcode3 << 8) | opcode2));
+			break;
+		case Ox33:
+			printf("INC SP");
+			break;
+		case Ox34:
+			printf("INC (HL)");
+			break;
+		case Ox35:
+			printf("DEC (HL)");
+			break;
+		case Ox36:
+			printf("LD (HL), %.2Xh", opcode2);
+			break;
+		case Ox37:
+			printf("SCF");
+			break;
+		case Ox38:
+			printf("JR C, %.2Xh", opcode2);
+			break;
+		case Ox39:
+			printf("ADD HL, SP");
+			break;
+		case Ox3A:
+			printf("LD A, (%.4Xh)", ((opcode3 << 8) | opcode2));
+			break;
+		case Ox3B:
+			printf("DEC SP");
+			break;
+		case Ox3C:
+			printf("INC A");
+			break;
+		case Ox3D:
+			printf("DEC A");
+			break;
+		case Ox3E:
+			printf("LD A, %.2Xh", opcode2);
+			break;
+		case Ox3F:
+			printf("CCF");
+			break;
+		case Ox40:
+			printf("LD B, B");
+			break;
+		case Ox41:
+			printf("LD B, C");
+			break;
+		case Ox42:
+			printf("LD B, D");
+			break;
+		case Ox43:
+			printf("LD B, E");
+			break;
+		case Ox44:
+			printf("LD B, H");
+			break;
+		case Ox45:
+			printf("LD B, L");
+			break;
+		case Ox46:
+			printf("LD B, (HL)");
+			break;
+		case Ox47:
+			printf("LD B, A");
+			break;
+		case Ox48:
+			printf("LD C, B");
+			break;
+		case Ox49:
+			printf("LD C, C");
+			break;
+		case Ox4A:
+			printf("LD C, D");
+			break;
+		case Ox4B:
+			printf("LD C, E");
+			break;
+		case Ox4C:
+			printf("LD C, H");
+			break;
+		case Ox4D:
+			printf("LD C, L");
+			break;
+		case Ox4E:
+			printf("LD C, (HL)");
+			break;
+		case Ox4F:
+			printf("LD C, A");
+			break;
+		case Ox50:
+			printf("LD D, B");
+			break;
+		case Ox51:
+			printf("LD D, C");
+			break;
+		case Ox52:
+			printf("LD D, D");
+			break;
+		case Ox53:
+			printf("LD D, E");
+			break;
+		case Ox54:
+			printf("LD D, H");
+			break;
+		case Ox55:
+			printf("LD D, L");
+			break;
+		case Ox56:
+			printf("LD D, (HL)");
+			break;
+		case Ox57:
+			printf("LD D, A");
+			break;
+		case Ox58:
+			printf("LD E, B");
+			break;
+		case Ox59:
+			printf("LD E, C");
+			break;
+		case Ox5A:
+			printf("LD E, D");
+			break;
+		case Ox5B:
+			printf("LD E, E");
+			break;
+		case Ox5C:
+			printf("LD E, H");
+			break;
+		case Ox5D:
+			printf("LD E, L");
+			break;
+		case Ox5E:
+			printf("LD E, (HL)");
+			break;
+		case Ox5F:
+			printf("LD E, A");
+			break;
+		case Ox60:
+			printf("LD H, B");
+			break;
+		case Ox61:
+			printf("LD H, C");
+			break;
+		case Ox62:
+			printf("LD H, D");
+			break;
+		case Ox63:
+			printf("LD H, E");
+			break;
+		case Ox64:
+			printf("LD H, H");
+			break;
+		case Ox65:
+			printf("LD H, L");
+			break;
+		case Ox66:
+			printf("LD H, (HL)");
+			break;
+		case Ox67:
+			printf("LD H, A");
+			break;
+		case Ox68:
+			printf("LD L, B");
+			break;
+		case Ox69:
+			printf("LD L, C");
+			break;
+		case Ox6A:
+			printf("LD L, D");
+			break;
+		case Ox6B:
+			printf("LD L, E");
+			break;
+		case Ox6C:
+			printf("LD L, H");
+			break;
+		case Ox6D:
+			printf("LD L, L");
+			break;
+		case Ox6E:
+			printf("LD L, (HL)");
+			break;
+		case Ox6F:
+			printf("LD L, A");
+			break;
+		case Ox70:
+			printf("LD (HL), B");
+			break;
+		case Ox71:
+			printf("LD (HL), C");
+			break;
+		case Ox72:
+			printf("LD (HL), D");
+			break;
+		case Ox73:
+			printf("LD (HL), E");
+			break;
+		case Ox74:
+			printf("LD (HL), H");
+			break;
+		case Ox75:
+			printf("LD (HL), L");
+			break;
+		case Ox76:
+			printf("HALT");
+			break;
+		case Ox77:
+			printf("LD (HL), A");
+			break;
+		case Ox78:
+			printf("LD A, B");
+			break;
+		case Ox79:
+			printf("LD A, C");
+			break;
+		case Ox7A:
+			printf("LD A, D");
+			break;
+		case Ox7B:
+			printf("LD A, E");
+			break;
+		case Ox7C:
+			printf("LD A, H");
+			break;
+		case Ox7D:
+			printf("LD A, L");
+			break;
+		case Ox7E:
+			printf("LD A, (HL)");
+			break;
+		case Ox7F:
+			printf("LD A, A");
+			break;
+		case Ox80:
+			printf("ADD A, B");
+			break;
+		case Ox81:
+			printf("ADD A, C");
+			break;
+		case Ox82:
+			printf("ADD A, D");
+			break;
+		case Ox83:
+			printf("ADD A, E");
+			break;
+		case Ox84:
+			printf("ADD A, H");
+			break;
+		case Ox85:
+			printf("ADD A, L");
+			break;
+		case Ox86:
+			printf("ADD A, (HL)");
+			break;
+		case Ox87:
+			printf("ADD A, A");
+			break;
+		case Ox88:
+			printf("ADC A, B");
+			break;
+		case Ox89:
+			printf("ADC A, C");
+			break;
+		case Ox8A:
+			printf("ADC A, D");
+			break;
+		case Ox8B:
+			printf("ADC A, E");
+			break;
+		case Ox8C:
+			printf("ADC A, H");
+			break;
+		case Ox8D:
+			printf("ADC A, L");
+			break;
+		case Ox8E:
+			printf("ADC A, (HL)");
+			break;
+		case Ox8F:
+			printf("ADC A, A");
+			break;
+		case Ox90:
+			printf("SUB A, B");
+			break;
+		case Ox91:
+			printf("SUB A, C");
+			break;
+		case Ox92:
+			printf("SUB A, D");
+			break;
+		case Ox93:
+			printf("SUB A, E");
+			break;
+		case Ox94:
+			printf("SUB A, H");
+			break;
+		case Ox95:
+			printf("SUB A, L");
+			break;
+		case Ox96:
+			printf("SUB A, (HL)");
+			break;
+		case Ox97:
+			printf("SUB A, A");
+			break;
+		case Ox98:
+			printf("SBC A, B");
+			break;
+		case Ox99:
+			printf("SBC A, C");
+			break;
+		case Ox9A:
+			printf("SBC A, D");
+			break;
+		case Ox9B:
+			printf("SBC A, E");
+			break;
+		case Ox9C:
+			printf("SBC A, H");
+			break;
+		case Ox9D:
+			printf("SBC A, L");
+			break;
+		case Ox9E:
+			printf("SBC A, (HL)");
+			break;
+		case Ox9F:
+			printf("SBC A, A");
+			break;
+		case OxA0:
+			printf("AND A, B");
+			break;
+		case OxA1:
+			printf("AND A, C");
+			break;
+		case OxA2:
+			printf("AND A, D");
+			break;
+		case OxA3:
+			printf("AND A, E");
+			break;
+		case OxA4:
+			printf("AND A, H");
+			break;
+		case OxA5:
+			printf("AND A, L");
+			break;
+		case OxA6:
+			printf("AND A, (HL)");
+			break;
+		case OxA7:
+			printf("AND A, A");
+			break;
+		case OxA8:
+			printf("XOR A, B");
+			break;
+		case OxA9:
+			printf("XOR A, C");
+			break;
+		case OxAA:
+			printf("XOR A, D");
+			break;
+		case OxAB:
+			printf("XOR A, E");
+			break;
+		case OxAC:
+			printf("XOR A, H");
+			break;
+		case OxAD:
+			printf("XOR A, L");
+			break;
+		case OxAE:
+			printf("XOR A, (HL)");
+			break;
+		case OxAF:
+			printf("XOR A, A");
+			break;
+		case OxB0:
+			printf("OR A, B");
+			break;
+		case OxB1:
+			printf("OR A, C");
+			break;
+		case OxB2:
+			printf("OR A, D");
+			break;
+		case OxB3:
+			printf("OR A, E");
+			break;
+		case OxB4:
+			printf("OR A, H");
+			break;
+		case OxB5:
+			printf("OR A, L");
+			break;
+		case OxB6:
+			printf("OR A, (HL)");
+			break;
+		case OxB7:
+			printf("OR A, A");
+			break;
+		case OxB8:
+			printf("CP A, B");
+			break;
+		case OxB9:
+			printf("CP A, C");
+			break;
+		case OxBA:
+			printf("CP A, D");
+			break;
+		case OxBB:
+			printf("CP A, E");
+			break;
+		case OxBC:
+			printf("CP A, H");
+			break;
+		case OxBD:
+			printf("CP A, L");
+			break;
+		case OxBE:
+			printf("CP A, (HL)");
+			break;
+		case OxBF:
+			printf("CP A, A");
+			break;
+		case OxC0:
+			printf("RET NZ");
+			break;
+		case OxC1:
+			printf("POP BC");
+			break;
+		case OxC2:
+			printf("JP NZ, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxC3:
+			printf("JP %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxC4:
+			printf("CALL NZ, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxC5:
+			printf("PUSH BC");
+			break;
+		case OxC6:
+			printf("ADD A, %.2Xh", opcode2);
+			break;
+		case OxC7:
+			printf("RST 00h");
+			break;
+		case OxC8:
+			printf("RET Z");
+			break;
+		case OxC9:
+			printf("RET");
+			break;
+		case OxCA:
+			printf("JP Z, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxCC:
+			printf("CALL Z, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxCD:
+			printf("CALL %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxCE:
+			printf("ADC A, %.2Xh", opcode2);
+			break;
+		case OxCF:
+			printf("RST 08h");
+			break;
+		case OxD0:
+			printf("RET NC");
+			break;
+		case OxD1:
+			printf("POP DE");
+			break;
+		case OxD2:
+			printf("JP NC, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxD3:
+			printf("OUT (%.2Xh), A", opcode2);
+			break;
+		case OxD4:
+			printf("CALL NC, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxD5:
+			printf("PUSH DE");
+			break;
+		case OxD6:
+			printf("SUB %.2Xh", opcode2);
+			break;
+		case OxD7:
+			printf("RST 10h");
+			break;
+		case OxD8:
+			printf("RET C");
+			break;
+		case OxD9:
+			printf("EXX");
+			break;
+		case OxDA:
+			printf("JP C, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxDB:
+			printf("IN A, (%.2Xh)", opcode2);
+			break;
+		case OxDC:
+			printf("CALL C, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxDE:
+			printf("SBC A, %.2Xh", opcode2);
+			break;
+		case OxDF:
+			printf("RST 18h");
+			break;
+		case OxE0:
+			printf("RET PO");
+			break;
+		case OxE1:
+			printf("POP HL");
+			break;
+		case OxE2:
+			printf("JP PO, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxE3:
+			printf("EX (SP), HL");
+			break;
+		case OxE4:
+			printf("CALL PO, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxE5:
+			printf("PUSH HL");
+			break;
+		case OxE6:
+			printf("AND %.2Xh", opcode2);
+			break;
+		case OxE7:
+			printf("RST 20h");
+			break;
+		case OxE8:
+			printf("RET PE");
+			break;
+		case OxE9:
+			printf("JP HL");
+			break;
+		case OxEA:
+			printf("JP PE, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxEB:
+			printf("EX DE, HL");
+			break;
+		case OxEC:
+			printf("CALL PE, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxEE:
+			printf("XOR %.2Xh", opcode2);
+			break;
+		case OxEF:
+			printf("RST 28h");
+			break;
+		case OxF0:
+			printf("RET P");
+			break;
+		case OxF1:
+			printf("POP AF");
+			break;
+		case OxF2:
+			printf("JP P, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxF3:
+			printf("DI");
+			break;
+		case OxF4:
+			printf("CALL P, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxF5:
+			printf("PUSH AF");
+			break;
+		case OxF6:
+			printf("OR %.2Xh", opcode2);
+			break;
+		case OxF7:
+			printf("RST 30h");
+			break;
+		case OxF8:
+			printf("RET M");
+			break;
+		case OxF9:
+			printf("LD SP, HL");
+			break;
+		case OxFA:
+			printf("JP M, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxFB:
+			printf("EI");
+			break;
+		case OxFC:
+			printf("CALL M, %.4Xh", ((opcode3 << 8) | opcode2));
+			break;
+		case OxFE:
+			printf("CP %.2Xh", opcode2);
+			break;
+		case OxFF:
+			printf("RST 38h");
+			break;
 
-/******************************************************************************/
-/************************ Extended instructions (ED) **************************/
-/******************************************************************************/
+			/******************************************************************************/
+			/************************ Extended instructions (ED) **************************/
+			/******************************************************************************/
 
-		case OxED40: printf("IN B, (C)"); break;
-		case OxED41: printf("OUT (C), B"); break;
-		case OxED42: printf("SBC HL, BC"); break;
-		case OxED43: printf("LD (%.4Xh), BC", ((opcode4 << 8) | opcode3)); break;
-		case OxED44: printf("NEG"); break;
-		case OxED45: printf("RETN"); break;
-		case OxED46: printf("IM 0"); break;
-		case OxED47: printf("LD I, A"); break;
-		case OxED48: printf("IN C, (C)"); break;
-		case OxED49: printf("OUT C, (C)"); break;
-		case OxED4A: printf("ADC HL, BC"); break;
-		case OxED4B: printf("LD BC, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
-		case OxED4C: printf("NEG"); break;
-		case OxED4D: printf("RETI"); break;
-		case OxED4E: printf("IM 0/1"); break;
-		case OxED4F: printf("LD R, A"); break;
-		case OxED50: printf("IN D, (C)"); break;
-		case OxED51: printf("OUT (C), D"); break;
-		case OxED52: printf("SBC HL, DE"); break;
-		case OxED53: printf("LD (%.4Xh), DE", ((opcode4 << 8) | opcode3)); break;
-		case OxED54: printf("NEG"); break;
-		case OxED55: printf("RETN"); break;
-		case OxED56: printf("IM 1"); break;
-		case OxED57: printf("LD A, I"); break;
-		case OxED58: printf("IN E, (C)"); break;
-		case OxED59: printf("OUT (C), E"); break;
-		case OxED5A: printf("ADC HL, DE"); break;
-		case OxED5B: printf("LD DE, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
-		case OxED5C: printf("NEG"); break;
-		case OxED5D: printf("RETN"); break;
-		case OxED5E: printf("IM 2"); break;
-		case OxED5F: printf("LD A, R"); break;
-		case OxED60: printf("IN H, (C)"); break;
-		case OxED61: printf("OUT (C), H"); break;
-		case OxED62: printf("SBC HL, HL"); break;
-		case OxED63: printf("LD (%.4Xh), HL", ((opcode4 << 8) | opcode3)); break;
-		case OxED64: printf("NEG"); break;
-		case OxED65: printf("RETN"); break;
-		case OxED66: printf("IM 0"); break;
-		case OxED67: printf("RRD"); break;
-		case OxED68: printf("IN L, (C)"); break;
-		case OxED69: printf("OUT (C), L"); break;
-		case OxED6A: printf("ADC HL, HL"); break;
-		case OxED6B: printf("LD HL, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
-		case OxED6C: printf("NEG"); break;
-		case OxED6D: printf("RETN"); break;
-		case OxED6E: printf("IM 0/1"); break;
-		case OxED6F: printf("RLD"); break;
-		case OxED70: printf("IN (C)"); break;
-		case OxED71: printf("OUT (C), 0"); break;
-		case OxED72: printf("SBC HL, SP"); break;
-		case OxED73: printf("LD (%.4Xh), HL", ((opcode4 << 8) | opcode3)); break;
-		case OxED74: printf("NEG"); break;
-		case OxED75: printf("RETN"); break;
-		case OxED76: printf("IM 1"); break;
-		case OxED78: printf("IN A, (C)"); break;
-		case OxED79: printf("OUT (C), A"); break;
-		case OxED7A: printf("ADC HL, SP"); break;
-		case OxED7B: printf("LD SP, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
-		case OxED7C: printf("NEG"); break;
-		case OxED7D: printf("RETN"); break;
-		case OxED7E: printf("IM 2"); break;
-		case OxEDA0: printf("LDI"); break;
-		case OxEDA1: printf("CPI"); break;
-		case OxEDA2: printf("INI"); break;
-		case OxEDA3: printf("OUTI"); break;
-		case OxEDA8: printf("LDD"); break;
-		case OxEDA9: printf("CPD"); break;
-		case OxEDAA: printf("IND"); break;
-		case OxEDAB: printf("OUTD"); break;
-		case OxEDB0: printf("LDIR"); break;
-		case OxEDB1: printf("CPIR"); break;
-		case OxEDB2: printf("INIR"); break;
-		case OxEDB3: printf("OTIR"); break;
-		case OxEDB8: printf("LDDR"); break;
-		case OxEDB9: printf("CPDR"); break;
-		case OxEDBA: printf("INDR"); break;
-		case OxEDBB: printf("OTDR"); break;
+		case OxED40:
+			printf("IN B, (C)");
+			break;
+		case OxED41:
+			printf("OUT (C), B");
+			break;
+		case OxED42:
+			printf("SBC HL, BC");
+			break;
+		case OxED43:
+			printf("LD (%.4Xh), BC", ((opcode4 << 8) | opcode3));
+			break;
+		case OxED44:
+			printf("NEG");
+			break;
+		case OxED45:
+			printf("RETN");
+			break;
+		case OxED46:
+			printf("IM 0");
+			break;
+		case OxED47:
+			printf("LD I, A");
+			break;
+		case OxED48:
+			printf("IN C, (C)");
+			break;
+		case OxED49:
+			printf("OUT C, (C)");
+			break;
+		case OxED4A:
+			printf("ADC HL, BC");
+			break;
+		case OxED4B:
+			printf("LD BC, (%.4Xh)", ((opcode4 << 8) | opcode3));
+			break;
+		case OxED4C:
+			printf("NEG");
+			break;
+		case OxED4D:
+			printf("RETI");
+			break;
+		case OxED4E:
+			printf("IM 0/1");
+			break;
+		case OxED4F:
+			printf("LD R, A");
+			break;
+		case OxED50:
+			printf("IN D, (C)");
+			break;
+		case OxED51:
+			printf("OUT (C), D");
+			break;
+		case OxED52:
+			printf("SBC HL, DE");
+			break;
+		case OxED53:
+			printf("LD (%.4Xh), DE", ((opcode4 << 8) | opcode3));
+			break;
+		case OxED54:
+			printf("NEG");
+			break;
+		case OxED55:
+			printf("RETN");
+			break;
+		case OxED56:
+			printf("IM 1");
+			break;
+		case OxED57:
+			printf("LD A, I");
+			break;
+		case OxED58:
+			printf("IN E, (C)");
+			break;
+		case OxED59:
+			printf("OUT (C), E");
+			break;
+		case OxED5A:
+			printf("ADC HL, DE");
+			break;
+		case OxED5B:
+			printf("LD DE, (%.4Xh)", ((opcode4 << 8) | opcode3));
+			break;
+		case OxED5C:
+			printf("NEG");
+			break;
+		case OxED5D:
+			printf("RETN");
+			break;
+		case OxED5E:
+			printf("IM 2");
+			break;
+		case OxED5F:
+			printf("LD A, R");
+			break;
+		case OxED60:
+			printf("IN H, (C)");
+			break;
+		case OxED61:
+			printf("OUT (C), H");
+			break;
+		case OxED62:
+			printf("SBC HL, HL");
+			break;
+		case OxED63:
+			printf("LD (%.4Xh), HL", ((opcode4 << 8) | opcode3));
+			break;
+		case OxED64:
+			printf("NEG");
+			break;
+		case OxED65:
+			printf("RETN");
+			break;
+		case OxED66:
+			printf("IM 0");
+			break;
+		case OxED67:
+			printf("RRD");
+			break;
+		case OxED68:
+			printf("IN L, (C)");
+			break;
+		case OxED69:
+			printf("OUT (C), L");
+			break;
+		case OxED6A:
+			printf("ADC HL, HL");
+			break;
+		case OxED6B:
+			printf("LD HL, (%.4Xh)", ((opcode4 << 8) | opcode3));
+			break;
+		case OxED6C:
+			printf("NEG");
+			break;
+		case OxED6D:
+			printf("RETN");
+			break;
+		case OxED6E:
+			printf("IM 0/1");
+			break;
+		case OxED6F:
+			printf("RLD");
+			break;
+		case OxED70:
+			printf("IN (C)");
+			break;
+		case OxED71:
+			printf("OUT (C), 0");
+			break;
+		case OxED72:
+			printf("SBC HL, SP");
+			break;
+		case OxED73:
+			printf("LD (%.4Xh), HL", ((opcode4 << 8) | opcode3));
+			break;
+		case OxED74:
+			printf("NEG");
+			break;
+		case OxED75:
+			printf("RETN");
+			break;
+		case OxED76:
+			printf("IM 1");
+			break;
+		case OxED78:
+			printf("IN A, (C)");
+			break;
+		case OxED79:
+			printf("OUT (C), A");
+			break;
+		case OxED7A:
+			printf("ADC HL, SP");
+			break;
+		case OxED7B:
+			printf("LD SP, (%.4Xh)", ((opcode4 << 8) | opcode3));
+			break;
+		case OxED7C:
+			printf("NEG");
+			break;
+		case OxED7D:
+			printf("RETN");
+			break;
+		case OxED7E:
+			printf("IM 2");
+			break;
+		case OxEDA0:
+			printf("LDI");
+			break;
+		case OxEDA1:
+			printf("CPI");
+			break;
+		case OxEDA2:
+			printf("INI");
+			break;
+		case OxEDA3:
+			printf("OUTI");
+			break;
+		case OxEDA8:
+			printf("LDD");
+			break;
+		case OxEDA9:
+			printf("CPD");
+			break;
+		case OxEDAA:
+			printf("IND");
+			break;
+		case OxEDAB:
+			printf("OUTD");
+			break;
+		case OxEDB0:
+			printf("LDIR");
+			break;
+		case OxEDB1:
+			printf("CPIR");
+			break;
+		case OxEDB2:
+			printf("INIR");
+			break;
+		case OxEDB3:
+			printf("OTIR");
+			break;
+		case OxEDB8:
+			printf("LDDR");
+			break;
+		case OxEDB9:
+			printf("CPDR");
+			break;
+		case OxEDBA:
+			printf("INDR");
+			break;
+		case OxEDBB:
+			printf("OTDR");
+			break;
 
-/******************************************************************************/
-/*************************** Bit instructions (CB) ****************************/
-/******************************************************************************/
+			/******************************************************************************/
+			/*************************** Bit instructions (CB) ****************************/
+			/******************************************************************************/
 
-		case OxCB00: printf("RLC B"); break;
-		case OxCB01: printf("RLC C"); break;
-		case OxCB02: printf("RLC D"); break;
-		case OxCB03: printf("RLC E"); break;
-		case OxCB04: printf("RLC H"); break;
-		case OxCB05: printf("RLC L"); break;
-		case OxCB06: printf("RLC (HL)"); break;
-		case OxCB07: printf("RLC A"); break;
-		case OxCB08: printf("RRC B"); break;
-		case OxCB09: printf("RRC C"); break;
-		case OxCB0A: printf("RRC D"); break;
-		case OxCB0B: printf("RRC E"); break;
-		case OxCB0C: printf("RRC H"); break;
-		case OxCB0D: printf("RRC L"); break;
-		case OxCB0E: printf("RRC (HL)"); break;
-		case OxCB0F: printf("RRC A"); break;
-		case OxCB10: printf("RL B"); break;
-		case OxCB11: printf("RL C"); break;
-		case OxCB12: printf("RL D"); break;
-		case OxCB13: printf("RL E"); break;
-		case OxCB14: printf("RL H"); break;
-		case OxCB15: printf("RL L"); break;
-		case OxCB16: printf("RL (HL)"); break;
-		case OxCB17: printf("RL A"); break;
-		case OxCB18: printf("RR B"); break;
-		case OxCB19: printf("RR C"); break;
-		case OxCB1A: printf("RR D"); break;
-		case OxCB1B: printf("RR E"); break;
-		case OxCB1C: printf("RR H"); break;
-		case OxCB1D: printf("RR L"); break;
-		case OxCB1E: printf("RR (HL)"); break;
-		case OxCB1F: printf("RR A"); break;
-		case OxCB20: printf("SLA B"); break;
-		case OxCB21: printf("SLA C"); break;
-		case OxCB22: printf("SLA D"); break;
-		case OxCB23: printf("SLA E"); break;
-		case OxCB24: printf("SLA H"); break;
-		case OxCB25: printf("SLA L"); break;
-		case OxCB26: printf("SLA (HL)"); break;
-		case OxCB27: printf("SLA A"); break;
-		case OxCB28: printf("SRA B"); break;
-		case OxCB29: printf("SRA C"); break;
-		case OxCB2A: printf("SRA D"); break;
-		case OxCB2B: printf("SRA E"); break;
-		case OxCB2C: printf("SRA H"); break;
-		case OxCB2D: printf("SRA L"); break;
-		case OxCB2E: printf("SRA (HL)"); break;
-		case OxCB2F: printf("SRA A"); break;
-		case OxCB30: printf("SLL B"); break;
-		case OxCB31: printf("SLL C"); break;
-		case OxCB32: printf("SLL D"); break;
-		case OxCB33: printf("SLL E"); break;
-		case OxCB34: printf("SLL H"); break;
-		case OxCB35: printf("SLL L"); break;
-		case OxCB36: printf("SLL (HL)"); break;
-		case OxCB37: printf("SLL A"); break;
-		case OxCB38: printf("SRL B"); break;
-		case OxCB39: printf("SRL C"); break;
-		case OxCB3A: printf("SRL D"); break;
-		case OxCB3B: printf("SRL E"); break;
-		case OxCB3C: printf("SRL H"); break;
-		case OxCB3D: printf("SRL L"); break;
-		case OxCB3E: printf("SRL (HL)"); break;
-		case OxCB3F: printf("SRL A"); break;
-		case OxCB40: printf("BIT 0, B"); break;
-		case OxCB41: printf("BIT 0, C"); break;
-		case OxCB42: printf("BIT 0, D"); break;
-		case OxCB43: printf("BIT 0, E"); break;
-		case OxCB44: printf("BIT 0, H"); break;
-		case OxCB45: printf("BIT 0, L"); break;
-		case OxCB46: printf("BIT 0, (HL)"); break;
-		case OxCB47: printf("BIT 0, A"); break;
-		case OxCB48: printf("BIT 1, B"); break;
-		case OxCB49: printf("BIT 1, C"); break;
-		case OxCB4A: printf("BIT 1, D"); break;
-		case OxCB4B: printf("BIT 1, E"); break;
-		case OxCB4C: printf("BIT 1, H"); break;
-		case OxCB4D: printf("BIT 1, L"); break;
-		case OxCB4E: printf("BIT 1, (HL)"); break;
-		case OxCB4F: printf("BIT 1, A"); break;
-		case OxCB50: printf("BIT 2, B"); break;
-		case OxCB51: printf("BIT 2, C"); break;
-		case OxCB52: printf("BIT 2, D"); break;
-		case OxCB53: printf("BIT 2, E"); break;
-		case OxCB54: printf("BIT 2, H"); break;
-		case OxCB55: printf("BIT 2, L"); break;
-		case OxCB56: printf("BIT 2, (HL)"); break;
-		case OxCB57: printf("BIT 2, A"); break;
-		case OxCB58: printf("BIT 3, B"); break;
-		case OxCB59: printf("BIT 3, C"); break;
-		case OxCB5A: printf("BIT 3, D"); break;
-		case OxCB5B: printf("BIT 3, E"); break;
-		case OxCB5C: printf("BIT 3, H"); break;
-		case OxCB5D: printf("BIT 3, L"); break;
-		case OxCB5E: printf("BIT 3, (HL)"); break;
-		case OxCB5F: printf("BIT 3, A"); break;
-		case OxCB60: printf("BIT 4, B"); break;
-		case OxCB61: printf("BIT 4, C"); break;
-		case OxCB62: printf("BIT 4, D"); break;
-		case OxCB63: printf("BIT 4, E"); break;
-		case OxCB64: printf("BIT 4, H"); break;
-		case OxCB65: printf("BIT 4, L"); break;
-		case OxCB66: printf("BIT 4, (HL)"); break;
-		case OxCB67: printf("BIT 4, A"); break;
-		case OxCB68: printf("BIT 5, B"); break;
-		case OxCB69: printf("BIT 5, C"); break;
-		case OxCB6A: printf("BIT 5, D"); break;
-		case OxCB6B: printf("BIT 5, E"); break;
-		case OxCB6C: printf("BIT 5, H"); break;
-		case OxCB6D: printf("BIT 5, L"); break;
-		case OxCB6E: printf("BIT 5, (HL)"); break;
-		case OxCB6F: printf("BIT 5, A"); break;
-		case OxCB70: printf("BIT 6, B"); break;
-		case OxCB71: printf("BIT 6, C"); break;
-		case OxCB72: printf("BIT 6, D"); break;
-		case OxCB73: printf("BIT 6, E"); break;
-		case OxCB74: printf("BIT 6, H"); break;
-		case OxCB75: printf("BIT 6, L"); break;
-		case OxCB76: printf("BIT 6, (HL)"); break;
-		case OxCB77: printf("BIT 6, A"); break;
-		case OxCB78: printf("BIT 7, B"); break;
-		case OxCB79: printf("BIT 7, C"); break;
-		case OxCB7A: printf("BIT 7, D"); break;
-		case OxCB7B: printf("BIT 7, E"); break;
-		case OxCB7C: printf("BIT 7, H"); break;
-		case OxCB7D: printf("BIT 7, L"); break;
-		case OxCB7E: printf("BIT 7, (HL)"); break;
-		case OxCB7F: printf("BIT 7, A"); break;
-		case OxCB80: printf("RES 0, B"); break;
-		case OxCB81: printf("RES 0, C"); break;
-		case OxCB82: printf("RES 0, D"); break;
-		case OxCB83: printf("RES 0, E"); break;
-		case OxCB84: printf("RES 0, H"); break;
-		case OxCB85: printf("RES 0, L"); break;
-		case OxCB86: printf("RES 0, (HL)"); break;
-		case OxCB87: printf("RES 0, A"); break;
-		case OxCB88: printf("RES 1, B"); break;
-		case OxCB89: printf("RES 1, C"); break;
-		case OxCB8A: printf("RES 1, D"); break;
-		case OxCB8B: printf("RES 1, E"); break;
-		case OxCB8C: printf("RES 1, H"); break;
-		case OxCB8D: printf("RES 1, L"); break;
-		case OxCB8E: printf("RES 1, (HL)"); break;
-		case OxCB8F: printf("RES 1, A"); break;
-		case OxCB90: printf("RES 2, B"); break;
-		case OxCB91: printf("RES 2, C"); break;
-		case OxCB92: printf("RES 2, D"); break;
-		case OxCB93: printf("RES 2, E"); break;
-		case OxCB94: printf("RES 2, H"); break;
-		case OxCB95: printf("RES 2, L"); break;
-		case OxCB96: printf("RES 2, (HL)"); break;
-		case OxCB97: printf("RES 2, A"); break;
-		case OxCB98: printf("RES 3, B"); break;
-		case OxCB99: printf("RES 3, C"); break;
-		case OxCB9A: printf("RES 3, D"); break;
-		case OxCB9B: printf("RES 3, E"); break;
-		case OxCB9C: printf("RES 3, H"); break;
-		case OxCB9D: printf("RES 3, L"); break;
-		case OxCB9E: printf("RES 3, (HL)"); break;
-		case OxCB9F: printf("RES 3, A"); break;
-		case OxCBA0: printf("RES 4, B"); break;
-		case OxCBA1: printf("RES 4, C"); break;
-		case OxCBA2: printf("RES 4, D"); break;
-		case OxCBA3: printf("RES 4, E"); break;
-		case OxCBA4: printf("RES 4, H"); break;
-		case OxCBA5: printf("RES 4, L"); break;
-		case OxCBA6: printf("RES 4, (HL)"); break;
-		case OxCBA7: printf("RES 4, A"); break;
-		case OxCBA8: printf("RES 5, B"); break;
-		case OxCBA9: printf("RES 5, C"); break;
-		case OxCBAA: printf("RES 5, D"); break;
-		case OxCBAB: printf("RES 5, E"); break;
-		case OxCBAC: printf("RES 5, H"); break;
-		case OxCBAD: printf("RES 5, L"); break;
-		case OxCBAE: printf("RES 5, (HL)"); break;
-		case OxCBAF: printf("RES 5, A"); break;
-		case OxCBB0: printf("RES 6, B"); break;
-		case OxCBB1: printf("RES 6, C"); break;
-		case OxCBB2: printf("RES 6, D"); break;
-		case OxCBB3: printf("RES 6, E"); break;
-		case OxCBB4: printf("RES 6, H"); break;
-		case OxCBB5: printf("RES 6, L"); break;
-		case OxCBB6: printf("RES 6, (HL)"); break;
-		case OxCBB7: printf("RES 6, A"); break;
-		case OxCBB8: printf("RES 7, B"); break;
-		case OxCBB9: printf("RES 7, C"); break;
-		case OxCBBA: printf("RES 7, D"); break;
-		case OxCBBB: printf("RES 7, E"); break;
-		case OxCBBC: printf("RES 7, H"); break;
-		case OxCBBD: printf("RES 7, L"); break;
-		case OxCBBE: printf("RES 7, (HL)"); break;
-		case OxCBBF: printf("RES 7, A"); break;
-		case OxCBC0: printf("SET 0, B"); break;
-		case OxCBC1: printf("SET 0, C"); break;
-		case OxCBC2: printf("SET 0, D"); break;
-		case OxCBC3: printf("SET 0, E"); break;
-		case OxCBC4: printf("SET 0, H"); break;
-		case OxCBC5: printf("SET 0, L"); break;
-		case OxCBC6: printf("SET 0, (HL)"); break;
-		case OxCBC7: printf("SET 0, A"); break;
-		case OxCBC8: printf("SET 1, B"); break;
-		case OxCBC9: printf("SET 1, C"); break;
-		case OxCBCA: printf("SET 1, D"); break;
-		case OxCBCB: printf("SET 1, E"); break;
-		case OxCBCC: printf("SET 1, H"); break;
-		case OxCBCD: printf("SET 1, L"); break;
-		case OxCBCE: printf("SET 1, (HL)"); break;
-		case OxCBCF: printf("SET 1, A"); break;
-		case OxCBD0: printf("SET 2, B"); break;
-		case OxCBD1: printf("SET 2, C"); break;
-		case OxCBD2: printf("SET 2, D"); break;
-		case OxCBD3: printf("SET 2, E"); break;
-		case OxCBD4: printf("SET 2, H"); break;
-		case OxCBD5: printf("SET 2, L"); break;
-		case OxCBD6: printf("SET 2, (HL)"); break;
-		case OxCBD7: printf("SET 2, A"); break;
-		case OxCBD8: printf("SET 3, B"); break;
-		case OxCBD9: printf("SET 3, C"); break;
-		case OxCBDA: printf("SET 3, D"); break;
-		case OxCBDB: printf("SET 3, E"); break;
-		case OxCBDC: printf("SET 3, H"); break;
-		case OxCBDD: printf("SET 3, L"); break;
-		case OxCBDE: printf("SET 3, (HL)"); break;
-		case OxCBDF: printf("SET 3, A"); break;
-		case OxCBE0: printf("SET 4, B"); break;
-		case OxCBE1: printf("SET 4, C"); break;
-		case OxCBE2: printf("SET 4, D"); break;
-		case OxCBE3: printf("SET 4, E"); break;
-		case OxCBE4: printf("SET 4, H"); break;
-		case OxCBE5: printf("SET 4, L"); break;
-		case OxCBE6: printf("SET 4, (HL)"); break;
-		case OxCBE7: printf("SET 4, A"); break;
-		case OxCBE8: printf("SET 5, B"); break;
-		case OxCBE9: printf("SET 5, C"); break;
-		case OxCBEA: printf("SET 5, D"); break;
-		case OxCBEB: printf("SET 5, E"); break;
-		case OxCBEC: printf("SET 5, H"); break;
-		case OxCBED: printf("SET 5, L"); break;
-		case OxCBEE: printf("SET 5, (HL)"); break;
-		case OxCBEF: printf("SET 5, A"); break;
-		case OxCBF0: printf("SET 6, B"); break;
-		case OxCBF1: printf("SET 6, C"); break;
-		case OxCBF2: printf("SET 6, D"); break;
-		case OxCBF3: printf("SET 6, E"); break;
-		case OxCBF4: printf("SET 6, H"); break;
-		case OxCBF5: printf("SET 6, L"); break;
-		case OxCBF6: printf("SET 6, (HL)"); break;
-		case OxCBF7: printf("SET 6, A"); break;
-		case OxCBF8: printf("SET 7, B"); break;
-		case OxCBF9: printf("SET 7, C"); break;
-		case OxCBFA: printf("SET 7, D"); break;
-		case OxCBFB: printf("SET 7, E"); break;
-		case OxCBFC: printf("SET 7, H"); break;
-		case OxCBFD: printf("SET 7, L"); break;
-		case OxCBFE: printf("SET 7, (HL)"); break;
-		case OxCBFF: printf("SET 7, A"); break;
+		case OxCB00:
+			printf("RLC B");
+			break;
+		case OxCB01:
+			printf("RLC C");
+			break;
+		case OxCB02:
+			printf("RLC D");
+			break;
+		case OxCB03:
+			printf("RLC E");
+			break;
+		case OxCB04:
+			printf("RLC H");
+			break;
+		case OxCB05:
+			printf("RLC L");
+			break;
+		case OxCB06:
+			printf("RLC (HL)");
+			break;
+		case OxCB07:
+			printf("RLC A");
+			break;
+		case OxCB08:
+			printf("RRC B");
+			break;
+		case OxCB09:
+			printf("RRC C");
+			break;
+		case OxCB0A:
+			printf("RRC D");
+			break;
+		case OxCB0B:
+			printf("RRC E");
+			break;
+		case OxCB0C:
+			printf("RRC H");
+			break;
+		case OxCB0D:
+			printf("RRC L");
+			break;
+		case OxCB0E:
+			printf("RRC (HL)");
+			break;
+		case OxCB0F:
+			printf("RRC A");
+			break;
+		case OxCB10:
+			printf("RL B");
+			break;
+		case OxCB11:
+			printf("RL C");
+			break;
+		case OxCB12:
+			printf("RL D");
+			break;
+		case OxCB13:
+			printf("RL E");
+			break;
+		case OxCB14:
+			printf("RL H");
+			break;
+		case OxCB15:
+			printf("RL L");
+			break;
+		case OxCB16:
+			printf("RL (HL)");
+			break;
+		case OxCB17:
+			printf("RL A");
+			break;
+		case OxCB18:
+			printf("RR B");
+			break;
+		case OxCB19:
+			printf("RR C");
+			break;
+		case OxCB1A:
+			printf("RR D");
+			break;
+		case OxCB1B:
+			printf("RR E");
+			break;
+		case OxCB1C:
+			printf("RR H");
+			break;
+		case OxCB1D:
+			printf("RR L");
+			break;
+		case OxCB1E:
+			printf("RR (HL)");
+			break;
+		case OxCB1F:
+			printf("RR A");
+			break;
+		case OxCB20:
+			printf("SLA B");
+			break;
+		case OxCB21:
+			printf("SLA C");
+			break;
+		case OxCB22:
+			printf("SLA D");
+			break;
+		case OxCB23:
+			printf("SLA E");
+			break;
+		case OxCB24:
+			printf("SLA H");
+			break;
+		case OxCB25:
+			printf("SLA L");
+			break;
+		case OxCB26:
+			printf("SLA (HL)");
+			break;
+		case OxCB27:
+			printf("SLA A");
+			break;
+		case OxCB28:
+			printf("SRA B");
+			break;
+		case OxCB29:
+			printf("SRA C");
+			break;
+		case OxCB2A:
+			printf("SRA D");
+			break;
+		case OxCB2B:
+			printf("SRA E");
+			break;
+		case OxCB2C:
+			printf("SRA H");
+			break;
+		case OxCB2D:
+			printf("SRA L");
+			break;
+		case OxCB2E:
+			printf("SRA (HL)");
+			break;
+		case OxCB2F:
+			printf("SRA A");
+			break;
+		case OxCB30:
+			printf("SLL B");
+			break;
+		case OxCB31:
+			printf("SLL C");
+			break;
+		case OxCB32:
+			printf("SLL D");
+			break;
+		case OxCB33:
+			printf("SLL E");
+			break;
+		case OxCB34:
+			printf("SLL H");
+			break;
+		case OxCB35:
+			printf("SLL L");
+			break;
+		case OxCB36:
+			printf("SLL (HL)");
+			break;
+		case OxCB37:
+			printf("SLL A");
+			break;
+		case OxCB38:
+			printf("SRL B");
+			break;
+		case OxCB39:
+			printf("SRL C");
+			break;
+		case OxCB3A:
+			printf("SRL D");
+			break;
+		case OxCB3B:
+			printf("SRL E");
+			break;
+		case OxCB3C:
+			printf("SRL H");
+			break;
+		case OxCB3D:
+			printf("SRL L");
+			break;
+		case OxCB3E:
+			printf("SRL (HL)");
+			break;
+		case OxCB3F:
+			printf("SRL A");
+			break;
+		case OxCB40:
+			printf("BIT 0, B");
+			break;
+		case OxCB41:
+			printf("BIT 0, C");
+			break;
+		case OxCB42:
+			printf("BIT 0, D");
+			break;
+		case OxCB43:
+			printf("BIT 0, E");
+			break;
+		case OxCB44:
+			printf("BIT 0, H");
+			break;
+		case OxCB45:
+			printf("BIT 0, L");
+			break;
+		case OxCB46:
+			printf("BIT 0, (HL)");
+			break;
+		case OxCB47:
+			printf("BIT 0, A");
+			break;
+		case OxCB48:
+			printf("BIT 1, B");
+			break;
+		case OxCB49:
+			printf("BIT 1, C");
+			break;
+		case OxCB4A:
+			printf("BIT 1, D");
+			break;
+		case OxCB4B:
+			printf("BIT 1, E");
+			break;
+		case OxCB4C:
+			printf("BIT 1, H");
+			break;
+		case OxCB4D:
+			printf("BIT 1, L");
+			break;
+		case OxCB4E:
+			printf("BIT 1, (HL)");
+			break;
+		case OxCB4F:
+			printf("BIT 1, A");
+			break;
+		case OxCB50:
+			printf("BIT 2, B");
+			break;
+		case OxCB51:
+			printf("BIT 2, C");
+			break;
+		case OxCB52:
+			printf("BIT 2, D");
+			break;
+		case OxCB53:
+			printf("BIT 2, E");
+			break;
+		case OxCB54:
+			printf("BIT 2, H");
+			break;
+		case OxCB55:
+			printf("BIT 2, L");
+			break;
+		case OxCB56:
+			printf("BIT 2, (HL)");
+			break;
+		case OxCB57:
+			printf("BIT 2, A");
+			break;
+		case OxCB58:
+			printf("BIT 3, B");
+			break;
+		case OxCB59:
+			printf("BIT 3, C");
+			break;
+		case OxCB5A:
+			printf("BIT 3, D");
+			break;
+		case OxCB5B:
+			printf("BIT 3, E");
+			break;
+		case OxCB5C:
+			printf("BIT 3, H");
+			break;
+		case OxCB5D:
+			printf("BIT 3, L");
+			break;
+		case OxCB5E:
+			printf("BIT 3, (HL)");
+			break;
+		case OxCB5F:
+			printf("BIT 3, A");
+			break;
+		case OxCB60:
+			printf("BIT 4, B");
+			break;
+		case OxCB61:
+			printf("BIT 4, C");
+			break;
+		case OxCB62:
+			printf("BIT 4, D");
+			break;
+		case OxCB63:
+			printf("BIT 4, E");
+			break;
+		case OxCB64:
+			printf("BIT 4, H");
+			break;
+		case OxCB65:
+			printf("BIT 4, L");
+			break;
+		case OxCB66:
+			printf("BIT 4, (HL)");
+			break;
+		case OxCB67:
+			printf("BIT 4, A");
+			break;
+		case OxCB68:
+			printf("BIT 5, B");
+			break;
+		case OxCB69:
+			printf("BIT 5, C");
+			break;
+		case OxCB6A:
+			printf("BIT 5, D");
+			break;
+		case OxCB6B:
+			printf("BIT 5, E");
+			break;
+		case OxCB6C:
+			printf("BIT 5, H");
+			break;
+		case OxCB6D:
+			printf("BIT 5, L");
+			break;
+		case OxCB6E:
+			printf("BIT 5, (HL)");
+			break;
+		case OxCB6F:
+			printf("BIT 5, A");
+			break;
+		case OxCB70:
+			printf("BIT 6, B");
+			break;
+		case OxCB71:
+			printf("BIT 6, C");
+			break;
+		case OxCB72:
+			printf("BIT 6, D");
+			break;
+		case OxCB73:
+			printf("BIT 6, E");
+			break;
+		case OxCB74:
+			printf("BIT 6, H");
+			break;
+		case OxCB75:
+			printf("BIT 6, L");
+			break;
+		case OxCB76:
+			printf("BIT 6, (HL)");
+			break;
+		case OxCB77:
+			printf("BIT 6, A");
+			break;
+		case OxCB78:
+			printf("BIT 7, B");
+			break;
+		case OxCB79:
+			printf("BIT 7, C");
+			break;
+		case OxCB7A:
+			printf("BIT 7, D");
+			break;
+		case OxCB7B:
+			printf("BIT 7, E");
+			break;
+		case OxCB7C:
+			printf("BIT 7, H");
+			break;
+		case OxCB7D:
+			printf("BIT 7, L");
+			break;
+		case OxCB7E:
+			printf("BIT 7, (HL)");
+			break;
+		case OxCB7F:
+			printf("BIT 7, A");
+			break;
+		case OxCB80:
+			printf("RES 0, B");
+			break;
+		case OxCB81:
+			printf("RES 0, C");
+			break;
+		case OxCB82:
+			printf("RES 0, D");
+			break;
+		case OxCB83:
+			printf("RES 0, E");
+			break;
+		case OxCB84:
+			printf("RES 0, H");
+			break;
+		case OxCB85:
+			printf("RES 0, L");
+			break;
+		case OxCB86:
+			printf("RES 0, (HL)");
+			break;
+		case OxCB87:
+			printf("RES 0, A");
+			break;
+		case OxCB88:
+			printf("RES 1, B");
+			break;
+		case OxCB89:
+			printf("RES 1, C");
+			break;
+		case OxCB8A:
+			printf("RES 1, D");
+			break;
+		case OxCB8B:
+			printf("RES 1, E");
+			break;
+		case OxCB8C:
+			printf("RES 1, H");
+			break;
+		case OxCB8D:
+			printf("RES 1, L");
+			break;
+		case OxCB8E:
+			printf("RES 1, (HL)");
+			break;
+		case OxCB8F:
+			printf("RES 1, A");
+			break;
+		case OxCB90:
+			printf("RES 2, B");
+			break;
+		case OxCB91:
+			printf("RES 2, C");
+			break;
+		case OxCB92:
+			printf("RES 2, D");
+			break;
+		case OxCB93:
+			printf("RES 2, E");
+			break;
+		case OxCB94:
+			printf("RES 2, H");
+			break;
+		case OxCB95:
+			printf("RES 2, L");
+			break;
+		case OxCB96:
+			printf("RES 2, (HL)");
+			break;
+		case OxCB97:
+			printf("RES 2, A");
+			break;
+		case OxCB98:
+			printf("RES 3, B");
+			break;
+		case OxCB99:
+			printf("RES 3, C");
+			break;
+		case OxCB9A:
+			printf("RES 3, D");
+			break;
+		case OxCB9B:
+			printf("RES 3, E");
+			break;
+		case OxCB9C:
+			printf("RES 3, H");
+			break;
+		case OxCB9D:
+			printf("RES 3, L");
+			break;
+		case OxCB9E:
+			printf("RES 3, (HL)");
+			break;
+		case OxCB9F:
+			printf("RES 3, A");
+			break;
+		case OxCBA0:
+			printf("RES 4, B");
+			break;
+		case OxCBA1:
+			printf("RES 4, C");
+			break;
+		case OxCBA2:
+			printf("RES 4, D");
+			break;
+		case OxCBA3:
+			printf("RES 4, E");
+			break;
+		case OxCBA4:
+			printf("RES 4, H");
+			break;
+		case OxCBA5:
+			printf("RES 4, L");
+			break;
+		case OxCBA6:
+			printf("RES 4, (HL)");
+			break;
+		case OxCBA7:
+			printf("RES 4, A");
+			break;
+		case OxCBA8:
+			printf("RES 5, B");
+			break;
+		case OxCBA9:
+			printf("RES 5, C");
+			break;
+		case OxCBAA:
+			printf("RES 5, D");
+			break;
+		case OxCBAB:
+			printf("RES 5, E");
+			break;
+		case OxCBAC:
+			printf("RES 5, H");
+			break;
+		case OxCBAD:
+			printf("RES 5, L");
+			break;
+		case OxCBAE:
+			printf("RES 5, (HL)");
+			break;
+		case OxCBAF:
+			printf("RES 5, A");
+			break;
+		case OxCBB0:
+			printf("RES 6, B");
+			break;
+		case OxCBB1:
+			printf("RES 6, C");
+			break;
+		case OxCBB2:
+			printf("RES 6, D");
+			break;
+		case OxCBB3:
+			printf("RES 6, E");
+			break;
+		case OxCBB4:
+			printf("RES 6, H");
+			break;
+		case OxCBB5:
+			printf("RES 6, L");
+			break;
+		case OxCBB6:
+			printf("RES 6, (HL)");
+			break;
+		case OxCBB7:
+			printf("RES 6, A");
+			break;
+		case OxCBB8:
+			printf("RES 7, B");
+			break;
+		case OxCBB9:
+			printf("RES 7, C");
+			break;
+		case OxCBBA:
+			printf("RES 7, D");
+			break;
+		case OxCBBB:
+			printf("RES 7, E");
+			break;
+		case OxCBBC:
+			printf("RES 7, H");
+			break;
+		case OxCBBD:
+			printf("RES 7, L");
+			break;
+		case OxCBBE:
+			printf("RES 7, (HL)");
+			break;
+		case OxCBBF:
+			printf("RES 7, A");
+			break;
+		case OxCBC0:
+			printf("SET 0, B");
+			break;
+		case OxCBC1:
+			printf("SET 0, C");
+			break;
+		case OxCBC2:
+			printf("SET 0, D");
+			break;
+		case OxCBC3:
+			printf("SET 0, E");
+			break;
+		case OxCBC4:
+			printf("SET 0, H");
+			break;
+		case OxCBC5:
+			printf("SET 0, L");
+			break;
+		case OxCBC6:
+			printf("SET 0, (HL)");
+			break;
+		case OxCBC7:
+			printf("SET 0, A");
+			break;
+		case OxCBC8:
+			printf("SET 1, B");
+			break;
+		case OxCBC9:
+			printf("SET 1, C");
+			break;
+		case OxCBCA:
+			printf("SET 1, D");
+			break;
+		case OxCBCB:
+			printf("SET 1, E");
+			break;
+		case OxCBCC:
+			printf("SET 1, H");
+			break;
+		case OxCBCD:
+			printf("SET 1, L");
+			break;
+		case OxCBCE:
+			printf("SET 1, (HL)");
+			break;
+		case OxCBCF:
+			printf("SET 1, A");
+			break;
+		case OxCBD0:
+			printf("SET 2, B");
+			break;
+		case OxCBD1:
+			printf("SET 2, C");
+			break;
+		case OxCBD2:
+			printf("SET 2, D");
+			break;
+		case OxCBD3:
+			printf("SET 2, E");
+			break;
+		case OxCBD4:
+			printf("SET 2, H");
+			break;
+		case OxCBD5:
+			printf("SET 2, L");
+			break;
+		case OxCBD6:
+			printf("SET 2, (HL)");
+			break;
+		case OxCBD7:
+			printf("SET 2, A");
+			break;
+		case OxCBD8:
+			printf("SET 3, B");
+			break;
+		case OxCBD9:
+			printf("SET 3, C");
+			break;
+		case OxCBDA:
+			printf("SET 3, D");
+			break;
+		case OxCBDB:
+			printf("SET 3, E");
+			break;
+		case OxCBDC:
+			printf("SET 3, H");
+			break;
+		case OxCBDD:
+			printf("SET 3, L");
+			break;
+		case OxCBDE:
+			printf("SET 3, (HL)");
+			break;
+		case OxCBDF:
+			printf("SET 3, A");
+			break;
+		case OxCBE0:
+			printf("SET 4, B");
+			break;
+		case OxCBE1:
+			printf("SET 4, C");
+			break;
+		case OxCBE2:
+			printf("SET 4, D");
+			break;
+		case OxCBE3:
+			printf("SET 4, E");
+			break;
+		case OxCBE4:
+			printf("SET 4, H");
+			break;
+		case OxCBE5:
+			printf("SET 4, L");
+			break;
+		case OxCBE6:
+			printf("SET 4, (HL)");
+			break;
+		case OxCBE7:
+			printf("SET 4, A");
+			break;
+		case OxCBE8:
+			printf("SET 5, B");
+			break;
+		case OxCBE9:
+			printf("SET 5, C");
+			break;
+		case OxCBEA:
+			printf("SET 5, D");
+			break;
+		case OxCBEB:
+			printf("SET 5, E");
+			break;
+		case OxCBEC:
+			printf("SET 5, H");
+			break;
+		case OxCBED:
+			printf("SET 5, L");
+			break;
+		case OxCBEE:
+			printf("SET 5, (HL)");
+			break;
+		case OxCBEF:
+			printf("SET 5, A");
+			break;
+		case OxCBF0:
+			printf("SET 6, B");
+			break;
+		case OxCBF1:
+			printf("SET 6, C");
+			break;
+		case OxCBF2:
+			printf("SET 6, D");
+			break;
+		case OxCBF3:
+			printf("SET 6, E");
+			break;
+		case OxCBF4:
+			printf("SET 6, H");
+			break;
+		case OxCBF5:
+			printf("SET 6, L");
+			break;
+		case OxCBF6:
+			printf("SET 6, (HL)");
+			break;
+		case OxCBF7:
+			printf("SET 6, A");
+			break;
+		case OxCBF8:
+			printf("SET 7, B");
+			break;
+		case OxCBF9:
+			printf("SET 7, C");
+			break;
+		case OxCBFA:
+			printf("SET 7, D");
+			break;
+		case OxCBFB:
+			printf("SET 7, E");
+			break;
+		case OxCBFC:
+			printf("SET 7, H");
+			break;
+		case OxCBFD:
+			printf("SET 7, L");
+			break;
+		case OxCBFE:
+			printf("SET 7, (HL)");
+			break;
+		case OxCBFF:
+			printf("SET 7, A");
+			break;
 
-/******************************************************************************/
-/*************************** IX instructions (DD) *****************************/
-/******************************************************************************/
+			/******************************************************************************/
+			/*************************** IX instructions (DD) *****************************/
+			/******************************************************************************/
 
-		case OxDD09: printf("ADD IX, BC"); break;
-		case OxDD19: printf("ADD IX, DE"); break;
-		case OxDD21: printf("LD IX, %.4Xh", ((opcode4 << 8) | opcode3)); break;
-		case OxDD22: printf("LD (%.4Xh), IX", ((opcode4 << 8) | opcode3)); break;
-		case OxDD23: printf("INC IX"); break;
-		case OxDD24: printf("INC IXh"); break;
-		case OxDD25: printf("DEC IXh"); break;
-		case OxDD26: printf("LD IXh, %.2Xh", opcode3); break;
-		case OxDD29: printf("ADD IX, IX"); break;
-		case OxDD2A: printf("LD IX, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
-		case OxDD2B: printf("DEC IX"); break;
-		case OxDD2C: printf("INC IXl"); break;
-		case OxDD2D: printf("DEC IXl"); break;
-		case OxDD2E: printf("LD IXl, %.2Xh", opcode3); break;
-		case OxDD34: printf("INC (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD35: printf("DEC (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD36: printf("LD (IX + %.2Xh), %.2Xh", (int8_t) opcode3,  opcode4); break;
-		case OxDD39: printf("ADD IX, SP"); break;
-		case OxDD44: printf("LD B, IXh"); break;
-		case OxDD45: printf("LD B, IXl"); break;
-		case OxDD46: printf("LD B, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD4C: printf("LD C, IXh"); break;
-		case OxDD4D: printf("LD C, IXl"); break;
-		case OxDD4E: printf("LD C, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD54: printf("LD D, IXh"); break;
-		case OxDD55: printf("LD D, IXl"); break;
-		case OxDD56: printf("LD D, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD5C: printf("LD E, IXh"); break;
-		case OxDD5D: printf("LD E, IXl"); break;
-		case OxDD5E: printf("LD E, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD60: printf("LD IXh, B"); break;
-		case OxDD61: printf("LD IXh, C"); break;
-		case OxDD62: printf("LD IXh, D"); break;
-		case OxDD63: printf("LD IXh, E"); break;
-		case OxDD64: printf("LD IXh, IXh"); break;
-		case OxDD65: printf("LD IXh, IXl"); break;
-		case OxDD66: printf("LD H, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD67: printf("LD IXh, A"); break;
-		case OxDD68: printf("LD IXl, B"); break;
-		case OxDD69: printf("LD IXl, C"); break;
-		case OxDD6A: printf("LD IXl, D"); break;
-		case OxDD6B: printf("LD IXl, E"); break;
-		case OxDD6C: printf("LD IXl, IXh"); break;
-		case OxDD6D: printf("LD IXl, IXl"); break;
-		case OxDD6E: printf("LD L, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD6F: printf("LD IXl, A"); break;
-		case OxDD70: printf("LD (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDD71: printf("LD (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDD72: printf("LD (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDD73: printf("LD (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDD74: printf("LD (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDD75: printf("LD (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDD77: printf("LD (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDD7C: printf("LD A, IXh"); break;
-		case OxDD7D: printf("LD A, IXl"); break;
-		case OxDD7E: printf("LD A, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD84: printf("ADD A, IXh"); break;
-		case OxDD85: printf("ADD A, IXl"); break;
-		case OxDD86: printf("ADD A, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD8C: printf("ADC A, IXh"); break;
-		case OxDD8D: printf("ADC A, IXl"); break;
-		case OxDD8E: printf("ADC A, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD94: printf("SUB A, IXh"); break;
-		case OxDD95: printf("SUB A, IXl"); break;
-		case OxDD96: printf("SUB A, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDD9C: printf("SBC A, IXh"); break;
-		case OxDD9D: printf("SBC A, IXl"); break;
-		case OxDD9E: printf("SBC A, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDA4: printf("AND A, IXh"); break;
-		case OxDDA5: printf("AND A, IXl"); break;
-		case OxDDA6: printf("AND A, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDAC: printf("XOR A, IXh"); break;
-		case OxDDAD: printf("XOR A, IXl"); break;
-		case OxDDAE: printf("XOR A, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDB4: printf("OR A, IXh"); break;
-		case OxDDB5: printf("OR A, IXl"); break;
-		case OxDDB6: printf("OR A, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDBC: printf("CP A, IXh"); break;
-		case OxDDBD: printf("CP A, IXl"); break;
-		case OxDDBE: printf("CP A, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDE1: printf("POP IX"); break;
-		case OxDDE3: printf("EX (SP), IX"); break;
-		case OxDDE5: printf("PUSH IX"); break;
-		case OxDDE9: printf("JP IX"); break;
-		case OxDDF9: printf("LD SP, IX"); break;
+		case OxDD09:
+			printf("ADD IX, BC");
+			break;
+		case OxDD19:
+			printf("ADD IX, DE");
+			break;
+		case OxDD21:
+			printf("LD IX, %.4Xh", ((opcode4 << 8) | opcode3));
+			break;
+		case OxDD22:
+			printf("LD (%.4Xh), IX", ((opcode4 << 8) | opcode3));
+			break;
+		case OxDD23:
+			printf("INC IX");
+			break;
+		case OxDD24:
+			printf("INC IXh");
+			break;
+		case OxDD25:
+			printf("DEC IXh");
+			break;
+		case OxDD26:
+			printf("LD IXh, %.2Xh", opcode3);
+			break;
+		case OxDD29:
+			printf("ADD IX, IX");
+			break;
+		case OxDD2A:
+			printf("LD IX, (%.4Xh)", ((opcode4 << 8) | opcode3));
+			break;
+		case OxDD2B:
+			printf("DEC IX");
+			break;
+		case OxDD2C:
+			printf("INC IXl");
+			break;
+		case OxDD2D:
+			printf("DEC IXl");
+			break;
+		case OxDD2E:
+			printf("LD IXl, %.2Xh", opcode3);
+			break;
+		case OxDD34:
+			printf("INC (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD35:
+			printf("DEC (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD36:
+			printf("LD (IX + %.2Xh), %.2Xh", (int8_t) opcode3, opcode4);
+			break;
+		case OxDD39:
+			printf("ADD IX, SP");
+			break;
+		case OxDD44:
+			printf("LD B, IXh");
+			break;
+		case OxDD45:
+			printf("LD B, IXl");
+			break;
+		case OxDD46:
+			printf("LD B, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD4C:
+			printf("LD C, IXh");
+			break;
+		case OxDD4D:
+			printf("LD C, IXl");
+			break;
+		case OxDD4E:
+			printf("LD C, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD54:
+			printf("LD D, IXh");
+			break;
+		case OxDD55:
+			printf("LD D, IXl");
+			break;
+		case OxDD56:
+			printf("LD D, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD5C:
+			printf("LD E, IXh");
+			break;
+		case OxDD5D:
+			printf("LD E, IXl");
+			break;
+		case OxDD5E:
+			printf("LD E, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD60:
+			printf("LD IXh, B");
+			break;
+		case OxDD61:
+			printf("LD IXh, C");
+			break;
+		case OxDD62:
+			printf("LD IXh, D");
+			break;
+		case OxDD63:
+			printf("LD IXh, E");
+			break;
+		case OxDD64:
+			printf("LD IXh, IXh");
+			break;
+		case OxDD65:
+			printf("LD IXh, IXl");
+			break;
+		case OxDD66:
+			printf("LD H, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD67:
+			printf("LD IXh, A");
+			break;
+		case OxDD68:
+			printf("LD IXl, B");
+			break;
+		case OxDD69:
+			printf("LD IXl, C");
+			break;
+		case OxDD6A:
+			printf("LD IXl, D");
+			break;
+		case OxDD6B:
+			printf("LD IXl, E");
+			break;
+		case OxDD6C:
+			printf("LD IXl, IXh");
+			break;
+		case OxDD6D:
+			printf("LD IXl, IXl");
+			break;
+		case OxDD6E:
+			printf("LD L, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD6F:
+			printf("LD IXl, A");
+			break;
+		case OxDD70:
+			printf("LD (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDD71:
+			printf("LD (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDD72:
+			printf("LD (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDD73:
+			printf("LD (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDD74:
+			printf("LD (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDD75:
+			printf("LD (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDD77:
+			printf("LD (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDD7C:
+			printf("LD A, IXh");
+			break;
+		case OxDD7D:
+			printf("LD A, IXl");
+			break;
+		case OxDD7E:
+			printf("LD A, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD84:
+			printf("ADD A, IXh");
+			break;
+		case OxDD85:
+			printf("ADD A, IXl");
+			break;
+		case OxDD86:
+			printf("ADD A, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD8C:
+			printf("ADC A, IXh");
+			break;
+		case OxDD8D:
+			printf("ADC A, IXl");
+			break;
+		case OxDD8E:
+			printf("ADC A, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD94:
+			printf("SUB A, IXh");
+			break;
+		case OxDD95:
+			printf("SUB A, IXl");
+			break;
+		case OxDD96:
+			printf("SUB A, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDD9C:
+			printf("SBC A, IXh");
+			break;
+		case OxDD9D:
+			printf("SBC A, IXl");
+			break;
+		case OxDD9E:
+			printf("SBC A, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDA4:
+			printf("AND A, IXh");
+			break;
+		case OxDDA5:
+			printf("AND A, IXl");
+			break;
+		case OxDDA6:
+			printf("AND A, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDAC:
+			printf("XOR A, IXh");
+			break;
+		case OxDDAD:
+			printf("XOR A, IXl");
+			break;
+		case OxDDAE:
+			printf("XOR A, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDB4:
+			printf("OR A, IXh");
+			break;
+		case OxDDB5:
+			printf("OR A, IXl");
+			break;
+		case OxDDB6:
+			printf("OR A, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDBC:
+			printf("CP A, IXh");
+			break;
+		case OxDDBD:
+			printf("CP A, IXl");
+			break;
+		case OxDDBE:
+			printf("CP A, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDE1:
+			printf("POP IX");
+			break;
+		case OxDDE3:
+			printf("EX (SP), IX");
+			break;
+		case OxDDE5:
+			printf("PUSH IX");
+			break;
+		case OxDDE9:
+			printf("JP IX");
+			break;
+		case OxDDF9:
+			printf("LD SP, IX");
+			break;
 
-/******************************************************************************/
-/************************* IX bit instructions (DDCB) *************************/
-/******************************************************************************/
+			/******************************************************************************/
+			/************************* IX bit instructions (DDCB) *************************/
+			/******************************************************************************/
 
-		case OxDDCBnn00: printf("RLC (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn01: printf("RLC (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn02: printf("RLC (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn03: printf("RLC (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn04: printf("RLC (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn05: printf("RLC (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn06: printf("RLC (IX + %.2Xh)",    (int8_t) opcode3); break;
-		case OxDDCBnn07: printf("RLC (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn08: printf("RRC (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn09: printf("RRC (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn0A: printf("RRC (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn0B: printf("RRC (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn0C: printf("RRC (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn0D: printf("RRC (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn0E: printf("RRC (IX + %.2Xh)",    (int8_t) opcode3); break;
-		case OxDDCBnn0F: printf("RRC (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn10: printf("RL (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn11: printf("RL (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn12: printf("RL (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn13: printf("RL (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn14: printf("RL (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn15: printf("RL (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn16: printf("RL (IX + %.2Xh)",    (int8_t) opcode3); break;
-		case OxDDCBnn17: printf("RL (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn18: printf("RR (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn19: printf("RR (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn1A: printf("RR (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn1B: printf("RR (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn1C: printf("RR (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn1D: printf("RR (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn1E: printf("RR (IX + %.2Xh)",    (int8_t) opcode3); break;
-		case OxDDCBnn1F: printf("RR (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn20: printf("SLA (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn21: printf("SLA (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn22: printf("SLA (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn23: printf("SLA (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn24: printf("SLA (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn25: printf("SLA (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn26: printf("SLA (IX + %.2Xh)",    (int8_t) opcode3); break;
-		case OxDDCBnn27: printf("SLA (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn28: printf("SRA (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn29: printf("SRA (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn2A: printf("SRA (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn2B: printf("SRA (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn2C: printf("SRA (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn2D: printf("SRA (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn2E: printf("SRA (IX + %.2Xh)",    (int8_t) opcode3); break;
-		case OxDDCBnn2F: printf("SRA (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn30: printf("SLL (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn31: printf("SLL (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn32: printf("SLL (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn33: printf("SLL (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn34: printf("SLL (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn35: printf("SLL (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn36: printf("SLL (IX + %.2Xh)",    (int8_t) opcode3); break;
-		case OxDDCBnn37: printf("SLL (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn38: printf("SRL (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn39: printf("SRL (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn3A: printf("SRL (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn3B: printf("SRL (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn3C: printf("SRL (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn3D: printf("SRL (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn3E: printf("SRL (IX + %.2Xh)",    (int8_t) opcode3); break;
-		case OxDDCBnn3F: printf("SRL (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn40: printf("BIT 0, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn41: printf("BIT 0, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn42: printf("BIT 0, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn43: printf("BIT 0, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn44: printf("BIT 0, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn45: printf("BIT 0, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn46: printf("BIT 0, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn47: printf("BIT 0, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn48: printf("BIT 1, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn49: printf("BIT 1, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn4A: printf("BIT 1, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn4B: printf("BIT 1, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn4C: printf("BIT 1, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn4D: printf("BIT 1, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn4E: printf("BIT 1, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn4F: printf("BIT 1, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn50: printf("BIT 2, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn51: printf("BIT 2, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn52: printf("BIT 2, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn53: printf("BIT 2, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn54: printf("BIT 2, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn55: printf("BIT 2, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn56: printf("BIT 2, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn57: printf("BIT 2, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn58: printf("BIT 3, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn59: printf("BIT 3, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn5A: printf("BIT 3, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn5B: printf("BIT 3, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn5C: printf("BIT 3, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn5D: printf("BIT 3, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn5E: printf("BIT 3, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn5F: printf("BIT 3, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn60: printf("BIT 4, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn61: printf("BIT 4, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn62: printf("BIT 4, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn63: printf("BIT 4, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn64: printf("BIT 4, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn65: printf("BIT 4, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn66: printf("BIT 4, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn67: printf("BIT 4, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn68: printf("BIT 5, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn69: printf("BIT 5, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn6A: printf("BIT 5, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn6B: printf("BIT 5, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn6C: printf("BIT 5, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn6D: printf("BIT 5, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn6E: printf("BIT 5, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn6F: printf("BIT 5, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn70: printf("BIT 6, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn71: printf("BIT 6, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn72: printf("BIT 6, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn73: printf("BIT 6, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn74: printf("BIT 6, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn75: printf("BIT 6, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn76: printf("BIT 6, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn77: printf("BIT 6, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn78: printf("BIT 7, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn79: printf("BIT 7, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn7A: printf("BIT 7, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn7B: printf("BIT 7, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn7C: printf("BIT 7, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn7D: printf("BIT 7, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn7E: printf("BIT 7, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn7F: printf("BIT 7, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn80: printf("RES 0, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn81: printf("RES 0, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn82: printf("RES 0, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn83: printf("RES 0, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn84: printf("RES 0, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn85: printf("RES 0, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn86: printf("RES 0, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn87: printf("RES 0, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn88: printf("RES 1, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn89: printf("RES 1, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn8A: printf("RES 1, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn8B: printf("RES 1, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn8C: printf("RES 1, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn8D: printf("RES 1, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn8E: printf("RES 1, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn8F: printf("RES 1, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn90: printf("RES 2, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn91: printf("RES 2, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn92: printf("RES 2, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn93: printf("RES 2, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn94: printf("RES 2, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn95: printf("RES 2, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn96: printf("RES 2, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn97: printf("RES 2, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnn98: printf("RES 3, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnn99: printf("RES 3, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnn9A: printf("RES 3, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnn9B: printf("RES 3, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnn9C: printf("RES 3, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnn9D: printf("RES 3, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnn9E: printf("RES 3, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnn9F: printf("RES 3, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnA0: printf("RES 4, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnA1: printf("RES 4, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnA2: printf("RES 4, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnA3: printf("RES 4, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnA4: printf("RES 4, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnA5: printf("RES 4, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnA6: printf("RES 4, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnA7: printf("RES 4, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnA8: printf("RES 5, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnA9: printf("RES 5, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnAA: printf("RES 5, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnAB: printf("RES 5, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnAC: printf("RES 5, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnAD: printf("RES 5, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnAE: printf("RES 5, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnAF: printf("RES 5, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnB0: printf("RES 6, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnB1: printf("RES 6, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnB2: printf("RES 6, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnB3: printf("RES 6, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnB4: printf("RES 6, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnB5: printf("RES 6, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnB6: printf("RES 6, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnB7: printf("RES 6, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnB8: printf("RES 7, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnB9: printf("RES 7, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnBA: printf("RES 7, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnBB: printf("RES 7, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnBC: printf("RES 7, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnBD: printf("RES 7, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnBE: printf("RES 7, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnBF: printf("RES 7, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnC0: printf("SET 0, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnC1: printf("SET 0, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnC2: printf("SET 0, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnC3: printf("SET 0, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnC4: printf("SET 0, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnC5: printf("SET 0, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnC6: printf("SET 0, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnC7: printf("SET 0, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnC8: printf("SET 1, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnC9: printf("SET 1, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnCA: printf("SET 1, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnCB: printf("SET 1, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnCC: printf("SET 1, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnCD: printf("SET 1, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnCE: printf("SET 1, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnCF: printf("SET 1, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnD0: printf("SET 2, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnD1: printf("SET 2, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnD2: printf("SET 2, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnD3: printf("SET 2, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnD4: printf("SET 2, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnD5: printf("SET 2, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnD6: printf("SET 2, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnD7: printf("SET 2, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnD8: printf("SET 3, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnD9: printf("SET 3, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnDA: printf("SET 3, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnDB: printf("SET 3, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnDC: printf("SET 3, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnDD: printf("SET 3, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnDE: printf("SET 3, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnDF: printf("SET 3, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnE0: printf("SET 4, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnE1: printf("SET 4, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnE2: printf("SET 4, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnE3: printf("SET 4, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnE4: printf("SET 4, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnE5: printf("SET 4, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnE6: printf("SET 4, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnE7: printf("SET 4, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnE8: printf("SET 5, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnE9: printf("SET 5, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnEA: printf("SET 5, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnEB: printf("SET 5, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnEC: printf("SET 5, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnED: printf("SET 5, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnEE: printf("SET 5, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnEF: printf("SET 5, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnF0: printf("SET 6, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnF1: printf("SET 6, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnF2: printf("SET 6, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnF3: printf("SET 6, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnF4: printf("SET 6, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnF5: printf("SET 6, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnF6: printf("SET 6, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnF7: printf("SET 6, (IX + %.2Xh), A", (int8_t) opcode3); break;
-		case OxDDCBnnF8: printf("SET 7, (IX + %.2Xh), B", (int8_t) opcode3); break;
-		case OxDDCBnnF9: printf("SET 7, (IX + %.2Xh), C", (int8_t) opcode3); break;
-		case OxDDCBnnFA: printf("SET 7, (IX + %.2Xh), D", (int8_t) opcode3); break;
-		case OxDDCBnnFB: printf("SET 7, (IX + %.2Xh), E", (int8_t) opcode3); break;
-		case OxDDCBnnFC: printf("SET 7, (IX + %.2Xh), H", (int8_t) opcode3); break;
-		case OxDDCBnnFD: printf("SET 7, (IX + %.2Xh), L", (int8_t) opcode3); break;
-		case OxDDCBnnFE: printf("SET 7, (IX + %.2Xh)", (int8_t) opcode3); break;
-		case OxDDCBnnFF: printf("SET 7, (IX + %.2Xh), A", (int8_t) opcode3); break;
+		case OxDDCBnn00:
+			printf("RLC (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn01:
+			printf("RLC (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn02:
+			printf("RLC (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn03:
+			printf("RLC (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn04:
+			printf("RLC (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn05:
+			printf("RLC (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn06:
+			printf("RLC (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn07:
+			printf("RLC (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn08:
+			printf("RRC (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn09:
+			printf("RRC (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn0A:
+			printf("RRC (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn0B:
+			printf("RRC (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn0C:
+			printf("RRC (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn0D:
+			printf("RRC (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn0E:
+			printf("RRC (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn0F:
+			printf("RRC (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn10:
+			printf("RL (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn11:
+			printf("RL (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn12:
+			printf("RL (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn13:
+			printf("RL (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn14:
+			printf("RL (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn15:
+			printf("RL (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn16:
+			printf("RL (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn17:
+			printf("RL (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn18:
+			printf("RR (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn19:
+			printf("RR (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn1A:
+			printf("RR (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn1B:
+			printf("RR (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn1C:
+			printf("RR (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn1D:
+			printf("RR (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn1E:
+			printf("RR (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn1F:
+			printf("RR (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn20:
+			printf("SLA (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn21:
+			printf("SLA (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn22:
+			printf("SLA (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn23:
+			printf("SLA (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn24:
+			printf("SLA (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn25:
+			printf("SLA (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn26:
+			printf("SLA (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn27:
+			printf("SLA (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn28:
+			printf("SRA (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn29:
+			printf("SRA (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn2A:
+			printf("SRA (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn2B:
+			printf("SRA (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn2C:
+			printf("SRA (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn2D:
+			printf("SRA (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn2E:
+			printf("SRA (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn2F:
+			printf("SRA (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn30:
+			printf("SLL (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn31:
+			printf("SLL (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn32:
+			printf("SLL (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn33:
+			printf("SLL (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn34:
+			printf("SLL (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn35:
+			printf("SLL (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn36:
+			printf("SLL (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn37:
+			printf("SLL (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn38:
+			printf("SRL (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn39:
+			printf("SRL (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn3A:
+			printf("SRL (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn3B:
+			printf("SRL (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn3C:
+			printf("SRL (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn3D:
+			printf("SRL (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn3E:
+			printf("SRL (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn3F:
+			printf("SRL (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn40:
+			printf("BIT 0, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn41:
+			printf("BIT 0, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn42:
+			printf("BIT 0, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn43:
+			printf("BIT 0, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn44:
+			printf("BIT 0, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn45:
+			printf("BIT 0, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn46:
+			printf("BIT 0, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn47:
+			printf("BIT 0, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn48:
+			printf("BIT 1, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn49:
+			printf("BIT 1, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn4A:
+			printf("BIT 1, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn4B:
+			printf("BIT 1, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn4C:
+			printf("BIT 1, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn4D:
+			printf("BIT 1, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn4E:
+			printf("BIT 1, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn4F:
+			printf("BIT 1, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn50:
+			printf("BIT 2, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn51:
+			printf("BIT 2, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn52:
+			printf("BIT 2, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn53:
+			printf("BIT 2, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn54:
+			printf("BIT 2, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn55:
+			printf("BIT 2, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn56:
+			printf("BIT 2, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn57:
+			printf("BIT 2, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn58:
+			printf("BIT 3, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn59:
+			printf("BIT 3, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn5A:
+			printf("BIT 3, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn5B:
+			printf("BIT 3, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn5C:
+			printf("BIT 3, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn5D:
+			printf("BIT 3, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn5E:
+			printf("BIT 3, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn5F:
+			printf("BIT 3, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn60:
+			printf("BIT 4, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn61:
+			printf("BIT 4, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn62:
+			printf("BIT 4, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn63:
+			printf("BIT 4, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn64:
+			printf("BIT 4, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn65:
+			printf("BIT 4, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn66:
+			printf("BIT 4, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn67:
+			printf("BIT 4, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn68:
+			printf("BIT 5, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn69:
+			printf("BIT 5, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn6A:
+			printf("BIT 5, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn6B:
+			printf("BIT 5, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn6C:
+			printf("BIT 5, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn6D:
+			printf("BIT 5, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn6E:
+			printf("BIT 5, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn6F:
+			printf("BIT 5, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn70:
+			printf("BIT 6, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn71:
+			printf("BIT 6, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn72:
+			printf("BIT 6, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn73:
+			printf("BIT 6, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn74:
+			printf("BIT 6, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn75:
+			printf("BIT 6, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn76:
+			printf("BIT 6, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn77:
+			printf("BIT 6, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn78:
+			printf("BIT 7, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn79:
+			printf("BIT 7, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn7A:
+			printf("BIT 7, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn7B:
+			printf("BIT 7, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn7C:
+			printf("BIT 7, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn7D:
+			printf("BIT 7, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn7E:
+			printf("BIT 7, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn7F:
+			printf("BIT 7, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn80:
+			printf("RES 0, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn81:
+			printf("RES 0, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn82:
+			printf("RES 0, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn83:
+			printf("RES 0, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn84:
+			printf("RES 0, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn85:
+			printf("RES 0, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn86:
+			printf("RES 0, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn87:
+			printf("RES 0, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn88:
+			printf("RES 1, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn89:
+			printf("RES 1, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn8A:
+			printf("RES 1, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn8B:
+			printf("RES 1, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn8C:
+			printf("RES 1, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn8D:
+			printf("RES 1, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn8E:
+			printf("RES 1, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn8F:
+			printf("RES 1, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn90:
+			printf("RES 2, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn91:
+			printf("RES 2, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn92:
+			printf("RES 2, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn93:
+			printf("RES 2, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn94:
+			printf("RES 2, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn95:
+			printf("RES 2, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn96:
+			printf("RES 2, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn97:
+			printf("RES 2, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnn98:
+			printf("RES 3, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnn99:
+			printf("RES 3, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnn9A:
+			printf("RES 3, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnn9B:
+			printf("RES 3, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnn9C:
+			printf("RES 3, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnn9D:
+			printf("RES 3, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnn9E:
+			printf("RES 3, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnn9F:
+			printf("RES 3, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA0:
+			printf("RES 4, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA1:
+			printf("RES 4, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA2:
+			printf("RES 4, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA3:
+			printf("RES 4, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA4:
+			printf("RES 4, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA5:
+			printf("RES 4, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA6:
+			printf("RES 4, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA7:
+			printf("RES 4, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA8:
+			printf("RES 5, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnA9:
+			printf("RES 5, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnAA:
+			printf("RES 5, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnAB:
+			printf("RES 5, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnAC:
+			printf("RES 5, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnAD:
+			printf("RES 5, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnAE:
+			printf("RES 5, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnAF:
+			printf("RES 5, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB0:
+			printf("RES 6, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB1:
+			printf("RES 6, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB2:
+			printf("RES 6, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB3:
+			printf("RES 6, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB4:
+			printf("RES 6, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB5:
+			printf("RES 6, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB6:
+			printf("RES 6, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB7:
+			printf("RES 6, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB8:
+			printf("RES 7, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnB9:
+			printf("RES 7, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnBA:
+			printf("RES 7, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnBB:
+			printf("RES 7, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnBC:
+			printf("RES 7, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnBD:
+			printf("RES 7, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnBE:
+			printf("RES 7, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnBF:
+			printf("RES 7, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC0:
+			printf("SET 0, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC1:
+			printf("SET 0, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC2:
+			printf("SET 0, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC3:
+			printf("SET 0, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC4:
+			printf("SET 0, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC5:
+			printf("SET 0, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC6:
+			printf("SET 0, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC7:
+			printf("SET 0, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC8:
+			printf("SET 1, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnC9:
+			printf("SET 1, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnCA:
+			printf("SET 1, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnCB:
+			printf("SET 1, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnCC:
+			printf("SET 1, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnCD:
+			printf("SET 1, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnCE:
+			printf("SET 1, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnCF:
+			printf("SET 1, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD0:
+			printf("SET 2, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD1:
+			printf("SET 2, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD2:
+			printf("SET 2, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD3:
+			printf("SET 2, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD4:
+			printf("SET 2, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD5:
+			printf("SET 2, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD6:
+			printf("SET 2, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD7:
+			printf("SET 2, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD8:
+			printf("SET 3, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnD9:
+			printf("SET 3, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnDA:
+			printf("SET 3, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnDB:
+			printf("SET 3, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnDC:
+			printf("SET 3, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnDD:
+			printf("SET 3, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnDE:
+			printf("SET 3, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnDF:
+			printf("SET 3, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE0:
+			printf("SET 4, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE1:
+			printf("SET 4, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE2:
+			printf("SET 4, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE3:
+			printf("SET 4, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE4:
+			printf("SET 4, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE5:
+			printf("SET 4, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE6:
+			printf("SET 4, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE7:
+			printf("SET 4, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE8:
+			printf("SET 5, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnE9:
+			printf("SET 5, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnEA:
+			printf("SET 5, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnEB:
+			printf("SET 5, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnEC:
+			printf("SET 5, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnED:
+			printf("SET 5, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnEE:
+			printf("SET 5, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnEF:
+			printf("SET 5, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF0:
+			printf("SET 6, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF1:
+			printf("SET 6, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF2:
+			printf("SET 6, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF3:
+			printf("SET 6, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF4:
+			printf("SET 6, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF5:
+			printf("SET 6, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF6:
+			printf("SET 6, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF7:
+			printf("SET 6, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF8:
+			printf("SET 7, (IX + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxDDCBnnF9:
+			printf("SET 7, (IX + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxDDCBnnFA:
+			printf("SET 7, (IX + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxDDCBnnFB:
+			printf("SET 7, (IX + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxDDCBnnFC:
+			printf("SET 7, (IX + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxDDCBnnFD:
+			printf("SET 7, (IX + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxDDCBnnFE:
+			printf("SET 7, (IX + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxDDCBnnFF:
+			printf("SET 7, (IX + %.2Xh), A", (int8_t) opcode3);
+			break;
 
-/******************************************************************************/
-/*************************** IY instructions (FD) *****************************/
-/******************************************************************************/
+			/******************************************************************************/
+			/*************************** IY instructions (FD) *****************************/
+			/******************************************************************************/
 
-		case OxFD09: printf("ADD IY, BC"); break;
-		case OxFD19: printf("ADD IY, DE"); break;
-		case OxFD21: printf("LD IY, %.4Xh", ((opcode4 << 8) | opcode3)); break;
-		case OxFD22: printf("LD (%.4Xh), IY", ((opcode4 << 8) | opcode3)); break;
-		case OxFD23: printf("INC IY"); break;
-		case OxFD24: printf("INC IYh"); break;
-		case OxFD25: printf("DEC IYh"); break;
-		case OxFD26: printf("LD IYh, %.2Xh", opcode3); break;
-		case OxFD29: printf("ADD IY, IY"); break;
-		case OxFD2A: printf("LD IY, (%.4Xh)", ((opcode4 << 8) | opcode3)); break;
-		case OxFD2B: printf("DEC IY"); break;
-		case OxFD2C: printf("INC IYl"); break;
-		case OxFD2D: printf("DEC IYl"); break;
-		case OxFD2E: printf("LD IYl, %.2Xh", opcode3); break;
-		case OxFD34: printf("INC (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD35: printf("DEC (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD36: printf("LD (IY + %.2Xh), %.2Xh", (int8_t) opcode3,  opcode4); break;
-		case OxFD39: printf("ADD IY, SP"); break;
-		case OxFD44: printf("LD B, IYh"); break;
-		case OxFD45: printf("LD B, IYl"); break;
-		case OxFD46: printf("LD B, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD4C: printf("LD C, IYh"); break;
-		case OxFD4D: printf("LD C, IYl"); break;
-		case OxFD4E: printf("LD C, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD54: printf("LD D, IYh"); break;
-		case OxFD55: printf("LD D, IYl"); break;
-		case OxFD56: printf("LD D, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD5C: printf("LD E, IYh"); break;
-		case OxFD5D: printf("LD E, IYl"); break;
-		case OxFD5E: printf("LD E, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD60: printf("LD IYh, B"); break;
-		case OxFD61: printf("LD IYh, C"); break;
-		case OxFD62: printf("LD IYh, D"); break;
-		case OxFD63: printf("LD IYh, E"); break;
-		case OxFD64: printf("LD IYh, IYh"); break;
-		case OxFD65: printf("LD IYh, IYl"); break;
-		case OxFD66: printf("LD H, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD67: printf("LD IYh, A"); break;
-		case OxFD68: printf("LD IYl, B"); break;
-		case OxFD69: printf("LD IYl, C"); break;
-		case OxFD6A: printf("LD IYl, D"); break;
-		case OxFD6B: printf("LD IYl, E"); break;
-		case OxFD6C: printf("LD IYl, IYh"); break;
-		case OxFD6D: printf("LD IYl, IYl"); break;
-		case OxFD6E: printf("LD L, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD6F: printf("LD IYl, A"); break;
-		case OxFD70: printf("LD (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFD71: printf("LD (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFD72: printf("LD (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFD73: printf("LD (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFD74: printf("LD (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFD75: printf("LD (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFD77: printf("LD (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFD7C: printf("LD A, IYh"); break;
-		case OxFD7D: printf("LD A, IYl"); break;
-		case OxFD7E: printf("LD A, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD84: printf("ADD A, IYh"); break;
-		case OxFD85: printf("ADD A, IYl"); break;
-		case OxFD86: printf("ADD A, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD8C: printf("ADC A, IYh"); break;
-		case OxFD8D: printf("ADC A, IYl"); break;
-		case OxFD8E: printf("ADC A, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD94: printf("SUB A, IYh"); break;
-		case OxFD95: printf("SUB A, IYl"); break;
-		case OxFD96: printf("SUB A, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFD9C: printf("SBC A, IYh"); break;
-		case OxFD9D: printf("SBC A, IYl"); break;
-		case OxFD9E: printf("SBC A, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDA4: printf("AND A, IYh"); break;
-		case OxFDA5: printf("AND A, IYl"); break;
-		case OxFDA6: printf("AND A, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDAC: printf("XOR A, IYh"); break;
-		case OxFDAD: printf("XOR A, IYl"); break;
-		case OxFDAE: printf("XOR A, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDB4: printf("OR A, IYh"); break;
-		case OxFDB5: printf("OR A, IYl"); break;
-		case OxFDB6: printf("OR A, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDBC: printf("CP A, IYh"); break;
-		case OxFDBD: printf("CP A, IYl"); break;
-		case OxFDBE: printf("CP A, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDE1: printf("POP IY"); break;
-		case OxFDE3: printf("EX (SP), IY"); break;
-		case OxFDE5: printf("PUSH IY"); break;
-		case OxFDE9: printf("JP IY"); break;
-		case OxFDF9: printf("LD SP, IY"); break;
+		case OxFD09:
+			printf("ADD IY, BC");
+			break;
+		case OxFD19:
+			printf("ADD IY, DE");
+			break;
+		case OxFD21:
+			printf("LD IY, %.4Xh", ((opcode4 << 8) | opcode3));
+			break;
+		case OxFD22:
+			printf("LD (%.4Xh), IY", ((opcode4 << 8) | opcode3));
+			break;
+		case OxFD23:
+			printf("INC IY");
+			break;
+		case OxFD24:
+			printf("INC IYh");
+			break;
+		case OxFD25:
+			printf("DEC IYh");
+			break;
+		case OxFD26:
+			printf("LD IYh, %.2Xh", opcode3);
+			break;
+		case OxFD29:
+			printf("ADD IY, IY");
+			break;
+		case OxFD2A:
+			printf("LD IY, (%.4Xh)", ((opcode4 << 8) | opcode3));
+			break;
+		case OxFD2B:
+			printf("DEC IY");
+			break;
+		case OxFD2C:
+			printf("INC IYl");
+			break;
+		case OxFD2D:
+			printf("DEC IYl");
+			break;
+		case OxFD2E:
+			printf("LD IYl, %.2Xh", opcode3);
+			break;
+		case OxFD34:
+			printf("INC (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD35:
+			printf("DEC (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD36:
+			printf("LD (IY + %.2Xh), %.2Xh", (int8_t) opcode3, opcode4);
+			break;
+		case OxFD39:
+			printf("ADD IY, SP");
+			break;
+		case OxFD44:
+			printf("LD B, IYh");
+			break;
+		case OxFD45:
+			printf("LD B, IYl");
+			break;
+		case OxFD46:
+			printf("LD B, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD4C:
+			printf("LD C, IYh");
+			break;
+		case OxFD4D:
+			printf("LD C, IYl");
+			break;
+		case OxFD4E:
+			printf("LD C, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD54:
+			printf("LD D, IYh");
+			break;
+		case OxFD55:
+			printf("LD D, IYl");
+			break;
+		case OxFD56:
+			printf("LD D, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD5C:
+			printf("LD E, IYh");
+			break;
+		case OxFD5D:
+			printf("LD E, IYl");
+			break;
+		case OxFD5E:
+			printf("LD E, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD60:
+			printf("LD IYh, B");
+			break;
+		case OxFD61:
+			printf("LD IYh, C");
+			break;
+		case OxFD62:
+			printf("LD IYh, D");
+			break;
+		case OxFD63:
+			printf("LD IYh, E");
+			break;
+		case OxFD64:
+			printf("LD IYh, IYh");
+			break;
+		case OxFD65:
+			printf("LD IYh, IYl");
+			break;
+		case OxFD66:
+			printf("LD H, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD67:
+			printf("LD IYh, A");
+			break;
+		case OxFD68:
+			printf("LD IYl, B");
+			break;
+		case OxFD69:
+			printf("LD IYl, C");
+			break;
+		case OxFD6A:
+			printf("LD IYl, D");
+			break;
+		case OxFD6B:
+			printf("LD IYl, E");
+			break;
+		case OxFD6C:
+			printf("LD IYl, IYh");
+			break;
+		case OxFD6D:
+			printf("LD IYl, IYl");
+			break;
+		case OxFD6E:
+			printf("LD L, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD6F:
+			printf("LD IYl, A");
+			break;
+		case OxFD70:
+			printf("LD (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFD71:
+			printf("LD (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFD72:
+			printf("LD (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFD73:
+			printf("LD (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFD74:
+			printf("LD (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFD75:
+			printf("LD (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFD77:
+			printf("LD (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFD7C:
+			printf("LD A, IYh");
+			break;
+		case OxFD7D:
+			printf("LD A, IYl");
+			break;
+		case OxFD7E:
+			printf("LD A, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD84:
+			printf("ADD A, IYh");
+			break;
+		case OxFD85:
+			printf("ADD A, IYl");
+			break;
+		case OxFD86:
+			printf("ADD A, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD8C:
+			printf("ADC A, IYh");
+			break;
+		case OxFD8D:
+			printf("ADC A, IYl");
+			break;
+		case OxFD8E:
+			printf("ADC A, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD94:
+			printf("SUB A, IYh");
+			break;
+		case OxFD95:
+			printf("SUB A, IYl");
+			break;
+		case OxFD96:
+			printf("SUB A, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFD9C:
+			printf("SBC A, IYh");
+			break;
+		case OxFD9D:
+			printf("SBC A, IYl");
+			break;
+		case OxFD9E:
+			printf("SBC A, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDA4:
+			printf("AND A, IYh");
+			break;
+		case OxFDA5:
+			printf("AND A, IYl");
+			break;
+		case OxFDA6:
+			printf("AND A, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDAC:
+			printf("XOR A, IYh");
+			break;
+		case OxFDAD:
+			printf("XOR A, IYl");
+			break;
+		case OxFDAE:
+			printf("XOR A, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDB4:
+			printf("OR A, IYh");
+			break;
+		case OxFDB5:
+			printf("OR A, IYl");
+			break;
+		case OxFDB6:
+			printf("OR A, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDBC:
+			printf("CP A, IYh");
+			break;
+		case OxFDBD:
+			printf("CP A, IYl");
+			break;
+		case OxFDBE:
+			printf("CP A, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDE1:
+			printf("POP IY");
+			break;
+		case OxFDE3:
+			printf("EX (SP), IY");
+			break;
+		case OxFDE5:
+			printf("PUSH IY");
+			break;
+		case OxFDE9:
+			printf("JP IY");
+			break;
+		case OxFDF9:
+			printf("LD SP, IY");
+			break;
 
-/******************************************************************************/
-/************************* IY bit instructions (FDCB) *************************/
-/******************************************************************************/
+			/******************************************************************************/
+			/************************* IY bit instructions (FDCB) *************************/
+			/******************************************************************************/
 
-		case OxFDCBnn00: printf("RLC (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn01: printf("RLC (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn02: printf("RLC (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn03: printf("RLC (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn04: printf("RLC (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn05: printf("RLC (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn06: printf("RLC (IY + %.2Xh)",    (int8_t) opcode3); break;
-		case OxFDCBnn07: printf("RLC (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn08: printf("RRC (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn09: printf("RRC (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn0A: printf("RRC (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn0B: printf("RRC (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn0C: printf("RRC (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn0D: printf("RRC (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn0E: printf("RRC (IY + %.2Xh)",    (int8_t) opcode3); break;
-		case OxFDCBnn0F: printf("RRC (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn10: printf("RL (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn11: printf("RL (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn12: printf("RL (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn13: printf("RL (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn14: printf("RL (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn15: printf("RL (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn16: printf("RL (IY + %.2Xh)",    (int8_t) opcode3); break;
-		case OxFDCBnn17: printf("RL (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn18: printf("RR (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn19: printf("RR (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn1A: printf("RR (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn1B: printf("RR (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn1C: printf("RR (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn1D: printf("RR (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn1E: printf("RR (IY + %.2Xh)",    (int8_t) opcode3); break;
-		case OxFDCBnn1F: printf("RR (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn20: printf("SLA (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn21: printf("SLA (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn22: printf("SLA (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn23: printf("SLA (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn24: printf("SLA (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn25: printf("SLA (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn26: printf("SLA (IY + %.2Xh)",    (int8_t) opcode3); break;
-		case OxFDCBnn27: printf("SLA (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn28: printf("SRA (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn29: printf("SRA (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn2A: printf("SRA (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn2B: printf("SRA (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn2C: printf("SRA (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn2D: printf("SRA (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn2E: printf("SRA (IY + %.2Xh)",    (int8_t) opcode3); break;
-		case OxFDCBnn2F: printf("SRA (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn30: printf("SLL (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn31: printf("SLL (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn32: printf("SLL (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn33: printf("SLL (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn34: printf("SLL (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn35: printf("SLL (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn36: printf("SLL (IY + %.2Xh)",    (int8_t) opcode3); break;
-		case OxFDCBnn37: printf("SLL (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn38: printf("SRL (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn39: printf("SRL (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn3A: printf("SRL (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn3B: printf("SRL (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn3C: printf("SRL (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn3D: printf("SRL (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn3E: printf("SRL (IY + %.2Xh)",    (int8_t) opcode3); break;
-		case OxFDCBnn3F: printf("SRL (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn40: printf("BIT 0, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn41: printf("BIT 0, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn42: printf("BIT 0, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn43: printf("BIT 0, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn44: printf("BIT 0, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn45: printf("BIT 0, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn46: printf("BIT 0, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn47: printf("BIT 0, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn48: printf("BIT 1, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn49: printf("BIT 1, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn4A: printf("BIT 1, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn4B: printf("BIT 1, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn4C: printf("BIT 1, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn4D: printf("BIT 1, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn4E: printf("BIT 1, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn4F: printf("BIT 1, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn50: printf("BIT 2, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn51: printf("BIT 2, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn52: printf("BIT 2, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn53: printf("BIT 2, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn54: printf("BIT 2, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn55: printf("BIT 2, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn56: printf("BIT 2, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn57: printf("BIT 2, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn58: printf("BIT 3, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn59: printf("BIT 3, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn5A: printf("BIT 3, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn5B: printf("BIT 3, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn5C: printf("BIT 3, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn5D: printf("BIT 3, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn5E: printf("BIT 3, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn5F: printf("BIT 3, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn60: printf("BIT 4, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn61: printf("BIT 4, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn62: printf("BIT 4, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn63: printf("BIT 4, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn64: printf("BIT 4, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn65: printf("BIT 4, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn66: printf("BIT 4, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn67: printf("BIT 4, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn68: printf("BIT 5, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn69: printf("BIT 5, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn6A: printf("BIT 5, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn6B: printf("BIT 5, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn6C: printf("BIT 5, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn6D: printf("BIT 5, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn6E: printf("BIT 5, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn6F: printf("BIT 5, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn70: printf("BIT 6, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn71: printf("BIT 6, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn72: printf("BIT 6, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn73: printf("BIT 6, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn74: printf("BIT 6, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn75: printf("BIT 6, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn76: printf("BIT 6, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn77: printf("BIT 6, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn78: printf("BIT 7, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn79: printf("BIT 7, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn7A: printf("BIT 7, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn7B: printf("BIT 7, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn7C: printf("BIT 7, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn7D: printf("BIT 7, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn7E: printf("BIT 7, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn7F: printf("BIT 7, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn80: printf("RES 0, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn81: printf("RES 0, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn82: printf("RES 0, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn83: printf("RES 0, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn84: printf("RES 0, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn85: printf("RES 0, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn86: printf("RES 0, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn87: printf("RES 0, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn88: printf("RES 1, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn89: printf("RES 1, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn8A: printf("RES 1, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn8B: printf("RES 1, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn8C: printf("RES 1, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn8D: printf("RES 1, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn8E: printf("RES 1, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn8F: printf("RES 1, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn90: printf("RES 2, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn91: printf("RES 2, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn92: printf("RES 2, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn93: printf("RES 2, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn94: printf("RES 2, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn95: printf("RES 2, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn96: printf("RES 2, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn97: printf("RES 2, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnn98: printf("RES 3, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnn99: printf("RES 3, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnn9A: printf("RES 3, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnn9B: printf("RES 3, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnn9C: printf("RES 3, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnn9D: printf("RES 3, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnn9E: printf("RES 3, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnn9F: printf("RES 3, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnA0: printf("RES 4, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnA1: printf("RES 4, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnA2: printf("RES 4, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnA3: printf("RES 4, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnA4: printf("RES 4, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnA5: printf("RES 4, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnA6: printf("RES 4, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnA7: printf("RES 4, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnA8: printf("RES 5, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnA9: printf("RES 5, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnAA: printf("RES 5, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnAB: printf("RES 5, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnAC: printf("RES 5, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnAD: printf("RES 5, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnAE: printf("RES 5, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnAF: printf("RES 5, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnB0: printf("RES 6, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnB1: printf("RES 6, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnB2: printf("RES 6, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnB3: printf("RES 6, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnB4: printf("RES 6, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnB5: printf("RES 6, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnB6: printf("RES 6, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnB7: printf("RES 6, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnB8: printf("RES 7, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnB9: printf("RES 7, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnBA: printf("RES 7, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnBB: printf("RES 7, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnBC: printf("RES 7, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnBD: printf("RES 7, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnBE: printf("RES 7, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnBF: printf("RES 7, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnC0: printf("SET 0, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnC1: printf("SET 0, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnC2: printf("SET 0, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnC3: printf("SET 0, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnC4: printf("SET 0, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnC5: printf("SET 0, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnC6: printf("SET 0, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnC7: printf("SET 0, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnC8: printf("SET 1, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnC9: printf("SET 1, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnCA: printf("SET 1, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnCB: printf("SET 1, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnCC: printf("SET 1, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnCD: printf("SET 1, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnCE: printf("SET 1, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnCF: printf("SET 1, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnD0: printf("SET 2, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnD1: printf("SET 2, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnD2: printf("SET 2, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnD3: printf("SET 2, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnD4: printf("SET 2, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnD5: printf("SET 2, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnD6: printf("SET 2, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnD7: printf("SET 2, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnD8: printf("SET 3, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnD9: printf("SET 3, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnDA: printf("SET 3, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnDB: printf("SET 3, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnDC: printf("SET 3, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnDD: printf("SET 3, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnDE: printf("SET 3, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnDF: printf("SET 3, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnE0: printf("SET 4, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnE1: printf("SET 4, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnE2: printf("SET 4, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnE3: printf("SET 4, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnE4: printf("SET 4, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnE5: printf("SET 4, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnE6: printf("SET 4, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnE7: printf("SET 4, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnE8: printf("SET 5, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnE9: printf("SET 5, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnEA: printf("SET 5, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnEB: printf("SET 5, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnEC: printf("SET 5, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnED: printf("SET 5, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnEE: printf("SET 5, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnEF: printf("SET 5, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnF0: printf("SET 6, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnF1: printf("SET 6, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnF2: printf("SET 6, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnF3: printf("SET 6, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnF4: printf("SET 6, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnF5: printf("SET 6, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnF6: printf("SET 6, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnF7: printf("SET 6, (IY + %.2Xh), A", (int8_t) opcode3); break;
-		case OxFDCBnnF8: printf("SET 7, (IY + %.2Xh), B", (int8_t) opcode3); break;
-		case OxFDCBnnF9: printf("SET 7, (IY + %.2Xh), C", (int8_t) opcode3); break;
-		case OxFDCBnnFA: printf("SET 7, (IY + %.2Xh), D", (int8_t) opcode3); break;
-		case OxFDCBnnFB: printf("SET 7, (IY + %.2Xh), E", (int8_t) opcode3); break;
-		case OxFDCBnnFC: printf("SET 7, (IY + %.2Xh), H", (int8_t) opcode3); break;
-		case OxFDCBnnFD: printf("SET 7, (IY + %.2Xh), L", (int8_t) opcode3); break;
-		case OxFDCBnnFE: printf("SET 7, (IY + %.2Xh)", (int8_t) opcode3); break;
-		case OxFDCBnnFF: printf("SET 7, (IY + %.2Xh), A", (int8_t) opcode3); break;
+		case OxFDCBnn00:
+			printf("RLC (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn01:
+			printf("RLC (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn02:
+			printf("RLC (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn03:
+			printf("RLC (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn04:
+			printf("RLC (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn05:
+			printf("RLC (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn06:
+			printf("RLC (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn07:
+			printf("RLC (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn08:
+			printf("RRC (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn09:
+			printf("RRC (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn0A:
+			printf("RRC (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn0B:
+			printf("RRC (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn0C:
+			printf("RRC (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn0D:
+			printf("RRC (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn0E:
+			printf("RRC (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn0F:
+			printf("RRC (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn10:
+			printf("RL (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn11:
+			printf("RL (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn12:
+			printf("RL (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn13:
+			printf("RL (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn14:
+			printf("RL (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn15:
+			printf("RL (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn16:
+			printf("RL (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn17:
+			printf("RL (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn18:
+			printf("RR (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn19:
+			printf("RR (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn1A:
+			printf("RR (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn1B:
+			printf("RR (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn1C:
+			printf("RR (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn1D:
+			printf("RR (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn1E:
+			printf("RR (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn1F:
+			printf("RR (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn20:
+			printf("SLA (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn21:
+			printf("SLA (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn22:
+			printf("SLA (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn23:
+			printf("SLA (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn24:
+			printf("SLA (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn25:
+			printf("SLA (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn26:
+			printf("SLA (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn27:
+			printf("SLA (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn28:
+			printf("SRA (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn29:
+			printf("SRA (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn2A:
+			printf("SRA (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn2B:
+			printf("SRA (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn2C:
+			printf("SRA (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn2D:
+			printf("SRA (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn2E:
+			printf("SRA (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn2F:
+			printf("SRA (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn30:
+			printf("SLL (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn31:
+			printf("SLL (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn32:
+			printf("SLL (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn33:
+			printf("SLL (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn34:
+			printf("SLL (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn35:
+			printf("SLL (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn36:
+			printf("SLL (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn37:
+			printf("SLL (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn38:
+			printf("SRL (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn39:
+			printf("SRL (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn3A:
+			printf("SRL (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn3B:
+			printf("SRL (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn3C:
+			printf("SRL (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn3D:
+			printf("SRL (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn3E:
+			printf("SRL (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn3F:
+			printf("SRL (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn40:
+			printf("BIT 0, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn41:
+			printf("BIT 0, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn42:
+			printf("BIT 0, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn43:
+			printf("BIT 0, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn44:
+			printf("BIT 0, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn45:
+			printf("BIT 0, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn46:
+			printf("BIT 0, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn47:
+			printf("BIT 0, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn48:
+			printf("BIT 1, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn49:
+			printf("BIT 1, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn4A:
+			printf("BIT 1, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn4B:
+			printf("BIT 1, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn4C:
+			printf("BIT 1, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn4D:
+			printf("BIT 1, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn4E:
+			printf("BIT 1, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn4F:
+			printf("BIT 1, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn50:
+			printf("BIT 2, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn51:
+			printf("BIT 2, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn52:
+			printf("BIT 2, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn53:
+			printf("BIT 2, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn54:
+			printf("BIT 2, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn55:
+			printf("BIT 2, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn56:
+			printf("BIT 2, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn57:
+			printf("BIT 2, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn58:
+			printf("BIT 3, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn59:
+			printf("BIT 3, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn5A:
+			printf("BIT 3, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn5B:
+			printf("BIT 3, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn5C:
+			printf("BIT 3, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn5D:
+			printf("BIT 3, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn5E:
+			printf("BIT 3, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn5F:
+			printf("BIT 3, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn60:
+			printf("BIT 4, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn61:
+			printf("BIT 4, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn62:
+			printf("BIT 4, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn63:
+			printf("BIT 4, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn64:
+			printf("BIT 4, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn65:
+			printf("BIT 4, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn66:
+			printf("BIT 4, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn67:
+			printf("BIT 4, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn68:
+			printf("BIT 5, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn69:
+			printf("BIT 5, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn6A:
+			printf("BIT 5, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn6B:
+			printf("BIT 5, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn6C:
+			printf("BIT 5, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn6D:
+			printf("BIT 5, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn6E:
+			printf("BIT 5, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn6F:
+			printf("BIT 5, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn70:
+			printf("BIT 6, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn71:
+			printf("BIT 6, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn72:
+			printf("BIT 6, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn73:
+			printf("BIT 6, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn74:
+			printf("BIT 6, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn75:
+			printf("BIT 6, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn76:
+			printf("BIT 6, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn77:
+			printf("BIT 6, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn78:
+			printf("BIT 7, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn79:
+			printf("BIT 7, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn7A:
+			printf("BIT 7, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn7B:
+			printf("BIT 7, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn7C:
+			printf("BIT 7, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn7D:
+			printf("BIT 7, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn7E:
+			printf("BIT 7, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn7F:
+			printf("BIT 7, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn80:
+			printf("RES 0, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn81:
+			printf("RES 0, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn82:
+			printf("RES 0, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn83:
+			printf("RES 0, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn84:
+			printf("RES 0, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn85:
+			printf("RES 0, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn86:
+			printf("RES 0, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn87:
+			printf("RES 0, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn88:
+			printf("RES 1, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn89:
+			printf("RES 1, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn8A:
+			printf("RES 1, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn8B:
+			printf("RES 1, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn8C:
+			printf("RES 1, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn8D:
+			printf("RES 1, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn8E:
+			printf("RES 1, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn8F:
+			printf("RES 1, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn90:
+			printf("RES 2, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn91:
+			printf("RES 2, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn92:
+			printf("RES 2, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn93:
+			printf("RES 2, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn94:
+			printf("RES 2, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn95:
+			printf("RES 2, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn96:
+			printf("RES 2, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn97:
+			printf("RES 2, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnn98:
+			printf("RES 3, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnn99:
+			printf("RES 3, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnn9A:
+			printf("RES 3, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnn9B:
+			printf("RES 3, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnn9C:
+			printf("RES 3, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnn9D:
+			printf("RES 3, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnn9E:
+			printf("RES 3, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnn9F:
+			printf("RES 3, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA0:
+			printf("RES 4, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA1:
+			printf("RES 4, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA2:
+			printf("RES 4, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA3:
+			printf("RES 4, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA4:
+			printf("RES 4, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA5:
+			printf("RES 4, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA6:
+			printf("RES 4, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA7:
+			printf("RES 4, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA8:
+			printf("RES 5, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnA9:
+			printf("RES 5, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnAA:
+			printf("RES 5, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnAB:
+			printf("RES 5, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnAC:
+			printf("RES 5, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnAD:
+			printf("RES 5, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnAE:
+			printf("RES 5, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnAF:
+			printf("RES 5, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB0:
+			printf("RES 6, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB1:
+			printf("RES 6, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB2:
+			printf("RES 6, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB3:
+			printf("RES 6, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB4:
+			printf("RES 6, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB5:
+			printf("RES 6, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB6:
+			printf("RES 6, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB7:
+			printf("RES 6, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB8:
+			printf("RES 7, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnB9:
+			printf("RES 7, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnBA:
+			printf("RES 7, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnBB:
+			printf("RES 7, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnBC:
+			printf("RES 7, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnBD:
+			printf("RES 7, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnBE:
+			printf("RES 7, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnBF:
+			printf("RES 7, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC0:
+			printf("SET 0, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC1:
+			printf("SET 0, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC2:
+			printf("SET 0, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC3:
+			printf("SET 0, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC4:
+			printf("SET 0, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC5:
+			printf("SET 0, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC6:
+			printf("SET 0, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC7:
+			printf("SET 0, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC8:
+			printf("SET 1, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnC9:
+			printf("SET 1, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnCA:
+			printf("SET 1, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnCB:
+			printf("SET 1, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnCC:
+			printf("SET 1, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnCD:
+			printf("SET 1, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnCE:
+			printf("SET 1, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnCF:
+			printf("SET 1, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD0:
+			printf("SET 2, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD1:
+			printf("SET 2, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD2:
+			printf("SET 2, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD3:
+			printf("SET 2, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD4:
+			printf("SET 2, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD5:
+			printf("SET 2, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD6:
+			printf("SET 2, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD7:
+			printf("SET 2, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD8:
+			printf("SET 3, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnD9:
+			printf("SET 3, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnDA:
+			printf("SET 3, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnDB:
+			printf("SET 3, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnDC:
+			printf("SET 3, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnDD:
+			printf("SET 3, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnDE:
+			printf("SET 3, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnDF:
+			printf("SET 3, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE0:
+			printf("SET 4, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE1:
+			printf("SET 4, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE2:
+			printf("SET 4, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE3:
+			printf("SET 4, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE4:
+			printf("SET 4, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE5:
+			printf("SET 4, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE6:
+			printf("SET 4, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE7:
+			printf("SET 4, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE8:
+			printf("SET 5, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnE9:
+			printf("SET 5, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnEA:
+			printf("SET 5, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnEB:
+			printf("SET 5, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnEC:
+			printf("SET 5, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnED:
+			printf("SET 5, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnEE:
+			printf("SET 5, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnEF:
+			printf("SET 5, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF0:
+			printf("SET 6, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF1:
+			printf("SET 6, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF2:
+			printf("SET 6, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF3:
+			printf("SET 6, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF4:
+			printf("SET 6, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF5:
+			printf("SET 6, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF6:
+			printf("SET 6, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF7:
+			printf("SET 6, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF8:
+			printf("SET 7, (IY + %.2Xh), B", (int8_t) opcode3);
+			break;
+		case OxFDCBnnF9:
+			printf("SET 7, (IY + %.2Xh), C", (int8_t) opcode3);
+			break;
+		case OxFDCBnnFA:
+			printf("SET 7, (IY + %.2Xh), D", (int8_t) opcode3);
+			break;
+		case OxFDCBnnFB:
+			printf("SET 7, (IY + %.2Xh), E", (int8_t) opcode3);
+			break;
+		case OxFDCBnnFC:
+			printf("SET 7, (IY + %.2Xh), H", (int8_t) opcode3);
+			break;
+		case OxFDCBnnFD:
+			printf("SET 7, (IY + %.2Xh), L", (int8_t) opcode3);
+			break;
+		case OxFDCBnnFE:
+			printf("SET 7, (IY + %.2Xh)", (int8_t) opcode3);
+			break;
+		case OxFDCBnnFF:
+			printf("SET 7, (IY + %.2Xh), A", (int8_t) opcode3);
+			break;
 
 		default:
 			printf("<--------------------------------------------------");

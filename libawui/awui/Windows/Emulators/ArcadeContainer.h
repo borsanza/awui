@@ -25,22 +25,22 @@ namespace awui::Windows {
 		class DebuggerSMS;
 
 		class ArcadeContainer : public Button {
-			protected:
-				StationUI * m_station;
+		  protected:
+			StationUI *m_station;
 
-			public:
-				ArcadeContainer();
-				virtual ~ArcadeContainer() = default;
+		  public:
+			ArcadeContainer();
+			virtual ~ArcadeContainer() = default;
 
-				virtual bool IsClass(Classes objectClass) const override;
+			virtual bool IsClass(Classes objectClass) const override;
 
-				virtual void SetSoundEnabled(bool mode) {}
-				virtual void SetDebugger(DebuggerSMS * debugger) {};
-				virtual int GetType() const = 0;
+			virtual void SetSoundEnabled(bool mode) {}
+			virtual void SetDebugger(DebuggerSMS *debugger){};
+			virtual int GetType() const = 0;
 
-				void SetStationUI(StationUI * station);
+			void SetStationUI(StationUI *station);
 
-				virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+			virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 		};
-	}
-}
+	} // namespace Emulators
+} // namespace awui::Windows

@@ -18,15 +18,15 @@ TimeSpan::TimeSpan(long long ticks) {
 }
 
 TimeSpan::TimeSpan(int hours, int minutes, int seconds) {
-	this->ticks = (hours*TicksPerHour) + (minutes*TicksPerMinute) + (seconds*TicksPerSecond);
+	this->ticks = (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond);
 }
 
 TimeSpan::TimeSpan(int days, int hours, int minutes, int seconds) {
-	this->ticks = (days*TicksPerDay) + (hours*TicksPerHour) + (minutes*TicksPerMinute) + (seconds*TicksPerSecond);
+	this->ticks = (days * TicksPerDay) + (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond);
 }
 
 TimeSpan::TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds) {
-	this->ticks = (days*TicksPerDay) + (hours*TicksPerHour) + (minutes*TicksPerMinute) + (seconds*TicksPerSecond) + (milliseconds*TicksPerMillisecond);
+	this->ticks = (days * TicksPerDay) + (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond) + (milliseconds * TicksPerMillisecond);
 }
 
 long long TimeSpan::GetTicks() const {
@@ -34,39 +34,39 @@ long long TimeSpan::GetTicks() const {
 }
 
 double TimeSpan::GetTotalMilliseconds() const {
-	return (double)this->ticks / TicksPerMillisecond;
+	return (double) this->ticks / TicksPerMillisecond;
 }
 
 double TimeSpan::GetTotalSeconds() const {
-	return (double)this->ticks / TicksPerSecond;
+	return (double) this->ticks / TicksPerSecond;
 }
 
 double TimeSpan::GetTotalMinutes() const {
-	return (double)this->ticks / TicksPerMinute;
+	return (double) this->ticks / TicksPerMinute;
 }
 
 double TimeSpan::GetTotalHours() const {
-	return (double)this->ticks / TicksPerHour;
+	return (double) this->ticks / TicksPerHour;
 }
 
 double TimeSpan::GetTotalDays() const {
-	return (double)this->ticks / TicksPerDay;
+	return (double) this->ticks / TicksPerDay;
 }
 
 int TimeSpan::GetMilliseconds() const {
-	return ((int)Math::Floor(this->GetTotalMilliseconds())) % 1000;
+	return ((int) Math::Floor(this->GetTotalMilliseconds())) % 1000;
 }
 
 int TimeSpan::GetSeconds() const {
-	return ((int)Math::Floor(this->GetTotalSeconds())) % 60;
+	return ((int) Math::Floor(this->GetTotalSeconds())) % 60;
 }
 
 int TimeSpan::GetMinutes() const {
-	return ((int)Math::Floor(this->GetTotalMinutes())) % 60;
+	return ((int) Math::Floor(this->GetTotalMinutes())) % 60;
 }
 
 int TimeSpan::GetHours() const {
-	return ((int)Math::Floor(this->GetTotalHours())) % 24;
+	return ((int) Math::Floor(this->GetTotalHours())) % 24;
 }
 
 int TimeSpan::GetDays() const {
@@ -75,9 +75,9 @@ int TimeSpan::GetDays() const {
 
 awui::String TimeSpan::ConvertDecimals(int value, int decimals) const {
 	String output = "";
-	for (int i=0; i < decimals; i++) {
+	for (int i = 0; i < decimals; i++) {
 		output = Convert::ToString(value % 10) + output;
-		value = Math::Floor((float)value / 10);
+		value = Math::Floor((float) value / 10);
 	}
 
 	return output;
@@ -101,7 +101,7 @@ awui::String TimeSpan::ToString() const {
 	return output;
 }
 
-TimeSpan & TimeSpan::operator= (const TimeSpan & other) {
+TimeSpan &TimeSpan::operator=(const TimeSpan &other) {
 	this->ticks = other.ticks;
 
 	return *this;

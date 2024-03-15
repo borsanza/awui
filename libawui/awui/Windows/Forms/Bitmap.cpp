@@ -57,7 +57,7 @@ void Bitmap::SetFixedMargins(int x1, int y1, int x2, int y2) {
 	m_fixY2 = y2;
 }
 
-void Bitmap::GetFixedMargins(int * x1, int * y1, int * x2, int * y2) {
+void Bitmap::GetFixedMargins(int *x1, int *y1, int *x2, int *y2) {
 	*x1 = m_fixX1;
 	*y1 = m_fixY1;
 	*x2 = m_fixX2;
@@ -68,7 +68,7 @@ void Bitmap::Load() {
 	if (m_loaded)
 		return;
 
-	SDL_Surface * textureImage = IMG_Load(m_file.ToCharArray());
+	SDL_Surface *textureImage = IMG_Load(m_file.ToCharArray());
 	if (textureImage) {
 		glGenTextures(1, &m_texture);
 		glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -98,7 +98,7 @@ void Bitmap::Unload() {
 
 void Bitmap::UnloadAll() {
 	for (int i = 0; i < Bitmap::list.GetCount(); i++) {
-		Bitmap * bitmap = (Bitmap *) Bitmap::list.Get(i);
+		Bitmap *bitmap = (Bitmap *) Bitmap::list.Get(i);
 		bitmap->Unload();
 	}
 }
@@ -588,7 +588,7 @@ void Bitmap::SetColor(Drawing::ColorF color) {
 	m_color = color;
 }
 
-void Bitmap::OnPaint(GL * gl) {
+void Bitmap::OnPaint(GL *gl) {
 	Load();
 
 	if ((m_textureWidth == 0) || (m_textureHeight == 0))

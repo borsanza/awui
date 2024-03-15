@@ -11,7 +11,7 @@
 
 using namespace awui;
 
-awui::Configuration& Configuration::getInstance(const String &filePath) {
+awui::Configuration &Configuration::getInstance(const String &filePath) {
 	std::string filePathStr = filePath.ToCharArray();
 	static std::map<std::string, std::shared_ptr<Configuration>> instances;
 	if (instances.find(filePathStr) == instances.end()) {
@@ -38,7 +38,7 @@ bool Configuration::Load(const String &filePath) {
 	} else {
 		std::ofstream outFile(filePath.ToCharArray());
 		if (outFile) {
-			nlohmann::json defaultConfig = { };
+			nlohmann::json defaultConfig = {};
 			outFile << defaultConfig.dump(4);
 			outFile.close();
 			m_configJson = defaultConfig;

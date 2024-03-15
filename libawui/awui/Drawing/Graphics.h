@@ -16,29 +16,29 @@ namespace awui {
 		class GlyphMetrics;
 
 		class Graphics : public Object {
-			private:
-				cairo_surface_t *m_cairo_surface;
-				cairo_t *m_cr;
+		  private:
+			cairo_surface_t *m_cairo_surface;
+			cairo_t *m_cr;
 
-				void SetPen(Drawing::Pen * pen);
-				Graphics();
+			void SetPen(Drawing::Pen *pen);
+			Graphics();
 
-			public:
-				virtual ~Graphics() = default;
+		  public:
+			virtual ~Graphics() = default;
 
-				virtual bool IsClass(Classes objectClass) const override;
+			virtual bool IsClass(Classes objectClass) const override;
 
-				static Graphics * FromImage(Drawing::Image *image);
+			static Graphics *FromImage(Drawing::Image *image);
 
-				void Clear(const Drawing::Color color);
-				void DrawRectangle(Drawing::Pen * pen, float x, float y, float width, float height);
-				void FillRectangle(const Drawing::Color color, float x, float y, float width, float height);
-				void DrawImage(Drawing::Image * image, float x, float y);
-				void DrawImage(Drawing::Image * image, float x, float y, float width, float height);
-				void DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float y2);
+			void Clear(const Drawing::Color color);
+			void DrawRectangle(Drawing::Pen *pen, float x, float y, float width, float height);
+			void FillRectangle(const Drawing::Color color, float x, float y, float width, float height);
+			void DrawImage(Drawing::Image *image, float x, float y);
+			void DrawImage(Drawing::Image *image, float x, float y, float width, float height);
+			void DrawLine(Drawing::Pen *pen, float x1, float y1, float x2, float y2);
 
-				Drawing::GlyphMetrics GetMeasureText(const String text, Drawing::Font *font) const;
-				void DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y);
+			Drawing::GlyphMetrics GetMeasureText(const String text, Drawing::Font *font) const;
+			void DrawString(const String text, Drawing::Font *font, const Drawing::Color color, float x, float y);
 		};
-	}
-}
+	} // namespace Drawing
+} // namespace awui

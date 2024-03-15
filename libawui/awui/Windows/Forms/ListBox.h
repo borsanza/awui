@@ -11,36 +11,36 @@ namespace awui {
 		class ObjectCollection;
 
 		class ListBox : public Control {
-			private:
-				ObjectCollection * m_collection;
+		  private:
+			ObjectCollection *m_collection;
 
-			public:
-				ListBox();
-				virtual ~ListBox();
+		  public:
+			ListBox();
+			virtual ~ListBox();
 
-				virtual bool IsClass(Classes objectClass) const override;
+			virtual bool IsClass(Classes objectClass) const override;
 
-				ObjectCollection * GetItems() const;
+			ObjectCollection *GetItems() const;
 		};
 
 		class ObjectCollection : Object {
-			private:
-				ListBox * listbox;
-				awui::Collections::ArrayList * arraylist;
+		  private:
+			ListBox *listbox;
+			awui::Collections::ArrayList *arraylist;
 
-			public:
-				ObjectCollection(ListBox * owner);
-				virtual ~ObjectCollection();
+		  public:
+			ObjectCollection(ListBox *owner);
+			virtual ~ObjectCollection();
 
-				int GetCount() const;
+			int GetCount() const;
 
-				void Add(Object * item);
-				virtual void Clear();
-				bool Contains(Object * value) const;
-				int IndexOf(Object * value) const;
-//				void Insert(int index, Object item);
-				void Remove(Object * value);
-				void RemoveAt(int index);
+			void Add(Object *item);
+			virtual void Clear();
+			bool Contains(Object *value) const;
+			int IndexOf(Object *value) const;
+			//				void Insert(int index, Object item);
+			void Remove(Object *value);
+			void RemoveAt(int index);
 		};
-	}
-}
+	} // namespace Windows::Forms
+} // namespace awui

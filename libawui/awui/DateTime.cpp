@@ -7,10 +7,12 @@
 
 using namespace awui;
 
-DateTime::DateTime() : m_time(0) {
+DateTime::DateTime()
+	: m_time(0) {
 }
 
-DateTime::DateTime(std::chrono::microseconds time) : m_time(time) {
+DateTime::DateTime(std::chrono::microseconds time)
+	: m_time(time) {
 }
 
 // Método estático para obtener el momento actual.

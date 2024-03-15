@@ -35,7 +35,7 @@ Sound::Sound() {
 	}
 }
 
-int Sound::GetPosBuffer(Motherboard * cpu) {
+int Sound::GetPosBuffer(Motherboard *cpu) {
 	double now = cpu->GetVirtualTime();
 	now = now - SoundSDL::Instance().GetInitTimeSound();
 	float timeFrame = SOUNDSAMPLES / (SOUNDFREQ * 2.0f);
@@ -45,21 +45,22 @@ int Sound::GetPosBuffer(Motherboard * cpu) {
 	pos = int(pos) % SOUNDSAMPLES;
 	pos = pos + (frame * SOUNDSAMPLES);
 
-//	printf("%d\n", (int)pos);
-//	printf("------>>>> %d\n", m_frame);
+	//	printf("%d\n", (int)pos);
+	//	printf("------>>>> %d\n", m_frame);
 
 	return int(pos) % SOUNDBUFFER;
 }
 
-void Sound::WriteByte(Motherboard * cpu, uint8_t value) {
+void Sound::WriteByte(Motherboard *cpu, uint8_t value) {
 	bool changeTone = false;
 	bool changeVolume = false;
 	bool useModulation = false;
 
-	Channel * channel = &(m_channels[m_channel]);
+	Channel *channel = &(m_channels[m_channel]);
 
 	if ((value & 0x80) == 0) {
-		// printf("%d %d%d%d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
+		// printf("%d %d%d%d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0),
+		// (value & 0x1 ? 1 : 0));
 		channel->_register = ((value & 0x3F) << 4) | (channel->_register & 0x0F);
 
 		if (m_type == 0) {
@@ -70,7 +71,8 @@ void Sound::WriteByte(Motherboard * cpu, uint8_t value) {
 			channel->_volume = value & 0xF;
 		}
 	} else {
-		// printf("%d %d%d %d %d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x40 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 : 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
+		// printf("%d %d%d %d %d%d%d%d\n", (value & 0x80 ? 1 : 0), (value & 0x40 ? 1 : 0), (value & 0x20 ? 1 : 0), (value & 0x10 ? 1 : 0), (value & 0x8 ? 1 : 0), (value & 0x4 ? 1 :
+		// 0), (value & 0x2 ? 1 : 0), (value & 0x1 ? 1 : 0));
 
 		m_channel = (value & 0x60) >> 5;
 		m_type = (value & 0x10) >> 4;

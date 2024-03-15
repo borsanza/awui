@@ -9,10 +9,10 @@
 using namespace awui::Emulation::MasterSystem;
 
 #include <assert.h>
-#include <stdio.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
+#include <stdio.h>
 
 /*
  *|-----------------------------------|
@@ -44,8 +44,8 @@ Ports::Ports() {
 	this->_maskRegion = 0x00;
 }
 
-void Ports::WriteByte(Motherboard * cpu, uint8_t port, uint8_t value) {
-//	printf("Write Port: %.2X    Value: %.2X\n", port, value);
+void Ports::WriteByte(Motherboard *cpu, uint8_t port, uint8_t value) {
+	//	printf("Write Port: %.2X    Value: %.2X\n", port, value);
 	if (port == 0x7f || port == 0x7e) {
 		// printf("Write Port: %.2X    Value: %.2X\n", port, value);
 		cpu->GetSound()->WriteByte(cpu, value);
@@ -83,11 +83,11 @@ void Ports::WriteByte(Motherboard * cpu, uint8_t port, uint8_t value) {
 		return;
 	}
 
-//	assert(false);
+	//	assert(false);
 }
 
-uint8_t Ports::ReadByte(Motherboard * cpu, uint8_t port) const {
-//	printf("Read Port: %.2X\n", port);
+uint8_t Ports::ReadByte(Motherboard *cpu, uint8_t port) const {
+	//	printf("Read Port: %.2X\n", port);
 
 	if (port >= 0x40 && port <= 0xBF)
 		return cpu->GetVDP()->ReadByte(port);
@@ -96,7 +96,7 @@ uint8_t Ports::ReadByte(Motherboard * cpu, uint8_t port) const {
 		return ((cpu->GetPad2() << 6) | ((cpu->GetPad1() & 0x3F)));
 
 	if (port == 0xC1 || port == 0xDD) {
-		uint8_t data =  0x30 | ((cpu->GetPad2() & 0x3F) >> 2);
+		uint8_t data = 0x30 | ((cpu->GetPad2() & 0x3F) >> 2);
 		if (this->_maskRegion & 0x01)
 			data |= (this->_region & 0x01) << 6;
 		else
@@ -110,6 +110,6 @@ uint8_t Ports::ReadByte(Motherboard * cpu, uint8_t port) const {
 		return data;
 	}
 
-//	assert(false);
+	//	assert(false);
 	return 0xFF;
 }

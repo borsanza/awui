@@ -1,11 +1,12 @@
 /**
-* awui/IO/Directory.cpp
-*
-* Copyright (C) 2014 Borja Sánchez Zamorano
-*/
+ * awui/IO/Directory.cpp
+ *
+ * Copyright (C) 2014 Borja Sánchez Zamorano
+ */
 
 #include "Directory.h"
 
+// clang-format off
 #ifdef __linux__
     #include <unistd.h>
     #define GetCurrentDir getcwd
@@ -13,6 +14,7 @@
     #include <direct.h>
     #define GetCurrentDir _getcwd
 #endif
+// clang-format on
 
 using namespace awui;
 using namespace awui::IO;

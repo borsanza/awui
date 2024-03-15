@@ -6,22 +6,22 @@ namespace awui::Windows::Forms::Station::Browser {
 	class Page;
 
 	class Browser : public Control {
-		private:
-			Gradient m_gradientUp;
-			Gradient m_gradientBottom;
-			Gradient m_gradientLeft;
-			Gradient m_gradientRight;
-			Page * m_page;
+	  private:
+		Gradient m_gradientUp;
+		Gradient m_gradientBottom;
+		Gradient m_gradientLeft;
+		Gradient m_gradientRight;
+		Page *m_page;
 
-		public:
-			Browser();
-			virtual ~Browser() = default;
+	  public:
+		Browser();
+		virtual ~Browser() = default;
 
-			virtual bool IsClass(Classes objectClass) const override;
+		virtual bool IsClass(Classes objectClass) const override;
 
-			void SetPage(Page * page);
-			Page * GetPage() const { return m_page; };
+		void SetPage(Page *page);
+		Page *GetPage() const { return m_page; };
 
-			virtual void OnTick(float deltaSeconds) override;
+		virtual void OnTick(float deltaSeconds) override;
 	};
-}
+} // namespace awui::Windows::Forms::Station::Browser

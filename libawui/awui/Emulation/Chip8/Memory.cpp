@@ -6,11 +6,11 @@
 
 #include "Memory.h"
 
-#include <stdint.h>
-#include <stdlib.h>
 #include <awui/IO/FileStream.h>
 #include <awui/IO/MemoryStream.h>
 #include <awui/String.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 using namespace awui::Emulation::Chip8;
 using namespace awui::IO;
@@ -26,7 +26,7 @@ Memory::~Memory() {
 
 void Memory::LoadRom(const String file) {
 	this->_file = file;
-	FileStream * fs = new FileStream(file, FileMode::Open, FileAccess::Read);
+	FileStream *fs = new FileStream(file, FileMode::Open, FileAccess::Read);
 
 	if (this->_memory->GetCapacity() < fs->GetLength())
 		this->_memory->SetCapacity(fs->GetLength());
@@ -35,7 +35,7 @@ void Memory::LoadRom(const String file) {
 
 	while (fs->GetPosition() < fs->GetLength()) {
 		uint8_t b = fs->ReadByte();
-//		Console::WriteLine(Convert::ToString(b));
+		//		Console::WriteLine(Convert::ToString(b));
 		this->_memory->WriteByte(b);
 	}
 

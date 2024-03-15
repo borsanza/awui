@@ -11,7 +11,7 @@
 using namespace awui::Emulation::Common;
 
 Ram::Ram(uint32_t size) {
-	this->_data = (uint8_t *) calloc (size, sizeof(uint8_t));
+	this->_data = (uint8_t *) calloc(size, sizeof(uint8_t));
 	this->_size = size;
 }
 
@@ -26,7 +26,7 @@ void Ram::Clear() {
 void Ram::Resize(uint32_t size) {
 	if (this->_size != size) {
 		free(this->_data);
-		this->_data = (uint8_t *) calloc (size, sizeof(uint8_t));
+		this->_data = (uint8_t *) calloc(size, sizeof(uint8_t));
 		this->_size = size;
 	}
 }

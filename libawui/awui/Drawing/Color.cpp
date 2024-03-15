@@ -22,10 +22,7 @@ bool Color::IsClass(Classes objectClass) const {
 
 awui::String Color::ToString() const {
 	String value;
-	value = String("Color [A=") + Convert::ToString(m_a) +
-				", R=" + Convert::ToString(m_r) +
-				", G=" + Convert::ToString(m_g) +
-				", B=" + Convert::ToString(m_b) + "]";
+	value = String("Color [A=") + Convert::ToString(m_a) + ", R=" + Convert::ToString(m_r) + ", G=" + Convert::ToString(m_g) + ", B=" + Convert::ToString(m_b) + "]";
 	return value;
 }
 
@@ -77,7 +74,7 @@ float Color::GetHue() const {
 	while (H < 0.0)
 		H += 360.0;
 
-	return (float)H;
+	return (float) H;
 }
 
 float Color::GetSaturation() const {
@@ -92,14 +89,14 @@ float Color::GetSaturation() const {
 
 	value /= 255.0;
 
-	return (float)value;
+	return (float) value;
 }
 
 Color Color::FromArgb(uint32_t argb) {
 	auto a = static_cast<std::uint8_t>((argb >> 24) & 0xFF);
-    auto r = static_cast<std::uint8_t>((argb >> 16) & 0xFF);
-    auto g = static_cast<std::uint8_t>((argb >> 8) & 0xFF);
-    auto b = static_cast<std::uint8_t>(argb & 0xFF);
+	auto r = static_cast<std::uint8_t>((argb >> 16) & 0xFF);
+	auto g = static_cast<std::uint8_t>((argb >> 8) & 0xFF);
+	auto b = static_cast<std::uint8_t>(argb & 0xFF);
 
 	return Color::FromArgb(a, r, g, b);
 }
@@ -123,7 +120,7 @@ Color Color::FromArgb(uint8_t alpha, uint8_t red, uint8_t green, uint8_t blue) {
 	return color;
 }
 
-Color & Color::operator=(const Color & other) {
+Color &Color::operator=(const Color &other) {
 	m_r = other.m_r;
 	m_g = other.m_g;
 	m_b = other.m_b;
@@ -132,6 +129,6 @@ Color & Color::operator=(const Color & other) {
 	return *this;
 }
 
-bool Color::operator !=(const Color &b) const {
+bool Color::operator!=(const Color &b) const {
 	return ((m_r != b.m_r) || (m_g != b.m_g) || (m_b != b.m_b) || (m_a != b.m_a));
 }

@@ -6,13 +6,13 @@ using namespace awui;
 
 namespace awui {
 	class Environment {
-		public:
-			enum class SpecialFolder {
-				LocalApplicationData,
-			};
+	  public:
+		enum class SpecialFolder {
+			LocalApplicationData,
+		};
 
-			static String GetNewLine();
+		static String GetNewLine();
 
-			static String GetFolderPath(SpecialFolder folder);
+		static String GetFolderPath(SpecialFolder folder);
 	};
-}
+} // namespace awui

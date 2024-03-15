@@ -8,8 +8,8 @@
 
 #include "Shader.h"
 
-#include <fstream>
 #include <GL/glew.h>
+#include <fstream>
 
 using namespace awui::Drawing;
 
@@ -21,7 +21,7 @@ Shader::Shader() {
 	glAttachShader(m_gProgramID, fragmentShader);
 	glLinkProgram(m_gProgramID);
 	glUseProgram(m_gProgramID);
-	//int texcoord_index = glGetAttribLocation(_gProgramID, "in_coord");
+	// int texcoord_index = glGetAttribLocation(_gProgramID, "in_coord");
 }
 
 bool Shader::IsClass(Classes objectClass) const {
@@ -33,44 +33,43 @@ void Shader::printShaderLog(GLuint shader) {
 		int infoLogLength = 0;
 		int maxLength = infoLogLength;
 
-		glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &maxLength );
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 
-		char* infoLog = new char[ maxLength ];
+		char *infoLog = new char[maxLength];
 
-		glGetShaderInfoLog( shader, maxLength, &infoLogLength, infoLog );
+		glGetShaderInfoLog(shader, maxLength, &infoLogLength, infoLog);
 		if (infoLogLength > 0)
 			printf("%s\n", infoLog);
 
 		delete[] infoLog;
 	} else
-		printf( "Name %d is not a shader\n", (int) shader );
+		printf("Name %d is not a shader\n", (int) shader);
 }
 
-GLuint Shader::LoadShaderFromFile( std::string path, GLenum shaderType) {
+GLuint Shader::LoadShaderFromFile(std::string path, GLenum shaderType) {
 	GLuint shaderID = 0;
 	std::string shaderString;
-	std::ifstream sourceFile( path.c_str() );
+	std::ifstream sourceFile(path.c_str());
 
 	if (sourceFile) {
-		shaderString.assign((std::istreambuf_iterator< char >(sourceFile)), std::istreambuf_iterator< char >());
+		shaderString.assign((std::istreambuf_iterator<char>(sourceFile)), std::istreambuf_iterator<char>());
 		shaderID = glCreateShader(shaderType);
 
-		const GLchar* shaderSource = shaderString.c_str();
-		glShaderSource(shaderID, 1, (const GLchar**)&shaderSource, NULL);
+		const GLchar *shaderSource = shaderString.c_str();
+		glShaderSource(shaderID, 1, (const GLchar **) &shaderSource, NULL);
 
 		glCompileShader(shaderID);
 
 		GLint shaderCompiled = GL_FALSE;
-		glGetShaderiv( shaderID, GL_COMPILE_STATUS, &shaderCompiled );
+		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &shaderCompiled);
 		if (shaderCompiled != GL_TRUE) {
 			printf("Unable to compile shader %d!\n\nSource:\n%s\n", (int) shaderID, shaderSource);
 			printShaderLog(shaderID);
 			glDeleteShader(shaderID);
 			shaderID = 0;
 		}
-	}
-	else
-		printf( "Unable to open file %s\n", path.c_str() );
+	} else
+		printf("Unable to open file %s\n", path.c_str());
 
 	return shaderID;
 }

@@ -6,23 +6,31 @@
 
 #include "Motherboard.h"
 
+#include <assert.h>
 #include <awui/Console.h>
 #include <awui/DateTime.h>
 #include <awui/Emulation/Common/Rom.h>
 #include <awui/Emulation/MasterSystem/Ports.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
-#include <assert.h>
 #include <string.h>
 
 using namespace awui;
 using namespace awui::Emulation::Common;
 using namespace awui::Emulation::MasterSystem;
 
-void MasterGearWriteMemoryCB(uint16_t pos, uint8_t value, void * data) { ((Motherboard *) data)->WriteMemory(pos, value); }
-uint8_t MasterGearReadMemoryCB(uint16_t pos, void * data) { return ((Motherboard *) data)->ReadMemory(pos); }
-void MasterGearWritePortCB(uint8_t port, uint8_t value, void * data) { ((Motherboard *) data)->WritePort(port, value); }
-uint8_t MasterGearReadPortCB(uint8_t port, void * data) { return ((Motherboard *) data)->ReadPort(port); }
+void MasterGearWriteMemoryCB(uint16_t pos, uint8_t value, void *data) {
+	((Motherboard *) data)->WriteMemory(pos, value);
+}
+uint8_t MasterGearReadMemoryCB(uint16_t pos, void *data) {
+	return ((Motherboard *) data)->ReadMemory(pos);
+}
+void MasterGearWritePortCB(uint8_t port, uint8_t value, void *data) {
+	((Motherboard *) data)->WritePort(port, value);
+}
+uint8_t MasterGearReadPortCB(uint8_t port, void *data) {
+	return ((Motherboard *) data)->ReadPort(port);
+}
 
 Motherboard::Motherboard() {
 	m_seconds = 0.0f;
@@ -84,7 +92,7 @@ void Motherboard::CheckInterrupts() {
 		return;
 
 	if (interrupt) {
-//		printf("Entra %d\n", m_vdp->GetLine());
+		//		printf("Entra %d\n", m_vdp->GetLine());
 		m_z80.SetInInterrupt(true);
 		m_z80.GetRegisters()->SetIFF1(false);
 		m_z80.GetRegisters()->SetIFF2(false);
@@ -151,7 +159,8 @@ void Motherboard::DoTick() {
 		vdpIters += times * (itersVDP / iters);
 		if (!vsync) {
 			for (; vdpCount < vdpIters; vdpCount++) {
-				if (vsync) continue;
+				if (vsync)
+					continue;
 				vsync = m_vdp->OnTick(realIters);
 				if (vsync)
 					CheckInterrupts();
@@ -184,15 +193,15 @@ void Motherboard::CallPaused() {
 }
 
 void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
-//	if (pos == 0xc092)
-//		printf("Writing: %.2X\n", value);
+	//	if (pos == 0xc092)
+	//		printf("Writing: %.2X\n", value);
 
 	switch (m_saveData._mapper) {
 		default:
 		case MAPPER_SEGA:
 			if (pos < 0xC000) {
 				if ((pos >= 0x8000) && (m_saveData._controlbyte & 0x08)) {
-					uint16_t offset = ((m_saveData._controlbyte & 0x04)? 0x4000 : 0x0000) + pos;
+					uint16_t offset = ((m_saveData._controlbyte & 0x04) ? 0x4000 : 0x0000) + pos;
 					if (offset >= 32768) {
 						printf("Motherboard::WriteMemory Out of Range");
 						return;
@@ -217,17 +226,17 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 					case 0xFFFD:
 						value = value % m_rom->GetNumPages();
 						m_saveData._frame0 = value;
-//						printf("Frames: %.2X %.2X %.2X\n", d._frame0, d._frame1, d._frame2);
+						// printf("Frames: %.2X %.2X %.2X\n", d._frame0, d._frame1, d._frame2);
 						break;
 					case 0xFFFE:
 						value = value % m_rom->GetNumPages();
 						m_saveData._frame1 = value;
-//						printf("Frames: %.2X %.2X %.2X\n", m_saveData._frame0, m_saveData._frame1, m_saveData._frame2);
+						// printf("Frames: %.2X %.2X %.2X\n", m_saveData._frame0, m_saveData._frame1, m_saveData._frame2);
 						break;
 					case 0xFFFF:
 						value = value % m_rom->GetNumPages();
 						m_saveData._frame2 = value;
-//						printf("Frames: %.2X %.2X %.2X\n", m_saveData._frame0, m_saveData._frame1, m_saveData._frame2);
+						// printf("Frames: %.2X %.2X %.2X\n", m_saveData._frame0, m_saveData._frame1, m_saveData._frame2);
 						break;
 				}
 			}
@@ -264,9 +273,8 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 				if (pos < 0x8000)
 					return m_rom->ReadByte((uint16_t(m_saveData._frame1) << 14) + (pos - 0x4000));
 
-
 				if (m_saveData._controlbyte & 0x08) {
-					uint16_t offset = ((m_saveData._controlbyte & 0x04)? 0x4000 : 0x0000) + pos;
+					uint16_t offset = ((m_saveData._controlbyte & 0x04) ? 0x4000 : 0x0000) + pos;
 					if (offset >= 32768) {
 						printf("Motherboard::ReadMemory Out of Range");
 						return 0;
@@ -319,15 +327,15 @@ int Motherboard::GetSaveSize() {
 	return size;
 }
 
-void Motherboard::LoadState(uint8_t * data) {
-	memcpy (&m_saveData, data, sizeof(Motherboard::saveData));
+void Motherboard::LoadState(uint8_t *data) {
+	memcpy(&m_saveData, data, sizeof(Motherboard::saveData));
 
 	m_vdp->LoadState(&data[sizeof(Motherboard::saveData)]);
 	m_z80.LoadState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
 }
 
-void Motherboard::SaveState(uint8_t * data) {
-	memcpy (data, &m_saveData, sizeof(Motherboard::saveData));
+void Motherboard::SaveState(uint8_t *data) {
+	memcpy(data, &m_saveData, sizeof(Motherboard::saveData));
 
 	m_vdp->SaveState(&data[sizeof(Motherboard::saveData)]);
 	m_z80.SaveState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);

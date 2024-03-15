@@ -6,11 +6,11 @@
 
 #include "ConfigButton.h"
 
+#include <SDL_opengl.h>
+#include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Listeners/IButtonListener.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
-#include <awui/Drawing/Font.h>
-#include <SDL_opengl.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -40,8 +40,8 @@ bool ConfigButton::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::ConfigButton) || Control::IsClass(objectClass);
 }
 
-void ConfigButton::OnPaint(GL* gl) {
-	Form * form = GetForm();
+void ConfigButton::OnPaint(GL *gl) {
+	Form *form = GetForm();
 	if (form && (form->GetChildFocused() == this)) {
 		SetForeColor(Color::FromArgb(255, 255, 255));
 	} else {
@@ -54,20 +54,20 @@ void ConfigButton::OnPaint(GL* gl) {
 		float x = GetWidth() - 22.0f;
 		float y = (GetHeight() / 2.0f) - 0.5f;
 
-		Form * form = GetForm();
+		Form *form = GetForm();
 		if (form && (form->GetChildFocused() == this)) {
 			glColor3ub(255, 255, 255);
 		} else {
 			glColor3ub(199, 199, 199);
 		}
 
-		glEnable( GL_LINE_SMOOTH );
+		glEnable(GL_LINE_SMOOTH);
 		glBegin(GL_LINE_STRIP);
 		glVertex2f(x - 10.0f + OFFSET, y - 10.0f + OFFSET);
 		glVertex2f(x + OFFSET, y + OFFSET);
 		glVertex2f(x - 10.0f + OFFSET, y + 10.0f + OFFSET);
 		glEnd();
-		glDisable( GL_LINE_SMOOTH );
+		glDisable(GL_LINE_SMOOTH);
 	}
 }
 
@@ -105,16 +105,16 @@ void ConfigButton::OnResize() {
 }
 
 void ConfigButton::Click() {
-	for (auto* listener : m_listeners) {
+	for (auto *listener : m_listeners) {
 		listener->OnClick(this);
 	}
 }
 
-void ConfigButton::AddOnClickListener(IButtonListener * listener) {
+void ConfigButton::AddOnClickListener(IButtonListener *listener) {
 	m_listeners.push_back(listener);
 }
 
-void ConfigButton::RemoveOnClickListener(IButtonListener* listener) {
+void ConfigButton::RemoveOnClickListener(IButtonListener *listener) {
 	m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), listener), m_listeners.end());
 }
 
@@ -122,7 +122,7 @@ void ConfigButton::RemoveAllListeners() {
 	m_listeners.clear();
 }
 
-void ConfigButton::OnMouseUp(MouseEventArgs* e) {
+void ConfigButton::OnMouseUp(MouseEventArgs *e) {
 	Click();
 }
 
@@ -132,18 +132,18 @@ bool ConfigButton::OnKeyPress(Keys::Enum key) {
 		case Keys::Key_ENTER:
 		case Keys::Key_SPACE:
 			Click();
-	    	ret = true;
+			ret = true;
 			break;
-		
+
 		default:
 			break;
 	}
 
-    return ret;
+	return ret;
 }
 
 awui::String ConfigButton::ToString() const {
-    String a = awui::String("awui::Windows::Forms::Station::Settings::ConfigButton (");
+	String a = awui::String("awui::Windows::Forms::Station::Settings::ConfigButton (");
 	a += GetText();
 	a += awui::String(")");
 	return a;

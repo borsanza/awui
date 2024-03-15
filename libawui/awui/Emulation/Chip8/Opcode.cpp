@@ -157,7 +157,7 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 
 		case 0x8:
 			switch (this->GetN()) {
-			case 0x0:
+				case 0x0:
 					return Ox8XY0;
 				case 0x1:
 					return Ox8XY1;

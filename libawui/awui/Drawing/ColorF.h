@@ -2,35 +2,33 @@
 
 #include <awui/Object.h>
 
-namespace awui {
-	namespace Drawing {
-		class ColorF : public Object {
-			private:
-				float m_a, m_r, m_g, m_b;
+namespace awui::Drawing {
+	class ColorF : public Object {
+	  private:
+		float m_a, m_r, m_g, m_b;
 
-			public:
-				ColorF();
+	  public:
+		ColorF();
 
-				virtual bool IsClass(Classes objectClass) const override;
-				virtual String ToString() const override;
+		virtual bool IsClass(Classes objectClass) const override;
+		virtual String ToString() const override;
 
-				float GetA() const;
-				float GetR() const;
-				float GetG() const;
-				float GetB() const;
-				int ToArgb() const;
-				float GetBrightness() const;
-				float GetHue() const;
-				float GetSaturation() const;
+		float GetA() const;
+		float GetR() const;
+		float GetG() const;
+		float GetB() const;
+		int ToArgb() const;
+		float GetBrightness() const;
+		float GetHue() const;
+		float GetSaturation() const;
 
-				static ColorF FromArgb(int argb);
-				static ColorF FromArgb(float alpha, ColorF baseColor);
-				static ColorF FromArgb(float red, float green, float blue);
-				static ColorF FromArgb(float alpha, float red, float green, float blue);
+		static ColorF FromArgb(int argb);
+		static ColorF FromArgb(float alpha, ColorF baseColor);
+		static ColorF FromArgb(float red, float green, float blue);
+		static ColorF FromArgb(float alpha, float red, float green, float blue);
 
-				ColorF & operator= (const ColorF & other);
+		ColorF &operator=(const ColorF &other);
 
-				bool operator !=(const ColorF &b) const;
-		};
-	}
-}
+		bool operator!=(const ColorF &b) const;
+	};
+} // namespace awui::Drawing

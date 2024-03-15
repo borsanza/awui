@@ -36,15 +36,15 @@ bool Button::IsClass(Classes objectClass) const {
 void Button::OnMouseLeave() {
 }
 
-void Button::OnMouseDown(MouseEventArgs * e) {
+void Button::OnMouseDown(MouseEventArgs *e) {
 	SetFocus();
 }
 
-void Button::OnMouseMove(MouseEventArgs * e) {
+void Button::OnMouseMove(MouseEventArgs *e) {
 	SetFocus();
 }
 
-void Button::OnMouseUp(MouseEventArgs * e) {
+void Button::OnMouseUp(MouseEventArgs *e) {
 	Click();
 }
 
@@ -64,7 +64,7 @@ bool Button::OnKeyPress(Keys::Enum key) {
 	return ret;
 }
 
-void Button::OnPaint(GL * gl) {
+void Button::OnPaint(GL *gl) {
 	m_label.SetSize(GetWidth(), GetHeight());
 	m_label.OnPaint(gl);
 }
@@ -92,16 +92,16 @@ int Button::GetLabelWidth() const {
 }
 
 void Button::Click() {
-	for (auto * listener : m_listeners) {
+	for (auto *listener : m_listeners) {
 		listener->OnClick(this);
 	}
 }
 
-void Button::AddOnClickListener(IButtonListener * listener) {
+void Button::AddOnClickListener(IButtonListener *listener) {
 	m_listeners.push_back(listener);
 }
 
-void Button::RemoveOnClickListener(IButtonListener * listener) {
+void Button::RemoveOnClickListener(IButtonListener *listener) {
 	m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), listener), m_listeners.end());
 }
 

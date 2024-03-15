@@ -6,20 +6,18 @@
 typedef unsigned int GLuint;
 typedef unsigned int GLenum;
 
-namespace awui {
-	namespace Drawing {
-		class Shader : public Object {
-			private:
-				GLuint m_gProgramID;
+namespace awui::Drawing {
+	class Shader : public Object {
+	  private:
+		GLuint m_gProgramID;
 
-				void printShaderLog(GLuint shader);
+		void printShaderLog(GLuint shader);
 
-			public:
-				Shader();
-				virtual ~Shader() = default;
+	  public:
+		Shader();
+		virtual ~Shader() = default;
 
-				virtual bool IsClass(Classes objectClass) const override;
-				GLuint LoadShaderFromFile(std::string path, GLenum shaderType);
-		};
-	}
-}
+		virtual bool IsClass(Classes objectClass) const override;
+		GLuint LoadShaderFromFile(std::string path, GLenum shaderType);
+	};
+} // namespace awui::Drawing

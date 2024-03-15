@@ -168,23 +168,23 @@ float Math::Round(float x) {
 }
 
 int Math::Sign(double value) {
-	return (value == 0)? 0 :((value < 0)?-1 : 1);
+	return (value == 0) ? 0 : ((value < 0) ? -1 : 1);
 }
 
-int Math::Sign(float value){
-	return (value == 0)? 0 :((value < 0)?-1 : 1);
+int Math::Sign(float value) {
+	return (value == 0) ? 0 : ((value < 0) ? -1 : 1);
 }
 
 int Math::Sign(short value) {
-	return (value == 0)? 0 :((value < 0)?-1 : 1);
+	return (value == 0) ? 0 : ((value < 0) ? -1 : 1);
 }
 
 int Math::Sign(long value) {
-	return (value == 0)? 0 :((value < 0)?-1 : 1);
+	return (value == 0) ? 0 : ((value < 0) ? -1 : 1);
 }
 
 int Math::Sign(int value) {
-	return (value == 0)? 0 :((value < 0)?-1 : 1);
+	return (value == 0) ? 0 : ((value < 0) ? -1 : 1);
 }
 
 double Math::Sin(double a) {

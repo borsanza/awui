@@ -14,36 +14,36 @@ namespace awui {
 
 	namespace Windows::Forms::Joystick {
 		class Controller : public Object {
-			private:
-				static Collections::ArrayList * m_controllersList;
-				SDL_GameController * m_controller;
-				int m_positionOrder;
-				SDL_JoystickID m_which;
-				uint32_t m_buttons;
-				uint32_t m_prevButtons;
-				int16_t m_axisX;
-				int16_t m_axisY;
-				
-				Controller(SDL_GameController * controller);
-				virtual ~Controller();
+		  private:
+			static Collections::ArrayList *m_controllersList;
+			SDL_GameController *m_controller;
+			int m_positionOrder;
+			SDL_JoystickID m_which;
+			uint32_t m_buttons;
+			uint32_t m_prevButtons;
+			int16_t m_axisX;
+			int16_t m_axisY;
 
-				void SetOrder(int position) { m_positionOrder = position; }
+			Controller(SDL_GameController *controller);
+			virtual ~Controller();
 
-			public:
-				int GetOrder() const { return m_positionOrder; }
-				uint32_t GetButtons() const { return m_buttons; }
-				uint32_t GetPrevButtons() const { return m_prevButtons; }
-				int16_t GetAxisX() const { return m_axisX; }
-				int16_t GetAxisY() const { return m_axisY; }
+			void SetOrder(int position) { m_positionOrder = position; }
 
-				static Controller * AddOnce(SDL_GameController * controller);
-				static Controller * GetByWhich(SDL_JoystickID which);
-				static void Refresh();
-				static void CloseAll();
+		  public:
+			int GetOrder() const { return m_positionOrder; }
+			uint32_t GetButtons() const { return m_buttons; }
+			uint32_t GetPrevButtons() const { return m_prevButtons; }
+			int16_t GetAxisX() const { return m_axisX; }
+			int16_t GetAxisY() const { return m_axisY; }
 
-				void OnButtonDown(uint32_t button);
-				void OnButtonUp(uint32_t button);
-				void OnAxisMotion(uint8_t axis, int16_t value);
+			static Controller *AddOnce(SDL_GameController *controller);
+			static Controller *GetByWhich(SDL_JoystickID which);
+			static void Refresh();
+			static void CloseAll();
+
+			void OnButtonDown(uint32_t button);
+			void OnButtonUp(uint32_t button);
+			void OnAxisMotion(uint8_t axis, int16_t value);
 		};
-	}
-}
+	} // namespace Windows::Forms::Joystick
+} // namespace awui

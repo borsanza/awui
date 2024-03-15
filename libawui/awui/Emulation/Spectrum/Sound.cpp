@@ -21,8 +21,8 @@ Sound::Sound() {
 	SoundSDL::Instance();
 }
 
-int Sound::GetPosBuffer(Motherboard * cpu) {
-	SoundSDL * soundSDL = SoundSDL::Instance();
+int Sound::GetPosBuffer(Motherboard *cpu) {
+	SoundSDL *soundSDL = SoundSDL::Instance();
 	double now = cpu->GetVirtualTime();
 	now = now - soundSDL->GetInitTimeSound();
 	float timeFrame = SOUNDSAMPLES / (SOUNDFREQ * 2.0f);
@@ -35,15 +35,15 @@ int Sound::GetPosBuffer(Motherboard * cpu) {
 	return int(pos) % SOUNDBUFFER;
 }
 
-void Sound::WriteByte(Motherboard * cpu, int16_t value) {
+void Sound::WriteByte(Motherboard *cpu, int16_t value) {
 	int pos = this->GetPosBuffer(cpu);
 	this->_buffer[pos] = value;
 	SoundSDL::Instance()->AddSound(this);
 }
 
-void Sound::WriteSound(Motherboard * cpu, int value) {
+void Sound::WriteSound(Motherboard *cpu, int value) {
 	int signal = ((value >> 4) & 0x01) ? +85 : -85;
-	signal    += ((value >> 3) & 0x01) ? +42 : -42;
+	signal += ((value >> 3) & 0x01) ? +42 : -42;
 
 	this->WriteByte(cpu, signal);
 }

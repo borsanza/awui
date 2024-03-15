@@ -6,13 +6,13 @@
 #include <awui/Environment.h>
 
 #include <cstdarg>
-#include <iostream>
 #include <cstdio>
+#include <iostream>
 
 using namespace awui;
 
-IO::TextWriter* awui::Console::Error = new awui::Console::ErrorClass();
-IO::TextWriter* awui::Console::Out = new awui::Console::OutClass();
+IO::TextWriter *awui::Console::Error = new awui::Console::ErrorClass();
+IO::TextWriter *awui::Console::Out = new awui::Console::OutClass();
 
 void awui::Console::OutClass::Flush() {
 	fflush(stdout);
@@ -22,7 +22,7 @@ String awui::Console::OutClass::GetNewLine() {
 	return Environment::GetNewLine();
 }
 
-void awui::Console::OutClass::Write(const char * str, va_list args) {
+void awui::Console::OutClass::Write(const char *str, va_list args) {
 	vfprintf(stdout, str, args);
 }
 
@@ -34,7 +34,7 @@ String awui::Console::ErrorClass::GetNewLine() {
 	return Environment::GetNewLine();
 }
 
-void awui::Console::ErrorClass::Write(const char * str, va_list args) {
+void awui::Console::ErrorClass::Write(const char *str, va_list args) {
 	vfprintf(stderr, str, args);
 }
 
@@ -46,7 +46,7 @@ void awui::Console::WriteLine(String value) {
 	awui::Console::Out->WriteLine(value);
 }
 
-void awui::Console::WriteLine(Object * value) {
+void awui::Console::WriteLine(Object *value) {
 	awui::Console::Out->WriteLine(value);
 }
 

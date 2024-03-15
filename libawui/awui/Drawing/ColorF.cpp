@@ -27,10 +27,7 @@ bool ColorF::IsClass(Classes objectClass) const {
 
 awui::String ColorF::ToString() const {
 	String value;
-	value = String("ColorF [A=") + Convert::ToString(m_a) +
-				", R=" + Convert::ToString(m_r) +
-				", G=" + Convert::ToString(m_g) +
-				", B=" + Convert::ToString(m_b) + "]";
+	value = String("ColorF [A=") + Convert::ToString(m_a) + ", R=" + Convert::ToString(m_r) + ", G=" + Convert::ToString(m_g) + ", B=" + Convert::ToString(m_b) + "]";
 	return value;
 }
 
@@ -82,7 +79,7 @@ float ColorF::GetHue() const {
 	while (H < 0.0)
 		H += 360.0;
 
-	return (float)H;
+	return (float) H;
 }
 
 float ColorF::GetSaturation() const {
@@ -97,7 +94,7 @@ float ColorF::GetSaturation() const {
 
 	value /= 255.0;
 
-	return (float)value;
+	return (float) value;
 }
 
 ColorF ColorF::FromArgb(int argb) {
@@ -136,7 +133,7 @@ ColorF ColorF::FromArgb(float alpha, float red, float green, float blue) {
 	return color;
 }
 
-ColorF & ColorF::operator=(const ColorF & other) {
+ColorF &ColorF::operator=(const ColorF &other) {
 	m_r = other.m_r;
 	m_g = other.m_g;
 	m_b = other.m_b;
@@ -145,6 +142,6 @@ ColorF & ColorF::operator=(const ColorF & other) {
 	return *this;
 }
 
-bool ColorF::operator !=(const ColorF &b) const {
+bool ColorF::operator!=(const ColorF &b) const {
 	return ((m_r != b.m_r) || (m_g != b.m_g) || (m_b != b.m_b) || (m_a != b.m_a));
 }

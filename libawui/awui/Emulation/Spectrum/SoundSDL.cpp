@@ -7,16 +7,16 @@
 #include "SoundSDL.h"
 
 #include <awui/DateTime.h>
-#include <awui/Object.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
 #include <awui/Emulation/Spectrum/Sound.h>
+#include <awui/Object.h>
 
 using namespace awui::Emulation::Spectrum;
 using namespace awui::Collections;
 
 extern void FillAudioSpectrumCB(void *udata, Uint8 *stream, int len);
 
-SoundSDL* SoundSDL::_instance = 0;
+SoundSDL *SoundSDL::_instance = 0;
 
 SoundSDL::SoundSDL() {
 	this->_playing = NULL;
@@ -36,7 +36,7 @@ SoundSDL::SoundSDL() {
 	SDL_PauseAudio(0);
 }
 
-SoundSDL* SoundSDL::Instance() {
+SoundSDL *SoundSDL::Instance() {
 	if (SoundSDL::_instance == 0)
 		SoundSDL::_instance = new SoundSDL();
 
@@ -53,9 +53,9 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 		copy.Add(this->_arraySound.Get(i));
 	this->_arraySound.Clear();
 
-	Sound * playing = this->_playing;
+	Sound *playing = this->_playing;
 	for (int i = 0; i < copy.GetCount(); i++) {
-		Sound * sound = (Sound *) copy.Get(i);
+		Sound *sound = (Sound *) copy.Get(i);
 		if (playing != sound)
 			this->FillAudioSDL(sound, 0, len);
 	}
@@ -64,7 +64,7 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 		this->FillAudioSDL(playing, stream, len);
 }
 
-void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
+void SoundSDL::FillAudioSDL(Sound *sound, Uint8 *stream, int len) {
 	int offset = this->_frame * SOUNDSIZEFRAME;
 
 	for (int i = 0; i < len; i++) {
@@ -84,7 +84,7 @@ void SoundSDL::FillAudioSDL(Sound * sound, Uint8 *stream, int len) {
 	this->_frame = (this->_frame + 1) % TOTALFRAMES;
 }
 
-void SoundSDL::AddSound(Sound * sound) {
+void SoundSDL::AddSound(Sound *sound) {
 	if (this->_arraySound.IndexOf(sound) == -1)
 		this->_arraySound.Add(sound);
 }

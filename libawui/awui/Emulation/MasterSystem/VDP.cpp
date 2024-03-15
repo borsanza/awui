@@ -6,8 +6,8 @@
 
 #include "VDP.h"
 
-#include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <assert.h>
+#include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <string.h>
 
 using namespace awui::Emulation::MasterSystem;
@@ -24,7 +24,7 @@ using namespace awui::Emulation::MasterSystem;
  *     0: ?
  */
 
-VDP::VDP(Motherboard * cpu) {
+VDP::VDP(Motherboard *cpu) {
 	this->d._width = 256;
 	this->d._height = 192;
 	this->d._ntsc = true;
@@ -51,19 +51,27 @@ VDP::VDP(Motherboard * cpu) {
 	}
 
 	for (int i = 0; i < 313; i++) {
-		this->PALx192[i] = (i <= 0xF2) ? i : i - 0x39; // 00-F2, BA-FF
-		this->PALx224[i] = (i <= 0xFF) ? i : ((i <= 0x102)? i - 0x100 : i - 0x39); // 00-FF, 00-02, CA-FF
-		this->PALx240[i] = (i <= 0xFF) ? i : ((i <= 0x10A)? i - 0x100 : i - 0x39); // 00-FF, 00-0A, D2-FF
+		this->PALx192[i] = (i <= 0xF2) ? i : i - 0x39;								// 00-F2, BA-FF
+		this->PALx224[i] = (i <= 0xFF) ? i : ((i <= 0x102) ? i - 0x100 : i - 0x39); // 00-FF, 00-02, CA-FF
+		this->PALx240[i] = (i <= 0xFF) ? i : ((i <= 0x10A) ? i - 0x100 : i - 0x39); // 00-FF, 00-0A, D2-FF
 	}
 
-	for (int i = 0; i < 256; i++) this->HORSYNC[i]       =    0 + ((i / 255.0f) * 0x7F); // 256 : 00-7F : Active display
-	for (int i = 0; i < 15; i++)  this->HORSYNC[i + 256] = 0x80 + ((i / 14.0f) * 0x7);   //  15 : 80-87 : Right border
-	for (int i = 0; i < 8; i++)   this->HORSYNC[i + 271] = 0x87 + ((i / 7.0f) * 0x4);    //   8 : 87-8B : Right blanking
-	for (int i = 0; i < 26; i++)  this->HORSYNC[i + 279] = 0x8B + ((i / 25.0f) * 0x62);  //  26 : 8B-ED : Horizontal sync
-	for (int i = 0; i < 2; i++)   this->HORSYNC[i + 305] = 0xED + ((i / 1.0f) * 0x1);    //   2 : ED-EE : Left blanking
-	for (int i = 0; i < 14; i++)  this->HORSYNC[i + 307] = 0xEE + ((i / 13.0f) * 0x7);   //  14 : EE-F5 : Color burst
-	for (int i = 0; i < 8; i++)   this->HORSYNC[i + 321] = 0xF5 + ((i / 7.0f) * 0x4);    //   8 : F5-F9 : Left blanking
-	for (int i = 0; i < 13; i++)  this->HORSYNC[i + 329] = 0xF9 + ((i / 12.0f) * 0x6);   //  13 : F9-FF : Left border
+	for (int i = 0; i < 256; i++)
+		this->HORSYNC[i] = 0 + ((i / 255.0f) * 0x7F); // 256 : 00-7F : Active display
+	for (int i = 0; i < 15; i++)
+		this->HORSYNC[i + 256] = 0x80 + ((i / 14.0f) * 0x7); //  15 : 80-87 : Right border
+	for (int i = 0; i < 8; i++)
+		this->HORSYNC[i + 271] = 0x87 + ((i / 7.0f) * 0x4); //   8 : 87-8B : Right blanking
+	for (int i = 0; i < 26; i++)
+		this->HORSYNC[i + 279] = 0x8B + ((i / 25.0f) * 0x62); //  26 : 8B-ED : Horizontal sync
+	for (int i = 0; i < 2; i++)
+		this->HORSYNC[i + 305] = 0xED + ((i / 1.0f) * 0x1); //   2 : ED-EE : Left blanking
+	for (int i = 0; i < 14; i++)
+		this->HORSYNC[i + 307] = 0xEE + ((i / 13.0f) * 0x7); //  14 : EE-F5 : Color burst
+	for (int i = 0; i < 8; i++)
+		this->HORSYNC[i + 321] = 0xF5 + ((i / 7.0f) * 0x4); //   8 : F5-F9 : Left blanking
+	for (int i = 0; i < 13; i++)
+		this->HORSYNC[i + 329] = 0xF9 + ((i / 12.0f) * 0x6); //  13 : F9-FF : Left border
 
 	this->Reset();
 }
@@ -76,10 +84,10 @@ void VDP::Reset() {
 	memset(this->d._vram, 0, 16384 * sizeof(uint8_t));
 
 	uint8_t values[] = {0x36, 0x80, 0xFF, 0xFF, 0xFF, 0xFF, 0xFB, 0x00, 0x00, 0x00, 0xFF};
-	for (uint8_t i = 0; i<=10; i++)
+	for (uint8_t i = 0; i <= 10; i++)
 		this->d._registers[i] = values[i];
 
-	for (uint8_t i = 0; i<32; i++)
+	for (uint8_t i = 0; i < 32; i++)
 		this->d._cram[i] = 0;
 
 	this->UpdateAllRegisters();
@@ -89,11 +97,11 @@ void VDP::Clear() {
 	memset(this->d._data, 0, this->d._sizeData * sizeof(uint8_t));
 }
 
-const uint8_t * VDP::GetColors() const {
+const uint8_t *VDP::GetColors() const {
 	return this->d._cram;
 }
 
-uint8_t * VDP::GetVram() {
+uint8_t *VDP::GetVram() {
 	return this->d._vram;
 }
 
@@ -197,15 +205,21 @@ uint16_t VDP::GetActiveTop() const {
 	if (this->d._showBorder) {
 		if (this->GetNTSC()) {
 			switch (this->d._height) {
-				case 192: return 27;
-				case 224: return 11;
-				case 240: return 2;
+				case 192:
+					return 27;
+				case 224:
+					return 11;
+				case 240:
+					return 2;
 			}
 		} else {
 			switch (this->d._height) {
-				case 192: return 54;
-				case 224: return 38;
-				case 240: return 30;
+				case 192:
+					return 54;
+				case 224:
+					return 38;
+				case 240:
+					return 30;
 			}
 		}
 	}
@@ -228,18 +242,20 @@ bool VDP::IsVSYNC(uint16_t line) const {
 			// 24     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 192: return 219 == line;
+			case 192:
+				return 219 == line;
 
 			// 224    Active display
 			// 8      Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 224: return 235 == line;
+			case 224:
+				return 235 == line;
 
 			// 240    Active display
 			case 240:
 				// Segun documentacion no funciona en maquinas reales
-				//assert(0);
+				// assert(0);
 				return 240 == line;
 		}
 	} else {
@@ -248,19 +264,22 @@ bool VDP::IsVSYNC(uint16_t line) const {
 			// 48     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 192: return 249 == line; // Confirmado con la Master System
+			case 192:
+				return 249 == line; // Confirmado con la Master System
 
 			// 224    Active display
 			// 32     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 224: return 281 == line;
+			case 224:
+				return 281 == line;
 
 			// 240    Active display
 			// 24     Bottom border
 			// 3      Bottom blanking
 			// 3      Vertical blanking
-			case 240: return 297 == line;
+			case 240:
+				return 297 == line;
 		}
 	}
 
@@ -268,7 +287,7 @@ bool VDP::IsVSYNC(uint16_t line) const {
 	return false;
 }
 
-void VDP::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) {
+void VDP::CalcNextPixel(uint16_t *col, uint16_t *line, bool *hsync, bool *vsync) {
 	*hsync = false;
 	*vsync = false;
 
@@ -336,7 +355,6 @@ uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flip
 		y = y >> 1;
 	}
 
-
 	int64_t offset;
 	if (flipy)
 		offset = sprite * 32 + ((7 - y) * 4);
@@ -359,7 +377,7 @@ uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flip
 
 	uint8_t c;
 
-	c  = (  byte1 & mask) >> realX;
+	c = (byte1 & mask) >> realX;
 	c |= (((byte2 & mask) >> realX) << 1);
 	c |= (((byte3 & mask) >> realX) << 2);
 	c |= (((byte4 & mask) >> realX) << 3);
@@ -371,15 +389,14 @@ uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flip
 }
 
 // Sprite
-bool VDP::GetSpritePixel(uint8_t * color) const {
+bool VDP::GetSpritePixel(uint8_t *color) const {
 	uint8_t x = this->d._col;
 	uint8_t y = this->d._line;
-
 
 	int offset = 0;
 	if (this->d._registers[0] & 0x8) {
 		offset = 8;
-//		x += 8;
+		//		x += 8;
 	}
 
 	int16_t sx;
@@ -412,7 +429,7 @@ bool VDP::GetSpritePixel(uint8_t * color) const {
 		cont++;
 		if (cont > 8) {
 			// Descomentar o ponerlo como una opcion en el futuro. Flickering
-//			break;
+			//			break;
 		}
 
 		sx = this->d._vram[base + 128 + (n * 2)];
@@ -425,7 +442,7 @@ bool VDP::GetSpritePixel(uint8_t * color) const {
 		if (this->d._registers[6] & 0x4)
 			pattern |= 0x100;
 
-		* color = this->GetSpriteColor(pattern, x - sx, y - sy - 1, false, false, true, doble);
+		*color = this->GetSpriteColor(pattern, x - sx, y - sy - 1, false, false, true, doble);
 		if ((*color & 0xF) == 0)
 			continue;
 
@@ -466,8 +483,8 @@ bool VDP::OnTick(uint32_t counter) {
 		ret = true;
 	}
 
-//	if (hsync)
-//		this->_status |= 0x40;
+	//	if (hsync)
+	//		this->_status |= 0x40;
 
 	if (this->d._line == 0 && this->d._col == 0)
 		this->d._verticalScroll = this->d._registers[9];
@@ -485,23 +502,24 @@ bool VDP::OnTick(uint32_t counter) {
 		if (((line >> 3) <= 1) && (this->d._registers[0] & 0x40))
 			hScroll = false;
 
-		if ((((col - (this->d._registers[8] & 0x7))>> 3) >= 24) && (this->d._registers[0] & 0x80))
+		if ((((col - (this->d._registers[8] & 0x7)) >> 3) >= 24) && (this->d._registers[0] & 0x80))
 			vScroll = false;
-		else
-			if ((((col >> 3) >= 24) && (this->d._registers[0] & 0x80)) && !hScroll)
-				vScroll = false;
+		else if ((((col >> 3) >= 24) && (this->d._registers[0] & 0x80)) && !hScroll)
+			vScroll = false;
 
 		if (col < (this->d._registers[8] & 0x7) && hScroll && ((this->d._registers[8] & 0x7) != 0))
 			black = true;
 
 		if (hScroll) {
 			col = col - this->d._registers[8];
-			while (col < 0) col += 256;
+			while (col < 0)
+				col += 256;
 		}
 
 		if (vScroll) {
 			line = line + this->d._verticalScroll;
-			while (line >= 0xe0) line -= 0xe0;
+			while (line >= 0xe0)
+				line -= 0xe0;
 		}
 
 		int32_t pos;
@@ -563,9 +581,8 @@ void VDP::UpdateAllRegisters() {
 		if (this->d._registers[0] & 0x02) {
 			if (this->d._registers[1] & 0x10)
 				height = 224;
-			else
-				if (this->d._registers[1] & 0x08)
-					height = 240;
+			else if (this->d._registers[1] & 0x08)
+				height = 240;
 		}
 
 		this->SetHeight(height);
@@ -616,15 +633,13 @@ void VDP::WriteControlByte(uint8_t value) {
 
 		// This value signifies a VDP register write, explained
 		// below. Writes to the data port go to VRAM.
-		case 2:
-			{
-				uint8_t pos = value & 0xF;
-				if (pos < 11) {
-					this->d._registers[pos] = this->d._address & 0xFF;
-					this->UpdateAllRegisters();
-				}
+		case 2: {
+			uint8_t pos = value & 0xF;
+			if (pos < 11) {
+				this->d._registers[pos] = this->d._address & 0xFF;
+				this->UpdateAllRegisters();
 			}
-			break;
+		} break;
 
 		// Writes to the data port go to CRAM.
 		case 3:
@@ -757,10 +772,10 @@ int VDP::GetSaveSize() {
 	return sizeof(VDP::saveData);
 }
 
-void VDP::LoadState(uint8_t * data) {
-	memcpy (&this->d, data, sizeof(VDP::saveData));
+void VDP::LoadState(uint8_t *data) {
+	memcpy(&this->d, data, sizeof(VDP::saveData));
 }
 
-void VDP::SaveState(uint8_t * data) {
-	memcpy (data, &this->d, sizeof(VDP::saveData));
+void VDP::SaveState(uint8_t *data) {
+	memcpy(data, &this->d, sizeof(VDP::saveData));
 }

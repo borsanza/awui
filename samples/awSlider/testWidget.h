@@ -10,22 +10,22 @@ namespace awui {
 	namespace OpenGL {
 		class GL;
 	}
-}
+} // namespace awui
 
 using namespace awui::Windows::Forms;
 using namespace awui;
 
 class TestWidget : public Button {
-	private:
-		Drawing::Image * m_image;
+  private:
+	Drawing::Image *m_image;
 
-	public:
-		TestWidget();
-		virtual ~TestWidget();
+  public:
+	TestWidget();
+	virtual ~TestWidget();
 
-//		virtual int IsClass(Classes::Enum objectClass) const;
+	//		virtual int IsClass(Classes::Enum objectClass) const;
 
-		virtual void OnTick(float deltaSeconds);
+	virtual void OnTick(float deltaSeconds);
 
-		virtual void OnPaint(OpenGL::GL* gl);
+	virtual void OnPaint(OpenGL::GL *gl);
 };

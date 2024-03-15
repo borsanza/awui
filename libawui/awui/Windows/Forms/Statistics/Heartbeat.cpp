@@ -2,9 +2,10 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "Heartbeat.h"
+
+#include <SDL_opengl.h>
 #include <awui/Drawing/Color.h>
 #include <awui/OpenGL/GL.h>
-#include <SDL_opengl.h>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Statistics;
@@ -17,7 +18,7 @@ Heartbeat::Heartbeat() {
 Heartbeat::~Heartbeat() {
 }
 
-void Heartbeat::OnPaint(OpenGL::GL * gl) {
+void Heartbeat::OnPaint(OpenGL::GL *gl) {
 	int size = 4;
 	int left = (this->GetWidth() - size) / 2;
 	int top = (this->GetHeight() - size) / 2;

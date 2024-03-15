@@ -98,11 +98,7 @@ void CPUInst::LDrr(uint8_t reg, uint8_t value, uint8_t cycles, uint8_t size) {
 void CPUInst::LDAri(uint8_t value) {
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		ZS_Flags[value] |
-		(this->d._registers.GetIFF2() ? Flag_P : 0) |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF(ZS_Flags[value] | (this->d._registers.GetIFF2() ? Flag_P : 0) | (this->d._registers.GetF() & Flag_C));
 
 	this->d._registers.IncPC(2);
 	this->d._cycles += 9;
@@ -145,7 +141,7 @@ void CPUInst::LDrHL(uint8_t reg) {
  */
 void CPUInst::LDrXXd(uint8_t reg, uint8_t reg2) {
 	this->d._cycles += 4;
-	this->d._registers.SetRegm(reg, this->ReadMemory(this->d._registers.GetRegss(reg2) + (int8_t)this->ReadMemory(this->d._registers.GetPC() + 2)));
+	this->d._registers.SetRegm(reg, this->ReadMemory(this->d._registers.GetRegss(reg2) + (int8_t) this->ReadMemory(this->d._registers.GetPC() + 2)));
 	this->d._registers.IncPC(3);
 	this->d._cycles += 9;
 }
@@ -421,19 +417,16 @@ void CPUInst::LDI() {
 	uint16_t value = this->d._registers.GetBC() - 1;
 	this->d._registers.SetBC(value);
 
-	this->d._registers.SetF(
-		((valueFlag & 2) ? Flag_F5 : 0) |
-		((valueFlag & 8) ? Flag_F3 : 0) |
-		((value != 0) ? Flag_V : 0) |
-		(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C))
-	);
+	this->d._registers.SetF(((valueFlag & 2) ? Flag_F5 : 0) | ((valueFlag & 8) ? Flag_F3 : 0) | ((value != 0) ? Flag_V : 0) |
+							(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C)));
 
 	this->d._cycles += 2;
 }
 
 /**
  * LDIR -> pc:4,pc+1:4,hl:3,de:3,de:1 x 2,[de:1 x 5]
- * |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented. If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
+ * |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl and de are incremented and bc is decremented. If bc
+ * is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
  */
 void CPUInst::LDIR() {
 	this->d._cycles += 8;
@@ -449,18 +442,13 @@ void CPUInst::LDIR() {
 	this->d._registers.SetDE(de + 1);
 	this->d._registers.SetBC(bc);
 
-	this->d._registers.SetF(
-		((valueFlag & 2) ? Flag_F5 : 0) |
-		((valueFlag & 8) ? Flag_F3 : 0) |
-		(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C))
-	);
+	this->d._registers.SetF(((valueFlag & 2) ? Flag_F5 : 0) | ((valueFlag & 8) ? Flag_F3 : 0) | (this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C)));
 
 	// TODO: Repasar el orden de los ciclos, no estoy seguro
 	if (bc == 0) {
 		this->d._registers.IncPC(2);
 		this->d._cycles += 2;
-	}
-	else
+	} else
 		this->d._cycles += 7;
 }
 
@@ -484,19 +472,16 @@ void CPUInst::LDD() {
 	this->d._registers.SetDE(DE - 1);
 	this->d._registers.SetBC(BC);
 
-	this->d._registers.SetF(
-		((valueFlag & 2) ? Flag_F5 : 0) |
-		((valueFlag & 8) ? Flag_F3 : 0) |
-		((BC != 0) ? Flag_P : 0) |
-		(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C))
-	);
+	this->d._registers.SetF(((valueFlag & 2) ? Flag_F5 : 0) | ((valueFlag & 8) ? Flag_F3 : 0) | ((BC != 0) ? Flag_P : 0) |
+							(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C)));
 
 	this->d._cycles += 2;
 }
 
 /**
  * LDDR -> pc:4,pc+1:4,hl:3,de:3,de:1 x 2,[de:1 x 5]
- * |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl, de, and bc are decremented. If bc is not zero, this operation is repeated. Interrupts can trigger while this instruction is processing.
+ * |2|21/16| Transfers a byte of data from the memory location pointed to by hl to the memory location pointed to by de. Then hl, de, and bc are decremented. If bc is not zero,
+ * this operation is repeated. Interrupts can trigger while this instruction is processing.
  */
 void CPUInst::LDDR() {
 	this->d._cycles += 8;
@@ -512,11 +497,7 @@ void CPUInst::LDDR() {
 	this->d._registers.SetDE(DE - 1);
 	this->d._registers.SetBC(BC);
 
-	this->d._registers.SetF(
-		((valueFlag & 2) ? Flag_F5 : 0) |
-		((valueFlag & 8) ? Flag_F3 : 0) |
-		(this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C))
-	);
+	this->d._registers.SetF(((valueFlag & 2) ? Flag_F5 : 0) | ((valueFlag & 8) ? Flag_F3 : 0) | (this->d._registers.GetF() & (Flag_S | Flag_Z | Flag_C)));
 
 	if (BC == 0) {
 		this->d._registers.IncPC(2);
@@ -544,22 +525,16 @@ void CPUInst::CPI() {
 	this->d._registers.SetBC(BC);
 
 	int newH = (value & 0xF) > (old & 0xF);
-	this->d._registers.SetF(
-		ZS_Flags[value] |
-		(newH ? Flag_H : 0) |
-		(((value - newH) & 2) ? Flag_F5 : 0) |
-		(((value - newH) & 8) ? Flag_F3 : 0) |
-		((BC != 0) ? Flag_V : 0) |
-		Flag_N |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF(ZS_Flags[value] | (newH ? Flag_H : 0) | (((value - newH) & 2) ? Flag_F5 : 0) | (((value - newH) & 8) ? Flag_F3 : 0) | ((BC != 0) ? Flag_V : 0) |
+							Flag_N | (this->d._registers.GetF() & Flag_C));
 
 	this->d._cycles += 5;
 }
 
 /**
  * CPIR -> pc:4,pc+1:4,hl:3,hl:1 x 5,[hl:1 x 5]
- * |2|21/16| Compares the value of the memory location pointed to by hl with a. Then hl is incremented and bc is decremented. If bc is not zero and z is not set, this operation is repeated. Interrupts can trigger while this instruction is processing.
+ * |2|21/16| Compares the value of the memory location pointed to by hl with a. Then hl is incremented and bc is decremented. If bc is not zero and z is not set, this operation is
+ * repeated. Interrupts can trigger while this instruction is processing.
  */
 void CPUInst::CPIR() {
 	this->d._cycles += 8;
@@ -574,15 +549,8 @@ void CPUInst::CPIR() {
 	this->d._registers.SetBC(BC);
 
 	int newH = (value & 0xF) > (old & 0xF);
-	this->d._registers.SetF(
-		ZS_Flags[value] |
-		(newH ? Flag_H : 0) |
-		(((value - newH) & 2) ? Flag_F5 : 0) |
-		(((value - newH) & 8) ? Flag_F3 : 0) |
-		((BC != 0) ? Flag_V : 0) |
-		Flag_N |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF(ZS_Flags[value] | (newH ? Flag_H : 0) | (((value - newH) & 2) ? Flag_F5 : 0) | (((value - newH) & 8) ? Flag_F3 : 0) | ((BC != 0) ? Flag_V : 0) |
+							Flag_N | (this->d._registers.GetF() & Flag_C));
 
 	if ((BC != 0) && (value != 0)) {
 		this->d._cycles += 10;
@@ -610,22 +578,16 @@ void CPUInst::CPD() {
 	this->d._registers.SetBC(BC);
 
 	int newH = (value & 0xF) > (old & 0xF);
-	this->d._registers.SetF(
-		ZS_Flags[value] |
-		(newH ? Flag_H : 0) |
-		(((value - newH) & 2) ? Flag_F5 : 0) |
-		(((value - newH) & 8) ? Flag_F3 : 0) |
-		((BC != 0) ? Flag_V : 0) |
-		Flag_N |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF(ZS_Flags[value] | (newH ? Flag_H : 0) | (((value - newH) & 2) ? Flag_F5 : 0) | (((value - newH) & 8) ? Flag_F3 : 0) | ((BC != 0) ? Flag_V : 0) |
+							Flag_N | (this->d._registers.GetF() & Flag_C));
 
 	this->d._cycles += 5;
 }
 
 /**
  * CPDR -> pc:4,pc+1:4,hl:3,hl:1 x 5,[hl:1 x 5]
- * |2|21/16| Compares the value of the memory location pointed to by hl with a. Then hl and bc are decremented. If bc is not zero and z is not set, this operation is repeated. Interrupts can trigger while this instruction is processing.
+ * |2|21/16| Compares the value of the memory location pointed to by hl with a. Then hl and bc are decremented. If bc is not zero and z is not set, this operation is repeated.
+ * Interrupts can trigger while this instruction is processing.
  */
 void CPUInst::CPDR() {
 	this->d._cycles += 8;
@@ -640,15 +602,8 @@ void CPUInst::CPDR() {
 	this->d._registers.SetBC(BC);
 
 	int newH = (value & 0xF) > (old & 0xF);
-	this->d._registers.SetF(
-		ZS_Flags[value] |
-		(newH ? Flag_H : 0) |
-		(((value - newH) & 2) ? Flag_F5 : 0) |
-		(((value - newH) & 8) ? Flag_F3 : 0) |
-		((BC != 0) ? Flag_V : 0) |
-		Flag_N |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF(ZS_Flags[value] | (newH ? Flag_H : 0) | (((value - newH) & 2) ? Flag_F5 : 0) | (((value - newH) & 8) ? Flag_F3 : 0) | ((BC != 0) ? Flag_V : 0) |
+							Flag_N | (this->d._registers.GetF() & Flag_C));
 
 	if ((BC != 0) && (value != 0)) {
 		this->d._cycles += 10;
@@ -670,13 +625,7 @@ void CPUInst::ADD(uint8_t b, uint8_t cycles, uint8_t size) {
 	Word w;
 	w.W = ((uint16_t) A) + ((uint16_t) b);
 
-	this->d._registers.SetF(
-		(w.L & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[w.L] |
-		((A ^ b ^ w.L) & Flag_H) |
-		((((~(A ^ b)) & (b ^ w.L)) & 0x80) ? Flag_V : 0) |
-		w.H
-	);
+	this->d._registers.SetF((w.L & (Flag_F3 | Flag_F5)) | ZS_Flags[w.L] | ((A ^ b ^ w.L) & Flag_H) | ((((~(A ^ b)) & (b ^ w.L)) & 0x80) ? Flag_V : 0) | w.H);
 
 	this->d._registers.SetA(w.L);
 
@@ -692,13 +641,7 @@ void CPUInst::ADC(uint8_t b, uint8_t cycles, uint8_t size) {
 	Word w;
 	w.W = ((uint16_t) A) + ((uint16_t) b) + (this->d._registers.GetF() & Flag_C);
 
-	this->d._registers.SetF(
-		(w.L & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[w.L] |
-		((A ^ b ^ w.L) & Flag_H) |
-		((((~(A ^ b)) & (b ^ w.L)) & 0x80) ? Flag_V : 0) |
-		w.H
-	);
+	this->d._registers.SetF((w.L & (Flag_F3 | Flag_F5)) | ZS_Flags[w.L] | ((A ^ b ^ w.L) & Flag_H) | ((((~(A ^ b)) & (b ^ w.L)) & 0x80) ? Flag_V : 0) | w.H);
 
 	this->d._registers.SetA(w.L);
 
@@ -716,14 +659,8 @@ void CPUInst::SUB(uint8_t b, uint8_t cycles, uint8_t size) {
 
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
-		(((A ^ b) & (A ^ value) & 0x80) ? Flag_V : 0) |
-		((pvalue < 0) ? Flag_C : 0) |
-		Flag_N
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | (((A ^ b ^ value) & 0x10) ? Flag_H : 0) | (((A ^ b) & (A ^ value) & 0x80) ? Flag_V : 0) |
+							((pvalue < 0) ? Flag_C : 0) | Flag_N);
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -744,14 +681,8 @@ void CPUInst::SBC(uint8_t b, uint8_t cycles, uint8_t size) {
 
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
-		(((A ^ b) & (A ^ value) & 0x80) ? Flag_V : 0) |
-		((pvalue < 0) ? Flag_C : 0) |
-		Flag_N
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | (((A ^ b ^ value) & 0x10) ? Flag_H : 0) | (((A ^ b) & (A ^ value) & 0x80) ? Flag_V : 0) |
+							((pvalue < 0) ? Flag_C : 0) | Flag_N);
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -765,11 +696,7 @@ void CPUInst::AND(uint8_t valueb, uint8_t cycles, uint8_t size) {
 
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		Flag_H
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | Flag_H);
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -783,10 +710,7 @@ void CPUInst::OR(uint8_t valueb, uint8_t cycles, uint8_t size) {
 
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value]
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value]);
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -800,10 +724,7 @@ void CPUInst::XOR(uint8_t b, uint8_t cycles, uint8_t size) {
 
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value]
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value]);
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -817,14 +738,8 @@ void CPUInst::CP(uint8_t b, uint8_t cycles, uint8_t size) {
 	uint8_t value = A - b;
 	uint16_t pvalue = (uint16_t) A - (uint16_t) b;
 
-	this->d._registers.SetF(
-		(b & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(((A ^ b ^ value) & 0x10) ? Flag_H : 0) |
-		Flag_N |
-		((pvalue & 0x100) ? Flag_C : 0) |
-		(((A ^ b) & (A ^ value) & 0x80) ? Flag_V : 0)
-	);
+	this->d._registers.SetF((b & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | (((A ^ b ^ value) & 0x10) ? Flag_H : 0) | Flag_N | ((pvalue & 0x100) ? Flag_C : 0) |
+							(((A ^ b) & (A ^ value) & 0x80) ? Flag_V : 0));
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -839,13 +754,7 @@ void CPUInst::INCr(uint8_t reg, uint8_t cycles, uint8_t size) {
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		((value & 0xF) ? 0 : Flag_H) |
-		((old == 0x7F) ? Flag_V : 0) |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | ((value & 0xF) ? 0 : Flag_H) | ((old == 0x7F) ? Flag_V : 0) | (this->d._registers.GetF() & Flag_C));
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -860,14 +769,8 @@ void CPUInst::DECm(uint8_t reg, uint8_t cycles, uint8_t size) {
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(((value & 0xF) == 0xF) ? Flag_H : 0) |
-		((old == 0x80) ? Flag_V : 0) |
-		Flag_N |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | (((value & 0xF) == 0xF) ? Flag_H : 0) | ((old == 0x80) ? Flag_V : 0) | Flag_N |
+							(this->d._registers.GetF() & Flag_C));
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -887,16 +790,10 @@ void CPUInst::DECHL() {
 
 	this->d._cycles++;
 
- 	this->WriteMemory(HL, value);
+	this->WriteMemory(HL, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(((value & 0xF) == 0xF) ? Flag_H : 0) |
-		((old == 0x80) ? Flag_V : 0) |
-		Flag_N |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | (((value & 0xF) == 0xF) ? Flag_H : 0) | ((old == 0x80) ? Flag_V : 0) | Flag_N |
+							(this->d._registers.GetF() & Flag_C));
 }
 
 /**
@@ -914,13 +811,7 @@ void CPUInst::INCHL() {
 
 	this->WriteMemory(this->d._registers.GetHL(), value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		((value & 0xF) ? 0 : Flag_H) |
-		((old == 0x7F) ? Flag_V : 0) |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | ((value & 0xF) ? 0 : Flag_H) | ((old == 0x7F) ? Flag_V : 0) | (this->d._registers.GetF() & Flag_C));
 }
 
 /**
@@ -943,13 +834,7 @@ void CPUInst::INCXXd(uint8_t xx) {
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		((value & 0xF) ? 0 : Flag_H) |
-		((old == 0x7F) ? Flag_V : 0) |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | ((value & 0xF) ? 0 : Flag_H) | ((old == 0x7F) ? Flag_V : 0) | (this->d._registers.GetF() & Flag_C));
 }
 
 /**
@@ -972,14 +857,8 @@ void CPUInst::DECXXd(uint8_t xx) {
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(((value & 0xF) == 0xF) ? Flag_H : 0) |
-		((old == 0x80) ? Flag_V : 0) |
-		Flag_N |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | (((value & 0xF) == 0xF) ? Flag_H : 0) | ((old == 0x80) ? Flag_V : 0) | Flag_N |
+							(this->d._registers.GetF() & Flag_C));
 }
 
 /******************************************************************************/
@@ -1010,13 +889,8 @@ void CPUInst::DAA() {
 
 	this->d._registers.SetA(tmp);
 
-	this->d._registers.SetF(
-		(tmp & (Flag_F3 | Flag_F5)) |
-		(((A ^ tmp) & 0x10) ? Flag_H : 0) |
-		PZS_Flags[tmp] |
-		((C || A > 0x99)? Flag_C : 0) |
-		(this->d._registers.GetF() & Flag_N)
-	);
+	this->d._registers.SetF((tmp & (Flag_F3 | Flag_F5)) | (((A ^ tmp) & 0x10) ? Flag_H : 0) | PZS_Flags[tmp] | ((C || A > 0x99) ? Flag_C : 0) |
+							(this->d._registers.GetF() & Flag_N));
 
 	this->d._registers.IncPC();
 	this->d._cycles += 4;
@@ -1029,12 +903,7 @@ void CPUInst::CPL() {
 	uint8_t A = ~this->d._registers.GetA();
 	this->d._registers.SetA(A);
 
-	this->d._registers.SetF(
-		(A & (Flag_F3 | Flag_F5)) |
-		Flag_N |
-		Flag_H |
-		(this->d._registers.GetF() & (Flag_C | Flag_P | Flag_Z | Flag_S))
-	);
+	this->d._registers.SetF((A & (Flag_F3 | Flag_F5)) | Flag_N | Flag_H | (this->d._registers.GetF() & (Flag_C | Flag_P | Flag_Z | Flag_S)));
 
 	this->d._registers.IncPC();
 	this->d._cycles += 4;
@@ -1048,14 +917,7 @@ void CPUInst::NEG() {
 	uint8_t value = 0 - A;
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		ZS_Flags[value] |
-		(((A ^ value) & 0x10) ? Flag_H : 0) |
-		((A == 0x80) ? Flag_V : 0) |
-		((A != 0) ? Flag_C : 0) |
-		Flag_N
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ZS_Flags[value] | (((A ^ value) & 0x10) ? Flag_H : 0) | ((A == 0x80) ? Flag_V : 0) | ((A != 0) ? Flag_C : 0) | Flag_N);
 
 	this->d._registers.IncPC(2);
 	this->d._cycles += 8;
@@ -1068,11 +930,7 @@ void CPUInst::CCF() {
 	bool carry = this->d._registers.GetF() & Flag_C;
 	uint8_t A = this->d._registers.GetA();
 
-	this->d._registers.SetF(
-		(A & (Flag_F3 | Flag_F5)) |
-		(carry ? Flag_H : Flag_C) |
-		(this->d._registers.GetF() & (Flag_P | Flag_Z | Flag_S))
-	);
+	this->d._registers.SetF((A & (Flag_F3 | Flag_F5)) | (carry ? Flag_H : Flag_C) | (this->d._registers.GetF() & (Flag_P | Flag_Z | Flag_S)));
 
 	this->d._registers.IncPC();
 	this->d._cycles += 4;
@@ -1084,11 +942,7 @@ void CPUInst::CCF() {
 void CPUInst::SCF() {
 	uint8_t A = this->d._registers.GetA();
 
-	this->d._registers.SetF(
-		(A & (Flag_F3 | Flag_F5)) |
-		Flag_C |
-		(this->d._registers.GetF() & (Flag_P | Flag_Z | Flag_S))
-	);
+	this->d._registers.SetF((A & (Flag_F3 | Flag_F5)) | Flag_C | (this->d._registers.GetF() & (Flag_P | Flag_Z | Flag_S)));
 
 	this->d._registers.IncPC();
 	this->d._cycles += 4;
@@ -1109,15 +963,9 @@ void CPUInst::ADCHLss(uint8_t reg) {
 
 	this->d._registers.SetHL(w.W);
 
-	this->d._registers.SetF(
-		((w.W & Flag_F3H) ? Flag_F3 : 0) |
-		((w.W & Flag_F5H) ? Flag_F5 : 0) |
-		(w.H & Flag_S) |
-		((w.W == 0) ? Flag_Z : 0) |
-		(((hl ^ b ^ w.W) & 0x1000) ? Flag_H : 0) |
-		(((~(hl ^ b)) & (b ^ w.W) & 0x8000) ? Flag_V : 0) |
-		((((uint32_t) hl + (uint32_t) b +  (uint32_t) (this->d._registers.GetF() & Flag_C)) & 0x10000) ? Flag_C : 0)
-	);
+	this->d._registers.SetF(((w.W & Flag_F3H) ? Flag_F3 : 0) | ((w.W & Flag_F5H) ? Flag_F5 : 0) | (w.H & Flag_S) | ((w.W == 0) ? Flag_Z : 0) |
+							(((hl ^ b ^ w.W) & 0x1000) ? Flag_H : 0) | (((~(hl ^ b)) & (b ^ w.W) & 0x8000) ? Flag_V : 0) |
+							((((uint32_t) hl + (uint32_t) b + (uint32_t) (this->d._registers.GetF() & Flag_C)) & 0x10000) ? Flag_C : 0));
 
 	this->d._registers.IncPC(2);
 	this->d._cycles += 15;
@@ -1136,16 +984,8 @@ void CPUInst::SBCHLss(uint8_t reg) {
 
 	this->d._registers.SetHL(value);
 
-	this->d._registers.SetF(
-		((value & Flag_F3H) ? Flag_F3 : 0) |
-		((value & Flag_F5H) ? Flag_F5 : 0) |
-		((value & 0x8000) ? Flag_S : 0) |
-		((value == 0) ? Flag_Z : 0) |
-		(((value & 0xFFF) > (hl & 0xFFF)) ? Flag_H : 0) |
-		(((hl ^ b) & (hl ^ value) & 0x8000) ? Flag_V : 0) |
-		Flag_N |
-		((value > hl) ? Flag_C : 0)
-	);
+	this->d._registers.SetF(((value & Flag_F3H) ? Flag_F3 : 0) | ((value & Flag_F5H) ? Flag_F5 : 0) | ((value & 0x8000) ? Flag_S : 0) | ((value == 0) ? Flag_Z : 0) |
+							(((value & 0xFFF) > (hl & 0xFFF)) ? Flag_H : 0) | (((hl ^ b) & (hl ^ value) & 0x8000) ? Flag_V : 0) | Flag_N | ((value > hl) ? Flag_C : 0));
 
 	this->d._registers.IncPC(2);
 	this->d._cycles += 15;
@@ -1156,17 +996,12 @@ void CPUInst::SBCHLss(uint8_t reg) {
  */
 void CPUInst::ADDXXpp(uint8_t XX, uint16_t reg2, uint8_t cycles, uint8_t size) {
 	uint16_t reg1 = this->d._registers.GetRegss(XX);
-	uint32_t value = (uint32_t)reg1 + (uint32_t)reg2;
+	uint32_t value = (uint32_t) reg1 + (uint32_t) reg2;
 
 	this->d._registers.SetRegss(XX, value);
 
-	this->d._registers.SetF(
-		(value & Flag_F3H ? Flag_F3 : 0) |
-		(value & Flag_F5H ? Flag_F5 : 0) |
-		(((reg1 ^ reg2 ^ ((uint16_t) value)) & 0x1000) ? Flag_H : 0) |
-		((value & 0x10000) ? Flag_C : 0) |
-		(this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P))
-	);
+	this->d._registers.SetF((value & Flag_F3H ? Flag_F3 : 0) | (value & Flag_F5H ? Flag_F5 : 0) | (((reg1 ^ reg2 ^ ((uint16_t) value)) & 0x1000) ? Flag_H : 0) |
+							((value & 0x10000) ? Flag_C : 0) | (this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P)));
 
 	this->d._registers.IncPC(size);
 	this->d._cycles += cycles;
@@ -1205,11 +1040,7 @@ void CPUInst::RLCA() {
 
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		((old & 0x80) ? Flag_C : 0) |
-		(this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P))
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ((old & 0x80) ? Flag_C : 0) | (this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P)));
 
 	this->d._registers.IncPC();
 	this->d._cycles += 4;
@@ -1226,11 +1057,7 @@ void CPUInst::RLA() {
 
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		((old & 0x80) ? Flag_C : 0) |
-		(this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P))
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ((old & 0x80) ? Flag_C : 0) | (this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P)));
 
 	this->d._registers.IncPC();
 	this->d._cycles += 4;
@@ -1247,11 +1074,7 @@ void CPUInst::RRCA() {
 
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		((old & 0x01) ? Flag_C : 0) |
-		(this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P))
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ((old & 0x01) ? Flag_C : 0) | (this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P)));
 
 	this->d._registers.IncPC();
 	this->d._cycles += 4;
@@ -1268,11 +1091,7 @@ void CPUInst::RRA() {
 
 	this->d._registers.SetA(value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		((old & 0x01) ? Flag_C : 0) |
-		(this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P))
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | ((old & 0x01) ? Flag_C : 0) | (this->d._registers.GetF() & (Flag_Z | Flag_S | Flag_P)));
 
 	this->d._registers.IncPC();
 	this->d._cycles += 4;
@@ -1289,11 +1108,7 @@ void CPUInst::RLC(uint8_t reg) {
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 
 	this->d._registers.IncPC(2);
 	this->d._cycles += 8;
@@ -1317,11 +1132,7 @@ void CPUInst::RLC_HL() {
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
@@ -1342,11 +1153,7 @@ void CPUInst::RLCXXd(uint8_t reg) {
 
 	this->WriteMemory(finalOffset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
@@ -1364,17 +1171,14 @@ void CPUInst::RL(uint8_t reg) {
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
  * TODO: Revisar
  * RL (HL)
- * |2|15| The contents of (hl) are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
+ * |2|15| The contents of (hl) are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit
+ * 0.
  */
 void CPUInst::RL_HL() {
 	this->d._cycles += 8;
@@ -1390,16 +1194,13 @@ void CPUInst::RL_HL() {
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
  * TODO: Revisar
- * |4|23| The contents of the memory location pointed to by ix plus * are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
+ * |4|23| The contents of the memory location pointed to by ix plus * are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous
+ * contents of the carry flag are copied to bit 0.
  */
 void CPUInst::RLXXd(uint8_t reg) {
 	this->d._cycles += 8;
@@ -1420,11 +1221,7 @@ void CPUInst::RLXXd(uint8_t reg) {
 
 	this->WriteMemory(finalOffset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
@@ -1441,11 +1238,7 @@ void CPUInst::RRC(uint8_t reg) {
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
@@ -1467,11 +1260,7 @@ void CPUInst::RRC_HL() {
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
@@ -1497,11 +1286,7 @@ void CPUInst::RRCXXd(uint8_t reg) {
 
 	this->WriteMemory(finalOffset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
@@ -1517,16 +1302,13 @@ void CPUInst::RR(uint8_t reg) {
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
  * RR (HL)
- * |2|15| The contents of (hl) are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
+ * |2|15| The contents of (hl) are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to
+ * bit 7.
  */
 void CPUInst::RR_HL() {
 	this->d._cycles += 8;
@@ -1542,16 +1324,13 @@ void CPUInst::RR_HL() {
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
  * TODO: Revisar
- * |4|23| The contents of the memory location pointed to by ix plus * are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
+ * |4|23| The contents of the memory location pointed to by ix plus * are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous
+ * contents of the carry flag are copied to bit 7.
  */
 void CPUInst::RRXXd(uint8_t reg) {
 	this->d._cycles += 8;
@@ -1572,11 +1351,7 @@ void CPUInst::RRXXd(uint8_t reg) {
 
 	this->WriteMemory(finalOffset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
@@ -1590,10 +1365,7 @@ void CPUInst::SLA(uint8_t reg) {
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
@@ -1613,15 +1385,13 @@ void CPUInst::SLA_HL() {
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
  * TODO: Revisar
- * |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
+ * |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into
+ * bit 0.
  */
 void CPUInst::SLAXXd(uint8_t reg) {
 	this->d._cycles += 8;
@@ -1640,10 +1410,7 @@ void CPUInst::SLAXXd(uint8_t reg) {
 
 	this->WriteMemory(finalOffset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
@@ -1654,14 +1421,11 @@ void CPUInst::SRA(uint8_t reg) {
 	this->d._registers.IncPC(2);
 
 	uint8_t old = this->d._registers.GetRegm(reg);
-	uint8_t value =  (old & 0x80) | (old >> 1);
+	uint8_t value = (old & 0x80) | (old >> 1);
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
@@ -1675,21 +1439,19 @@ void CPUInst::SRA_HL() {
 
 	uint16_t offset = this->d._registers.GetHL();
 	uint8_t old = this->ReadMemory(offset);
-	uint8_t value =  (old & 0x80) | (old >> 1);
+	uint8_t value = (old & 0x80) | (old >> 1);
 
 	this->d._cycles++;
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
  * TODO: Revisar
- * |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
+ * |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous
+ * contents of bit 7 are unchanged.
  */
 void CPUInst::SRAXXd(uint8_t reg) {
 	this->d._cycles += 8;
@@ -1701,16 +1463,13 @@ void CPUInst::SRAXXd(uint8_t reg) {
 	this->d._cycles += 5;
 
 	uint8_t old = this->ReadMemory(finalOffset);
-	uint8_t value =  (old & 0x80) | (old >> 1);
+	uint8_t value = (old & 0x80) | (old >> 1);
 
 	this->d._cycles++;
 
 	this->WriteMemory(finalOffset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
@@ -1725,10 +1484,7 @@ void CPUInst::SLL(uint8_t reg) {
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
@@ -1747,15 +1503,13 @@ void CPUInst::SLL_HL() {
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
  * TODO: Revisar
- * |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+ * |4|23| The contents of the memory location pointed to by ix plus * are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit
+ * 0.
  */
 void CPUInst::SLLXXd(uint8_t reg) {
 	this->d._cycles += 8;
@@ -1774,10 +1528,7 @@ void CPUInst::SLLXXd(uint8_t reg) {
 
 	this->WriteMemory(finalOffset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x80) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x80) ? Flag_C : 0));
 }
 
 /**
@@ -1788,14 +1539,11 @@ void CPUInst::SRL(uint8_t reg) {
 	this->d._registers.IncPC(2);
 
 	uint8_t old = this->d._registers.GetRegm(reg);
-	uint8_t value =  old >> 1;
+	uint8_t value = old >> 1;
 
 	this->d._registers.SetRegm(reg, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
@@ -1808,21 +1556,19 @@ void CPUInst::SRL_HL() {
 
 	uint16_t offset = this->d._registers.GetHL();
 	uint8_t old = this->ReadMemory(offset);
-	uint8_t value =  old >> 1;
+	uint8_t value = old >> 1;
 
 	this->d._cycles++;
 
 	this->WriteMemory(offset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
  * TODO: Revisar
- * |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
+ * |4|23| The contents of the memory location pointed to by ix plus * are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into
+ * bit 7.
  */
 void CPUInst::SRLXXd(uint8_t reg) {
 	this->d._cycles += 8;
@@ -1834,21 +1580,19 @@ void CPUInst::SRLXXd(uint8_t reg) {
 	this->d._cycles += 5;
 
 	uint8_t old = this->ReadMemory(finalOffset);
-	uint8_t value =  old >> 1;
+	uint8_t value = old >> 1;
 
 	this->d._cycles++;
 
 	this->WriteMemory(finalOffset, value);
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[value] |
-		((old & 0x01) ? Flag_C : 0));
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | PZS_Flags[value] | ((old & 0x01) ? Flag_C : 0));
 }
 
 /**
  * RLD -> pc:4,pc+1:4,hl:3,hl:1 x 4,hl(write):3
- * |2|18| The contents of the low-order nibble of (hl) are copied to the high-order nibble of (hl). The previous contents are copied to the low-order nibble of a. The previous contents are copied to the low-order nibble of (hl).
+ * |2|18| The contents of the low-order nibble of (hl) are copied to the high-order nibble of (hl). The previous contents are copied to the low-order nibble of a. The previous
+ * contents are copied to the low-order nibble of (hl).
  */
 void CPUInst::RLD() {
 	this->d._cycles += 8;
@@ -1866,16 +1610,13 @@ void CPUInst::RLD() {
 
 	this->WriteMemory(offset, valueHL);
 
-	this->d._registers.SetF(
-		(valueA & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[valueA] |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF((valueA & (Flag_F3 | Flag_F5)) | PZS_Flags[valueA] | (this->d._registers.GetF() & Flag_C));
 }
 
 /**
  * RRD -> pc:4,pc+1:4,hl:3,hl:1 x 4,hl(write):3
- * |2|18| The contents of the low-order nibble of (hl) are copied to the low-order nibble of a. The previous contents are copied to the high-order nibble of (hl). The previous contents are copied to the low-order nibble of (hl).
+ * |2|18| The contents of the low-order nibble of (hl) are copied to the low-order nibble of a. The previous contents are copied to the high-order nibble of (hl). The previous
+ * contents are copied to the low-order nibble of (hl).
  */
 void CPUInst::RRD() {
 	this->d._cycles += 8;
@@ -1893,11 +1634,7 @@ void CPUInst::RRD() {
 
 	this->WriteMemory(offset, valueHL);
 
-	this->d._registers.SetF(
-		(valueA & (Flag_F3 | Flag_F5)) |
-		PZS_Flags[valueA] |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF((valueA & (Flag_F3 | Flag_F5)) | PZS_Flags[valueA] | (this->d._registers.GetF() & Flag_C));
 }
 
 /******************************************************************************/
@@ -1914,12 +1651,7 @@ void CPUInst::BIT(uint8_t valueb, uint8_t compare) {
 
 	uint8_t value = valueb & compare;
 
-	this->d._registers.SetF(
-		(value & (Flag_F3 | Flag_F5)) |
-		Flag_H |
-		PZS_Flags[value] |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF((value & (Flag_F3 | Flag_F5)) | Flag_H | PZS_Flags[value] | (this->d._registers.GetF() & Flag_C));
 }
 
 /**
@@ -1936,13 +1668,7 @@ void CPUInst::BITHL(uint8_t compare) {
 
 	this->d._cycles++;
 
-	this->d._registers.SetF(
-		((HL & Flag_F3H) ? Flag_F3 : 0) |
-		((HL & Flag_F5H) ? Flag_F5 : 0) |
-		Flag_H |
-		PZS_Flags[value] |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF(((HL & Flag_F3H) ? Flag_F3 : 0) | ((HL & Flag_F5H) ? Flag_F5 : 0) | Flag_H | PZS_Flags[value] | (this->d._registers.GetF() & Flag_C));
 }
 
 /**
@@ -1963,13 +1689,7 @@ void CPUInst::BITbssd(uint8_t bit, uint8_t reg) {
 
 	this->d._cycles++;
 
-	this->d._registers.SetF(
-		((offset & Flag_F3H) ? Flag_F3 : 0) |
-		((offset & Flag_F5H) ? Flag_F5 : 0) |
-		Flag_H |
-		PZS_Flags[value] |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF(((offset & Flag_F3H) ? Flag_F3 : 0) | ((offset & Flag_F5H) ? Flag_F5 : 0) | Flag_H | PZS_Flags[value] | (this->d._registers.GetF() & Flag_C));
 }
 
 /**
@@ -1991,7 +1711,7 @@ void CPUInst::SETHL(uint8_t bit) {
 	uint16_t offset = this->d._registers.GetHL();
 	uint8_t value = this->ReadMemory(offset) | bit;
 	this->d._cycles++;
-	this->WriteMemory(offset,  value);
+	this->WriteMemory(offset, value);
 }
 
 /**
@@ -2196,7 +1916,8 @@ void CPUInst::CallInterrupt(uint16_t offset) {
 
 /**
  * RETI -> pc:4,pc+1:4,sp:3,sp+1:3
- * |2|14| Used at the end of a maskable interrupt service routine. The top stack entry is popped into pc, and signals an I/O device that the interrupt has finished, allowing nested interrupts (not a consideration on the TI).
+ * |2|14| Used at the end of a maskable interrupt service routine. The top stack entry is popped into pc, and signals an I/O device that the interrupt has finished, allowing nested
+ * interrupts (not a consideration on the TI).
  */
 void CPUInst::RETI() {
 	this->d._cycles += 8;
@@ -2212,7 +1933,8 @@ void CPUInst::RETI() {
 
 /**
  * RETN -> pc:4,pc+1:4,sp:3,sp+1:3
- * |2|14| Used at the end of a non-maskable interrupt service routine (located at $0066) to pop the top stack entry into PC. The value of IFF2 is copied to IFF1 so that maskable interrupts are allowed to continue as before. NMIs are not enabled on the TI.
+ * |2|14| Used at the end of a non-maskable interrupt service routine (located at $0066) to pop the top stack entry into PC. The value of IFF2 is copied to IFF1 so that maskable
+ * interrupts are allowed to continue as before. NMIs are not enabled on the TI.
  */
 void CPUInst::RETN() {
 	this->d._cycles += 8;
@@ -2237,14 +1959,12 @@ void CPUInst::INrC(uint8_t reg) {
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = this->d._registers.GetB();
 
-//	printf("INrC\n");
+	//	printf("INrC\n");
 	uint8_t data = this->ReadPort(C);
 
 	this->d._registers.SetRegm(reg, data);
 
-	this->d._registers.SetF(PZS_Flags[data] |
-		(this->d._registers.GetF() & Flag_C)
-	);
+	this->d._registers.SetF(PZS_Flags[data] | (this->d._registers.GetF() & Flag_C));
 
 	this->d._registers.IncPC(2);
 	this->d._cycles += 12;
@@ -2258,7 +1978,7 @@ void CPUInst::INI() {
 
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = B;
-//	printf("INI\n");
+	//	printf("INI\n");
 	this->WriteMemory(HL, this->ReadPort(C));
 	this->d._addressBus.W = HL;
 	B = B - 1;
@@ -2283,7 +2003,7 @@ void CPUInst::OUTnA() {
 
 	this->d._addressBus.L = n;
 	this->d._addressBus.H = data;
-//	printf("OUTnA\n");
+	//	printf("OUTnA\n");
 	this->WritePort(n, data);
 
 	this->d._registers.IncPC(2);
@@ -2297,7 +2017,7 @@ void CPUInst::OUTC(uint8_t value) {
 
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = B;
-//	printf("OUTC\n");
+	//	printf("OUTC\n");
 	this->WritePort(C, value);
 
 	this->d._registers.IncPC(2);
@@ -2317,7 +2037,7 @@ void CPUInst::OUTI() {
 	uint16_t HL = this->d._registers.GetHL();
 	uint8_t value = this->ReadMemory(HL);
 
-//	printf("OUTI\n");
+	//	printf("OUTI\n");
 	this->WritePort(C, value);
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = B;
@@ -2342,7 +2062,7 @@ void CPUInst::OUTD() {
 	uint8_t C = this->d._registers.GetC();
 	uint16_t HL = this->d._registers.GetHL();
 
-//	printf("OUTD\n");
+	//	printf("OUTD\n");
 	this->WritePort(C, this->ReadMemory(HL));
 	this->d._addressBus.L = C;
 	this->d._addressBus.H = B;
@@ -2359,30 +2079,30 @@ int CPUInst::GetSaveSize() {
 	return sizeof(CPUInst::saveData);
 }
 
-void CPUInst::LoadState(uint8_t * data) {
-	memcpy (&this->d, data, sizeof(CPUInst::saveData));
+void CPUInst::LoadState(uint8_t *data) {
+	memcpy(&this->d, data, sizeof(CPUInst::saveData));
 }
 
-void CPUInst::SaveState(uint8_t * data) {
-	memcpy (data, &this->d, sizeof(CPUInst::saveData));
+void CPUInst::SaveState(uint8_t *data) {
+	memcpy(data, &this->d, sizeof(CPUInst::saveData));
 }
 
-void CPUInst::SetWriteMemoryCB(void (* fun)(uint16_t, uint8_t, void *), void * data) {
+void CPUInst::SetWriteMemoryCB(void (*fun)(uint16_t, uint8_t, void *), void *data) {
 	this->_writeMemoryCB = fun;
 	this->_writeMemoryDataCB = data;
 }
 
-void CPUInst::SetReadMemoryCB(uint8_t (* fun)(uint16_t, void *), void * data) {
+void CPUInst::SetReadMemoryCB(uint8_t (*fun)(uint16_t, void *), void *data) {
 	this->_readMemoryCB = fun;
 	this->_readMemoryDataCB = data;
 }
 
-void CPUInst::SetWritePortCB(void (* fun)(uint8_t, uint8_t, void *), void * data) {
+void CPUInst::SetWritePortCB(void (*fun)(uint8_t, uint8_t, void *), void *data) {
 	this->_writePortCB = fun;
 	this->_writePortDataCB = data;
 }
 
-void CPUInst::SetReadPortCB(uint8_t (* fun)(uint8_t, void *), void * data) {
+void CPUInst::SetReadPortCB(uint8_t (*fun)(uint8_t, void *), void *data) {
 	this->_readPortCB = fun;
 	this->_readPortDataCB = data;
 }

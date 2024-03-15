@@ -7,14 +7,14 @@
 using namespace awui::Windows::Forms;
 
 class FormTIS100 : public awui::Windows::Forms::Form {
-	private:
-		void InitializeComponent();
+  private:
+	void InitializeComponent();
 
-	public:
-		FormTIS100();
-		virtual ~FormTIS100();
+  public:
+	FormTIS100();
+	virtual ~FormTIS100();
 
-		virtual void OnTick(float deltaSeconds);
+	virtual void OnTick(float deltaSeconds);
 };
 
 #endif

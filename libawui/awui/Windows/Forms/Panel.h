@@ -4,12 +4,12 @@
 
 namespace awui::Windows::Forms {
 	class Panel : public Control {
-		public:
-			Panel();
-			virtual ~Panel() = default;
+	  public:
+		Panel();
+		virtual ~Panel() = default;
 
-			virtual bool IsClass(Classes objectClass) const override;
+		virtual bool IsClass(Classes objectClass) const override;
 
-			const virtual awui::Drawing::Size GetMinimumSize() const;
+		const virtual awui::Drawing::Size GetMinimumSize() const;
 	};
-}
+} // namespace awui::Windows::Forms

@@ -43,7 +43,7 @@ void Size::SetHeight(float height) {
 	m_height = (height < 0.0f) ? 0.0f : height;
 }
 
-Size & Size::operator= (const Size & other) {
+Size &Size::operator=(const Size &other) {
 	m_width = other.m_width;
 	m_height = other.m_height;
 

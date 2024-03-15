@@ -6,13 +6,13 @@
 
 #include "DebuggerSMS.h"
 
+#include <SDL_opengl.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Common/Ram.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
-#include <SDL_opengl.h>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
@@ -35,7 +35,8 @@ void DebuggerSMS::OnTick(float deltaSeconds) {
 	if (!m_show) {
 		if (m_width != 1) {
 			m_width = m_width + ((0.0f - m_width) * 0.25f);
-			if (m_width < 1) m_width = 1;
+			if (m_width < 1)
+				m_width = 1;
 			newWidth = m_width;
 		}
 	} else {
@@ -55,12 +56,12 @@ void DebuggerSMS::OnTick(float deltaSeconds) {
 		return;
 
 	uint8_t c, r, g, b;
-	uint8_t color[4] {0, 85, 170, 255};
+	uint8_t color[4]{0, 85, 170, 255};
 
-	VDP * vdp = m_rom->GetCPU()->GetVDP();
-	const uint8_t * colors = vdp->GetColors();
+	VDP *vdp = m_rom->GetCPU()->GetVDP();
+	const uint8_t *colors = vdp->GetColors();
 
-	for (int i=0; i<32; i++) {
+	for (int i = 0; i < 32; i++) {
 		c = colors[i];
 		r = color[c & 0x3];
 		g = color[(c >> 2) & 0x3];
@@ -70,7 +71,7 @@ void DebuggerSMS::OnTick(float deltaSeconds) {
 
 	m_colors->Update();
 
-	uint8_t * ram = vdp->GetVram();
+	uint8_t *ram = vdp->GetVram();
 
 	for (int sprite = 0; sprite < 512; sprite++) {
 		int64_t offset2 = sprite * 32;
@@ -81,11 +82,11 @@ void DebuggerSMS::OnTick(float deltaSeconds) {
 			uint8_t byte3 = ram[offset + 2];
 			uint8_t byte4 = ram[offset + 3];
 
-			//byte1 = byte2 = byte3 = byte4 = ((y == 0 || y == 7)? 0x81 : 0x00);
+			// byte1 = byte2 = byte3 = byte4 = ((y == 0 || y == 7)? 0x81 : 0x00);
 			uint8_t mask = 0x80;
 			for (int x = 0; x < 8; x++) {
 				uint8_t c;
-				c  = (  byte1 & mask) >> (7 - x);
+				c = (byte1 & mask) >> (7 - x);
 				c |= (((byte2 & mask) >> (7 - x)) << 1);
 				c |= (((byte3 & mask) >> (7 - x)) << 2);
 				c |= (((byte4 & mask) >> (7 - x)) << 3);
@@ -107,7 +108,7 @@ void DebuggerSMS::OnTick(float deltaSeconds) {
 	m_tiles->Update();
 }
 
-void DebuggerSMS::OnPaint(OpenGL::GL * gl) {
+void DebuggerSMS::OnPaint(OpenGL::GL *gl) {
 	if (m_width == 1)
 		return;
 
@@ -122,6 +123,6 @@ void DebuggerSMS::OnPaint(OpenGL::GL * gl) {
 	GL::DrawImageGL(m_tiles, left, top);
 }
 
-void DebuggerSMS::SetRom(MasterSystem * rom) {
+void DebuggerSMS::SetRom(MasterSystem *rom) {
 	m_rom = rom;
 }

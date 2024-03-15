@@ -13,27 +13,27 @@
 using namespace awui;
 using namespace awui::Windows::Emulators;
 
-int main(int argc, char ** argv) {
+int main(int argc, char **argv) {
 	if (argc == 3) {
 		String name = argv[1];
 		if (name == "--testsms") {
-			MasterSystem * ms = new MasterSystem();
+			MasterSystem *ms = new MasterSystem();
 			ms->LoadRom(argv[2]);
 
 			while (!ms->GetCPU()->IsEndlessLoop()) {
 				ms->RunOpcode();
 			}
 
-			//ms->GetCPU()->PrintLog();
+			// ms->GetCPU()->PrintLog();
 			return 0;
 		}
 	}
 
-	FormArcade * form = new FormArcade();
+	FormArcade *form = new FormArcade();
 
-//	for (int i = 1; i < argc; i++) {
-//		form->LoadRom(argv[i]);
-//	}
+	//	for (int i = 1; i < argc; i++) {
+	//		form->LoadRom(argv[i]);
+	//	}
 
 	Application::Run(form);
 

@@ -11,37 +11,37 @@ namespace awui {
 
 	namespace Windows::Emulators {
 		class Chip8 : public ArcadeContainer {
-			private:
-				static bool m_invertedColors;
-				bool m_lastInverted;
+		  private:
+			static bool m_invertedColors;
+			bool m_lastInverted;
 
-				CPU * m_cpu;
-				Drawing::Image * m_image;
+			CPU *m_cpu;
+			Drawing::Image *m_image;
 
-				int ConvertKeyAwToChip8(Keys::Enum key);
-				int ConvertRemoteKeyToChip8(RemoteButtons::Enum button);
-				void CheckBackcolor();
-				void UpdateImage();
+			int ConvertKeyAwToChip8(Keys::Enum key);
+			int ConvertRemoteKeyToChip8(RemoteButtons::Enum button);
+			void CheckBackcolor();
+			void UpdateImage();
 
-			public:
-				Chip8();
-				virtual ~Chip8();
+		  public:
+			Chip8();
+			virtual ~Chip8();
 
-				virtual bool IsClass(Classes objectClass) const override;
+			virtual bool IsClass(Classes objectClass) const override;
 
-				virtual int GetType() const { return Types::Chip8;}
+			virtual int GetType() const { return Types::Chip8; }
 
-				void LoadRom(const String file);
+			void LoadRom(const String file);
 
-				virtual void OnTick(float deltaSeconds);
-				virtual void OnPaint(OpenGL::GL* gl);
-				int GetChip8Mode() const;
-				void SetInvertedColors(bool mode);
+			virtual void OnTick(float deltaSeconds);
+			virtual void OnPaint(OpenGL::GL *gl);
+			int GetChip8Mode() const;
+			void SetInvertedColors(bool mode);
 
-				virtual bool OnKeyPress(Keys::Enum key);
-				virtual bool OnKeyUp(Keys::Enum key);
-				bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-				bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+			virtual bool OnKeyPress(Keys::Enum key);
+			virtual bool OnKeyUp(Keys::Enum key);
+			bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
+			bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 		};
-	}
-}
+	} // namespace Windows::Emulators
+} // namespace awui

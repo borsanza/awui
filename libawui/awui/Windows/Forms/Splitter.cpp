@@ -33,12 +33,12 @@ void Splitter::SetOrientation(SplitContainer::Orientation orientation) {
 	m_orientation = orientation;
 }
 
-void Splitter::OnMouseDown(MouseEventArgs * e) {
+void Splitter::OnMouseDown(MouseEventArgs *e) {
 	if (e->GetButton() == MouseButtons::Left)
 		m_mouseActive = true;
 }
 
-void Splitter::OnMouseMove(MouseEventArgs * e) {
+void Splitter::OnMouseMove(MouseEventArgs *e) {
 	if (!m_mouseActive)
 		return;
 
@@ -49,17 +49,17 @@ void Splitter::OnMouseMove(MouseEventArgs * e) {
 			((SplitContainer *) GetParent())->SetSplitterDistance(GetTop() + e->GetY());
 	}
 
-//	std::cout << "Motion: " << e->GetX() << "x" << e->GetY() << "   " << GetName() << std::endl;
+	//	std::cout << "Motion: " << e->GetX() << "x" << e->GetY() << "   " << GetName() << std::endl;
 }
 
-void Splitter::OnMouseUp(MouseEventArgs * e) {
+void Splitter::OnMouseUp(MouseEventArgs *e) {
 	m_mouseActive = false;
 }
 
 void Splitter::OnMouseEnter() {
-//	std::cout << "OnMouseEnter" << std::endl;
+	//	std::cout << "OnMouseEnter" << std::endl;
 }
 
 void Splitter::OnMouseLeave() {
-//	std::cout << "OnMouseLeave" << std::endl;
+	//	std::cout << "OnMouseLeave" << std::endl;
 }

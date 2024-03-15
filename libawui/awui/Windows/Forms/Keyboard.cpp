@@ -18,13 +18,13 @@ Keyboard::Keyboard() {
 	m_class = Classes::Keyboard;
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	int pos = 0;
-	const char * letras = "abcdefghijklmnopqrstuvwxyz1234567890";
+	const char *letras = "abcdefghijklmnopqrstuvwxyz1234567890";
 
-	Button * focused = nullptr;
+	Button *focused = nullptr;
 	Font font = Font("sans-serif", 34, FontStyle::Bold);
-	for (int i=0; i<6; i++) {
-		for (int j=0; j<6; j++) {
-			Button * button = new Button();
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 6; j++) {
+			Button *button = new Button();
 			button->SetDock(DockStyle::None);
 			button->SetLocation(30 + j * 70, 30 + i * 55);
 			button->SetSize(50, 50);
@@ -51,7 +51,7 @@ Keyboard::Keyboard() {
 
 	font = Font("sans-serif", 25, FontStyle::Bold);
 
-	Button * button = new Button();
+	Button *button = new Button();
 	button->SetDock(DockStyle::None);
 	button->SetLocation(30, 360);
 	button->SetSize(120, 50);

@@ -7,12 +7,13 @@ namespace awui::Windows::Forms {
 }
 
 class Form1 : public awui::Windows::Forms::Form {
-	private:
-		awui::Windows::Forms::Bitmap * m_bitmap2;
-	public:
-		Form1();
-		virtual ~Form1() = default;
+  private:
+	awui::Windows::Forms::Bitmap *m_bitmap2;
 
-	private:
-		void InitializeComponent();
+  public:
+	Form1();
+	virtual ~Form1() = default;
+
+  private:
+	void InitializeComponent();
 };

@@ -36,7 +36,7 @@ TapeCorder::~TapeCorder() {
 void TapeCorder::Clear() {
 	if (this->_list) {
 		for (int i = 0; i < this->_list->GetCount(); i++) {
-			TapeBlock * block = (TapeBlock *) this->_list->Get(i);
+			TapeBlock *block = (TapeBlock *) this->_list->Get(i);
 			delete block;
 		}
 
@@ -48,13 +48,13 @@ void TapeCorder::LoadFile(const String fileParam) {
 	this->Clear();
 	this->_list = new ArrayList();
 
-	FileStream * file = new FileStream(fileParam, FileMode::Open, FileAccess::Read);
+	FileStream *file = new FileStream(fileParam, FileMode::Open, FileAccess::Read);
 
 	Word blocks;
 	int state = 0;
 
 	int cont;
-	TapeBlock * block;
+	TapeBlock *block;
 	for (unsigned int i = 0; i < file->GetLength(); i++) {
 		uint8_t data = file->ReadByte();
 		switch (state) {
@@ -120,8 +120,8 @@ uint32_t TapeCorder::GetNext() {
 			this->_state = 3;
 			return 735;
 
-		case 3: {// Mandar Datos
-			TapeBlock * tapeBlock = (TapeBlock *) this->_list->Get(this->_block);
+		case 3: { // Mandar Datos
+			TapeBlock *tapeBlock = (TapeBlock *) this->_list->Get(this->_block);
 			uint8_t data = tapeBlock->GetByte(this->_posByte);
 			data = (data >> (7 - this->_posBit)) & 0x01;
 			this->_state = 4;
@@ -132,7 +132,7 @@ uint32_t TapeCorder::GetNext() {
 		}
 
 		case 4: { // Mandar Datos
-			TapeBlock * tapeBlock = (TapeBlock *) this->_list->Get(this->_block);
+			TapeBlock *tapeBlock = (TapeBlock *) this->_list->Get(this->_block);
 			uint8_t data = tapeBlock->GetByte(this->_posByte);
 			data = (data >> (7 - this->_posBit)) & 0x01;
 			this->_posBit++;
@@ -170,7 +170,7 @@ uint32_t TapeCorder::GetNext() {
 			if (this->_cycle == 0)
 				this->_state = 1;
 
-			return  2168;
+			return 2168;
 		case 8: // Fin
 			if (this->_finishCassetteCB)
 				this->_finishCassetteCB(this->_finishCassetteDataCB);
@@ -183,7 +183,7 @@ uint32_t TapeCorder::GetNext() {
 	return -1;
 }
 
-void TapeCorder::SetFinishCassetteCB(void (* fun)(void *), void * data) {
+void TapeCorder::SetFinishCassetteCB(void (*fun)(void *), void *data) {
 	this->_finishCassetteCB = fun;
 	this->_finishCassetteDataCB = data;
 }
@@ -191,7 +191,7 @@ void TapeCorder::SetFinishCassetteCB(void (* fun)(void *), void * data) {
 /******************************************************************************/
 
 TapeBlock::TapeBlock(int size) {
-	this->_data = (uint8_t *) malloc (size);
+	this->_data = (uint8_t *) malloc(size);
 	this->_size = size;
 }
 

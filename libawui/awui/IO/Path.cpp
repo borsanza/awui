@@ -14,7 +14,7 @@ using namespace awui::IO;
 String Path::Combine(const String &path1, const String &path2) {
 
 	if (path1.GetLength() > 0 && !path1.EndsWith(DirectorySeparatorChar)) {
-		return path1 + (String)DirectorySeparatorChar + path2;
+		return path1 + (String) DirectorySeparatorChar + path2;
 	}
 
 	return path1 + path2;

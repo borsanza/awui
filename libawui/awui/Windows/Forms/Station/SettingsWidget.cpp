@@ -11,6 +11,7 @@
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
+using namespace awui::Windows::Forms::Station;
 
 SettingsWidget::SettingsWidget() {
 	m_bitmap = new Bitmap("images/settings.png");
@@ -24,7 +25,7 @@ SettingsWidget::~SettingsWidget() {
 	delete m_bitmap;
 }
 
-void SettingsWidget::OnPaint(GL* gl) {
+void SettingsWidget::OnPaint(GL *gl) {
 	m_bitmap->OnPaint(gl);
 }
 

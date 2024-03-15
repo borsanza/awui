@@ -4,10 +4,10 @@
 
 namespace awui::Windows::Forms {
 	class Keyboard : public Control {
-		public:
-			Keyboard();
-			virtual ~Keyboard() = default;
+	  public:
+		Keyboard();
+		virtual ~Keyboard() = default;
 
-			virtual bool IsClass(Classes objectClass) const override;
+		virtual bool IsClass(Classes objectClass) const override;
 	};
-}
+} // namespace awui::Windows::Forms

@@ -23,7 +23,7 @@ using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
-Bitmap * Control::m_selectedBitmap = NULL;
+Bitmap *Control::m_selectedBitmap = NULL;
 int32_t Control::lastTabIndex = 10000;
 int32_t Control::countFocused = 1000;
 
@@ -63,7 +63,7 @@ Control::~Control() {
 	delete m_mouseEventArgs;
 
 	while (m_controls->GetCount() > 0) {
-		Control * control = (Control *) m_controls->Get(0);
+		Control *control = (Control *) m_controls->Get(0);
 		delete control;
 		m_controls->RemoveAt(0);
 	}
@@ -130,7 +130,7 @@ int Control::GetTop() const {
 }
 
 int Control::GetAbsoluteTop() const {
-	Control * parent = GetParent();
+	Control *parent = GetParent();
 	int pos = 0;
 	if (parent)
 		pos = parent->GetAbsoluteTop();
@@ -147,7 +147,7 @@ int Control::GetLeft() const {
 }
 
 int Control::GetAbsoluteLeft() const {
-	Control * parent = GetParent();
+	Control *parent = GetParent();
 	int pos = 0;
 	if (parent)
 		pos = parent->GetAbsoluteLeft();
@@ -187,7 +187,7 @@ const awui::Drawing::Rectangle Control::GetBounds() const {
 	return m_bounds;
 }
 
-void Control::AddWidget(Control * control) {
+void Control::AddWidget(Control *control) {
 	if (!control) {
 		return;
 	}
@@ -209,7 +209,7 @@ void Control::AddWidget(Control * control) {
 	Layout();
 }
 
-void Control::RemoveWidget(Control * control) {
+void Control::RemoveWidget(Control *control) {
 	if (!control) {
 		return;
 	}
@@ -222,7 +222,7 @@ void Control::RemoveWidget(Control * control) {
 		m_focusedTime = -1;
 
 		for (auto aux : *m_controls) {
-			Control * control = (Control *) aux;
+			Control *control = (Control *) aux;
 			if (!m_focused || (control->m_focusedTime > m_focusedTime)) {
 				m_focused = control;
 				m_focusedTime = control->m_focusedTime;
@@ -235,12 +235,12 @@ void Control::RemoveWidget(Control * control) {
 	}
 }
 
-void Control::MoveToEnd(Control * item) {
+void Control::MoveToEnd(Control *item) {
 	RemoveWidget(item);
 	AddWidget(item);
 }
 
-void Control::ReplaceWidget(Control * oldControl, Control * newControl) {
+void Control::ReplaceWidget(Control *oldControl, Control *newControl) {
 	if (oldControl) {
 		oldControl->CheckMouseControl();
 		oldControl->SetParent(nullptr);
@@ -301,11 +301,11 @@ void Control::SetMinimumSize(Size size) {
 	SetSize(GetSize());
 }
 
-Control * Control::GetParent() const {
+Control *Control::GetParent() const {
 	return m_parent;
 }
 
-void Control::SetParent(Control * parent) {
+void Control::SetParent(Control *parent) {
 	m_parent = parent;
 }
 
@@ -317,7 +317,7 @@ void Control::Layout() {
 	int margin = 0;
 
 	for (int i = 0; i < GetCount(); i++) {
-		Control * control = Get(i);
+		Control *control = Get(i);
 		if (!control->IsVisible()) {
 			continue;
 		}
@@ -355,7 +355,7 @@ void Control::Refresh() {
 	m_needRefresh = 1;
 }
 
-int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first) {
+int Control::OnPaintPre(int x, int y, int width, int height, GL *gl, bool first) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-x, width - x, height - y, -y, -1.0f, 1.0f);
@@ -409,7 +409,7 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 
 	if (isVisible) {
 		for (int i = 0; i < GetCount(); i++) {
-			Control * control = Get(i);
+			Control *control = Get(i);
 			if (!control->IsVisible())
 				continue;
 
@@ -423,23 +423,23 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL * gl, bool first
 }
 
 // Lo usamos para dibujar el skin
-void Control::OnPaint(OpenGL::GL * gl) {
+void Control::OnPaint(OpenGL::GL *gl) {
 	static float lastx1, lasty1, lastright, lastbottom;
-	static Control * lastParent = NULL;
-	Control * focused = nullptr;
-	Form * form = GetForm();
+	static Control *lastParent = NULL;
+	Control *focused = nullptr;
+	Form *form = GetForm();
 	if (form) {
 		focused = form->GetChildFocused();
 	}
 
 	for (int i = 0; i < GetCount(); i++) {
-		Control * control = Get(i);
+		Control *control = Get(i);
 		if (!control->IsVisible())
 			continue;
 
 		if ((focused == control) && (control->GetDrawShadow())) {
 			int x1, y1, x2, y2;
-			Bitmap * bitmap = Control::GetSelectedBitmap();
+			Bitmap *bitmap = Control::GetSelectedBitmap();
 			float percent = m_deltaSeconds * 10.0f;
 
 			if (lastParent != this) {
@@ -470,7 +470,7 @@ void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int button
 	m_mouseEventArgs->SetLocation(x, y);
 
 	for (int i = GetCount() - 1; i >= 0; i--) {
-		Control * control = Get(i);
+		Control *control = Get(i);
 		if (!control->IsVisible())
 			continue;
 
@@ -499,7 +499,7 @@ void Control::OnMouseMovePre(int x, int y, int buttons) {
 	m_mouseEventArgs->SetLocation(x, y);
 
 	for (int i = GetCount() - 1; i >= 0; i--) {
-		Control * control = Get(i);
+		Control *control = Get(i);
 		if (!control->IsVisible())
 			continue;
 
@@ -528,7 +528,7 @@ void Control::OnMouseMovePre(int x, int y, int buttons) {
 	//	std::cout << "Move: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
 }
 
-void Control::ChangeControlOnMouseOver(Control * control) {
+void Control::ChangeControlOnMouseOver(Control *control) {
 	if (GetParent()) {
 		GetParent()->ChangeControlOnMouseOver(control);
 		return;
@@ -550,7 +550,7 @@ void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons) {
 	int y = m_mouseEventArgs->GetY();
 
 	for (int i = GetCount() - 1; i >= 0; i--) {
-		Control * control = Get(i);
+		Control *control = Get(i);
 		if (!control->IsVisible())
 			continue;
 
@@ -625,7 +625,7 @@ void Control::OnTickPre(float deltaSeconds) {
 		OnTick(deltaSeconds);
 
 		for (int i = 0; i < GetCount(); i++) {
-			Control * control = Get(i);
+			Control *control = Get(i);
 			if (!control->IsVisible()) {
 				continue;
 			}
@@ -634,7 +634,7 @@ void Control::OnTickPre(float deltaSeconds) {
 	}
 }
 
-awui::Drawing::Font * Control::GetFont() {
+awui::Drawing::Font *Control::GetFont() {
 	return m_font;
 }
 
@@ -733,7 +733,7 @@ void Control::SetFocusImpl(bool forced, int32_t time) {
 			Console::WriteLine("SetFocus(%d): %s", forced, ToString().ToCharArray());
 		}
 	*/
-	Control * parent = GetParent();
+	Control *parent = GetParent();
 
 	if (forced) {
 		m_focusedTime = time;
@@ -790,7 +790,7 @@ void Control::SetFocus(bool forced) {
 	}
 }
 
-Control * Control::GetChildFocusedImp(Control * focused) {
+Control *Control::GetChildFocusedImp(Control *focused) {
 	if (IsFocusable())
 		focused = this;
 
@@ -801,12 +801,12 @@ Control * Control::GetChildFocusedImp(Control * focused) {
 	return focused;
 }
 
-Control * Control::GetChildFocused() {
+Control *Control::GetChildFocused() {
 	return GetChildFocusedImp(nullptr);
 }
 
 bool Control::IsFocused() const {
-	Control * parent = GetParent();
+	Control *parent = GetParent();
 	if (parent) {
 		return (parent->m_focused == this) && parent->IsFocused();
 	}
@@ -814,7 +814,7 @@ bool Control::IsFocused() const {
 	return IsClass(Classes::Form);
 }
 
-Control * Control::GetRoot() {
+Control *Control::GetRoot() {
 	if (m_parent) {
 		return m_parent->GetRoot();
 	}
@@ -822,8 +822,8 @@ Control * Control::GetRoot() {
 	return this;
 }
 
-Form * Control::GetForm() {
-	const Control * root = GetRoot();
+Form *Control::GetForm() {
+	const Control *root = GetRoot();
 
 	if (!root->IsClass(Classes::Form)) {
 		return nullptr;
@@ -836,15 +836,15 @@ bool Control::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	return false;
 }
 
-bool Control::OnJoystickButtonDown(JoystickButtonEventArgs * e) {
+bool Control::OnJoystickButtonDown(JoystickButtonEventArgs *e) {
 	return false;
 }
 
-bool Control::OnJoystickButtonUp(JoystickButtonEventArgs * e) {
+bool Control::OnJoystickButtonUp(JoystickButtonEventArgs *e) {
 	return false;
 }
 
-bool Control::OnJoystickAxisMotion(JoystickAxisMotionEventArgs * e) {
+bool Control::OnJoystickAxisMotion(JoystickAxisMotionEventArgs *e) {
 	return false;
 }
 
@@ -855,7 +855,7 @@ bool Control::OnKeyUp(Keys::Enum button) {
 // Arriba y Abajo: de la fila de items mas cercana el item mas cercano
 // Izquierda y Derecha: De la actual fila, el item mas cercano
 bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
-	Form * form = GetForm();
+	Form *form = GetForm();
 	if (!form) {
 		return false;
 	}
@@ -867,7 +867,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 		float distance = 30000;
 		float distance2 = 30000;
-		Control * selected = NULL;
+		Control *selected = NULL;
 
 		ArrayList list;
 		GetRoot()->GetControlsSelectables(&list);
@@ -875,7 +875,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		switch (button) {
 			case RemoteButtons::Left:
 				for (int i = 0; i < list.GetCount(); i++) {
-					Control * control = (Control *) list.Get(i);
+					Control *control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -897,7 +897,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				break;
 			case RemoteButtons::Right:
 				for (int i = 0; i < list.GetCount(); i++) {
-					Control * control = (Control *) list.Get(i);
+					Control *control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -918,10 +918,10 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				}
 				break;
 			case RemoteButtons::Down: {
-				Control * selectedAux = NULL;
+				Control *selectedAux = NULL;
 				// Primero busco el mas cercano en Y por abajo
 				for (int i = 0; i < list.GetCount(); i++) {
-					Control * control = (Control *) list.Get(i);
+					Control *control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -957,7 +957,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				// Ahora busco de ese cercano, uno que este en la misma horizontal y mas cerca del actual
 				// Y que ademas este por debajo del actual
 				for (int i = 0; i < list.GetCount(); i++) {
-					Control * control = (Control *) list.Get(i);
+					Control *control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -979,10 +979,10 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				break;
 			}
 			case RemoteButtons::Up: {
-				Control * selectedAux = NULL;
+				Control *selectedAux = NULL;
 				// Primero busco el mas cercano en Y por arriba
 				for (int i = 0; i < list.GetCount(); i++) {
-					Control * control = (Control *) list.Get(i);
+					Control *control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -1018,7 +1018,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				// Ahora busco de ese cercano, uno que este en la misma horizontal y mas cerca del actual
 				// Y ademas que este por arriba del actual
 				for (int i = 0; i < list.GetCount(); i++) {
-					Control * control = (Control *) list.Get(i);
+					Control *control = (Control *) list.Get(i);
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -1055,9 +1055,9 @@ bool Control::OnKeyPress(Keys::Enum key) {
 	return false;
 }
 
-void Control::GetControlsSelectables(ArrayList * list) {
+void Control::GetControlsSelectables(ArrayList *list) {
 	for (int i = 0; i < GetCount(); i++) {
-		Control * control = Get(i);
+		Control *control = Get(i);
 		control->GetControlsSelectables(list);
 	}
 
@@ -1077,10 +1077,10 @@ void Control::CleanMouseControl() {
 	m_mouseControl = NULL;
 }
 
-Bitmap * Control::GetSelectedBitmap() {
+Bitmap *Control::GetSelectedBitmap() {
 	if (!Control::m_selectedBitmap) {
 		String file = IO::Directory::GetWorkingDirectory();
-		Bitmap * bitmap = new Bitmap(file + "/images/button.png");
+		Bitmap *bitmap = new Bitmap(file + "/images/button.png");
 		bitmap->SetDock(DockStyle::None);
 		bitmap->SetBackColor(Drawing::Color::FromArgb(0, 0, 0, 0));
 		bitmap->SetFixedMargins(28, 25, 28, 24);

@@ -7,12 +7,12 @@ namespace awui::Windows::Forms {
 }
 
 class FormSlider : public awui::Windows::Forms::Form {
-	private:
-		awui::Windows::Forms::SliderBrowser * m_slider;
+  private:
+	awui::Windows::Forms::SliderBrowser *m_slider;
 
-		void InitializeComponent();
+	void InitializeComponent();
 
-	public:
-		FormSlider();
-		virtual ~FormSlider() = default;
+  public:
+	FormSlider();
+	virtual ~FormSlider() = default;
 };

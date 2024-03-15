@@ -26,15 +26,15 @@ bool Graphics::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::Graphics) || Object::IsClass(objectClass);
 }
 
-Graphics * Graphics::FromImage(Drawing::Image *image) {
-	Graphics * graphics = new Graphics();
+Graphics *Graphics::FromImage(Drawing::Image *image) {
+	Graphics *graphics = new Graphics();
 	graphics->m_cairo_surface = image->m_cairo_surface;
 	graphics->m_cr = image->m_cr;
 
 	return graphics;
 }
 
-void Graphics::DrawRectangle(Drawing::Pen * pen, float x, float y, float width, float height) {
+void Graphics::DrawRectangle(Drawing::Pen *pen, float x, float y, float width, float height) {
 	SetPen(pen);
 	cairo_rectangle(m_cr, x, y, width, height);
 	cairo_stroke(m_cr);
@@ -51,11 +51,11 @@ void Graphics::FillRectangle(const Drawing::Color color, float x, float y, float
 	cairo_fill(m_cr);
 }
 
-void Graphics::DrawImage(Drawing::Image * image, float x, float y) {
-	DrawImage(image, x, y, (float)image->GetWidth(), (float)image->GetHeight());
+void Graphics::DrawImage(Drawing::Image *image, float x, float y) {
+	DrawImage(image, x, y, (float) image->GetWidth(), (float) image->GetHeight());
 }
 
-void Graphics::DrawImage(Drawing::Image * image, float x, float y, float width, float height) {
+void Graphics::DrawImage(Drawing::Image *image, float x, float y, float width, float height) {
 	cairo_surface_t *surfaceAux = image->m_cairo_surface;
 
 	cairo_save(m_cr);
@@ -67,7 +67,7 @@ void Graphics::DrawImage(Drawing::Image * image, float x, float y, float width, 
 	cairo_restore(m_cr);
 }
 
-void Graphics::SetPen(Drawing::Pen * pen) {
+void Graphics::SetPen(Drawing::Pen *pen) {
 	Drawing::Color color = pen->GetColor();
 	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 
@@ -86,7 +86,7 @@ void Graphics::SetPen(Drawing::Pen * pen) {
 	}
 }
 
-void Graphics::DrawLine(Drawing::Pen * pen, float x1, float y1, float x2, float y2) {
+void Graphics::DrawLine(Drawing::Pen *pen, float x1, float y1, float x2, float y2) {
 	SetPen(pen);
 	cairo_save(m_cr);
 	cairo_move_to(m_cr, x1, y1);
@@ -134,7 +134,7 @@ GlyphMetrics Graphics::GetMeasureText(const String text, Drawing::Font *font) co
 	return metrics;
 }
 
-void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing::Color color, float x, float y) {
+void Graphics::DrawString(const String text, Drawing::Font *font, const Drawing::Color color, float x, float y) {
 	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 
 	cairo_font_weight_t weight;
@@ -170,13 +170,14 @@ void Graphics::DrawString(const String text, Drawing::Font * font, const Drawing
 	cairo_set_antialias(m_cr, cairo_antialias_t::CAIRO_ANTIALIAS_NONE);
 
 	if (font->GetStrikeout()) {
-		float posy =  y - (extents.y_bearing / 2.0f) + BORDER;;
+		float posy = y - (extents.y_bearing / 2.0f) + BORDER;
+		;
 		posy = Math::Round(posy);
 		DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
 	}
 
 	if (font->GetUnderline()) {
-		float posy =  y - extents.y_bearing + BORDER + (size * 1.5f);
+		float posy = y - extents.y_bearing + BORDER + (size * 1.5f);
 		posy = Math::Round(posy);
 		DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
 	}

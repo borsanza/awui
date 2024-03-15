@@ -3,29 +3,23 @@
 #include <awui/Emulation/Common/Word.h>
 #include <awui/Emulation/Processors/Z80/CPUInst.h>
 
-namespace awui {
-	namespace Emulation {
-		namespace Processors {
-			namespace Z80 {
-				class CPU : public CPUInst {
-					private:
-						void Print(const char * str, ...);
+namespace awui::Emulation::Processors::Z80 {
+	class CPU : public CPUInst {
+	  private:
+		void Print(const char *str, ...);
 
-					public:
-						CPU();
-						virtual ~CPU();
+	  public:
+		CPU();
+		virtual ~CPU();
 
-						void RunOpcode();
-						bool IsEndlessLoop() const;
+		void RunOpcode();
+		bool IsEndlessLoop() const;
 
-						Word GetAddressBus() const;
-						void SetAddressBus(Word);
+		Word GetAddressBus() const;
+		void SetAddressBus(Word);
 
-						void Reset();
+		void Reset();
 
-						void PrintLog();
-				};
-			}
-		}
-	}
-}
+		void PrintLog();
+	};
+} // namespace awui::Emulation::Processors::Z80

@@ -5,6 +5,6 @@ namespace awui::Windows::Forms::Station::Settings {
 		Group,
 		Boolean,
 		List,
-        Label,
+		Label,
 	};
 }

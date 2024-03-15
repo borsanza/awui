@@ -54,9 +54,9 @@ namespace awui {
 			virtual bool IsClass(Classes objectClass) const override;
 
 			void SetFixedMargins(int x1, int y1, int x2, int y2);
-			void GetFixedMargins(int * x1, int * y1, int * x2, int * y2);
+			void GetFixedMargins(int *x1, int *y1, int *x2, int *y2);
 
-			virtual void OnPaint(OpenGL::GL * gl);
+			virtual void OnPaint(OpenGL::GL *gl);
 
 			void SetColor(Drawing::ColorF color);
 

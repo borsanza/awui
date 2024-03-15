@@ -7,27 +7,25 @@ namespace awui {
 		class Effect;
 	}
 
-	namespace Windows {
-		namespace Forms {
-			class SliderBrowser : public Control {
-				private:
-					int m_margin;
-					awui::Effects::Effect * m_effect;
-					Control * m_lastControl;
-					float m_lastTime;
-					int m_initPos;
-					int m_selected;
+	namespace Windows::Forms {
+		class SliderBrowser : public Control {
+		  private:
+			int m_margin;
+			awui::Effects::Effect *m_effect;
+			Control *m_lastControl;
+			float m_lastTime;
+			int m_initPos;
+			int m_selected;
 
-				public:
-					SliderBrowser();
-					virtual ~SliderBrowser();
+		  public:
+			SliderBrowser();
+			virtual ~SliderBrowser();
 
-					void SetMargin(int margin);
+			void SetMargin(int margin);
 
-					virtual void OnTick(float deltaSeconds);
+			virtual void OnTick(float deltaSeconds);
 
-					Control * GetControlSelected() const;
-			};
-		}
-	}
-}
+			Control *GetControlSelected() const;
+		};
+	} // namespace Windows::Forms
+} // namespace awui

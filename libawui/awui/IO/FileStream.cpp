@@ -6,8 +6,8 @@
 
 #include "FileStream.h"
 
-#include <awui/String.h>
 #include <assert.h>
+#include <awui/String.h>
 #include <stdio.h>
 
 using namespace awui::IO;
@@ -25,7 +25,7 @@ FileStream::FileStream(const String path, FileMode::Enum mode, FileAccess::Enum 
 				case FileAccess::Enum::Read:
 					assert(0 && "Esto no tiene sentido");
 					break;
-				}
+			}
 			break;
 		case FileMode::Enum::Open:
 			switch (access) {
@@ -36,7 +36,7 @@ FileStream::FileStream(const String path, FileMode::Enum mode, FileAccess::Enum 
 				case FileAccess::Enum::Read:
 					this->_file = fopen(path.ToCharArray(), "rb");
 					break;
-				}
+			}
 			break;
 		case FileMode::Enum::Create:
 			this->_file = fopen(path.ToCharArray(), "rb");

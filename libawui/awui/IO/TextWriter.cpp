@@ -15,12 +15,12 @@ TextWriter::~TextWriter() {
 }
 
 void TextWriter::Write(Object *value) {
-	const char * str = value->ToString().ToCharArray();
+	const char *str = value->ToString().ToCharArray();
 	Write(str);
 }
 
 void awui::IO::TextWriter::Write(String value) {
-	const char * str = value.ToCharArray();
+	const char *str = value.ToCharArray();
 	Write(str);
 }
 
@@ -30,13 +30,13 @@ void TextWriter::WriteLine() {
 }
 
 void TextWriter::WriteLine(Object *value) {
-	const char * str = value->ToString().ToCharArray();
+	const char *str = value->ToString().ToCharArray();
 	Write(str);
 	WriteLine();
 }
 
 void TextWriter::WriteLine(String value) {
-	const char * str = value.ToCharArray();
+	const char *str = value.ToCharArray();
 	Write(str);
 	WriteLine();
 }

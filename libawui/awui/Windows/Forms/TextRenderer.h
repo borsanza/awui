@@ -8,18 +8,16 @@ namespace awui {
 		class Graphics;
 		class Image;
 		class GlyphMetrics;
-	}
+	} // namespace Drawing
 
-	namespace Windows {
-		namespace Forms {
-			class TextRenderer {
-				private:
-					static awui::Drawing::Graphics * graphics;
-					static awui::Drawing::Image * image;
+	namespace Windows::Forms {
+		class TextRenderer {
+		  private:
+			static awui::Drawing::Graphics *graphics;
+			static awui::Drawing::Image *image;
 
-				public:
-					static awui::Drawing::GlyphMetrics GetMeasureText(const String text, awui::Drawing::Font *font);
-			};
-		}
-	}
-}
+		  public:
+			static awui::Drawing::GlyphMetrics GetMeasureText(const String text, awui::Drawing::Font *font);
+		};
+	} // namespace Windows::Forms
+} // namespace awui

@@ -23,9 +23,9 @@ TestWidget::~TestWidget() {
 }
 
 void TestWidget::OnTick(float deltaSeconds) {
-//	printf("%d\n", GetParent()->GetControls()->IndexOf(this));
+	//	printf("%d\n", GetParent()->GetControls()->IndexOf(this));
 }
 
-void TestWidget::OnPaint(GL* gl) {
+void TestWidget::OnPaint(GL *gl) {
 	SetBackColor(Color::FromArgb(255, 255, 0, 0));
 }

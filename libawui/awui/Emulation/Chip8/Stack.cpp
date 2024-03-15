@@ -23,7 +23,7 @@ void Stack::Push(int value) {
 }
 
 int Stack::Pop() {
-	StackInt * o = (StackInt *)this->_stack->Pop();
+	StackInt *o = (StackInt *) this->_stack->Pop();
 	int r = o->GetValue();
 	delete o;
 	return r;

@@ -6,13 +6,13 @@
 
 #include "MenuButton.h"
 
+#include <SDL_opengl.h>
 #include <awui/Windows/Emulators/Chip8.h>
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Emulators/Spectrum.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/Station/StationUI.h>
-#include <SDL_opengl.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -21,7 +21,7 @@ using namespace awui::Windows::Forms::Station;
 
 #define OFFSET 0.5f
 
-MenuButton::MenuButton(StationUI * station) {
+MenuButton::MenuButton(StationUI *station) {
 	m_class = Classes::MenuButton;
 	m_node = NULL;
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
@@ -41,7 +41,7 @@ bool MenuButton::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::MenuButton) || Control::IsClass(objectClass);
 }
 
-void MenuButton::OnMouseDown(MouseEventArgs * e) {
+void MenuButton::OnMouseDown(MouseEventArgs *e) {
 	switch (e->GetButton()) {
 		case MouseButtons::Left: {
 			if (!IsFocused()) {
@@ -49,8 +49,7 @@ void MenuButton::OnMouseDown(MouseEventArgs * e) {
 			} else {
 				OnRemoteKeyUp(0, RemoteButtons::Ok);
 			}
-		}
-			break;
+		} break;
 		case MouseButtons::Right:
 			OnRemoteKeyUp(0, RemoteButtons::Menu);
 			break;
@@ -59,8 +58,8 @@ void MenuButton::OnMouseDown(MouseEventArgs * e) {
 	}
 }
 
-void MenuButton::OnPaint(GL* gl) {
-	Form * form = GetForm();
+void MenuButton::OnPaint(GL *gl) {
+	Form *form = GetForm();
 	if (form && (form->GetChildFocused() == this)) {
 		SetForeColor(Color::FromArgb(255, 255, 255));
 	} else {
@@ -73,20 +72,20 @@ void MenuButton::OnPaint(GL* gl) {
 		float x = GetWidth() - 22.0f;
 		float y = (GetHeight() / 2.0f) - 0.5f;
 
-		Form * form = GetForm();
+		Form *form = GetForm();
 		if (form && (form->GetChildFocused() == this)) {
 			glColor3ub(255, 255, 255);
 		} else {
 			glColor3ub(199, 199, 199);
 		}
 
-		glEnable( GL_LINE_SMOOTH );
+		glEnable(GL_LINE_SMOOTH);
 		glBegin(GL_LINE_STRIP);
 		glVertex2f(x - 10.0f + OFFSET, y - 10.0f + OFFSET);
 		glVertex2f(x + OFFSET, y + OFFSET);
 		glVertex2f(x - 10.0f + OFFSET, y + 10.0f + OFFSET);
 		glEnd();
-		glDisable( GL_LINE_SMOOTH );
+		glDisable(GL_LINE_SMOOTH);
 	}
 }
 
@@ -129,7 +128,7 @@ bool MenuButton::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	return 1;
 }
 
-void MenuButton::SetNodeFile(NodeFile * node) {
+void MenuButton::SetNodeFile(NodeFile *node) {
 	m_node = node;
 }
 
@@ -142,19 +141,19 @@ void MenuButton::CheckArcade() {
 			switch (m_node->m_emulator) {
 				case 2:
 				case 3: {
-					MasterSystem * sms = new MasterSystem();
+					MasterSystem *sms = new MasterSystem();
 					sms->LoadRom(m_node->m_path);
 					m_node->m_arcade = sms;
 					break;
 				}
 				case 4: {
-					Spectrum * szx = new Spectrum();
+					Spectrum *szx = new Spectrum();
 					szx->LoadRom(m_node->m_path);
 					m_node->m_arcade = szx;
 					break;
 				}
 				case 1: {
-					Chip8 * ch8 = new Chip8();
+					Chip8 *ch8 = new Chip8();
 					ch8->LoadRom(m_node->m_path);
 					m_node->m_arcade = ch8;
 					break;
@@ -181,7 +180,7 @@ void MenuButton::OnResize() {
 }
 
 awui::String MenuButton::ToString() const {
-    String a = awui::String("awui::Windows::Forms::Station::MenuButton (");
+	String a = awui::String("awui::Windows::Forms::Station::MenuButton (");
 	a += GetText();
 	a += awui::String(")");
 	return a;

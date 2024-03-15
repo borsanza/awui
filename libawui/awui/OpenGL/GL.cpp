@@ -6,9 +6,9 @@
 
 #include "GL.h"
 
+#include <SDL_opengl.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Math.h>
-#include <SDL_opengl.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -92,7 +92,7 @@ void GL::FillRectangle(int x1, int y1, int x2, int y2) {
 #define GL_BGRA 0x80E1
 #endif
 
-void GL::DrawImageGL(awui::Drawing::Image * image, int x, int y) {
+void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
 	image->Load();
 	// Mas rapido guardandose solo el valor y recuperarlo despues
 	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
@@ -109,10 +109,14 @@ void GL::DrawImageGL(awui::Drawing::Image * image, int x, int y) {
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);glVertex2i(x, y);
-	glTexCoord2f(1.0f, 0.0f);glVertex2i(x + image->GetWidth(), y);
-	glTexCoord2f(1.0f, 1.0f);glVertex2i(x + image->GetWidth(), y + image->GetHeight());
-	glTexCoord2f(0.0f, 1.0f);glVertex2i(x, y + image->GetHeight()) ;
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2i(x, y);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2i(x + image->GetWidth(), y);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2i(x + image->GetWidth(), y + image->GetHeight());
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2i(x, y + image->GetHeight());
 	glEnd();
 
 	if (!oldBlend)
@@ -123,7 +127,7 @@ void GL::DrawImageGL(awui::Drawing::Image * image, int x, int y) {
 		glDisable(GL_TEXTURE_2D);
 }
 
-void GL::DrawImageGL(awui::Drawing::Image * image, int x, int y, int width, int height) {
+void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int height) {
 	image->Load();
 	// Mas rapido guardandose solo el valor y recuperarlo despues
 	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
@@ -140,10 +144,14 @@ void GL::DrawImageGL(awui::Drawing::Image * image, int x, int y, int width, int 
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);glVertex2i(x, y);
-	glTexCoord2f(1.0f, 0.0f);glVertex2i(x + width, y);
-	glTexCoord2f(1.0f, 1.0f);glVertex2i(x + width, y + height);
-	glTexCoord2f(0.0f, 1.0f);glVertex2i(x, y + height) ;
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2i(x, y);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2i(x + width, y);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2i(x + width, y + height);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2i(x, y + height);
 	glEnd();
 
 	if (!oldBlend)

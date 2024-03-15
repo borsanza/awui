@@ -12,5 +12,5 @@ using namespace awui::IO;
 
 bool File::Exists(String path) {
 	struct stat buffer;
-	return (stat (path.ToCharArray(), &buffer) == 0);
+	return (stat(path.ToCharArray(), &buffer) == 0);
 }

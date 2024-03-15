@@ -12,10 +12,10 @@ namespace awui {
 #endif
 
 		class Path {
-			public:
-				static String Combine(const String &path1, const String &path2);
-				static String Combine(const String &path1, const String &path2, const String &path3);
-				static String Combine(const String &path1, const String &path2, const String &path3, const String &path4);
+		  public:
+			static String Combine(const String &path1, const String &path2);
+			static String Combine(const String &path1, const String &path2, const String &path3);
+			static String Combine(const String &path1, const String &path2, const String &path3, const String &path4);
 		};
-	}
-}
+	} // namespace IO
+} // namespace awui

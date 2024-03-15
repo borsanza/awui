@@ -3,7 +3,7 @@
 #include <awui/Windows/Forms/Control.h>
 
 typedef struct SDL_Window SDL_Window;
-typedef void * SDL_GLContext;
+typedef void *SDL_GLContext;
 typedef union SDL_Event SDL_Event;
 
 namespace awui {
@@ -21,13 +21,13 @@ namespace awui {
 			friend class Control;
 
 		  private:
-			static ArrayList * m_formsList;
+			static ArrayList *m_formsList;
 			static uint32_t m_buttonsPad1;
 			static uint32_t m_buttonsPad2;
-			Control * m_mouseControlOver;
+			Control *m_mouseControlOver;
 			// awui::Diagnostics::Process* remoteProcess;
 			String m_text;
-			SDL_Window * m_window;
+			SDL_Window *m_window;
 			SDL_GLContext m_context;
 
 			int m_mouseX;
@@ -67,7 +67,7 @@ namespace awui {
 			void SwapGL();
 
 			uint32_t GetWindowID();
-			void ProcessEvents(SDL_Event * event);
+			void ProcessEvents(SDL_Event *event);
 
 			bool SetSwapInterval(bool mode);
 			bool GetSwapInterval();

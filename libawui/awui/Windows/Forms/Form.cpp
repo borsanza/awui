@@ -25,7 +25,7 @@ using namespace awui::Windows::Forms::Statistics;
 
 uint32_t Form::m_buttonsPad1 = 0;
 uint32_t Form::m_buttonsPad2 = 0;
-ArrayList * Form::m_formsList = new ArrayList();
+ArrayList *Form::m_formsList = new ArrayList();
 
 Form::Form() {
 	m_class = Classes::Form;
@@ -51,7 +51,7 @@ Form::Form() {
 	m_lastWidth = 0;
 	m_lastHeight = 0;
 
-	Stats * stats = Stats::Instance();
+	Stats *stats = Stats::Instance();
 	stats->SetDock(DockStyle::None);
 	AddWidget(stats);
 }
@@ -95,23 +95,23 @@ void Form::OnPaintForm() {
 
 	int r = OnPaintPre(0, 0, GetWidth(), GetHeight(), &gl, true);
 
-	Stats * stats = Stats::Instance();
+	Stats *stats = Stats::Instance();
 	stats->SetDrawedControls(r);
 }
 
 void Form::OnRemoteHeartbeat() {
-	Stats * stats = Stats::Instance();
+	Stats *stats = Stats::Instance();
 	stats->OnRemoteHeartbeat();
 }
 
 void Form::OnTick(float deltaSeconds) {
-	Stats * stats = Stats::Instance();
+	Stats *stats = Stats::Instance();
 	MoveToEnd(stats);
 	stats->SetWidth(GetWidth());
 	stats->SetLocation(0, GetHeight() - stats->GetHeight());
 
-	static Control * lastControl = nullptr;
-	Control * control = GetChildFocused();
+	static Control *lastControl = nullptr;
+	Control *control = GetChildFocused();
 	if (control && (control != lastControl)) {
 		lastControl = control;
 		Console::WriteLine("%s", control->ToString().ToCharArray());
@@ -225,7 +225,7 @@ void Form::SetText(String title) {
 }
 
 bool Form::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
-	uint32_t * buttons;
+	uint32_t *buttons;
 	switch (which) {
 		default:
 		case 0:
@@ -241,7 +241,7 @@ bool Form::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 }
 
 bool Form::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	uint32_t * buttons;
+	uint32_t *buttons;
 	switch (which) {
 		default:
 		case 0:
@@ -268,7 +268,7 @@ uint32_t Form::GetWindowID() {
 	return SDL_GetWindowID(m_window);
 }
 
-void Form::ProcessEvents(SDL_Event * event) {
+void Form::ProcessEvents(SDL_Event *event) {
 	int resizex = -1;
 	int resizey = -1;
 

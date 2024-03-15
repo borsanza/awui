@@ -4,10 +4,10 @@
  * Copyright (C) 2016 Borja Sánchez Zamorano
  */
 
- #include "StationUI.h"
+#include "StationUI.h"
 
-#include <awui/Console.h>
 #include <awui/Collections/SortedList.h>
+#include <awui/Console.h>
 #include <awui/Math.h>
 #include <awui/Windows/Emulators/ArcadeContainer.h>
 #include <awui/Windows/Forms/Bitmap.h>
@@ -16,8 +16,8 @@
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
 #include <awui/Windows/Forms/Station/MenuButton.h>
-#include <awui/Windows/Forms/Station/SettingsWidget.h>
 #include <awui/Windows/Forms/Station/Settings/SettingsUI.h>
+#include <awui/Windows/Forms/Station/SettingsWidget.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -59,7 +59,6 @@ StationUI::StationUI() {
 	m_controlBase->AddWidget(m_title);
 	m_controlBase->AddWidget(m_browser);
 
-
 	m_settings = new SettingsWidget();
 	m_settings->AddOnClickListener(this);
 	m_settings->SetDock(DockStyle::None);
@@ -100,22 +99,21 @@ void StationUI::Clear() {
 	}
 }
 
-void StationUI::SetBackground(Bitmap * background) {
+void StationUI::SetBackground(Bitmap *background) {
 	m_backgroundFader->SetImage(background);
 }
 
-void StationUI::RecursiveSearch(NodeFile * parent) {
+void StationUI::RecursiveSearch(NodeFile *parent) {
 	DIR *d;
 	struct dirent *dir;
 	d = opendir(parent->m_path.ToCharArray());
 	if (d) {
 		while ((dir = readdir(d)) != nullptr) {
-			if ((strcmp(dir->d_name, "." ) == 0) ||
-				(strcmp(dir->d_name, "..") == 0)) {
+			if ((strcmp(dir->d_name, ".") == 0) || (strcmp(dir->d_name, "..") == 0)) {
 				continue;
 			}
 
-			NodeFile * child = new NodeFile();
+			NodeFile *child = new NodeFile();
 
 			String newFile = parent->m_path;
 
@@ -180,7 +178,7 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 
 			child->m_directory = isDir;
 
-			child->m_key = String::Concat((child->m_directory? "1" : "2") , child->m_name);
+			child->m_key = String::Concat((child->m_directory ? "1" : "2"), child->m_name);
 			parent->m_childList->Add(&child->m_key, child);
 
 			if (child->m_directory) {
@@ -192,12 +190,12 @@ void StationUI::RecursiveSearch(NodeFile * parent) {
 	}
 }
 
-bool StationUI::Minimize(NodeFile * parent) {
+bool StationUI::Minimize(NodeFile *parent) {
 	int r = false;
 
 	if (parent->m_childList) {
 		for (int i = parent->m_childList->GetCount() - 1; i >= 0; i--) {
-			NodeFile * child = (NodeFile *)parent->m_childList->GetByIndex(i);
+			NodeFile *child = (NodeFile *) parent->m_childList->GetByIndex(i);
 
 			if (child->m_directory) {
 				r |= Minimize(child);
@@ -208,24 +206,20 @@ bool StationUI::Minimize(NodeFile * parent) {
 			} else {
 				switch (child->m_emulator) {
 					case Types::Chip8:
-						if (child->m_path.EndsWith("ch8") ||
-							child->m_path.EndsWith("c8x")) {
-								continue;
-							}
+						if (child->m_path.EndsWith("ch8") || child->m_path.EndsWith("c8x")) {
+							continue;
+						}
 						break;
 					case Types::GameGear:
 					case Types::MasterSystem:
-						if (child->m_path.EndsWith("sms") ||
-							child->m_path.EndsWith("sg")  ||
-							child->m_path.EndsWith("gg")) {
-								continue;
-							}
+						if (child->m_path.EndsWith("sms") || child->m_path.EndsWith("sg") || child->m_path.EndsWith("gg")) {
+							continue;
+						}
 						break;
 					case Types::Spectrum:
-						if (child->m_path.EndsWith("rom") ||
-							child->m_path.EndsWith("tap")) {
-								continue;
-							}
+						if (child->m_path.EndsWith("rom") || child->m_path.EndsWith("tap")) {
+							continue;
+						}
 						break;
 				}
 			}
@@ -246,11 +240,12 @@ void StationUI::Refresh() {
 	m_root->m_path = m_path;
 	m_root->m_emulator = Types::Undefined;
 	RecursiveSearch(m_root);
-	while (Minimize(m_root));
+	while (Minimize(m_root))
+		;
 
 	if (!m_root->m_childList) {
 		m_root->m_childList = new SortedList();
-		NodeFile * child = new NodeFile();
+		NodeFile *child = new NodeFile();
 		child->m_name = "No hay roms";
 		child->m_directory = false;
 		child->m_button = new MenuButton(this);
@@ -267,7 +262,7 @@ void StationUI::RefreshList() {
 		int y = 25;
 		m_actual->m_page = new Page();
 		for (int i = 0; i < m_actual->m_childList->GetCount(); i++) {
-			NodeFile * child = (NodeFile *)m_actual->m_childList->GetByIndex(i);
+			NodeFile *child = (NodeFile *) m_actual->m_childList->GetByIndex(i);
 			child->m_button->SetHeight(MENUBUTTONHEIGHT);
 			child->m_button->SetLocation(40, y);
 			y += MENUBUTTONHEIGHT;
@@ -284,8 +279,8 @@ void StationUI::RefreshList() {
 }
 
 void StationUI::OnTick(float deltaSeconds) {
-	static Control * lastFocused = nullptr;
-	Control * c = m_actual->m_page->GetFocused();
+	static Control *lastFocused = nullptr;
+	Control *c = m_actual->m_page->GetFocused();
 	if (lastFocused != c) {
 		lastFocused = c;
 		CheckArcade();
@@ -307,7 +302,7 @@ void StationUI::OnTick(float deltaSeconds) {
 
 	m_clock->SetLocation(GetWidth() - 80, 16);
 	m_clock->SetSize(m_clock->GetLabelWidth(), 45);
-	
+
 	m_title->SetLocation(GetWidth() >> 1, 0);
 	m_title->SetSize(GetWidth() >> 1, 69);
 	m_browser->SetLocation(GetWidth() >> 1, 69);
@@ -315,7 +310,7 @@ void StationUI::OnTick(float deltaSeconds) {
 	m_actual->m_page->SetWidth(m_browser->GetWidth());
 
 	for (int i = 0; i < m_actual->m_page->GetCount(); i++) {
-		Control * child = m_actual->m_page->Get(i);
+		Control *child = m_actual->m_page->Get(i);
 		child->SetWidth(m_browser->GetWidth() - 100);
 	}
 
@@ -331,7 +326,7 @@ void StationUI::OnTick(float deltaSeconds) {
 	}
 }
 
-void StationUI::SelectChild(NodeFile * node) {
+void StationUI::SelectChild(NodeFile *node) {
 	if (node->m_directory) {
 		m_actual = node;
 		RefreshList();
@@ -373,13 +368,13 @@ void StationUI::UpdateTitle() {
 }
 
 void StationUI::CheckArcade() {
-	MenuButton * c = (MenuButton *) m_actual->m_page->GetFocused();
+	MenuButton *c = (MenuButton *) m_actual->m_page->GetFocused();
 	if (c) {
 		c->CheckArcade();
 	}
 }
 
-void StationUI::SetArcade(Emulators::ArcadeContainer * arcade) {
+void StationUI::SetArcade(Emulators::ArcadeContainer *arcade) {
 	if (m_arcade == arcade) {
 		return;
 	}
@@ -431,7 +426,7 @@ void StationUI::OnClick(Control *sender) {
 	m_settingsUI->SetDock(DockStyle::Fill);
 	m_settingsUI->InitializeComponent();
 	AddWidget(m_settingsUI);
-	//Form::SetControlSelected(m_settingsUI);
+	// Form::SetControlSelected(m_settingsUI);
 }
 
 /********************************* FadePanel **********************************/
@@ -491,7 +486,7 @@ NodeFile::~NodeFile() {
 	// printf("%d) ~NodeFile:  %s\n", _emulator, _path.ToCharArray());
 	if (m_childList) {
 		for (int i = 0; i < m_childList->GetCount(); i++) {
-			NodeFile * object = (NodeFile *)m_childList->GetByIndex(i);
+			NodeFile *object = (NodeFile *) m_childList->GetByIndex(i);
 			delete object;
 		}
 

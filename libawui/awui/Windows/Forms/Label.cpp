@@ -6,10 +6,10 @@
 
 #include "Label.h"
 
-#include <awui/Math.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Drawing/Graphics.h>
 #include <awui/Drawing/Image.h>
+#include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/TextRenderer.h>
 
@@ -102,11 +102,11 @@ void Label::Draw(int x, int y, int width, int height) {
 		int correctPosY = posY + m_metrics.GetBearingY() - BORDER;
 
 		GL::DrawImageGL(m_image, correctPosX, correctPosY);
-//		DrawLines(posX, posY);
+		//		DrawLines(posX, posY);
 	}
 }
 
-void Label::OnPaint(GL* gl) {
+void Label::OnPaint(GL *gl) {
 	int scrolled = Math::Round(m_scrolled);
 	Draw(scrolled, 0, GetWidth(), GetHeight());
 

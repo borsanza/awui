@@ -2,22 +2,16 @@
 
 #include <awui/Windows/Forms/Control.h>
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			namespace Statistics {
-				class Spinner : public Control {
-					private:
-						int position;
+namespace awui::Windows::Forms::Statistics {
+	class Spinner : public Control {
+	  private:
+		int position;
 
-					public:
-						Spinner();
-						virtual ~Spinner();
+	  public:
+		Spinner();
+		virtual ~Spinner();
 
-						virtual void OnTick(float deltaSeconds);
-						virtual void OnPaint(OpenGL::GL * gl);
-				};
-			}
-		}
-	}
-}
+		virtual void OnTick(float deltaSeconds);
+		virtual void OnPaint(OpenGL::GL *gl);
+	};
+} // namespace awui::Windows::Forms::Statistics

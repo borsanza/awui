@@ -18,7 +18,7 @@ Rectangle::Rectangle() {
 	m_size = Size(0.0f, 0.0f);
 }
 
-Rectangle::Rectangle(const Point& location, const Size& size) {
+Rectangle::Rectangle(const Point &location, const Size &size) {
 	m_location = location;
 	m_size = size;
 }
@@ -63,11 +63,11 @@ Size Rectangle::GetSize() const {
 	return m_size;
 }
 
-void Rectangle::SetLocation(const Point& location) {
+void Rectangle::SetLocation(const Point &location) {
 	m_location = location;
 }
 
-void Rectangle::SetSize(const Size& size) {
+void Rectangle::SetSize(const Size &size) {
 	m_size = size;
 }
 
@@ -75,7 +75,7 @@ void Rectangle::SetSize(float width, float height) {
 	m_size = Size(width, height);
 }
 
-void Rectangle::Inflate(const Size& size) {
+void Rectangle::Inflate(const Size &size) {
 	Inflate(size.GetWidth(), size.GetHeight());
 }
 
@@ -84,7 +84,7 @@ void Rectangle::Inflate(float width, float height) {
 	SetHeight(GetHeight() + height);
 }
 
-void Rectangle::Offset(const Point& pos) {
+void Rectangle::Offset(const Point &pos) {
 	Offset(pos.GetX(), pos.GetY());
 }
 
@@ -93,7 +93,7 @@ void Rectangle::Offset(float x, float y) {
 	SetY(GetY() + y);
 }
 
-Rectangle & Rectangle::operator=(const Rectangle & other) {
+Rectangle &Rectangle::operator=(const Rectangle &other) {
 	m_size = other.m_size;
 	m_location = other.m_location;
 
@@ -101,24 +101,25 @@ Rectangle & Rectangle::operator=(const Rectangle & other) {
 }
 
 Rectangle Rectangle::FromLTRB(float left, float top, float right, float bottom) {
- 	return Rectangle(left, top, right - left + 1.0f, bottom - top + 1.0f);
+	return Rectangle(left, top, right - left + 1.0f, bottom - top + 1.0f);
 }
 
-Rectangle Rectangle::Intersect(const Rectangle& rectangle1, const Rectangle& rectangle2) {
-	float left   = rectangle1.GetLeft() > rectangle2.GetLeft()?  rectangle1.GetLeft() : rectangle2.GetLeft();
-	float top    = rectangle1.GetTop() > rectangle2.GetTop()? rectangle1.GetTop() : rectangle2.GetTop();
-	float right  = rectangle1.GetRight() < rectangle2.GetRight()? rectangle1.GetRight() : rectangle2.GetRight();
-	float bottom = rectangle1.GetBottom() < rectangle2.GetBottom()? rectangle1.GetBottom(): rectangle2.GetBottom();
+Rectangle Rectangle::Intersect(const Rectangle &rectangle1, const Rectangle &rectangle2) {
+	float left = rectangle1.GetLeft() > rectangle2.GetLeft() ? rectangle1.GetLeft() : rectangle2.GetLeft();
+	float top = rectangle1.GetTop() > rectangle2.GetTop() ? rectangle1.GetTop() : rectangle2.GetTop();
+	float right = rectangle1.GetRight() < rectangle2.GetRight() ? rectangle1.GetRight() : rectangle2.GetRight();
+	float bottom = rectangle1.GetBottom() < rectangle2.GetBottom() ? rectangle1.GetBottom() : rectangle2.GetBottom();
 
 	return Rectangle::FromLTRB(left, top, right, bottom);
 }
 
-void Rectangle::Intersect(const Rectangle& rectangle) {
+void Rectangle::Intersect(const Rectangle &rectangle) {
 	*this = Rectangle::Intersect(*this, rectangle);
 }
 
 awui::String Rectangle::ToString() const {
 	String value;
-	value = String("{X=") + Convert::ToString(m_location.GetX()) + ",Y=" + Convert::ToString(m_location.GetY()) + ",Width=" + Convert::ToString(m_size.GetWidth()) + ", Height=" + Convert::ToString(m_size.GetHeight()) + "}";
+	value = String("{X=") + Convert::ToString(m_location.GetX()) + ",Y=" + Convert::ToString(m_location.GetY()) + ",Width=" + Convert::ToString(m_size.GetWidth()) +
+			", Height=" + Convert::ToString(m_size.GetHeight()) + "}";
 	return value;
 }

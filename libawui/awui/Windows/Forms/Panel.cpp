@@ -26,7 +26,7 @@ const Size Panel::GetMinimumSize() const {
 
 	int count = GetCount();
 	for (int i = 0; i < count; i++) {
-		Control * control = Get(i);
+		Control *control = Get(i);
 		switch (control->GetDock()) {
 			case DockStyle::None:
 				break;

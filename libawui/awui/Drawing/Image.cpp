@@ -6,10 +6,10 @@
 
 #include "Image.h"
 
+#include <SDL_opengl.h>
 #include <awui/String.h>
 #include <cairo.h>
 #include <stdlib.h>
-#include <SDL_opengl.h>
 
 #define BTPP 4
 
@@ -94,7 +94,7 @@ void Image::Unload() {
 
 void Image::UnloadAll() {
 	for (int i = 0; i < Image::list.GetCount(); i++) {
-		Image * image = (Image *)Image::list.Get(i);
+		Image *image = (Image *) Image::list.Get(i);
 		image->Unload();
 	}
 }
@@ -112,7 +112,7 @@ GLuint Image::GetTexture() {
 
 void Image::SetPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 	int offset = ((y * m_width) + x) * BTPP;
-	m_image[offset    ] = b;
+	m_image[offset] = b;
 	m_image[offset + 1] = g;
 	m_image[offset + 2] = r;
 	m_image[offset + 3] = a;

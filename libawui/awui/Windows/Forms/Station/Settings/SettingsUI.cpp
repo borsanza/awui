@@ -7,9 +7,9 @@
 #include "SettingsUI.h"
 
 #include <awui/Console.h>
-#include <awui/String.h>
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
+#include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Station/Browser/Browser.h>
 #include <awui/Windows/Forms/Station/Browser/Page.h>
@@ -49,14 +49,14 @@ void SettingsUI::InitializeComponent() {
 	AddWidget(m_title);
 
 	// SetBackColor(Color::FromArgb(0, 255, 0));
-	Browser::Page * page = ProcessJson(j);
+	Browser::Page *page = ProcessJson(j);
 
 	m_browser = new Browser::Browser();
 	m_browser->SetDock(DockStyle::None);
 
 	AddWidget(m_browser);
 	Console::WriteLine("d) %s", page->GetChildFocused()->ToString().ToCharArray());
-	//m_browser->SetFocus();
+	// m_browser->SetFocus();
 	m_browser->SetPage(page);
 	Console::WriteLine("e) %s", page->GetChildFocused()->ToString().ToCharArray());
 	Console::WriteLine("f) %s", m_browser->GetChildFocused()->ToString().ToCharArray());
@@ -72,29 +72,28 @@ void SettingsUI::InitializeComponent() {
 //    list
 //    label
 
-Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
-	Browser::Page * page = nullptr;
+Browser::Page *SettingsUI::ProcessJson(const json &j, int depth) {
+	Browser::Page *page = nullptr;
 	bool added = false;
 	int posY = 25;
 	if (j.is_array()) {
 		page = new Browser::Page();
 		// page->SetBackColor(Color::FromArgb(255, 0, 0));
 
-		for (const auto& element : j) {
+		for (const auto &element : j) {
 			if (!element.contains("type")) {
 				continue;
 			}
 
-			TypeButton type = element["type"] == "group" ?   TypeButton::Group :
-							 (element["type"] == "boolean" ? TypeButton::Boolean :
-							 (element["type"] == "list" ?    TypeButton::List : TypeButton::Label));
+			TypeButton type = element["type"] == "group"
+								  ? TypeButton::Group
+								  : (element["type"] == "boolean" ? TypeButton::Boolean : (element["type"] == "list" ? TypeButton::List : TypeButton::Label));
 
 			switch (type) {
-				case TypeButton::Group:
-				{
-					ConfigButton * button = new ConfigButton(TypeButton::Group);
+				case TypeButton::Group: {
+					ConfigButton *button = new ConfigButton(TypeButton::Group);
 					if (element.contains("name")) {
-						//std::cout << std::string(depth * 2, ' ') << element["name"] << ":" << std::endl;
+						// std::cout << std::string(depth * 2, ' ') << element["name"] << ":" << std::endl;
 						std::string test = element["name"].get<std::string>();
 						button->SetText(test.c_str());
 						button->SetHeight(MENUBUTTONHEIGHT);
@@ -122,8 +121,7 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 							button->AddOnClickListener(this);
 						}
 					}
-				}
-					break;
+				} break;
 				case TypeButton::Boolean:
 					// std::cout << std::string(depth * 2, ' ');
 
@@ -149,7 +147,7 @@ Browser::Page * SettingsUI::ProcessJson(const json &j, int depth) {
 						// std::cout << element["defaultValue"] << std::endl;
 					}
 
-					for (const auto& option : element["options"]) {
+					for (const auto &option : element["options"]) {
 						// std::cout << std::string((depth + 1) * 2, ' ');
 						if (option.contains("code")) {
 							// std::cout << option["code"] << ": " ;
@@ -187,24 +185,24 @@ void SettingsUI::OnTick(float deltaSeconds) {
 	m_title->SetSize(GetWidth(), 69);
 	m_browser->SetLocation((this->GetWidth() / 2.0) + 42, 118);
 	m_browser->SetSize((this->GetWidth() / 2.0) - 66, this->GetHeight() - 260);
-	Page * page = m_browser->GetPage();
+	Page *page = m_browser->GetPage();
 	if (page) {
 		// Console::WriteLine("%d", m_browser->GetWidth());
 		page->SetWidth(m_browser->GetWidth());
 
 		for (int i = 0; i < page->GetCount(); i++) {
-			Control * child = page->Get(i);
+			Control *child = page->Get(i);
 			child->SetWidth(m_browser->GetWidth() - 80);
 		}
 	}
 }
 
-void SettingsUI::OnClick(Control* sender) {
+void SettingsUI::OnClick(Control *sender) {
 	if (sender->IsClass(Classes::ConfigButton)) {
-		ConfigButton * button = (ConfigButton *) sender;
+		ConfigButton *button = (ConfigButton *) sender;
 		switch (button->GetTypeButton()) {
 			case TypeButton::Group:
-				Page * page = button->GetSubPage();
+				Page *page = button->GetSubPage();
 				m_browser->SetPage(page);
 				page->SetWidth(m_browser->GetWidth());
 				break;

@@ -15,27 +15,27 @@ namespace awui::Windows::Forms {
 		namespace Browser {
 			class Browser;
 			class Page;
-		}
+		} // namespace Browser
 
 		namespace Settings {
 			class SettingsUI : public Control, Listeners::IButtonListener {
-				private:
-					Browser::Browser * m_browser;
-					Label * m_title;
+			  private:
+				Browser::Browser *m_browser;
+				Label *m_title;
 
-					Browser::Page * ProcessJson(const json& j, int depth = 0);
+				Browser::Page *ProcessJson(const json &j, int depth = 0);
 
-				public:
-					SettingsUI();
+			  public:
+				SettingsUI();
 
-					virtual bool IsClass(Classes objectClass) const override;
-					
-					void InitializeComponent();
+				virtual bool IsClass(Classes objectClass) const override;
 
-					virtual void OnTick(float deltaSeconds) override;
+				void InitializeComponent();
 
-					virtual void OnClick(Control* sender) override;
+				virtual void OnTick(float deltaSeconds) override;
+
+				virtual void OnClick(Control *sender) override;
 			};
-		}
-	}
-}
+		} // namespace Settings
+	}	  // namespace Station
+} // namespace awui::Windows::Forms

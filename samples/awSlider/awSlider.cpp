@@ -7,8 +7,8 @@
 
 using namespace awui::Windows::Forms;
 
-int main(int argc, char ** argv) {
-	FormSlider * form = new FormSlider();
+int main(int argc, char **argv) {
+	FormSlider *form = new FormSlider();
 
 	Application::Run(form);
 

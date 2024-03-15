@@ -41,22 +41,22 @@ bool SplitContainer::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::SplitContainer) || Control::IsClass(objectClass);
 }
 
-Panel * SplitContainer::GetPanel1() const {
+Panel *SplitContainer::GetPanel1() const {
 	return m_panel1;
 }
 
-Panel * SplitContainer::GetPanel2() const {
+Panel *SplitContainer::GetPanel2() const {
 	return m_panel2;
 }
 
-void SplitContainer::SetLocationW(Control * control, int pos) {
+void SplitContainer::SetLocationW(Control *control, int pos) {
 	if (m_orientation == Orientation::Vertical)
 		control->SetLocation(pos, 0);
 	else
 		control->SetLocation(0, pos);
 }
 
-void SplitContainer::SetSizeW(Control * control, int size, int substract) {
+void SplitContainer::SetSizeW(Control *control, int size, int substract) {
 	if (m_orientation == Orientation::Vertical) {
 		if (substract)
 			size = GetWidth() - size;
@@ -70,14 +70,14 @@ void SplitContainer::SetSizeW(Control * control, int size, int substract) {
 	}
 }
 
-int SplitContainer::GetSizeW(Control * control) const {
+int SplitContainer::GetSizeW(Control *control) const {
 	if (m_orientation == Orientation::Vertical)
 		return control->GetWidth();
 	else
 		return control->GetHeight();
 }
 
-int SplitContainer::GetMinimumSizeW(Control * control) const {
+int SplitContainer::GetMinimumSizeW(Control *control) const {
 	if (m_orientation == Orientation::Vertical)
 		return control->GetMinimumSize().GetWidth();
 	else
@@ -89,7 +89,7 @@ void SplitContainer::RecalculatePositions() {
 	int x2 = m_splitterWidth >> 1;
 	int x1 = m_splitterWidth - x2;
 
-	int size = (m_orientation == Orientation::Vertical)? GetWidth() : GetHeight();
+	int size = (m_orientation == Orientation::Vertical) ? GetWidth() : GetHeight();
 
 	int minSize = GetMinimumSizeW(m_panel1);
 	if (distance < (minSize + x1))

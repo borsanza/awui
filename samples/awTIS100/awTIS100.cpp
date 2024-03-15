@@ -10,7 +10,7 @@
 
 using namespace awui::Windows::Forms;
 
-int main(int argc, char ** argv) {
+int main(int argc, char **argv) {
 	FormTIS100 *form = new FormTIS100();
 
 	Application::Run(form);

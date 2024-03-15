@@ -6,8 +6,8 @@
 
 #include "ArrayList.h"
 
-#include <awui/String.h>
 #include <assert.h>
+#include <awui/String.h>
 #include <stdlib.h>
 
 using namespace awui::Collections;
@@ -16,7 +16,7 @@ ArrayList::ArrayList() {
 	m_class = Classes::ArrayList;
 	m_count = 0;
 	m_size = 8;
-	m_data = (Object **) malloc (m_size * sizeof(Object *));
+	m_data = (Object **) malloc(m_size * sizeof(Object *));
 }
 
 ArrayList::~ArrayList() {
@@ -31,10 +31,10 @@ awui::String ArrayList::ToString() const {
 	return "awui.Collections.ArrayList";
 }
 
-void ArrayList::Add(Object * item) {
+void ArrayList::Add(Object *item) {
 	if (m_count == m_size) {
 		m_size = m_size * 2;
-		m_data = (Object **) realloc (m_data, m_size * sizeof(Object *));
+		m_data = (Object **) realloc(m_data, m_size * sizeof(Object *));
 	}
 
 	m_data[m_count] = item;
@@ -44,10 +44,10 @@ void ArrayList::Add(Object * item) {
 void ArrayList::Clear() {
 	m_count = 0;
 	m_size = 8;
-	m_data = (Object **) realloc (m_data, m_size * sizeof(Object *));
+	m_data = (Object **) realloc(m_data, m_size * sizeof(Object *));
 }
 
-int ArrayList::IndexOf(Object * item) const {
+int ArrayList::IndexOf(Object *item) const {
 	for (int i = 0; i < m_count; i++)
 		if (m_data[i] == item)
 			return i;
@@ -55,7 +55,7 @@ int ArrayList::IndexOf(Object * item) const {
 	return -1;
 }
 
-awui::Object * ArrayList::Get(int index) const {
+awui::Object *ArrayList::Get(int index) const {
 	if ((index < 0) || (index >= m_count)) {
 		assert(0);
 		return nullptr;
@@ -64,7 +64,7 @@ awui::Object * ArrayList::Get(int index) const {
 	return m_data[index];
 }
 
-void ArrayList::Remove(Object * item) {
+void ArrayList::Remove(Object *item) {
 	int pos = IndexOf(item);
 
 	if (pos != -1)
@@ -80,12 +80,12 @@ void ArrayList::RemoveAt(int index) {
 
 		if ((m_size > 8) && ((m_size >> 1) > m_count)) {
 			m_size = m_size >> 1;
-			m_data = (Object **) realloc (m_data, m_size * sizeof(Object *));
+			m_data = (Object **) realloc(m_data, m_size * sizeof(Object *));
 		}
 	}
 }
 
-void ArrayList::SetChildIndex(Object * item, int newIndex) {
+void ArrayList::SetChildIndex(Object *item, int newIndex) {
 	// newIndex no puede ser mayor que el tamaño
 	if (newIndex >= m_count)
 		return;
@@ -104,7 +104,7 @@ void ArrayList::SetChildIndex(Object * item, int newIndex) {
 	m_data[newIndex] = item;
 }
 
-void ArrayList::Replace(Object * oldItem, Object * newItem) {
+void ArrayList::Replace(Object *oldItem, Object *newItem) {
 	if (oldItem && newItem) {
 		int index = IndexOf(oldItem);
 

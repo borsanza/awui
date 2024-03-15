@@ -10,10 +10,12 @@
 
 using namespace awui;
 
-String::String() : m_string("") {
+String::String()
+	: m_string("") {
 }
 
-String::String(const char * value) : m_string(value) {
+String::String(const char *value)
+	: m_string(value) {
 }
 
 String::String(const char value) {
@@ -24,51 +26,51 @@ int String::GetLength() const {
 	return m_string.length();
 }
 
-const char * String::ToCharArray() const {
+const char *String::ToCharArray() const {
 	return m_string.c_str();
 }
 
-int awui::String::Compare(const String& strA, const String& strB) {
+int awui::String::Compare(const String &strA, const String &strB) {
 	return strA.m_string.compare(strB.m_string);
 }
 
-int String::CompareTo(const String& strB) const {
+int String::CompareTo(const String &strB) const {
 	return m_string.compare(strB.m_string);
 }
 
-bool String::EndsWith(const String& value) const {
+bool String::EndsWith(const String &value) const {
 	return (IndexOf(value, GetLength() - value.GetLength()) != -1);
 }
 
-bool String::operator==(const String& value) const {
+bool String::operator==(const String &value) const {
 	return (CompareTo(value) == 0);
 }
 
-bool String::operator!=(const String& value) const {
+bool String::operator!=(const String &value) const {
 	return (CompareTo(value) != 0);
 }
 
-bool String::operator>(const String& value) const {
+bool String::operator>(const String &value) const {
 	return (CompareTo(value) > 0);
 }
 
-bool String::operator>=(const String& value) const {
+bool String::operator>=(const String &value) const {
 	return (CompareTo(value) >= 0);
 }
 
-bool String::operator<(const String& value) const {
+bool String::operator<(const String &value) const {
 	return (CompareTo(value) < 0);
 }
 
-bool String::operator<=(const String& value) const {
+bool String::operator<=(const String &value) const {
 	return (CompareTo(value) <= 0);
 }
 
-String String::operator+(const String& strB) const {
+String String::operator+(const String &strB) const {
 	return String((m_string + strB.m_string).c_str());
 }
 
-void String::operator+=(const String& strB) {
+void String::operator+=(const String &strB) {
 	*this = *this + strB;
 }
 
@@ -84,7 +86,7 @@ String String::ToUpper() const {
 	String str2;
 	str2.m_string.reserve(m_string.length());
 	std::transform(m_string.begin(), m_string.end(), std::back_inserter(str2.m_string), ::toupper);
-	
+
 	return str2;
 }
 
@@ -124,8 +126,8 @@ String String::ToString() const {
 	return String(m_string.c_str());
 }
 
-int String::IndexOf(const String& value, int startIndex) const {
-    size_t pos = m_string.find(value.m_string, startIndex);
+int String::IndexOf(const String &value, int startIndex) const {
+	size_t pos = m_string.find(value.m_string, startIndex);
 	return (pos != std::string::npos) ? pos : -1;
 }
 

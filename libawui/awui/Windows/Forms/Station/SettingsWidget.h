@@ -2,30 +2,17 @@
 
 #include <awui/Windows/Forms/Button.h>
 
-using namespace awui;
-using namespace awui::Windows::Forms;
+namespace awui::Windows::Forms::Station {
+	class SettingsWidget : public Button {
+	  private:
+		Bitmap *m_bitmap;
 
-namespace awui {
-	namespace Windows {
-		namespace Forms {
-			class Bitmap;
-		}
-	}
-		
-	namespace OpenGL {
-		class GL;
-	}
-}
-
-class SettingsWidget : public Button {
-	private:
-		Bitmap * m_bitmap;
-
-	public:
+	  public:
 		SettingsWidget();
 		virtual ~SettingsWidget();
 
-		virtual void OnPaint(OpenGL::GL* gl);
+		virtual void OnPaint(OpenGL::GL *gl);
 
 		String ToString() const override;
-};
+	};
+} // namespace awui::Windows::Forms::Station

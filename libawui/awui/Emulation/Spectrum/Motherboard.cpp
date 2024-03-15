@@ -7,7 +7,6 @@
 #include "Motherboard.h"
 
 #include <assert.h>
-#include <string.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/DateTime.h>
@@ -16,6 +15,7 @@
 #include <awui/Emulation/Processors/Z80/CPU.h>
 #include <awui/Emulation/Spectrum/Sound.h>
 #include <awui/Emulation/Spectrum/ULA.h>
+#include <string.h>
 
 using namespace awui;
 using namespace awui::Emulation;
@@ -35,12 +35,20 @@ Content Memory:
 	14342	No delay         <- 14342 % 8 = 6;
 */
 
-static int content_states[] = { 5, 4, 3, 2, 1, 0, 0, 6 };
+static int content_states[] = {5, 4, 3, 2, 1, 0, 0, 6};
 
-void WriteMemoryCB(uint16_t pos, uint8_t value, void * data) { ((Motherboard *) data)->WriteMemory(pos, value); }
-uint8_t ReadMemoryCB(uint16_t pos, void * data) { return ((Motherboard *) data)->ReadMemory(pos); }
-void WritePortCB(uint8_t port, uint8_t value, void * data) { ((Motherboard *) data)->WritePort(port, value); }
-uint8_t ReadPortCB(uint8_t port, void * data) { return ((Motherboard *) data)->ReadPort(port); }
+void WriteMemoryCB(uint16_t pos, uint8_t value, void *data) {
+	((Motherboard *) data)->WriteMemory(pos, value);
+}
+uint8_t ReadMemoryCB(uint16_t pos, void *data) {
+	return ((Motherboard *) data)->ReadMemory(pos);
+}
+void WritePortCB(uint8_t port, uint8_t value, void *data) {
+	((Motherboard *) data)->WritePort(port, value);
+}
+uint8_t ReadPortCB(uint8_t port, void *data) {
+	return ((Motherboard *) data)->ReadPort(port);
+}
 
 Motherboard::Motherboard() {
 	this->_percFrame = 0;
@@ -179,8 +187,10 @@ void Motherboard::OnTick() {
 		this->ProcessCassette();
 
 		while (this->_cyclesULA > 0) {
-			if (this->_ula->OnTick(0)) this->CheckInterrupts();
-			if (this->_ula->OnTick(0)) this->CheckInterrupts();
+			if (this->_ula->OnTick(0))
+				this->CheckInterrupts();
+			if (this->_ula->OnTick(0))
+				this->CheckInterrupts();
 			this->_cyclesULA--;
 		}
 
@@ -272,13 +282,13 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 		uint8_t row = this->_z80->GetAddressBus().H;
 
 		uint8_t value = 0xFF;
-/*
-		static uint8_t debug = 0;
-		if (debug != row) {
-			debug = row;
-			printf("ReadPort: %.2X -> %.2X\n", port, row);
-		}
-*/
+		/*
+				static uint8_t debug = 0;
+				if (debug != row) {
+					debug = row;
+					printf("ReadPort: %.2X -> %.2X\n", port, row);
+				}
+		*/
 		for (int i = 0; i <= 7; i++) {
 			if ((row & 0x01) == 0)
 				value &= this->d._keys[i];
@@ -309,14 +319,14 @@ int Motherboard::GetSaveSize() {
 	return size;
 }
 
-void Motherboard::LoadState(uint8_t * data) {
-	memcpy (&this->d, data, sizeof(Motherboard::saveData));
+void Motherboard::LoadState(uint8_t *data) {
+	memcpy(&this->d, data, sizeof(Motherboard::saveData));
 	this->_z80->LoadState(&data[sizeof(Motherboard::saveData)]);
 	this->_ula->LoadState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
 }
 
-void Motherboard::SaveState(uint8_t * data) {
-	memcpy (data, &this->d, sizeof(Motherboard::saveData));
+void Motherboard::SaveState(uint8_t *data) {
+	memcpy(data, &this->d, sizeof(Motherboard::saveData));
 	this->_z80->SaveState(&data[sizeof(Motherboard::saveData)]);
 	this->_ula->SaveState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
 }
@@ -341,12 +351,12 @@ void Motherboard::OnPadEvent(uint8_t status) {
 	this->d._kempston = status;
 }
 
-void Motherboard::SetWriteCassetteCB(void (* fun)(int32_t, void *), void * data) {
+void Motherboard::SetWriteCassetteCB(void (*fun)(int32_t, void *), void *data) {
 	this->_writeCassetteCB = fun;
 	this->_writeCassetteDataCB = data;
 }
 
-void Motherboard::SetReadCassetteCB(int32_t (* fun)(void *), void * data) {
+void Motherboard::SetReadCassetteCB(int32_t (*fun)(void *), void *data) {
 	this->_readCassetteCB = fun;
 	this->_readCassetteDataCB = data;
 }

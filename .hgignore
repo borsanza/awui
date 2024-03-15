@@ -25,6 +25,7 @@ syntax: glob
 
 # Visual Studio code browsing database files
 *.VC.db
+.vscode/launch.json
 
 # Visual Studio ipch files
 ipch/

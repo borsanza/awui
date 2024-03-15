@@ -7,7 +7,7 @@
 
 using namespace awui::Windows::Forms;
 
-int main(int argc, char ** argv) {
+int main(int argc, char **argv) {
 	Form1 *form = new Form1();
 
 	Application::Run(form);

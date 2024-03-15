@@ -15,7 +15,7 @@ using namespace awui::Emulation::Chip8;
 Screen::Screen(uint16_t width, uint16_t height) {
 	this->_width = width;
 	this->_height = height;
-	this->_data = (uint32_t *) malloc (sizeof(uint32_t *) * width * height);
+	this->_data = (uint32_t *) malloc(sizeof(uint32_t *) * width * height);
 	this->Clear();
 }
 
@@ -53,7 +53,6 @@ void Screen::SetPixel(uint16_t x, uint16_t y, uint32_t value) {
 		return;
 
 	uint16_t offset = (y * this->_width) + x;
-
 
 	uint8_t a = (value >> 24) & 0xFF;
 	if (a == 255) {

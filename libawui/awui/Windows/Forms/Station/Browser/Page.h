@@ -4,8 +4,8 @@
 
 namespace awui::Windows::Forms::Station::Browser {
 	class Page : public Control {
-		public:
-			Page();
-			virtual bool IsClass(Classes objectClass) const override;
+	  public:
+		Page();
+		virtual bool IsClass(Classes objectClass) const override;
 	};
-}
+} // namespace awui::Windows::Forms::Station::Browser

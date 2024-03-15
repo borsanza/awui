@@ -6,16 +6,15 @@
 
 #include "ULA.h"
 
+#include <assert.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
-#include <assert.h>
 #include <string.h>
 
 using namespace awui::Emulation::Spectrum;
 
 /*
 16384 Ciclos - Borde superior
-
 
 *** Ciclos ***
  24:  48 pixeles borde izquierdo
@@ -31,11 +30,7 @@ using namespace awui::Emulation::Spectrum;
 ------------
 288 Lineas
 
-
-
 349440 Ciclos = 312 lineas * 224 ciclos * 50 frames
-
-
 
  60 lineas
 192 lineas
@@ -43,13 +38,9 @@ using namespace awui::Emulation::Spectrum;
 ----------
 312 lineas
 
-
-resolucion 352x288
+La resolucion real es de 352x288
 352 = 48 + 256 + 48
 288 = 48 + 192 + 48
-
-
-
 
 Por ahi leo que un televisor tiene 720x540 de resolucion
 Tienen en cuenta que un pixel es 2x2
@@ -100,7 +91,7 @@ void ULA::Reset() {
 48+256+48
 */
 
-void ULA::CalcNextPixel(uint16_t * col, uint16_t * line, bool * hsync, bool * vsync) {
+void ULA::CalcNextPixel(uint16_t *col, uint16_t *line, bool *hsync, bool *vsync) {
 	*hsync = false;
 	*vsync = false;
 
@@ -150,21 +141,21 @@ bool ULA::OnTick(uint32_t counter) {
 
 		uint8_t color;
 		if (active)
-			color = ((reg & 0x40) >> 3) |  (reg & 0x07);
+			color = ((reg & 0x40) >> 3) | (reg & 0x07);
 		else
 			color = (reg & 0x78) >> 3;
 
 		this->d._data[pos] = color;
 	} else {
-/*
-		Es mucho mas rapido asignarlo simplemente
-		uint16_t vsync_begin = SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT;
-		uint16_t vsync_end = vsync_begin + SPECTRUM_VIDEO_WIDTH_SYNC;
-		uint16_t hsync_begin = SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM;
-		uint16_t hsync_end = hsync_begin + SPECTRUM_VIDEO_HEIGHT_SYNC;
-		bool border = !(((col >= vsync_begin) && (col < vsync_end)) || ((line >= hsync_begin) && (line < hsync_end)));
-		if (border)
-*/
+		/*
+				Es mucho mas rapido asignarlo simplemente
+				uint16_t vsync_begin = SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT;
+				uint16_t vsync_end = vsync_begin + SPECTRUM_VIDEO_WIDTH_SYNC;
+				uint16_t hsync_begin = SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM;
+				uint16_t hsync_end = hsync_begin + SPECTRUM_VIDEO_HEIGHT_SYNC;
+				bool border = !(((col >= vsync_begin) && (col < vsync_end)) || ((line >= hsync_begin) && (line < hsync_end)));
+				if (border)
+		*/
 		this->d._data[pos] = this->d._lastbackcolor;
 	}
 
@@ -175,11 +166,11 @@ int ULA::GetSaveSize() {
 	return sizeof(ULA::saveData);
 }
 
-void ULA::LoadState(uint8_t * data) {
+void ULA::LoadState(uint8_t *data) {
 	memcpy(&this->d, data, sizeof(ULA::saveData));
 }
 
-void ULA::SaveState(uint8_t * data) {
+void ULA::SaveState(uint8_t *data) {
 	memcpy(data, &this->d, sizeof(ULA::saveData));
 }
 

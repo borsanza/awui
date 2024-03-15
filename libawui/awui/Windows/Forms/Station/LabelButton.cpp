@@ -6,8 +6,8 @@
 
 #include "LabelButton.h"
 
-#include <awui/Windows/Forms/Form.h>
 #include <awui/Math.h>
+#include <awui/Windows/Forms/Form.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Station;
@@ -19,16 +19,16 @@ LabelButton::LabelButton() {
 	SetTextAlign(ContentAlignment::MiddleLeft);
 }
 
-void LabelButton::OnMouseUp(MouseEventArgs * e) {
+void LabelButton::OnMouseUp(MouseEventArgs *e) {
 	GetParent()->OnMouseUp(e);
 }
 
-void LabelButton::OnMouseDown(MouseEventArgs * e) {
+void LabelButton::OnMouseDown(MouseEventArgs *e) {
 	GetParent()->OnMouseDown(e);
 }
 
 void LabelButton::OnTick(float deltaSeconds) {
-	Form * form = GetForm();
+	Form *form = GetForm();
 	if (!form) {
 		return;
 	}

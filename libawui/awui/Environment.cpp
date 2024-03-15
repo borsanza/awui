@@ -9,9 +9,9 @@
 using namespace awui;
 
 #ifdef __unix
-	#ifndef __unix__
-	#define __unix__
-	#endif
+#ifndef __unix__
+#define __unix__
+#endif
 #endif
 
 String Environment::GetNewLine() {

@@ -22,7 +22,7 @@ Font::Font(const String font, float size, int style) {
 }
 
 bool Font::IsClass(Classes objectClass) const {
-    return (objectClass == Classes::Font) || Object::IsClass(objectClass);
+	return (objectClass == Classes::Font) || Object::IsClass(objectClass);
 }
 
 bool Font::GetBold() {
@@ -55,7 +55,7 @@ awui::String Font::ToString() const {
 	return value;
 }
 
-Font & Font::operator= (const Font & other) {
+Font &Font::operator=(const Font &other) {
 	m_font = other.m_font;
 	m_size = other.m_size;
 	m_style = other.m_style;

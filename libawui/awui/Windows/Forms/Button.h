@@ -1,10 +1,8 @@
 #pragma once
 
-#include <awui/Windows/Forms/Control.h>
 #include <awui/Windows/Forms/Label.h>
 
 #include <functional>
-#include <vector>
 
 namespace awui::Windows::Forms {
 	namespace Listeners {
@@ -30,17 +28,17 @@ namespace awui::Windows::Forms {
 		void SetText(const String str);
 
 		virtual void OnMouseLeave();
-		virtual void OnMouseDown(MouseEventArgs * e);
-		virtual void OnMouseMove(MouseEventArgs * e);
-		virtual void OnMouseUp(MouseEventArgs * e);
+		virtual void OnMouseDown(MouseEventArgs *e);
+		virtual void OnMouseMove(MouseEventArgs *e);
+		virtual void OnMouseUp(MouseEventArgs *e);
 		virtual bool OnKeyPress(Keys::Enum key);
-		virtual void OnPaint(OpenGL::GL * gl);
+		virtual void OnPaint(OpenGL::GL *gl);
 		virtual void SetForeColor(const Drawing::Color color);
 		virtual void SetFont(const Drawing::Font font);
 		int GetLabelWidth() const;
 
-		void AddOnClickListener(Listeners::IButtonListener * listener);
-		void RemoveOnClickListener(Listeners::IButtonListener * listener);
+		void AddOnClickListener(Listeners::IButtonListener *listener);
+		void RemoveOnClickListener(Listeners::IButtonListener *listener);
 		void RemoveAllListeners();
 	};
 } // namespace awui::Windows::Forms

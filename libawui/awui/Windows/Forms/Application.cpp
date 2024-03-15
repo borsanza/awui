@@ -34,7 +34,7 @@ void Application::Quit() {
 	Application::quit = 1;
 }
 
-void Application::Run(Form * form = NULL) {
+void Application::Run(Form *form = NULL) {
 	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
 		SDL_Log("[ERROR] SDL_Init failed: %s", SDL_GetError());
 		return;
@@ -53,7 +53,7 @@ void Application::Run(Form * form = NULL) {
 
 	atexit(SDL_Quit);
 
-	Stats * stats = Stats::Instance();
+	Stats *stats = Stats::Instance();
 
 	Stopwatch stopwatch;
 
@@ -96,7 +96,7 @@ void Application::ProcessEvents() {
 		bool ret = false;
 		// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
 		for (int i = 0; i < Form::m_formsList->GetCount(); i++) {
-			Form * formW = (Form *) Form::m_formsList->Get(i);
+			Form *formW = (Form *) Form::m_formsList->Get(i);
 			switch (event.type) {
 				case SDL_JOYDEVICEADDED:
 				case SDL_JOYDEVICEREMOVED:
@@ -109,7 +109,7 @@ void Application::ProcessEvents() {
 					break;
 				case SDL_CONTROLLERAXISMOTION: {
 					// Console::WriteLine(String("SDL_CONTROLLERAXISMOTION [") + Convert::ToString((int)event.caxis.axis) + " - " + Convert::ToString((int)event.caxis.value) + "]");
-					Joystick::Controller * controller = Joystick::Controller::GetByWhich(event.cbutton.which);
+					Joystick::Controller *controller = Joystick::Controller::GetByWhich(event.cbutton.which);
 					if (controller) {
 						controller->OnAxisMotion(event.caxis.axis, event.caxis.value);
 						formW->OnJoystickAxisMotionPre(controller->GetOrder(), controller->GetAxisX(), controller->GetAxisY());
@@ -118,7 +118,7 @@ void Application::ProcessEvents() {
 					break;
 				}
 				case SDL_CONTROLLERBUTTONDOWN: {
-					Joystick::Controller * controller = Joystick::Controller::GetByWhich(event.cbutton.which);
+					Joystick::Controller *controller = Joystick::Controller::GetByWhich(event.cbutton.which);
 					if (controller) {
 						controller->OnButtonDown(2 << event.cbutton.button);
 						formW->OnJoystickButtonDownPre(controller->GetOrder(), 2 << event.cbutton.button, controller->GetButtons(), controller->GetPrevButtons());
@@ -127,7 +127,7 @@ void Application::ProcessEvents() {
 					break;
 				}
 				case SDL_CONTROLLERBUTTONUP: {
-					Joystick::Controller * controller = Joystick::Controller::GetByWhich(event.cbutton.which);
+					Joystick::Controller *controller = Joystick::Controller::GetByWhich(event.cbutton.which);
 					if (controller) {
 						controller->OnButtonUp(2 << event.cbutton.button);
 						formW->OnJoystickButtonUpPre(controller->GetOrder(), 2 << event.cbutton.button, controller->GetButtons(), controller->GetPrevButtons());
@@ -176,7 +176,7 @@ void Application::ProcessEvents() {
 
 		if (windowID != 0) {
 			for (int i = 0; i < Form::m_formsList->GetCount(); i++) {
-				Form * formW = (Form *) Form::m_formsList->Get(i);
+				Form *formW = (Form *) Form::m_formsList->Get(i);
 				if (windowID == formW->GetWindowID()) {
 					formW->ProcessEvents(&event);
 				}

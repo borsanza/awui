@@ -12,10 +12,10 @@
 #include <awui/Emulation/MasterSystem/SoundSDL.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/OpenGL/GL.h>
-#include <awui/Windows/Forms/JoystickAxisMotionEventArgs.h>
-#include <awui/Windows/Forms/JoystickButtons.h>
-#include <awui/Windows/Forms/JoystickButtonEventArgs.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
+#include <awui/Windows/Forms/JoystickAxisMotionEventArgs.h>
+#include <awui/Windows/Forms/JoystickButtonEventArgs.h>
+#include <awui/Windows/Forms/JoystickButtons.h>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
@@ -45,7 +45,7 @@ MasterSystem::MasterSystem() {
 	m_debugger = NULL;
 
 	for (int i = 0; i < TOTALSAVED; i++)
-		m_savedData[i] = (uint8_t *) calloc (Motherboard::GetSaveSize(), sizeof(uint8_t));
+		m_savedData[i] = (uint8_t *) calloc(Motherboard::GetSaveSize(), sizeof(uint8_t));
 }
 
 MasterSystem::~MasterSystem() {
@@ -221,21 +221,21 @@ void MasterSystem::RunOpcode() {
 	m_cpu->RunOpcode();
 }
 
-Motherboard * MasterSystem::GetCPU() {
+Motherboard *MasterSystem::GetCPU() {
 	return m_cpu;
 }
 
-void MasterSystem::OnPaint(GL* gl) {
+void MasterSystem::OnPaint(GL *gl) {
 	uint8_t c, r, g, b;
-	uint8_t color[4] {0, 85, 170, 255};
-	VDP * screen = m_cpu->GetVDP();
+	uint8_t color[4]{0, 85, 170, 255};
+	VDP *screen = m_cpu->GetVDP();
 
-//	¿Lo rellenamos con el registro 7?
-//	c = screen->GetBackColor();
-//	r = color[c & 0x3];
-//	g = color[(c >> 2) & 0x3];
-//	b = color[(c >> 4) & 0x3];
-//	SetBackColor(Color::FromArgb(255, r, g, b));
+	//	¿Lo rellenamos con el registro 7?
+	//	c = screen->GetBackColor();
+	//	r = color[c & 0x3];
+	//	g = color[(c >> 2) & 0x3];
+	//	b = color[(c >> 4) & 0x3];
+	//	SetBackColor(Color::FromArgb(255, r, g, b));
 
 	int width = screen->GetVisualWidth();
 	int height = screen->GetVisualHeight();
@@ -336,12 +336,11 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			}
 			break;
 		case Keys::Key_B: {
-			VDP * screen = m_cpu->GetVDP();
+			VDP *screen = m_cpu->GetVDP();
 			screen->SetShowBorder(!screen->GetShowBorder());
 			screen->Clear();
 			ret = true;
-			}
-			break;
+		} break;
 		case Keys::Key_Q:
 			TimeReverse();
 			RefreshPads();
@@ -454,20 +453,20 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 	return ret;
 }
 
-bool MasterSystem::RefreshButtons(JoystickButtonEventArgs* e) {
+bool MasterSystem::RefreshButtons(JoystickButtonEventArgs *e) {
 	bool ret = false;
 
 	uint32_t buttons = e->GetButtons();
 	// printf("Buttons: %x\n", buttons);
-	uint8_t masterButtons = ((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_UP)?    0x01 : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_DOWN)?  0x02 : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_RIGHT)? 0x08 : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_LEFT)?  0x04 : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_Y)?          (m_invertButtons ? 0x20 : 0x10) : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_A)?          (m_invertButtons ? 0x20 : 0x10) : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_B)?          (m_invertButtons ? 0x10 : 0x20) : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_X)?          (m_invertButtons ? 0x10 : 0x20) : 0) |
-							((buttons & JoystickButtons::JOYSTICK_BUTTON_START)?      0x40 : 0);
+	uint8_t masterButtons = ((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_UP) ? 0x01 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_DOWN) ? 0x02 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_RIGHT) ? 0x08 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_DPAD_LEFT) ? 0x04 : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_Y) ? (m_invertButtons ? 0x20 : 0x10) : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_A) ? (m_invertButtons ? 0x20 : 0x10) : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_B) ? (m_invertButtons ? 0x10 : 0x20) : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_X) ? (m_invertButtons ? 0x10 : 0x20) : 0) |
+							((buttons & JoystickButtons::JOYSTICK_BUTTON_START) ? 0x40 : 0);
 
 	switch (e->GetWhich()) {
 		case 0:
@@ -482,13 +481,13 @@ bool MasterSystem::RefreshButtons(JoystickButtonEventArgs* e) {
 	}
 
 	if (ret) {
-			RefreshPads();
+		RefreshPads();
 	}
 
 	return ret;
 }
 
-bool MasterSystem::OnJoystickButtonDown(JoystickButtonEventArgs* e) {
+bool MasterSystem::OnJoystickButtonDown(JoystickButtonEventArgs *e) {
 	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_LEFTSHOULDER) {
 		TimeReverse();
 		return true;
@@ -512,7 +511,7 @@ bool MasterSystem::OnJoystickButtonDown(JoystickButtonEventArgs* e) {
 	return RefreshButtons(e);
 }
 
-bool MasterSystem::OnJoystickButtonUp(JoystickButtonEventArgs* e) {
+bool MasterSystem::OnJoystickButtonUp(JoystickButtonEventArgs *e) {
 	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_START) {
 		Pause(false);
 		return true;
@@ -521,13 +520,13 @@ bool MasterSystem::OnJoystickButtonUp(JoystickButtonEventArgs* e) {
 	return RefreshButtons(e);
 }
 
-bool MasterSystem::OnJoystickAxisMotion(JoystickAxisMotionEventArgs* e) {
+bool MasterSystem::OnJoystickAxisMotion(JoystickAxisMotionEventArgs *e) {
 	bool ret = false;
 
-	uint8_t masterButtons = ((e->GetAxisY() < -DEADZONE)?    0x01 : 0) |
-							((e->GetAxisY() >  DEADZONE)?    0x02 : 0) |
-							((e->GetAxisX() < -DEADZONE)?    0x04 : 0) |
-							((e->GetAxisX() >  DEADZONE)?    0x08 : 0);
+	uint8_t masterButtons = ((e->GetAxisY() < -DEADZONE) ? 0x01 : 0) |
+							((e->GetAxisY() > DEADZONE) ? 0x02 : 0) |
+							((e->GetAxisX() < -DEADZONE) ? 0x04 : 0) |
+							((e->GetAxisX() > DEADZONE) ? 0x08 : 0);
 
 	switch (e->GetWhich()) {
 		case 0:
@@ -542,7 +541,7 @@ bool MasterSystem::OnJoystickAxisMotion(JoystickAxisMotionEventArgs* e) {
 	}
 
 	if (ret) {
-			RefreshPads();
+		RefreshPads();
 	}
 
 	return ret;

@@ -13,29 +13,25 @@
 
 #include <awui/Object.h>
 
-namespace awui {
-	namespace Emulation {
-		namespace Spectrum {
-			class Motherboard;
+namespace awui::Emulation::Spectrum {
+	class Motherboard;
 
-			class Sound : public Object {
-				private:
-					Motherboard * _cpu;
+	class Sound : public Object {
+	  private:
+		Motherboard *_cpu;
 
-					int GetPosBuffer(Motherboard * cpu);
+		int GetPosBuffer(Motherboard *cpu);
 
-				public:
-					int16_t _buffer[SOUNDBUFFER];
+	  public:
+		int16_t _buffer[SOUNDBUFFER];
 
-					Sound();
+		Sound();
 
-					inline void SetCPU(Motherboard * cpu) { this->_cpu = cpu; }
-					inline Motherboard * GetCPU() { return this->_cpu; }
+		inline void SetCPU(Motherboard *cpu) { this->_cpu = cpu; }
+		inline Motherboard *GetCPU() { return this->_cpu; }
 
-					void WriteByte(Motherboard * cpu, int16_t value);
+		void WriteByte(Motherboard *cpu, int16_t value);
 
-					void WriteSound(Motherboard * cpu, int sound);
-			};
-		}
-	}
-}
+		void WriteSound(Motherboard *cpu, int sound);
+	};
+} // namespace awui::Emulation::Spectrum

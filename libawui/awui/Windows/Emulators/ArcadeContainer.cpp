@@ -23,7 +23,7 @@ bool ArcadeContainer::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::ArcadeContainer) || Button::IsClass(objectClass);
 }
 
-void ArcadeContainer::SetStationUI(StationUI * station) {
+void ArcadeContainer::SetStationUI(StationUI *station) {
 	m_station = station;
 }
 

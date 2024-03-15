@@ -9,7 +9,7 @@
 using namespace awui::Windows::Forms::Station::Browser;
 
 Page::Page() {
-    m_class = Classes::Page;
+	m_class = Classes::Page;
 }
 
 bool Page::IsClass(Classes objectClass) const {

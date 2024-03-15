@@ -3,11 +3,11 @@
 
 #include "test2.h"
 
+#include <awui/Console.h>
 #include <awui/DateTime.h>
 #include <awui/Drawing/Color.h>
 #include <awui/String.h>
 #include <awui/TimeSpan.h>
-#include <awui/Console.h>
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/Keyboard.h>
 #include <awui/Windows/Forms/ListBox.h>
@@ -28,12 +28,12 @@ void Test2::InitializeComponent() {
 	SetDock(DockStyle::Left);
 	SetSize(480, 400);
 
-	Keyboard * keyboard = new Keyboard();
+	Keyboard *keyboard = new Keyboard();
 	keyboard->SetDock(DockStyle::Top);
 	keyboard->SetSize(480, 480);
 	AddWidget(keyboard);
 
-	Keyboard * keyboard2 = new Keyboard();
+	Keyboard *keyboard2 = new Keyboard();
 	keyboard2->SetDock(DockStyle::Top);
 	keyboard2->SetSize(480, 480);
 	AddWidget(keyboard2);
@@ -60,7 +60,7 @@ void Test2::CheckMame() {
 void Test2::CheckGames() {
 	static int lines = 0;
 	static awui::TimeSpan lastTime;
-	Statistics::Stats * stats = Statistics::Stats::Instance();
+	Statistics::Stats *stats = Statistics::Stats::Instance();
 
 	awui::TimeSpan time = stats->GetIdle();
 	awui::DateTime begin = awui::DateTime::GetNow();

@@ -1,38 +1,34 @@
 #pragma once
 
-#include <stdint.h>
 #include <SDL.h>
+#include <stdint.h>
 
 #include <awui/Collections/ArrayList.h>
 
-namespace awui {
-	namespace Emulation {
-		namespace Spectrum {
-			class Sound;
+namespace awui::Emulation::Spectrum {
+	class Sound;
 
-			class SoundSDL {
-				private:
-					static SoundSDL* _instance;
-					int _frame;
-					double _initTimeSound;
-					SDL_AudioSpec _wanted;
+	class SoundSDL {
+	  private:
+		static SoundSDL *_instance;
+		int _frame;
+		double _initTimeSound;
+		SDL_AudioSpec _wanted;
 
-					awui::Collections::ArrayList _arraySound;
-					Sound * _playing;
-					int _tone;
+		awui::Collections::ArrayList _arraySound;
+		Sound *_playing;
+		int _tone;
 
-				public:
-					SoundSDL();
+	  public:
+		SoundSDL();
 
-					inline double GetInitTimeSound() { return this->_initTimeSound; }
+		inline double GetInitTimeSound() { return this->_initTimeSound; }
 
-					static SoundSDL* Instance();
-					void FillAudio(Uint8 *stream, int len);
-					void FillAudioSDL(Sound * sound, Uint8 *stream, int len);
-					void AddSound(Sound * sound);
+		static SoundSDL *Instance();
+		void FillAudio(Uint8 *stream, int len);
+		void FillAudioSDL(Sound *sound, Uint8 *stream, int len);
+		void AddSound(Sound *sound);
 
-					inline void SetPlayingSound(Sound * sound) { this->_playing = sound; }
-			};
-		}
-	}
-}
+		inline void SetPlayingSound(Sound *sound) { this->_playing = sound; }
+	};
+} // namespace awui::Emulation::Spectrum

@@ -31,8 +31,8 @@ awui::String SortedList::ToString() const {
 	return "awui.Collections.SortedList";
 }
 
-void SortedList::Add(Object * key, Object * value) {
-	SortedListItem * itemList = (SortedListItem *) malloc(sizeof (struct SortedListItem));
+void SortedList::Add(Object *key, Object *value) {
+	SortedListItem *itemList = (SortedListItem *) malloc(sizeof(struct SortedListItem));
 	itemList->key = key;
 	itemList->value = value;
 	itemList->next = NULL;
@@ -52,7 +52,7 @@ void SortedList::Add(Object * key, Object * value) {
 		return;
 	}
 
-	SortedListItem * itemListAux = m_first;
+	SortedListItem *itemListAux = m_first;
 	while (itemListAux->next != NULL) {
 		if (key->ToString() < itemListAux->key->ToString())
 			break;
@@ -68,7 +68,8 @@ void SortedList::Add(Object * key, Object * value) {
 	itemList->next = itemListAux->next;
 	itemListAux->next = itemList;
 
-	while (m_last->next) m_last = m_last->next;
+	while (m_last->next)
+		m_last = m_last->next;
 }
 
 int SortedList::GetCount() {
@@ -80,10 +81,10 @@ void SortedList::Clear() {
 		RemoveAt(0);
 }
 
-awui::Object * SortedList::GetKey(int index) {
+awui::Object *SortedList::GetKey(int index) {
 	int pos = 0;
 
-	SortedListItem * itemListAux = m_first;
+	SortedListItem *itemListAux = m_first;
 
 	while (itemListAux != NULL) {
 		if (pos == index)
@@ -96,10 +97,10 @@ awui::Object * SortedList::GetKey(int index) {
 	return NULL;
 }
 
-awui::Object * SortedList::GetByIndex(int index) {
+awui::Object *SortedList::GetByIndex(int index) {
 	int pos = 0;
 
-	SortedListItem * itemListAux = m_first;
+	SortedListItem *itemListAux = m_first;
 
 	while (itemListAux != NULL) {
 		if (pos == index)
@@ -114,8 +115,8 @@ awui::Object * SortedList::GetByIndex(int index) {
 
 void SortedList::RemoveAt(int index) {
 	int pos = 0;
-	SortedListItem * itemListAux = m_first;
-	SortedListItem * last = NULL;
+	SortedListItem *itemListAux = m_first;
+	SortedListItem *last = NULL;
 
 	while (itemListAux != NULL) {
 		if (pos == index) {

@@ -11,51 +11,49 @@ namespace awui {
 
 	using namespace Collections;
 
-	namespace Emulation {
-		namespace Spectrum {
-			class TapeBlock : public awui::Object {
-				private:
-					uint8_t * _data;
-					int _size;
+	namespace Emulation::Spectrum {
+		class TapeBlock : public awui::Object {
+		  private:
+			uint8_t *_data;
+			int _size;
 
-				public:
-					TapeBlock(int size);
-					virtual ~TapeBlock();
+		  public:
+			TapeBlock(int size);
+			virtual ~TapeBlock();
 
-					void SetByte(int pos, uint8_t value);
-					uint8_t GetByte(int pos);
-					int GetLength();
-			};
+			void SetByte(int pos, uint8_t value);
+			uint8_t GetByte(int pos);
+			int GetLength();
+		};
 
-			class TapeCorder {
-				private:
-					ArrayList * _list;
-					int _posByte;
-					int _posBit;
-					int _block;
-					int _state;
-					int32_t _cycle;
-					bool _playing;
+		class TapeCorder {
+		  private:
+			ArrayList *_list;
+			int _posByte;
+			int _posBit;
+			int _block;
+			int _state;
+			int32_t _cycle;
+			bool _playing;
 
-					void (*_finishCassetteCB) (void *);
-					void * _finishCassetteDataCB;
+			void (*_finishCassetteCB)(void *);
+			void *_finishCassetteDataCB;
 
-					void Clear();
+			void Clear();
 
-				public:
-					TapeCorder();
-					virtual ~TapeCorder();
+		  public:
+			TapeCorder();
+			virtual ~TapeCorder();
 
-					void LoadFile(const String file);
+			void LoadFile(const String file);
 
-					void Rewind();
-					void Play();
-					void Stop() { this->_playing = false; }
-					uint32_t GetNext();
-					inline bool IsPlaying() const { return this->_playing; }
+			void Rewind();
+			void Play();
+			void Stop() { this->_playing = false; }
+			uint32_t GetNext();
+			inline bool IsPlaying() const { return this->_playing; }
 
-					void SetFinishCassetteCB(void (* fun)(void *), void * data);
-			};
-		}
-	}
-}
+			void SetFinishCassetteCB(void (*fun)(void *), void *data);
+		};
+	} // namespace Emulation::Spectrum
+} // namespace awui

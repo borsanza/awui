@@ -8,24 +8,22 @@ namespace awui {
 		class MemoryStream;
 	}
 
-	namespace Emulation {
-		namespace Chip8 {
-			class Memory {
-				private:
-					IO::MemoryStream * _memory;
-					String _file;
+	namespace Emulation::Chip8 {
+		class Memory {
+		  private:
+			IO::MemoryStream *_memory;
+			String _file;
 
-				public:
-					Memory(int32_t capacity);
-					virtual ~Memory();
+		  public:
+			Memory(int32_t capacity);
+			virtual ~Memory();
 
-					void LoadRom(const String file);
+			void LoadRom(const String file);
 
-					uint8_t ReadByte(int64_t pos);
-					void WriteByte(int64_t pos, uint8_t value);
+			uint8_t ReadByte(int64_t pos);
+			void WriteByte(int64_t pos, uint8_t value);
 
-					void Reload();
-			};
-		}
-	}
-}
+			void Reload();
+		};
+	} // namespace Emulation::Chip8
+} // namespace awui

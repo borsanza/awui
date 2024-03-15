@@ -12,14 +12,14 @@ using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Station;
 
 class FormArcade : public awui::Windows::Forms::Form {
-	private:
-		StationUI * m_stationUI;
+  private:
+	StationUI *m_stationUI;
 
-		void InitializeComponent();
+	void InitializeComponent();
 
-	public:
-		FormArcade();
-		virtual ~FormArcade();
+  public:
+	FormArcade();
+	virtual ~FormArcade();
 
-		bool OnKeyPress(Keys::Enum key);
+	bool OnKeyPress(Keys::Enum key);
 };

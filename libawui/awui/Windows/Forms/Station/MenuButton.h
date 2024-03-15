@@ -8,33 +8,33 @@ namespace awui::Windows::Forms::Station {
 	class StationUI;
 
 	class MenuButton : public Control {
-		private:
-			LabelButton m_label;
-			NodeFile * m_node;
-			StationUI * m_station;
+	  private:
+		LabelButton m_label;
+		NodeFile *m_node;
+		StationUI *m_station;
 
-		public:
-			MenuButton(StationUI * station);
-			virtual ~MenuButton();
+	  public:
+		MenuButton(StationUI *station);
+		virtual ~MenuButton();
 
-			virtual bool IsClass(Classes objectClass) const override;
+		virtual bool IsClass(Classes objectClass) const override;
 
-			const String GetText() const;
-			void SetText(const String str);
+		const String GetText() const;
+		void SetText(const String str);
 
-			virtual void OnMouseDown(MouseEventArgs* e);
-			virtual void OnPaint(OpenGL::GL* gl);
-			virtual void SetForeColor(const Drawing::Color color);
-			virtual void SetFont(const Drawing::Font font);
-			int GetLabelWidth() const;
-			virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+		virtual void OnMouseDown(MouseEventArgs *e);
+		virtual void OnPaint(OpenGL::GL *gl);
+		virtual void SetForeColor(const Drawing::Color color);
+		virtual void SetFont(const Drawing::Font font);
+		int GetLabelWidth() const;
+		virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 
-			void SetNodeFile(NodeFile * node);
+		void SetNodeFile(NodeFile *node);
 
-			void CheckArcade();
+		void CheckArcade();
 
-			virtual void OnResize();
+		virtual void OnResize();
 
-			virtual String ToString() const override;
+		virtual String ToString() const override;
 	};
-}
+} // namespace awui::Windows::Forms::Station

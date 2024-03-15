@@ -29,8 +29,8 @@ awui::String Stack::ToString() const {
 	return "awui.Collections.Stack";
 }
 
-void Stack::Push(Object * item) {
-	StackItem * itemList = (StackItem *) malloc(sizeof (struct StackItem));
+void Stack::Push(Object *item) {
+	StackItem *itemList = (StackItem *) malloc(sizeof(struct StackItem));
 	itemList->object = item;
 	itemList->prev = m_last;
 	m_count++;
@@ -46,13 +46,13 @@ void Stack::Clear() {
 		Pop();
 }
 
-awui::Object * Stack::Pop() {
+awui::Object *Stack::Pop() {
 	if (!m_last)
 		return NULL;
 
-	Object * r = m_last->object;
+	Object *r = m_last->object;
 
-	StackItem * prev = m_last->prev;
+	StackItem *prev = m_last->prev;
 
 	free(m_last);
 	m_count--;

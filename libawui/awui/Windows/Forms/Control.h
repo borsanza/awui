@@ -7,13 +7,7 @@
 #include <awui/Windows/Forms/MouseButtons.h>
 #include <awui/Windows/Forms/RemoteButtons.h>
 
-#include <cstdint>
-
 namespace awui {
-	namespace Collections {
-		class ArrayList;
-	}
-
 	namespace Drawing {
 		class Font;
 	}
@@ -42,9 +36,9 @@ namespace awui {
 			friend class Form;
 
 		  private:
-			ArrayList * m_controls;
-			Control * m_parent;
-			static Bitmap * m_selectedBitmap;
+			ArrayList *m_controls;
+			Control *m_parent;
+			static Bitmap *m_selectedBitmap;
 
 			// Sirve para saber en que orden se han insertado los componentes
 			static int32_t lastTabIndex;
@@ -52,7 +46,7 @@ namespace awui {
 			static int32_t countFocused;
 
 			int32_t m_tabIndex;
-			Control * m_focused;
+			Control *m_focused;
 			int32_t m_focusedTime;
 			bool m_focusable;
 
@@ -71,23 +65,23 @@ namespace awui {
 			int m_needRefresh;
 			int m_refreshed;
 			bool m_scissorEnabled;
-			Drawing::Font * m_font;
+			Drawing::Font *m_font;
 			DockStyle m_dock;
 			Drawing::Color m_backColor;
 			Drawing::Color m_foreColor;
-			MouseEventArgs * m_mouseEventArgs;
-			Control * m_mouseControl;
+			MouseEventArgs *m_mouseEventArgs;
+			Control *m_mouseControl;
 			String m_name;
 
 			float m_deltaSeconds;
 
 			void OnResizePre();
-			int OnPaintPre(int x, int y, int width, int height, OpenGL::GL * gl, bool first = false);
-			void ChangeControlOnMouseOver(Control * control);
+			int OnPaintPre(int x, int y, int width, int height, OpenGL::GL *gl, bool first = false);
+			void ChangeControlOnMouseOver(Control *control);
 			bool IsVisible() const;
 			void CleanMouseControl();
 
-			Control * GetChildFocusedImp(Control * focused);
+			Control *GetChildFocusedImp(Control *focused);
 			void SetFocusImpl(bool forced, int32_t time);
 
 		  protected:
@@ -146,13 +140,13 @@ namespace awui {
 			int GetRight() const;
 			int GetBottom() const;
 
-			void AddWidget(Control * control);
-			void RemoveWidget(Control * control);
+			void AddWidget(Control *control);
+			void RemoveWidget(Control *control);
 			int GetCount() const { return m_controls->GetCount(); }
-			int IndexOf(Control * control) const { return m_controls->IndexOf(control); }
-			Control * Get(int index) const { return (Control *) m_controls->Get(index); }
-			void MoveToEnd(Control * item);
-			void ReplaceWidget(Control * oldItem, Control * newItem);
+			int IndexOf(Control *control) const { return m_controls->IndexOf(control); }
+			Control *Get(int index) const { return (Control *) m_controls->Get(index); }
+			void MoveToEnd(Control *item);
+			void ReplaceWidget(Control *oldItem, Control *newItem);
 
 			Drawing::Color GetBackColor();
 			void SetBackColor(const Drawing::Color color);
@@ -160,13 +154,13 @@ namespace awui {
 			Drawing::Color GetForeColor();
 			virtual void SetForeColor(const Drawing::Color color);
 
-			Drawing::Font * GetFont();
+			Drawing::Font *GetFont();
 			virtual void SetFont(const Drawing::Font font);
 
 			void Refresh();
 
-			Control * GetParent() const;
-			void SetParent(Control * parent);
+			Control *GetParent() const;
+			void SetParent(Control *parent);
 
 			void OnMouseMovePre(int x, int y, int buttons);
 			void OnMouseUpPre(MouseButtons::Enum button, int buttons);
@@ -180,20 +174,20 @@ namespace awui {
 			void OnKeyUpPre(Keys::Enum key);
 
 			virtual void Layout();
-			virtual void OnMouseDown(MouseEventArgs * e) {}
-			virtual void OnMouseMove(MouseEventArgs * e) {}
-			virtual void OnMouseUp(MouseEventArgs * e) {}
+			virtual void OnMouseDown(MouseEventArgs *e) {}
+			virtual void OnMouseMove(MouseEventArgs *e) {}
+			virtual void OnMouseUp(MouseEventArgs *e) {}
 			virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 			virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
-			virtual bool OnJoystickButtonDown(JoystickButtonEventArgs * e);
-			virtual bool OnJoystickButtonUp(JoystickButtonEventArgs * e);
-			virtual bool OnJoystickAxisMotion(JoystickAxisMotionEventArgs * e);
+			virtual bool OnJoystickButtonDown(JoystickButtonEventArgs *e);
+			virtual bool OnJoystickButtonUp(JoystickButtonEventArgs *e);
+			virtual bool OnJoystickAxisMotion(JoystickAxisMotionEventArgs *e);
 			virtual bool OnKeyPress(Keys::Enum key);
 			virtual bool OnKeyUp(Keys::Enum key);
 			virtual void OnRemoteHeartbeat() {}
 			virtual void OnMouseEnter();
 			virtual void OnMouseLeave();
-			virtual void OnPaint(OpenGL::GL * gl);
+			virtual void OnPaint(OpenGL::GL *gl);
 			virtual void OnResize() {}
 			virtual void OnTick(float deltaSeconds) {}
 			void SetScissorEnabled(bool mode);
@@ -203,21 +197,21 @@ namespace awui {
 			void SetFocusable(bool focusable);
 
 			void SetFocus(bool forced = true);
-			inline Control * GetFocused() const { return m_focused; }
-			Control * GetChildFocused();
+			inline Control *GetFocused() const { return m_focused; }
+			Control *GetChildFocused();
 			bool IsFocused() const;
 
-			Control * GetRoot();
-			Form * GetForm();
+			Control *GetRoot();
+			Form *GetForm();
 
-			void GetControlsSelectables(Collections::ArrayList * list);
+			void GetControlsSelectables(Collections::ArrayList *list);
 
 			inline void SetPreventChangeControl(bool mode) { m_preventChangeControl = mode; }
 
 			inline void SetVisible(bool mode) { m_visible = mode; }
 			void CheckMouseControl();
 
-			static Bitmap * GetSelectedBitmap();
+			static Bitmap *GetSelectedBitmap();
 
 			virtual String ToString() const override;
 		};
