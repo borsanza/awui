@@ -889,6 +889,13 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		}
 
 		if (selected) {
+			Form *form = selected->GetForm();
+			if (form) {
+				Control *focused = form->GetChildFocused();
+				if (focused) {
+					focused->m_focusedTime = -1;
+				}
+			}
 			selected->SetFocus();
 		}
 	}

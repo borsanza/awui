@@ -342,7 +342,6 @@ void StationUI::SelectChild(NodeFile *node) {
 
 			MoveToEnd(&m_fade);
 			m_arcade->SetFocusable(true);
-			m_arcade->SetFocus();
 			m_fade.ShowFade();
 		}
 	}
