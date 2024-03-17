@@ -13,9 +13,9 @@
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/ImageFader.h>
-#include <awui/Windows/Forms/Station/Browser/Browser.h>
-#include <awui/Windows/Forms/Station/Browser/Page.h>
+#include <awui/Windows/Forms/Station/Browser.h>
 #include <awui/Windows/Forms/Station/MenuButton.h>
+#include <awui/Windows/Forms/Station/Page.h>
 #include <awui/Windows/Forms/Station/Settings/SettingsUI.h>
 #include <awui/Windows/Forms/Station/SettingsWidget.h>
 #include <dirent.h>
@@ -28,7 +28,6 @@
 using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms::Station;
-using namespace awui::Windows::Forms::Station::Browser;
 using namespace awui::Windows::Forms::Station::Settings;
 
 StationUI::StationUI() {
@@ -55,7 +54,7 @@ StationUI::StationUI() {
 	m_title->SetFont(font);
 	m_title->SetDock(DockStyle::None);
 
-	m_browser = new Browser::Browser();
+	m_browser = new Browser();
 	m_controlBase->AddWidget(m_title);
 	m_controlBase->AddWidget(m_browser);
 
@@ -379,7 +378,17 @@ void StationUI::SetArcade(Emulators::ArcadeContainer *arcade) {
 		return;
 	}
 
-	ReplaceWidget(m_arcade, arcade);
+	if (m_arcade && arcade) {
+		ReplaceWidget(m_arcade, arcade);
+	} else {
+		if (m_arcade) {
+			RemoveWidget(m_arcade);
+		}
+
+		if (arcade) {
+			AddWidget(arcade);
+		}
+	}
 
 	if (m_arcade) {
 		m_arcade->SetSoundEnabled(false);
@@ -415,7 +424,7 @@ void StationUI::ExitArcade() {
 
 void StationUI::OnClick(Control *sender) {
 	m_controlBase->SetVisible(false);
-	Console::WriteLine("Click %s", sender->ToString());
+	// Console::WriteLine("Click %s", sender->ToString());
 	if (m_settingsUI) {
 		RemoveWidget(m_settingsUI);
 		delete m_settingsUI;
@@ -424,8 +433,8 @@ void StationUI::OnClick(Control *sender) {
 
 	m_settingsUI = new SettingsUI();
 	m_settingsUI->SetDock(DockStyle::Fill);
-	m_settingsUI->InitializeComponent();
 	AddWidget(m_settingsUI);
+	m_settingsUI->InitializeComponent();
 	// Form::SetControlSelected(m_settingsUI);
 }
 

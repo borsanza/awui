@@ -55,6 +55,10 @@ int ArrayList::IndexOf(Object *item) const {
 	return -1;
 }
 
+bool ArrayList::Contains(Object *item) const {
+	return (IndexOf(item) != -1);
+}
+
 awui::Object *ArrayList::Get(int index) const {
 	if ((index < 0) || (index >= m_count)) {
 		assert(0);

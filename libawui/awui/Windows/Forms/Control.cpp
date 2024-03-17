@@ -31,6 +31,8 @@ Control::Control() {
 	m_class = Classes::Control;
 	m_tabIndex = -1;
 	m_focusedTime = -1;
+	m_focusable = false;
+	m_focused = NULL;
 
 	m_deltaSeconds = 0.0f;
 	m_refreshed = 0;
@@ -39,14 +41,12 @@ Control::Control() {
 	m_lastLeft = 0;
 	m_lastTop = 0;
 	m_drawShadow = true;
-	m_focusable = false;
 	m_bounds = Drawing::Rectangle(0, 0, 100, 100);
 	m_boundsTo = m_bounds;
 	m_controls = new ArrayList();
 	m_mouseEventArgs = new MouseEventArgs();
 	m_mouseControl = NULL;
 	m_parent = NULL;
-	m_focused = NULL;
 	m_needRefresh = 1;
 	m_dock = DockStyle::None;
 	m_backColor = Color::FromArgb(0, 0, 0, 0);
@@ -187,77 +187,9 @@ const awui::Drawing::Rectangle Control::GetBounds() const {
 	return m_bounds;
 }
 
-void Control::AddWidget(Control *control) {
-	if (!control) {
-		return;
-	}
-
-	if (control->m_tabIndex == -1) {
-		control->m_tabIndex = lastTabIndex;
-		lastTabIndex++;
-	}
-
-	m_controls->Add(control);
-	control->SetParent(this);
-
-	if (!m_focused || (m_focusedTime < control->m_focusedTime)) {
-		m_focused = control;
-		// m_focusedTime = control->m_focusedTime;
-		m_focused->SetFocus(false);
-	}
-
-	Layout();
-}
-
-void Control::RemoveWidget(Control *control) {
-	if (!control) {
-		return;
-	}
-
-	m_controls->Remove(control);
-	control->SetParent(nullptr);
-
-	if (m_focused == control) {
-		m_focused = nullptr;
-		m_focusedTime = -1;
-
-		for (auto aux : *m_controls) {
-			Control *control = (Control *) aux;
-			if (!m_focused || (control->m_focusedTime > m_focusedTime)) {
-				m_focused = control;
-				m_focusedTime = control->m_focusedTime;
-			}
-		}
-
-		if (m_focused) {
-			m_focused->SetFocus(false);
-		}
-	}
-}
-
 void Control::MoveToEnd(Control *item) {
 	RemoveWidget(item);
 	AddWidget(item);
-}
-
-void Control::ReplaceWidget(Control *oldControl, Control *newControl) {
-	if (oldControl) {
-		oldControl->CheckMouseControl();
-		oldControl->SetParent(nullptr);
-	}
-
-	m_controls->Replace(oldControl, newControl);
-
-	if (m_focused == oldControl) {
-		m_focused = newControl;
-		if (newControl) {
-			m_focusedTime = newControl->m_focusedTime;
-		}
-	}
-
-	if (newControl) {
-		newControl->SetParent(this);
-	}
 }
 
 void Control::OnResizePre() {
@@ -434,8 +366,9 @@ void Control::OnPaint(OpenGL::GL *gl) {
 
 	for (int i = 0; i < GetCount(); i++) {
 		Control *control = Get(i);
-		if (!control->IsVisible())
+		if (!control->IsVisible()) {
 			continue;
+		}
 
 		if ((focused == control) && (control->GetDrawShadow())) {
 			int x1, y1, x2, y2;
@@ -650,14 +583,6 @@ bool Control::GetScissorEnabled() {
 	return m_scissorEnabled;
 }
 
-bool Control::IsFocusable() {
-	return m_focusable;
-}
-
-void Control::SetFocusable(bool focusable) {
-	m_focusable = focusable;
-}
-
 void Control::OnRemoteKeyPressPre(int which, RemoteButtons::Enum button) {
 	bool mustStop = IsVisible() && OnRemoteKeyPress(which, button);
 	if (mustStop) {
@@ -682,136 +607,62 @@ void Control::OnRemoteKeyUpPre(int which, RemoteButtons::Enum button) {
 
 void Control::OnJoystickButtonDownPre(int which, int button, uint32_t buttons, uint32_t prevButtons) {
 	JoystickButtonEventArgs joy(which, button, buttons, prevButtons);
-	bool mustStop = OnJoystickButtonDown(&joy);
-	if (mustStop)
-		return;
 
-	if (m_focused)
+	bool mustStop = OnJoystickButtonDown(&joy);
+	if (mustStop) {
+		return;
+	}
+
+	if (m_focused) {
 		m_focused->OnJoystickButtonDownPre(which, button, buttons, prevButtons);
+	}
 }
 
 void Control::OnJoystickButtonUpPre(int which, int button, uint32_t buttons, uint32_t prevButtons) {
 	JoystickButtonEventArgs joy(which, button, buttons, prevButtons);
-	bool mustStop = OnJoystickButtonUp(&joy);
-	if (mustStop)
-		return;
 
-	if (m_focused)
+	bool mustStop = OnJoystickButtonUp(&joy);
+	if (mustStop) {
+		return;
+	}
+
+	if (m_focused) {
 		m_focused->OnJoystickButtonUpPre(which, button, buttons, prevButtons);
+	}
 }
 void Control::OnJoystickAxisMotionPre(int which, int16_t axisX, int16_t axisY) {
 	JoystickAxisMotionEventArgs joy(which, axisX, axisY);
-	bool mustStop = OnJoystickAxisMotion(&joy);
-	if (mustStop)
-		return;
 
-	if (m_focused)
+	bool mustStop = OnJoystickAxisMotion(&joy);
+	if (mustStop) {
+		return;
+	}
+
+	if (m_focused) {
 		m_focused->OnJoystickAxisMotionPre(which, axisX, axisY);
+	}
 }
 
 void Control::OnKeyPressPre(Keys::Enum key) {
 	bool mustStop = IsVisible() && OnKeyPress(key);
-	if (mustStop)
+	if (mustStop) {
 		return;
+	}
 
-	if (m_focused && m_focused->IsVisible())
+	if (m_focused && m_focused->IsVisible()) {
 		m_focused->OnKeyPressPre(key);
+	}
 }
 
 void Control::OnKeyUpPre(Keys::Enum key) {
 	bool mustStop = IsVisible() && OnKeyUp(key);
-	if (mustStop)
+	if (mustStop) {
 		return;
+	}
 
-	if (m_focused && m_focused->IsVisible())
+	if (m_focused && m_focused->IsVisible()) {
 		m_focused->OnKeyUpPre(key);
-}
-
-void Control::SetFocusImpl(bool forced, int32_t time) {
-	/*
-		if (m_controls->GetCount() <= 0 || forced) {
-			Console::WriteLine("SetFocus(%d): %s", forced, ToString().ToCharArray());
-		}
-	*/
-	Control *parent = GetParent();
-
-	if (forced) {
-		m_focusedTime = time;
-		if (parent) {
-			parent->m_focused = this;
-			parent->SetFocusImpl(forced, time);
-		}
-	} else {
-		if (time > m_focusedTime) {
-			m_focusedTime = time;
-		}
-
-		if (parent) {
-			if (parent->m_focused == nullptr) {
-				parent->m_focused = this;
-				parent->SetFocusImpl(forced, time);
-			} else {
-				if (parent->m_focused->m_focusedTime < time) {
-					parent->m_focused = this;
-					parent->SetFocusImpl(forced, time);
-				}
-			}
-		}
 	}
-
-	/*
-		Control* parent = GetParent();
-
-		// Actualizar el tiempo de enfoque si es forzado o si el nuevo tiempo es mayor.
-		if (forced || time >= m_focusedTime) {
-			m_focusedTime = time;
-
-			if (parent) {
-				// Si forzado o si el padre no tiene un control enfocado o si este control debe tomar el foco.
-				if (forced || parent->m_focused == nullptr || parent->m_focused->m_focusedTime < time) {
-					parent->m_focused = this;
-					parent->SetFocusImpl(forced, time); // Propagar el enfoque hacia arriba solo si es necesario.
-				}
-			}
-		}
-	*/
-}
-
-void Control::SetFocus(bool forced) {
-	/*
-		if (m_controls->GetCount() <= 0 || forced) {
-			Console::WriteLine("SetFocus(%d): %s", forced, ToString().ToCharArray());
-		}
-	*/
-	SetFocusImpl(forced, forced ? countFocused : m_focusedTime);
-
-	if (forced) {
-		countFocused++;
-	}
-}
-
-Control *Control::GetChildFocusedImp(Control *focused) {
-	if (IsFocusable())
-		focused = this;
-
-	if (m_focused) {
-		return m_focused->GetChildFocusedImp(focused);
-	}
-
-	return focused;
-}
-
-Control *Control::GetChildFocused() {
-	return GetChildFocusedImp(nullptr);
-}
-
-bool Control::IsFocused() const {
-	Control *parent = GetParent();
-	if (parent) {
-		return (parent->m_focused == this) && parent->IsFocused();
-	}
-
-	return IsClass(Classes::Form);
 }
 
 Control *Control::GetRoot() {
@@ -884,9 +735,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlCenter.GetX() < thisCenter.GetX()) &&
-						(controlP1.GetTop() < thisP2.GetBottom()) &&
-						(controlP2.GetBottom() > thisP1.GetTop())) {
+					if ((controlCenter.GetX() < thisCenter.GetX()) && (controlP1.GetTop() < thisP2.GetBottom()) && (controlP2.GetBottom() > thisP1.GetTop())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
 							distance = calc;
@@ -906,9 +755,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlCenter.GetX() > thisCenter.GetX()) &&
-						(controlP1.GetTop() < thisP2.GetBottom()) &&
-						(controlP2.GetBottom() > thisP1.GetTop())) {
+					if ((controlCenter.GetX() > thisCenter.GetX()) && (controlP1.GetTop() < thisP2.GetBottom()) && (controlP2.GetBottom() > thisP1.GetTop())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
 							distance = calc;
@@ -966,8 +813,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) &&
-						(controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
+					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) && (controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
 						(controlP1.GetTop() > thisP1.GetBottom())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
@@ -1027,8 +873,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) &&
-						(controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
+					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) && (controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
 						(controlP2.GetBottom() < thisP2.GetTop())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
@@ -1094,4 +939,216 @@ Bitmap *Control::GetSelectedBitmap() {
 
 awui::String Control::ToString() const {
 	return "awui::Windows::Forms::Control";
+}
+
+/******************************************************************************/
+/*********************** Actions that affect the focus ************************/
+/******************************************************************************/
+
+/**
+ * Indica si el control puede recibir el foco.
+ *
+ * @return True si el control es enfocable, False de lo contrario.
+ */
+bool Control::IsFocusable() {
+	return m_focusable;
+}
+
+/**
+ * Establece la capacidad del control para recibir o no el foco.
+ *
+ * @param focusable Especifica si el control debe ser enfocable (true) o no (false).
+ */
+void Control::SetFocusable(bool focusable) {
+	m_focusable = focusable;
+}
+
+/**
+ * Establece el enfoque en este control y actualiza la jerarquía de enfoque si es necesario.
+ *
+ * @param forced Si el enfoque debe ser forzado.
+ * @param time Prioridad o momento del enfoque.
+ */
+void Control::SetFocusImpl(bool forced, int32_t time) {
+	if (forced || time > m_focusedTime) {
+		m_focusedTime = time;
+	}
+
+	if (m_parent && (forced || m_parent->m_focused == nullptr || m_parent->m_focused->m_focusedTime < time)) {
+		m_parent->m_focused = this;
+		m_parent->SetFocusImpl(forced, time);
+	}
+}
+
+/**
+ * Establece o actualiza el enfoque en este control. Si se fuerza el enfoque, se incrementa
+ * el contador de enfoque; de lo contrario, se utiliza el tiempo de enfoque actual.
+ *
+ * @param forced Indica si el enfoque debe ser forzado.
+ */
+void Control::SetFocus(bool forced) {
+	SetFocusImpl(forced, forced ? countFocused : m_focusedTime);
+
+	if (forced) {
+		countFocused++;
+	}
+}
+
+/**
+ * Busca recursivamente el control enfocado más profundo, iniciando desde este control.
+ *
+ * @param focused Control enfocado inicial; suele ser null en la primera llamada.
+ * @return Control enfocado más profundo.
+ */
+Control *Control::GetChildFocusedImp(Control *focused) {
+	if (IsFocusable())
+		focused = this;
+
+	if (m_focused) {
+		return m_focused->GetChildFocusedImp(focused);
+	}
+
+	return focused;
+}
+
+/**
+ * Inicia la búsqueda del control enfocado dentro de la jerarquía de este control.
+ *
+ * @return El control enfocado más profundo o null si ninguno está enfocado.
+ */
+Control *Control::GetChildFocused() {
+	return GetChildFocusedImp(nullptr);
+}
+
+/**
+ * Verifica si el control está enfocado, considerando la jerarquía de contenedores hasta un formulario.
+ *
+ * @return True si está enfocado, False si no.
+ */
+bool Control::IsFocused() const {
+	Control *parent = GetParent();
+	if (parent) {
+		return (parent->m_focused == this) && parent->IsFocused();
+	}
+
+	return IsClass(Classes::Form);
+}
+
+/**
+ * Agrega un nuevo control al contenedor si no está ya presente y no tiene otro contenedor.
+ * Asigna un índice de tabulación si aún no tiene uno, lo agrega a la colección de controles,
+ * establece este contenedor como su padre, y luego ajusta el enfoque y la disposición del contenedor.
+ *
+ * @param control El control a agregar.
+ */
+void Control::AddWidget(Control *control) {
+	assert(control && !m_controls->Contains(control) && control->GetParent() == nullptr);
+	if (!control || m_controls->Contains(control) || control->GetParent() != nullptr) {
+		return;
+	}
+
+	if (control->m_tabIndex == -1) {
+		control->m_tabIndex = lastTabIndex++;
+	}
+
+	m_controls->Add(control);
+	control->SetParent(this);
+
+	FixFocusImpl();
+
+	Layout();
+}
+
+/**
+ * Elimina un control específico del contenedor, verificando primero que el control exista en este contenedor
+ * y que realmente pertenezca a él como hijo. Después de la eliminación, el control se desvincula de este contenedor
+ * y se realiza una revisión para ajustar el enfoque dentro del contenedor, si es necesario.
+ *
+ * @param control El control a eliminar del contenedor.
+ */
+void Control::RemoveWidget(Control *control) {
+	assert(control && m_controls->Contains(control) && control->GetParent() == this);
+	if (!control || !m_controls->Contains(control) || control->GetParent() != this) {
+		return;
+	}
+
+	m_controls->Remove(control);
+	control->SetParent(nullptr);
+
+	FixFocusImpl();
+}
+
+/**
+ * Reemplaza un control antiguo por uno nuevo en el contenedor. Asegura que ambos controles sean válidos,
+ * diferentes, y que el nuevo control no tenga ya un contenedor. Actualiza la jerarquía de controles y el enfoque.
+ *
+ * @param oldControl Control a reemplazar.
+ * @param newControl Nuevo control a insertar.
+ */
+void Control::ReplaceWidget(Control *oldControl, Control *newControl) {
+	assert((oldControl != nullptr) && (newControl != nullptr) && (oldControl != newControl) && (m_controls->Contains(oldControl)) && newControl->GetParent() == nullptr);
+	if (oldControl == nullptr || newControl == nullptr || oldControl == newControl || !m_controls->Contains(oldControl) || newControl->GetParent() != nullptr) {
+		return;
+	}
+
+	oldControl->CheckMouseControl();
+	oldControl->SetParent(nullptr);
+	m_controls->Replace(oldControl, newControl);
+	newControl->SetParent(this);
+
+	FixFocusImpl();
+}
+
+/**
+ * Establece la visibilidad del control y actualiza el enfoque en el padre si es necesario.
+ * Solo actúa si la nueva visibilidad difiere de la actual.
+ *
+ * @param isVisible True para hacer el control visible, false para ocultarlo.
+ */
+void Control::SetVisible(bool isVisible) {
+	if (m_visible != isVisible) {
+		m_visible = isVisible;
+
+		if (m_parent) {
+			m_parent->FixFocusImpl();
+		}
+	}
+}
+
+/**
+ * Busca y devuelve el próximo control elegible para recibir el enfoque dentro del contenedor de controles.
+ * El criterio para determinar el "próximo" control se basa en la visibilidad del control y su tiempo de enfoque.
+ * Solo los controles visibles son considerados elegibles, y entre ellos, se prefiere aquel con el mayor tiempo de enfoque.
+ *
+ * @return Control* Puntero al control que ha sido identificado como el próximo elegible para recibir el enfoque.
+ *         Retorna nullptr si no se encuentra ningún control elegible.
+ */
+Control *Control::FindNextFocusableControl() {
+	Control *nextFocusable = nullptr;
+	int32_t highestFocusTime = -1;
+	for (auto aux : *m_controls) {
+		Control *control = (Control *) aux;
+		if (control->IsVisible() && (nextFocusable == nullptr || control->m_focusedTime > highestFocusTime)) {
+			nextFocusable = control;
+			highestFocusTime = control->m_focusedTime;
+		}
+	}
+
+	return nextFocusable;
+}
+
+/**
+ * Actualiza el control enfocado al próximo elegible y notifica al contenedor padre para ajustar su enfoque.
+ */
+void Control::FixFocusImpl() {
+	Control *nextFocus = FindNextFocusableControl();
+
+	if (nextFocus != m_focused) {
+		m_focused = nextFocus;
+		m_focusedTime = (m_focused != nullptr) ? m_focused->m_focusedTime : -1;
+
+		if (m_parent) {
+			m_parent->FixFocusImpl();
+		}
+	}
 }

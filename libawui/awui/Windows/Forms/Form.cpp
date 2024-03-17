@@ -109,13 +109,14 @@ void Form::OnTick(float deltaSeconds) {
 	MoveToEnd(stats);
 	stats->SetWidth(GetWidth());
 	stats->SetLocation(0, GetHeight() - stats->GetHeight());
-
-	static Control *lastControl = nullptr;
-	Control *control = GetChildFocused();
-	if (control && (control != lastControl)) {
-		lastControl = control;
-		Console::WriteLine("%s", control->ToString().ToCharArray());
-	}
+	/*
+		static Control *lastControl = nullptr;
+		Control *control = GetChildFocused();
+		if (control && (control != lastControl)) {
+			lastControl = control;
+			Console::WriteLine("%s", control->ToString().ToCharArray());
+		}
+	*/
 }
 
 void Form::RefreshVideo() {
@@ -155,9 +156,7 @@ void Form::RefreshVideo() {
 
 	if (!m_window) {
 		// Crear una nueva ventana si aún no existe
-		m_window = SDL_CreateWindow(m_text.ToCharArray(),
-									SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-									finalWidth, finalHeight, flags | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, finalWidth, finalHeight, flags | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 		if (m_window == NULL) {
 			SDL_Log("[ERROR] SDL_CreateWindow failed: %s", SDL_GetError());
 			return;

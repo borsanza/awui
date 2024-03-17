@@ -6,7 +6,7 @@
 
 #include "Page.h"
 
-using namespace awui::Windows::Forms::Station::Browser;
+using namespace awui::Windows::Forms::Station;
 
 Page::Page() {
 	m_class = Classes::Page;

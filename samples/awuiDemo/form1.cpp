@@ -22,5 +22,5 @@ void Form1::InitializeComponent() {
 	AddWidget(test1);
 
 	SetSize(460, 532);
-	SetFullscreen(0);
+	SetFullscreen(false);
 }

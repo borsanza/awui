@@ -19,18 +19,15 @@ namespace awui {
 			class Label;
 
 			namespace Station {
-				class MenuButton;
-				class SettingsWidget;
-				class StationUI;
-
 				namespace Settings {
 					class SettingsUI;
 				}
 
-				namespace Browser {
-					class Browser;
-					class Page;
-				} // namespace Browser
+				class Browser;
+				class MenuButton;
+				class Page;
+				class SettingsWidget;
+				class StationUI;
 
 				class FadePanel : public Control {
 				  private:
@@ -61,7 +58,7 @@ namespace awui {
 					String m_name;
 					String m_path;
 					MenuButton *m_button;
-					Browser::Page *m_page;
+					Page *m_page;
 					Emulators::ArcadeContainer *m_arcade;
 					SortedList *m_childList;
 					Bitmap *m_background;
@@ -82,7 +79,7 @@ namespace awui {
 					Emulators::ArcadeContainer *m_arcade;
 
 					Label *m_title;
-					Browser::Browser *m_browser;
+					Browser *m_browser;
 					SettingsWidget *m_settings;
 					Label *m_clock;
 					ImageFader *m_backgroundFader;

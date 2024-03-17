@@ -12,18 +12,16 @@ namespace awui::Windows::Forms {
 	class Label;
 
 	namespace Station {
-		namespace Browser {
-			class Browser;
-			class Page;
-		} // namespace Browser
+		class Browser;
+		class Page;
 
 		namespace Settings {
 			class SettingsUI : public Control, Listeners::IButtonListener {
 			  private:
-				Browser::Browser *m_browser;
+				Browser *m_browser;
 				Label *m_title;
 
-				Browser::Page *ProcessJson(const json &j, int depth = 0);
+				Page *ProcessJson(const json &j, int depth = 0);
 
 			  public:
 				SettingsUI();

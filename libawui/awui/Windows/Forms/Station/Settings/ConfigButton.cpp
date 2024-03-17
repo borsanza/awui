@@ -10,7 +10,7 @@
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Listeners/IButtonListener.h>
-#include <awui/Windows/Forms/Station/Browser/Page.h>
+#include <awui/Windows/Forms/Station/Page.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;

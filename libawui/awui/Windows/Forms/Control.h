@@ -83,6 +83,8 @@ namespace awui {
 
 			Control *GetChildFocusedImp(Control *focused);
 			void SetFocusImpl(bool forced, int32_t time);
+			Control *FindNextFocusableControl();
+			void FixFocusImpl();
 
 		  protected:
 			void OnTickPre(float deltaSeconds);
@@ -208,7 +210,7 @@ namespace awui {
 
 			inline void SetPreventChangeControl(bool mode) { m_preventChangeControl = mode; }
 
-			inline void SetVisible(bool mode) { m_visible = mode; }
+			void SetVisible(bool mode);
 			void CheckMouseControl();
 
 			static Bitmap *GetSelectedBitmap();

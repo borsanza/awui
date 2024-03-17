@@ -2,7 +2,7 @@
 
 #include <awui/Windows/Forms/Gradient.h>
 
-namespace awui::Windows::Forms::Station::Browser {
+namespace awui::Windows::Forms::Station {
 	class Page;
 
 	class Browser : public Control {
@@ -24,4 +24,4 @@ namespace awui::Windows::Forms::Station::Browser {
 
 		virtual void OnTick(float deltaSeconds) override;
 	};
-} // namespace awui::Windows::Forms::Station::Browser
+} // namespace awui::Windows::Forms::Station

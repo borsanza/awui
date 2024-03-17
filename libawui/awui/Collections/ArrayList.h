@@ -50,6 +50,7 @@ namespace awui::Collections {
 		void Clear();
 		Object *Get(int index) const;
 		int IndexOf(Object *item) const;
+		bool Contains(Object *item) const;
 		void Remove(Object *item);
 		void RemoveAt(int index);
 		void SetChildIndex(Object *item, int index);

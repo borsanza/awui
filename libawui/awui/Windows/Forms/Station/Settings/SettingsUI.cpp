@@ -11,8 +11,8 @@
 #include <awui/Drawing/Font.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Station/Browser/Browser.h>
-#include <awui/Windows/Forms/Station/Browser/Page.h>
+#include <awui/Windows/Forms/Station/Browser.h>
+#include <awui/Windows/Forms/Station/Page.h>
 #include <awui/Windows/Forms/Station/Settings/ConfigButton.h>
 #include <awui/Windows/Forms/Station/Settings/TypeConfigButton.h>
 
@@ -21,7 +21,6 @@
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Station;
-using namespace awui::Windows::Forms::Station::Browser;
 using namespace awui::Windows::Forms::Station::Settings;
 
 #define MENUBUTTONHEIGHT 70
@@ -48,20 +47,12 @@ void SettingsUI::InitializeComponent() {
 	m_title->SetForeColor(Color::FromArgb(120, 120, 120));
 	AddWidget(m_title);
 
-	// SetBackColor(Color::FromArgb(0, 255, 0));
-	Browser::Page *page = ProcessJson(j);
+	Page *page = ProcessJson(j);
 
-	m_browser = new Browser::Browser();
+	m_browser = new Browser();
 	m_browser->SetDock(DockStyle::None);
-
 	AddWidget(m_browser);
-	Console::WriteLine("d) %s", page->GetChildFocused()->ToString().ToCharArray());
-	// m_browser->SetFocus();
 	m_browser->SetPage(page);
-	Console::WriteLine("e) %s", page->GetChildFocused()->ToString().ToCharArray());
-	Console::WriteLine("f) %s", m_browser->GetChildFocused()->ToString().ToCharArray());
-	Console::WriteLine("g) %s", GetChildFocused()->ToString().ToCharArray());
-	// m_browser->SetBackColor(Color::FromArgb(0, 0, 255));
 
 	page->SetWidth(m_browser->GetWidth());
 }
@@ -72,12 +63,12 @@ void SettingsUI::InitializeComponent() {
 //    list
 //    label
 
-Browser::Page *SettingsUI::ProcessJson(const json &j, int depth) {
-	Browser::Page *page = nullptr;
+Page *SettingsUI::ProcessJson(const json &j, int depth) {
+	Page *page = nullptr;
 	bool added = false;
 	int posY = 25;
 	if (j.is_array()) {
-		page = new Browser::Page();
+		page = new Page();
 		// page->SetBackColor(Color::FromArgb(255, 0, 0));
 
 		for (const auto &element : j) {
@@ -101,20 +92,12 @@ Browser::Page *SettingsUI::ProcessJson(const json &j, int depth) {
 						button->SetLocation(40, posY);
 						posY += MENUBUTTONHEIGHT;
 
-						if (page->GetChildFocused())
-							Console::WriteLine("a) %s", page->GetChildFocused()->ToString().ToCharArray());
 						page->AddWidget(button);
-
-						if (page->GetChildFocused())
-							Console::WriteLine("b) %s", page->GetChildFocused()->ToString().ToCharArray());
 
 						if (!added) {
 							button->SetFocus();
 							added = true;
 						}
-
-						if (page->GetChildFocused())
-							Console::WriteLine("c) %s", page->GetChildFocused()->ToString().ToCharArray());
 
 						if (element.contains("items")) {
 							button->SetSubPage(ProcessJson(element["items"], depth + 1));

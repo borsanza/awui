@@ -13,9 +13,7 @@ namespace awui::Windows::Forms {
 	}
 
 	namespace Station {
-		namespace Browser {
-			class Page;
-		}
+		class Page;
 
 		namespace Settings {
 			enum class TypeButton;
@@ -24,7 +22,7 @@ namespace awui::Windows::Forms {
 			  private:
 				LabelButton m_label;
 				bool m_group;
-				Browser::Page *m_subpage;
+				Page *m_subpage;
 				std::vector<Listeners::IButtonListener *> m_listeners;
 				TypeButton m_typeButton;
 
@@ -47,8 +45,8 @@ namespace awui::Windows::Forms {
 
 				virtual void OnResize();
 
-				void SetSubPage(Browser::Page *subpage) { m_subpage = subpage; }
-				Browser::Page *GetSubPage() const { return m_subpage; }
+				void SetSubPage(Page *subpage) { m_subpage = subpage; }
+				Page *GetSubPage() const { return m_subpage; }
 				TypeButton GetTypeButton() { return m_typeButton; }
 
 				void Click();
