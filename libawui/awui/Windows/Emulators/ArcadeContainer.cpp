@@ -17,6 +17,7 @@ ArcadeContainer::ArcadeContainer() {
 	SetDrawShadow(false);
 	SetPreventChangeControl(true);
 	m_station = NULL;
+	SetFocusable(false);
 }
 
 bool ArcadeContainer::IsClass(Classes objectClass) const {

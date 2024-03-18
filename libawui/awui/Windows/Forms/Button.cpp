@@ -37,11 +37,15 @@ void Button::OnMouseLeave() {
 }
 
 void Button::OnMouseDown(MouseEventArgs *e) {
-	SetFocus();
+	if (IsFocusable()) {
+		SetFocus();
+	}
 }
 
 void Button::OnMouseMove(MouseEventArgs *e) {
-	SetFocus();
+	if (IsFocusable()) {
+		SetFocus();
+	}
 }
 
 void Button::OnMouseUp(MouseEventArgs *e) {

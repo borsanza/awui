@@ -341,7 +341,6 @@ void StationUI::SelectChild(NodeFile *node) {
 			}
 
 			MoveToEnd(&m_fade);
-			m_arcade->SetFocusable(true);
 			m_fade.ShowFade();
 		}
 	}
@@ -403,6 +402,7 @@ void StationUI::SetArcade(Emulators::ArcadeContainer *arcade) {
 void StationUI::SetArcadeFullScreen() {
 	RemoveWidget(&m_fade);
 	m_controlBase->SetVisible(false);
+	m_arcade->SetFocusable(true);
 }
 
 void StationUI::ExitingArcade() {
@@ -415,6 +415,7 @@ void StationUI::ExitingArcade() {
 	m_fade.HideFade();
 	AddWidget(&m_fade);
 	m_arcade->SetFocusable(false);
+	m_browser->SetFocus();
 }
 
 void StationUI::ExitArcade() {
