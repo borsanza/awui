@@ -13,7 +13,8 @@ namespace awui {
 	  public:
 		String();
 		String(const char);
-		String(const char *value);
+		String(const char *format, ...);
+
 		virtual ~String() = default;
 
 		int GetLength() const;

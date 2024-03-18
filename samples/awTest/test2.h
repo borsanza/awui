@@ -25,5 +25,5 @@ class Test2 : public awui::Windows::Forms::Control {
 	virtual void OnTick(float deltaSeconds) override;
 
 	void CheckMame();
-	void CheckGames();
+	// void CheckGames();
 };

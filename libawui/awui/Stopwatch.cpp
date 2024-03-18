@@ -5,22 +5,28 @@
 
 using namespace awui;
 
+Stopwatch::Stopwatch() {
+	m_running = false;
+	m_elapsed = Duration::zero();
+}
+
 // Inicia o reinicia el Stopwatch
 void Stopwatch::StartNew() {
-	m_start_time = std::chrono::steady_clock::now();
+	m_elapsed = Duration::zero();
+	m_start_time = Clock::now();
 	m_running = true;
 }
 
 // Detiene el Stopwatch
 void Stopwatch::Stop() {
 	if (m_running) {
-		m_end_time = std::chrono::steady_clock::now();
+		m_elapsed += Clock::now() - m_start_time;
 		m_running = false;
 	}
 }
 
-// Retorna la cantidad de milisegundos transcurridos
+// Retorna la cantidad de segundos transcurridos como float
 float Stopwatch::GetDeltaSeconds() const {
-	auto end = m_running ? std::chrono::steady_clock::now() : m_end_time;
-	return std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_start_time).count() / 1000000000.0f;
+	Duration elapsed = m_running ? m_elapsed + Clock::now() - m_start_time : m_elapsed;
+	return std::chrono::duration_cast<std::chrono::duration<float>>(elapsed).count();
 }

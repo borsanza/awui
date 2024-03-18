@@ -47,7 +47,7 @@ void Test2::InitializeComponent() {
 void Test2::OnTick(float deltaSeconds) {
 	if (!m_endMame) {
 		CheckMame();
-		CheckGames();
+		// CheckGames();
 	}
 }
 
@@ -57,6 +57,7 @@ void Test2::CheckMame() {
 	}
 }
 
+/*
 void Test2::CheckGames() {
 	static int lines = 0;
 	static awui::TimeSpan lastTime;
@@ -84,3 +85,4 @@ void Test2::CheckGames() {
 		Console::WriteLine("-");
 	}
 }
+*/

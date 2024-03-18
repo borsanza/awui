@@ -7,19 +7,36 @@
 #include "String.h"
 
 #include <algorithm>
+#include <cstdarg>
+#include <format>
+#include <vector>
 
 using namespace awui;
 
-String::String()
-	: m_string("") {
-}
-
-String::String(const char *value)
-	: m_string(value) {
+String::String() : m_string("") {
 }
 
 String::String(const char value) {
 	m_string = std::string(1, value);
+}
+
+String::String(const char *format, ...) {
+	va_list args;
+	va_start(args, format);
+
+	int n = vsnprintf(nullptr, 0, format, args);
+	va_end(args);
+
+	if (n < 0) {
+		return;
+	}
+
+	std::vector<char> buffer(n + 1);
+	va_start(args, format);
+	vsnprintf(buffer.data(), buffer.size(), format, args);
+	va_end(args);
+
+	m_string.assign(buffer.data(), n);
 }
 
 int String::GetLength() const {

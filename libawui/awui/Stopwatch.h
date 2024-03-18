@@ -7,12 +7,16 @@
 namespace awui {
 	class Stopwatch : public Object {
 	  private:
-		std::chrono::steady_clock::time_point m_start_time;
-		std::chrono::steady_clock::time_point m_end_time;
-		bool m_running = false;
+		using Clock = std::chrono::high_resolution_clock;
+		using TimePoint = std::chrono::time_point<Clock>;
+		using Duration = Clock::duration;
+
+		TimePoint m_start_time;
+		Duration m_elapsed;
+		bool m_running;
 
 	  public:
-		Stopwatch() = default;
+		Stopwatch();
 
 		void StartNew();
 		void Stop();

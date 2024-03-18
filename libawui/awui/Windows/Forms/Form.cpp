@@ -109,14 +109,6 @@ void Form::OnTick(float deltaSeconds) {
 	MoveToEnd(stats);
 	stats->SetWidth(GetWidth());
 	stats->SetLocation(0, GetHeight() - stats->GetHeight());
-	/*
-		static Control *lastControl = nullptr;
-		Control *control = GetChildFocused();
-		if (control && (control != lastControl)) {
-			lastControl = control;
-			Console::WriteLine("%s", control->ToString().ToCharArray());
-		}
-	*/
 }
 
 void Form::RefreshVideo() {

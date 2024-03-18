@@ -250,7 +250,7 @@ void Control::Layout() {
 
 	for (int i = 0; i < GetCount(); i++) {
 		Control *control = Get(i);
-		if (!control->IsVisible()) {
+		if (!control->IsVisible(false)) {
 			continue;
 		}
 
@@ -523,14 +523,14 @@ const awui::String Control::GetName() {
 	return m_name;
 }
 
-bool Control::IsVisible() const {
+bool Control::IsVisible(bool checkInside) const {
 	bool isVisible = true;
 
 	if (!m_visible) {
 		return false;
 	}
 
-	if (GetParent()) {
+	if (checkInside && GetParent()) {
 		Drawing::Rectangle pr = GetParent()->GetBounds();
 		pr.SetLocation(0, 0);
 		Drawing::Rectangle cr = Drawing::Rectangle::Intersect(m_bounds, pr);

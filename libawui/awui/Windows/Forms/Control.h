@@ -78,7 +78,7 @@ namespace awui {
 			void OnResizePre();
 			int OnPaintPre(int x, int y, int width, int height, OpenGL::GL *gl, bool first = false);
 			void ChangeControlOnMouseOver(Control *control);
-			bool IsVisible() const;
+			bool IsVisible(bool checkInside = true) const;
 			void CleanMouseControl();
 
 			Control *GetChildFocusedImp(Control *focused);
