@@ -53,8 +53,8 @@ namespace awui::Windows::Forms {
 				void AddOnClickListener(Listeners::IButtonListener *listener);
 				void RemoveOnClickListener(Listeners::IButtonListener *listener);
 				void RemoveAllListeners();
-				void OnMouseUp(MouseEventArgs *e);
-				bool OnKeyPress(Keys::Enum key);
+				void OnMouseDown(MouseEventArgs *e);
+				bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 
 				String ToString() const override;
 			};

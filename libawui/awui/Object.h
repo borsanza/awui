@@ -43,7 +43,8 @@ namespace awui {
 		SettingsUI,
 		Browser,
 		Page,
-		Font
+		Font,
+		StationUI
 	};
 
 	class Object {

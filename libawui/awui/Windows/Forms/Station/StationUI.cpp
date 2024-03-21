@@ -31,6 +31,8 @@ using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Settings;
 
 StationUI::StationUI() {
+	m_class = Classes::StationUI;
+
 	m_controlBase = new Control();
 
 	m_actual = 0;
@@ -85,6 +87,10 @@ StationUI::~StationUI() {
 		delete m_root;
 		m_root = nullptr;
 	}
+}
+
+bool StationUI::IsClass(Classes objectClass) const {
+	return (objectClass == Classes::StationUI) || Control::IsClass(objectClass);
 }
 
 void StationUI::SetPath(const String path) {
@@ -435,6 +441,7 @@ void StationUI::OnClick(Control *sender) {
 	m_settingsUI->SetDock(DockStyle::Fill);
 	AddWidget(m_settingsUI);
 	m_settingsUI->InitializeComponent();
+	CheckMouseControl();
 	// Form::SetControlSelected(m_settingsUI);
 }
 

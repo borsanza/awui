@@ -8,13 +8,9 @@ AllowShortFunctionsOnASingleLine: InlineOnly
 IndentCaseLabels: true
 SpaceAfterCStyleCast: true
 AllowShortBlocksOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
 NamespaceIndentation: All
 PointerAlignment: Right
+BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterControlStatement: Always
-  AfterFunction: true
-  AfterNamespace: true
-  AfterStruct: true
-  AfterClass: true
-  AfterUnion: true
-  AfterEnum: true
+  AfterEnum: false

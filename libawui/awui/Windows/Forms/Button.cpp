@@ -9,7 +9,7 @@
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Listeners/IButtonListener.h>
-
+#include <awui/Windows/Forms/MouseEventArgs.h>
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
@@ -33,39 +33,34 @@ bool Button::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::Button) || Control::IsClass(objectClass);
 }
 
-void Button::OnMouseLeave() {
-}
-
 void Button::OnMouseDown(MouseEventArgs *e) {
-	if (IsFocusable()) {
-		SetFocus();
+	switch (e->GetButton()) {
+		case MouseButtons::Left:
+			if (!IsFocused()) {
+				SetFocus();
+			} else {
+				OnRemoteKeyUp(0, RemoteButtons::Ok);
+			}
+			break;
+		case MouseButtons::Right:
+			OnRemoteKeyUp(0, RemoteButtons::Menu);
+			break;
+		default:
+			break;
 	}
 }
 
-void Button::OnMouseMove(MouseEventArgs *e) {
-	if (IsFocusable()) {
-		SetFocus();
-	}
-}
-
-void Button::OnMouseUp(MouseEventArgs *e) {
-	Click();
-}
-
-bool Button::OnKeyPress(Keys::Enum key) {
-	bool ret = false;
-	switch (key) {
-		case Keys::Key_ENTER:
-		case Keys::Key_SPACE:
+bool Button::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
+	switch (button) {
+		case RemoteButtons::Ok:
 			Click();
-			ret = true;
 			break;
 
 		default:
 			break;
 	}
 
-	return ret;
+	return 1;
 }
 
 void Button::OnPaint(GL *gl) {

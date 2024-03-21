@@ -10,6 +10,7 @@
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Listeners/IButtonListener.h>
+#include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/Station/Page.h>
 
 using namespace awui::Drawing;
@@ -122,24 +123,21 @@ void ConfigButton::RemoveAllListeners() {
 	m_listeners.clear();
 }
 
-void ConfigButton::OnMouseUp(MouseEventArgs *e) {
-	Click();
-}
-
-bool ConfigButton::OnKeyPress(Keys::Enum key) {
-	bool ret = false;
-	switch (key) {
-		case Keys::Key_ENTER:
-		case Keys::Key_SPACE:
-			Click();
-			ret = true;
+void ConfigButton::OnMouseDown(MouseEventArgs *e) {
+	switch (e->GetButton()) {
+		case MouseButtons::Left: {
+			if (!IsFocused()) {
+				SetFocus();
+			} else {
+				OnRemoteKeyUp(0, RemoteButtons::Ok);
+			}
+		} break;
+		case MouseButtons::Right:
+			OnRemoteKeyUp(0, RemoteButtons::Menu);
 			break;
-
 		default:
 			break;
 	}
-
-	return ret;
 }
 
 awui::String ConfigButton::ToString() const {
@@ -147,4 +145,20 @@ awui::String ConfigButton::ToString() const {
 	a += GetText();
 	a += awui::String(")");
 	return a;
+}
+
+bool ConfigButton::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
+	switch (button) {
+		case RemoteButtons::Ok:
+			Click();
+			// m_station->SelectChild(m_node);
+			break;
+		case RemoteButtons::Menu:
+			// m_station->SelectParent();
+			break;
+		default:
+			break;
+	}
+
+	return 1;
 }

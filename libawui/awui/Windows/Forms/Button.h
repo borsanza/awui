@@ -27,11 +27,8 @@ namespace awui::Windows::Forms {
 		const String GetText();
 		void SetText(const String str);
 
-		virtual void OnMouseLeave();
 		virtual void OnMouseDown(MouseEventArgs *e);
-		virtual void OnMouseMove(MouseEventArgs *e);
-		virtual void OnMouseUp(MouseEventArgs *e);
-		virtual bool OnKeyPress(Keys::Enum key);
+		virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 		virtual void OnPaint(OpenGL::GL *gl);
 		virtual void SetForeColor(const Drawing::Color color);
 		virtual void SetFont(const Drawing::Font font);
