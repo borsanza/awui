@@ -544,14 +544,14 @@ bool Control::IsVisible(bool checkInside) const {
 
 void Control::OnTickPre(float deltaSeconds) {
 	m_deltaSeconds = deltaSeconds;
-	double percent = 10.0f * deltaSeconds;
+	float percent = 10.0f * deltaSeconds;
 	// awui::Console::WriteLine("%lld %.3f", ellapsed, percent);
 
 	m_lastRight = Math::Interpolate(m_lastRight, m_boundsTo.GetRight(), percent);
 	m_lastBottom = Math::Interpolate(m_lastBottom, m_boundsTo.GetBottom(), percent);
 	m_lastLeft = Math::Interpolate(m_lastLeft, m_boundsTo.GetLeft(), percent);
 	m_lastTop = Math::Interpolate(m_lastTop, m_boundsTo.GetTop(), percent);
-	m_bounds.SetSize(m_lastRight - m_lastLeft + 1, m_lastBottom - m_lastTop + 1);
+	m_bounds.SetSize(m_lastRight - m_lastLeft + 1.0f, m_lastBottom - m_lastTop + 1.0f);
 	m_bounds.SetLocation(m_lastLeft, m_lastTop);
 
 	if (IsVisible()) {
@@ -813,8 +813,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) && (controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
-						(controlP1.GetTop() > thisP1.GetBottom())) {
+					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) && (controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) && (controlP1.GetTop() > thisP1.GetBottom())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
 							distance = calc;
@@ -873,8 +872,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 					Point controlP2(control->GetAbsoluteRight(), control->GetAbsoluteBottom());
 					Point controlCenter((controlP1.GetX() + controlP2.GetX()) / 2.0, (controlP1.GetY() + controlP2.GetY()) / 2.0);
 
-					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) && (controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) &&
-						(controlP2.GetBottom() < thisP2.GetTop())) {
+					if ((controlP1.GetTop() < selectedAux->GetAbsoluteBottom()) && (controlP2.GetBottom() > selectedAux->GetAbsoluteTop()) && (controlP2.GetBottom() < thisP2.GetTop())) {
 						float calc = Point::Distance(&controlCenter, &thisCenter);
 						if (calc < distance) {
 							distance = calc;
