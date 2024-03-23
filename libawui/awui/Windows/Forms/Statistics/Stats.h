@@ -1,6 +1,6 @@
 #pragma once
 
-#include <awui/Stopwatch.h>
+#include <awui/ChronoLap.h>
 #include <awui/Windows/Forms/Label.h>
 #include <awui/Windows/Forms/Panel.h>
 #include <awui/Windows/Forms/Statistics/Heartbeat.h>
@@ -28,7 +28,7 @@ namespace awui::Windows::Forms::Statistics {
 #endif
 
 #ifdef SHOW_FPS
-		Stopwatch m_fpsWatch;
+		ChronoLap m_fpsChronoLap;
 		int m_fps;
 		float m_fpsPreviousElapsedTime;
 		Label *m_labelFPS;

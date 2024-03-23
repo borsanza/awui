@@ -46,7 +46,7 @@ Stats::Stats() {
 	m_labelFPS->SetWidth(120);
 	AddWidget(m_labelFPS);
 
-	m_fpsWatch.StartNew();
+	m_fpsChronoLap.Start();
 #endif
 
 #ifdef SHOW_WIDGETS
@@ -74,7 +74,7 @@ void Stats::SetTimeAfterIddle() {
 #ifdef SHOW_FPS
 	m_fps++;
 
-	float elapsedTime = m_fpsWatch.GetDeltaSeconds();
+	float elapsedTime = m_fpsChronoLap.GetTotalTime();
 	if ((elapsedTime - m_fpsPreviousElapsedTime) >= TimeToMeasure) {
 		float fps = m_fps / (elapsedTime - m_fpsPreviousElapsedTime);
 		m_labelFPS->SetText(String("%.1f FPS", fps));

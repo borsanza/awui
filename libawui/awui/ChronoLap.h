@@ -5,21 +5,25 @@
 #include <chrono>
 
 namespace awui {
-	class Stopwatch : public Object {
+	class ChronoLap : public Object {
 	  private:
 		using Clock = std::chrono::high_resolution_clock;
 		using TimePoint = std::chrono::time_point<Clock>;
 		using Duration = Clock::duration;
 
-		TimePoint m_start_time;
-		Duration m_elapsed;
+		TimePoint m_startTime;
+		TimePoint m_lapTime;
+		Duration m_lastLapDuration;
+		Duration m_totalDuration;
 		bool m_running;
 
 	  public:
-		Stopwatch();
+		ChronoLap();
 
-		void StartNew();
+		void Start();
+		void Lap();
 		void Stop();
-		float GetDeltaSeconds() const;
+		float GetLapTime() const;
+		float GetTotalTime() const;
 	};
 } // namespace awui

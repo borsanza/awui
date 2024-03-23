@@ -8,10 +8,10 @@
 
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include <awui/ChronoLap.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Math.h>
-#include <awui/Stopwatch.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Joystick/Controller.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
@@ -55,18 +55,17 @@ void Application::Run(Form *form = NULL) {
 
 	Stats *stats = Stats::Instance();
 
-	Stopwatch stopwatch;
+	ChronoLap chronoLap;
 
-	stopwatch.StartNew();
+	chronoLap.Start();
 
 	// Lo inicializo en una frecuencia de 60Hz
 	float lastDeltaSeconds = 1.0f / 60.0f;
 	while (!Application::quit) {
 		ProcessEvents();
 
-		stopwatch.Stop();
-		float deltaSeconds = stopwatch.GetDeltaSeconds();
-		stopwatch.StartNew();
+		chronoLap.Lap();
+		float deltaSeconds = chronoLap.GetLapTime();
 
 		// Se comporta mejor en fullscreen si amortiguo el deltaseconds
 		lastDeltaSeconds = Math::Interpolate(lastDeltaSeconds, deltaSeconds, 0.2, false);
