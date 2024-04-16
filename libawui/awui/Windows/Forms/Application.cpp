@@ -12,6 +12,7 @@
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Math.h>
+// #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Joystick/Controller.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
@@ -65,7 +66,7 @@ void Application::Run(Form *form = NULL) {
 		ProcessEvents();
 
 		chronoLap.Lap();
-		float deltaSeconds = chronoLap.GetLapTime();
+		float deltaSeconds = chronoLap.GetLapDuration();
 
 		// Se comporta mejor en fullscreen si amortiguo el deltaseconds
 		lastDeltaSeconds = Math::Interpolate(lastDeltaSeconds, deltaSeconds, 0.2, false);
@@ -78,6 +79,15 @@ void Application::Run(Form *form = NULL) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		form->OnPaintForm();
+
+		/*
+				int top = 640;
+				for (int i = -top; i < 0; i++) {
+					for (int j = -top; j < 0; j++) {
+						OpenGL::GL::FillRectangle(i << 3, j << 3, (i << 3) + 5, (j << 3) + 5);
+					}
+				}
+		*/
 
 		stats->SetTimeBeforeIddle();
 		form->SwapGL();

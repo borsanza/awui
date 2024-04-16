@@ -162,25 +162,26 @@ void Graphics::DrawString(const String text, Drawing::Font *font, const Drawing:
 	cairo_show_text(m_cr, text.ToCharArray());
 	cairo_restore(m_cr);
 
-	float size = font->GetSize() * 0.07f;
-	size = Math::Max(Math::Round(size), 1.0f);
-	Pen pen = Pen(color, size);
+	if (font->GetStrikeout() || font->GetUnderline()) {
+		float size = font->GetSize() * 0.07f;
+		size = Math::Max(Math::Round(size), 1.0f);
+		Pen pen = Pen(color, size);
 
-	cairo_antialias_t old = cairo_get_antialias(m_cr);
-	cairo_set_antialias(m_cr, cairo_antialias_t::CAIRO_ANTIALIAS_NONE);
+		cairo_antialias_t old = cairo_get_antialias(m_cr);
+		cairo_set_antialias(m_cr, cairo_antialias_t::CAIRO_ANTIALIAS_NONE);
 
-	if (font->GetStrikeout()) {
-		float posy = y - (extents.y_bearing / 2.0f) + BORDER;
-		;
-		posy = Math::Round(posy);
-		DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
+		if (font->GetStrikeout()) {
+			float posy = y - (extents.y_bearing / 2.0f) + BORDER;
+			posy = Math::Round(posy);
+			DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
+		}
+
+		if (font->GetUnderline()) {
+			float posy = y - extents.y_bearing + BORDER + (size * 1.5f);
+			posy = Math::Round(posy);
+			DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
+		}
+
+		cairo_set_antialias(m_cr, old);
 	}
-
-	if (font->GetUnderline()) {
-		float posy = y - extents.y_bearing + BORDER + (size * 1.5f);
-		posy = Math::Round(posy);
-		DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
-	}
-
-	cairo_set_antialias(m_cr, old);
 }

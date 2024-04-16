@@ -76,9 +76,7 @@ Page *SettingsUI::ProcessJson(const json &j, int depth) {
 				continue;
 			}
 
-			TypeButton type = element["type"] == "group"
-								  ? TypeButton::Group
-								  : (element["type"] == "boolean" ? TypeButton::Boolean : (element["type"] == "list" ? TypeButton::List : TypeButton::Label));
+			TypeButton type = element["type"] == "group" ? TypeButton::Group : (element["type"] == "boolean" ? TypeButton::Boolean : (element["type"] == "list" ? TypeButton::List : TypeButton::Label));
 
 			switch (type) {
 				case TypeButton::Group: {
@@ -180,7 +178,7 @@ void SettingsUI::OnTick(float deltaSeconds) {
 	}
 }
 
-void SettingsUI::OnClick(Control *sender) {
+void SettingsUI::OnOk(Control *sender) {
 	if (sender->IsClass(Classes::ConfigButton)) {
 		ConfigButton *button = (ConfigButton *) sender;
 		switch (button->GetTypeButton()) {
@@ -188,7 +186,11 @@ void SettingsUI::OnClick(Control *sender) {
 				Page *page = button->GetSubPage();
 				m_browser->SetPage(page);
 				page->SetWidth(m_browser->GetWidth());
+				CheckMouseControl();
 				break;
 		}
 	}
+}
+
+void SettingsUI::OnMenu(Control *sender) {
 }

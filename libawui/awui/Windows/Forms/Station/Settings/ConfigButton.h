@@ -9,7 +9,7 @@
 
 namespace awui::Windows::Forms {
 	namespace Listeners {
-		class IButtonListener;
+		class IRemoteListener;
 	}
 
 	namespace Station {
@@ -23,7 +23,7 @@ namespace awui::Windows::Forms {
 				LabelButton m_label;
 				bool m_group;
 				Page *m_subpage;
-				std::vector<Listeners::IButtonListener *> m_listeners;
+				std::vector<Listeners::IRemoteListener *> m_listeners;
 				TypeButton m_typeButton;
 
 			  public:
@@ -50,8 +50,8 @@ namespace awui::Windows::Forms {
 				TypeButton GetTypeButton() { return m_typeButton; }
 
 				void Click();
-				void AddOnClickListener(Listeners::IButtonListener *listener);
-				void RemoveOnClickListener(Listeners::IButtonListener *listener);
+				void AddOnClickListener(Listeners::IRemoteListener *listener);
+				void RemoveOnClickListener(Listeners::IRemoteListener *listener);
 				void RemoveAllListeners();
 				void OnMouseDown(MouseEventArgs *e);
 				bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);

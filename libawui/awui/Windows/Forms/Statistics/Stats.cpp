@@ -13,6 +13,9 @@ Stats *Stats::m_instance = 0;
 Stats::Stats() {
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 
+	// Font font = Font("DejaVu Sans Mono", 16, FontStyle::Bold);
+	// Font font = Font("Courier New", 16, FontStyle::Bold);
+	// Font font = Font("Consolas", 16, FontStyle::Bold);
 	Font font = Font("Liberation Sans", 16, FontStyle::Bold);
 	Color backColor = Color::FromArgb(0, 0, 0, 0);
 	Color foreColor = Color::FromArgb(151, 151, 151);
@@ -74,7 +77,7 @@ void Stats::SetTimeAfterIddle() {
 #ifdef SHOW_FPS
 	m_fps++;
 
-	float elapsedTime = m_fpsChronoLap.GetTotalTime();
+	float elapsedTime = m_fpsChronoLap.GetTotalDuration();
 	if ((elapsedTime - m_fpsPreviousElapsedTime) >= TimeToMeasure) {
 		float fps = m_fps / (elapsedTime - m_fpsPreviousElapsedTime);
 		m_labelFPS->SetText(String("%.1f FPS", fps));

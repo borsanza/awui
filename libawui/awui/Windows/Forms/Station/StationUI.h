@@ -1,7 +1,8 @@
 #pragma once
 
 #include <awui/Windows/Forms/Control.h>
-#include <awui/Windows/Forms/Listeners/IButtonListener.h>
+#include <awui/Windows/Forms/Listeners/IExitListener.h>
+#include <awui/Windows/Forms/Listeners/IRemoteListener.h>
 
 namespace awui {
 	namespace Collections {
@@ -70,7 +71,7 @@ namespace awui {
 
 				using namespace awui::Windows::Forms::Listeners;
 
-				class StationUI : public Control, IButtonListener {
+				class StationUI : public Control, public IRemoteListener, public IExitListener {
 				  private:
 					FadePanel m_fade;
 					String m_path;
@@ -117,7 +118,9 @@ namespace awui {
 
 					void SetBackground(Bitmap *background);
 
-					virtual void OnClick(Control *sender) override;
+					virtual void OnOk(Control *sender) override;
+					virtual void OnMenu(Control *sender) override;
+					virtual void OnExit(Control *sender) override;
 				};
 			} // namespace Station
 		}	  // namespace Forms

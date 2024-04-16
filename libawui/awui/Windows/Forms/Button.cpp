@@ -8,7 +8,7 @@
 
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Listeners/IButtonListener.h>
+#include <awui/Windows/Forms/Listeners/IRemoteListener.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -91,19 +91,28 @@ int Button::GetLabelWidth() const {
 }
 
 void Button::Click() {
-	for (auto *listener : m_listeners) {
-		listener->OnClick(this);
+	for (auto *listener : m_buttonListeners) {
+		listener->OnOk(this);
 	}
 }
 
-void Button::AddOnClickListener(IButtonListener *listener) {
-	m_listeners.push_back(listener);
+void Button::AddOnClickListener(IRemoteListener *listener) {
+	m_buttonListeners.push_back(listener);
 }
 
-void Button::RemoveOnClickListener(IButtonListener *listener) {
-	m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), listener), m_listeners.end());
+void Button::AddOnExitListener(IExitListener *listener) {
+	m_exitListeners.push_back(listener);
+}
+
+void Button::RemoveOnClickListener(IRemoteListener *listener) {
+	m_buttonListeners.erase(std::remove(m_buttonListeners.begin(), m_buttonListeners.end(), listener), m_buttonListeners.end());
+}
+
+void Button::RemoveOnExitListener(IExitListener *listener) {
+	m_exitListeners.erase(std::remove(m_exitListeners.begin(), m_exitListeners.end(), listener), m_exitListeners.end());
 }
 
 void Button::RemoveAllListeners() {
-	m_listeners.clear();
+	m_buttonListeners.clear();
+	m_exitListeners.clear();
 }

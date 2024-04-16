@@ -44,15 +44,15 @@ void ChronoLap::Stop() {
 }
 
 // Obtiene el tiempo de la última vuelta en segundos.
-float ChronoLap::GetLapTime() const {
-	return std::chrono::duration_cast<std::chrono::duration<float>>(m_lastLapDuration).count();
+float ChronoLap::GetLapDuration() const {
+	return std::chrono::duration<float>(m_lastLapDuration).count();
 }
 
 // Obtiene el tiempo total transcurrido desde el inicio en segundos.
-float ChronoLap::GetTotalTime() const {
+float ChronoLap::GetTotalDuration() const {
 	if (m_running) {
-		return std::chrono::duration_cast<std::chrono::duration<float>>((Clock::now() - m_startTime)).count();
+		return std::chrono::duration<float>((Clock::now() - m_startTime)).count();
 	}
 
-	return std::chrono::duration_cast<std::chrono::duration<float>>(m_totalDuration).count();
+	return std::chrono::duration<float>(m_totalDuration).count();
 }

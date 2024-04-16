@@ -62,6 +62,7 @@ StationUI::StationUI() {
 
 	m_settings = new SettingsWidget();
 	m_settings->AddOnClickListener(this);
+	m_settings->AddOnExitListener(this);
 	m_settings->SetDock(DockStyle::None);
 	m_settings->SetFont(font2);
 	m_settings->SetBackColor(Color::FromArgb(0, 0, 0, 0));
@@ -428,7 +429,7 @@ void StationUI::ExitArcade() {
 	RemoveWidget(&m_fade);
 }
 
-void StationUI::OnClick(Control *sender) {
+void StationUI::OnOk(Control *sender) {
 	m_controlBase->SetVisible(false);
 	// Console::WriteLine("Click %s", sender->ToString());
 	if (m_settingsUI) {
@@ -443,6 +444,12 @@ void StationUI::OnClick(Control *sender) {
 	m_settingsUI->InitializeComponent();
 	CheckMouseControl();
 	// Form::SetControlSelected(m_settingsUI);
+}
+
+void StationUI::OnMenu(Control *sender) {
+}
+
+void StationUI::OnExit(Control *sender) {
 }
 
 /********************************* FadePanel **********************************/

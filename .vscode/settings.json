@@ -76,6 +76,9 @@
 		"cinttypes": "cpp",
 		"typeinfo": "cpp",
 		"valarray": "cpp",
-		"variant": "cpp"
+		"variant": "cpp",
+		"xhash": "cpp",
+		"xstring": "cpp",
+		"xutility": "cpp"
 	},
 }

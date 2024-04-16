@@ -70,21 +70,23 @@ void GL::DrawLine(int x1, int y1, int x2, int y2) {
 	glEnd();
 }
 
+// GL_CCW
 void GL::DrawRectangle(int x1, int y1, int x2, int y2) {
 	glBegin(GL_LINE_LOOP);
-	glVertex2f(x1 + OFFSET, y1 + OFFSET);
-	glVertex2f(x2 + OFFSET, y1 + OFFSET);
-	glVertex2f(x2 + OFFSET, y2 + OFFSET);
-	glVertex2f(x1 + OFFSET, y2 + OFFSET);
+	glVertex2f(x1 + OFFSET, y2 + OFFSET); // Left Bottom
+	glVertex2f(x2 + OFFSET, y2 + OFFSET); // Right Bottom
+	glVertex2f(x2 + OFFSET, y1 + OFFSET); // Right Top
+	glVertex2f(x1 + OFFSET, y1 + OFFSET); // Left Top
 	glEnd();
 }
 
+// GL_CCW
 void GL::FillRectangle(int x1, int y1, int x2, int y2) {
 	glBegin(GL_QUADS);
-	glVertex2f(x1, y1);
-	glVertex2f(x2 + 1.0f, y1);
-	glVertex2f(x2 + 1.0f, y2 + 1.0f);
-	glVertex2f(x1, y2 + 1.0f);
+	glVertex2f(x1, y2 + 1.0f);		  // Left Bottom
+	glVertex2f(x2 + 1.0f, y2 + 1.0f); // Right Bottom
+	glVertex2f(x2 + 1.0f, y1);		  // Right Top
+	glVertex2f(x1, y1);				  // Left Top
 	glEnd();
 }
 
@@ -92,6 +94,7 @@ void GL::FillRectangle(int x1, int y1, int x2, int y2) {
 #define GL_BGRA 0x80E1
 #endif
 
+// GL_CCW
 void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
 	image->Load();
 	// Mas rapido guardandose solo el valor y recuperarlo despues
@@ -109,14 +112,14 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2i(x, y);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2i(x + image->GetWidth(), y);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2i(x + image->GetWidth(), y + image->GetHeight());
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex2i(x, y + image->GetHeight());
+	glVertex2i(x, y + image->GetHeight()); // Left Bottom
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2i(x + image->GetWidth(), y + image->GetHeight()); // Right Bottom
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2i(x + image->GetWidth(), y); // Right Top
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2i(x, y); // Left Top
 	glEnd();
 
 	if (!oldBlend)
@@ -127,6 +130,7 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
 		glDisable(GL_TEXTURE_2D);
 }
 
+// GL_CCW
 void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int height) {
 	image->Load();
 	// Mas rapido guardandose solo el valor y recuperarlo despues
@@ -144,14 +148,14 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int h
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2i(x, y);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2i(x + width, y);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2i(x + width, y + height);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex2i(x, y + height);
+	glVertex2i(x, y + height); // Left Bottom
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2i(x + width, y + height); // Right Bottom
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2i(x + width, y); // Right Top
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2i(x, y); // Left Top
 	glEnd();
 
 	if (!oldBlend)

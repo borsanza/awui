@@ -9,7 +9,7 @@
 #include <SDL_opengl.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Listeners/IButtonListener.h>
+#include <awui/Windows/Forms/Listeners/IRemoteListener.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/Station/Page.h>
 
@@ -107,15 +107,15 @@ void ConfigButton::OnResize() {
 
 void ConfigButton::Click() {
 	for (auto *listener : m_listeners) {
-		listener->OnClick(this);
+		listener->OnOk(this);
 	}
 }
 
-void ConfigButton::AddOnClickListener(IButtonListener *listener) {
+void ConfigButton::AddOnClickListener(IRemoteListener *listener) {
 	m_listeners.push_back(listener);
 }
 
-void ConfigButton::RemoveOnClickListener(IButtonListener *listener) {
+void ConfigButton::RemoveOnClickListener(IRemoteListener *listener) {
 	m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), listener), m_listeners.end());
 }
 

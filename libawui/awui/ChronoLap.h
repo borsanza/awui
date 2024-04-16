@@ -23,7 +23,7 @@ namespace awui {
 		void Start();
 		void Lap();
 		void Stop();
-		float GetLapTime() const;
-		float GetTotalTime() const;
+		float GetLapDuration() const;
+		float GetTotalDuration() const;
 	};
 } // namespace awui

@@ -167,13 +167,13 @@ void Label::UpdateBufferText() {
 	if (m_image)
 		delete m_image;
 
-	Font font = *GetFont();
-	m_metrics = TextRenderer::GetMeasureText(m_text, &font);
+	Font *font = GetFont();
+	m_metrics = TextRenderer::GetMeasureText(m_text, font);
 
 	m_image = new Drawing::Image(m_metrics.GetWidth(), m_metrics.GetHeight());
 	m_g = Drawing::Graphics::FromImage(m_image);
 
-	m_g->DrawString(m_text, &font, GetForeColor(), 0, 0);
+	m_g->DrawString(m_text, font, GetForeColor(), 0, 0);
 }
 
 void Label::SetScrolled(float scroll) {

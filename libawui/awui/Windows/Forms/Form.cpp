@@ -88,7 +88,13 @@ void Form::OnPaintForm() {
 
 	gl.SetClippingBase(rectangle);
 
-	glDisable(GL_CULL_FACE);
+	// Habilitar el culling de caras para mejorar el rendimiento, opcional pero recomendado
+	glEnable(GL_CULL_FACE);
+	//  Especificar qué caras deseas ocultar. Por defecto es GL_BACK, pero aquí la configuramos explícitamente.
+	glCullFace(GL_BACK);
+	//  Definir cuál es considerada la cara frontal. Por defecto es GL_CCW (counter-clockwise).
+	glFrontFace(GL_CCW);
+
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);

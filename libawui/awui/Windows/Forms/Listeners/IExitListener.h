@@ -4,9 +4,8 @@
 #include <awui/Object.h>
 
 namespace awui::Windows::Forms::Listeners {
-	class IButtonListener {
+	class IExitListener {
 	  public:
-		virtual ~IButtonListener() = default;
-		virtual void OnClick(Control *sender) = 0;
+		virtual void OnExit(Control *sender) = 0;
 	};
 } // namespace awui::Windows::Forms::Listeners

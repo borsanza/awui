@@ -6,15 +6,17 @@
 
 namespace awui::Windows::Forms {
 	namespace Listeners {
-		class IButtonListener;
-	}
+		class IRemoteListener;
+		class IExitListener;
+	} // namespace Listeners
 
 	class Button : public Control {
 	  private:
 		Label m_label;
 		String m_text;
 		int m_nextId = 0;
-		std::vector<Listeners::IButtonListener *> m_listeners;
+		std::vector<Listeners::IRemoteListener *> m_buttonListeners;
+		std::vector<Listeners::IExitListener *> m_exitListeners;
 
 		void Click();
 
@@ -34,8 +36,10 @@ namespace awui::Windows::Forms {
 		virtual void SetFont(const Drawing::Font font);
 		int GetLabelWidth() const;
 
-		void AddOnClickListener(Listeners::IButtonListener *listener);
-		void RemoveOnClickListener(Listeners::IButtonListener *listener);
+		void AddOnClickListener(Listeners::IRemoteListener *listener);
+		void AddOnExitListener(Listeners::IExitListener *listener);
+		void RemoveOnClickListener(Listeners::IRemoteListener *listener);
+		void RemoveOnExitListener(Listeners::IExitListener *listener);
 		void RemoveAllListeners();
 	};
 } // namespace awui::Windows::Forms

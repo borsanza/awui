@@ -29,33 +29,33 @@ void Gradient::SetColorGo(int pos, const Drawing::ColorF color) {
 	this->m_colorGo[pos] = color;
 }
 
+// GL_CCW
 void Gradient::OnPaint(GL *gl) {
 	ColorF *c;
 
 	glBegin(GL_QUADS);
 
-	c = &this->m_color[0];
+	c = &this->m_color[3];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(0.0f, 0.0f, 0.0f);
-
-	c = &this->m_color[1];
-	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(this->GetWidth(), 0.0f, 0.0f);
+	glVertex3f(0.0f, this->GetHeight(), 0.0f); // Left Bottom
 
 	c = &this->m_color[2];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(this->GetWidth(), this->GetHeight(), 0.0f);
+	glVertex3f(this->GetWidth(), this->GetHeight(), 0.0f); // Right Bottom
 
-	c = &this->m_color[3];
+	c = &this->m_color[1];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(0.0f, this->GetHeight(), 0.0f);
+	glVertex3f(this->GetWidth(), 0.0f, 0.0f); // Right Top
+
+	c = &this->m_color[0];
+	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
+	glVertex3f(0.0f, 0.0f, 0.0f); // Left Top
 
 	glEnd();
 }
 
 awui::Drawing::ColorF Gradient::InterpolateColor(Drawing::ColorF *c1, Drawing::ColorF *c2, float percent) {
-	return ColorF::FromArgb(Math::Interpolate(c1->GetA(), c2->GetA(), percent), Math::Interpolate(c1->GetR(), c2->GetR(), percent),
-							Math::Interpolate(c1->GetG(), c2->GetG(), percent), Math::Interpolate(c1->GetB(), c2->GetB(), percent));
+	return ColorF::FromArgb(Math::Interpolate(c1->GetA(), c2->GetA(), percent), Math::Interpolate(c1->GetR(), c2->GetR(), percent), Math::Interpolate(c1->GetG(), c2->GetG(), percent), Math::Interpolate(c1->GetB(), c2->GetB(), percent));
 }
 
 void Gradient::OnTick(float deltaSeconds) {
