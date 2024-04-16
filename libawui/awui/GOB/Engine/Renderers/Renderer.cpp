@@ -9,6 +9,10 @@ using namespace awui::GOB::Engine;
 using namespace awui::Windows::Forms;
 using namespace awui::OpenGL;
 
+Renderer::Renderer() {
+	m_offsetZ = 0.0f;
+}
+
 void Renderer::OnMenu(Control *sender) {
 }
 
@@ -71,8 +75,11 @@ void Renderer::Render(Scene &scene, Camera &camera) {
 	glEnd();
 }
 
+void awui::GOB::Engine::Renderer::OnTick(float deltaSeconds) {
+	m_offsetZ -= 1.0f * deltaSeconds;
+}
+
 void Renderer::OnPaint(OpenGL::GL *gl) {
-	static float offsetZ = 0.0f;
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 
@@ -82,8 +89,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 
 	Scene scene;
 	PerspectiveCamera camera(60, ((float) this->GetWidth()) / ((float) this->GetHeight()), 0.1, 1000);
-	camera.SetPosition(Vector3(2, 2, 8 + offsetZ));
-	offsetZ -= 0.05f;
+	camera.SetPosition(Vector3(2, 2, 8 + m_offsetZ));
 	camera.SetTarget(Vector3(0, 0, 0));
 	Render(scene, camera);
 
