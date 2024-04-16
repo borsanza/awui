@@ -24,12 +24,50 @@ void Renderer::Render(Scene &scene, Camera &camera) {
 	camera.SetProjectionMatrix();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glColor3ub(255, 0, 0);
 	glBegin(GL_QUADS);
-	glVertex3f(0, 0, 0);
-	glVertex3f(1.0f, 0, 0);
-	glVertex3f(1.0f, 1.0f, 0);
-	glVertex3f(0, 1.0f, 0);
+
+	glColor3ub(128, 0, 0);
+	// Left
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 1.0f, 1.0f);
+	glVertex3f(0.0f, 1.0f, 0.0f);
+
+	glColor3ub(255, 0, 0);
+	// Right
+	glVertex3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 1.0f);
+	glVertex3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.0f, 0.0f, 0.0f);
+
+	glColor3ub(0, 255, 0);
+	// Top
+	glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 1.0f);
+	glVertex3f(1.0f, 1.0f, 1.0f);
+	glVertex3f(1.0f, 1.0f, 0.0f);
+
+	glColor3ub(0, 128, 0);
+	// Bottom
+	glVertex3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+
+	glColor3ub(0, 0, 255);
+	// Front
+	glVertex3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.0f, 1.0f, 1.0f);
+	glVertex3f(0.0f, 1.0f, 1.0f);
+
+	glColor3ub(0, 0, 128);
+	// Back
+	glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+
 	glEnd();
 }
 
@@ -44,7 +82,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 
 	Scene scene;
 	PerspectiveCamera camera(60, ((float) this->GetWidth()) / ((float) this->GetHeight()), 0.1, 1000);
-	camera.SetPosition(Vector3(0, 2, 8 + offsetZ));
+	camera.SetPosition(Vector3(2, 2, 8 + offsetZ));
 	offsetZ -= 0.05f;
 	camera.SetTarget(Vector3(0, 0, 0));
 	Render(scene, camera);
