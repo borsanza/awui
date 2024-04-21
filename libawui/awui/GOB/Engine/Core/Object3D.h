@@ -27,6 +27,7 @@ namespace awui::GOB::Engine {
 		void SetRotation(float x, float y, float z);
 		Vector3 GetPosition() const;
 
-		virtual void Render();
+		void PreRender(const Matrix4 &parentMatrix);
+		virtual void Render(const Matrix4 &transform);
 	};
 } // namespace awui::GOB::Engine

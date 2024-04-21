@@ -28,3 +28,5 @@ Windows:
   Command:
     bbr.bat
 
+Actualizar Paquetes:
+  pacman -Syu

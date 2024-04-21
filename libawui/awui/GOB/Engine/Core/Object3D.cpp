@@ -1,6 +1,8 @@
 #include "Object3D.h"
 
 #include <algorithm>
+#include <awui/GOB/Engine/Math/Matrix4.h>
+#include <awui/GOB/Engine/Math/Quaternion.h>
 
 using namespace awui::GOB::Engine;
 
@@ -49,8 +51,21 @@ Vector3 Object3D::GetPosition() const {
 	return position;
 }
 
-void Object3D::Render() {
+void Object3D::PreRender(const Matrix4 &parentMatrix) {
+
+	Quaternion quaternion;
+	quaternion.SetFromEuler(rotation);
+
+	Matrix4 matrix;
+	matrix.Compose(position, quaternion, scale);
+	matrix = matrix * parentMatrix;
+
+	Render(matrix);
+
 	for (auto *child : _children) {
-		child->Render();
+		child->PreRender(matrix);
 	}
+}
+
+void Object3D::Render(const Matrix4 &transform) {
 }

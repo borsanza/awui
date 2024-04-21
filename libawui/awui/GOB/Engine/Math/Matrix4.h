@@ -13,6 +13,11 @@ namespace awui::GOB::Engine {
 	  public:
 		Matrix4();
 
+		bool IsIdentity() const;
+		static Matrix4 Identity();
+
+		Matrix4 operator*(const Matrix4 &other) const;
+
 		float *operator[](int index);
 		const float *data() const;
 

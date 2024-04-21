@@ -32,6 +32,10 @@ void Matrix4::Set(float n11, float n12, float n13, float n14, float n21, float n
 	m[15] = n44;
 }
 
+bool Matrix4::IsIdentity() const {
+	return m[0] == 1.0f && m[1] == 0.0f && m[2] == 0.0f && m[3] == 0.0f && m[4] == 0.0f && m[5] == 1.0f && m[6] == 0.0f && m[7] == 0.0f && m[8] == 0.0f && m[9] == 0.0f && m[10] == 1.0f && m[11] == 0.0f && m[12] == 0.0f && m[13] == 0.0f && m[14] == 0.0f && m[15] == 1.0f;
+}
+
 float *Matrix4::operator[](int index) {
 	return &m[index * 4];
 }
@@ -50,15 +54,15 @@ void Matrix4::Compose(const Vector3 &position, const Quaternion &rotation, const
 	float sx = scale.x, sy = scale.y, sz = scale.z;
 
 	m[0] = (1 - (yy + zz)) * sx;
-	m[1] = (xy - wz) * sx;
-	m[2] = (xz + wy) * sx;
+	m[1] = (xy + wz) * sx;
+	m[2] = (xz - wy) * sx;
 
-	m[4] = (xy + wz) * sy;
+	m[4] = (xy - wz) * sy;
 	m[5] = (1 - (xx + zz)) * sy;
-	m[6] = (yz - wx) * sy;
+	m[6] = (yz + wx) * sy;
 
-	m[8] = (xz - wy) * sz;
-	m[9] = (yz + wx) * sz;
+	m[8] = (xz + wy) * sz;
+	m[9] = (yz - wx) * sz;
 	m[10] = (1 - (xx + yy)) * sz;
 
 	m[12] = position.x;
@@ -67,4 +71,27 @@ void Matrix4::Compose(const Vector3 &position, const Quaternion &rotation, const
 
 	m[3] = m[7] = m[11] = m[15] = 0;
 	m[15] = 1;
+}
+
+Matrix4 Matrix4::Identity() {
+	return Matrix4();
+}
+
+Matrix4 Matrix4::operator*(const Matrix4 &other) const {
+	Matrix4 result;
+
+	if (other.IsIdentity()) {
+		return Matrix4(*this);
+	}
+
+	for (int row = 0; row < 4; row++) {
+		for (int col = 0; col < 4; col++) {
+			result.m[row * 4 + col] = 0;
+			for (int k = 0; k < 4; k++) {
+				result.m[row * 4 + col] += m[row * 4 + k] * other.m[k * 4 + col];
+			}
+		}
+	}
+
+	return result;
 }

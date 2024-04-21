@@ -17,7 +17,7 @@ namespace awui::GOB::Engine {
 	  public:
 		Renderer();
 
-		void Render(Scene &scene, Camera &camera);
+		void DoRender(Scene &scene, Camera &camera);
 
 		virtual void OnTick(float deltaSeconds) override;
 		virtual void OnPaint(OpenGL::GL *gl) override;

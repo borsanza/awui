@@ -11,6 +11,6 @@ namespace awui::GOB::Engine {
 	  public:
 		Mesh(BufferGeometry *geometry);
 
-		virtual void Render();
+		virtual void Render(const Matrix4 &transform);
 	};
 } // namespace awui::GOB::Engine

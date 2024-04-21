@@ -24,22 +24,20 @@ Renderer::Renderer() {
 		for (int ix = 0; ix < 10; ix++) {
 			BoxGeometry *geometry = new BoxGeometry(1, 1, 1);
 			Mesh *cube = new Mesh(geometry);
-			cube->SetPosition(ix * 0.8f, iy * 0.8f, 0);
+			cube->SetPosition(ix * 0.8f, 0, iy * 0.8f);
 			cube->SetScale(ix / 10.0f, iy / 10.0f, 1);
-			// cube->SetRotation(ix, 0, 0);
+			cube->SetRotation(0, 0, ix);
 			m_scene->Add(cube);
 		}
 	}
-	m_scene->SetPosition(0.8f, 0.8f, 0);
-	m_scene->SetScale(2.0f, 2.0f, 1);
-	// m_scene->SetRotation(10, 0, 0);
 }
 
-void Renderer::Render(Scene &scene, Camera &camera) {
-
+void Renderer::DoRender(Scene &scene, Camera &camera) {
 	camera.SetViewMatrix();
 	camera.SetProjectionMatrix();
-	scene.Render();
+
+	Matrix4 identity = Matrix4::Identity();
+	scene.PreRender(identity);
 
 	glBegin(GL_LINES);
 
@@ -171,9 +169,9 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glLoadIdentity();
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	// m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 2.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
+	m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 2.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
-	Render(*m_scene, *m_camera);
+	DoRender(*m_scene, *m_camera);
 
 	glFlush();
 
