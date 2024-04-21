@@ -19,9 +19,10 @@ FormGOB::~FormGOB() {
 }
 
 void FormGOB::InitializeComponent() {
-	SetBackColor(Color::FromArgb(0, 0, 0));
+	SetBackColor(awui::Drawing::Color::FromArgb(0, 0, 0));
 
 	m_renderer = new Renderer();
+	m_renderer->SetClearColor(0xaad1feff);
 	m_renderer->SetDock(DockStyle::Fill);
 	// m_renderer->SetSize(500, 500);
 	// m_renderer->SetLocation(200, 200);

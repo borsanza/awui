@@ -174,15 +174,12 @@ void awui::GOB::Engine::Renderer::OnTick(float deltaSeconds) {
 	m_angle -= 0.5f * deltaSeconds;
 }
 
+void Renderer::SetClearColor(uint32_t color) {
+	m_clearColor = Color(color);
+}
+
 void Renderer::OnPaint(OpenGL::GL *gl) {
 	glEnable(GL_DEPTH_TEST);
-
-	// glEnable(GL_LINE_SMOOTH);
-	// glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	// glEnable(GL_POINT_SMOOTH);
-	// glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-	// glEnable(GL_POLYGON_SMOOTH);
-	// glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -194,11 +191,12 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
+	glClearColor(m_clearColor.GetR() / 255.0f, m_clearColor.GetG() / 255.0f, m_clearColor.GetB() / 255.0f, m_clearColor.GetA() / 255.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	// m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 2.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
+	m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 2.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);
 

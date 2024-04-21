@@ -11,9 +11,9 @@ file(GLOB GAMEOFBLOCKS_SOURCES *.cpp)
 
 add_executable(gameOfBlocks ${GAMEOFBLOCKS_SOURCES})
 
-#if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
-#    set_target_properties(gameOfBlocks PROPERTIES WIN32_EXECUTABLE TRUE)
-#endif()
+if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(gameOfBlocks PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     if(MSVC)
