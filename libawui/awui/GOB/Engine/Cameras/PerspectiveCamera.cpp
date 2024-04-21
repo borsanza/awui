@@ -25,6 +25,10 @@ void PerspectiveCamera::MakePerspectiveMatrix(Matrix4 &matrix, float fovY, float
 	matrix[3][3] = 0.0f;
 }
 
+void PerspectiveCamera::SetAspectRatio(float aspect) {
+	m_aspect = aspect;
+}
+
 // Configurar la matriz de proyección
 void PerspectiveCamera::SetProjectionMatrix() {
 	glMatrixMode(GL_PROJECTION);
@@ -66,7 +70,7 @@ void PerspectiveCamera::MakeLookAtMatrix(Matrix4 &matrix, const Vector3 &eye, co
 // Configurar la matriz de vista
 void PerspectiveCamera::SetViewMatrix() {
 	Matrix4 viewMatrix;
-	MakeLookAtMatrix(viewMatrix, position, target, upVector);
+	MakeLookAtMatrix(viewMatrix, position, m_target, m_upVector);
 
 	// Establecer el modo de matriz a GL_MODELVIEW para trabajar con la matriz de vista
 	glMatrixMode(GL_MODELVIEW);

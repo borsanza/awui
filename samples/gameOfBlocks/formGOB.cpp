@@ -23,6 +23,8 @@ void FormGOB::InitializeComponent() {
 
 	m_renderer = new Renderer();
 	m_renderer->SetDock(DockStyle::Fill);
+	// m_renderer->SetSize(500, 500);
+	// m_renderer->SetLocation(200, 200);
 	AddWidget(m_renderer);
 
 	SetSize(1280, 720);

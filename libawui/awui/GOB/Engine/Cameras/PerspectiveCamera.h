@@ -19,6 +19,7 @@ namespace awui::GOB::Engine::Cameras {
 	  public:
 		PerspectiveCamera(float fov, float aspect, float near, float far);
 
+		void SetAspectRatio(float aspect);
 		virtual void SetProjectionMatrix() override;
 		virtual void SetViewMatrix() override;
 	};

@@ -4,6 +4,10 @@
 
 using namespace awui::GOB::Engine;
 
+Object3D::Object3D() {
+	scale.Set(1, 1, 1);
+}
+
 Object3D::~Object3D() {
 	for (auto *child : _children) {
 		delete child;
@@ -29,6 +33,24 @@ void Object3D::SetPosition(const Vector3 &newPosition) {
 	position = newPosition;
 }
 
+void Object3D::SetPosition(float x, float y, float z) {
+	position.Set(x, y, z);
+}
+
+void Object3D::SetScale(float x, float y, float z) {
+	scale.Set(x, y, z);
+}
+
+void Object3D::SetRotation(float x, float y, float z) {
+	rotation.Set(x, y, z);
+}
+
 Vector3 Object3D::GetPosition() const {
 	return position;
+}
+
+void Object3D::Render() {
+	for (auto *child : _children) {
+		child->Render();
+	}
 }

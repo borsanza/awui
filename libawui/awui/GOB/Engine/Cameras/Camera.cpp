@@ -4,21 +4,24 @@ using namespace awui::GOB::Engine;
 using namespace awui::GOB::Engine::Cameras;
 
 Camera::Camera() {
-	upVector = Vector3(0, 1, 0);
+	m_upVector = Vector3(0, 1, 0);
+	m_target = Vector3(0, 0, 0);
 }
 
-void Camera::SetTarget(const Vector3 &newTarget) {
-	target = newTarget;
+void Camera::LookAt(float x, float y, float z) {
+	m_target.x = x;
+	m_target.y = y;
+	m_target.z = z;
 }
 
 Vector3 Camera::GetTarget() const {
-	return target;
+	return m_target;
 }
 
 void Camera::SetUpVector(const Vector3 &newUpVector) {
-	upVector = newUpVector;
+	m_upVector = newUpVector;
 }
 
 Vector3 Camera::GetUpVector() const {
-	return upVector;
+	return m_upVector;
 }

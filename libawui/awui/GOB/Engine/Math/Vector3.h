@@ -1,13 +1,35 @@
 #pragma once
 
 namespace awui::GOB::Engine {
-	class Vector3 {
+	class Matrix4;
+
+	struct Vector3 {
+
 	  public:
-		float x, y, z;
+		static const int X = 0;
+		static const int Y = 1;
+		static const int Z = 2;
 
-		Vector3(float x = 0, float y = 0, float z = 0) : x(x), y(y), z(z) {}
+		union {
+			struct {
+				float m_x, m_y, m_z;
+			};
+			struct {
+				float x, y, z;
+			};
+			struct {
+				float u, v, w;
+			};
+			float data[3];
+		};
 
+		Vector3(float x = 0, float y = 0, float z = 0) : m_x(x), m_y(y), m_z(z) {}
+
+		Vector3 operator+(const Vector3 &other) const;
 		Vector3 operator-(const Vector3 &other) const;
+		Vector3 operator*(const Matrix4 &other) const;
+
+		void Set(float x, float y, float z);
 
 		static Vector3 Cross(const Vector3 &a, const Vector3 &b);
 		static float Dot(const Vector3 &a, const Vector3 &b);
