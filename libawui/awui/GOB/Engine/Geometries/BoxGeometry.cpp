@@ -38,7 +38,7 @@ void BoxGeometry::BuildPlane(int u, int v, int w, int udir, int vdir, float widt
 			vec.data[w] = faceFixed;
 			m_vertices.push_back(vec);
 
-			m_uvs.push_back(Vector2((float) ix / (float) widthSegments, 1.0f - ((float) iy / (float) heightSegments)));
+			m_uvs.push_back(Vector3((float) ix / (float) widthSegments, 1.0f - ((float) iy / (float) heightSegments), materialIndex));
 		}
 	}
 

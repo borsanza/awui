@@ -1,7 +1,7 @@
 #pragma once
 
 namespace awui::GOB::Engine {
-	class Vector3;
+	class Euler;
 
 	struct Quaternion {
 	  public:
@@ -23,6 +23,6 @@ namespace awui::GOB::Engine {
 		Quaternion(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 1.0f) : m_x(x), m_y(y), m_z(z), m_w(w) {}
 
 		void Set(float x, float y, float z, float w);
-		void SetFromEuler(const Vector3 &euler);
+		void SetFromEuler(const Euler &euler);
 	};
 } // namespace awui::GOB::Engine

@@ -52,12 +52,8 @@ Vector3 Object3D::GetPosition() const {
 }
 
 void Object3D::PreRender(const Matrix4 &parentMatrix) {
-
-	Quaternion quaternion;
-	quaternion.SetFromEuler(rotation);
-
 	Matrix4 matrix;
-	matrix.Compose(position, quaternion, scale);
+	matrix.Compose(position, rotation.GetQuaternion(), scale);
 	matrix = matrix * parentMatrix;
 
 	Render(matrix);

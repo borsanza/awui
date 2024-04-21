@@ -14,10 +14,6 @@ Vector3 Vector3::operator-(const Vector3 &other) const {
 }
 
 Vector3 Vector3::operator*(const Matrix4 &other) const {
-	if (other.IsIdentity()) {
-		return Vector3(*this);
-	}
-
 	float px = m_x * other.m[0] + m_y * other.m[4] + m_z * other.m[8] + other.m[12];
 	float py = m_x * other.m[1] + m_y * other.m[5] + m_z * other.m[9] + other.m[13];
 	float pz = m_x * other.m[2] + m_y * other.m[6] + m_z * other.m[10] + other.m[14];

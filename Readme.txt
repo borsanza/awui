@@ -30,3 +30,6 @@ Windows:
 
 Actualizar Paquetes:
   pacman -Syu
+
+
+find -type f -exec wc -l {} + | sort -n

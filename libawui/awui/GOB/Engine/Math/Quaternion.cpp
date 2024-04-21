@@ -1,6 +1,6 @@
 #include "Quaternion.h"
 
-#include <awui/GOB/Engine/Math/Vector3.h>
+#include <awui/GOB/Engine/Math/Euler.h>
 #include <awui/Math.h>
 
 using namespace awui::GOB::Engine;
@@ -12,14 +12,18 @@ void Quaternion::Set(float x, float y, float z, float w) {
 	m_w = w;
 }
 
-void Quaternion::SetFromEuler(const Vector3 &euler) {
-	float c1 = Math::Cos(euler.m_x / 2.0f);
-	float c2 = Math::Cos(euler.m_y / 2.0f);
-	float c3 = Math::Cos(euler.m_z / 2.0f);
+void Quaternion::SetFromEuler(const Euler &euler) {
+	float ex = euler.GetX();
+	float ey = euler.GetY();
+	float ez = euler.GetZ();
 
-	float s1 = Math::Sin(euler.m_x / 2.0f);
-	float s2 = Math::Sin(euler.m_y / 2.0f);
-	float s3 = Math::Sin(euler.m_z / 2.0f);
+	float c1 = Math::Cos(ex / 2.0f);
+	float c2 = Math::Cos(ey / 2.0f);
+	float c3 = Math::Cos(ez / 2.0f);
+
+	float s1 = Math::Sin(ex / 2.0f);
+	float s2 = Math::Sin(ey / 2.0f);
+	float s3 = Math::Sin(ez / 2.0f);
 
 	m_x = s1 * c2 * c3 + c1 * s2 * s3;
 	m_y = c1 * s2 * c3 - s1 * c2 * s3;

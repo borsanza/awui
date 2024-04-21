@@ -3,7 +3,7 @@
 namespace awui::GOB::Engine {
 	class Matrix4;
 
-	struct Vector3 {
+	class Vector3 {
 
 	  public:
 		static const int X = 0;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <awui/GOB/Engine/Math/Euler.h>
 #include <awui/GOB/Engine/Math/Vector3.h>
 #include <vector>
 
@@ -11,7 +12,7 @@ namespace awui::GOB::Engine {
 
 	  protected:
 		Vector3 position;
-		Vector3 rotation;
+		Euler rotation;
 		Vector3 scale;
 
 	  public:

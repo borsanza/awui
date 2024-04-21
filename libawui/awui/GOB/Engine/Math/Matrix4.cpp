@@ -80,15 +80,11 @@ Matrix4 Matrix4::Identity() {
 Matrix4 Matrix4::operator*(const Matrix4 &other) const {
 	Matrix4 result;
 
-	if (other.IsIdentity()) {
-		return Matrix4(*this);
-	}
-
-	for (int row = 0; row < 4; row++) {
+	for (int row = 0; row < 16; row += 4) {
 		for (int col = 0; col < 4; col++) {
-			result.m[row * 4 + col] = 0;
+			result.m[row + col] = 0;
 			for (int k = 0; k < 4; k++) {
-				result.m[row * 4 + col] += m[row * 4 + k] * other.m[k * 4 + col];
+				result.m[row + col] += m[row + k] * other.m[(k << 2) + col];
 			}
 		}
 	}

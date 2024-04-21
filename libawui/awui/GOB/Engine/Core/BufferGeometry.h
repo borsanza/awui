@@ -11,6 +11,6 @@ namespace awui::GOB::Engine {
 	  public:
 		std::vector<Vector3> m_vertices;
 		std::vector<TriangleIndices> m_indices;
-		std::vector<Vector2> m_uvs;
+		std::vector<Vector3> m_uvs;
 	};
 } // namespace awui::GOB::Engine

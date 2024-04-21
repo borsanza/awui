@@ -4,9 +4,12 @@
 #include <SDL_opengl.h>
 #include <awui/GOB/Engine/Cameras/PerspectiveCamera.h>
 #include <awui/GOB/Engine/Geometries/BoxGeometry.h>
+#include <awui/GOB/Engine/Geometries/PlaneGeometry.h>
+#include <awui/GOB/Engine/Materials/MeshBasicMaterial.h>
 #include <awui/GOB/Engine/Objects/Mesh.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
+#include <vector>
 
 using namespace awui::GOB::Engine;
 using namespace awui::Windows::Forms;
@@ -20,16 +23,35 @@ Renderer::Renderer() {
 	m_camera->SetPosition(5, 5, 10);
 	m_camera->LookAt(0.5f, 0.5f, 0.5f);
 
-	for (int iy = 0; iy < 10; iy++) {
-		for (int ix = 0; ix < 10; ix++) {
+	std::vector<Material *> materials = {
+		new MeshBasicMaterial(0xff0000ff, false), // +X
+		new MeshBasicMaterial(0x800000ff, false), // -X
+		new MeshBasicMaterial(0x00ff00ff, false), // +Y
+		new MeshBasicMaterial(0x008000ff, false), // -Y
+		new MeshBasicMaterial(0x0000ffff, false), // +Z
+		new MeshBasicMaterial(0x000080ff, false)  // -Z
+	};
+
+	// int max = 270000;
+	int max = 12;
+	int limit = Math::Floor(Math::Sqrt(max / 12.0f));
+	for (int iy = 0; iy < limit; iy++) {
+		for (int ix = 0; ix < limit; ix++) {
 			BoxGeometry *geometry = new BoxGeometry(1, 1, 1);
-			Mesh *cube = new Mesh(geometry);
-			cube->SetPosition(ix * 0.8f, 0, iy * 0.8f);
-			cube->SetScale(ix / 10.0f, iy / 10.0f, 1);
-			cube->SetRotation(0, 0, ix);
+			Mesh *cube = new Mesh(geometry, materials);
+			cube->SetPosition(ix, 0.0f, iy);
+			// cube->SetScale(ix / 10.0f, iy / 10.0f, 1);
+			// cube->SetRotation(ix, 0, ix);
 			m_scene->Add(cube);
 		}
 	}
+
+	// PlaneGeometry *geometry = new PlaneGeometry(10, 10);
+	// Mesh *cube = new Mesh(geometry, materials);
+	//	cube->SetPosition(ix, 0.0f, iy);
+	// cube->SetScale(ix / 10.0f, iy / 10.0f, 1);
+	// cube->SetRotation(ix, 0, ix);
+	// m_scene->Add(cube);
 }
 
 void Renderer::DoRender(Scene &scene, Camera &camera) {
@@ -155,6 +177,13 @@ void awui::GOB::Engine::Renderer::OnTick(float deltaSeconds) {
 void Renderer::OnPaint(OpenGL::GL *gl) {
 	glEnable(GL_DEPTH_TEST);
 
+	// glEnable(GL_LINE_SMOOTH);
+	// glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	// glEnable(GL_POINT_SMOOTH);
+	// glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+	// glEnable(GL_POLYGON_SMOOTH);
+	// glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	glViewport(this->GetLeft(), this->GetTop(), this->GetWidth(), this->GetHeight());
@@ -169,7 +198,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glLoadIdentity();
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 2.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
+	// m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 2.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);
 
