@@ -6,7 +6,7 @@
 
 #include "Keyboard.h"
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/Form.h>

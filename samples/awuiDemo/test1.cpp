@@ -3,7 +3,7 @@
 
 #include "test1.h"
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Effects/Effect.h>
 #include <awui/Math.h>
@@ -12,6 +12,7 @@
 #include <awui/Windows/Forms/Panel.h>
 #include <awui/Windows/Forms/SplitContainer.h>
 
+using namespace awui;
 using namespace awui::Drawing;
 using namespace awui::Effects;
 using namespace awui::Windows::Forms;
@@ -35,8 +36,8 @@ void Test1::InitializeComponent() {
 
 	AddWidget(m_splitter);
 
-	Control * control1 = m_splitter->GetPanel1();
-	Control * control2 = m_splitter->GetPanel2();
+	Control *control1 = m_splitter->GetPanel1();
+	Control *control2 = m_splitter->GetPanel2();
 	control1->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	control2->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 
@@ -58,15 +59,15 @@ void Test1::InitializeComponent() {
 	AddButtonEffect(new EffectBounce(), control2);
 }
 
-void Test1::AddButtonEffect(Effect * effect, Control * control, int posy) {
+void Test1::AddButtonEffect(Effect *effect, Control *control, int posy) {
 	static int y = 5;
 
 	if (posy != -1)
 		y = 5;
 
-	Button * focused = nullptr;
-	for (int i = 0; i<=2; i++) {
-		Button * button = new Button();
+	Button *focused = nullptr;
+	for (int i = 0; i <= 2; i++) {
+		Button *button = new Button();
 		button->SetDock(DockStyle::None);
 		button->SetText(effect->GetName());
 		button->SetSize(150, 52);
@@ -100,7 +101,7 @@ void Test1::OnTick(float deltaSeconds) {
 	py2++;
 
 	// Controles 1
-	Control * control = ((Control *)m_buttons->Get(0))->GetParent();
+	Control *control = ((Control *) m_buttons->Get(0))->GetParent();
 	int time = control->GetWidth() / 3;
 
 	if (py1 > time) {
@@ -110,7 +111,7 @@ void Test1::OnTick(float deltaSeconds) {
 
 	float value1 = py1 / time;
 
-	control = ((Control *)m_buttons->Get(18))->GetParent();
+	control = ((Control *) m_buttons->Get(18))->GetParent();
 	time = control->GetWidth() / 3;
 
 	if (py2 > time) {
@@ -120,24 +121,24 @@ void Test1::OnTick(float deltaSeconds) {
 
 	float value2 = py2 / time;
 
-	for (int i=0; i<m_buttons->GetCount(); i++) {
-		Effect * effect = (Effect *)m_effects->Get(i);
-		Button * button = (Button *)m_buttons->Get(i);
+	for (int i = 0; i < m_buttons->GetCount(); i++) {
+		Effect *effect = (Effect *) m_effects->Get(i);
+		Button *button = (Button *) m_buttons->Get(i);
 
 		float value3 = 0.0f;
 
 		switch (i % 3) {
 			case 0:
 				EffectIn in;
-				value3 = in.Calculate(i<18?value1:value2, effect);
+				value3 = in.Calculate(i < 18 ? value1 : value2, effect);
 				break;
 			case 1:
 				EffectOut out;
-				value3 = out.Calculate(i<18?value1:value2, effect);
+				value3 = out.Calculate(i < 18 ? value1 : value2, effect);
 				break;
 			case 2:
 				EffectInOut inout;
-				value3 = inout.Calculate(i<18?value1:value2, effect);
+				value3 = inout.Calculate(i < 18 ? value1 : value2, effect);
 				break;
 		}
 

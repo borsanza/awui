@@ -3,7 +3,7 @@
 
 #include "Splitter.h"
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
 #include <awui/Windows/Forms/SplitContainer.h>
 

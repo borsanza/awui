@@ -32,7 +32,7 @@ namespace awui::Windows::Forms {
 		virtual void OnMouseDown(MouseEventArgs *e);
 		virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 		virtual void OnPaint(OpenGL::GL *gl);
-		virtual void SetForeColor(const Drawing::Color color);
+		virtual void SetForeColor(const Color color);
 		virtual void SetFont(const Drawing::Font font);
 		int GetLabelWidth() const;
 

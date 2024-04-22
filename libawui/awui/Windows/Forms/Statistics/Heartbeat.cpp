@@ -4,7 +4,7 @@
 #include "Heartbeat.h"
 
 #include <SDL_opengl.h>
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/OpenGL/GL.h>
 
 using namespace awui::OpenGL;
@@ -24,7 +24,7 @@ void Heartbeat::OnPaint(OpenGL::GL *gl) {
 	int top = (this->GetHeight() - size) / 2;
 	int right = left + size - 1;
 	int bottom = top + size - 1;
-	Drawing::Color color = this->GetForeColor();
+	Color color = this->GetForeColor();
 	glColor4ub(color.GetR(), color.GetG(), color.GetB(), color.GetA());
 
 	if (this->heartbeat) {

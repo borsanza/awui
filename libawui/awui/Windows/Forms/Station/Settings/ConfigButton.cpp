@@ -76,7 +76,7 @@ void ConfigButton::SetText(const String str) {
 	m_label.SetText(str);
 }
 
-void ConfigButton::SetForeColor(const Drawing::Color color) {
+void ConfigButton::SetForeColor(const Color color) {
 	if (color != GetForeColor()) {
 		Control::SetForeColor(color);
 		m_label.SetForeColor(GetForeColor());

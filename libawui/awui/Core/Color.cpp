@@ -6,14 +6,27 @@
 
 #include "Color.h"
 
-#include <awui/Convert.h>
 #include <awui/Math.h>
 #include <awui/String.h>
 
-using namespace awui::Drawing;
+using namespace awui;
 
 Color::Color() : m_a(0), m_r(0), m_g(0), m_b(0) {
 	m_class = Classes::Color;
+}
+
+Color::Color(uint32_t color) {
+	m_r = (color >> 24) & 0xFF;
+	m_g = (color >> 16) & 0xFF;
+	m_b = (color >> 8) & 0xFF;
+	m_a = (color >> 0) & 0xFF;
+}
+
+Color::Color(float r, float g, float b, float a) {
+	m_r = static_cast<uint8_t>(Math::Min(Math::Max(r, 0.0f), 1.0f) * 255.0f);
+	m_g = static_cast<uint8_t>(Math::Min(Math::Max(g, 0.0f), 1.0f) * 255.0f);
+	m_b = static_cast<uint8_t>(Math::Min(Math::Max(b, 0.0f), 1.0f) * 255.0f);
+	m_a = static_cast<uint8_t>(Math::Min(Math::Max(a, 0.0f), 1.0f) * 255.0f);
 }
 
 bool Color::IsClass(Classes objectClass) const {
@@ -21,9 +34,7 @@ bool Color::IsClass(Classes objectClass) const {
 }
 
 awui::String Color::ToString() const {
-	String value;
-	value = String("Color [A=") + Convert::ToString(m_a) + ", R=" + Convert::ToString(m_r) + ", G=" + Convert::ToString(m_g) + ", B=" + Convert::ToString(m_b) + "]";
-	return value;
+	return String("Color [A=%d, R=%d, G=%d, B=%d]", m_a, m_r, m_g, m_b);
 }
 
 uint8_t Color::GetA() const {
@@ -121,10 +132,12 @@ Color Color::FromArgb(uint8_t alpha, uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 Color &Color::operator=(const Color &other) {
-	m_r = other.m_r;
-	m_g = other.m_g;
-	m_b = other.m_b;
-	m_a = other.m_a;
+	if (this != &other) {
+		m_r = other.m_r;
+		m_g = other.m_g;
+		m_b = other.m_b;
+		m_a = other.m_a;
+	}
 
 	return *this;
 }

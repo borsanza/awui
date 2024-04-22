@@ -3,7 +3,7 @@
 
 #include "Graphics.h"
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Drawing/GlyphMetrics.h>
 #include <awui/Drawing/Image.h>
@@ -40,12 +40,12 @@ void Graphics::DrawRectangle(Drawing::Pen *pen, float x, float y, float width, f
 	cairo_stroke(m_cr);
 }
 
-void Graphics::Clear(const Drawing::Color color) {
+void Graphics::Clear(const Color color) {
 	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 	cairo_paint(m_cr);
 }
 
-void Graphics::FillRectangle(const Drawing::Color color, float x, float y, float width, float height) {
+void Graphics::FillRectangle(const Color color, float x, float y, float width, float height) {
 	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 	cairo_rectangle(m_cr, x, y, width, height);
 	cairo_fill(m_cr);
@@ -68,7 +68,7 @@ void Graphics::DrawImage(Drawing::Image *image, float x, float y, float width, f
 }
 
 void Graphics::SetPen(Drawing::Pen *pen) {
-	Drawing::Color color = pen->GetColor();
+	Color color = pen->GetColor();
 	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 
 	cairo_set_line_width(m_cr, pen->GetWidth());
@@ -134,7 +134,7 @@ GlyphMetrics Graphics::GetMeasureText(const String text, Drawing::Font *font) co
 	return metrics;
 }
 
-void Graphics::DrawString(const String text, Drawing::Font *font, const Drawing::Color color, float x, float y) {
+void Graphics::DrawString(const String text, Drawing::Font *font, const Color color, float x, float y) {
 	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 
 	cairo_font_weight_t weight;

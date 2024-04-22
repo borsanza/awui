@@ -6,7 +6,7 @@
 
 #include "SplitContainer.h"
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Windows/Forms/Panel.h>
 #include <awui/Windows/Forms/Splitter.h>
 

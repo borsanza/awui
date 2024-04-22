@@ -10,6 +10,7 @@
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Listeners/IRemoteListener.h>
 #include <awui/Windows/Forms/MouseEventArgs.h>
+
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
@@ -76,7 +77,7 @@ const awui::String Button::GetText() {
 	return m_label.GetText();
 }
 
-void Button::SetForeColor(const Drawing::Color color) {
+void Button::SetForeColor(const Color color) {
 	Control::SetForeColor(color);
 	m_label.SetForeColor(GetForeColor());
 }

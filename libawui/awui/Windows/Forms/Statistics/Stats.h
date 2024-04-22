@@ -6,10 +6,10 @@
 #include <awui/Windows/Forms/Statistics/Heartbeat.h>
 #include <awui/Windows/Forms/Statistics/Spinner.h>
 
-#define SHOW_SPINNER
+// #define SHOW_SPINNER
 #define SHOW_FPS
-#define SHOW_WIDGETS
-// #define SHOW_HEARTBEAT
+// #define SHOW_WIDGETS
+//  #define SHOW_HEARTBEAT
 
 const float TimeToMeasure = 1.0f;
 

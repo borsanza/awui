@@ -4,6 +4,7 @@
 #include "Stats.h"
 
 #include <awui/Drawing/Font.h>
+#include <awui/Math.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Statistics;
@@ -80,7 +81,7 @@ void Stats::SetTimeAfterIddle() {
 	float elapsedTime = m_fpsChronoLap.GetTotalDuration();
 	if ((elapsedTime - m_fpsPreviousElapsedTime) >= TimeToMeasure) {
 		float fps = m_fps / (elapsedTime - m_fpsPreviousElapsedTime);
-		m_labelFPS->SetText(String("%.1f FPS", fps));
+		m_labelFPS->SetText(String("%.0f FPS", Math::Round(fps)));
 		m_fps = 0;
 		m_fpsPreviousElapsedTime = elapsedTime;
 	}

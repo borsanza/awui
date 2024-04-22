@@ -39,7 +39,7 @@ namespace awui {
 
 			void DrawLines(int x, int y);
 
-			virtual void SetForeColor(const Drawing::Color color);
+			virtual void SetForeColor(const Color color);
 			virtual void SetFont(const Drawing::Font font);
 
 			void SetScrolled(float scroll);

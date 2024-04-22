@@ -6,7 +6,7 @@
 
 #include "formTIS100.h"
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Windows/Emulators/TIS100.h>
 
 using namespace awui::Drawing;

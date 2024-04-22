@@ -93,7 +93,7 @@ void MenuButton::SetText(const String str) {
 	m_label.SetText(str);
 }
 
-void MenuButton::SetForeColor(const Drawing::Color color) {
+void MenuButton::SetForeColor(const Color color) {
 	if (color != GetForeColor()) {
 		Control::SetForeColor(color);
 		m_label.SetForeColor(GetForeColor());

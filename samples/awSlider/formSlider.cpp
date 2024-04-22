@@ -7,7 +7,7 @@
 #include "formSlider.h"
 #include "testWidget.h"
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Windows/Forms/SliderBrowser.h>
 
 using namespace awui::Drawing;

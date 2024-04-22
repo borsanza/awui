@@ -2,6 +2,7 @@
 
 #include <GL/glu.h>
 #include <SDL_opengl.h>
+#include <awui/Console.h>
 #include <awui/GOB/Engine/Cameras/PerspectiveCamera.h>
 #include <awui/GOB/Engine/Geometries/BoxGeometry.h>
 #include <awui/GOB/Engine/Geometries/PlaneGeometry.h>
@@ -32,25 +33,39 @@ Renderer::Renderer() {
 		new MeshBasicMaterial(0x000080ff, false)  // -Z
 	};
 
-	// int max = 270000;
-	int max = 12;
-	int limit = Math::Floor(Math::Sqrt(max / 12.0f));
-	for (int iy = 0; iy < limit; iy++) {
-		for (int ix = 0; ix < limit; ix++) {
-			BoxGeometry *geometry = new BoxGeometry(1, 1, 1);
-			Mesh *cube = new Mesh(geometry, materials);
-			cube->SetPosition(ix, 0.0f, iy);
-			// cube->SetScale(ix / 10.0f, iy / 10.0f, 1);
-			// cube->SetRotation(ix, 0, ix);
-			m_scene->Add(cube);
+	int max = 270000;
+	// int max = 12;
+
+	int line;
+	for (line = 0; true; line++) {
+		if (max <= 0)
+			break;
+		for (int lado = 0; lado <= 1; lado++) {
+			if (max <= 0)
+				break;
+			for (int iy = 0; iy < line + lado; iy++) {
+				if (max <= 0)
+					break;
+				BoxGeometry *geometry = new BoxGeometry(1, 1, 1);
+				Mesh *cube = new Mesh(geometry, materials);
+				cube->SetPosition(lado ? iy : line, 0.0f, lado ? line : iy);
+				cube->SetScale(0.5f, 0.5f, 0.5f);
+				// cube->SetRotation(iy + line, iy + line, iy + line);
+				m_scene->Add(cube);
+				max -= 12;
+			}
 		}
 	}
 
+	Console::WriteLine("Line: %f", line / 2.0f);
+	m_camera->SetPosition(line / 2.0f, line * 0.666, 0.001f + 0);
+	m_camera->LookAt(line / 2.0f, 0.0f, line * 0.333);
+
 	// PlaneGeometry *geometry = new PlaneGeometry(10, 10);
 	// Mesh *cube = new Mesh(geometry, materials);
-	//	cube->SetPosition(ix, 0.0f, iy);
-	// cube->SetScale(ix / 10.0f, iy / 10.0f, 1);
-	// cube->SetRotation(ix, 0, ix);
+	// cube->SetPosition(10, 0.0f, 10);
+	// cube->SetScale(2.0f, 1.4f, 1);
+	// cube->SetRotation(15, 0, 10);
 	// m_scene->Add(cube);
 }
 
@@ -107,67 +122,6 @@ void Renderer::DoRender(Scene &scene, Camera &camera) {
 	glVertex3f(0.0, 0.0, size);
 	glVertex3f(0.0, -dif, size - dif);
 	glEnd();
-
-	/*
-		float xpos = 0;
-		float xsize = 1;
-		float ypos = 0;
-		float ysize = 1;
-		float zpos = 0;
-		float zsize = 1;
-		float left = xpos - xsize / 2.0f;
-		float right = xpos + xsize / 2.0f;
-		float top = ypos + xsize / 2.0f;
-		float bottom = ypos - xsize / 2.0f;
-		float front = zpos - zsize / 2.0f;
-		float back = zpos + zsize / 2.0f;
-
-		glBegin(GL_QUADS);
-
-		// +X
-		glColor3ub(255, 0, 0);
-		glVertex3f(right, top, front);
-		glVertex3f(right, top, back);
-		glVertex3f(right, bottom, back);
-		glVertex3f(right, bottom, front);
-
-		// -X
-		glColor3ub(128, 0, 0);
-		glVertex3f(left, bottom, front);
-		glVertex3f(left, bottom, back);
-		glVertex3f(left, top, back);
-		glVertex3f(left, top, front);
-
-		// +Y
-		glColor3ub(0, 255, 0);
-		glVertex3f(left, top, front);
-		glVertex3f(left, top, back);
-		glVertex3f(right, top, back);
-		glVertex3f(right, top, front);
-
-		// -Y
-		glColor3ub(0, 128, 0);
-		glVertex3f(right, bottom, front);
-		glVertex3f(right, bottom, back);
-		glVertex3f(left, bottom, back);
-		glVertex3f(left, bottom, front);
-
-		// +Z
-		glColor3ub(0, 0, 255);
-		glVertex3f(left, bottom, back);
-		glVertex3f(right, bottom, back);
-		glVertex3f(right, top, back);
-		glVertex3f(left, top, back);
-
-		// -Z
-		glColor3ub(0, 0, 128);
-		glVertex3f(left, top, front);
-		glVertex3f(right, top, front);
-		glVertex3f(right, bottom, front);
-		glVertex3f(left, bottom, front);
-
-		glEnd();
-		*/
 }
 
 void awui::GOB::Engine::Renderer::OnTick(float deltaSeconds) {
@@ -196,7 +150,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glLoadIdentity();
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 2.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
+	// m_camera->SetPosition(50.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 16.0f, 50.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);
 

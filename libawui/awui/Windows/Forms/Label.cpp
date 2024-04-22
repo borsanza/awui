@@ -150,7 +150,7 @@ void Label::SetTextAlign(Drawing::ContentAlignment::Enum textAlign) {
 	m_textAlign = textAlign;
 }
 
-void Label::SetForeColor(const Drawing::Color color) {
+void Label::SetForeColor(const Color color) {
 	Control::SetForeColor(color);
 	UpdateBufferText();
 }

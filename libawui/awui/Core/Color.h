@@ -3,13 +3,23 @@
 #include <awui/Object.h>
 #include <cstdint>
 
-namespace awui::Drawing {
+namespace awui {
 	class Color : public Object {
 	  private:
-		uint8_t m_a, m_r, m_g, m_b;
+		union {
+			struct {
+				uint8_t m_r, m_g, m_b, m_a;
+			};
+			struct {
+				uint32_t m_color32;
+			};
+			uint8_t m_color[4];
+		};
 
 	  public:
 		Color();
+		Color(uint32_t color);
+		Color(float r, float g, float b, float a = 1.0f);
 
 		virtual bool IsClass(Classes objectClass) const override;
 		virtual String ToString() const override;
@@ -32,4 +42,4 @@ namespace awui::Drawing {
 
 		bool operator!=(const Color &b) const;
 	};
-} // namespace awui::Drawing
+} // namespace awui

@@ -39,7 +39,7 @@ Form::Form() {
 	m_text = "";
 	m_swapInterval = true;
 
-	SetBackColor(Drawing::Color::FromArgb(192, 192, 192));
+	SetBackColor(Color::FromArgb(192, 192, 192));
 
 	SetBounds(100, 100, 300, 300);
 	m_mouseButtons = 0;

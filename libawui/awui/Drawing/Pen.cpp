@@ -3,14 +3,15 @@
 
 #include "Pen.h"
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Drawing/Drawing2D/LineCap.h>
 #include <stdlib.h>
 
+using namespace awui;
 using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
 
-Pen::Pen(Drawing::Color color) {
+Pen::Pen(Color color) {
 	m_class = Classes::Pen;
 	m_color = color;
 	m_width = 1;
@@ -18,7 +19,7 @@ Pen::Pen(Drawing::Color color) {
 	m_lineJoin = LineJoin::Miter;
 }
 
-Pen::Pen(Drawing::Color color, float width) {
+Pen::Pen(Color color, float width) {
 	m_class = Classes::Pen;
 	m_color = color;
 	m_width = width;
@@ -34,7 +35,7 @@ Color Pen::GetColor() {
 	return m_color;
 }
 
-void Pen::SetColor(Drawing::Color color) {
+void Pen::SetColor(Color color) {
 	m_color = color;
 }
 

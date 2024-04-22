@@ -3,7 +3,7 @@
 
 #include "Panel.h"
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Windows/Forms/Control.h>
 
 using namespace awui::Drawing;

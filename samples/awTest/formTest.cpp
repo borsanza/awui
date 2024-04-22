@@ -4,10 +4,11 @@
 #include "formTest.h"
 
 #include "test2.h"
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Button.h>
 
+using namespace awui;
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 

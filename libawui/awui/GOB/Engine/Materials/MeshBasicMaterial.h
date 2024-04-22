@@ -1,8 +1,8 @@
 #pragma once
 
 #include "stdint.h"
+#include <awui/Core/Color.h>
 #include <awui/GOB/Engine/Materials/Material.h>
-#include <awui/GOB/Engine/Math/Color.h>
 
 namespace awui::GOB::Engine {
 	class MeshBasicMaterial : public Material {

@@ -7,7 +7,7 @@
 #include "SettingsUI.h"
 
 #include <awui/Console.h>
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>

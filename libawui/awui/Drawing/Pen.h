@@ -1,6 +1,6 @@
 #pragma once
 
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 #include <awui/Drawing/Drawing2D/LineCap.h>
 #include <awui/Drawing/Drawing2D/LineJoin.h>
 #include <awui/Object.h>
@@ -8,20 +8,20 @@
 namespace awui::Drawing {
 	class Pen : public Object {
 	  private:
-		awui::Drawing::Color m_color;
+		awui::Color m_color;
 		float m_width;
 		Drawing2D::LineCap m_lineCap;
 		Drawing2D::LineJoin m_lineJoin;
 
 	  public:
-		Pen(awui::Drawing::Color color);
-		Pen(awui::Drawing::Color color, float width);
+		Pen(awui::Color color);
+		Pen(awui::Color color, float width);
 		virtual ~Pen() = default;
 
 		virtual bool IsClass(Classes objectClass) const override;
 
-		awui::Drawing::Color GetColor();
-		void SetColor(awui::Drawing::Color color);
+		awui::Color GetColor();
+		void SetColor(awui::Color color);
 
 		float GetWidth();
 		void SetWidth(float width);

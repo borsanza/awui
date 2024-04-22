@@ -24,7 +24,7 @@ namespace awui::Windows::Forms::Station {
 
 		virtual void OnMouseDown(MouseEventArgs *e);
 		virtual void OnPaint(OpenGL::GL *gl);
-		virtual void SetForeColor(const Drawing::Color color);
+		virtual void SetForeColor(const Color color);
 		virtual void SetFont(const Drawing::Font font);
 		int GetLabelWidth() const;
 		virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);

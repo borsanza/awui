@@ -16,29 +16,32 @@ Mesh::Mesh(BufferGeometry *geometry, const std::vector<Material *> &materials) :
 }
 
 void Mesh::Render(const Matrix4 &transform) {
+	const std::vector<Vector3> &vertices = m_geometry->m_vertices;
+	const std::vector<TriangleIndices> &indices = m_geometry->m_indices;
+	const std::vector<Vector3> &uvs = m_geometry->m_uvs;
+	Material *material, *lastMaterial = nullptr;
+	const Vector3 *uv;
 	Vector3 vector;
-	std::vector<Vector3> *vertices = &(m_geometry->m_vertices);
-	TriangleIndices *triangle;
-	Material *material, *lastMaterial;
-	Vector3 *uvs;
 
 	glBegin(GL_TRIANGLES);
-	glColor3ub(255, 0, 0);
 
-	for (int i = 0; i < m_geometry->m_indices.size(); i++) {
-		triangle = &m_geometry->m_indices[i];
+	for (const TriangleIndices &triangle : indices) {
+		for (int iTriangleVertex = 0; iTriangleVertex < 3; iTriangleVertex++) {
+			int triangleIndex = triangle.v[iTriangleVertex];
 
-		for (int j = 0; j < 3; j++) {
-			uvs = &m_geometry->m_uvs[triangle->Get(j)];
-			material = m_materials[uvs->data[2]];
+			uv = &uvs[triangleIndex];
+
+			material = m_materials[uv->data[2]];
 			if (material != lastMaterial) {
 				material->ApplyMaterial();
 				lastMaterial = material;
 			}
-			material->ApplyUVs(uvs->data[0], uvs->data[1]);
-			vector = vertices->at(triangle->Get(j)) * transform;
+			material->ApplyUVs(uv);
+
+			vector = vertices[triangleIndex] * transform;
 			glVertex3f(vector.x, vector.y, vector.z);
 		}
 	}
+
 	glEnd();
 }

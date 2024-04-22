@@ -4,9 +4,9 @@
 #include "form1.h"
 
 #include "test1.h"
-#include <awui/Drawing/Color.h>
+#include <awui/Core/Color.h>
 
-using namespace awui::Drawing;
+using namespace awui;
 using namespace awui::Windows::Forms;
 
 Form1::Form1() {

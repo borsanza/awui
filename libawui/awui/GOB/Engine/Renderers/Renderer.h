@@ -1,7 +1,7 @@
 #pragma once
 
+#include <awui/Core/Color.h>
 #include <awui/GOB/Engine/Cameras/PerspectiveCamera.h>
-#include <awui/GOB/Engine/Math/Color.h>
 #include <awui/GOB/Engine/Scenes/Scene.h>
 #include <awui/Windows/Forms/Control.h>
 

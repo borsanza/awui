@@ -197,19 +197,19 @@ void Control::OnResizePre() {
 	Layout();
 }
 
-void Control::SetBackColor(const awui::Drawing::Color color) {
+void Control::SetBackColor(const awui::Color color) {
 	m_backColor = color;
 }
 
-awui::Drawing::Color Control::GetBackColor() {
+awui::Color Control::GetBackColor() {
 	return m_backColor;
 }
 
-void Control::SetForeColor(const awui::Drawing::Color color) {
+void Control::SetForeColor(const awui::Color color) {
 	m_foreColor = color;
 }
 
-awui::Drawing::Color Control::GetForeColor() {
+awui::Color Control::GetForeColor() {
 	return m_foreColor;
 }
 
@@ -932,7 +932,7 @@ Bitmap *Control::GetSelectedBitmap() {
 		String file = IO::Directory::GetWorkingDirectory();
 		Bitmap *bitmap = new Bitmap(file + "/images/button.png");
 		bitmap->SetDock(DockStyle::None);
-		bitmap->SetBackColor(Drawing::Color::FromArgb(0, 0, 0, 0));
+		bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 		bitmap->SetFixedMargins(28, 25, 28, 24);
 		bitmap->SetLocation(0, 0);
 		bitmap->SetSize(Drawing::Size(97, 97));

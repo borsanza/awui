@@ -8,7 +8,7 @@
 
 #include <awui/Windows/Forms/Station/StationUI.h>
 
-using namespace awui::Drawing;
+using namespace awui;
 using namespace awui::Windows::Forms;
 
 FormArcade::FormArcade() {
