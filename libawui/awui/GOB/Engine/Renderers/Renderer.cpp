@@ -50,7 +50,7 @@ Renderer::Renderer() {
 				Mesh *cube = new Mesh(geometry, materials);
 				cube->SetPosition(lado ? iy : line, 0.0f, lado ? line : iy);
 				cube->SetScale(0.5f, 0.5f, 0.5f);
-				// cube->SetRotation(iy + line, iy + line, iy + line);
+				//  cube->SetRotation(iy + line, iy + line, iy + line);
 				m_scene->Add(cube);
 				max -= 12;
 			}
@@ -125,7 +125,7 @@ void Renderer::DoRender(Scene &scene, Camera &camera) {
 }
 
 void awui::GOB::Engine::Renderer::OnTick(float deltaSeconds) {
-	m_angle -= 0.5f * deltaSeconds;
+	m_angle += 0.1f * deltaSeconds;
 }
 
 void Renderer::SetClearColor(uint32_t color) {
@@ -150,7 +150,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glLoadIdentity();
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	// m_camera->SetPosition(50.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 16.0f, 50.5f + -4.0f + 8.0f * Math::Sin(m_angle));
+	m_camera->SetPosition(50.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 50.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);
 

@@ -48,6 +48,9 @@ void Application::Run(Form *form = NULL) {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
 	Joystick::Controller::Refresh();
 
 	form->Init();
@@ -59,6 +62,8 @@ void Application::Run(Form *form = NULL) {
 	ChronoLap chronoLap;
 
 	chronoLap.Start();
+
+	glEnable(GL_MULTISAMPLE);
 
 	// Lo inicializo en una frecuencia de 60Hz
 	float lastDeltaSeconds = 1.0f / 60.0f;
