@@ -69,3 +69,9 @@ void Texture::Unload() {
 	m_texture = -1;
 	m_loaded = false;
 }
+
+void Texture::setMinFilter(int filter) {
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
