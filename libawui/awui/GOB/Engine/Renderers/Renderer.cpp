@@ -33,7 +33,8 @@ Renderer::Renderer() {
 		new MeshBasicMaterial(0x000080ff, false)  // -Z
 	};
 
-	int max = 270000;
+	int initMax = 270000;
+	int max = initMax;
 	// int max = 12;
 
 	int line;
@@ -57,7 +58,8 @@ Renderer::Renderer() {
 		}
 	}
 
-	Console::WriteLine("Line: %f", line / 2.0f);
+	Console::WriteLine("Center XY: %.0f", line / 2.0f);
+	Console::WriteLine("Triangles: %d", initMax);
 	m_camera->SetPosition(line / 2.0f, line * 0.666, 0.001f + 0);
 	m_camera->LookAt(line / 2.0f, 0.0f, line * 0.333);
 
