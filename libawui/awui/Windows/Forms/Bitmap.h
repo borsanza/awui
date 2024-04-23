@@ -1,7 +1,7 @@
 #pragma once
 
 #include <awui/Collections/ArrayList.h>
-#include <awui/Drawing/ColorF.h>
+#include <awui/Core/ColorF.h>
 #include <awui/Windows/Forms/Control.h>
 
 typedef unsigned int GLuint;
@@ -32,7 +32,7 @@ namespace awui {
 			int m_fixY1;
 			int m_fixY2;
 			StretchMode::Enum m_stretchMode;
-			Drawing::ColorF m_color;
+			ColorF m_color;
 
 			String m_file;
 			bool m_loaded;
@@ -58,7 +58,7 @@ namespace awui {
 
 			virtual void OnPaint(OpenGL::GL *gl);
 
-			void SetColor(Drawing::ColorF color);
+			void SetColor(ColorF color);
 
 			void SetStretchMode(StretchMode::Enum stretchMode);
 			StretchMode::Enum GetStretchMode();

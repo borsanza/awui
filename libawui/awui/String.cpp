@@ -43,6 +43,10 @@ int String::GetLength() const {
 	return m_string.length();
 }
 
+bool awui::String::IsEmpty() const {
+	return m_string.empty();
+}
+
 const char *String::ToCharArray() const {
 	return m_string.c_str();
 }

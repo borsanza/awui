@@ -1,17 +1,16 @@
 /**
- * awui/Drawing/ColorF.cpp
+ * awui/Core/ColorF.cpp
  *
  * Copyright (C) 2016 Borja Sánchez Zamorano
  */
 
 #include "ColorF.h"
 
-#include <awui/Convert.h>
 #include <awui/Math.h>
 #include <awui/String.h>
 #include <stdlib.h>
 
-using namespace awui::Drawing;
+using namespace awui;
 
 ColorF::ColorF() {
 	m_class = Classes::ColorF;
@@ -26,9 +25,7 @@ bool ColorF::IsClass(Classes objectClass) const {
 }
 
 awui::String ColorF::ToString() const {
-	String value;
-	value = String("ColorF [A=") + Convert::ToString(m_a) + ", R=" + Convert::ToString(m_r) + ", G=" + Convert::ToString(m_g) + ", B=" + Convert::ToString(m_b) + "]";
-	return value;
+	return String("ColorF [A=%f, R=%f, G=%f, B=%f]", m_a, m_r, m_g, m_b);
 }
 
 float ColorF::GetA() const {

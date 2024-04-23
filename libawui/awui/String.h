@@ -19,6 +19,8 @@ namespace awui {
 
 		int GetLength() const;
 
+		bool IsEmpty() const;
+
 		const char *ToCharArray() const;
 
 		static int Compare(const String &strA, const String &strB);

@@ -2,11 +2,11 @@
 // feedback: borsanza AT gmail DOT com
 
 #include "Bitmap.h"
-#include <awui/Math.h>
 
-#include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_opengl.h>
+#include <awui/Console.h>
+#include <awui/Math.h>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
@@ -25,7 +25,7 @@ Bitmap::Bitmap(const String file) {
 	m_textureWidth = 0;
 	m_textureHeight = 0;
 	m_texture = -1;
-	m_color = Drawing::ColorF::FromArgb(1.0f, 1.0f, 1.0f, 1.0f);
+	m_color = ColorF::FromArgb(1.0f, 1.0f, 1.0f, 1.0f);
 
 	m_stretchMode = StretchMode::Stretch;
 
@@ -65,24 +65,44 @@ void Bitmap::GetFixedMargins(int *x1, int *y1, int *x2, int *y2) {
 }
 
 void Bitmap::Load() {
-	if (m_loaded)
+	if (m_loaded || m_file.IsEmpty())
 		return;
 
 	SDL_Surface *textureImage = IMG_Load(m_file.ToCharArray());
-	if (textureImage) {
-		glGenTextures(1, &m_texture);
-		glBindTexture(GL_TEXTURE_2D, m_texture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // GL_NEAREST or GL_LINEAR
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // GL_NEAREST or GL_LINEAR
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, 4, textureImage->w, textureImage->h, 0, textureImage->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, textureImage->pixels);
-		m_textureWidth = textureImage->w;
-		m_textureHeight = textureImage->h;
+	if (!textureImage) {
+		Console::Error->WriteLine("Failed to load texture: %s", m_file);
+		return;
 	}
 
-	if (textureImage)
+	SDL_Surface *optimizedImage = SDL_ConvertSurfaceFormat(textureImage, SDL_PIXELFORMAT_RGBA32, 0);
+	SDL_FreeSurface(textureImage);
+	if (!optimizedImage) {
+		Console::Error->WriteLine("Failed to optimize texture format: %s", m_file);
+		return;
+	}
+	textureImage = optimizedImage;
+
+	glGenTextures(1, &m_texture);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	if (glGetError() != GL_NO_ERROR) {
+		Console::Error->WriteLine("OpenGL error: Failed to bind texture.");
+		glDeleteTextures(1, &m_texture);
 		SDL_FreeSurface(textureImage);
+		return;
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // GL_NEAREST or GL_LINEAR
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // GL_NEAREST or GL_LINEAR
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	GLenum internalFormat = textureImage->format->BytesPerPixel == 4 ? GL_RGBA8 : GL_RGB8;
+	GLenum textureFormat = textureImage->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB;
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, textureImage->w, textureImage->h, 0, textureFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
+	m_textureWidth = textureImage->w;
+	m_textureHeight = textureImage->h;
+
+	SDL_FreeSurface(textureImage);
 
 	m_loaded = true;
 }
@@ -588,7 +608,7 @@ void Bitmap::PaintAspectFill() {
 	PaintTexture(left, top, right, bottom);
 }
 
-void Bitmap::SetColor(Drawing::ColorF color) {
+void Bitmap::SetColor(ColorF color) {
 	m_color = color;
 }
 

@@ -9,7 +9,7 @@
 #include <SDL_opengl.h>
 #include <awui/Math.h>
 
-using namespace awui::Drawing;
+using namespace awui;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Station;
 
@@ -21,11 +21,11 @@ bool Gradient::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::Gradient) || Control::IsClass(objectClass);
 }
 
-void Gradient::SetColor(int pos, const Drawing::ColorF color) {
+void Gradient::SetColor(int pos, const ColorF color) {
 	this->m_color[pos] = this->m_colorGo[pos] = color;
 }
 
-void Gradient::SetColorGo(int pos, const Drawing::ColorF color) {
+void Gradient::SetColorGo(int pos, const ColorF color) {
 	this->m_colorGo[pos] = color;
 }
 
@@ -54,7 +54,7 @@ void Gradient::OnPaint(GL *gl) {
 	glEnd();
 }
 
-awui::Drawing::ColorF Gradient::InterpolateColor(Drawing::ColorF *c1, Drawing::ColorF *c2, float percent) {
+ColorF Gradient::InterpolateColor(ColorF *c1, ColorF *c2, float percent) {
 	return ColorF::FromArgb(Math::Interpolate(c1->GetA(), c2->GetA(), percent), Math::Interpolate(c1->GetR(), c2->GetR(), percent), Math::Interpolate(c1->GetG(), c2->GetG(), percent), Math::Interpolate(c1->GetB(), c2->GetB(), percent));
 }
 

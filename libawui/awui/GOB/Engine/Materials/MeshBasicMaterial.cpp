@@ -10,3 +10,6 @@ MeshBasicMaterial::MeshBasicMaterial(uint32_t color, bool wireframe) : m_color(c
 void MeshBasicMaterial::ApplyMaterial() {
 	glColor3ub(m_color.GetR(), m_color.GetG(), m_color.GetB());
 }
+
+void MeshBasicMaterial::ApplyUVs(const Vector3 *uv) {
+}

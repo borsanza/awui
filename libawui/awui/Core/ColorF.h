@@ -2,7 +2,7 @@
 
 #include <awui/Object.h>
 
-namespace awui::Drawing {
+namespace awui {
 	class ColorF : public Object {
 	  private:
 		float m_a, m_r, m_g, m_b;
@@ -31,4 +31,4 @@ namespace awui::Drawing {
 
 		bool operator!=(const ColorF &b) const;
 	};
-} // namespace awui::Drawing
+} // namespace awui

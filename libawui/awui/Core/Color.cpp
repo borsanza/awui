@@ -1,5 +1,5 @@
 /**
- * awui/Drawing/Color.cpp
+ * awui/Core/Color.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano
  */

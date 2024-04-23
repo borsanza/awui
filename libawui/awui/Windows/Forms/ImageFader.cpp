@@ -3,10 +3,10 @@
 
 #include "ImageFader.h"
 
-#include <awui/Drawing/ColorF.h>
+#include <awui/Core/ColorF.h>
 #include <awui/Windows/Forms/Bitmap.h>
 
-using namespace awui::Drawing;
+using namespace awui;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
@@ -17,14 +17,14 @@ ImageFader::ImageFader() {
 	m_percentage = 0.0f;
 	m_speedFadeOut = 5.0f;
 	m_speedFadeIn = 2.0f;
-	m_color = Drawing::ColorF::FromArgb(1.0f, 1.0f, 1.0f, 1.0f);
+	m_color = ColorF::FromArgb(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 bool ImageFader::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::ImageFader) || Control::IsClass(objectClass);
 }
 
-void ImageFader::SetColor(Drawing::ColorF color) {
+void ImageFader::SetColor(ColorF color) {
 	m_color = color;
 }
 
