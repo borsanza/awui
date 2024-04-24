@@ -14,7 +14,7 @@ using namespace awui::GOB::Engine;
 
 Mesh::Mesh(BufferGeometry *geometry, const std::vector<Material *> &materials) : m_geometry(geometry), m_materials(materials) {
 }
-
+/*
 void Mesh::Render(const Matrix4 &transform) {
 	const std::vector<Vector3> &vertices = m_geometry->m_vertices;
 	const std::vector<TriangleIndices> &indices = m_geometry->m_indices;
@@ -40,6 +40,42 @@ void Mesh::Render(const Matrix4 &transform) {
 			int triangleIndex = triangle.v[iTriangleVertex];
 
 			material->ApplyUVs(&uvs[triangleIndex]);
+
+			vector = vertices[triangleIndex] * transform;
+			glVertex3f(vector.x, vector.y, vector.z);
+		}
+	}
+
+	glEnd();
+}
+
+*/
+void Mesh::Render(const Matrix4 &transform) {
+	const std::vector<Vector3> &vertices = m_geometry->m_vertices;
+	const std::vector<TriangleIndices> &indices = m_geometry->m_indices;
+	const std::vector<Vector3> &uvs = m_geometry->m_uvs;
+	Material *material, *lastMaterial = nullptr;
+	const Vector3 *uv;
+	Vector3 vector;
+
+	glBegin(GL_TRIANGLES);
+
+	for (const TriangleIndices &triangle : indices) {
+		for (int iTriangleVertex = 0; iTriangleVertex < 3; iTriangleVertex++) {
+			int triangleIndex = triangle.v[iTriangleVertex];
+
+			uv = &uvs[triangleIndex];
+
+			material = m_materials[uv->data[2]];
+			if (material != lastMaterial) {
+				if (lastMaterial != nullptr)
+					lastMaterial->UnApplyMaterial();
+				glEnd();
+				material->ApplyMaterial();
+				glBegin(GL_TRIANGLES);
+				lastMaterial = material;
+			}
+			material->ApplyUVs(uv);
 
 			vector = vertices[triangleIndex] * transform;
 			glVertex3f(vector.x, vector.y, vector.z);

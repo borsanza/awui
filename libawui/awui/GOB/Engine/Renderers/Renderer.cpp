@@ -25,25 +25,16 @@ Renderer::Renderer() {
 	m_camera->SetPosition(5, 5, 10);
 	m_camera->LookAt(0.5f, 0.5f, 0.5f);
 
-	// new MeshBasicMaterial(0xff0000ff, false), // +X
-	// new MeshBasicMaterial(0x800000ff, false), // -X
-	// new MeshBasicMaterial(0x00ff00ff, false), // +Y
-	// new MeshBasicMaterial(0x008000ff, false), // -Y
-	// new MeshBasicMaterial(0x0000ffff, false), // +Z
-	// new MeshBasicMaterial(0x000080ff, false)  // -Z
-
-	//	Texture *texture = new Texture("./images/chip8.jpg", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST);
-	/*
 	std::vector<Material *> materials = {
-		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
-		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
-		new MeshBasicMaterial(texture, false),																				   // +Y
-		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
-		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
-		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
+		new MeshBasicMaterial(new Texture("./images/block-pattern-0.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +X
+		new MeshBasicMaterial(new Texture("./images/block-pattern-1.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // -X
+		new MeshBasicMaterial(new Texture("./images/block-pattern-2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
+		new MeshBasicMaterial(new Texture("./images/block-pattern-3.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // -Y
+		new MeshBasicMaterial(new Texture("./images/block-pattern-4.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Z
+		new MeshBasicMaterial(new Texture("./images/block-pattern-5.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // -Z
 	};
-	*/
-	std::vector<Material *> materials = {
+
+	std::vector<Material *> materials2 = {
 		new MeshBasicMaterial(0xff0000ff, false), // +Y
 		new MeshBasicMaterial(0x800000ff, false), // +Y
 		new MeshBasicMaterial(0x00ff00ff, false), // +Y
@@ -53,7 +44,8 @@ Renderer::Renderer() {
 	};
 
 	int initMax = 270000;
-	// int initMax = 12;
+	// int initMax = 100;
+	//  int initMax = 12;
 	int max = initMax;
 
 	int line;
@@ -69,7 +61,7 @@ Renderer::Renderer() {
 				}
 
 				BoxGeometry *geometry = new BoxGeometry(1, 1, 1);
-				Mesh *cube = new Mesh(geometry, materials);
+				Mesh *cube = new Mesh(geometry, (iy % 2 == 0) ? materials2 : materials);
 				cube->SetPosition(lado ? iy : line, 0.0f, lado ? line : iy);
 				cube->SetScale(0.5f, 0.5f, 0.5f);
 				//  cube->SetRotation(iy + line, iy + line, iy + line);
@@ -81,8 +73,10 @@ Renderer::Renderer() {
 
 	Console::WriteLine("Center XY: %.0f", line / 2.0f);
 	Console::WriteLine("Triangles: %d", initMax);
-	m_camera->SetPosition(line / 2.0f, line * 0.666, 0.001f + 0);
-	m_camera->LookAt(line / 2.0f, 0.0f, line * 0.333);
+	// m_camera->SetPosition(line / 2.0f, line * 0.666, 0.001f + 0);
+	// m_camera->LookAt(line / 2.0f, 0.0f, line * 0.333);
+	m_camera->SetPosition(1.5f, 2.0f, 4.0f);
+	m_camera->LookAt(1.5f, 0.0f, 0.0f);
 
 	// PlaneGeometry *geometry = new PlaneGeometry(10, 10);
 	// Mesh *cube = new Mesh(geometry, materials);
@@ -173,7 +167,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glLoadIdentity();
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
+	// m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);
 
