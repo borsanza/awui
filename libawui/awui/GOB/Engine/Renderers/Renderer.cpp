@@ -8,6 +8,7 @@
 #include <awui/GOB/Engine/Geometries/PlaneGeometry.h>
 #include <awui/GOB/Engine/Materials/MeshBasicMaterial.h>
 #include <awui/GOB/Engine/Objects/Mesh.h>
+#include <awui/GOB/Engine/Textures/Texture.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
 #include <vector>
@@ -24,29 +25,49 @@ Renderer::Renderer() {
 	m_camera->SetPosition(5, 5, 10);
 	m_camera->LookAt(0.5f, 0.5f, 0.5f);
 
+	// new MeshBasicMaterial(0xff0000ff, false), // +X
+	// new MeshBasicMaterial(0x800000ff, false), // -X
+	// new MeshBasicMaterial(0x00ff00ff, false), // +Y
+	// new MeshBasicMaterial(0x008000ff, false), // -Y
+	// new MeshBasicMaterial(0x0000ffff, false), // +Z
+	// new MeshBasicMaterial(0x000080ff, false)  // -Z
+
+	//	Texture *texture = new Texture("./images/chip8.jpg", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST);
+	/*
 	std::vector<Material *> materials = {
-		new MeshBasicMaterial(0xff0000ff, false), // +X
-		new MeshBasicMaterial(0x800000ff, false), // -X
+		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
+		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
+		new MeshBasicMaterial(texture, false),																				   // +Y
+		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
+		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
+		new MeshBasicMaterial(new Texture("./images/button2.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST), false), // +Y
+	};
+	*/
+	std::vector<Material *> materials = {
+		new MeshBasicMaterial(0xff0000ff, false), // +Y
+		new MeshBasicMaterial(0x800000ff, false), // +Y
 		new MeshBasicMaterial(0x00ff00ff, false), // +Y
-		new MeshBasicMaterial(0x008000ff, false), // -Y
-		new MeshBasicMaterial(0x0000ffff, false), // +Z
-		new MeshBasicMaterial(0x000080ff, false)  // -Z
+		new MeshBasicMaterial(0x008000ff, false), // +Y
+		new MeshBasicMaterial(0x0000ffff, false), // +Y
+		new MeshBasicMaterial(0x000080ff, false), // +Y
 	};
 
 	int initMax = 270000;
+	// int initMax = 12;
 	int max = initMax;
-	// int max = 12;
 
 	int line;
 	for (line = 0; true; line++) {
-		if (max <= 0)
+		if (max <= 0) {
 			break;
+		}
+
 		for (int lado = 0; lado <= 1; lado++) {
-			if (max <= 0)
-				break;
 			for (int iy = 0; iy < line + lado; iy++) {
-				if (max <= 0)
+				if (max <= 0) {
 					break;
+				}
+
 				BoxGeometry *geometry = new BoxGeometry(1, 1, 1);
 				Mesh *cube = new Mesh(geometry, materials);
 				cube->SetPosition(lado ? iy : line, 0.0f, lado ? line : iy);
@@ -127,7 +148,7 @@ void Renderer::DoRender(Scene &scene, Camera &camera) {
 }
 
 void awui::GOB::Engine::Renderer::OnTick(float deltaSeconds) {
-	m_angle += 0.1f * deltaSeconds;
+	m_angle += 0.5f * deltaSeconds;
 }
 
 void Renderer::SetClearColor(uint32_t color) {
@@ -152,7 +173,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glLoadIdentity();
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	m_camera->SetPosition(50.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 50.5f + -4.0f + 8.0f * Math::Sin(m_angle));
+	m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);
 

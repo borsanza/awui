@@ -74,7 +74,7 @@ void PerspectiveCamera::SetViewMatrix() {
 
 	// Establecer el modo de matriz a GL_MODELVIEW para trabajar con la matriz de vista
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	// glLoadIdentity();
 
 	// Cargar la matriz de vista
 	glLoadMatrixf(viewMatrix.data());

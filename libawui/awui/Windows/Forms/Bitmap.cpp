@@ -5,6 +5,7 @@
 
 #include <SDL_image.h>
 #include <SDL_opengl.h>
+#include <SDL_opengl_glext.h>
 #include <awui/Console.h>
 #include <awui/Math.h>
 
@@ -91,14 +92,21 @@ void Bitmap::Load() {
 		return;
 	}
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // GL_NEAREST or GL_LINEAR
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // GL_NEAREST or GL_LINEAR
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	GLenum internalFormat = textureImage->format->BytesPerPixel == 4 ? GL_RGBA8 : GL_RGB8;
 	GLenum textureFormat = textureImage->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB;
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, textureImage->w, textureImage->h, 0, textureFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
+	if (glGetError() != GL_NO_ERROR) {
+		Console::Error->WriteLine("OpenGL error: Failed to load texture image.");
+		glDeleteTextures(1, &m_texture);
+		SDL_FreeSurface(textureImage);
+		return;
+	}
+
 	m_textureWidth = textureImage->w;
 	m_textureHeight = textureImage->h;
 
