@@ -1,6 +1,7 @@
 #include "Object3D.h"
 
 #include <algorithm>
+#include <awui/GOB/Engine/Materials/Material.h>
 #include <awui/GOB/Engine/Math/Matrix4.h>
 #include <awui/GOB/Engine/Math/Quaternion.h>
 
@@ -51,17 +52,28 @@ Vector3 Object3D::GetPosition() const {
 	return position;
 }
 
-void Object3D::PreRender(const Matrix4 &parentMatrix) {
+void Object3D::PreRender(const Material &material, const Matrix4 &parentMatrix) {
 	Matrix4 matrix;
 	matrix.Compose(position, rotation.GetQuaternion(), scale);
 	matrix = matrix * parentMatrix;
 
-	Render(matrix);
+	Render(material, matrix);
 
 	for (auto *child : _children) {
-		child->PreRender(matrix);
+		child->PreRender(material, matrix);
 	}
 }
 
-void Object3D::Render(const Matrix4 &transform) {
+void Object3D::Render(const Material &material, const Matrix4 &transform) {
+}
+
+void Object3D::PreFillMaterialList(std::unordered_set<Material *> &materials) {
+	FillMaterialList(materials);
+
+	for (auto *child : _children) {
+		child->PreFillMaterialList(materials);
+	}
+}
+
+void Object3D::FillMaterialList(std::unordered_set<Material *> &materials) {
 }

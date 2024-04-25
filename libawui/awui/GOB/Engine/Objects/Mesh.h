@@ -1,6 +1,7 @@
 #pragma once
 
 #include <awui/GOB/Engine/Core/Object3D.h>
+#include <unordered_set>
 #include <vector>
 
 namespace awui::GOB::Engine {
@@ -15,6 +16,7 @@ namespace awui::GOB::Engine {
 	  public:
 		Mesh(BufferGeometry *geometry, const std::vector<Material *> &materials);
 
-		virtual void Render(const Matrix4 &transform);
+		virtual void FillMaterialList(std::unordered_set<Material *> &materials) override;
+		virtual void Render(const Material &material, const Matrix4 &transform) override;
 	};
 } // namespace awui::GOB::Engine

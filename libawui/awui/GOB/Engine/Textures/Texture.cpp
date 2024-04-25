@@ -127,11 +127,11 @@ void Texture::BindTexture() {
 
 	m_oldTexture = glIsEnabled(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_2D);
-	m_oldDepth = glIsEnabled(GL_DEPTH_TEST);
-	glDisable(GL_DEPTH_TEST);
-	m_oldBlend = glIsEnabled(GL_BLEND);
-	glEnable(GL_BLEND);
-	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// m_oldDepth = glIsEnabled(GL_DEPTH_TEST);
+	// glDisable(GL_DEPTH_TEST);
+	// m_oldBlend = glIsEnabled(GL_BLEND);
+	// glEnable(GL_BLEND);
+	//  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 
@@ -139,10 +139,10 @@ void Texture::BindTexture() {
 }
 
 void Texture::UnBindTexture() {
-	if (!m_oldBlend)
-		glDisable(GL_BLEND);
-	if (m_oldDepth)
-		glEnable(GL_DEPTH_TEST);
+	// if (!m_oldBlend)
+	//	glDisable(GL_BLEND);
+	// if (m_oldDepth)
+	//	glEnable(GL_DEPTH_TEST);
 	if (!m_oldTexture)
 		glDisable(GL_TEXTURE_2D);
 }

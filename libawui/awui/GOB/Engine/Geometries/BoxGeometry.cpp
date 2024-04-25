@@ -44,13 +44,13 @@ void BoxGeometry::BuildPlane(int u, int v, int w, int udir, int vdir, float widt
 
 	for (int iy = 0; iy < heightSegments; iy++) {
 		for (int ix = 0; ix < widthSegments; ix++) {
-			float a = numVertices + ix + (widthSegments + 1.0f) * iy;
-			float b = numVertices + ix + (widthSegments + 1.0f) * (iy + 1.0f);
-			float c = numVertices + (ix + 1.0f) + (widthSegments + 1.0f) * (iy + 1.0f);
-			float d = numVertices + (ix + 1.0f) + (widthSegments + 1.0f) * iy;
+			int a = numVertices + ix + (widthSegments + 1.0f) * iy;
+			int b = numVertices + ix + (widthSegments + 1.0f) * (iy + 1.0f);
+			int c = numVertices + (ix + 1.0f) + (widthSegments + 1.0f) * (iy + 1.0f);
+			int d = numVertices + (ix + 1.0f) + (widthSegments + 1.0f) * iy;
 
-			m_indices.push_back(TriangleIndices(a, b, d));
-			m_indices.push_back(TriangleIndices(b, c, d));
+			m_indices.push_back(TriangleVertices(&m_vertices[a], &m_vertices[b], &m_vertices[d]));
+			m_indices.push_back(TriangleVertices(&m_vertices[b], &m_vertices[c], &m_vertices[d]));
 		}
 	}
 }

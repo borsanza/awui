@@ -20,6 +20,7 @@ PlaneGeometry::PlaneGeometry(float width, float height, int widthSegments, int h
 }
 
 void PlaneGeometry::BuildPlane(int u, int v, int w, int udir, int vdir, float width, float height, int widthSegments, int heightSegments) {
+	/*
 	float faceWidthHalf = width / 2.0f;
 	float faceHeightHalf = height / 2.0f;
 	float faceSegmentWidth = width / (float) widthSegments;
@@ -49,8 +50,9 @@ void PlaneGeometry::BuildPlane(int u, int v, int w, int udir, int vdir, float wi
 			float c = numVertices + (ix + 1.0f) + (widthSegments + 1.0f) * (iy + 1.0f);
 			float d = numVertices + (ix + 1.0f) + (widthSegments + 1.0f) * iy;
 
-			m_indices.push_back(TriangleIndices(a, b, d));
-			m_indices.push_back(TriangleIndices(b, c, d));
+			m_indices.push_back(TriangleVertices(a, b, d));
+			m_indices.push_back(TriangleVertices(b, c, d));
 		}
 	}
+	*/
 }

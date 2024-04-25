@@ -11,6 +11,7 @@
 #include <awui/GOB/Engine/Textures/Texture.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
+#include <unordered_set>
 #include <vector>
 
 using namespace awui::GOB::Engine;
@@ -73,10 +74,10 @@ Renderer::Renderer() {
 
 	Console::WriteLine("Center XY: %.0f", line / 2.0f);
 	Console::WriteLine("Triangles: %d", initMax);
-	// m_camera->SetPosition(line / 2.0f, line * 0.666, 0.001f + 0);
-	// m_camera->LookAt(line / 2.0f, 0.0f, line * 0.333);
-	m_camera->SetPosition(1.5f, 2.0f, 4.0f);
-	m_camera->LookAt(1.5f, 0.0f, 0.0f);
+	m_camera->SetPosition(line / 2.0f, line * 0.666, 0.001f + 0);
+	m_camera->LookAt(line / 2.0f, 0.0f, line * 0.333);
+	// m_camera->SetPosition(1.5f, 2.0f, 4.0f);
+	// m_camera->LookAt(1.5f, 0.0f, 0.0f);
 
 	// PlaneGeometry *geometry = new PlaneGeometry(10, 10);
 	// Mesh *cube = new Mesh(geometry, materials);
@@ -91,7 +92,15 @@ void Renderer::DoRender(Scene &scene, Camera &camera) {
 	camera.SetProjectionMatrix();
 
 	Matrix4 identity = Matrix4::Identity();
-	scene.PreRender(identity);
+
+	std::unordered_set<Material *> materials = scene.GetMaterials();
+	for (auto &material : materials) {
+		material->ApplyMaterial();
+		glBegin(GL_TRIANGLES);
+		scene.PreRender(*material, identity);
+		glEnd();
+		material->UnApplyMaterial();
+	}
 
 	glBegin(GL_LINES);
 
@@ -167,7 +176,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glLoadIdentity();
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	// m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
+	m_camera->SetPosition(50.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 50.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);
 
