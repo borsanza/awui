@@ -5,7 +5,7 @@
 namespace awui {
 	class ColorF : public Object {
 	  private:
-		float m_a, m_r, m_g, m_b;
+		float m_r, m_g, m_b, m_a;
 
 	  public:
 		ColorF();
