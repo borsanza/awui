@@ -33,7 +33,7 @@ Renderer::Renderer() {
 		new MeshBasicMaterial(0x000080ff, false)  // -Z
 	};
 
-	int initMax = 270000;
+	int initMax = 320000;
 	int max = initMax;
 	// int max = 12;
 
@@ -76,6 +76,9 @@ void Renderer::DoRender(Scene &scene, Camera &camera) {
 	camera.SetProjectionMatrix();
 
 	Matrix4 identity = Matrix4::Identity();
+
+	glMatrixMode(GL_MODELVIEW);
+
 	scene.PreRender(identity);
 
 	glBegin(GL_LINES);

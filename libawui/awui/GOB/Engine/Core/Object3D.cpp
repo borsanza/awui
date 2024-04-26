@@ -1,5 +1,6 @@
 #include "Object3D.h"
 
+#include <SDL_opengl.h>
 #include <algorithm>
 #include <awui/GOB/Engine/Math/Matrix4.h>
 #include <awui/GOB/Engine/Math/Quaternion.h>
@@ -56,11 +57,16 @@ void Object3D::PreRender(const Matrix4 &parentMatrix) {
 	matrix.Compose(position, rotation.GetQuaternion(), scale);
 	matrix = matrix * parentMatrix;
 
+	// glPushMatrix();
+	// glMultMatrixf(matrix.data());
+
 	Render(matrix);
 
 	for (auto *child : _children) {
 		child->PreRender(matrix);
 	}
+
+	// glPopMatrix();
 }
 
 void Object3D::Render(const Matrix4 &transform) {
