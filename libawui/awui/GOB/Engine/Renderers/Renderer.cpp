@@ -44,12 +44,12 @@ Renderer::Renderer() {
 	};
 	*/
 	std::vector<Material *> materials = {
-		new MeshBasicMaterial(0xff0000ff, false), // +Y
-		new MeshBasicMaterial(0x800000ff, false), // +Y
+		new MeshBasicMaterial(0xff0000ff, false), // +X
+		new MeshBasicMaterial(0x800000ff, false), // -X
 		new MeshBasicMaterial(0x00ff00ff, false), // +Y
-		new MeshBasicMaterial(0x008000ff, false), // +Y
-		new MeshBasicMaterial(0x0000ffff, false), // +Y
-		new MeshBasicMaterial(0x000080ff, false), // +Y
+		new MeshBasicMaterial(0x008000ff, false), // -Y
+		new MeshBasicMaterial(0x0000ffff, false), // +Z
+		new MeshBasicMaterial(0x000080ff, false), // -Z
 	};
 
 	int initMax = 270000;
@@ -173,7 +173,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glLoadIdentity();
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	m_camera->SetPosition(0.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 0.5f + -4.0f + 8.0f * Math::Sin(m_angle));
+	m_camera->SetPosition(50.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 50.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);
 
