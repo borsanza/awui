@@ -18,6 +18,7 @@ namespace awui::GOB::Engine {
 		MeshBasicMaterial(Texture *texture, bool wireframe = false);
 
 		void ApplyMaterial() override;
+		void UnApplyMaterial() override;
 
 		void ApplyUVs(const Vector3 *uv) override;
 	};

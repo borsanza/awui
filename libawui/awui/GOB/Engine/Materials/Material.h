@@ -8,6 +8,7 @@ namespace awui::GOB::Engine {
 		virtual ~Material() = default;
 
 		virtual void ApplyMaterial();
+		virtual void UnApplyMaterial();
 		virtual void ApplyUVs(const Vector3 *uv);
 	};
 } // namespace awui::GOB::Engine

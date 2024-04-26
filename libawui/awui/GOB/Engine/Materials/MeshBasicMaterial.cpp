@@ -23,6 +23,13 @@ void MeshBasicMaterial::ApplyMaterial() {
 	}
 }
 
+void MeshBasicMaterial::UnApplyMaterial() {
+	if (m_texture == NULL) {
+	} else {
+		m_texture->UnBindTexture();
+	}
+}
+
 void MeshBasicMaterial::ApplyUVs(const Vector3 *uv) {
 	if (m_texture == NULL) {
 		return;
