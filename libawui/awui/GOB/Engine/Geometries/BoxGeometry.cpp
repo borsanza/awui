@@ -1,5 +1,8 @@
 #include "BoxGeometry.h"
 
+#include <awui/GOB/Engine/Core/Triangle.h>
+#include <awui/GOB/Engine/Math/Vertex.h>
+
 using namespace awui::GOB::Engine;
 
 BoxGeometry::BoxGeometry(float width, float height, float depth, int widthSegments, int heightSegments, int depthSegments) {
@@ -10,12 +13,12 @@ BoxGeometry::BoxGeometry(float width, float height, float depth, int widthSegmen
 	m_heightSegments = heightSegments;
 	m_depthSegments = depthSegments;
 
-	BuildPlane(Vector3::Z, Vector3::Y, Vector3::X, -1, -1, depth, height, width, m_depthSegments, m_heightSegments, 0);	 // X+
-	BuildPlane(Vector3::Z, Vector3::Y, Vector3::X, 1, -1, depth, height, -width, m_depthSegments, m_heightSegments, 1);	 // X-
-	BuildPlane(Vector3::X, Vector3::Z, Vector3::Y, 1, 1, width, depth, height, m_widthSegments, m_depthSegments, 2);	 // Y+
-	BuildPlane(Vector3::X, Vector3::Z, Vector3::Y, 1, -1, width, depth, -height, m_widthSegments, m_depthSegments, 3);	 // Y-
-	BuildPlane(Vector3::X, Vector3::Y, Vector3::Z, 1, -1, width, height, depth, m_widthSegments, m_heightSegments, 4);	 // Z+
-	BuildPlane(Vector3::X, Vector3::Y, Vector3::Z, -1, -1, width, height, -depth, m_widthSegments, m_heightSegments, 5); // Z-
+	BuildPlane(Vertex::Z, Vertex::Y, Vertex::X, -1, -1, depth, height, width, m_depthSegments, m_heightSegments, 0);  // X+
+	BuildPlane(Vertex::Z, Vertex::Y, Vertex::X, 1, -1, depth, height, -width, m_depthSegments, m_heightSegments, 1);  // X-
+	BuildPlane(Vertex::X, Vertex::Z, Vertex::Y, 1, 1, width, depth, height, m_widthSegments, m_depthSegments, 2);	  // Y+
+	BuildPlane(Vertex::X, Vertex::Z, Vertex::Y, 1, -1, width, depth, -height, m_widthSegments, m_depthSegments, 3);	  // Y-
+	BuildPlane(Vertex::X, Vertex::Y, Vertex::Z, 1, -1, width, height, depth, m_widthSegments, m_heightSegments, 4);	  // Z+
+	BuildPlane(Vertex::X, Vertex::Y, Vertex::Z, -1, -1, width, height, -depth, m_widthSegments, m_heightSegments, 5); // Z-
 }
 
 void BoxGeometry::BuildPlane(int u, int v, int w, int udir, int vdir, float width, float height, float depth, int widthSegments, int heightSegments, int materialIndex) {
@@ -32,13 +35,11 @@ void BoxGeometry::BuildPlane(int u, int v, int w, int udir, int vdir, float widt
 			float x = ix * faceSegmentWidth - faceWidthHalf;
 			float y = iy * faceSegmentHeight - faceHeightHalf;
 
-			Vector3 vec;
-			vec.data[u] = x * udir;
-			vec.data[v] = y * vdir;
-			vec.data[w] = faceFixed;
+			Vertex *vec = new Vertex(0, 0, 0, (float) ix / (float) widthSegments, 1.0f - ((float) iy / (float) heightSegments));
+			vec->data[u] = x * udir;
+			vec->data[v] = y * vdir;
+			vec->data[w] = faceFixed;
 			m_vertices.push_back(vec);
-
-			m_uvs.push_back(Vector3((float) ix / (float) widthSegments, 1.0f - ((float) iy / (float) heightSegments), materialIndex));
 		}
 	}
 
@@ -49,8 +50,8 @@ void BoxGeometry::BuildPlane(int u, int v, int w, int udir, int vdir, float widt
 			float c = numVertices + (ix + 1.0f) + (widthSegments + 1.0f) * (iy + 1.0f);
 			float d = numVertices + (ix + 1.0f) + (widthSegments + 1.0f) * iy;
 
-			m_indices.push_back(TriangleIndices(a, b, d));
-			m_indices.push_back(TriangleIndices(b, c, d));
+			m_triangles.push_back(new Triangle(m_vertices[a], m_vertices[b], m_vertices[d], materialIndex));
+			m_triangles.push_back(new Triangle(m_vertices[b], m_vertices[c], m_vertices[d], materialIndex));
 		}
 	}
 }

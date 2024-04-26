@@ -97,7 +97,9 @@ void Renderer::DoRender(Scene &scene, Camera &camera) {
 	camera.SetProjectionMatrix();
 
 	Matrix4 identity = Matrix4::Identity();
+	glBegin(GL_TRIANGLES);
 	scene.PreRender(identity);
+	glEnd();
 
 	glBegin(GL_LINES);
 

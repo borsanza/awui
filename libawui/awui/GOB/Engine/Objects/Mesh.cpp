@@ -2,11 +2,12 @@
 
 #include <SDL_opengl.h>
 #include <awui/GOB/Engine/Core/BufferGeometry.h>
-#include <awui/GOB/Engine/Core/TriangleIndices.h>
+#include <awui/GOB/Engine/Core/Triangle.h>
 #include <awui/GOB/Engine/Materials/Material.h>
 #include <awui/GOB/Engine/Math/Matrix4.h>
 #include <awui/GOB/Engine/Math/Quaternion.h>
 #include <awui/GOB/Engine/Math/Vector3.h>
+#include <awui/GOB/Engine/Math/Vertex.h>
 
 #include <vector>
 
@@ -16,33 +17,25 @@ Mesh::Mesh(BufferGeometry *geometry, const std::vector<Material *> &materials) :
 }
 
 void Mesh::Render(const Matrix4 &transform) {
-	const std::vector<Vector3> &vertices = m_geometry->m_vertices;
-	const std::vector<TriangleIndices> &indices = m_geometry->m_indices;
-	const std::vector<Vector3> &uvs = m_geometry->m_uvs;
+	const std::vector<Triangle *> &triangles = m_geometry->m_triangles;
+	Vertex vertex;
 	Material *material, *lastMaterial = nullptr;
-	Vector3 vector;
-	const Vector3 *uv;
-
-	glBegin(GL_TRIANGLES);
 
 	// Recorro todos los triangulos
-	for (const TriangleIndices &triangle : indices) {
+	for (const Triangle *triangle : triangles) {
 		// Recorro los tres vertices de un triangulo
-		for (int iTriangleVertex = 0; iTriangleVertex < 3; iTriangleVertex++) {
-			int triangleIndex = triangle.v[iTriangleVertex];
-			uv = &uvs[triangleIndex];
+		for (const Vertex *iTriangleVertex : triangle->v) {
 
-			material = m_materials[uv->data[2]];
+			material = m_materials[triangle->m_material_index];
 			if (material != lastMaterial) {
 				material->ApplyMaterial();
 				lastMaterial = material;
 			}
-			material->ApplyUVs(uv);
+			// material->ApplyUVs(uv);
 
-			vector = vertices[triangleIndex] * transform;
-			glVertex3f(vector.x, vector.y, vector.z);
+			vertex = *iTriangleVertex * transform;
+
+			glVertex3f(vertex.x, vertex.y, vertex.z);
 		}
 	}
-
-	glEnd();
 }

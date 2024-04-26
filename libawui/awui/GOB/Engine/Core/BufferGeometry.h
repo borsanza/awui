@@ -1,16 +1,15 @@
 
 #pragma once
 
-#include <awui/GOB/Engine/Core/TriangleIndices.h>
-#include <awui/GOB/Engine/Math/Vector2.h>
-#include <awui/GOB/Engine/Math/Vector3.h>
 #include <vector>
 
 namespace awui::GOB::Engine {
+	class Vertex;
+	class Triangle;
+
 	class BufferGeometry {
 	  public:
-		std::vector<Vector3> m_vertices;
-		std::vector<TriangleIndices> m_indices;
-		std::vector<Vector3> m_uvs;
+		std::vector<Vertex *> m_vertices;
+		std::vector<Triangle *> m_triangles;
 	};
 } // namespace awui::GOB::Engine

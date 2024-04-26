@@ -6,6 +6,7 @@ namespace awui::GOB::Engine {
 
 	class Matrix4 {
 		friend class Vector3;
+		friend class Vertex;
 
 	  private:
 		float m[16];
