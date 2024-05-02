@@ -15,6 +15,11 @@ pkg_search_module(SDL2 REQUIRED sdl2)
 pkg_search_module(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
 pkg_search_module(CAIRO REQUIRED cairo)
 
+message(STATUS "OpenGL Include Directories: ${OPENGL_INCLUDE_DIRS}")
+message(STATUS "OpenGL Libraries: ${OPENGL_LIBRARIES}")
+message(STATUS "GLEW Include Directories: ${GLEW_INCLUDE_DIRS}")
+message(STATUS "GLEW Libraries: ${GLEW_LIBRARIES}")
+
 # Define los archivos de fuente y cabecera
 file(GLOB_RECURSE LIBAWUI_SOURCES awui/*.cpp )
 file(GLOB_RECURSE LIBAWUI_HEADERS awui/*.h )
@@ -30,7 +35,7 @@ target_include_directories(awui PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
   ${CAIRO_INCLUDE_DIRS}
   ${GLEW_INCLUDE_DIRS}
-  ${OPENGL_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIRS}
   ${SDL2_INCLUDE_DIRS}
   ${SDL2IMAGE_INCLUDE_DIRS}
 )
@@ -39,7 +44,7 @@ target_include_directories(awui PUBLIC
 target_link_libraries(awui PRIVATE
   ${CAIRO_LIBRARIES}
   ${GLEW_LIBRARIES}
-  ${OPENGL_gl_LIBRARY}
+  ${OPENGL_LIBRARIES}
   ${SDL2_LIBRARIES}
   ${SDL2IMAGE_LIBRARIES}
   nlohmann_json::nlohmann_json

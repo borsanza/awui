@@ -8,15 +8,7 @@ PlaneGeometry::PlaneGeometry(float width, float height, int widthSegments, int h
 	m_widthSegments = widthSegments;
 	m_heightSegments = heightSegments;
 
-	/*
-	BuildPlane(Vector3::Z, Vector3::Y, Vector3::X, -1, -1, 0, height, width, m_depthSegments, m_heightSegments, 0);	   // X+
-	BuildPlane(Vector3::Z, Vector3::Y, Vector3::X, 1, -1, 0, height, -width, m_depthSegments, m_heightSegments, 1);	   // X-
-	BuildPlane(Vector3::X, Vector3::Z, Vector3::Y, 1, 1, width, 0, height, m_widthSegments, m_depthSegments, 2);	   // Y+
-	BuildPlane(Vector3::X, Vector3::Z, Vector3::Y, 1, -1, width, 0, -height, m_widthSegments, m_depthSegments, 3);	   // Y-
-	*/
-	BuildPlane(Vector3::X, Vector3::Y, Vector3::Z, 1, -1, width, height, m_widthSegments, m_heightSegments); // Z+
-
-	// BuildPlane(Vector3::X, Vector3::Y, Vector3::Z, -1, -1, width, height, -0, m_widthSegments, m_heightSegments, 0); // Z-
+	BuildPlane(Vector3::X, Vector3::Y, Vector3::Z, 1, -1, width, height, m_widthSegments, m_heightSegments);
 }
 
 void PlaneGeometry::BuildPlane(int u, int v, int w, int udir, int vdir, float width, float height, int widthSegments, int heightSegments) {

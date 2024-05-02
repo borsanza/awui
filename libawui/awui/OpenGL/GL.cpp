@@ -6,11 +6,17 @@
 
 #include "GL.h"
 
+#include <GL/glew.h>
 #include <SDL_opengl.h>
 #include <awui/Drawing/Image.h>
+#include <awui/GOB/Engine/Math/Matrix4.h>
+#include <awui/GOB/Engine/Shaders/Shader.h>
+#include <awui/GOB/Engine/Shaders/Shaders.h>
 #include <awui/Math.h>
+#include <iostream>
 
 using namespace awui::Drawing;
+using namespace awui::GOB::Engine;
 using namespace awui::OpenGL;
 
 GL::GL() {
@@ -97,14 +103,11 @@ void GL::FillRectangle(int x1, int y1, int x2, int y2) {
 // GL_CCW
 void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
 	image->Load();
-	// Mas rapido guardandose solo el valor y recuperarlo despues
-	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
 
-	GLboolean oldDepth = glIsEnabled(GL_DEPTH_TEST);
+	GLboolean needDepthTest = glIsEnabled(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
 
-	GLboolean oldBlend = glIsEnabled(GL_BLEND);
+	GLboolean needBlend = glIsEnabled(GL_BLEND);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -122,12 +125,80 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
 	glVertex2i(x, y); // Left Top
 	glEnd();
 
-	if (!oldBlend)
+	if (!needBlend)
 		glDisable(GL_BLEND);
-	if (oldDepth)
+	if (needDepthTest)
 		glEnable(GL_DEPTH_TEST);
-	if (!oldTexture)
-		glDisable(GL_TEXTURE_2D);
+}
+
+void GL::DrawImageGL33(awui::Drawing::Image *image, int x, int y, float windowWidth, float windowHeight) {
+	Matrix4 identity = Matrix4::Identity();
+	Shader *shader = Shaders::ShaderDefaultView();
+
+	image->Load();
+
+	GLboolean needDepthTest = glIsEnabled(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
+
+	GLboolean needBlend = glIsEnabled(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	shader->Use();
+
+	glBindTexture(GL_TEXTURE_2D, image->GetTexture());
+
+	GLuint shaderProgram = shader->GetProgram();
+	GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
+	GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
+	GLuint projLoc = glGetUniformLocation(shaderProgram, "projection");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, identity.data());
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, identity.data());
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, identity.data());
+
+	float xpos = (float) x;
+	float ypos = (float) y;
+
+	float vertices[] = {xpos, ypos + image->GetHeight(), 0.0f, 1.0f, xpos + image->GetWidth(), ypos + image->GetHeight(), 1.0f, 1.0f, xpos + image->GetWidth(), ypos, 1.0f, 0.0f, xpos, ypos, 0.0f, 0.0f};
+	// Transforma las coordenadas a espacio normalizado de -1 a 1
+	for (int i = 0; i < 16; i += 4) {
+		vertices[i] = 2.0f * (vertices[i] / windowWidth) - 1.0f;
+		vertices[i + 1] = 2.0f * (vertices[i + 1] / windowHeight) - 1.0f;
+	}
+
+	GLuint VBO, VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	// Posición de vértice
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) 0);
+	glEnableVertexAttribArray(0);
+
+	// Coordenadas de textura
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) (2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0);
+
+	glBindVertexArray(VAO);
+	glBindTexture(GL_TEXTURE_2D, image->GetTexture());
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4); // Cambio a GL_TRIANGLE_FAN para cubrir el cuadrado
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+
+	shader->Unuse();
+
+	if (!needBlend)
+		glDisable(GL_BLEND);
+	if (needDepthTest)
+		glEnable(GL_DEPTH_TEST);
 }
 
 // GL_CCW
@@ -164,4 +235,16 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int h
 		glEnable(GL_DEPTH_TEST);
 	if (!oldTexture)
 		glDisable(GL_TEXTURE_2D);
+}
+
+bool GL::CheckGLErrors(const char *label) {
+	bool ret = false;
+
+	GLenum error;
+	while ((error = glGetError()) != GL_NO_ERROR) {
+		std::cerr << "GL Error '" << label << "': " << error << " " << gluErrorString(error) << std::endl;
+		ret = true;
+	}
+
+	return ret;
 }

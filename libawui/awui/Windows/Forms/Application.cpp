@@ -6,19 +6,28 @@
 
 #include "Application.h"
 
-#include <SDL.h>
+#include <GL/glew.h>
+#include <SDL2/SDL.h>
+#include <SDL_image.h>
 #include <SDL_opengl.h>
 #include <awui/ChronoLap.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
+#include <awui/GOB/Engine/Materials/MeshBasicMaterial.h>
+#include <awui/GOB/Engine/Math/Matrix4.h>
+#include <awui/GOB/Engine/Shaders/Shader.h>
+#include <awui/GOB/Engine/Textures/Texture.h>
 #include <awui/Math.h>
-// #include <awui/OpenGL/GL.h>
+#include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Joystick/Controller.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
+#include <iostream>
 
 using namespace awui;
+using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
+using namespace awui::GOB::Engine;
 using namespace awui::Windows::Forms::Statistics;
 
 int Application::quit = 0;
@@ -36,15 +45,20 @@ void Application::Quit() {
 }
 
 void Application::Run(Form *form = NULL) {
-	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
 		SDL_Log("[ERROR] SDL_Init failed: %s", SDL_GetError());
 		return;
 	}
 
+	if (!IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG)) {
+		SDL_Log("SDL_image could not initialize! SDL_image Error: %s", IMG_GetError());
+		return;
+	}
+
+	// Me he quedado en OpenGL 3.1, hay que ver de ir a 3.2
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	// No se ve si no pongo modo de compatiblidad
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
@@ -102,6 +116,128 @@ void Application::Run(Form *form = NULL) {
 	Joystick::Controller::CloseAll();
 
 	SDL_Quit();
+}
+
+int Application::Test() {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) { // Inicializar SDL2
+		std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+		return -1;
+	}
+
+	if (!IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG)) {
+		std::cerr << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
+		return -1;
+	}
+
+	// Configurar SDL para usar OpenGL 3.3 core profile
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+	// Crear ventana
+	SDL_Window *window = SDL_CreateWindow("SDL2 OpenGL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	if (!window) {
+		std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+		SDL_Quit();
+		return -1;
+	}
+
+	// Crear contexto OpenGL
+	SDL_GLContext glContext = SDL_GL_CreateContext(window);
+	if (!glContext) {
+		std::cerr << "OpenGL context could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+		SDL_DestroyWindow(window);
+		SDL_Quit();
+		return -1;
+	}
+
+	// Bucle principal (puede mantener la ventana abierta hasta que el usuario cierra la ventana)
+	bool quit = false;
+	SDL_Event e;
+
+	glewInit();
+
+	SDL_GL_SetSwapInterval(true);
+
+	glEnable(GL_MULTISAMPLE);
+
+	// Shader *shader = new Shader("shader-330.vs", "shader-330.fs");
+	float vertices[] = {
+		// Posiciones    // UVs
+		0.0f,  0.5f,  0.0f, 0.5f, 1.0f, // Top
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // Left
+		0.5f,  -0.5f, 0.0f, 1.0f, 0.0f	// Right
+	};
+
+	GLuint VAO, VBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	// Bind the Vertex Array Object
+	glBindVertexArray(VAO);
+
+	// Bind and set vertex buffer(s)
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
+	glEnableVertexAttribArray(0);
+
+	// Texture coord attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) (3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	// Unbind VBO and VAO
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	Texture *test = new Texture("./images/block-dirt.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST);
+	MeshBasicMaterial *m_basic = new MeshBasicMaterial(test, false);
+
+	m_basic->ApplyMaterial();
+
+	Matrix4 identity = Matrix4::Identity();
+	GLuint shaderProgram = test->GetProgram();
+	GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
+	GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
+	GLuint projLoc = glGetUniformLocation(shaderProgram, "projection");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, identity.data());
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, identity.data());
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, identity.data());
+
+	while (!quit) {
+		while (SDL_PollEvent(&e) != 0) {
+			if (e.type == SDL_QUIT) {
+				quit = true;
+			}
+		}
+
+		// Limpia el color y el buffer de profundidad
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Dibujar el triángulo
+		// shader->Use();
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		// shader->Unuse();
+
+		// Intercambia los buffers delantero y trasero
+		SDL_GL_SwapWindow(window); // Intercambiar buffers
+	}
+	m_basic->UnApplyMaterial();
+
+	// Limpiar
+	SDL_GL_DeleteContext(glContext);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+	return 0;
 }
 
 void Application::ProcessEvents() {

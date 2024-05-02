@@ -13,7 +13,6 @@ Vector3 Vector3::operator-(const Vector3 &other) const {
 	return Vector3(m_x - other.x, m_y - other.y, m_z - other.z);
 }
 
-/*
 Vector3 Vector3::operator*(const Matrix4 &other) const {
 	float px = m_x * other.m[0] + m_y * other.m[4] + m_z * other.m[8] + other.m[12];
 	float py = m_x * other.m[1] + m_y * other.m[5] + m_z * other.m[9] + other.m[13];
@@ -26,7 +25,7 @@ Vector3 Vector3::operator*(const Matrix4 &other) const {
 
 	return Vector3(px, py, pz);
 }
-*/
+
 Vector3 Vector3::Cross(const Vector3 &a, const Vector3 &b) {
 	return Vector3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 }
@@ -40,6 +39,8 @@ void Vector3::Normalize() {
 	m_x /= length;
 	m_y /= length;
 	m_z /= length;
+
+	m_dirtyTransform = true;
 }
 
 void Vector3::ApplyTransform(const Matrix4 &transform) {
@@ -61,6 +62,8 @@ void Vector3::Set(float x, float y, float z) {
 	m_x = x;
 	m_y = y;
 	m_z = z;
+
+	m_dirtyTransform = true;
 }
 
 Vector3 Vector3::Normalize(const Vector3 &a) {

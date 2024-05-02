@@ -288,11 +288,13 @@ void Control::Refresh() {
 }
 
 int Control::OnPaintPre(int x, int y, int width, int height, GL *gl, bool first) {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-x, width - x, height - y, -y, -1.0f, 1.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	// GL::CheckGLErrors("Control::OnPaintPre(1)");
+	// FIXME-GL33
+	// glMatrixMode(GL_PROJECTION);
+	// glLoadIdentity();
+	// glOrtho(-x, width - x, height - y, -y, -1.0f, 1.0f);
+	// glMatrixMode(GL_MODELVIEW);
+	// glLoadIdentity();
 
 	Drawing::Rectangle rect2;
 	rect2.SetX(x);
@@ -308,7 +310,7 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL *gl, bool first)
 		gl->SetClipping();
 	}
 
-	if (!first)
+	if (!first) {
 		switch (m_backColor.GetA()) {
 			case 255:
 				if ((width == GetWidth()) && (height == GetHeight())) {
@@ -326,6 +328,7 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL *gl, bool first)
 				GL::FillRectangle(0, 0, GetWidth(), GetHeight());
 				break;
 		}
+	}
 
 	int r = 0;
 
@@ -333,7 +336,9 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL *gl, bool first)
 	int isVisible = (cr.GetWidth() > 0) && (cr.GetHeight() > 0) && m_visible;
 	if (isVisible) {
 		r++;
+		// GL::CheckGLErrors("Control::OnPaintPre(2)");
 		OnPaint(NULL);
+		// GL::CheckGLErrors("Control::OnPaintPre(3)");
 	}
 
 	if (disableScissor)

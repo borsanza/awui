@@ -5,7 +5,11 @@
 #include <awui/GOB/Engine/Scenes/Scene.h>
 #include <awui/Windows/Forms/Control.h>
 
+typedef unsigned int GLuint;
+
 namespace awui::GOB::Engine {
+	class MeshBasicMaterial;
+
 	using namespace awui::GOB::Engine::Cameras;
 	using namespace awui::Windows::Forms;
 
@@ -15,6 +19,13 @@ namespace awui::GOB::Engine {
 		PerspectiveCamera *m_camera;
 		Scene *m_scene;
 		Color m_clearColor = Color(0.0f, 0.0f, 0.0f, 1.0f);
+		float m_centerX, m_centerY;
+
+		bool m_initialized;
+		MeshBasicMaterial *m_basic;
+		GLuint m_vao;
+
+		void Initialize();
 
 	  public:
 		Renderer();

@@ -38,6 +38,10 @@ namespace awui {
 			static void FillRectangle(int x1, int y1, int x2, int y2);
 			static void DrawImageGL(awui::Drawing::Image *image, int x, int y);
 			static void DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int height);
+
+			static void DrawImageGL33(awui::Drawing::Image *image, int x, int y, float windowWidth, float windowHeight);
+
+			static bool CheckGLErrors(const char *label);
 		};
 	} // namespace OpenGL
 } // namespace awui

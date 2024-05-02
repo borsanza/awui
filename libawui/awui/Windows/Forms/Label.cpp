@@ -11,6 +11,7 @@
 #include <awui/Drawing/Image.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
+#include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/TextRenderer.h>
 
 #include <SDL_opengl.h>
@@ -101,8 +102,7 @@ void Label::Draw(int x, int y, int width, int height) {
 		int correctPosX = posX - BORDER;
 		int correctPosY = posY + m_metrics.GetBearingY() - BORDER;
 
-		GL::DrawImageGL(m_image, correctPosX, correctPosY);
-		//		DrawLines(posX, posY);
+		GL::DrawImageGL33(m_image, correctPosX, correctPosY, GetForm()->GetWidth(), GetForm()->GetHeight());
 	}
 }
 

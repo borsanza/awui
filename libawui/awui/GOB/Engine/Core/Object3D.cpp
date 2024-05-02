@@ -57,16 +57,11 @@ void Object3D::PreRender(const Matrix4 &parentMatrix) {
 	matrix.Compose(position, rotation.GetQuaternion(), scale);
 	matrix = matrix * parentMatrix;
 
-	// glPushMatrix();
-	// glMultMatrixf(matrix.data());
-
 	Render(matrix);
 
 	for (auto *child : _children) {
 		child->PreRender(matrix);
 	}
-
-	// glPopMatrix();
 }
 
 void Object3D::Render(const Matrix4 &transform) {

@@ -20,6 +20,8 @@ namespace awui::GOB::Engine {
 		void ApplyMaterial() override;
 		void UnApplyMaterial() override;
 
+		Texture *GetTexture() { return m_texture; }
+
 		void ApplyUVs(const Vector3 *uv) override;
 	};
 } // namespace awui::GOB::Engine

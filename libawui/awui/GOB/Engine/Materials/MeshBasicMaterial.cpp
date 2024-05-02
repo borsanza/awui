@@ -1,9 +1,12 @@
 #include "MeshBasicMaterial.h"
 
+#include <GL/glew.h>
 #include <GL/glu.h>
 #include <awui/GOB/Engine/Math/Vector3.h>
 #include <awui/GOB/Engine/Textures/Texture.h>
+#include <awui/OpenGL/GL.h>
 
+using namespace awui::OpenGL;
 using namespace awui::GOB::Engine;
 
 MeshBasicMaterial::MeshBasicMaterial(uint32_t color, bool wireframe) : m_color(color), m_wireframe(wireframe) {
@@ -15,10 +18,12 @@ MeshBasicMaterial::MeshBasicMaterial(Texture *texture, bool wireframe) : m_textu
 }
 
 void MeshBasicMaterial::ApplyMaterial() {
+	// GL::CheckGLErrors("MeshBasicMaterial::ApplyMaterial(1)");
+
 	if (m_texture == NULL) {
 		glColor3ub(m_color.GetR(), m_color.GetG(), m_color.GetB());
 	} else {
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		// glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		m_texture->BindTexture();
 	}
 }

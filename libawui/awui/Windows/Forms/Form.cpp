@@ -15,6 +15,7 @@
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 
+#include <GL/glew.h>
 #include <SDL.h>
 #include <SDL_events.h>
 #include <SDL_opengl.h>
@@ -79,6 +80,7 @@ void Form::Init() {
 }
 
 void Form::OnPaintForm() {
+	// GL::CheckGLErrors("Form::OnPaintForm(1)");
 	GL gl;
 	Drawing::Rectangle rectangle;
 	rectangle.SetX(0);
@@ -96,7 +98,6 @@ void Form::OnPaintForm() {
 	glFrontFace(GL_CCW);
 
 	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 
 	int r = OnPaintPre(0, 0, GetWidth(), GetHeight(), &gl, true);
@@ -174,6 +175,13 @@ void Form::RefreshVideo() {
 			SDL_Quit();
 			m_window = 0;
 			return;
+		}
+
+		glewExperimental = GL_TRUE;
+		GLenum err = glewInit();
+		if (GLEW_OK != err) {
+			// Problema al cargar GLEW
+			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		}
 	}
 

@@ -79,6 +79,7 @@
 		"variant": "cpp",
 		"xhash": "cpp",
 		"xstring": "cpp",
-		"xutility": "cpp"
+		"xutility": "cpp",
+		"unordered_set": "cpp"
 	},
 }

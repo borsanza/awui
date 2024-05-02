@@ -11,8 +11,9 @@
 using namespace awui;
 
 int main(int argc, char **argv) {
-	FormGOB *form = new FormGOB();
+	// Application::Test();
 
+	FormGOB *form = new FormGOB();
 	Application::Run(form);
 
 	return 0;

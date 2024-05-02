@@ -32,7 +32,7 @@ namespace awui::GOB::Engine {
 
 		Vector3 operator+(const Vector3 &other) const;
 		Vector3 operator-(const Vector3 &other) const;
-		// Vector3 operator*(const Matrix4 &other) const;
+		Vector3 operator*(const Matrix4 &other) const;
 
 		void Set(float x, float y, float z);
 

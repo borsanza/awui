@@ -11,8 +11,8 @@ namespace awui::GOB::Engine::Cameras {
 
 	  public:
 		Camera();
-		virtual void SetProjectionMatrix() = 0;
-		virtual void SetViewMatrix() = 0;
+		virtual Matrix4 GetProjectionMatrix() = 0;
+		virtual Matrix4 GetViewMatrix() = 0;
 
 		void LookAt(float x, float y, float z);
 

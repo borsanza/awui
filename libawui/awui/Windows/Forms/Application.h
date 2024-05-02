@@ -15,6 +15,7 @@ namespace awui::Windows::Forms {
 		Application();
 
 		static void Run(Form *form);
+		static int Test();
 
 		virtual bool IsClass(Classes objectClass) const override;
 

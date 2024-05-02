@@ -16,14 +16,13 @@ Mesh::Mesh(BufferGeometry *geometry, const std::vector<Material *> &materials) :
 }
 
 void Mesh::Render(const Matrix4 &transform) {
+	static Material *lastMaterial = nullptr;
 	std::vector<Vector3> &vertices = m_geometry->m_vertices;
 	const std::vector<TriangleIndices> &indices = m_geometry->m_indices;
 	const std::vector<Vector3> &uvs = m_geometry->m_uvs;
-	Material *material, *lastMaterial = nullptr;
+	Material *material;
 	const Vector3 *uv;
-	Vector3 vector;
 
-	glBegin(GL_TRIANGLES);
 	for (const TriangleIndices &triangle : indices) {
 		for (int iTriangleVertex = 0; iTriangleVertex < 3; iTriangleVertex++) {
 			int triangleIndex = triangle.v[iTriangleVertex];
@@ -32,7 +31,12 @@ void Mesh::Render(const Matrix4 &transform) {
 
 			material = m_materials[uv->data[2]];
 			if (material != lastMaterial) {
+				glEnd();
+				if (lastMaterial != nullptr) {
+					lastMaterial->UnApplyMaterial();
+				}
 				material->ApplyMaterial();
+				glBegin(GL_TRIANGLES);
 				lastMaterial = material;
 			}
 			material->ApplyUVs(uv);
@@ -44,6 +48,4 @@ void Mesh::Render(const Matrix4 &transform) {
 			glVertex3f(vector->t_x, vector->t_y, vector->t_z);
 		}
 	}
-
-	glEnd();
 }

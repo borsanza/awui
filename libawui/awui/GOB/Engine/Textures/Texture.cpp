@@ -1,12 +1,19 @@
 #include "Texture.h"
 
+#include <GL/glew.h>
 #include <SDL_image.h>
 #include <SDL_opengl.h>
 #include <awui/Console.h>
+#include <awui/GOB/Engine/Shaders/Shader.h>
+#include <awui/GOB/Engine/Shaders/Shaders.h>
+#include <awui/OpenGL/GL.h>
+#include <iostream>
 
+using namespace awui::OpenGL;
 using namespace awui::GOB::Engine;
 
 Texture::Texture(const String file, int minFilter, int magFilter) : m_file(file), m_minFilter(minFilter), m_magFilter(magFilter) {
+	m_shader = nullptr;
 	m_textureWidth = 0;
 	m_textureHeight = 0;
 
@@ -14,10 +21,6 @@ Texture::Texture(const String file, int minFilter, int magFilter) : m_file(file)
 	m_texture = -1;
 	m_needUpdateFilters = true;
 	m_errorOnLoad = false;
-
-	m_oldBlend = false;
-	m_oldDepth = true;
-	m_oldTexture = false;
 }
 
 Texture::~Texture() {
@@ -31,7 +34,7 @@ void Texture::Load() {
 
 	SDL_Surface *textureImage = IMG_Load(m_file.ToCharArray());
 	if (!textureImage) {
-		Console::Error->WriteLine("Failed to load texture: %s", m_file.ToCharArray());
+		Console::Error->WriteLine("[IMG_Load] Failed to load texture: %s", m_file.ToCharArray());
 		m_errorOnLoad = true;
 		return;
 	}
@@ -39,15 +42,14 @@ void Texture::Load() {
 	SDL_Surface *optimizedImage = SDL_ConvertSurfaceFormat(textureImage, SDL_PIXELFORMAT_RGBA32, 0);
 	SDL_FreeSurface(textureImage);
 	if (!optimizedImage) {
-		Console::Error->WriteLine("Failed to optimize texture format: %s", m_file.ToCharArray());
+		Console::Error->WriteLine("[SDL_ConvertSurfaceFormat] Failed to optimize texture format: %s", m_file.ToCharArray());
 		m_errorOnLoad = true;
 		return;
 	}
 	textureImage = optimizedImage;
 
 	glGenTextures(1, &m_texture);
-	if (glGetError() != GL_NO_ERROR) {
-		Console::Error->WriteLine("OpenGL error: Failed to generate texture.");
+	if (GL::CheckGLErrors("Texture::Load() - glGenTextures()")) {
 		m_errorOnLoad = true;
 		SDL_FreeSurface(textureImage);
 		m_texture = -1;
@@ -55,8 +57,7 @@ void Texture::Load() {
 	}
 
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	if (glGetError() != GL_NO_ERROR) {
-		Console::Error->WriteLine("OpenGL error: Failed to bind texture.");
+	if (GL::CheckGLErrors("Texture::Load() - glBindTexture()")) {
 		m_errorOnLoad = true;
 		glDeleteTextures(1, &m_texture);
 		SDL_FreeSurface(textureImage);
@@ -64,8 +65,8 @@ void Texture::Load() {
 		return;
 	}
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // GL_CLAMP_TO_EDGE);
 
 	GLenum internalFormat = textureImage->format->BytesPerPixel == 4 ? GL_RGBA8 : GL_RGB8;
 	GLenum textureFormat = textureImage->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB;
@@ -78,11 +79,13 @@ void Texture::Load() {
 		m_texture = -1;
 		return;
 	}
+	glGenerateMipmap(GL_TEXTURE_2D);
 
 	m_textureWidth = textureImage->w;
 	m_textureHeight = textureImage->h;
 
 	SDL_FreeSurface(textureImage);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	m_loaded = true;
 }
@@ -119,32 +122,28 @@ void Texture::SetMagFilter(int filter) {
 }
 
 void Texture::BindTexture() {
+	// GL::CheckGLErrors("Texture::BindTexture(1)");
 	Load();
 
 	if ((m_textureWidth == 0) || (m_textureHeight == 0)) {
 		return;
 	}
 
-	m_oldTexture = glIsEnabled(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
-	m_oldDepth = glIsEnabled(GL_DEPTH_TEST);
-	glDisable(GL_DEPTH_TEST);
-	m_oldBlend = glIsEnabled(GL_BLEND);
-	glEnable(GL_BLEND);
-	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_shader = Shaders::ShaderDefaultView();
+	m_shader->Use();
+	GLenum err;
+	while ((err = glGetError()) != GL_NO_ERROR) {
+		std::cerr << "OpenGL error: " << std::hex << err << std::endl;
+	}
 
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 
 	UpdateTextureFilters();
 }
 
 void Texture::UnBindTexture() {
-	if (!m_oldBlend)
-		glDisable(GL_BLEND);
-	if (m_oldDepth)
-		glEnable(GL_DEPTH_TEST);
-	if (!m_oldTexture)
-		glDisable(GL_TEXTURE_2D);
+	m_shader->Unuse();
 }
 
 void Texture::UpdateTextureFilters() {
