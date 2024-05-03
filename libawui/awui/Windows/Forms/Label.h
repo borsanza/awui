@@ -37,8 +37,6 @@ namespace awui {
 			void Draw(int x, int y, int width, int height);
 			virtual void OnPaint(OpenGL::GL *gl);
 
-			void DrawLines(int x, int y);
-
 			virtual void SetForeColor(const Color color);
 			virtual void SetFont(const Drawing::Font font);
 

@@ -45,29 +45,11 @@ void Renderer::Initialize() {
 
 	Texture *test = new Texture("./images/block-dirt.png", Texture::TEXTURE_NEAREST, Texture::TEXTURE_NEAREST);
 	m_basic = new MeshBasicMaterial(test, false);
-	/*
-		std::vector<Material *> materials3 = {
-			m_basic, // +X
-			m_basic, // -X
-			m_basic, // +Y
-			m_basic, // -Y
-			m_basic, // +Z
-			m_basic	 // -Z
-		};
-	*/
-	std::vector<Material *> materials2 = {
-		new MeshBasicMaterial(0xff0000ff, false), // +X
-		new MeshBasicMaterial(0x800000ff, false), // -X
-		new MeshBasicMaterial(0x00ff00ff, false), // +Y
-		new MeshBasicMaterial(0x008000ff, false), // -Y
-		new MeshBasicMaterial(0x0000ffff, false), // +Z
-		new MeshBasicMaterial(0x000080ff, false)  // -Z
-	};
 
 	int initMax;
 	// initMax = 25000;
-	initMax = 250000;
-	// initMax = 12;
+	// initMax = 250000;
+	initMax = 12;
 	int max = initMax;
 
 	int line;
@@ -96,7 +78,7 @@ void Renderer::Initialize() {
 	Console::WriteLine("Center XY: %.0f", line / 2.0f);
 	Console::WriteLine("Triangles: %d", initMax);
 	m_camera->SetPosition(m_centerX, m_centerX * 1.1f, 0.001f + 0);
-	m_camera->LookAt(m_centerX, 0.0f, m_centerY);
+	m_camera->LookAt(m_centerX, 1.0f, m_centerY);
 
 	// PlaneGeometry *geometry = new PlaneGeometry(10, 10);
 	// Mesh *cube = new Mesh(geometry, materials);
@@ -273,15 +255,12 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glViewport(this->GetLeft(), this->GetTop(), this->GetWidth(), this->GetHeight());
 
 	glClearColor(m_clearColor.GetR() / 255.0f, m_clearColor.GetG() / 255.0f, m_clearColor.GetB() / 255.0f, m_clearColor.GetA() / 255.0f);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
-	m_camera->SetPosition(m_centerX + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, m_centerY + -4.0f + 8.0f * Math::Sin(m_angle));
+	m_camera->SetPosition(m_centerX + -6.0f + 6.0f * Math::Cos(m_angle), 7.0f + Math::Cos(m_angle) * 4.0f, m_centerY + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);
-
-	glFlush();
 
 	glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 }

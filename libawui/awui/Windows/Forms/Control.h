@@ -35,6 +35,10 @@ namespace awui {
 		class Control : public Object {
 			friend class Form;
 
+		  protected:
+			int _positionInWindowX;
+			int _positionInWindowY;
+
 		  private:
 			ArrayList *m_controls;
 			Control *m_parent;

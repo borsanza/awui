@@ -102,7 +102,7 @@ void Label::Draw(int x, int y, int width, int height) {
 		int correctPosX = posX - BORDER;
 		int correctPosY = posY + m_metrics.GetBearingY() - BORDER;
 
-		GL::DrawImageGL33(m_image, correctPosX, correctPosY, GetForm()->GetWidth(), GetForm()->GetHeight());
+		GL::DrawImageGL33(m_image, _positionInWindowX + correctPosX, _positionInWindowY + correctPosY, GetForm()->GetWidth(), GetForm()->GetHeight());
 	}
 }
 
@@ -112,25 +112,6 @@ void Label::OnPaint(GL *gl) {
 
 	if (scrolled != 0)
 		Draw(scrolled + (GetLabelWidth() + SCROLLMARGIN), 0, GetWidth(), GetHeight());
-}
-
-void Label::DrawLines(int x, int y) {
-	int posBaseline = y;
-	int posAscent = posBaseline - m_metrics.GetAscent();
-	int posDescent = posBaseline + m_metrics.GetDescent();
-
-	glColor3f(0.0f, 1.0f, 0.0f);
-	GL::DrawLine(0, posBaseline, GetWidth(), posBaseline);
-
-	glColor3f(1.0f, 0.0f, 1.0f);
-	GL::DrawLine(0, posAscent, GetWidth(), posAscent);
-
-	glColor3f(1.0f, 0.0f, 1.0f);
-	GL::DrawLine(0, posDescent, GetWidth(), posDescent);
-
-	glColor3f(1.0f, 0.0f, 0.0f);
-	GL::DrawLine(x, 0, x, GetHeight());
-	GL::DrawLine(0, y, GetWidth(), y);
 }
 
 void Label::SetText(const String str) {

@@ -157,9 +157,9 @@ void GL::DrawImageGL33(awui::Drawing::Image *image, int x, int y, float windowWi
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, identity.data());
 
 	float xpos = (float) x;
-	float ypos = (float) y;
+	float ypos = windowHeight - (float) y;
 
-	float vertices[] = {xpos, ypos + image->GetHeight(), 0.0f, 1.0f, xpos + image->GetWidth(), ypos + image->GetHeight(), 1.0f, 1.0f, xpos + image->GetWidth(), ypos, 1.0f, 0.0f, xpos, ypos, 0.0f, 0.0f};
+	float vertices[] = {xpos, ypos, 0.0f, 0.0f, xpos + image->GetWidth(), ypos, 1.0f, 0.0f, xpos + image->GetWidth(), ypos - image->GetHeight(), 1.0f, 1.0f, xpos, ypos - image->GetHeight(), 0.0f, 1.0f};
 	// Transforma las coordenadas a espacio normalizado de -1 a 1
 	for (int i = 0; i < 16; i += 4) {
 		vertices[i] = 2.0f * (vertices[i] / windowWidth) - 1.0f;

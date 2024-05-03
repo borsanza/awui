@@ -289,12 +289,8 @@ void Control::Refresh() {
 
 int Control::OnPaintPre(int x, int y, int width, int height, GL *gl, bool first) {
 	// GL::CheckGLErrors("Control::OnPaintPre(1)");
-	// FIXME-GL33
-	// glMatrixMode(GL_PROJECTION);
-	// glLoadIdentity();
-	// glOrtho(-x, width - x, height - y, -y, -1.0f, 1.0f);
-	// glMatrixMode(GL_MODELVIEW);
-	// glLoadIdentity();
+	_positionInWindowX = x;
+	_positionInWindowY = y;
 
 	Drawing::Rectangle rect2;
 	rect2.SetX(x);
