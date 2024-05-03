@@ -205,8 +205,6 @@ void GL::DrawImageGL33(awui::Drawing::Image *image, int x, int y, float windowWi
 void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int height) {
 	image->Load();
 	// Mas rapido guardandose solo el valor y recuperarlo despues
-	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
 
 	GLboolean oldDepth = glIsEnabled(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
@@ -233,8 +231,6 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int h
 		glDisable(GL_BLEND);
 	if (oldDepth)
 		glEnable(GL_DEPTH_TEST);
-	if (!oldTexture)
-		glDisable(GL_TEXTURE_2D);
 }
 
 bool GL::CheckGLErrors(const char *label) {

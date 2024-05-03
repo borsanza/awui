@@ -626,9 +626,6 @@ void Bitmap::OnPaint(GL *gl) {
 	if ((m_textureWidth == 0) || (m_textureHeight == 0))
 		return;
 
-	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
-
 	GLboolean oldDepth = glIsEnabled(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
 
@@ -671,6 +668,4 @@ void Bitmap::OnPaint(GL *gl) {
 		glDisable(GL_BLEND);
 	if (oldDepth)
 		glEnable(GL_DEPTH_TEST);
-	if (!oldTexture)
-		glDisable(GL_TEXTURE_2D);
 }
