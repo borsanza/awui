@@ -15,7 +15,8 @@
 #include <vector>
 
 // #define SIZE 39000000
-#define SIZE 1800000
+//  #define SIZE 1800000
+#define SIZE 12
 
 using namespace awui;
 using namespace awui::GOB::Engine;
@@ -49,7 +50,7 @@ void Renderer::Initialize() {
 	int initMax;
 	// initMax = 25000;
 	// initMax = 250000;
-	initMax = 12;
+	initMax = SIZE;
 	int max = initMax;
 
 	int line;
