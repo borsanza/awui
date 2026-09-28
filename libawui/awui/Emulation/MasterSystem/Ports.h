@@ -7,9 +7,9 @@ namespace awui::Emulation::MasterSystem {
 
 	class Ports {
 	  private:
-		uint8_t _region;
-		uint8_t _maskRegion;
-		bool _getRegion : 1;
+		uint8_t _ioControl; // Último valor escrito en el puerto 0x3F (control de E/S)
+
+		uint8_t GetPinLevel(uint8_t directionBit, uint8_t outputBit, bool isTH) const;
 
 	  public:
 		Ports();
