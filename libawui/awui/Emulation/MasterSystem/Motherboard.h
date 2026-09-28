@@ -49,9 +49,6 @@ namespace awui::Emulation {
 			bool m_showNotImplemented : 1;
 			Common::Rom *m_rom;
 
-			double m_initFrame;
-			double m_percFrame;
-
 			VDP *m_vdp;
 			Sound *m_sound;
 			Processors::Z80::CPU m_z80;
@@ -91,7 +88,7 @@ namespace awui::Emulation {
 			void LoadState(uint8_t *data);
 			void SaveState(uint8_t *data);
 
-			double GetVirtualTime();
+			inline int64_t GetCycles() const { return m_z80.GetCycles(); }
 			void RunOpcode();
 
 			void WriteMemory(uint16_t pos, uint8_t value);

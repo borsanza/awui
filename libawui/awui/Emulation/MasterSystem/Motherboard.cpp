@@ -46,8 +46,6 @@ Motherboard::Motherboard() {
 	m_sound = new Sound();
 	m_sound->SetCPU(this);
 
-	m_percFrame = 0;
-	m_initFrame = 0;
 	m_vdp = new VDP(this);
 	m_saveData._addressBus.W = 0;
 	m_saveData._frame = 0;
@@ -80,6 +78,7 @@ void Motherboard::Reset() {
 	memset(m_saveData._ram, 0, 8192 * sizeof(uint8_t));
 	memset(m_saveData._boardram, 0, 32768 * sizeof(uint8_t));
 	m_vdp->Reset();
+	m_sound->Reset();
 }
 
 void Motherboard::LoadRom(const String file) {
@@ -121,8 +120,6 @@ void Motherboard::OnTick(float deltaSeconds) {
 }
 
 void Motherboard::DoTick() {
-	m_initFrame = DateTime::GetTotalSeconds();
-
 	double fps = m_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;
 	double speed = m_vdp->GetNTSC() ? 3.579545f : 3.5468949f;
 	m_saveData._frame += fps / 59.922743404f; // Refresco de awui
@@ -140,7 +137,6 @@ void Motherboard::DoTick() {
 	double vdpIters = 0;
 
 	int realIters = 0;
-	m_percFrame = 0;
 
 	for (int i = 0; i < iters; i++) {
 		int64_t oldCycles = m_z80.GetCycles();
@@ -154,7 +150,6 @@ void Motherboard::DoTick() {
 
 		double times = (m_z80.GetCycles() - oldCycles);
 		i = i + times - 1;
-		m_percFrame = i / iters;
 
 		vdpIters += times * (itersVDP / iters);
 		if (!vsync) {
@@ -174,6 +169,8 @@ void Motherboard::DoTick() {
 		if (vsync)
 			CheckInterrupts();
 	}
+
+	m_sound->EndFrame(this);
 }
 
 uint16_t Motherboard::GetAddressBus() const {
@@ -339,10 +336,4 @@ void Motherboard::SaveState(uint8_t *data) {
 
 	m_vdp->SaveState(&data[sizeof(Motherboard::saveData)]);
 	m_z80.SaveState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
-}
-
-double Motherboard::GetVirtualTime() {
-	double begin = m_initFrame;
-	double frameDuration = 1.0 / 59.922743404;
-	return begin + (frameDuration * m_percFrame);
 }

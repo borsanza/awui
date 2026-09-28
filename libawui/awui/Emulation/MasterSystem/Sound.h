@@ -1,58 +1,52 @@
 #pragma once
 
-#include <stdint.h>
-
-// 48000, 44100, 22050, 11025
-#define SOUNDFREQ 44100
-#define SOUNDSAMPLES 512
-// #define SOUNDSAMPLES 1024
-// #define SOUNDSAMPLES 2048
-
-#define TOTALFRAMES 3
-#define SOUNDBUFFER (SOUNDSAMPLES * TOTALFRAMES)
-
 #include <awui/Object.h>
 
+#include <cstdint>
+#include <vector>
+
 namespace awui::Emulation::MasterSystem {
-	struct Sample {
-		int8_t _volume;
-		uint16_t _tone;
-		uint8_t _changeTone : 1;
-		uint8_t _changeVolume : 1;
-	};
-
-	struct Channel {
-		bool _useModulation;
-		uint16_t _register;
-
-		uint16_t _tone;	 // 10 bits tono y 3 bits noise
-		uint8_t _volume; // 4 bit
-		unsigned int _fase;
-
-		Sample _buffer[SOUNDBUFFER];
-		Sample _last;
-		unsigned int _count;
-	};
-
 	class Motherboard;
 
+	// PSG SN76489 (variante de Sega)
+	// Referencia: https://www.smspower.org/Development/SN76489
+	//
+	// Las escrituras de registros se aplican en el ciclo de CPU exacto en el que ocurren:
+	// antes de cada escritura se genera el audio hasta ese ciclo, y al final de cada frame
+	// se envían las muestras generadas a SoundSDL.
 	class Sound : public Object {
 	  private:
-		uint16_t m_channel;
-		uint8_t m_type; // 1: Volumen, 0: Tone/Noise
 		Motherboard *m_cpu;
 
-		int GetPosBuffer(Motherboard *cpu);
+		uint16_t m_registers[4]; // 0-2: periodo del tono (10 bits), 3: control del ruido (3 bits)
+		uint8_t m_volumes[4];	 // Atenuación (4 bits, 0xF = silencio)
+		int m_counters[4];
+		int8_t m_outputs[4]; // +1 / -1
+		bool m_noiseToggle;
+		uint16_t m_lfsr;
+
+		uint8_t m_latchedChannel;
+		bool m_latchedVolume;
+
+		int64_t m_lastCycle;
+		int m_pendingCycles;
+		double m_ticksPerSample;
+		double m_tickPos;
+		int m_sampleSum;
+		int m_sampleTicks;
+		std::vector<int16_t> m_samples;
+
+		void Tick();
+		void Render(int64_t cycle);
 
 	  public:
-		uint16_t m_noiseData;
-		Channel m_channels[4];
-
 		Sound();
 
 		inline void SetCPU(Motherboard *cpu) { m_cpu = cpu; }
 		inline Motherboard *GetCPU() const { return m_cpu; }
 
+		void Reset();
 		void WriteByte(Motherboard *cpu, uint8_t value);
+		void EndFrame(Motherboard *cpu);
 	};
 } // namespace awui::Emulation::MasterSystem
