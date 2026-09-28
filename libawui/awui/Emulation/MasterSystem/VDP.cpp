@@ -742,6 +742,9 @@ void VDP::WriteControlByte(uint8_t value) {
 }
 
 void VDP::WriteDataByte(uint8_t value) {
+	// Cualquier acceso al puerto de datos reinicia la escritura en dos bytes del puerto de control
+	this->d._controlMode = false;
+
 	switch (d._portState) {
 		case 0:
 		case 1:
@@ -823,6 +826,9 @@ uint8_t VDP::ReadByte(uint8_t port) {
 		r = true;
 		if (even) {
 			uint8_t ret;
+
+			// Cualquier acceso al puerto de datos reinicia la escritura en dos bytes del puerto de control
+			this->d._controlMode = false;
 
 			switch (this->d._portState) {
 				default:
