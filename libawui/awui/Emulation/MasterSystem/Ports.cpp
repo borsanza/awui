@@ -51,9 +51,11 @@ Ports::Ports() {
 }
 
 void Ports::WriteByte(Motherboard *cpu, uint8_t port, uint8_t value) {
-	// Game Gear: reparto estéreo de los canales del PSG
-	if ((port == 0x06) && cpu->IsGameGear()) {
-		cpu->GetSound()->WriteStereo(cpu, value);
+	// Game Gear: 0x00-0x05 son del enlace serie (no emulado, se ignoran) y 0x06 el reparto estéreo del PSG.
+	// Los impares no deben caer en el control de E/S (0x3F)
+	if (cpu->IsGameGear() && (port <= 0x06)) {
+		if (port == 0x06)
+			cpu->GetSound()->WriteStereo(cpu, value);
 		return;
 	}
 
