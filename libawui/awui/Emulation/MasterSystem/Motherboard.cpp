@@ -129,8 +129,13 @@ void Motherboard::LoadRom(const String file) {
 		m_saveData._mapper = MAPPER_SG1000;
 	else if (uint8_t korean = GetKoreanMapper(m_rom->GetCRC32()))
 		m_saveData._mapper = korean;
+	else if (IsCodemastersRom())
+		m_saveData._mapper = MAPPER_CODEMASTERS;
+	// Los cartuchos de hasta 48KB no llevan mapper: escribir en 0xFFFC-0xFFFF solo toca la RAM
+	else if (m_rom->GetSize() <= 0xC000)
+		m_saveData._mapper = MAPPER_NONE;
 	else
-		m_saveData._mapper = IsCodemastersRom() ? MAPPER_CODEMASTERS : MAPPER_SEGA;
+		m_saveData._mapper = MAPPER_SEGA;
 }
 
 // Las ROMs de Codemasters llevan en 0x7FE6 una suma de comprobación y en 0x7FE8 su complemento (suman 0x10000)
