@@ -78,6 +78,7 @@ namespace awui::Emulation::MasterSystem {
 		void OnTickBorder();
 		void WriteControlByte(uint8_t value);
 		void WriteDataByte(uint8_t value);
+		uint16_t GetBackdropColor() const;
 		uint16_t GetWidth() const;
 		uint16_t GetHeight() const;
 		uint16_t GetBufferWidth() const;

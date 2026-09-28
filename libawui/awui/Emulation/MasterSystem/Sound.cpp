@@ -61,7 +61,9 @@ void Sound::Reset() {
 	m_pendingCycles = 0;
 	m_ticksPerSample = (CLOCK_NTSC / CYCLES_PER_TICK) / SOUNDFREQ;
 	m_tickPos = 0;
-	m_sampleSum = 0;
+	m_sampleSumLeft = 0;
+	m_sampleSumRight = 0;
+	m_stereo = 0xFF;
 	m_sampleTicks = 0;
 	m_samples.clear();
 }
@@ -97,7 +99,8 @@ void Sound::Tick() {
 
 	m_outputs[3] = (m_lfsr & 1) ? 1 : -1;
 
-	int mix = 0;
+	int left = 0;
+	int right = 0;
 	for (int i = 0; i < 4; i++) {
 		if (!SoundSDL::IsChannelEnabled(i))
 			continue;
@@ -105,18 +108,27 @@ void Sound::Tick() {
 		// En el chip de Sega un periodo de 0 o 1 deja la salida fija a +1.
 		// Los juegos lo usan para reproducir samples cambiando solo el volumen.
 		int output = (i < 3 && m_registers[i] <= 1) ? 1 : m_outputs[i];
-		mix += output * volumeTable.values[m_volumes[i]];
+		int value = output * volumeTable.values[m_volumes[i]];
+
+		// En Master System m_stereo es siempre 0xFF: los dos lados suenan igual
+		if (m_stereo & (0x10 << i))
+			left += value;
+		if (m_stereo & (0x01 << i))
+			right += value;
 	}
 
 	// Promedia todos los pasos del chip que caen en la misma muestra de salida (filtro anti-aliasing sencillo)
-	m_sampleSum += mix;
+	m_sampleSumLeft += left;
+	m_sampleSumRight += right;
 	m_sampleTicks++;
 	m_tickPos += 1.0;
 
 	if (m_tickPos >= m_ticksPerSample) {
 		m_tickPos -= m_ticksPerSample;
-		m_samples.push_back((int16_t) (m_sampleSum / m_sampleTicks));
-		m_sampleSum = 0;
+		m_samples.push_back((int16_t) (m_sampleSumLeft / m_sampleTicks));
+		m_samples.push_back((int16_t) (m_sampleSumRight / m_sampleTicks));
+		m_sampleSumLeft = 0;
+		m_sampleSumRight = 0;
 		m_sampleTicks = 0;
 	}
 }
@@ -174,6 +186,12 @@ void Sound::WriteByte(Motherboard *cpu, uint8_t value) {
 	}
 }
 
+void Sound::WriteStereo(Motherboard *cpu, uint8_t value) {
+	// Genera el audio hasta el momento de la escritura antes de cambiar el reparto
+	Render(cpu->GetCycles());
+	m_stereo = value;
+}
+
 void Sound::EndFrame(Motherboard *cpu) {
 	SoundSDL &soundSDL = SoundSDL::Instance();
 
@@ -184,7 +202,7 @@ void Sound::EndFrame(Motherboard *cpu) {
 	Render(cpu->GetCycles());
 
 	if (!m_samples.empty()) {
-		soundSDL.Queue(this, m_samples.data(), (int) m_samples.size());
+		soundSDL.Queue(this, m_samples.data(), (int) (m_samples.size() / 2));
 		m_samples.clear();
 	}
 }

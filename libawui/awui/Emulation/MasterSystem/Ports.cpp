@@ -57,6 +57,12 @@ void Ports::WriteByte(Motherboard *cpu, uint8_t port, uint8_t value) {
 		return;
 	}
 
+	// Game Gear: reparto estéreo de los canales del PSG
+	if ((port == 0x06) && cpu->IsGameGear()) {
+		cpu->GetSound()->WriteStereo(cpu, value);
+		return;
+	}
+
 	// SDSC
 	if (port == 0xFD) {
 		printf("%c", value);

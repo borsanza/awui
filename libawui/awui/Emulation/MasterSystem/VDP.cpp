@@ -403,7 +403,7 @@ void VDP::OnTickBorder() {
 	}
 
 	if (draw)
-		this->d._data[x + (y * this->GetBufferWidth())] = this->GetColor(this->d._registers[7] & 0x0F);
+		this->d._data[x + (y * this->GetBufferWidth())] = this->GetBackdropColor();
 }
 
 // Background
@@ -616,7 +616,7 @@ bool VDP::OnTick(uint32_t counter) {
 
 		// Blank Display
 		if (black || !(this->d._registers[1] & 0x40) || ((this->d._registers[0] & 0x20) && (this->d._col < 8))) {
-			this->d._data[pos] = this->GetColor(this->d._registers[7] & 0x0F);
+			this->d._data[pos] = this->GetBackdropColor();
 		} else {
 			int32_t offset = this->d._baseAddress + ((line >> 3) * 64) + ((col >> 3) * 2);
 			uint8_t byte1 = this->d._vram[offset];
@@ -864,8 +864,13 @@ bool VDP::IsIRQ() const {
 	return frame || line;
 }
 
+// Color de fondo y borde: el registro 7 elige uno de la segunda paleta (la de los sprites, colores 16-31)
+uint16_t VDP::GetBackdropColor() const {
+	return this->GetColor(0x10 | (this->d._registers[7] & 0x0F));
+}
+
 uint16_t VDP::GetBackColor() const {
-	return this->GetColor(this->d._registers[7] & 0x0F);
+	return this->GetBackdropColor();
 }
 
 int VDP::GetSaveSize() {

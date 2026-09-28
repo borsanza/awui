@@ -35,7 +35,7 @@ SoundSDL::SoundSDL() {
 	SDL_zero(desired);
 	desired.freq = SOUNDFREQ;
 	desired.format = AUDIO_S16SYS;
-	desired.channels = 1;
+	desired.channels = 2;
 	desired.samples = 512;
 	desired.callback = NULL;
 
@@ -64,7 +64,7 @@ int SoundSDL::GetQueuedSamples() const {
 	if (m_audioDevice == 0)
 		return 0;
 
-	return (int) (SDL_GetQueuedAudioSize(m_audioDevice) / sizeof(int16_t));
+	return (int) (SDL_GetQueuedAudioSize(m_audioDevice) / (2 * sizeof(int16_t)));
 }
 
 void SoundSDL::SetPlayingSound(Sound *sound) {
@@ -90,11 +90,11 @@ void SoundSDL::Queue(Sound *sound, const int16_t *samples, int count) {
 
 	// Al arrancar o tras quedarse sin datos, añade silencio para recuperar el margen
 	if (queued == 0) {
-		std::vector<int16_t> silence(TARGET_QUEUED_SAMPLES / 2, 0);
+		std::vector<int16_t> silence(TARGET_QUEUED_SAMPLES, 0); // TARGET/2 muestras estéreo
 		SDL_QueueAudio(m_audioDevice, silence.data(), (Uint32) (silence.size() * sizeof(int16_t)));
 	}
 
-	SDL_QueueAudio(m_audioDevice, samples, (Uint32) (count * sizeof(int16_t)));
+	SDL_QueueAudio(m_audioDevice, samples, (Uint32) (count * 2 * sizeof(int16_t)));
 }
 
 // > 1 cuando sobran muestras en la cola (hay que generar menos), < 1 cuando faltan

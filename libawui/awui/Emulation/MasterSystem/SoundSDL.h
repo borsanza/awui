@@ -31,6 +31,7 @@ namespace awui::Emulation::MasterSystem {
 		void SetPlayingSound(Sound *sound);
 		inline bool IsPlaying(const Sound *sound) const { return m_audioDevice != 0 && sound == m_playing; }
 
+		// samples: estéreo intercalado (izquierda, derecha); count: número de parejas
 		void Queue(Sound *sound, const int16_t *samples, int count);
 		double GetRateAdjust() const;
 
