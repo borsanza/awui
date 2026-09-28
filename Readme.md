@@ -35,6 +35,31 @@ Lo utilicé para cargar mis emuladores y jugar desde un entorno más cómodo y v
 Un experimento inicial para crear mi propio “voxel engine”.
 Se trata de una conversión a C++ de un motor que ya tenía en Three.js, con el objetivo de conseguir más rendimiento y aprender sobre estructuras para mundos infinitos.
 
+## 🔨 Compilar
+
+Requiere CMake ≥ 3.21, Ninja y un compilador con C++20.
+
+Dependencias en Debian/Ubuntu:
+
+```bash
+sudo apt-get install cmake ninja-build libsdl2-dev libsdl2-image-dev libglew-dev libcairo2-dev nlohmann-json3-dev libgl-dev
+```
+
+En Windows, con MSYS2 (ver paquetes más abajo).
+
+```bash
+cmake --preset release          # o: cmake --preset debug
+cmake --build --preset release
+```
+
+Los ejecutables quedan en `build/samples/<sample>/` y se lanzan desde ese directorio (cargan `images/` y `roms/` con rutas relativas):
+
+```bash
+cd build/samples/stationTV && ./stationTV
+```
+
+Opción `-DAWUI_WARNINGS=ON` para activar los warnings del compilador.
+
 ## Anotaciones antiguas
 
 Windows:

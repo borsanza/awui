@@ -6,6 +6,7 @@
 
 #include "ConfigButton.h"
 
+#include <algorithm>
 #include <SDL_opengl.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Form.h>

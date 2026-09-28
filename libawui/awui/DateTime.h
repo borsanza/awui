@@ -3,6 +3,7 @@
 #include <awui/Object.h>
 
 #include <chrono>
+#include <cstdint>
 
 namespace awui {
 	class DateTime : public Object {
@@ -15,7 +16,7 @@ namespace awui {
 		virtual ~DateTime() = default;
 
 		static DateTime GetNow();
-		long long GetTicks() const;
+		int64_t GetTicks() const;
 		static double GetTotalSeconds();
 
 		unsigned int GetMillisecond() const;

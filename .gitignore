@@ -1,0 +1,9 @@
+
+# Artefactos de compilación (en build/ solo se versionan los assets de los samples)
+/build/*
+!/build/samples/
+/build/samples/*
+!/build/samples/*/
+/build/samples/*/*
+!/build/samples/*/images/
+!/build/samples/*/roms/

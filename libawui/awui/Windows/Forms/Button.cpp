@@ -6,6 +6,7 @@
 
 #include "Button.h"
 
+#include <algorithm>
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Listeners/IRemoteListener.h>
