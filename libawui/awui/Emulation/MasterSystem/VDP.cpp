@@ -12,6 +12,11 @@
 
 using namespace awui::Emulation::MasterSystem;
 
+// Paleta fija del TMS9918 (modos de la SG-1000) en 12 bits: 0x0BGR
+static const uint16_t TMS_PALETTE[16] = {
+	0x000, 0x000, 0x4C2, 0x7D6, 0xE55, 0xF77, 0x55C, 0xEE4, 0x55F, 0x77F, 0x5BC, 0x8CE, 0x3A2, 0xB5C, 0xCCC, 0xFFF,
+};
+
 /*
  * bit 7: VSync flag, set at the beginning of each VSync impulse
  *     6: Line interruot flag: set when a line interrupt is generated
@@ -537,6 +542,145 @@ bool VDP::GetSpritePixel(uint8_t *color) {
 	return found;
 }
 
+// Sprites del TMS9918: 32 sprites de 4 bytes (Y, X, patrón, color). Como máximo 4 por línea;
+// si hay un quinto se activa el bit 6 del estado y su número queda en los bits 0-4.
+void VDP::EvaluateLegacySprites() {
+	int line = this->d._line;
+	int size = ((this->d._registers[1] & 0x02) ? 16 : 8) << (this->d._registers[1] & 0x01);
+	uint16_t base = (this->d._registers[5] & 0x7F) << 7;
+
+	int count = 0;
+	for (int n = 0; n < 32; n++) {
+		int sy = this->d._vram[base + (n * 4)];
+		if (sy == 0xD0)
+			break;
+
+		if (sy >= 0xE0)
+			sy -= 256;
+		sy++;
+
+		if ((line < sy) || (line >= sy + size))
+			continue;
+
+		if (count == 4) {
+			if (!(this->d._status & 0x40))
+				this->d._status = (this->d._status & 0xA0) | 0x40 | n;
+			break;
+		}
+
+		this->d._lineSprites[count++] = n;
+	}
+
+	this->d._lineSpriteCount = count;
+}
+
+// Píxel en los modos del TMS9918: Graphics I, Graphics II, Text y Multicolor, con sus sprites
+uint16_t VDP::GetLegacyPixel() {
+	int x = this->d._col;
+	int y = this->d._line;
+	uint8_t *vram = this->d._vram;
+	uint8_t *reg = this->d._registers;
+
+	bool text = reg[1] & 0x10;
+	bool multicolor = reg[1] & 0x08;
+	bool graphics2 = reg[0] & 0x02;
+
+	// Sprites (no hay en el modo texto). La colisión cuenta los píxeles del patrón aunque su color sea transparente.
+	if (!text) {
+		int sizeBase = (reg[1] & 0x02) ? 16 : 8;
+		int magnify = reg[1] & 0x01;
+		uint16_t base = (reg[5] & 0x7F) << 7;
+		uint16_t patterns = (reg[6] & 0x07) << 11;
+		bool found = false;
+		uint8_t spriteColor = 0;
+
+		for (int i = 0; i < this->d._lineSpriteCount; i++) {
+			int n = this->d._lineSprites[i];
+			int sy = vram[base + (n * 4)];
+			if (sy >= 0xE0)
+				sy -= 256;
+			sy++;
+
+			int sx = vram[base + (n * 4) + 1];
+			uint8_t pattern = vram[base + (n * 4) + 2];
+			uint8_t color = vram[base + (n * 4) + 3];
+			if (color & 0x80)
+				sx -= 32;
+
+			int dx = x - sx;
+			if ((dx < 0) || (dx >= (sizeBase << magnify)))
+				continue;
+
+			int dy = (y - sy) >> magnify;
+			dx >>= magnify;
+
+			uint16_t addr;
+			if (sizeBase == 16)
+				addr = patterns + ((pattern & 0xFC) * 8) + dy + ((dx & 8) ? 16 : 0);
+			else
+				addr = patterns + (pattern * 8) + dy;
+
+			if (!(vram[addr & 0x3FFF] & (0x80 >> (dx & 7))))
+				continue;
+
+			if (found)
+				this->d._status |= 0x20;
+			else if (color & 0x0F) {
+				found = true;
+				spriteColor = color & 0x0F;
+			}
+		}
+
+		if (found)
+			return TMS_PALETTE[spriteColor];
+	}
+
+	uint16_t names = (reg[2] & 0x0F) << 10;
+	uint8_t c;
+
+	if (text) {
+		// 40 columnas de 6 píxeles, con 8 píxeles de borde a cada lado
+		if ((x < 8) || (x >= 248))
+			c = 0;
+		else {
+			int tx = (x - 8) / 6;
+			uint8_t name = vram[names + ((y >> 3) * 40) + tx];
+			uint8_t pattern = vram[((reg[4] & 0x07) << 11) + (name * 8) + (y & 7)];
+			c = (pattern & (0x80 >> ((x - 8) % 6))) ? (reg[7] >> 4) : (reg[7] & 0x0F);
+		}
+	} else if (multicolor) {
+		// Bloques de 4x4 píxeles con dos colores por byte
+		uint8_t name = vram[names + ((y >> 3) * 32) + (x >> 3)];
+		uint8_t b = vram[((reg[4] & 0x07) << 11) + (name * 8) + (((y >> 3) & 3) * 2) + ((y >> 2) & 1)];
+		c = (x & 4) ? (b & 0x0F) : (b >> 4);
+	} else {
+		uint8_t name = vram[names + ((y >> 3) * 32) + (x >> 3)];
+		int row = y & 7;
+		uint16_t patternAddr, colorAddr;
+
+		if (graphics2) {
+			// Graphics II: la pantalla se divide en tres tercios de 256 tiles. Los registros 3 y 4 hacen de máscara.
+			int index = ((y >> 6) << 8) + name;
+			patternAddr = ((reg[4] & 0x04) << 11) + ((index & (((reg[4] & 0x03) << 8) | 0xFF)) << 3) + row;
+			colorAddr = ((reg[3] & 0x80) << 6) + ((index & (((reg[3] & 0x7F) << 3) | 0x07)) << 3) + row;
+		} else {
+			// Graphics I: un byte de color por cada grupo de 8 tiles
+			patternAddr = ((reg[4] & 0x07) << 11) + (name * 8) + row;
+			colorAddr = (reg[3] << 6) + (name >> 3);
+		}
+
+		uint8_t pattern = vram[patternAddr & 0x3FFF];
+		uint8_t colors = vram[colorAddr & 0x3FFF];
+		c = (pattern & (0x80 >> (x & 7))) ? (colors >> 4) : (colors & 0x0F);
+	}
+
+	// El color 0 es transparente: se ve el color de fondo del registro 7
+	if (c == 0)
+		c = reg[7] & 0x0F;
+
+	return TMS_PALETTE[c];
+}
+
 uint16_t VDP::GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority, bool hasSprite, uint8_t spriteColor) const {
 	uint8_t color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete, false);
 
@@ -566,13 +710,24 @@ bool VDP::OnTick(uint32_t counter) {
 		this->d._horizontalScroll = this->d._registers[8];
 
 	if ((this->d._col == 0) && (this->d._line < this->d._height)) {
-		if (this->d._registers[1] & 0x40)
+		if (!(this->d._registers[1] & 0x40))
+			this->d._lineSpriteCount = 0;
+		else if (this->IsMode4())
 			this->EvaluateSprites();
 		else
-			this->d._lineSpriteCount = 0;
+			this->EvaluateLegacySprites();
 	}
 
-	if ((this->d._col < this->d._width) && (this->d._line < this->d._height)) {
+	// Modos del TMS9918 (SG-1000): el registro 0 tiene M4 a 0
+	if (!this->IsMode4() && (this->d._col < this->d._width) && (this->d._line < this->d._height)) {
+		int32_t pos;
+		if (this->d._showBorder)
+			pos = this->d._col + this->GetActiveLeft() + ((this->d._line + this->GetActiveTop()) * this->GetBufferWidth());
+		else
+			pos = this->d._col + (this->d._line * this->GetBufferWidth());
+
+		this->d._data[pos] = (this->d._registers[1] & 0x40) ? this->GetLegacyPixel() : this->GetBackdropColor();
+	} else if ((this->d._col < this->d._width) && (this->d._line < this->d._height)) {
 		int16_t col = this->d._col;
 		int16_t line = this->d._line;
 		bool vScroll = true;
@@ -666,6 +821,10 @@ void VDP::UpdateAllRegisters() {
 
 	// Register #1
 	this->d._visible = this->d._registers[0] & 0x40;
+
+	// Los modos del TMS9918 siempre tienen 192 líneas
+	if (!(this->d._registers[0] & 0x04))
+		this->SetHeight(192);
 
 	if (this->d._registers[0] & 0x04) {
 		uint16_t height = 192;
@@ -869,6 +1028,9 @@ void VDP::LatchHCounter() {
 }
 
 uint16_t VDP::GetBackdropColor() const {
+	if (!this->IsMode4())
+		return TMS_PALETTE[this->d._registers[7] & 0x0F];
+
 	return this->GetColor(0x10 | (this->d._registers[7] & 0x0F));
 }
 

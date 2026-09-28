@@ -159,6 +159,14 @@ void StationUI::RecursiveSearch(NodeFile *parent) {
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
+				// SG-1000: lo ejecuta el emulador de Master System (su VDP incluye los modos del TMS9918)
+				if (child->m_name == "sg1000") {
+					child->m_emulator = Types::MasterSystem;
+					child->m_button->SetText("SG-1000");
+					child->m_background = new Bitmap("./images/mastersystem.jpg");
+					child->m_background->SetStretchMode(StretchMode::AspectFill);
+				}
+
 				if (child->m_name == "zxspectrum") {
 					child->m_emulator = Types::Spectrum;
 					child->m_button->SetText("ZX Spectrum");

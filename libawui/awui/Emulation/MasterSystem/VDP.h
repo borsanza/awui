@@ -74,6 +74,9 @@ namespace awui::Emulation::MasterSystem {
 
 		uint8_t GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete, bool doble) const;
 		void EvaluateSprites();
+		void EvaluateLegacySprites();
+		uint16_t GetLegacyPixel();
+		inline bool IsMode4() const { return (this->d._registers[0] & 0x04) != 0; }
 		bool GetSpritePixel(uint8_t *color);
 		uint16_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority, bool hasSprite, uint8_t spriteColor) const;
 

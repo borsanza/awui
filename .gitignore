@@ -24,4 +24,5 @@ CMakeUserPresets.json
 # ROMs comerciales: no se versionan
 *.sms
 *.gg
+*.sg
 *.zip

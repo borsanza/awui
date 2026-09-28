@@ -23,6 +23,7 @@ namespace awui::Emulation {
 			MAPPER_NONE = 1,
 			MAPPER_SEGA = 2,
 			MAPPER_CODEMASTERS = 3,
+			MAPPER_SG1000 = 4,
 		};
 
 		class Motherboard {

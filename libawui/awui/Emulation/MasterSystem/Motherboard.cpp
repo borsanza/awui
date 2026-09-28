@@ -102,7 +102,10 @@ static bool IsGameGearInSmsMode(uint32_t crc) {
 void Motherboard::LoadRom(const String file) {
 	m_rom->LoadRom(file);
 	m_vdp->SetGameGear(file.ToLower().EndsWith(".gg") && !IsGameGearInSmsMode(m_rom->GetCRC32()));
-	m_saveData._mapper = IsCodemastersRom() ? MAPPER_CODEMASTERS : MAPPER_SEGA;
+	if (file.ToLower().EndsWith(".sg"))
+		m_saveData._mapper = MAPPER_SG1000;
+	else
+		m_saveData._mapper = IsCodemastersRom() ? MAPPER_CODEMASTERS : MAPPER_SEGA;
 }
 
 // Las ROMs de Codemasters llevan en 0x7FE6 una suma de comprobación y en 0x7FE8 su complemento (suman 0x10000)
@@ -314,6 +317,12 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 			m_saveData._ram[pos - 0xE000] = value;
 			return;
 
+		// SG-1000: ROM en 0x0000-0xBFFF y 1KB de RAM repetido en 0xC000-0xFFFF
+		case MAPPER_SG1000:
+			if (pos >= 0xC000)
+				m_saveData._ram[pos & 0x03FF] = value;
+			return;
+
 		case MAPPER_NONE:
 			// En la rom no se escribe
 			if (pos < 0xC000)
@@ -374,6 +383,12 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 				return m_saveData._ram[pos - 0xC000];
 
 			return m_saveData._ram[pos - 0xE000];
+
+		case MAPPER_SG1000:
+			if (pos < 0xC000)
+				return m_rom->ReadByte(pos);
+
+			return m_saveData._ram[pos & 0x03FF];
 
 		case MAPPER_NONE:
 			if (pos < 0xC000)
