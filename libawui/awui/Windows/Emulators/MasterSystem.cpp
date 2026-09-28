@@ -67,7 +67,6 @@ void MasterSystem::LoadRom(const String file) {
 	m_last = 0;
 	m_actual = 0;
 	m_lastTick = DateTime::GetNow().GetTicks();
-	m_cpu->SaveState(m_savedData[m_actual]);
 
 	uint32_t crc = GetCRC32();
 	switch (crc) {
@@ -198,6 +197,9 @@ void MasterSystem::LoadRom(const String file) {
 			GetCPU()->SetMapper(awui::Emulation::MasterSystem::MAPPER_NONE);
 			break;
 	}
+
+	// El mapper forma parte del estado: se guarda ya con el definitivo para que el rebobinado no lo pierda
+	m_cpu->SaveState(m_savedData[m_actual]);
 }
 
 void MasterSystem::OnTick(float deltaSeconds) {
