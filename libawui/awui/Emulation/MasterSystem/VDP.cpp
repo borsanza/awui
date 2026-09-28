@@ -526,6 +526,10 @@ bool VDP::GetSpritePixel(uint8_t *color) {
 		if (this->d._registers[6] & 0x4)
 			pattern |= 0x100;
 
+		// En sprites de 8x16 el hardware ignora el bit 0: se usan el tile par y el siguiente
+		if (this->d._registers[1] & 0x2)
+			pattern &= ~1;
+
 		uint8_t c = this->GetSpriteColor(pattern, x - sx, y - sy - 1, false, false, true, doble);
 		if ((c & 0xF) == 0)
 			continue;
