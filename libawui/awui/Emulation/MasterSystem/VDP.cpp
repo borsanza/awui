@@ -321,6 +321,11 @@ void VDP::CalcNextPixel(uint16_t *col, uint16_t *line, bool *hsync, bool *vsync)
 	if (*col == 279) {
 		*hsync = true;
 		*vsync = this->IsVSYNC(*line);
+
+		// Flag de interrupción de frame (bit 7 del estado): en la línea siguiente a la última visible
+		// (VCounter 0xC1, 0xE1 o 0xF1 según la altura). Es independiente del VSync, que marca el fin del frame.
+		if (*line == this->d._height + 1)
+			this->d._status |= 0x80;
 	}
 }
 
@@ -484,10 +489,8 @@ bool VDP::OnTick(uint32_t counter) {
 	bool hsync, vsync;
 
 	this->CalcNextPixel(&this->d._col, &this->d._line, &hsync, &vsync);
-	if (vsync) {
-		this->d._status |= 0x80;
+	if (vsync)
 		ret = true;
-	}
 
 	//	if (hsync)
 	//		this->_status |= 0x40;
