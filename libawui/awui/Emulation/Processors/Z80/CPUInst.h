@@ -15,6 +15,7 @@ namespace awui::Emulation::Processors::Z80 {
 			bool _inInterrupt : 1;
 			bool _isSuspended : 1;
 			bool _isEndlessLoop : 1;
+			bool _afterEI : 1; // La instrucción anterior fue EI: no se aceptan interrupciones todavía
 			Word _addressBus;
 			Registers _registers;
 		} d;
@@ -206,5 +207,6 @@ namespace awui::Emulation::Processors::Z80 {
 
 		inline void SetInInterrupt(bool mode) { this->d._inInterrupt = mode; }
 		inline bool IsInInterrupt() { return this->d._inInterrupt; }
+		inline bool IsAfterEI() const { return this->d._afterEI; }
 	};
 } // namespace awui::Emulation::Processors::Z80

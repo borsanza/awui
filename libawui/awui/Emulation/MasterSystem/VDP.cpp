@@ -34,7 +34,8 @@ VDP::VDP(Motherboard *cpu) {
 	this->_cpu = cpu;
 	this->d._line = 0;
 	this->d._col = 0;
-	this->d._interrupt = false;
+	this->d._lineInterruptPending = false;
+	this->d._lineCounter = 0xFF;
 
 	this->d._status = 0x1F;
 	this->d._address = 0;
@@ -299,13 +300,18 @@ void VDP::CalcNextPixel(uint16_t *col, uint16_t *line, bool *hsync, bool *vsync)
 			*line = 0;
 	}
 
+	// Contador de líneas: se decrementa en las líneas 0..altura (incluida) y al pasar de 0 se recarga
+	// con el registro 10 y queda pendiente la interrupción de línea. Fuera de esas líneas se recarga.
+	// La interrupción de frame va con el flag VSync del estado (bit 7), ver IsIRQ()
 	if (*col == 271) {
-		// Esto es una chapuza, tengo que revisar al milimetro todo el tema de interrupciones de hsync y vsync
-		if (*line == this->GetTotalHeight() - 43)
-			this->d._interrupt = true;
-
-		if ((this->d._registers[0] & 0x10) && ((this->d._registers[10] == 0) || (((*line - 3) % (this->d._registers[10] + 1)) == 0)))
-			this->d._interrupt = true;
+		if (*line <= this->d._height) {
+			if (this->d._lineCounter == 0) {
+				this->d._lineCounter = this->d._registers[10];
+				this->d._lineInterruptPending = true;
+			} else
+				this->d._lineCounter--;
+		} else
+			this->d._lineCounter = this->d._registers[10];
 	}
 
 	// 256 Active Display +
@@ -563,9 +569,13 @@ bool VDP::OnTick(uint32_t counter) {
 uint8_t VDP::GetStatus(bool resetStatus) {
 	uint8_t r = this->d._status;
 
-	// Clear bits 6, 7, 8
-	if (resetStatus)
+	// Leer el estado limpia los bits 7, 6 y 5, la interrupción de línea pendiente
+	// y reinicia la escritura en dos bytes del puerto de control
+	if (resetStatus) {
 		this->d._status &= 0x1F;
+		this->d._lineInterruptPending = false;
+		this->d._controlMode = false;
+	}
 
 	return r;
 }
@@ -755,13 +765,13 @@ uint8_t VDP::ReadByte(uint8_t port) {
 	return 0;
 }
 
-bool VDP::GetInterrupt() {
-	if (this->d._interrupt) {
-		this->d._interrupt = false;
-		return true;
-	}
+// La línea IRQ se mantiene activa mientras haya una interrupción pendiente y habilitada
+// (frame: bit 7 del estado + registro 1 bit 5, línea: pendiente + registro 0 bit 4)
+bool VDP::IsIRQ() const {
+	bool frame = (this->d._status & 0x80) && (this->d._registers[1] & 0x20);
+	bool line = this->d._lineInterruptPending && (this->d._registers[0] & 0x10);
 
-	return false;
+	return frame || line;
 }
 
 uint8_t VDP::GetBackColor() const {

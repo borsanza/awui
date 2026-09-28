@@ -33,8 +33,9 @@ namespace awui::Emulation::MasterSystem {
 			uint8_t _verticalScroll;
 			uint8_t _status;
 			uint8_t _spriteSize;
+			uint8_t _lineCounter;
 			bool _controlMode : 1;
-			bool _interrupt : 1;
+			bool _lineInterruptPending : 1;
 			bool _ntsc : 1;
 			bool _showBorder : 1;
 			bool _visible : 1;
@@ -107,7 +108,7 @@ namespace awui::Emulation::MasterSystem {
 
 		void Clear();
 
-		bool GetInterrupt();
+		bool IsIRQ() const;
 
 		uint16_t GetLine() const;
 		uint16_t GetColumn() const;

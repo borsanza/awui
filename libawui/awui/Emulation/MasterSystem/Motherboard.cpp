@@ -85,18 +85,19 @@ void Motherboard::LoadRom(const String file) {
 	m_rom->LoadRom(file);
 }
 
+// La IRQ del VDP es por nivel: sigue activa hasta que el juego lee el registro de estado.
+// Se comprueba después de cada instrucción y no se pierde si en ese momento las interrupciones están deshabilitadas.
 void Motherboard::CheckInterrupts() {
-	bool interrupt = m_vdp->GetInterrupt();
-	if (!m_z80.GetRegisters()->GetIFF1())
+	if (!m_vdp->IsIRQ())
 		return;
 
-	if (interrupt) {
-		//		printf("Entra %d\n", m_vdp->GetLine());
-		m_z80.SetInInterrupt(true);
-		m_z80.GetRegisters()->SetIFF1(false);
-		m_z80.GetRegisters()->SetIFF2(false);
-		m_z80.CallInterrupt(0x0038);
-	}
+	if (!m_z80.GetRegisters()->GetIFF1() || m_z80.IsAfterEI())
+		return;
+
+	m_z80.SetInInterrupt(true);
+	m_z80.GetRegisters()->SetIFF1(false);
+	m_z80.GetRegisters()->SetIFF2(false);
+	m_z80.CallInterrupt(0x0038);
 }
 
 void Motherboard::RunOpcode() {
@@ -157,18 +158,15 @@ void Motherboard::DoTick() {
 				if (vsync)
 					continue;
 				vsync = m_vdp->OnTick(realIters);
-				if (vsync)
-					CheckInterrupts();
 			}
 		}
+
+		CheckInterrupts();
 		realIters++;
 	}
 
-	while (!vsync) {
+	while (!vsync)
 		vsync = m_vdp->OnTick(realIters);
-		if (vsync)
-			CheckInterrupts();
-	}
 
 	m_sound->EndFrame(this);
 }

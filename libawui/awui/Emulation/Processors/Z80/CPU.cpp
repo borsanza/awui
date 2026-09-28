@@ -28,6 +28,7 @@ CPU::CPU() {
 	this->d._inInterrupt = false;
 	this->d._isSuspended = false;
 	this->d._isEndlessLoop = false;
+	this->d._afterEI = false;
 
 #ifdef NUMOPCODES
 	for (int i = 0; i < OxNOTIMPLEMENTED; i++) {
@@ -48,6 +49,7 @@ void CPU::Reset() {
 
 void CPU::RunOpcode() {
 	int64_t tStatesOld = this->d._cycles;
+	this->d._afterEI = false;
 
 	uint16_t pc = this->d._registers.GetPC();
 
@@ -1054,12 +1056,12 @@ void CPU::RunOpcode() {
 
 		// FB EI
 		// |1|4| Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
-		// I dont know if is completed
 		case OxFB:
 			this->d._cycles += 4;
 			this->d._registers.IncPC();
 			this->d._registers.SetIFF1(true);
 			this->d._registers.SetIFF2(true);
+			this->d._afterEI = true;
 			break;
 
 			/******************************************************************************/

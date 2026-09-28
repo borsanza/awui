@@ -52,6 +52,7 @@ void CPUInst::Reset() {
 	this->d._cycles = 0;
 	this->d._inInterrupt = false;
 	this->d._isSuspended = false;
+	this->d._afterEI = false;
 	this->d._registers.Clear();
 }
 
