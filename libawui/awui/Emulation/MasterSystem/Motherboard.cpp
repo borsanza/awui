@@ -158,9 +158,23 @@ void Motherboard::CheckInterrupts() {
 	if (!m_z80.GetRegisters()->GetIFF1() || m_z80.IsAfterEI())
 		return;
 
-	m_z80.GetRegisters()->SetIFF1(false);
-	m_z80.GetRegisters()->SetIFF2(false);
-	m_z80.CallInterrupt(0x0038);
+	Processors::Z80::Registers *registers = m_z80.GetRegisters();
+	registers->SetIFF1(false);
+	registers->SetIFF2(false);
+
+	// El reconocimiento de la IRQ lleva 2 ciclos de espera más que la NMI: 13 en IM 0/1 y 19 en IM 2
+	m_z80.IncCycles(2);
+
+	// Nadie pone nada en el bus de datos durante el reconocimiento, así que se lee 0xFF:
+	// en IM 0 se ejecuta RST 38h (como en IM 1) y en IM 2 el vector se lee de (I << 8) | 0xFF
+	uint16_t vector = 0x0038;
+	if (registers->GetIM() == 2) {
+		uint16_t address = (registers->GetI() << 8) | 0xFF;
+		vector = m_z80.ReadMemory(address);
+		vector |= m_z80.ReadMemory(address + 1) << 8;
+	}
+
+	m_z80.CallInterrupt(vector);
 }
 
 void Motherboard::RunOpcode() {
