@@ -22,6 +22,7 @@ namespace awui::Emulation {
 		enum {
 			MAPPER_NONE = 1,
 			MAPPER_SEGA = 2,
+			MAPPER_CODEMASTERS = 3,
 		};
 
 		class Motherboard {
@@ -57,6 +58,7 @@ namespace awui::Emulation {
 
 			void CheckInterrupts();
 			uint16_t GetBoardRamOffset(uint16_t pos) const;
+			bool IsCodemastersRom() const;
 			void DoTick();
 
 		  public:

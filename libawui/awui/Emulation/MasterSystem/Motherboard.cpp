@@ -83,6 +83,18 @@ void Motherboard::Reset() {
 
 void Motherboard::LoadRom(const String file) {
 	m_rom->LoadRom(file);
+	m_saveData._mapper = IsCodemastersRom() ? MAPPER_CODEMASTERS : MAPPER_SEGA;
+}
+
+// Las ROMs de Codemasters llevan en 0x7FE6 una suma de comprobación y en 0x7FE8 su complemento (suman 0x10000)
+bool Motherboard::IsCodemastersRom() const {
+	if (m_rom->GetNumPages() < 2)
+		return false;
+
+	uint16_t checksum = m_rom->ReadByte(0x7FE6) | (m_rom->ReadByte(0x7FE7) << 8);
+	uint16_t complement = m_rom->ReadByte(0x7FE8) | (m_rom->ReadByte(0x7FE9) << 8);
+
+	return (checksum != 0) && (uint16_t(checksum + complement) == 0);
 }
 
 // La IRQ del VDP es por nivel: sigue activa hasta que el juego lee el registro de estado.
@@ -237,6 +249,31 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 			m_saveData._ram[pos - 0xE000] = value;
 			break;
 
+		// Mapper de Codemasters: escribir en 0x0000, 0x4000 o 0x8000 elige el banco de 16KB de esa zona
+		case MAPPER_CODEMASTERS:
+			if (pos < 0xC000) {
+				switch (pos) {
+					case 0x0000:
+						m_saveData._frame0 = value % m_rom->GetNumPages();
+						break;
+					case 0x4000:
+						m_saveData._frame1 = value % m_rom->GetNumPages();
+						break;
+					case 0x8000:
+						m_saveData._frame2 = value % m_rom->GetNumPages();
+						break;
+				}
+				return;
+			}
+
+			if (pos < 0xE000) {
+				m_saveData._ram[pos - 0xC000] = value;
+				return;
+			}
+
+			m_saveData._ram[pos - 0xE000] = value;
+			return;
+
 		case MAPPER_NONE:
 			// En la rom no se escribe
 			if (pos < 0xC000)
@@ -274,6 +311,21 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 			}
 
 			// RAM or RAM (mirror)
+			if (pos < 0xE000)
+				return m_saveData._ram[pos - 0xC000];
+
+			return m_saveData._ram[pos - 0xE000];
+
+		case MAPPER_CODEMASTERS:
+			if (pos < 0x4000)
+				return m_rom->ReadByte((uint32_t(m_saveData._frame0) << 14) + pos);
+
+			if (pos < 0x8000)
+				return m_rom->ReadByte((uint32_t(m_saveData._frame1) << 14) + (pos - 0x4000));
+
+			if (pos < 0xC000)
+				return m_rom->ReadByte((uint32_t(m_saveData._frame2) << 14) + (pos - 0x8000));
+
 			if (pos < 0xE000)
 				return m_saveData._ram[pos - 0xC000];
 
