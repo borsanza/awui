@@ -766,6 +766,9 @@ void VDP::WriteDataByte(uint8_t value) {
 					this->d._cramLatch = value;
 			} else
 				this->d._cram[this->d._address & 0x1F] = value;
+
+			// La escritura en CRAM también deja el valor en el buffer de lectura
+			this->d._readbuffer = value;
 			break;
 	}
 
@@ -834,20 +837,10 @@ uint8_t VDP::ReadByte(uint8_t port) {
 			// Cualquier acceso al puerto de datos reinicia la escritura en dos bytes del puerto de control
 			this->d._controlMode = false;
 
-			switch (this->d._portState) {
-				default:
-				case 0:
-					ret = this->d._readbuffer;
-					this->d._readbuffer = this->d._vram[this->d._address];
-					break;
-				case 1:
-				case 2:
-					ret = this->d._vram[this->d._address];
-					break;
-				case 3:
-					ret = this->d._cram[this->d._address & (this->_gameGear ? 0x3F : 0x1F)];
-					break;
-			}
+			// Siempre devuelve el buffer de lectura y lo rellena con la VRAM, sea cual sea el código
+			// (con el código 3 tampoco se lee la CRAM)
+			ret = this->d._readbuffer;
+			this->d._readbuffer = this->d._vram[this->d._address];
 
 			this->d._address = (this->d._address + 1) & 0x3FFF;
 
