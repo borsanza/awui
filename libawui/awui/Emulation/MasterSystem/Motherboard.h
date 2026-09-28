@@ -29,8 +29,7 @@ namespace awui::Emulation {
 		class Motherboard {
 		  private:
 			struct saveData {
-				float _frame;
-				float _oldFrame;
+				double _frameAccumulator; // Fracción de frame de la consola pendiente (PAL: 49.70 frames por cada 59.92 ticks)
 				uint8_t _controlbyte;
 				uint8_t _frame0;
 				uint8_t _frame1;
@@ -56,8 +55,7 @@ namespace awui::Emulation {
 			VDP *m_vdp;
 			Sound *m_sound;
 			Processors::Z80::CPU m_z80;
-			float m_seconds;
-			float m_nextTick;
+			double m_seconds; // Tiempo real pendiente de emular (siempre menor que un tick salvo tras un parón)
 
 			void CheckInterrupts();
 			uint16_t GetBoardRamOffset(uint16_t pos) const;

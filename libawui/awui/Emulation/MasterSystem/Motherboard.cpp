@@ -33,8 +33,7 @@ uint8_t MasterGearReadPortCB(uint8_t port, void *data) {
 }
 
 Motherboard::Motherboard() {
-	m_seconds = 0.0f;
-	m_nextTick = 0.0f;
+	m_seconds = 0.0;
 
 	m_z80.SetWriteMemoryCB(MasterGearWriteMemoryCB, this);
 	m_z80.SetReadMemoryCB(MasterGearReadMemoryCB, this);
@@ -49,8 +48,7 @@ Motherboard::Motherboard() {
 
 	m_vdp = new VDP(this);
 	m_saveData._addressBus.W = 0;
-	m_saveData._frame = 0;
-	m_saveData._oldFrame = 0;
+	m_saveData._frameAccumulator = 0;
 
 	m_showLog = false;
 	m_showLogInt = false;
@@ -142,14 +140,19 @@ void Motherboard::RunOpcode() {
 // 53693175 / (15 * 228 * 262) ~ 59.922743404 frames per second for NTSC
 // 53203424 / (15 * 228 * 313) ~ 49.7014591858 frames per second for PAL
 
+// El emulador avanza en ticks de 1/60 s (el refresco de la pantalla). Los acumuladores solo guardan
+// lo pendiente, así no pierden precisión aunque la partida dure horas.
 void Motherboard::OnTick(float deltaSeconds) {
-	m_seconds += deltaSeconds;
-	if (m_seconds < m_nextTick) {
-		return;
-	}
+	const double tick = 1.0 / 60.0;
 
-	while (m_seconds >= m_nextTick) {
-		m_nextTick += 1.0f / 60.0f;
+	m_seconds += deltaSeconds;
+
+	// Tras un parón (por ejemplo, la ventana congelada) no se intenta recuperar todo el tiempo perdido
+	if (m_seconds > 0.25)
+		m_seconds = tick;
+
+	while (m_seconds >= tick) {
+		m_seconds -= tick;
 		DoTick();
 	}
 }
@@ -157,12 +160,12 @@ void Motherboard::OnTick(float deltaSeconds) {
 void Motherboard::DoTick() {
 	double fps = m_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;
 	double speed = m_vdp->GetNTSC() ? 3.579545f : 3.5468949f;
-	m_saveData._frame += fps / 59.922743404f; // Refresco de awui
-
-	if ((int) m_saveData._frame == (int) m_saveData._oldFrame)
+	// NTSC emula un frame por tick; PAL, 49.70 de cada 59.92 (se salta uno de cada seis ticks, repartidos)
+	m_saveData._frameAccumulator += fps / 59.922743404;
+	if (m_saveData._frameAccumulator < 1.0)
 		return;
 
-	m_saveData._oldFrame = m_saveData._frame;
+	m_saveData._frameAccumulator -= 1.0;
 
 	double iters = (speed * 1000000.0f) / fps;
 	double itersVDP = m_vdp->GetTotalWidth() * m_vdp->GetTotalHeight();
