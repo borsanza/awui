@@ -56,6 +56,7 @@ namespace awui::Emulation {
 			float m_nextTick;
 
 			void CheckInterrupts();
+			uint16_t GetBoardRamOffset(uint16_t pos) const;
 			void DoTick();
 
 		  public:

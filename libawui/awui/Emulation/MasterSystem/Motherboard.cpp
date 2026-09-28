@@ -187,6 +187,11 @@ void Motherboard::CallPaused() {
 	m_saveData._wantPause = true;
 }
 
+// RAM del cartucho (0xFFFC bit 3): se mapea en 0x8000-0xBFFF y el bit 2 elige cuál de los dos bancos de 16KB
+uint16_t Motherboard::GetBoardRamOffset(uint16_t pos) const {
+	return ((m_saveData._controlbyte & 0x04) ? 0x4000 : 0x0000) + (pos - 0x8000);
+}
+
 void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 	//	if (pos == 0xc092)
 	//		printf("Writing: %.2X\n", value);
@@ -195,15 +200,8 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 		default:
 		case MAPPER_SEGA:
 			if (pos < 0xC000) {
-				if ((pos >= 0x8000) && (m_saveData._controlbyte & 0x08)) {
-					uint16_t offset = ((m_saveData._controlbyte & 0x04) ? 0x4000 : 0x0000) + pos;
-					if (offset >= 32768) {
-						printf("Motherboard::WriteMemory Out of Range");
-						return;
-					}
-
-					m_saveData._boardram[offset] = value;
-				}
+				if ((pos >= 0x8000) && (m_saveData._controlbyte & 0x08))
+					m_saveData._boardram[GetBoardRamOffset(pos)] = value;
 				return;
 			}
 
@@ -269,13 +267,7 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 					return m_rom->ReadByte((uint16_t(m_saveData._frame1) << 14) + (pos - 0x4000));
 
 				if (m_saveData._controlbyte & 0x08) {
-					uint16_t offset = ((m_saveData._controlbyte & 0x04) ? 0x4000 : 0x0000) + pos;
-					if (offset >= 32768) {
-						printf("Motherboard::ReadMemory Out of Range");
-						return 0;
-					}
-
-					return m_saveData._boardram[offset];
+					return m_saveData._boardram[GetBoardRamOffset(pos)];
 				} else {
 					return m_rom->ReadByte((uint16_t(m_saveData._frame2) << 14) + (pos - 0x8000));
 				}
