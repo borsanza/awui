@@ -6,6 +6,7 @@
 /build/samples/*/*
 !/build/samples/*/images/
 !/build/samples/*/roms/
+/build-debug/
 
 # Restos de ejecutar "cmake ." en la raíz (CMake lo rechaza, pero deja estos ficheros)
 CMakeCache.txt
@@ -16,7 +17,6 @@ CMakeUserPresets.json
 .cache/
 
 # Editores y temporales
-.vscode/launch.json
 *.log
 *~
 .*.un~

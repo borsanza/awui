@@ -18,6 +18,7 @@
 			"name": "debug",
 			"displayName": "Debug",
 			"inherits": "base",
+			"binaryDir": "${sourceDir}/build-debug",
 			"cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
 		}
 	],

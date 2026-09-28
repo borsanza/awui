@@ -58,7 +58,18 @@ Los ejecutables quedan en `build/samples/<sample>/` y se lanzan desde ese direct
 cd build/samples/stationTV && ./stationTV
 ```
 
+La compilación Debug va a `build-debug/`; para ejecutarla, lánzala igualmente desde `build/samples/<sample>` (ahí están las imágenes y ROMs).
+
 Opción `-DAWUI_WARNINGS=ON` para activar los warnings del compilador.
+
+### Desde Visual Studio Code
+
+Con la extensión C/C++ (`ms-vscode.cpptools`) y `gdb`:
+
+* **F5** → *Depurar (Debug)*: compila en Debug y lo lanza con el depurador (puntos de ruptura, etc.).
+* *Ejecutar (Release)* (en el desplegable de Ejecutar y depurar): compila en Release y lo lanza a velocidad real.
+* Ambas preguntan qué programa lanzar (stationTV por defecto).
+* **Ctrl+Shift+B** solo compila (Debug).
 
 ## Anotaciones antiguas
 
