@@ -7,6 +7,20 @@
 !/build/samples/*/images/
 !/build/samples/*/roms/
 
+# Restos de ejecutar "cmake ." en la raíz (CMake lo rechaza, pero deja estos ficheros)
+CMakeCache.txt
+CMakeFiles/
+
+# Presets personales de CMake y caché de clangd (usa compile_commands.json)
+CMakeUserPresets.json
+.cache/
+
+# Editores y temporales
+.vscode/launch.json
+*.log
+*~
+.*.un~
+
 # ROMs comerciales: no se versionan
 *.sms
 *.gg

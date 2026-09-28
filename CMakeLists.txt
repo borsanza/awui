@@ -1,5 +1,15 @@
 cmake_minimum_required(VERSION 3.16)
 
+# No permitir compilar dentro del código fuente: los samples necesitan los assets de build/samples/
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+	message(FATAL_ERROR "No se puede compilar en el directorio del código fuente.\n"
+		"Usa:\n"
+		"  cmake --preset release && cmake --build --preset release\n"
+		"o bien:\n"
+		"  cmake -S . -B build && cmake --build build\n"
+		"Borra antes CMakeCache.txt y CMakeFiles/ que se acaban de crear aquí.")
+endif()
+
 project(AwuiProject LANGUAGES C CXX)
 
 # Release por defecto si no se indica tipo de compilación (generadores de una sola configuración)
