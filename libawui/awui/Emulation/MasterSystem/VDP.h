@@ -31,6 +31,7 @@ namespace awui::Emulation::MasterSystem {
 			uint8_t _portState;
 			uint8_t _readbuffer;
 			uint8_t _verticalScroll;
+			uint8_t _horizontalScroll; // Registro 8 fijado al empezar cada línea
 			uint8_t _status;
 			uint8_t _spriteSize;
 			uint8_t _lineCounter;

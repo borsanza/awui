@@ -36,6 +36,8 @@ VDP::VDP(Motherboard *cpu) {
 	this->d._col = 0;
 	this->d._lineInterruptPending = false;
 	this->d._lineCounter = 0xFF;
+	this->d._verticalScroll = 0;
+	this->d._horizontalScroll = 0;
 	this->d._lineSpriteCount = 0;
 	this->_spriteLimit = true;
 	this->_gameGear = false;
@@ -570,6 +572,10 @@ bool VDP::OnTick(uint32_t counter) {
 	if (this->d._line == 0 && this->d._col == 0)
 		this->d._verticalScroll = this->d._registers[9];
 
+	// El scroll horizontal se fija al empezar cada línea: un cambio a mitad de línea se aplica en la siguiente
+	if (this->d._col == 0)
+		this->d._horizontalScroll = this->d._registers[8];
+
 	if ((this->d._col == 0) && (this->d._line < this->d._height)) {
 		if (this->d._registers[1] & 0x40)
 			this->EvaluateSprites();
@@ -587,16 +593,16 @@ bool VDP::OnTick(uint32_t counter) {
 		if (((line >> 3) <= 1) && (this->d._registers[0] & 0x40))
 			hScroll = false;
 
-		if ((((col - (this->d._registers[8] & 0x7)) >> 3) >= 24) && (this->d._registers[0] & 0x80))
+		if ((((col - (this->d._horizontalScroll & 0x7)) >> 3) >= 24) && (this->d._registers[0] & 0x80))
 			vScroll = false;
 		else if ((((col >> 3) >= 24) && (this->d._registers[0] & 0x80)) && !hScroll)
 			vScroll = false;
 
-		if (col < (this->d._registers[8] & 0x7) && hScroll && ((this->d._registers[8] & 0x7) != 0))
+		if (col < (this->d._horizontalScroll & 0x7) && hScroll && ((this->d._horizontalScroll & 0x7) != 0))
 			black = true;
 
 		if (hScroll) {
-			col = col - this->d._registers[8];
+			col = col - this->d._horizontalScroll;
 			while (col < 0)
 				col += 256;
 		}
