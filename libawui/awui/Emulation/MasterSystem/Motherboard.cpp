@@ -158,7 +158,6 @@ void Motherboard::CheckInterrupts() {
 	if (!m_z80.GetRegisters()->GetIFF1() || m_z80.IsAfterEI())
 		return;
 
-	m_z80.SetInInterrupt(true);
 	m_z80.GetRegisters()->SetIFF1(false);
 	m_z80.GetRegisters()->SetIFF2(false);
 	m_z80.CallInterrupt(0x0038);
@@ -212,7 +211,9 @@ void Motherboard::DoTick() {
 		int64_t oldCycles = m_z80.GetCycles();
 		RunOpcode();
 
-		if (m_saveData._wantPause & !m_z80.IsInInterrupt()) {
+		// NMI del botón de pausa: no se puede enmascarar, entra aunque haya una IRQ en curso.
+		// IFF2 conserva el estado de IFF1 para que RETN lo restaure
+		if (m_saveData._wantPause) {
 			m_z80.GetRegisters()->SetIFF1(false);
 			m_z80.CallInterrupt(0x0066);
 			m_saveData._wantPause = false;
