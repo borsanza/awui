@@ -406,6 +406,7 @@ int Motherboard::GetSaveSize() {
 	int size = sizeof(Motherboard::saveData);
 	size += VDP::GetSaveSize();
 	size += awui::Emulation::Processors::Z80::CPU::GetSaveSize();
+	size += Sound::GetSaveSize();
 
 	return size;
 }
@@ -415,6 +416,7 @@ void Motherboard::LoadState(uint8_t *data) {
 
 	m_vdp->LoadState(&data[sizeof(Motherboard::saveData)]);
 	m_z80.LoadState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
+	m_sound->LoadState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize() + awui::Emulation::Processors::Z80::CPU::GetSaveSize()], m_z80.GetCycles());
 }
 
 void Motherboard::SaveState(uint8_t *data) {
@@ -422,4 +424,5 @@ void Motherboard::SaveState(uint8_t *data) {
 
 	m_vdp->SaveState(&data[sizeof(Motherboard::saveData)]);
 	m_z80.SaveState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
+	m_sound->SaveState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize() + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
 }
