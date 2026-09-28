@@ -15,7 +15,8 @@ using namespace awui::Emulation::Common;
 using namespace awui::IO;
 
 Rom::Rom(int32_t capacity) {
-	this->_numPages = 0;
+	this->_size = 0;
+	this->_mask = 0;
 	this->_rom = new MemoryStream(capacity);
 	this->_rom->SetLength(capacity);
 }
@@ -32,6 +33,8 @@ void Rom::LoadRom(const String file) {
 		this->_rom->SetCapacity(fs->GetLength());
 
 	this->_rom->SetPosition(0x0);
+	// Si la ROM es más pequeña que la capacidad inicial, la longitud (y el CRC) debe ser la del fichero
+	this->_rom->SetLength(0);
 
 	while (fs->GetPosition() < fs->GetLength()) {
 		uint8_t b = fs->ReadByte();
@@ -43,7 +46,11 @@ void Rom::LoadRom(const String file) {
 
 	delete fs;
 
-	this->_numPages = this->_rom->GetLength() >> 14;
+	this->_size = this->_rom->GetLength();
+	this->_mask = 1;
+	while (this->_mask < this->_size)
+		this->_mask <<= 1;
+	this->_mask--;
 }
 
 void Rom::Reload() {

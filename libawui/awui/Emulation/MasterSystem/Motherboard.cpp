@@ -135,7 +135,7 @@ void Motherboard::LoadRom(const String file) {
 
 // Las ROMs de Codemasters llevan en 0x7FE6 una suma de comprobación y en 0x7FE8 su complemento (suman 0x10000)
 bool Motherboard::IsCodemastersRom() const {
-	if (m_rom->GetNumPages() < 2)
+	if (m_rom->GetSize() < 0x8000)
 		return false;
 
 	uint16_t checksum = m_rom->ReadByte(0x7FE6) | (m_rom->ReadByte(0x7FE7) << 8);
@@ -281,7 +281,7 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 			if (pos < 0xC000) {
 				// Mapper coreano: además de los registros de Sega, 0xA000 elige el banco de 0x8000-0xBFFF
 				if ((pos == 0xA000) && (m_saveData._mapper == MAPPER_KOREA)) {
-					m_saveData._frame2 = value % m_rom->GetNumPages();
+					m_saveData._frame2 = value;
 					return;
 				}
 
@@ -302,17 +302,14 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 						m_saveData._controlbyte = value;
 						break;
 					case 0xFFFD:
-						value = value % m_rom->GetNumPages();
 						m_saveData._frame0 = value;
 						// printf("Frames: %.2X %.2X %.2X\n", d._frame0, d._frame1, d._frame2);
 						break;
 					case 0xFFFE:
-						value = value % m_rom->GetNumPages();
 						m_saveData._frame1 = value;
 						// printf("Frames: %.2X %.2X %.2X\n", m_saveData._frame0, m_saveData._frame1, m_saveData._frame2);
 						break;
 					case 0xFFFF:
-						value = value % m_rom->GetNumPages();
 						m_saveData._frame2 = value;
 						// printf("Frames: %.2X %.2X %.2X\n", m_saveData._frame0, m_saveData._frame1, m_saveData._frame2);
 						break;
@@ -333,14 +330,14 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 
 				switch (pos) {
 					case 0x0000:
-						m_saveData._frame0 = value % m_rom->GetNumPages();
+						m_saveData._frame0 = value;
 						break;
 					case 0x4000:
-						m_saveData._frame1 = (value & 0x7F) % m_rom->GetNumPages();
+						m_saveData._frame1 = value & 0x7F;
 						m_saveData._codemastersRam = (value & 0x80) != 0;
 						break;
 					case 0x8000:
-						m_saveData._frame2 = value % m_rom->GetNumPages();
+						m_saveData._frame2 = value;
 						break;
 				}
 				return;
@@ -367,7 +364,7 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 			if (pos <= 0x0003) {
 				// 0x0000 -> 0x8000, 0x0001 -> 0xA000, 0x0002 -> 0x4000, 0x0003 -> 0x6000
 				static const int slots[4] = {2, 3, 0, 1};
-				m_saveData._banks8k[slots[pos]] = value % (m_rom->GetNumPages() * 2);
+				m_saveData._banks8k[slots[pos]] = value;
 				return;
 			}
 
@@ -400,15 +397,15 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 					return m_rom->ReadByte(pos);
 
 				if (pos < 0x4000)
-					return m_rom->ReadByte((uint16_t(m_saveData._frame0) << 14) + pos);
+					return m_rom->ReadByte((uint32_t(m_saveData._frame0) << 14) + pos);
 
 				if (pos < 0x8000)
-					return m_rom->ReadByte((uint16_t(m_saveData._frame1) << 14) + (pos - 0x4000));
+					return m_rom->ReadByte((uint32_t(m_saveData._frame1) << 14) + (pos - 0x4000));
 
 				if (m_saveData._controlbyte & 0x08) {
 					return m_saveData._boardram[GetBoardRamOffset(pos)];
 				} else {
-					return m_rom->ReadByte((uint16_t(m_saveData._frame2) << 14) + (pos - 0x8000));
+					return m_rom->ReadByte((uint32_t(m_saveData._frame2) << 14) + (pos - 0x8000));
 				}
 			}
 
@@ -447,7 +444,7 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 		case MAPPER_MSX_NEMESIS:
 			// Variante de Nemesis: los primeros 8KB muestran el último banco de 8KB de la ROM
 			if ((pos < 0x2000) && (m_saveData._mapper == MAPPER_MSX_NEMESIS))
-				return m_rom->ReadByte((uint32_t(m_rom->GetNumPages() * 2 - 1) << 13) + pos);
+				return m_rom->ReadByte(m_rom->GetSize() - 0x2000 + pos);
 
 			if (pos < 0x4000)
 				return m_rom->ReadByte(pos);

@@ -8,7 +8,8 @@ namespace awui::Emulation::Common {
 	  private:
 		IO::MemoryStream *_rom;
 		String _file;
-		uint8_t _numPages;
+		uint32_t _size; // Tamaño del fichero
+		uint32_t _mask; // Tamaño redondeado a la siguiente potencia de 2, menos 1
 
 	  public:
 		Rom(int32_t capacity);
@@ -16,11 +17,16 @@ namespace awui::Emulation::Common {
 
 		void LoadRom(const String file);
 
-		inline uint8_t ReadByte(uint32_t pos) const { return this->_rom->ReadByte(pos); }
+		// Como en el hardware, las líneas de dirección que sobran se ignoran: la ROM se repite cada potencia de 2.
+		// Si el tamaño no es potencia de 2, el hueco hasta la siguiente devuelve 0xFF (bus abierto)
+		inline uint8_t ReadByte(uint32_t pos) const {
+			pos &= this->_mask;
+			return (pos < this->_size) ? this->_rom->ReadByte(pos) : 0xFF;
+		}
 		inline void WriteByte(uint32_t pos, uint8_t value) { this->_rom->WriteByte(pos, value); }
 
 		void Reload();
 		uint32_t GetCRC32() const;
-		uint8_t GetNumPages() const { return this->_numPages; }
+		inline uint32_t GetSize() const { return this->_size; }
 	};
 } // namespace awui::Emulation::Common
