@@ -72,6 +72,8 @@ void Motherboard::Reset() {
 	m_saveData._frame0 = 0;
 	m_saveData._frame1 = 1;
 	m_saveData._frame2 = 2;
+	for (int i = 0; i < 4; i++)
+		m_saveData._banks8k[i] = 2 + i;
 	m_saveData._codemastersRam = false;
 	m_z80.Reset();
 
@@ -79,6 +81,29 @@ void Motherboard::Reset() {
 	memset(m_saveData._boardram, 0, 32768 * sizeof(uint8_t));
 	m_vdp->Reset();
 	m_sound->Reset();
+}
+
+// Juegos coreanos sin cabecera que usan mappers propios (comprobados uno a uno)
+static uint8_t GetKoreanMapper(uint32_t crc) {
+	switch (crc) {
+		case 0x89b79e77: // Dallyeora Pigu-Wang (Korea) (Unl)
+		case 0x18fb98a3: // Jang Pung 3 (Korea) (Unl)
+		case 0x97d03541: // Sangokushi 3 (Korea) (Unl)
+			return MAPPER_KOREA;
+
+		case 0x77efe84a: // Cyborg Z (Korea)
+		case 0x06965ed9: // F-1 Spirit - The Way to Formula-1 (Korea) (Unl) (Pirate)
+		case 0xf89af3cc: // Knightmare II - The Maze of Galious (Korea)
+		case 0x445525e2: // Penguin Adventure (Korea) (Unl) (Pirate)
+		case 0x83f0eede: // Street Master (Korea) (Unl)
+		case 0xa05258f5: // Wonsiin (Korea) (Pirate)
+			return MAPPER_MSX;
+
+		case 0xe316c06d: // Nemesis (Korea)
+			return MAPPER_MSX_NEMESIS;
+	}
+
+	return 0;
 }
 
 // Juegos de Game Gear que funcionan en el modo de compatibilidad con Master System
@@ -102,6 +127,8 @@ void Motherboard::LoadRom(const String file) {
 	m_vdp->SetGameGear(file.ToLower().EndsWith(".gg") && !IsGameGearInSmsMode(m_rom->GetCRC32()));
 	if (file.ToLower().EndsWith(".sg"))
 		m_saveData._mapper = MAPPER_SG1000;
+	else if (uint8_t korean = GetKoreanMapper(m_rom->GetCRC32()))
+		m_saveData._mapper = korean;
 	else
 		m_saveData._mapper = IsCodemastersRom() ? MAPPER_CODEMASTERS : MAPPER_SEGA;
 }
@@ -250,7 +277,14 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 	switch (m_saveData._mapper) {
 		default:
 		case MAPPER_SEGA:
+		case MAPPER_KOREA:
 			if (pos < 0xC000) {
+				// Mapper coreano: además de los registros de Sega, 0xA000 elige el banco de 0x8000-0xBFFF
+				if ((pos == 0xA000) && (m_saveData._mapper == MAPPER_KOREA)) {
+					m_saveData._frame2 = value % m_rom->GetNumPages();
+					return;
+				}
+
 				if ((pos >= 0x8000) && (m_saveData._controlbyte & 0x08))
 					m_saveData._boardram[GetBoardRamOffset(pos)] = value;
 				return;
@@ -326,6 +360,21 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 				m_saveData._ram[pos & 0x03FF] = value;
 			return;
 
+		// Mapper MSX de 8KB (conversiones de MSX de Zemina): los primeros 16KB son fijos
+		// y las escrituras en 0x0000-0x0003 eligen bancos de 8KB para 0x4000-0xBFFF
+		case MAPPER_MSX:
+		case MAPPER_MSX_NEMESIS:
+			if (pos <= 0x0003) {
+				// 0x0000 -> 0x8000, 0x0001 -> 0xA000, 0x0002 -> 0x4000, 0x0003 -> 0x6000
+				static const int slots[4] = {2, 3, 0, 1};
+				m_saveData._banks8k[slots[pos]] = value % (m_rom->GetNumPages() * 2);
+				return;
+			}
+
+			if (pos >= 0xC000)
+				m_saveData._ram[pos & 0x1FFF] = value;
+			return;
+
 		case MAPPER_NONE:
 			// En la rom no se escribe
 			if (pos < 0xC000)
@@ -345,6 +394,7 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 	switch (m_saveData._mapper) {
 		default:
 		case MAPPER_SEGA:
+		case MAPPER_KOREA:
 			if (pos < 0xC000) {
 				if (pos < 0x400)
 					return m_rom->ReadByte(pos);
@@ -392,6 +442,20 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 				return m_rom->ReadByte(pos);
 
 			return m_saveData._ram[pos & 0x03FF];
+
+		case MAPPER_MSX:
+		case MAPPER_MSX_NEMESIS:
+			// Variante de Nemesis: los primeros 8KB muestran el último banco de 8KB de la ROM
+			if ((pos < 0x2000) && (m_saveData._mapper == MAPPER_MSX_NEMESIS))
+				return m_rom->ReadByte((uint32_t(m_rom->GetNumPages() * 2 - 1) << 13) + pos);
+
+			if (pos < 0x4000)
+				return m_rom->ReadByte(pos);
+
+			if (pos < 0xC000)
+				return m_rom->ReadByte((uint32_t(m_saveData._banks8k[(pos - 0x4000) >> 13]) << 13) + (pos & 0x1FFF));
+
+			return m_saveData._ram[pos & 0x1FFF];
 
 		case MAPPER_NONE:
 			if (pos < 0xC000)

@@ -24,6 +24,9 @@ namespace awui::Emulation {
 			MAPPER_SEGA = 2,
 			MAPPER_CODEMASTERS = 3,
 			MAPPER_SG1000 = 4,
+			MAPPER_KOREA = 5,
+			MAPPER_MSX = 6,
+			MAPPER_MSX_NEMESIS = 7,
 		};
 
 		class Motherboard {
@@ -34,6 +37,7 @@ namespace awui::Emulation {
 				uint8_t _frame0;
 				uint8_t _frame1;
 				uint8_t _frame2;
+				uint8_t _banks8k[4]; // Mapper MSX: bancos de 8KB en 0x4000, 0x6000, 0x8000 y 0xA000
 				uint8_t _mapper;
 				uint8_t _pad1;
 				uint8_t _pad2;
