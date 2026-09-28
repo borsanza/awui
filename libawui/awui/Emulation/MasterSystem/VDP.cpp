@@ -535,9 +535,6 @@ bool VDP::OnTick(uint32_t counter) {
 		bool hScroll = true;
 		bool black = false;
 
-		if (this->d._registers[1] & 0x10)
-			line -= 32;
-
 		if (((line >> 3) <= 1) && (this->d._registers[0] & 0x40))
 			hScroll = false;
 
@@ -555,10 +552,15 @@ bool VDP::OnTick(uint32_t counter) {
 				col += 256;
 		}
 
+		// La tabla de nombres tiene 28 filas en el modo de 192 líneas (el scroll da la vuelta en 224)
+		// y 32 filas en los de 224/240 (da la vuelta en 256)
 		if (vScroll) {
 			line = line + this->d._verticalScroll;
-			while (line >= 0xe0)
-				line -= 0xe0;
+			if (this->d._height == 192) {
+				while (line >= 224)
+					line -= 224;
+			} else
+				line &= 0xFF;
 		}
 
 		int32_t pos;
@@ -571,8 +573,7 @@ bool VDP::OnTick(uint32_t counter) {
 		if (black || !(this->d._registers[1] & 0x40) || ((this->d._registers[0] & 0x20) && (this->d._col < 8))) {
 			this->d._data[pos] = this->d._cram[this->d._registers[7] & 0x0F];
 		} else {
-			uint16_t base = (this->d._registers[2] & 0x0E) << 10;
-			int32_t offset = base + ((line >> 3) * 64) + ((col >> 3) * 2);
+			int32_t offset = this->d._baseAddress + ((line >> 3) * 64) + ((col >> 3) * 2);
 			uint8_t byte1 = this->d._vram[offset];
 			uint8_t byte2 = this->d._vram[offset + 1];
 			uint16_t sprite = ((byte2 & 0x1) << 8) | byte1;
