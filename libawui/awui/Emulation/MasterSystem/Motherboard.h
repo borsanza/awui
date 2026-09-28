@@ -38,6 +38,7 @@ namespace awui::Emulation {
 				uint8_t _pad1;
 				uint8_t _pad2;
 				bool _wantPause : 1;
+				bool _codemastersRam : 1; // Ernie Els Golf: 8KB de RAM en 0xA000-0xBFFF
 				Word _addressBus;
 				Ports _ports;
 				uint8_t _boardram[32768];
@@ -49,6 +50,7 @@ namespace awui::Emulation {
 			bool m_showLogInt : 1;
 			bool m_showNotImplemented : 1;
 			Common::Rom *m_rom;
+			bool m_startButton; // Game Gear: botón START (puerto 0x00)
 
 			VDP *m_vdp;
 			Sound *m_sound;
@@ -75,6 +77,11 @@ namespace awui::Emulation {
 			void Reset();
 
 			void CallPaused();
+
+			// Botón de pausa: en Master System genera la NMI al pulsarlo; en Game Gear es el botón START
+			void SetPauseButton(bool pressed);
+			inline bool GetStartButton() const { return m_startButton; }
+			bool IsGameGear() const;
 
 			inline VDP *GetVDP() const { return m_vdp; }
 			inline Sound *GetSound() const { return m_sound; }

@@ -45,6 +45,7 @@ Motherboard::Motherboard() {
 	m_rom = new Rom(4096);
 	m_sound = new Sound();
 	m_sound->SetCPU(this);
+	m_startButton = false;
 
 	m_vdp = new VDP(this);
 	m_saveData._addressBus.W = 0;
@@ -73,6 +74,7 @@ void Motherboard::Reset() {
 	m_saveData._frame0 = 0;
 	m_saveData._frame1 = 1;
 	m_saveData._frame2 = 2;
+	m_saveData._codemastersRam = false;
 	m_z80.Reset();
 
 	memset(m_saveData._ram, 0, 8192 * sizeof(uint8_t));
@@ -81,8 +83,25 @@ void Motherboard::Reset() {
 	m_sound->Reset();
 }
 
+// Juegos de Game Gear que funcionan en el modo de compatibilidad con Master System
+// (paleta de 6 bits y pantalla completa). La cabecera no lo indica, así que van por CRC.
+static bool IsGameGearInSmsMode(uint32_t crc) {
+	switch (crc) {
+		case 0x59840fd6: // Castle of Illusion Starring Mickey Mouse (USA, Europe)
+		case 0x44fbe8f6: // Chase H.Q. (USA)
+		case 0x8813514b: // Excellent Dizzy Collection, The (Europe)
+		case 0xc888222b: // Fantastic Dizzy (USA)
+		case 0xa2f9c7af: // Olympic Gold (USA)
+		case 0x10dbbef4: // Super Kick Off (Europe, Japan)
+			return true;
+	}
+
+	return false;
+}
+
 void Motherboard::LoadRom(const String file) {
 	m_rom->LoadRom(file);
+	m_vdp->SetGameGear(file.ToLower().EndsWith(".gg") && !IsGameGearInSmsMode(m_rom->GetCRC32()));
 	m_saveData._mapper = IsCodemastersRom() ? MAPPER_CODEMASTERS : MAPPER_SEGA;
 }
 
@@ -199,6 +218,20 @@ void Motherboard::CallPaused() {
 	m_saveData._wantPause = true;
 }
 
+void Motherboard::SetPauseButton(bool pressed) {
+	if (IsGameGear()) {
+		m_startButton = pressed;
+		return;
+	}
+
+	if (pressed)
+		CallPaused();
+}
+
+bool Motherboard::IsGameGear() const {
+	return m_vdp->IsGameGear();
+}
+
 // RAM del cartucho (0xFFFC bit 3): se mapea en 0x8000-0xBFFF y el bit 2 elige cuál de los dos bancos de 16KB
 uint16_t Motherboard::GetBoardRamOffset(uint16_t pos) const {
 	return ((m_saveData._controlbyte & 0x04) ? 0x4000 : 0x0000) + (pos - 0x8000);
@@ -249,15 +282,22 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 			m_saveData._ram[pos - 0xE000] = value;
 			break;
 
-		// Mapper de Codemasters: escribir en 0x0000, 0x4000 o 0x8000 elige el banco de 16KB de esa zona
+		// Mapper de Codemasters: escribir en 0x0000, 0x4000 o 0x8000 elige el banco de 16KB de esa zona.
+		// En 0x4000 el bit 7 activa los 8KB de RAM del cartucho en 0xA000-0xBFFF (Ernie Els Golf)
 		case MAPPER_CODEMASTERS:
 			if (pos < 0xC000) {
+				if ((pos >= 0xA000) && m_saveData._codemastersRam) {
+					m_saveData._boardram[pos - 0xA000] = value;
+					return;
+				}
+
 				switch (pos) {
 					case 0x0000:
 						m_saveData._frame0 = value % m_rom->GetNumPages();
 						break;
 					case 0x4000:
-						m_saveData._frame1 = value % m_rom->GetNumPages();
+						m_saveData._frame1 = (value & 0x7F) % m_rom->GetNumPages();
+						m_saveData._codemastersRam = (value & 0x80) != 0;
 						break;
 					case 0x8000:
 						m_saveData._frame2 = value % m_rom->GetNumPages();
@@ -323,8 +363,12 @@ uint8_t Motherboard::ReadMemory(uint16_t pos) const {
 			if (pos < 0x8000)
 				return m_rom->ReadByte((uint32_t(m_saveData._frame1) << 14) + (pos - 0x4000));
 
-			if (pos < 0xC000)
+			if (pos < 0xC000) {
+				if ((pos >= 0xA000) && m_saveData._codemastersRam)
+					return m_saveData._boardram[pos - 0xA000];
+
 				return m_rom->ReadByte((uint32_t(m_saveData._frame2) << 14) + (pos - 0x8000));
+			}
 
 			if (pos < 0xE000)
 				return m_saveData._ram[pos - 0xC000];

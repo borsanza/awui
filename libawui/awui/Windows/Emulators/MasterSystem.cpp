@@ -226,8 +226,8 @@ Motherboard *MasterSystem::GetCPU() {
 }
 
 void MasterSystem::OnPaint(GL *gl) {
-	uint8_t c, r, g, b;
-	uint8_t color[4]{0, 85, 170, 255};
+	uint16_t c;
+	uint8_t r, g, b;
 	VDP *screen = m_cpu->GetVDP();
 
 	//	¿Lo rellenamos con el registro 7?
@@ -247,10 +247,11 @@ void MasterSystem::OnPaint(GL *gl) {
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
+			// 12 bits (0x0BGR): cada componente de 4 bits pasa a 8 (x17: 0..255)
 			c = screen->GetPixel(x, y);
-			r = color[c & 0x3];
-			g = color[(c >> 2) & 0x3];
-			b = color[(c >> 4) & 0x3];
+			r = (c & 0xF) * 17;
+			g = ((c >> 4) & 0xF) * 17;
+			b = ((c >> 8) & 0xF) * 17;
 			m_image->SetPixel(x, y, r, g, b);
 		}
 	}
@@ -571,10 +572,11 @@ void awui::Windows::Emulators::MasterSystem::Pause(bool mode) {
 	if (mode) {
 		if (!m_pause) {
 			m_pause = true;
-			m_cpu->CallPaused();
+			m_cpu->SetPauseButton(true);
 		}
 	} else {
 		m_pause = false;
+		m_cpu->SetPauseButton(false);
 	}
 }
 

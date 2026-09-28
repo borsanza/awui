@@ -41,16 +41,18 @@ namespace awui::Emulation::MasterSystem {
 			bool _ntsc : 1;
 			bool _showBorder : 1;
 			bool _visible : 1;
-			uint8_t _cram[32];
+			uint8_t _cram[64]; // Master System: 32 colores de 1 byte. Game Gear: 32 colores de 2 bytes
+			uint8_t _cramLatch; // Game Gear: byte par pendiente de escribir en la CRAM
 			uint8_t _registers[11];
 			uint8_t _vram[16384];
 			uint16_t _sizeData;
-			uint8_t _data[(256 + LEFTBORDER + RIGHTBORDER) * 294]; // 294 parece que es el maximo en alto
+			uint16_t _data[(256 + LEFTBORDER + RIGHTBORDER) * 294]; // Color 12 bits (0x0BGR). 294 parece que es el maximo en alto
 		} d;
 
 		// No salvable
 		Motherboard *_cpu;
 		bool _spriteLimit;
+		bool _gameGear;
 
 		uint8_t NTSCx192[262];
 		uint8_t NTSCx224[262];
@@ -71,13 +73,15 @@ namespace awui::Emulation::MasterSystem {
 		uint8_t GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete, bool doble) const;
 		void EvaluateSprites();
 		bool GetSpritePixel(uint8_t *color);
-		uint8_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority, bool hasSprite, uint8_t spriteColor) const;
+		uint16_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority, bool hasSprite, uint8_t spriteColor) const;
 
 		void OnTickBorder();
 		void WriteControlByte(uint8_t value);
 		void WriteDataByte(uint8_t value);
 		uint16_t GetWidth() const;
 		uint16_t GetHeight() const;
+		uint16_t GetBufferWidth() const;
+		uint16_t GetBufferHeight() const;
 
 	  public:
 		VDP(Motherboard *cpu);
@@ -105,7 +109,14 @@ namespace awui::Emulation::MasterSystem {
 		uint16_t GetActiveLeft() const;
 		uint16_t GetBorderBottom() const;
 
-		uint8_t GetPixel(uint16_t x, uint16_t y) const;
+		// Color del píxel en 12 bits: 0x0BGR, 4 bits por componente
+		uint16_t GetPixel(uint16_t x, uint16_t y) const;
+		// Color i (0-31) de la paleta en 12 bits: 0x0BGR
+		uint16_t GetColor(uint8_t index) const;
+
+		// Game Gear: paleta de 12 bits y ventana visible de 160x144 en el centro de la pantalla
+		void SetGameGear(bool mode);
+		inline bool IsGameGear() const { return _gameGear; }
 
 		bool GetShowBorder() const;
 
@@ -122,7 +133,7 @@ namespace awui::Emulation::MasterSystem {
 		uint16_t GetLine() const;
 		uint16_t GetColumn() const;
 
-		uint8_t GetBackColor() const;
+		uint16_t GetBackColor() const;
 
 		static int GetSaveSize();
 

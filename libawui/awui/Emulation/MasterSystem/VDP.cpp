@@ -38,6 +38,7 @@ VDP::VDP(Motherboard *cpu) {
 	this->d._lineCounter = 0xFF;
 	this->d._lineSpriteCount = 0;
 	this->_spriteLimit = true;
+	this->_gameGear = false;
 
 	this->d._status = 0x1F;
 	this->d._address = 0;
@@ -90,14 +91,15 @@ void VDP::Reset() {
 	for (uint8_t i = 0; i <= 10; i++)
 		this->d._registers[i] = values[i];
 
-	for (uint8_t i = 0; i < 32; i++)
+	for (uint8_t i = 0; i < 64; i++)
 		this->d._cram[i] = 0;
+	this->d._cramLatch = 0;
 
 	this->UpdateAllRegisters();
 }
 
 void VDP::Clear() {
-	memset(this->d._data, 0, this->d._sizeData * sizeof(uint8_t));
+	memset(this->d._data, 0, this->d._sizeData * sizeof(uint16_t));
 }
 
 const uint8_t *VDP::GetColors() const {
@@ -121,6 +123,10 @@ uint16_t VDP::GetColumn() const {
 }
 
 void VDP::SetShowBorder(bool mode) {
+	// La Game Gear no tiene borde: solo se ve el centro de la pantalla
+	if (this->_gameGear)
+		mode = false;
+
 	if (this->d._showBorder != mode) {
 		this->d._showBorder = mode;
 		this->ResetVideo();
@@ -128,7 +134,26 @@ void VDP::SetShowBorder(bool mode) {
 }
 
 void VDP::ResetVideo() {
-	this->d._sizeData = this->GetVisualWidth() * this->GetVisualHeight();
+	this->d._sizeData = this->GetBufferWidth() * this->GetBufferHeight();
+}
+
+void VDP::SetGameGear(bool mode) {
+	this->_gameGear = mode;
+	if (mode)
+		this->SetShowBorder(false);
+}
+
+uint16_t VDP::GetColor(uint8_t index) const {
+	index &= 0x1F;
+
+	if (this->_gameGear) {
+		// 2 bytes por color: GGGGRRRR ----BBBB
+		return this->d._cram[index * 2] | ((this->d._cram[(index * 2) + 1] & 0x0F) << 8);
+	}
+
+	// 1 byte por color: --BBGGRR. Cada componente de 2 bits pasa a 4 bits (x5: 0, 5, 10, 15)
+	uint8_t c = this->d._cram[index];
+	return ((c & 0x03) * 5) | ((((c >> 2) & 0x03) * 5) << 4) | ((((c >> 4) & 0x03) * 5) << 8);
 }
 
 void VDP::SetNTSC() {
@@ -173,13 +198,27 @@ uint16_t VDP::GetTotalWidth() const {
 }
 
 uint16_t VDP::GetVisualWidth() const {
+	if (this->_gameGear)
+		return 160;
+
+	return this->GetBufferWidth();
+}
+
+uint16_t VDP::GetVisualHeight() const {
+	if (this->_gameGear)
+		return 144;
+
+	return this->GetBufferHeight();
+}
+
+uint16_t VDP::GetBufferWidth() const {
 	if (this->d._showBorder)
 		return 256 + LEFTBORDER + RIGHTBORDER;
 
 	return this->GetWidth();
 }
 
-uint16_t VDP::GetVisualHeight() const {
+uint16_t VDP::GetBufferHeight() const {
 	if (this->d._showBorder) {
 		if (this->GetNTSC())
 			return 243;
@@ -199,7 +238,7 @@ uint16_t VDP::GetActiveLeft() const {
 
 uint16_t VDP::GetBorderBottom() const {
 	if (this->d._showBorder)
-		return this->GetVisualHeight() - (this->GetHeight() + this->GetActiveTop());
+		return this->GetBufferHeight() - (this->GetHeight() + this->GetActiveTop());
 
 	return 0;
 }
@@ -234,8 +273,14 @@ uint16_t VDP::GetTotalHeight() const {
 	return (this->d._ntsc ? 262 : 313);
 }
 
-uint8_t VDP::GetPixel(uint16_t x, uint16_t y) const {
-	return this->d._data[(y * this->GetVisualWidth()) + x];
+uint16_t VDP::GetPixel(uint16_t x, uint16_t y) const {
+	// La Game Gear muestra 160x144 del centro de la pantalla
+	if (this->_gameGear) {
+		x += (this->GetWidth() - 160) / 2;
+		y += (this->GetHeight() - 144) / 2;
+	}
+
+	return this->d._data[(y * this->GetBufferWidth()) + x];
 }
 
 bool VDP::IsVSYNC(uint16_t line) const {
@@ -358,7 +403,7 @@ void VDP::OnTickBorder() {
 	}
 
 	if (draw)
-		this->d._data[x + (y * this->GetVisualWidth())] = this->d._cram[this->d._registers[7] & 0x0F];
+		this->d._data[x + (y * this->GetBufferWidth())] = this->GetColor(this->d._registers[7] & 0x0F);
 }
 
 // Background
@@ -497,14 +542,14 @@ bool VDP::GetSpritePixel(uint8_t *color) {
 	return found;
 }
 
-uint8_t VDP::GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority, bool hasSprite, uint8_t spriteColor) const {
+uint16_t VDP::GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority, bool hasSprite, uint8_t spriteColor) const {
 	uint8_t color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete, false);
 
 	// El sprite se ve encima salvo que el tile tenga prioridad y su color no sea el transparente
 	if (hasSprite && (!bgPriority || ((color & 0xF) == 0)))
-		return this->d._cram[spriteColor];
+		return this->GetColor(spriteColor);
 
-	return this->d._cram[color];
+	return this->GetColor(color);
 }
 
 bool VDP::OnTick(uint32_t counter) {
@@ -565,13 +610,13 @@ bool VDP::OnTick(uint32_t counter) {
 
 		int32_t pos;
 		if (this->d._showBorder)
-			pos = this->d._col + this->GetActiveLeft() + ((this->d._line + this->GetActiveTop()) * this->GetVisualWidth());
+			pos = this->d._col + this->GetActiveLeft() + ((this->d._line + this->GetActiveTop()) * this->GetBufferWidth());
 		else
-			pos = this->d._col + (this->d._line * this->GetVisualWidth());
+			pos = this->d._col + (this->d._line * this->GetBufferWidth());
 
 		// Blank Display
 		if (black || !(this->d._registers[1] & 0x40) || ((this->d._registers[0] & 0x20) && (this->d._col < 8))) {
-			this->d._data[pos] = this->d._cram[this->d._registers[7] & 0x0F];
+			this->d._data[pos] = this->GetColor(this->d._registers[7] & 0x0F);
 		} else {
 			int32_t offset = this->d._baseAddress + ((line >> 3) * 64) + ((col >> 3) * 2);
 			uint8_t byte1 = this->d._vram[offset];
@@ -705,7 +750,15 @@ void VDP::WriteDataByte(uint8_t value) {
 			this->d._readbuffer = value;
 			break;
 		case 3:
-			this->d._cram[this->d._address & 0x1F] = value;
+			if (this->_gameGear) {
+				// Game Gear: el byte par se guarda y al escribir el impar se actualizan los dos
+				if (this->d._address & 1) {
+					this->d._cram[(this->d._address & 0x3E)] = this->d._cramLatch;
+					this->d._cram[(this->d._address & 0x3F)] = value;
+				} else
+					this->d._cramLatch = value;
+			} else
+				this->d._cram[this->d._address & 0x1F] = value;
 			break;
 	}
 
@@ -782,7 +835,7 @@ uint8_t VDP::ReadByte(uint8_t port) {
 					ret = this->d._vram[this->d._address];
 					break;
 				case 3:
-					ret = this->d._cram[this->d._address & 0x1F];
+					ret = this->d._cram[this->d._address & (this->_gameGear ? 0x3F : 0x1F)];
 					break;
 			}
 
@@ -811,8 +864,8 @@ bool VDP::IsIRQ() const {
 	return frame || line;
 }
 
-uint8_t VDP::GetBackColor() const {
-	return this->d._cram[this->d._registers[7] & 0x0F];
+uint16_t VDP::GetBackColor() const {
+	return this->GetColor(this->d._registers[7] & 0x0F);
 }
 
 int VDP::GetSaveSize() {

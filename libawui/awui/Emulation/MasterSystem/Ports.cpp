@@ -92,6 +92,17 @@ uint8_t Ports::ReadByte(Motherboard *cpu, uint8_t port) const {
 	if (port >= 0x40 && port <= 0xBF)
 		return cpu->GetVDP()->ReadByte(port);
 
+	// Game Gear: puerto 0x00 = START (bit 7, activo a 0), bit 6 = versión no japonesa, bit 5 = NTSC.
+	// Los puertos 0x01-0x05 son del enlace serie y devuelven sus valores por defecto.
+	if (cpu->IsGameGear() && port <= 0x06) {
+		static const uint8_t serial[6] = {0x00, 0x7F, 0xFF, 0x00, 0xFF, 0x00};
+		if (port == 0x00)
+			return (cpu->GetStartButton() ? 0x00 : 0x80) | 0x40;
+		if (port <= 0x05)
+			return serial[port];
+		return 0xFF;
+	}
+
 	if (port == 0xC0 || port == 0xDC)
 		return ((cpu->GetPad2() << 6) | ((cpu->GetPad1() & 0x3F)));
 

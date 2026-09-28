@@ -55,17 +55,15 @@ void DebuggerSMS::OnTick(float deltaSeconds) {
 	if (!m_rom)
 		return;
 
-	uint8_t c, r, g, b;
-	uint8_t color[4]{0, 85, 170, 255};
+	uint8_t r, g, b;
 
 	VDP *vdp = m_rom->GetCPU()->GetVDP();
-	const uint8_t *colors = vdp->GetColors();
 
 	for (int i = 0; i < 32; i++) {
-		c = colors[i];
-		r = color[c & 0x3];
-		g = color[(c >> 2) & 0x3];
-		b = color[(c >> 4) & 0x3];
+		uint16_t c = vdp->GetColor(i);
+		r = (c & 0xF) * 17;
+		g = ((c >> 4) & 0xF) * 17;
+		b = ((c >> 8) & 0xF) * 17;
 		m_colors->SetPixel(i, 0, r, g, b);
 	}
 
@@ -90,10 +88,10 @@ void DebuggerSMS::OnTick(float deltaSeconds) {
 				c |= (((byte2 & mask) >> (7 - x)) << 1);
 				c |= (((byte3 & mask) >> (7 - x)) << 2);
 				c |= (((byte4 & mask) >> (7 - x)) << 3);
-				c = colors[c];
-				r = color[c & 0x3];
-				g = color[(c >> 2) & 0x3];
-				b = color[(c >> 4) & 0x3];
+				uint16_t rgb = vdp->GetColor(c);
+				r = (rgb & 0xF) * 17;
+				g = ((rgb >> 4) & 0xF) * 17;
+				b = ((rgb >> 8) & 0xF) * 17;
 
 				int ox = ((sprite % 16) * 8) + x;
 				int oy = ((sprite >> 4) * 8) + y;
