@@ -38,6 +38,13 @@ using namespace awui::Emulation::MasterSystem;
 
 #define DEFAULTREGION 0
 
+// Nivel de TH de los dos mandos (bit 0: puerto A, bit 1: puerto B) según el valor del puerto 0x3F
+static uint8_t GetTHLevels(uint8_t control) {
+	uint8_t a = (control & 0x02) ? 1 : ((control >> 5) & 1);
+	uint8_t b = (control & 0x08) ? 1 : ((control >> 7) & 1);
+	return a | (b << 1);
+}
+
 Ports::Ports() {
 	this->_region = DEFAULTREGION;
 	this->_getRegion = false;
@@ -71,6 +78,13 @@ void Ports::WriteByte(Motherboard *cpu, uint8_t port, uint8_t value) {
 	}
 
 	if (port == 0x3F) {
+		// Subir la línea TH de cualquiera de los dos mandos (0 -> 1) captura el contador horizontal.
+		// TH A: dirección bit 1 (1 = entrada, queda a 1), salida bit 5. TH B: dirección bit 3, salida bit 7.
+		uint8_t oldTH = GetTHLevels(this->_maskRegion);
+		uint8_t newTH = GetTHLevels(value);
+		if (~oldTH & newTH)
+			cpu->GetVDP()->LatchHCounter();
+
 		if (value & 0x01)
 			this->_region = (this->_region & 0x02) | ((value >> 5) & 0x01);
 		else

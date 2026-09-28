@@ -32,6 +32,7 @@ namespace awui::Emulation::MasterSystem {
 			uint8_t _readbuffer;
 			uint8_t _verticalScroll;
 			uint8_t _horizontalScroll; // Registro 8 fijado al empezar cada línea
+			uint8_t _hcounterLatch;	// Contador horizontal capturado (puerto 0x7F)
 			uint8_t _status;
 			uint8_t _spriteSize;
 			uint8_t _lineCounter;
@@ -131,6 +132,9 @@ namespace awui::Emulation::MasterSystem {
 		void Clear();
 
 		bool IsIRQ() const;
+
+		// Captura el contador horizontal (al subir TH en los puertos de mando)
+		void LatchHCounter();
 
 		uint16_t GetLine() const;
 		uint16_t GetColumn() const;

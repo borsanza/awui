@@ -38,6 +38,7 @@ VDP::VDP(Motherboard *cpu) {
 	this->d._lineCounter = 0xFF;
 	this->d._verticalScroll = 0;
 	this->d._horizontalScroll = 0;
+	this->d._hcounterLatch = 0;
 	this->d._lineSpriteCount = 0;
 	this->_spriteLimit = true;
 	this->_gameGear = false;
@@ -62,22 +63,10 @@ VDP::VDP(Motherboard *cpu) {
 		this->PALx240[i] = (i <= 0xFF) ? i : ((i <= 0x10A) ? i - 0x100 : i - 0x39); // 00-FF, 00-0A, D2-FF
 	}
 
-	for (int i = 0; i < 256; i++)
-		this->HORSYNC[i] = 0 + ((i / 255.0f) * 0x7F); // 256 : 00-7F : Active display
-	for (int i = 0; i < 15; i++)
-		this->HORSYNC[i + 256] = 0x80 + ((i / 14.0f) * 0x7); //  15 : 80-87 : Right border
-	for (int i = 0; i < 8; i++)
-		this->HORSYNC[i + 271] = 0x87 + ((i / 7.0f) * 0x4); //   8 : 87-8B : Right blanking
-	for (int i = 0; i < 26; i++)
-		this->HORSYNC[i + 279] = 0x8B + ((i / 25.0f) * 0x62); //  26 : 8B-ED : Horizontal sync
-	for (int i = 0; i < 2; i++)
-		this->HORSYNC[i + 305] = 0xED + ((i / 1.0f) * 0x1); //   2 : ED-EE : Left blanking
-	for (int i = 0; i < 14; i++)
-		this->HORSYNC[i + 307] = 0xEE + ((i / 13.0f) * 0x7); //  14 : EE-F5 : Color burst
-	for (int i = 0; i < 8; i++)
-		this->HORSYNC[i + 321] = 0xF5 + ((i / 7.0f) * 0x4); //   8 : F5-F9 : Left blanking
-	for (int i = 0; i < 13; i++)
-		this->HORSYNC[i + 329] = 0xF9 + ((i / 12.0f) * 0x6); //  13 : F9-FF : Left border
+	// Contador horizontal: avanza cada 2 píxeles. 0x00-0x93 desde el primer píxel visible
+	// (columnas 0-295) y salta a 0xE9-0xFF (columnas 296-341)
+	for (int i = 0; i < 342; i++)
+		this->HORSYNC[i] = (i < 296) ? (i >> 1) : (0xE9 + ((i - 296) >> 1));
 
 	this->Reset();
 }
@@ -832,7 +821,7 @@ uint8_t VDP::ReadByte(uint8_t port) {
 				}
 			}
 		} else
-			return this->HORSYNC[this->d._col];
+			return this->d._hcounterLatch;
 	}
 
 	if (port >= 0x80 && port <= 0xBF) {
@@ -874,6 +863,11 @@ bool VDP::IsIRQ() const {
 }
 
 // Color de fondo y borde: el registro 7 elige uno de la segunda paleta (la de los sprites, colores 16-31)
+// El puerto del contador horizontal devuelve el último valor capturado, no el contador en marcha
+void VDP::LatchHCounter() {
+	this->d._hcounterLatch = this->HORSYNC[this->d._col];
+}
+
 uint16_t VDP::GetBackdropColor() const {
 	return this->GetColor(0x10 | (this->d._registers[7] & 0x0F));
 }
