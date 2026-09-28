@@ -36,6 +36,8 @@ VDP::VDP(Motherboard *cpu) {
 	this->d._col = 0;
 	this->d._lineInterruptPending = false;
 	this->d._lineCounter = 0xFF;
+	this->d._lineSpriteCount = 0;
+	this->_spriteLimit = true;
 
 	this->d._status = 0x1F;
 	this->d._address = 0;
@@ -400,19 +402,56 @@ uint8_t VDP::GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flip
 }
 
 // Sprite
-bool VDP::GetSpritePixel(uint8_t *color) const {
-	uint8_t x = this->d._col;
+// Busca los sprites que tocan la línea actual. Como en el hardware, solo se dibujan los 8 primeros
+// (en orden de la SAT); si hay más se activa el flag de desbordamiento (bit 6 del estado).
+// En el modo de 192 líneas, una Y de 0xD0 termina la lista.
+void VDP::EvaluateSprites() {
 	uint8_t y = this->d._line;
+	uint8_t height = (this->d._registers[1] & 0x2) ? 16 : 8;
+	if (this->d._registers[1] & 0x1)
+		height = height << 1;
 
-	int offset = 0;
-	if (this->d._registers[0] & 0x8) {
-		offset = 8;
-		//		x += 8;
+	uint16_t base = ((uint16_t) this->d._registers[5] & 0x7E) << 7;
+
+	int count = 0;
+	bool overflow = false;
+	int limit = this->_spriteLimit ? 8 : 64;
+
+	for (int n = 0; n < 64; n++) {
+		int16_t sy = this->d._vram[base + n];
+
+		if ((this->d._height == 192) && (sy == 0xD0))
+			break;
+
+		if (sy > (255 - height))
+			sy -= 256;
+
+		if ((y <= sy) || (y > (sy + height)))
+			continue;
+
+		if (count >= 8)
+			overflow = true;
+
+		if (count >= limit)
+			break;
+
+		this->d._lineSprites[count++] = n;
 	}
 
-	int16_t sx;
-	int16_t sy;
-	uint16_t pattern;
+	if (overflow)
+		this->d._status |= 0x40;
+
+	this->d._lineSpriteCount = count;
+}
+
+// Color del sprite en el píxel actual. Si dos sprites tienen un píxel opaco en el mismo sitio
+// se activa el flag de colisión (bit 5 del estado); se dibuja el primero de la SAT.
+bool VDP::GetSpritePixel(uint8_t *color) {
+	int16_t x = this->d._col;
+	uint8_t y = this->d._line;
+
+	int offset = (this->d._registers[0] & 0x8) ? 8 : 0;
+
 	uint8_t height = (this->d._registers[1] & 0x2) ? 16 : 8;
 	uint8_t width = 8;
 
@@ -424,64 +463,48 @@ bool VDP::GetSpritePixel(uint8_t *color) const {
 
 	uint16_t base = ((uint16_t) this->d._registers[5] & 0x7E) << 7;
 
-	int cont = 0;
-	for (int n = 0; n < 64; n++) {
-		sy = this->d._vram[base + n];
+	bool found = false;
+	for (int i = 0; i < this->d._lineSpriteCount; i++) {
+		int n = this->d._lineSprites[i];
 
-		if (sy == 0xD0)
-			return false;
-
-		if (sy > (255 - height))
-			sy -= 256;
-
-		if ((y <= sy) || (y > (sy + height)))
-			continue;
-
-		cont++;
-		if (cont > 8) {
-			// Descomentar o ponerlo como una opcion en el futuro. Flickering
-			//			break;
-		}
-
-		sx = this->d._vram[base + 128 + (n * 2)];
+		int16_t sx = this->d._vram[base + 128 + (n * 2)];
 		sx -= offset;
 
 		if ((x < sx) || (x >= (sx + width)))
 			continue;
 
-		pattern = this->d._vram[base + 129 + (n * 2)];
+		int16_t sy = this->d._vram[base + n];
+		if (sy > (255 - height))
+			sy -= 256;
+
+		uint16_t pattern = this->d._vram[base + 129 + (n * 2)];
 		if (this->d._registers[6] & 0x4)
 			pattern |= 0x100;
 
-		*color = this->GetSpriteColor(pattern, x - sx, y - sy - 1, false, false, true, doble);
-		if ((*color & 0xF) == 0)
+		uint8_t c = this->GetSpriteColor(pattern, x - sx, y - sy - 1, false, false, true, doble);
+		if ((c & 0xF) == 0)
 			continue;
 
-		return true;
-	}
-
-	return false;
-}
-
-uint8_t VDP::GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority) const {
-	uint8_t color;
-
-	if (!bgPriority) {
-		if (this->GetSpritePixel(&color))
-			return this->d._cram[color];
-
-		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete, false);
-
-		return this->d._cram[color];
-	} else {
-		color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete, false);
-		if ((color & 0xF) == 0) {
-			if (this->GetSpritePixel(&color))
-				return this->d._cram[color];
+		if (found) {
+			this->d._status |= 0x20;
+			break;
 		}
 
-		return this->d._cram[color];
+		*color = c;
+		found = true;
 	}
+
+	return found;
+}
+
+uint8_t VDP::GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority, bool hasSprite, uint8_t spriteColor) const {
+	uint8_t color = this->GetSpriteColor(sprite, x, y, flipx, flipy, otherPalete, false);
+
+	// El sprite se ve encima salvo que el tile tenga prioridad y su color no sea el transparente
+	if (hasSprite && (!bgPriority || ((color & 0xF) == 0)))
+		return this->d._cram[spriteColor];
+
+	return this->d._cram[color];
 }
 
 bool VDP::OnTick(uint32_t counter) {
@@ -497,6 +520,13 @@ bool VDP::OnTick(uint32_t counter) {
 
 	if (this->d._line == 0 && this->d._col == 0)
 		this->d._verticalScroll = this->d._registers[9];
+
+	if ((this->d._col == 0) && (this->d._line < this->d._height)) {
+		if (this->d._registers[1] & 0x40)
+			this->EvaluateSprites();
+		else
+			this->d._lineSpriteCount = 0;
+	}
 
 	if ((this->d._col < this->d._width) && (this->d._line < this->d._height)) {
 		int16_t col = this->d._col;
@@ -550,7 +580,10 @@ bool VDP::OnTick(uint32_t counter) {
 			bool flipy = byte2 & 4;
 			bool otherPalette = byte2 & 8;
 			bool priority = byte2 & 16;
-			this->d._data[pos] = this->GetBackgroundPixel(sprite, col & 0x7, line & 0x7, flipx, flipy, otherPalette, priority);
+
+			uint8_t spriteColor = 0;
+			bool hasSprite = this->GetSpritePixel(&spriteColor);
+			this->d._data[pos] = this->GetBackgroundPixel(sprite, col & 0x7, line & 0x7, flipx, flipy, otherPalette, priority, hasSprite, spriteColor);
 		}
 	} else {
 		if (this->d._showBorder)

@@ -34,6 +34,8 @@ namespace awui::Emulation::MasterSystem {
 			uint8_t _status;
 			uint8_t _spriteSize;
 			uint8_t _lineCounter;
+			uint8_t _lineSprites[64]; // Sprites que se dibujan en la línea actual, en orden de la SAT
+			uint8_t _lineSpriteCount;
 			bool _controlMode : 1;
 			bool _lineInterruptPending : 1;
 			bool _ntsc : 1;
@@ -48,6 +50,7 @@ namespace awui::Emulation::MasterSystem {
 
 		// No salvable
 		Motherboard *_cpu;
+		bool _spriteLimit;
 
 		uint8_t NTSCx192[262];
 		uint8_t NTSCx224[262];
@@ -66,8 +69,9 @@ namespace awui::Emulation::MasterSystem {
 		bool IsVSYNC(uint16_t line) const;
 
 		uint8_t GetSpriteColor(uint16_t sprite, int x, int y, bool flipx, bool flipy, bool otherPalete, bool doble) const;
-		bool GetSpritePixel(uint8_t *color) const;
-		uint8_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority) const;
+		void EvaluateSprites();
+		bool GetSpritePixel(uint8_t *color);
+		uint8_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority, bool hasSprite, uint8_t spriteColor) const;
 
 		void OnTickBorder();
 		void WriteControlByte(uint8_t value);
@@ -104,6 +108,11 @@ namespace awui::Emulation::MasterSystem {
 		uint8_t GetPixel(uint16_t x, uint16_t y) const;
 
 		bool GetShowBorder() const;
+
+		// Límite de 8 sprites por línea como en el hardware. Desactivarlo evita el parpadeo,
+		// pero el flag de desbordamiento se sigue activando igual.
+		inline void SetSpriteLimit(bool mode) { _spriteLimit = mode; }
+		inline bool GetSpriteLimit() const { return _spriteLimit; }
 		void SetShowBorder(bool mode);
 
 		void Clear();
