@@ -589,6 +589,22 @@ awui::String Spectrum::GetStateFile() const {
 	return name;
 }
 
+bool Spectrum::SaveAutoState() {
+	std::vector<uint8_t> data(Motherboard::GetSaveSize());
+	m_motherboard->SaveState(data.data());
+	return WriteStateFile(String::Concat(m_romFile, ".autostate"), data.data(), (int) data.size());
+}
+
+bool Spectrum::LoadAutoState() {
+	std::vector<uint8_t> data(Motherboard::GetSaveSize());
+	if (!ReadStateFile(String::Concat(m_romFile, ".autostate"), data.data(), (int) data.size()))
+		return false;
+
+	m_motherboard->LoadState(data.data());
+	ReleaseAllKeys();
+	return true;
+}
+
 void Spectrum::LoadState() {
 	String name = GetStateFile();
 

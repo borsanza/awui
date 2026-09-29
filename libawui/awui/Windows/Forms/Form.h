@@ -58,6 +58,8 @@ namespace awui {
 			virtual void OnRemoteHeartbeat();
 
 			virtual void OnTick(float deltaSeconds);
+			// Se va a cerrar el programa (tras el último frame, con todo aún en pie)
+			virtual void OnClosing() {}
 
 			virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 			virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);

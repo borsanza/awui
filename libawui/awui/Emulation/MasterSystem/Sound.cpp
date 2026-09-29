@@ -259,22 +259,41 @@ void Sound::WriteStereo(Motherboard *cpu, uint8_t value) {
 	m_saveData._stereo = value;
 }
 
+// Estado: saveData, la estructura OPLL de emu2413 y, por cada uno de sus 18 operadores, el número de instrumento
+// al que apunta (los punteros de OPLL no valen en otra ejecución)
+#define OPLL_SLOTS 18
+
 int Sound::GetSaveSize() {
-	return sizeof(Sound::saveData) + sizeof(OPLL);
+	return sizeof(Sound::saveData) + sizeof(OPLL) + OPLL_SLOTS;
 }
 
 void Sound::SaveState(uint8_t *data) {
 	memcpy(data, &m_saveData, sizeof(Sound::saveData));
-	// Sus punteros son a su propia estructura, a tablas fijas de emu2413 y a su conversor: al restaurar en la
-	// misma instancia siguen valiendo
 	memcpy(data + sizeof(Sound::saveData), m_opll, sizeof(OPLL));
+
+	uint8_t *patches = data + sizeof(Sound::saveData) + sizeof(OPLL);
+	for (int i = 0; i < OPLL_SLOTS; i++) {
+		ptrdiff_t index = m_opll->slot[i].patch - m_opll->patch;
+		patches[i] = ((index >= 0) && (index < (ptrdiff_t) (sizeof(m_opll->patch) / sizeof(m_opll->patch[0])))) ? (uint8_t) index : 0;
+	}
 }
 
 // cycle: contador de ciclos de la CPU ya restaurada. El audio se resincroniza ahí
 // sin generar el salto de tiempo (hacia atrás o hacia delante) del estado cargado.
 void Sound::LoadState(uint8_t *data, int64_t cycle) {
 	memcpy(&m_saveData, data, sizeof(Sound::saveData));
+
+	// Se rehacen los punteros: cada operador a su instrumento de este chip, el conversor de este chip, y la
+	// tabla de onda (y lo que depende del instrumento) la recalcula emu2413 al pedirle una actualización
+	OPLL_RateConv *conv = m_opll->conv;
 	memcpy(m_opll, data + sizeof(Sound::saveData), sizeof(OPLL));
+	m_opll->conv = conv;
+
+	const uint8_t *patches = data + sizeof(Sound::saveData) + sizeof(OPLL);
+	for (int i = 0; i < OPLL_SLOTS; i++) {
+		m_opll->slot[i].patch = &m_opll->patch[patches[i] % (sizeof(m_opll->patch) / sizeof(m_opll->patch[0]))];
+		m_opll->slot[i].update_requests = 0xFF; // UPDATE_ALL
+	}
 
 	m_lastCycle = cycle;
 	m_tickPos = 0;

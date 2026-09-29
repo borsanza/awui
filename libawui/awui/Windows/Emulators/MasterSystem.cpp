@@ -445,6 +445,24 @@ uint32_t MasterSystem::GetCRC32() {
 	return m_cpu->GetCRC32();
 }
 
+bool MasterSystem::SaveAutoState() {
+	m_cpu->SaveState(m_state.data());
+	return WriteStateFile(String::Concat(GetName(), ".autostate"), m_state.data(), (int) m_state.size());
+}
+
+bool MasterSystem::LoadAutoState() {
+	if (!ReadStateFile(String::Concat(GetName(), ".autostate"), m_state.data(), (int) m_state.size()))
+		return false;
+
+	m_cpu->LoadState(m_state.data());
+	RefreshPads();
+
+	// El historial de rebobinado era de otra partida: empieza desde aquí
+	m_rewind->Clear();
+	m_rewind->Push(m_state.data());
+	return true;
+}
+
 void MasterSystem::SetRewinding(bool mode) {
 	m_rewinding = mode;
 	// Los estados cargados traen los mandos de cuando se guardaron: al soltar vuelven los que se pulsan ahora

@@ -35,6 +35,12 @@ namespace awui {
 			String m_romFile; // Cinta o ROM cargada: los estados se guardan a su lado
 
 			String GetStateFile() const;
+
+		  public:
+			virtual bool SaveAutoState() override;
+			virtual bool LoadAutoState() override;
+
+		  private:
 			void DoKey(Keys::Enum key, bool pressed);
 			void DoRemoteKey(RemoteButtons::Enum button, bool pressed);
 			void UpdateMatrix();

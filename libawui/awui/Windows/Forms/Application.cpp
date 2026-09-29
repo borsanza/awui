@@ -99,6 +99,9 @@ void Application::Run(Form *form = NULL) {
 		stats->SetTimeAfterIddle();
 	}
 
+	if (form)
+		form->OnClosing();
+
 	Joystick::Controller::CloseAll();
 
 	SDL_Quit();

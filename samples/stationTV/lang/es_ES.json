@@ -7,6 +7,8 @@
     "settings.general": "General",
     "settings.language": "Idioma",
     "settings.language.desc": "Idioma del programa.",
+    "settings.resumeGames": "Continuar partidas",
+    "settings.resumeGames.desc": "Al entrar en un juego, sigue donde lo dejaste. Se guarda solo al volver al menú o al cerrar el programa. Para empezar de nuevo, reinicia el juego.",
     "settings.clock": "Reloj",
     "settings.clock.desc": "Muestra el reloj en la esquina superior derecha.",
     "settings.timeFormat": "Formato de hora",

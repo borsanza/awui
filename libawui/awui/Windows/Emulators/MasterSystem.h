@@ -63,6 +63,9 @@ namespace awui {
 			virtual bool OnJoystickButtonUp(JoystickButtonEventArgs *e);
 			virtual bool OnJoystickAxisMotion(JoystickAxisMotionEventArgs *e);
 
+			virtual bool SaveAutoState() override;
+			virtual bool LoadAutoState() override;
+
 			void SetRewinding(bool mode);
 			void SetForwarding(bool mode);
 			void Pause(bool mode);

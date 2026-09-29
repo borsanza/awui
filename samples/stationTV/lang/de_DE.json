@@ -7,6 +7,8 @@
     "settings.general": "Allgemein",
     "settings.language": "Sprache",
     "settings.language.desc": "Sprache des Programms.",
+    "settings.resumeGames": "Spiele fortsetzen",
+    "settings.resumeGames.desc": "Beim Starten eines Spiels geht es dort weiter, wo du aufgehört hast. Gespeichert wird automatisch beim Zurückkehren ins Menü oder beim Beenden. Zum Neubeginn das Spiel zurücksetzen.",
     "settings.clock": "Uhr",
     "settings.clock.desc": "Zeigt die Uhr in der oberen rechten Ecke an.",
     "settings.timeFormat": "Zeitformat",

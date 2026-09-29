@@ -47,6 +47,7 @@ StationUI::StationUI() {
 	m_root = nullptr;
 	m_settingsUI = nullptr;
 	m_closeSettings = false;
+	m_inGame = false;
 	m_clock24 = true;
 	m_showClock = true;
 	m_noRoms = nullptr;
@@ -460,10 +461,37 @@ void StationUI::SetArcadeFullScreen() {
 	m_arcade->SetFocusable(true);
 }
 
+// Se ha entrado en el juego (a pantalla completa): se continúa la partida guardada si el ajuste lo pide
+void StationUI::EnteringArcade() {
+	if (m_inGame || !m_arcade) {
+		return;
+	}
+
+	m_inGame = true;
+	if (SettingsStore::Instance().GetBool("resumeGames")) {
+		m_arcade->LoadAutoState();
+	}
+}
+
+// Se sale del juego (al menú o cerrando el programa): se guarda la partida para continuarla
+void StationUI::SaveGame() {
+	if (m_inGame && m_arcade) {
+		m_arcade->SaveAutoState();
+	}
+
+	m_inGame = false;
+}
+
+void StationUI::OnClosing() {
+	SaveGame();
+}
+
 void StationUI::ExitingArcade() {
 	if (!m_fade.IsStopped()) {
 		return;
 	}
+
+	SaveGame();
 
 	m_controlBase->SetVisible(true);
 
@@ -574,7 +602,13 @@ void FadePanel::OnTick(float deltaSeconds) {
 	// 200 unidades en 1/3 de segundo, sea cual sea la tasa de frames
 	float step = 600.0f * deltaSeconds;
 	if (m_showing) {
+		// Con la pantalla en negro (mitad del fundido) se entra en el juego: si se continúa una partida, el
+		// salto no se ve
+		bool black = m_status >= 100.0f;
 		m_status += step;
+		if (!black && (m_status >= 100.0f))
+			m_station->EnteringArcade();
+
 		if (Math::Round(m_status) >= 200.0f) {
 			m_status = 200.0f;
 			m_station->SetArcadeFullScreen();

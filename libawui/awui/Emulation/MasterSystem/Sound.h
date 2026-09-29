@@ -77,8 +77,8 @@ namespace awui::Emulation::MasterSystem {
 		// es el sonido invertido y continuo. Al cambiar de sentido hay un fundido corto para que no chasquee
 		void SetReverse(bool reverse);
 
-		// El estado incluye el del YM2413 entero (su estructura de emu2413): solo vale para esta misma instancia,
-		// que es lo que usan el rebobinado y los estados en memoria
+		// El estado incluye el del YM2413 entero (su estructura de emu2413). Sus punteros se guardan como índices
+		// y se rehacen al cargar, así que sirve también para estados en fichero
 
 		static int GetSaveSize();
 		void SaveState(uint8_t *data);

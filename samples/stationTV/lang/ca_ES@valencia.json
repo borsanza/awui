@@ -7,6 +7,8 @@
     "settings.general": "General",
     "settings.language": "Idioma",
     "settings.language.desc": "Idioma del programa.",
+    "settings.resumeGames": "Continuar partides",
+    "settings.resumeGames.desc": "En entrar en un joc, continua on el vas deixar. Es guarda a soles en tornar al menú o en tancar el programa. Per a començar de nou, reinicia el joc.",
     "settings.clock": "Rellotge",
     "settings.clock.desc": "Mostra el rellotge en el cantó superior dret.",
     "settings.timeFormat": "Format de l'hora",

@@ -7,6 +7,8 @@
     "settings.general": "General",
     "settings.language": "Language",
     "settings.language.desc": "Language of the program.",
+    "settings.resumeGames": "Continue games",
+    "settings.resumeGames.desc": "When entering a game, it continues where you left it. It is saved automatically when going back to the menu or closing the program. To start over, reset the game.",
     "settings.clock": "Clock",
     "settings.clock.desc": "Show the clock in the top right corner.",
     "settings.timeFormat": "Time format",

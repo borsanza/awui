@@ -88,6 +88,7 @@ namespace awui {
 					Settings::SettingsUI *m_settingsUI;
 					Control *m_controlBase;
 					bool m_closeSettings;
+					bool m_inGame; // Se ha entrado en el juego (no solo la vista previa del menú)
 					bool m_clock24;
 					bool m_showClock;
 
@@ -99,6 +100,7 @@ namespace awui {
 					void CheckArcade();
 					void RefreshList();
 					void CloseSettings();
+					void SaveGame();
 
 				  public:
 					StationUI();
@@ -118,7 +120,9 @@ namespace awui {
 
 					void SetArcade(Emulators::ArcadeContainer *arcade);
 					void SetArcadeFullScreen();
+					void EnteringArcade();
 					void ExitingArcade();
+					void OnClosing();
 					void ExitArcade();
 
 					void SetBackground(Bitmap *background);

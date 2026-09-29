@@ -37,3 +37,5 @@ CMakeUserPresets.json
 # Estados guardados (F2) junto a cada juego: juego.tap.state, juego.tap.state1...
 *.state
 *.state[0-9]*
+*.autostate
+*.autostate.tmp

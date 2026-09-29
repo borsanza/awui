@@ -22,4 +22,5 @@ class FormArcade : public awui::Windows::Forms::Form {
 	virtual ~FormArcade();
 
 	bool OnKeyPress(Keys::Enum key);
+	virtual void OnClosing() override;
 };

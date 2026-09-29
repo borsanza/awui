@@ -40,6 +40,11 @@ void FormArcade::InitializeComponent() {
 	m_stationUI->ApplySettings();
 }
 
+// Si se cierra con un juego abierto, se guarda la partida para continuarla
+void FormArcade::OnClosing() {
+	m_stationUI->OnClosing();
+}
+
 bool FormArcade::OnKeyPress(Keys::Enum key) {
 	bool ret = false;
 	switch (key) {

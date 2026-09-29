@@ -12,6 +12,13 @@
                 "options": "languages"
             },
             {
+                "key": "resumeGames",
+                "name": "settings.resumeGames",
+                "description": "settings.resumeGames.desc",
+                "type": "boolean",
+                "defaultValue": false
+            },
+            {
                 "key": "clock",
                 "name": "settings.clock",
                 "description": "settings.clock.desc",

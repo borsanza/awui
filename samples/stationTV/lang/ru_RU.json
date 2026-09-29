@@ -7,6 +7,8 @@
     "settings.general": "Общие",
     "settings.language": "Язык",
     "settings.language.desc": "Язык программы.",
+    "settings.resumeGames": "Продолжать игры",
+    "settings.resumeGames.desc": "При входе в игру она продолжается с того места, где вы остановились. Сохраняется автоматически при возврате в меню или закрытии программы. Чтобы начать заново, перезапустите игру.",
     "settings.clock": "Часы",
     "settings.clock.desc": "Показывать часы в правом верхнем углу.",
     "settings.timeFormat": "Формат времени",

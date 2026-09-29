@@ -7,6 +7,8 @@
     "settings.general": "Geral",
     "settings.language": "Idioma",
     "settings.language.desc": "Idioma do programa.",
+    "settings.resumeGames": "Continuar partidas",
+    "settings.resumeGames.desc": "Ao entrar em um jogo, ele continua de onde você parou. É salvo sozinho ao voltar ao menu ou fechar o programa. Para começar de novo, reinicie o jogo.",
     "settings.clock": "Relógio",
     "settings.clock.desc": "Mostra o relógio no canto superior direito.",
     "settings.timeFormat": "Formato de hora",

@@ -82,7 +82,9 @@ namespace awui::Emulation::Processors::Z80 {
 
 	  public:
 		Registers();
-		virtual ~Registers();
+		// Sin métodos virtuales: se guarda byte a byte dentro de los estados, y un puntero a la tabla virtual
+		// guardado en un fichero no vale en otra ejecución
+		~Registers();
 
 		void Clear();
 		void Alternate();
