@@ -483,9 +483,20 @@ void Spectrum::LoadState() {
 		Console::Write("Cargando: ");
 		Console::WriteLine(name);
 
-		uint8_t *savedData = (uint8_t *) calloc(Motherboard::GetSaveSize(), sizeof(uint8_t));
 		FileStream *file = new FileStream(name, FileMode::Open, FileAccess::Read);
-		for (unsigned int i = 0; i < file->GetLength(); i++)
+
+		// Un estado de otro tamaño es de otra versión del emulador: cargarlo desbordaría el buffer
+		// (si es más grande) o dejaría la máquina a medias (si es más pequeño)
+		unsigned int size = Motherboard::GetSaveSize();
+		if (file->GetLength() != size) {
+			Console::Error->WriteLine("Estado incompatible (%u bytes, se esperaban %u): no se carga", file->GetLength(), size);
+			file->Close();
+			delete file;
+			return;
+		}
+
+		uint8_t *savedData = (uint8_t *) calloc(size, sizeof(uint8_t));
+		for (unsigned int i = 0; i < size; i++)
 			savedData[i] = file->ReadByte();
 		file->Close();
 		delete file;
