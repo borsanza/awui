@@ -18,6 +18,7 @@ Bitmap::Bitmap(const String file) {
 	m_class = Classes::Bitmap;
 	m_loaded = false;
 	m_file = file;
+	m_failed = false;
 
 	m_fixX1 = 0;
 	m_fixX2 = 0;
@@ -65,30 +66,39 @@ void Bitmap::GetFixedMargins(int *x1, int *y1, int *x2, int *y2) {
 	*y2 = m_fixY2;
 }
 
+// Se llama al pintar. Si falla, se marca y no se vuelve a intentar en cada frame (un error por imagen, no por
+// frame); UnloadAll lo permite de nuevo
 void Bitmap::Load() {
-	if (m_loaded || m_file.IsEmpty())
+	if (m_loaded || m_failed || m_file.IsEmpty())
 		return;
 
 	SDL_Surface *textureImage = IMG_Load(m_file.ToCharArray());
 	if (!textureImage) {
-		Console::Error->WriteLine("Failed to load texture: %s", m_file);
+		Console::Error->WriteLine("Failed to load texture: %s (%s)", m_file.ToCharArray(), IMG_GetError());
+		m_failed = true;
 		return;
 	}
 
 	SDL_Surface *optimizedImage = SDL_ConvertSurfaceFormat(textureImage, SDL_PIXELFORMAT_RGBA32, 0);
 	SDL_FreeSurface(textureImage);
 	if (!optimizedImage) {
-		Console::Error->WriteLine("Failed to optimize texture format: %s", m_file);
+		Console::Error->WriteLine("Failed to optimize texture format: %s (%s)", m_file.ToCharArray(), SDL_GetError());
+		m_failed = true;
 		return;
 	}
 	textureImage = optimizedImage;
 
+	// glGetError devuelve también errores anteriores que nadie ha leído: se vacían para no achacárselos a esta imagen
+	while (glGetError() != GL_NO_ERROR) {
+	}
+
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 	if (glGetError() != GL_NO_ERROR) {
-		Console::Error->WriteLine("OpenGL error: Failed to bind texture.");
+		Console::Error->WriteLine("OpenGL error: Failed to bind texture: %s", m_file.ToCharArray());
 		glDeleteTextures(1, &m_texture);
 		SDL_FreeSurface(textureImage);
+		m_failed = true;
 		return;
 	}
 
@@ -101,9 +111,10 @@ void Bitmap::Load() {
 	GLenum textureFormat = textureImage->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB;
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, textureImage->w, textureImage->h, 0, textureFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
 	if (glGetError() != GL_NO_ERROR) {
-		Console::Error->WriteLine("OpenGL error: Failed to load texture image.");
+		Console::Error->WriteLine("OpenGL error: Failed to load texture image: %s", m_file.ToCharArray());
 		glDeleteTextures(1, &m_texture);
 		SDL_FreeSurface(textureImage);
+		m_failed = true;
 		return;
 	}
 
@@ -124,10 +135,12 @@ void Bitmap::Unload() {
 	m_loaded = false;
 }
 
+// Tras un cambio de ventana o de contexto: se vuelven a cargar todas al pintar, también las que fallaron
 void Bitmap::UnloadAll() {
 	for (int i = 0; i < Bitmap::list.GetCount(); i++) {
 		Bitmap *bitmap = (Bitmap *) Bitmap::list.Get(i);
 		bitmap->Unload();
+		bitmap->m_failed = false;
 	}
 }
 

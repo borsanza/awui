@@ -36,6 +36,7 @@ namespace awui {
 
 			String m_file;
 			bool m_loaded;
+			bool m_failed; // No se ha podido cargar: no se reintenta en cada frame (sí tras UnloadAll)
 
 			void Load();
 			void Unload();
