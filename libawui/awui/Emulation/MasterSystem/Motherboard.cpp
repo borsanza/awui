@@ -10,6 +10,7 @@
 #include <awui/Console.h>
 #include <awui/DateTime.h>
 #include <awui/Emulation/Common/Rom.h>
+#include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Emulation/MasterSystem/Ports.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
@@ -301,14 +302,17 @@ void Motherboard::FlushBoardRam() {
 	m_boardRamIdleFrames = -1;
 }
 
+// m_savePath es la ruta junto a la ROM; SavePaths la lleva a la carpeta de partidas (y lee la antigua si solo
+// existe esa)
 void Motherboard::LoadBoardRam() {
-	FILE *file = fopen(m_savePath.ToCharArray(), "rb");
+	String path = SavePaths::GetReadPath(m_savePath);
+	FILE *file = fopen(path.ToCharArray(), "rb");
 	if (!file)
 		return;
 
 	size_t size = fread(m_saveData._boardram, 1, sizeof(m_saveData._boardram), file);
 	fclose(file);
-	printf("Partida guardada cargada: %s (%zu bytes)\n", m_savePath.ToCharArray(), size);
+	printf("Partida guardada cargada: %s (%zu bytes)\n", path.ToCharArray(), size);
 }
 
 void Motherboard::SaveBoardRam() {
@@ -320,27 +324,28 @@ void Motherboard::SaveBoardRam() {
 	for (size_t i = 0; empty && (i < sizeof(m_saveData._boardram)); i++)
 		empty = (m_saveData._boardram[i] == 0);
 
-	FILE *existing = fopen(m_savePath.ToCharArray(), "rb");
+	FILE *existing = fopen(SavePaths::GetReadPath(m_savePath).ToCharArray(), "rb");
 	if (existing)
 		fclose(existing);
 	else if (empty)
 		return;
 
 	// Se escribe en un temporal y se renombra, para no dejar el .sav a medias si algo falla
-	String tmpPath = String::Concat(m_savePath, ".tmp");
+	String path = SavePaths::GetWritePath(m_savePath);
+	String tmpPath = String::Concat(path, ".tmp");
 	FILE *file = fopen(tmpPath.ToCharArray(), "wb");
 	if (!file) {
-		printf("No se puede guardar la partida en %s\n", m_savePath.ToCharArray());
+		printf("No se puede guardar la partida en %s\n", path.ToCharArray());
 		return;
 	}
 
 	bool ok = fwrite(m_saveData._boardram, 1, sizeof(m_saveData._boardram), file) == sizeof(m_saveData._boardram);
 	ok = (fclose(file) == 0) && ok;
-	if (ok && (rename(tmpPath.ToCharArray(), m_savePath.ToCharArray()) == 0))
+	if (ok && (rename(tmpPath.ToCharArray(), path.ToCharArray()) == 0))
 		return;
 
 	remove(tmpPath.ToCharArray());
-	printf("No se puede guardar la partida en %s\n", m_savePath.ToCharArray());
+	printf("No se puede guardar la partida en %s\n", path.ToCharArray());
 }
 
 // El VDP avanza exactamente 1,5 píxeles por ciclo de CPU (reloj maestro / 10 frente a / 15)

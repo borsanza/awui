@@ -8,6 +8,7 @@
 
 #include <awui/DateTime.h>
 #include <awui/Emulation/Common/RewindBuffer.h>
+#include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
@@ -447,11 +448,11 @@ uint32_t MasterSystem::GetCRC32() {
 
 bool MasterSystem::SaveAutoState() {
 	m_cpu->SaveState(m_state.data());
-	return WriteStateFile(String::Concat(GetName(), ".autostate"), m_state.data(), (int) m_state.size());
+	return WriteStateFile(SavePaths::GetWritePath(String::Concat(GetName(), ".autostate")), m_state.data(), (int) m_state.size());
 }
 
 bool MasterSystem::LoadAutoState() {
-	if (!ReadStateFile(String::Concat(GetName(), ".autostate"), m_state.data(), (int) m_state.size()))
+	if (!ReadStateFile(SavePaths::GetReadPath(String::Concat(GetName(), ".autostate")), m_state.data(), (int) m_state.size()))
 		return false;
 
 	m_cpu->LoadState(m_state.data());

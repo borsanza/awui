@@ -10,6 +10,7 @@
 #include <awui/Convert.h>
 #include <awui/DateTime.h>
 #include <awui/Drawing/Image.h>
+#include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
 #include <awui/Emulation/Spectrum/SoundSDL.h>
 #include <awui/Emulation/Spectrum/TapeCorder.h>
@@ -26,6 +27,7 @@ using namespace awui::Emulation::Spectrum;
 using namespace awui::IO;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
+using namespace awui::Emulation::Common;
 
 void WriteCassetteCB(int32_t value, void *data) { /* printf("%d\n", value); */
 }
@@ -592,12 +594,12 @@ awui::String Spectrum::GetStateFile() const {
 bool Spectrum::SaveAutoState() {
 	std::vector<uint8_t> data(Motherboard::GetSaveSize());
 	m_motherboard->SaveState(data.data());
-	return WriteStateFile(String::Concat(m_romFile, ".autostate"), data.data(), (int) data.size());
+	return WriteStateFile(SavePaths::GetWritePath(String::Concat(m_romFile, ".autostate")), data.data(), (int) data.size());
 }
 
 bool Spectrum::LoadAutoState() {
 	std::vector<uint8_t> data(Motherboard::GetSaveSize());
-	if (!ReadStateFile(String::Concat(m_romFile, ".autostate"), data.data(), (int) data.size()))
+	if (!ReadStateFile(SavePaths::GetReadPath(String::Concat(m_romFile, ".autostate")), data.data(), (int) data.size()))
 		return false;
 
 	m_motherboard->LoadState(data.data());
@@ -606,7 +608,7 @@ bool Spectrum::LoadAutoState() {
 }
 
 void Spectrum::LoadState() {
-	String name = GetStateFile();
+	String name = SavePaths::GetReadPath(GetStateFile());
 
 	if (File::Exists(name)) {
 		Console::Write("Cargando: ");
@@ -636,7 +638,7 @@ void Spectrum::LoadState() {
 }
 
 void Spectrum::SaveState() {
-	String name = GetStateFile();
+	String name = SavePaths::GetWritePath(GetStateFile());
 
 	Console::Write("Guardando: ");
 	Console::WriteLine(name);

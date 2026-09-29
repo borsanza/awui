@@ -6,6 +6,8 @@
 
 #include "formArcade.h"
 
+#include <awui/Console.h>
+#include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Windows/Forms/Station/Settings/SettingsStore.h>
 #include <awui/Windows/Forms/Station/StationUI.h>
 
@@ -25,6 +27,14 @@ FormArcade::~FormArcade() {
 
 void FormArcade::InitializeComponent() {
 	SetBackColor(Color::FromArgb(0, 0, 0));
+
+	// Partidas (.sav, estados) fuera de roms/, que puede ser de solo lectura: en la carpeta de datos del usuario
+	// o en la que diga "saveDirectory" en settings.json
+	String saveDirectory = Settings::SettingsStore::Instance().GetString("saveDirectory").c_str();
+	if (saveDirectory.GetLength() == 0)
+		saveDirectory = awui::Emulation::Common::SavePaths::GetDefaultDirectory("stationtv");
+	awui::Emulation::Common::SavePaths::Configure(saveDirectory, "./roms/");
+	awui::Console::WriteLine(String("Partidas guardadas en: ") + saveDirectory);
 
 	m_stationUI = new StationUI();
 	m_stationUI->SetPath("./roms/");
