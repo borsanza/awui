@@ -85,9 +85,13 @@ float ColorF::GetSaturation() const {
 
 	double C = M - m;
 
+	// Gris, blanco o negro: sin saturación (y 1 - |2L - 1| sería 0 en el blanco y el negro: 0 / 0)
+	if (C == 0)
+		return 0.0f;
+
 	double L = ((M + m) / 2.0) / 255.0;
 
-	double value = C / (1 - Math::Abs((2.0 * L) - 1.0));
+	double value = C / (1.0 - Math::Abs((2.0 * L) - 1.0));
 
 	value /= 255.0;
 
