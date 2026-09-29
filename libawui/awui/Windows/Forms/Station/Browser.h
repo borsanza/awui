@@ -15,7 +15,7 @@ namespace awui::Windows::Forms::Station {
 
 	  public:
 		Browser();
-		virtual ~Browser();
+		virtual ~Browser() = default;
 
 		virtual bool IsClass(Classes objectClass) const override;
 
@@ -23,5 +23,6 @@ namespace awui::Windows::Forms::Station {
 		Page *GetPage() const { return m_page; };
 
 		virtual void OnTick(float deltaSeconds) override;
+		virtual void OnWidgetRemoved(Control *control) override;
 	};
 } // namespace awui::Windows::Forms::Station

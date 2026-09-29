@@ -53,7 +53,8 @@ Form::Form() {
 
 	Stats *stats = Stats::Instance();
 	stats->SetDock(DockStyle::None);
-	AddWidget(stats);
+	// Es único y compartido: el formulario no lo borra
+	AddWidget(stats, WidgetOwnership::Borrowed);
 }
 
 Form::~Form() {

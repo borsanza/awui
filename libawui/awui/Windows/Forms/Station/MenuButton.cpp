@@ -30,11 +30,10 @@ MenuButton::MenuButton(StationUI *station) {
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
 
-	AddWidget(&m_label);
+	AddWidget(&m_label, WidgetOwnership::Borrowed);
 }
 
 MenuButton::~MenuButton() {
-	RemoveWidget(&m_label);
 }
 
 bool MenuButton::IsClass(Classes objectClass) const {

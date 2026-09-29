@@ -96,14 +96,9 @@ StationUI::StationUI() {
 }
 
 StationUI::~StationUI() {
-	// m_fade es un miembro: si está en el árbol (durante un fundido), ~Control le haría delete
-	if (IndexOf(&m_fade) != -1) {
-		RemoveWidget(&m_fade);
-	}
-
-	// Los botones de los nodos son hijos de sus páginas: se suelta la que se ve antes de borrarlos
-	m_browser->SetPage(nullptr);
-
+	// Los nodos son dueños de sus botones, páginas y emuladores: al borrarlos se sueltan solos del árbol
+	m_arcade = nullptr;
+	m_backgroundFader->Clear();
 	if (m_root) {
 		delete m_root;
 		m_root = nullptr;
@@ -119,6 +114,9 @@ void StationUI::SetPath(const String path) {
 }
 
 void StationUI::Clear() {
+	// Lo que se muestra es de los nodos que se van a borrar
+	SetArcade(nullptr);
+	m_backgroundFader->Clear();
 	m_noRoms = nullptr;
 	if (m_root) {
 		delete m_root;
@@ -303,7 +301,7 @@ void StationUI::RefreshList() {
 			child->m_button->SetHeight(MENUBUTTONHEIGHT);
 			child->m_button->SetLocation(40, y);
 			y += MENUBUTTONHEIGHT;
-			m_actual->m_page->AddWidget(child->m_button);
+			m_actual->m_page->AddWidget(child->m_button, WidgetOwnership::Borrowed);
 			if (i == 0) {
 				child->m_button->SetFocus();
 			}
@@ -393,7 +391,7 @@ void StationUI::SelectChild(NodeFile *node) {
 			}
 
 			if (IndexOf(&m_fade) == -1) {
-				AddWidget(&m_fade);
+				AddWidget(&m_fade, WidgetOwnership::Borrowed);
 			}
 
 			MoveToEnd(&m_fade);
@@ -433,14 +431,14 @@ void StationUI::SetArcade(Emulators::ArcadeContainer *arcade) {
 	}
 
 	if (m_arcade && arcade) {
-		ReplaceWidget(m_arcade, arcade);
+		ReplaceWidget(m_arcade, arcade, WidgetOwnership::Borrowed);
 	} else {
 		if (m_arcade) {
 			RemoveWidget(m_arcade);
 		}
 
 		if (arcade) {
-			AddWidget(arcade);
+			AddWidget(arcade, WidgetOwnership::Borrowed);
 		}
 	}
 
@@ -496,7 +494,7 @@ void StationUI::ExitingArcade() {
 	m_controlBase->SetVisible(true);
 
 	m_fade.HideFade();
-	AddWidget(&m_fade);
+	AddWidget(&m_fade, WidgetOwnership::Borrowed);
 	m_arcade->SetFocusable(false);
 	m_browser->SetFocus();
 }
@@ -638,10 +636,12 @@ NodeFile::NodeFile() {
 	m_button = nullptr;
 	m_page = nullptr;
 	m_arcade = nullptr;
+	m_background = nullptr;
 }
 
+// El nodo es dueño de su botón, de la página con los botones de sus hijos, de su emulador (en el árbol de
+// controles están prestados) y de su imagen de fondo. Primero los hijos, que vacían la página al borrar sus botones
 NodeFile::~NodeFile() {
-	// printf("%d) ~NodeFile:  %s\n", _emulator, _path.ToCharArray());
 	if (m_childList) {
 		for (int i = 0; i < m_childList->GetCount(); i++) {
 			NodeFile *object = (NodeFile *) m_childList->GetByIndex(i);
@@ -651,7 +651,8 @@ NodeFile::~NodeFile() {
 		delete m_childList;
 	}
 
-	if (m_button) {
-		delete m_button;
-	}
+	delete m_page;
+	delete m_button;
+	delete m_arcade;
+	delete m_background;
 }

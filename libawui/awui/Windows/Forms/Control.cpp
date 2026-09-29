@@ -47,6 +47,7 @@ Control::Control() {
 	m_mouseEventArgs = new MouseEventArgs();
 	m_mouseControl = NULL;
 	m_parent = NULL;
+	m_ownedByParent = true;
 	m_needRefresh = 1;
 	m_dock = DockStyle::None;
 	m_backColor = Color::FromArgb(0, 0, 0, 0);
@@ -59,13 +60,23 @@ Control::Control() {
 }
 
 Control::~Control() {
+	// Si aún está en el árbol, se suelta: el padre no se queda con un puntero a un control borrado
+	if (m_parent) {
+		m_parent->RemoveWidget(this);
+	}
+
 	delete m_font;
 	delete m_mouseEventArgs;
 
+	// Los hijos se sueltan antes de borrarlos (si no, al destruirse intentarían soltarse de este) y solo se
+	// borran los que son suyos
 	while (m_controls->GetCount() > 0) {
 		Control *control = (Control *) m_controls->Get(0);
-		delete control;
 		m_controls->RemoveAt(0);
+		control->m_parent = nullptr;
+		if (control->m_ownedByParent) {
+			delete control;
+		}
 	}
 
 	m_controls->Clear();
@@ -1046,7 +1057,7 @@ bool Control::IsFocused() const {
  *
  * @param control El control a agregar.
  */
-void Control::AddWidget(Control *control) {
+void Control::AddWidget(Control *control, WidgetOwnership ownership) {
 	assert(control && !m_controls->Contains(control) && control->GetParent() == nullptr);
 	if (!control || m_controls->Contains(control) || control->GetParent() != nullptr) {
 		return;
@@ -1058,6 +1069,7 @@ void Control::AddWidget(Control *control) {
 
 	m_controls->Add(control);
 	control->SetParent(this);
+	control->m_ownedByParent = (ownership == WidgetOwnership::Owned);
 
 	FixFocusImpl();
 
@@ -1082,6 +1094,7 @@ void Control::RemoveWidget(Control *control) {
 	control->SetParent(nullptr);
 
 	FixFocusImpl();
+	OnWidgetRemoved(control);
 }
 
 /**
@@ -1112,7 +1125,7 @@ void Control::ForgetMouse() {
  * @param oldControl Control a reemplazar.
  * @param newControl Nuevo control a insertar.
  */
-void Control::ReplaceWidget(Control *oldControl, Control *newControl) {
+void Control::ReplaceWidget(Control *oldControl, Control *newControl, WidgetOwnership ownership) {
 	assert((oldControl != nullptr) && (newControl != nullptr) && (oldControl != newControl) && (m_controls->Contains(oldControl)) && newControl->GetParent() == nullptr);
 	if (oldControl == nullptr || newControl == nullptr || oldControl == newControl || !m_controls->Contains(oldControl) || newControl->GetParent() != nullptr) {
 		return;
@@ -1122,8 +1135,10 @@ void Control::ReplaceWidget(Control *oldControl, Control *newControl) {
 	oldControl->SetParent(nullptr);
 	m_controls->Replace(oldControl, newControl);
 	newControl->SetParent(this);
+	newControl->m_ownedByParent = (ownership == WidgetOwnership::Owned);
 
 	FixFocusImpl();
+	OnWidgetRemoved(oldControl);
 }
 
 /**

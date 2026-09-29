@@ -19,10 +19,8 @@ FormArcade::FormArcade() {
 	InitializeComponent();
 }
 
+// m_stationUI es hijo del formulario (lo borra Control)
 FormArcade::~FormArcade() {
-	// Es hijo del formulario: si no se saca, ~Control lo borraría otra vez
-	RemoveWidget(m_stationUI);
-	delete m_stationUI;
 }
 
 void FormArcade::InitializeComponent() {

@@ -43,19 +43,16 @@ Browser::Browser() {
 	m_gradientRight.SetColor(3, ColorF::FromArgb(0, 0, 0, 0));
 	m_gradientRight.SetDock(DockStyle::None);
 
-	AddWidget(&m_gradientUp);
-	AddWidget(&m_gradientBottom);
-	AddWidget(&m_gradientLeft);
-	AddWidget(&m_gradientRight);
+	AddWidget(&m_gradientUp, WidgetOwnership::Borrowed);
+	AddWidget(&m_gradientBottom, WidgetOwnership::Borrowed);
+	AddWidget(&m_gradientLeft, WidgetOwnership::Borrowed);
+	AddWidget(&m_gradientRight, WidgetOwnership::Borrowed);
 }
 
-// El destructor de Control borra los hijos que queden: los degradados son miembros y la página es de quien la creó
-Browser::~Browser() {
-	SetPage(nullptr);
-	RemoveWidget(&m_gradientUp);
-	RemoveWidget(&m_gradientBottom);
-	RemoveWidget(&m_gradientLeft);
-	RemoveWidget(&m_gradientRight);
+// Si la página sale del Browser (o se destruye), se olvida
+void Browser::OnWidgetRemoved(Control *control) {
+	if (control == m_page)
+		m_page = nullptr;
 }
 
 bool Browser::IsClass(Classes objectClass) const {
@@ -123,12 +120,12 @@ void Browser::SetPage(Page *page) {
 	if (m_page)
 		RemoveWidget(m_page);
 
-	// nullptr: solo se quita la página actual (no se borra, es de quien la creó)
+	// La página es de quien la creó (nullptr: solo se quita la actual)
 	m_page = page;
 	if (!m_page)
 		return;
 
-	AddWidget(m_page);
+	AddWidget(m_page, WidgetOwnership::Borrowed);
 
 	MoveToEnd(&m_gradientUp);
 	MoveToEnd(&m_gradientBottom);

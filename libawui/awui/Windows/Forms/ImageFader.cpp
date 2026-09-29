@@ -13,6 +13,7 @@ using namespace awui::Windows::Forms;
 ImageFader::ImageFader() {
 	m_class = Classes::ImageFader;
 	m_imageShowing = nullptr;
+	m_imageToShow = nullptr;
 	m_state = State::FadeIn;
 	m_percentage = 0.0f;
 	m_speedFadeOut = 5.0f;
@@ -49,6 +50,13 @@ void ImageFader::SetImage(Bitmap *image) {
 		// Si hay una imagen mostrándose, iniciar el FadeOut para la transición.
 		m_state = State::FadeOut;
 	}
+}
+
+void ImageFader::Clear() {
+	m_imageShowing = nullptr;
+	m_imageToShow = nullptr;
+	m_percentage = 0.0f;
+	m_state = State::FadeIn;
 }
 
 void ImageFader::OnTick(float deltaSeconds) {

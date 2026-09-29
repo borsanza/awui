@@ -53,13 +53,7 @@ SettingsUI::SettingsUI() {
 SettingsUI::~SettingsUI() {
 	DeletePages();
 
-	// El fader (hijo) lo borra Control, pero la imagen que muestra no
-	if (m_backgroundFader) {
-		RemoveWidget(m_backgroundFader);
-		delete m_backgroundFader;
-		m_backgroundFader = nullptr;
-	}
-
+	// El fader es hijo (lo borra Control); la imagen que muestra no
 	delete m_background;
 }
 

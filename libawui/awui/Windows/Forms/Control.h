@@ -23,6 +23,15 @@ namespace awui {
 		class JoystickButtonEventArgs;
 		class JoystickAxisMotionEventArgs;
 
+		// Quién libera un control hijo:
+		//   Owned: el padre (lo borra en su destructor). Para controles creados con new para ese padre.
+		//   Borrowed: otro (un miembro, un objeto compartido, algo de un modelo de datos). El padre solo lo suelta.
+		// Además, un control se suelta solo de su padre al destruirse, así que borrarlo nunca deja punteros colgando.
+		enum class WidgetOwnership {
+			Owned,
+			Borrowed,
+		};
+
 		enum class DockStyle {
 			None,
 			Top,
@@ -38,6 +47,7 @@ namespace awui {
 		  private:
 			ArrayList *m_controls;
 			Control *m_parent;
+			bool m_ownedByParent; // Lo borra su padre al destruirse (WidgetOwnership::Owned)
 			static Bitmap *m_selectedBitmap;
 
 			// Sirve para saber en que orden se han insertado los componentes
@@ -143,13 +153,13 @@ namespace awui {
 			int GetRight() const;
 			int GetBottom() const;
 
-			void AddWidget(Control *control);
+			void AddWidget(Control *control, WidgetOwnership ownership = WidgetOwnership::Owned);
 			void RemoveWidget(Control *control);
 			int GetCount() const { return m_controls->GetCount(); }
 			int IndexOf(Control *control) const { return m_controls->IndexOf(control); }
 			Control *Get(int index) const { return (Control *) m_controls->Get(index); }
 			void MoveToEnd(Control *item);
-			void ReplaceWidget(Control *oldItem, Control *newItem);
+			void ReplaceWidget(Control *oldItem, Control *newItem, WidgetOwnership ownership = WidgetOwnership::Owned);
 
 			Color GetBackColor();
 			void SetBackColor(const Color color);
@@ -193,6 +203,8 @@ namespace awui {
 			virtual void OnPaint(OpenGL::GL *gl);
 			virtual void OnResize() {}
 			virtual void OnTick(float deltaSeconds) {}
+			// Un hijo acaba de salir (RemoveWidget, ReplaceWidget o porque se ha destruido)
+			virtual void OnWidgetRemoved(Control *control) {}
 			void SetScissorEnabled(bool mode);
 			bool GetScissorEnabled();
 

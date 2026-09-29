@@ -35,13 +35,11 @@ ConfigButton::ConfigButton(TypeButton typeButton) {
 
 	m_value.SetTextAlign(ContentAlignment::MiddleRight);
 
-	AddWidget(&m_label);
-	AddWidget(&m_value);
+	AddWidget(&m_label, WidgetOwnership::Borrowed);
+	AddWidget(&m_value, WidgetOwnership::Borrowed);
 }
 
 ConfigButton::~ConfigButton() {
-	RemoveWidget(&m_value);
-	RemoveWidget(&m_label);
 }
 
 bool ConfigButton::IsClass(Classes objectClass) const {

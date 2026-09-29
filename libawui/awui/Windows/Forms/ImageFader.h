@@ -36,6 +36,8 @@ namespace awui {
 			virtual bool IsClass(Classes objectClass) const override;
 
 			void SetImage(Bitmap *image);
+			// Deja de mostrar imagen al momento (antes de borrar la que muestra)
+			void Clear();
 			void SetColor(ColorF color);
 			void SetSpeedFadeOut(float speed) { m_speedFadeOut = speed; }
 			void SetSpeedFadeIn(float speed) { m_speedFadeIn = speed; }
