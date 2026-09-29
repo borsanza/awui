@@ -23,13 +23,18 @@ namespace awui::IO {
 		void SetLength(uint32_t value);
 
 		uint32_t GetCapacity();
+		// Conserva el contenido que quepa; lo nuevo queda a cero
 		void SetCapacity(uint32_t value);
 
+		// Fuera de la capacidad se lee 0 y las escrituras se ignoran
 		virtual uint8_t ReadByte();
 		virtual void WriteByte(uint8_t value);
 
-		inline uint8_t ReadByte(uint32_t pos) const { return this->_data[pos]; }
-		inline void WriteByte(uint32_t pos, uint8_t value) { this->_data[pos] = value; }
+		inline uint8_t ReadByte(uint32_t pos) const { return (pos < this->_capacity) ? this->_data[pos] : 0; }
+		inline void WriteByte(uint32_t pos, uint8_t value) {
+			if (pos < this->_capacity)
+				this->_data[pos] = value;
+		}
 
 		uint32_t GetCRC32() const;
 

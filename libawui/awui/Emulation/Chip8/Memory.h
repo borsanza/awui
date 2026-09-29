@@ -15,6 +15,8 @@ namespace awui {
 			String _file;
 
 		  public:
+			static const int64_t MaxCapacity = 0x1000000;
+
 			Memory(int32_t capacity);
 			virtual ~Memory();
 

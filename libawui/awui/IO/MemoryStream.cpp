@@ -8,15 +8,16 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 using namespace awui::IO;
 
 MemoryStream::MemoryStream(uint32_t capacity) {
 	this->_data = 0;
 	this->_capacity = 0;
-	this->SetCapacity(capacity);
 	this->_position = 0;
 	this->_length = 0;
+	this->SetCapacity(capacity);
 }
 
 MemoryStream::~MemoryStream() {
@@ -52,12 +53,18 @@ void MemoryStream::SetCapacity(uint32_t value) {
 	if (this->_capacity == value)
 		return;
 
-	if (this->_data)
+	uint8_t *data = (uint8_t *) calloc(value ? value : 1, sizeof(uint8_t));
+	if (this->_data) {
+		memcpy(data, this->_data, (this->_capacity < value) ? this->_capacity : value);
 		free(this->_data);
+	}
 
-	this->_data = (uint8_t *) malloc(sizeof(uint8_t *) * value);
+	this->_data = data;
 	this->_capacity = value;
-	this->Clear();
+	if (this->_length > value)
+		this->_length = value;
+	if (this->_position > value)
+		this->_position = value;
 }
 
 uint32_t MemoryStream::GetCapacity() {
@@ -65,6 +72,9 @@ uint32_t MemoryStream::GetCapacity() {
 }
 
 uint8_t MemoryStream::ReadByte() {
+	if (this->_position >= this->_capacity)
+		return 0;
+
 	uint8_t r = this->_data[this->_position];
 	if (this->_position < this->_length)
 		this->_position++;
@@ -72,6 +82,9 @@ uint8_t MemoryStream::ReadByte() {
 }
 
 void MemoryStream::WriteByte(uint8_t value) {
+	if (this->_position >= this->_capacity)
+		return;
+
 	this->_data[this->_position] = value;
 	this->_position++;
 	if (this->_position > this->_length)
