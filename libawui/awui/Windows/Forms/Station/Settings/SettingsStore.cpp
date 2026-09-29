@@ -8,6 +8,7 @@
 
 #include <awui/Configuration.h>
 #include <awui/Console.h>
+#include <awui/Localization.h>
 
 #include <fstream>
 
@@ -51,12 +52,10 @@ void SettingsStore::CollectDefaults(const json &items) {
 			if (item.contains("defaultValue"))
 				m_defaults[key] = item["defaultValue"];
 
-			if (item.contains("options") && item["options"].is_array()) {
+			if (item.contains("options")) {
 				m_options[key] = json::array();
-				for (const auto &option : item["options"]) {
-					if (option.is_object() && option.contains("code") && option["code"].is_string())
-						m_options[key].push_back(option["code"]);
-				}
+				for (const auto &option : GetOptions(item))
+					m_options[key].push_back(option.first);
 			}
 		}
 
@@ -97,30 +96,27 @@ void SettingsStore::SetString(const std::string &key, const std::string &value) 
 	Configuration::getInstance(VALUES_FILE).Write(key, value);
 }
 
-String SettingsStore::Translate(const json &text) {
-	if (text.is_string())
-		return text.get<std::string>().c_str();
+std::vector<std::pair<std::string, std::string>> SettingsStore::GetOptions(const json &item) {
+	std::vector<std::pair<std::string, std::string>> options;
+	if (!item.contains("options"))
+		return options;
 
-	if (!text.is_object() || text.empty())
-		return "";
+	const json &list = item["options"];
+	if (list.is_string() && (list.get<std::string>() == "languages")) {
+		// El nombre de cada idioma se muestra en su propio idioma (no es una clave de traducción)
+		for (const auto &language : Localization::GetLanguages())
+			options.push_back({language.first, language.second.ToCharArray()});
 
-	// Idioma elegido; si falta, inglés; si tampoco, el primero que haya
-	std::string language = GetString("language");
-	for (const std::string &code : {language, std::string("en_US")}) {
-		if (text.contains(code) && text[code].is_string())
-			return text[code].get<std::string>().c_str();
+		return options;
 	}
 
-	const json &first = text.begin().value();
-	return first.is_string() ? first.get<std::string>().c_str() : "";
-}
+	if (!list.is_array())
+		return options;
 
-String SettingsStore::Text(const std::string &id) {
-	static const json texts = {
-		{"settings", {{"en_US", "Settings"}, {"es_ES", "Ajustes"}}},
-		{"on", {{"en_US", "On"}, {"es_ES", "Sí"}}},
-		{"off", {{"en_US", "Off"}, {"es_ES", "No"}}},
-	};
+	for (const auto &option : list) {
+		if (option.is_object() && option.contains("code") && option["code"].is_string() && option.contains("name") && option["name"].is_string())
+			options.push_back({option["code"].get<std::string>(), option["name"].get<std::string>()});
+	}
 
-	return texts.contains(id) ? Translate(texts[id]) : String(id.c_str());
+	return options;
 }

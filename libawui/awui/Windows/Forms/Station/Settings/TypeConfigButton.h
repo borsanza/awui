@@ -6,5 +6,6 @@ namespace awui::Windows::Forms::Station::Settings {
 		Boolean,
 		List,
 		Label,
+		Option, // Una opción dentro de la página de una lista
 	};
 }

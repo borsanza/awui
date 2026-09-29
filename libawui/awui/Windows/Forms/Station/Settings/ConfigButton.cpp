@@ -77,6 +77,29 @@ void ConfigButton::OnPaint(GL *gl) {
 		glEnd();
 		glDisable(GL_LINE_SMOOTH);
 	}
+
+	// Marca de la opción elegida
+	if ((m_typeButton == TypeButton::Option) && m_boolValue) {
+		glLineWidth(3.0f);
+
+		float x = GetWidth() - 22.0f;
+		float y = (GetHeight() / 2.0f) - 0.5f;
+
+		Form *form = GetForm();
+		if (form && (form->GetChildFocused() == this)) {
+			glColor3ub(255, 255, 255);
+		} else {
+			glColor3ub(199, 199, 199);
+		}
+
+		glEnable(GL_LINE_SMOOTH);
+		glBegin(GL_LINE_STRIP);
+		glVertex2f(x - 20.0f + OFFSET, y + OFFSET);
+		glVertex2f(x - 12.0f + OFFSET, y + 8.0f + OFFSET);
+		glVertex2f(x + OFFSET, y - 10.0f + OFFSET);
+		glEnd();
+		glDisable(GL_LINE_SMOOTH);
+	}
 }
 
 void ConfigButton::SetText(const String str) {
@@ -107,7 +130,7 @@ int ConfigButton::GetLabelWidth() const {
 
 void ConfigButton::OnResize() {
 	m_label.SetLocation(23, 0);
-	if (IsGroup()) {
+	if (IsGroup() || (m_typeButton == TypeButton::Option)) {
 		m_label.SetSize(GetWidth() - (50 + m_label.GetLeft()), GetHeight());
 		m_value.SetSize(0, GetHeight());
 		return;
@@ -162,7 +185,17 @@ std::string ConfigButton::GetListValue() const {
 	return (m_selected >= 0) ? m_options[m_selected].first : "";
 }
 
-// Cambia el valor (sí/no alterna, las listas avanzan o retroceden de forma circular) y avisa a los listeners
+void ConfigButton::SetListValue(const std::string &code) {
+	for (int i = 0; i < (int) m_options.size(); i++) {
+		if (m_options[i].first == code) {
+			m_selected = i;
+			UpdateValueText();
+			return;
+		}
+	}
+}
+
+// Cambia el valor (sí/no alterna, las listas avanzan o retroceden de forma circular) y avisa con onValueChanged
 void ConfigButton::Step(int direction) {
 	switch (m_typeButton) {
 		case TypeButton::Boolean:
@@ -180,7 +213,8 @@ void ConfigButton::Step(int direction) {
 	}
 
 	UpdateValueText();
-	Click();
+	if (m_onValueChanged)
+		m_onValueChanged(this);
 }
 
 void ConfigButton::Click() {
@@ -252,10 +286,18 @@ bool ConfigButton::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 bool ConfigButton::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	switch (button) {
 		case RemoteButtons::Ok:
-			if (IsGroup())
-				Click();
-			else
-				Step(1);
+			switch (m_typeButton) {
+				case TypeButton::Boolean:
+					Step(1);
+					break;
+				case TypeButton::Group:
+				case TypeButton::List:
+				case TypeButton::Option:
+					Click();
+					break;
+				default:
+					break;
+			}
 			break;
 		case RemoteButtons::Menu: {
 			// Copia: el listener puede cerrar el menú

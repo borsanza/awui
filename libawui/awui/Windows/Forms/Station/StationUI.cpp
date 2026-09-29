@@ -10,6 +10,7 @@
 #include <awui/Console.h>
 #include <awui/Emulation/Common/AudioSettings.h>
 #include <awui/Emulation/MasterSystem/SoundSDL.h>
+#include <awui/Localization.h>
 #include <awui/Math.h>
 #include <awui/Windows/Emulators/ArcadeContainer.h>
 #include <awui/Windows/Forms/Bitmap.h>
@@ -46,6 +47,7 @@ StationUI::StationUI() {
 	m_settingsUI = nullptr;
 	m_closeSettings = false;
 	m_clock24 = true;
+	m_noRoms = nullptr;
 
 	m_backgroundFader = new ImageFader();
 	m_backgroundFader->SetDock(DockStyle::Fill);
@@ -105,6 +107,7 @@ void StationUI::SetPath(const String path) {
 }
 
 void StationUI::Clear() {
+	m_noRoms = nullptr;
 	if (m_root) {
 		delete m_root;
 		m_root = 0;
@@ -267,7 +270,8 @@ void StationUI::Refresh() {
 	if (!m_root->m_childList) {
 		m_root->m_childList = new SortedList();
 		NodeFile *child = new NodeFile();
-		child->m_name = "No hay roms";
+		child->m_name = Localization::Tr("station.noRoms");
+		m_noRoms = child;
 		child->m_directory = false;
 		child->m_button = new MenuButton(this);
 		child->m_button->SetNodeFile(child);
@@ -498,6 +502,12 @@ void StationUI::CloseSettings() {
 // Aplica los ajustes guardados. Se llama al arrancar y cada vez que cambia uno en el menú
 void StationUI::ApplySettings() {
 	SettingsStore &settings = SettingsStore::Instance();
+
+	Localization::SetLanguage(settings.GetString("language"));
+	if (m_noRoms) {
+		m_noRoms->m_name = Localization::Tr("station.noRoms");
+		m_noRoms->m_button->SetText(m_noRoms->m_name);
+	}
 
 	Form *form = GetForm();
 	if (form) {

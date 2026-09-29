@@ -1,119 +1,134 @@
 [
     {
-        "name": {"en_US": "General", "es_ES": "General"},
+        "name": "settings.general",
         "type": "group",
         "items": [
             {
                 "key": "language",
-                "name": {"en_US": "Language", "es_ES": "Idioma"},
-                "description": {"en_US": "Language of the settings menu.", "es_ES": "Idioma del menú de ajustes."},
+                "name": "settings.language",
+                "description": "settings.language.desc",
                 "type": "list",
                 "defaultValue": "es_ES",
-                "options": [
-                    {"code": "en_US", "name": "English"},
-                    {"code": "es_ES", "name": "Español"}
-                ]
+                "options": "languages"
             },
             {
                 "key": "clock",
-                "name": {"en_US": "Clock", "es_ES": "Reloj"},
-                "description": {"en_US": "Show the clock in the top right corner.", "es_ES": "Muestra el reloj en la esquina superior derecha."},
+                "name": "settings.clock",
+                "description": "settings.clock.desc",
                 "type": "boolean",
                 "defaultValue": true
             },
             {
                 "key": "timeFormat",
-                "name": {"en_US": "Time format", "es_ES": "Formato de hora"},
-                "description": {"en_US": "Choose between a 12-hour or 24-hour clock.", "es_ES": "Elige entre reloj de 12 o de 24 horas."},
+                "name": "settings.timeFormat",
+                "description": "settings.timeFormat.desc",
                 "type": "list",
                 "defaultValue": "24",
                 "options": [
-                    {"code": "12", "name": {"en_US": "12 hour", "es_ES": "12 horas"}},
-                    {"code": "24", "name": {"en_US": "24 hour", "es_ES": "24 horas"}}
+                    {
+                        "code": "12",
+                        "name": "settings.timeFormat.12"
+                    },
+                    {
+                        "code": "24",
+                        "name": "settings.timeFormat.24"
+                    }
                 ]
             }
         ]
     },
     {
-        "name": {"en_US": "Video", "es_ES": "Vídeo"},
+        "name": "settings.video",
         "type": "group",
         "items": [
             {
                 "key": "fullScreen",
-                "name": {"en_US": "Fullscreen", "es_ES": "Pantalla completa"},
-                "description": {"en_US": "Use the whole screen instead of a window.", "es_ES": "Usa toda la pantalla en vez de una ventana."},
+                "name": "settings.fullScreen",
+                "description": "settings.fullScreen.desc",
                 "type": "boolean",
                 "defaultValue": false
             },
             {
                 "key": "vsync",
-                "name": {"en_US": "Vertical sync", "es_ES": "Sincronización vertical"},
-                "description": {"en_US": "Synchronize with the screen refresh to avoid tearing. The 5 key also toggles it.", "es_ES": "Sincroniza con el refresco de la pantalla para evitar cortes en la imagen. También se cambia con la tecla 5."},
+                "name": "settings.vsync",
+                "description": "settings.vsync.desc",
                 "type": "boolean",
                 "defaultValue": true
             },
             {
                 "key": "fps",
-                "name": {"en_US": "Show FPS", "es_ES": "Mostrar FPS"},
-                "description": {"en_US": "Show the frames per second in the bottom right corner.", "es_ES": "Muestra los fotogramas por segundo en la esquina inferior derecha."},
+                "name": "settings.fps",
+                "description": "settings.fps.desc",
                 "type": "boolean",
                 "defaultValue": false
             }
         ]
     },
     {
-        "name": {"en_US": "Audio", "es_ES": "Sonido"},
+        "name": "settings.audio",
         "type": "group",
         "items": [
             {
                 "key": "sound",
-                "name": {"en_US": "Sound", "es_ES": "Sonido"},
-                "description": {"en_US": "Enable or disable the sound of all the emulators.", "es_ES": "Activa o desactiva el sonido de todos los emuladores."},
+                "name": "settings.sound",
+                "description": "settings.sound.desc",
                 "type": "boolean",
                 "defaultValue": true
             },
             {
                 "key": "volume",
-                "name": {"en_US": "Volume", "es_ES": "Volumen"},
-                "description": {"en_US": "Volume of the emulators.", "es_ES": "Volumen de los emuladores."},
+                "name": "settings.volume",
+                "description": "settings.volume.desc",
                 "type": "list",
                 "defaultValue": "100",
                 "options": [
-                    {"code": "25", "name": "25%"},
-                    {"code": "50", "name": "50%"},
-                    {"code": "75", "name": "75%"},
-                    {"code": "100", "name": "100%"}
+                    {
+                        "code": "25",
+                        "name": "25%"
+                    },
+                    {
+                        "code": "50",
+                        "name": "50%"
+                    },
+                    {
+                        "code": "75",
+                        "name": "75%"
+                    },
+                    {
+                        "code": "100",
+                        "name": "100%"
+                    }
                 ]
             },
             {
-                "name": {"en_US": "Master System channels", "es_ES": "Canales de Master System"},
+                "name": "settings.smsChannels",
                 "type": "group",
                 "items": [
                     {
                         "key": "channel1",
-                        "name": {"en_US": "Tone 1", "es_ES": "Tono 1"},
-                        "description": {"en_US": "First square wave channel of the PSG. In game it is toggled with the 1 key.", "es_ES": "Primer canal de onda cuadrada del PSG. En el juego se cambia con la tecla 1."},
+                        "name": "settings.channel1",
+                        "description": "settings.channel1.desc",
                         "type": "boolean",
                         "defaultValue": true
                     },
                     {
                         "key": "channel2",
-                        "name": {"en_US": "Tone 2", "es_ES": "Tono 2"},
-                        "description": {"en_US": "Second square wave channel of the PSG. In game it is toggled with the 2 key.", "es_ES": "Segundo canal de onda cuadrada del PSG. En el juego se cambia con la tecla 2."},
+                        "name": "settings.channel2",
+                        "description": "settings.channel2.desc",
                         "type": "boolean",
                         "defaultValue": true
                     },
                     {
                         "key": "channel3",
-                        "name": {"en_US": "Tone 3", "es_ES": "Tono 3"},
-                        "description": {"en_US": "Third square wave channel of the PSG. In game it is toggled with the 3 key.", "es_ES": "Tercer canal de onda cuadrada del PSG. En el juego se cambia con la tecla 3."},
+                        "name": "settings.channel3",
+                        "description": "settings.channel3.desc",
                         "type": "boolean",
                         "defaultValue": true
                     },
                     {
                         "key": "channel4",
-                        "name": {"en_US": "Noise", "es_ES": "Ruido"},
-                        "description": {"en_US": "Noise channel of the PSG (drums and effects). In game it is toggled with the 4 key.", "es_ES": "Canal de ruido del PSG (percusión y efectos). En el juego se cambia con la tecla 4."},
+                        "name": "settings.channel4",
+                        "description": "settings.channel4.desc",
                         "type": "boolean",
                         "defaultValue": true
                     }
@@ -122,22 +137,22 @@
         ]
     },
     {
-        "name": {"en_US": "About", "es_ES": "Acerca de"},
+        "name": "settings.about",
         "type": "group",
         "items": [
             {
-                "name": {"en_US": "Application", "es_ES": "Aplicación"},
+                "name": "settings.about.application",
                 "type": "label",
                 "defaultValue": "StationTV"
             },
             {
-                "name": {"en_US": "Version", "es_ES": "Versión"},
+                "name": "settings.about.version",
                 "type": "label",
                 "defaultValue": "0.1"
             },
             {
-                "name": {"en_US": "Emulators", "es_ES": "Emuladores"},
-                "description": {"en_US": "Master System, Game Gear, SG-1000, ZX Spectrum and Chip-8.", "es_ES": "Master System, Game Gear, SG-1000, ZX Spectrum y Chip-8."},
+                "name": "settings.about.emulators",
+                "description": "settings.about.emulators.desc",
                 "type": "label",
                 "defaultValue": "5"
             }

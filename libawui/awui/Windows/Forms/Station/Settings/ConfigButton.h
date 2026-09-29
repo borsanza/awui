@@ -21,19 +21,21 @@ namespace awui::Windows::Forms {
 			enum class TypeButton;
 
 			// Una fila del menú de ajustes: nombre a la izquierda y, si tiene, el valor a la derecha.
-			// Grupo: abre su subpágina. Sí/No y lista: OK o izquierda/derecha cambian el valor.
-			// A los listeners se les avisa con OnOk al abrir un grupo o cambiar el valor, y con OnMenu al pulsar atrás.
+			// Grupo, lista y opción: OK avisa a los listeners con OnOk (abrir el grupo, abrir la página de opciones
+			// de la lista o elegir la opción). Sí/No: OK cambia el valor. Sí/No y lista: izquierda/derecha cambian
+			// el valor. Los cambios de valor se avisan con onValueChanged y atrás con OnMenu.
 			class ConfigButton : public Control {
 			  private:
 				LabelButton m_label;
 				LabelButton m_value;
 				Page *m_subpage;
 				std::vector<Listeners::IRemoteListener *> m_listeners;
+				std::function<void(ConfigButton *)> m_onValueChanged;
 				TypeButton m_typeButton;
 				std::string m_key;
 				String m_description;
 
-				bool m_boolValue;
+				bool m_boolValue; // Sí/No: el valor. Opción: si es la elegida
 				String m_onText;
 				String m_offText;
 				std::vector<std::pair<std::string, String>> m_options; // código, nombre
@@ -73,6 +75,9 @@ namespace awui::Windows::Forms {
 				inline bool GetBoolValue() const { return m_boolValue; }
 				void SetOptions(const std::vector<std::pair<std::string, String>> &options, const std::string &selected);
 				std::string GetListValue() const;
+				void SetListValue(const std::string &code);
+				inline void SetChecked(bool checked) { m_boolValue = checked; }
+				inline void SetOnValueChanged(std::function<void(ConfigButton *)> onValueChanged) { m_onValueChanged = onValueChanged; }
 				void SetValueText(const String &text);
 
 				void Click();

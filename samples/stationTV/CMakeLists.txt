@@ -1,1 +1,1 @@
-awui_add_sample(stationTV FILES menu-settings.json)
+awui_add_sample(stationTV FILES menu-settings.json lang)

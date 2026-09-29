@@ -77,6 +77,7 @@ namespace awui {
 					String m_path;
 					NodeFile *m_root;
 					NodeFile *m_actual;
+					NodeFile *m_noRoms; // Aviso de lista vacía (su texto depende del idioma)
 					Emulators::ArcadeContainer *m_arcade;
 
 					Label *m_title;

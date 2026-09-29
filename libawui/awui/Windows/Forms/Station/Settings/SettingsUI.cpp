@@ -9,6 +9,7 @@
 #include <awui/Console.h>
 #include <awui/Core/Color.h>
 #include <awui/Drawing/Font.h>
+#include <awui/Localization.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>
 #include <awui/Windows/Forms/Label.h>
@@ -27,6 +28,11 @@ using namespace awui::Windows::Forms::Station::Settings;
 
 #define MENUBUTTONHEIGHT 70
 #define DESCRIPTIONHEIGHT 36
+
+// Los textos del esquema son claves de traducción (lang/<idioma>.json)
+static awui::String Translate(const json &key) {
+	return key.is_string() ? awui::Localization::Tr(key.get<std::string>()) : awui::String("");
+}
 
 SettingsUI::SettingsUI() {
 	m_class = Classes::SettingsUI;
@@ -101,7 +107,7 @@ void SettingsUI::ShowPage(Page *page) {
 
 void SettingsUI::UpdateTitle() {
 	if (m_path.empty())
-		m_title->SetText(SettingsStore::Instance().Text("settings"));
+		m_title->SetText(Localization::Tr("settings.title"));
 	else
 		m_title->SetText(m_path.back()->GetText());
 }
@@ -109,9 +115,10 @@ void SettingsUI::UpdateTitle() {
 // types:
 //    group:   name, items
 //    boolean: key, name, description, defaultValue
-//    list:    key, name, description, defaultValue, options [{code, name}]
+//    list:    key, name, description, defaultValue, options [{code, name}] o "languages"
 //    label:   name, description, defaultValue (solo se muestra)
-// Los textos (name, description) pueden ser una cadena o un objeto por idioma
+// name, description, el nombre de las opciones y el valor de label son claves de traducción: si una
+// no existe se muestra tal cual (sirve para textos que no se traducen, como "25%" o la versión)
 Page *SettingsUI::ProcessJson(const json &j) {
 	SettingsStore &store = SettingsStore::Instance();
 
@@ -143,16 +150,14 @@ Page *SettingsUI::ProcessJson(const json &j) {
 
 				button = new ConfigButton(TypeButton::Boolean);
 				button->SetKey(key);
-				button->SetBoolValue(store.GetBool(key), store.Text("on"), store.Text("off"));
+				button->SetBoolValue(store.GetBool(key), Localization::Tr("settings.on"), Localization::Tr("settings.off"));
 			} else if (typeName == "list") {
-				if (key.empty() || !element.contains("options") || !element["options"].is_array())
+				if (key.empty())
 					continue;
 
 				std::vector<std::pair<std::string, String>> options;
-				for (const auto &option : element["options"]) {
-					if (option.is_object() && option.contains("code") && option["code"].is_string() && option.contains("name"))
-						options.push_back({option["code"].get<std::string>(), store.Translate(option["name"])});
-				}
+				for (const auto &option : SettingsStore::GetOptions(element))
+					options.push_back({option.first, Localization::Tr(option.second)});
 
 				if (options.empty())
 					continue;
@@ -160,21 +165,42 @@ Page *SettingsUI::ProcessJson(const json &j) {
 				button = new ConfigButton(TypeButton::List);
 				button->SetKey(key);
 				button->SetOptions(options, store.GetString(key));
+
+				// Página con una fila por opción: OK en la lista la abre para elegir desplazándose por ella
+				String description = element.contains("description") ? Translate(element["description"]) : String("");
+				Page *optionsPage = new Page();
+				m_pages.push_back(optionsPage);
+				int optionY = 25;
+				for (const auto &option : options) {
+					ConfigButton *optionButton = new ConfigButton(TypeButton::Option);
+					optionButton->SetKey(option.first);
+					optionButton->SetText(option.second);
+					optionButton->SetDescription(description);
+					optionButton->SetHeight(MENUBUTTONHEIGHT);
+					optionButton->SetLocation(40, optionY);
+					optionButton->AddOnClickListener(this);
+					optionY += MENUBUTTONHEIGHT;
+					optionsPage->AddWidget(optionButton);
+				}
+
+				optionsPage->SetHeight(optionY + 25);
+				button->SetSubPage(optionsPage);
 			} else if (typeName == "label") {
 				button = new ConfigButton(TypeButton::Label);
 				if (element.contains("defaultValue"))
-					button->SetValueText(store.Translate(element["defaultValue"]));
+					button->SetValueText(Translate(element["defaultValue"]));
 			} else {
 				continue;
 			}
 
-			button->SetText(store.Translate(element["name"]));
+			button->SetText(Translate(element["name"]));
 			if (element.contains("description"))
-				button->SetDescription(store.Translate(element["description"]));
+				button->SetDescription(Translate(element["description"]));
 
 			button->SetHeight(MENUBUTTONHEIGHT);
 			button->SetLocation(40, posY);
 			button->AddOnClickListener(this);
+			button->SetOnValueChanged([this](ConfigButton *changed) { OnValueChanged(changed); });
 			posY += MENUBUTTONHEIGHT;
 
 			page->AddWidget(button);
@@ -306,13 +332,47 @@ void SettingsUI::OnOk(Control *sender) {
 	if (!sender->IsClass(Classes::ConfigButton))
 		return;
 
-	SettingsStore &store = SettingsStore::Instance();
 	ConfigButton *button = (ConfigButton *) sender;
 	switch (button->GetTypeButton()) {
 		case TypeButton::Group:
 			m_path.push_back(button);
 			ShowPage(button->GetSubPage());
-			return;
+			break;
+		case TypeButton::List: {
+			// Marca la opción actual y le da el foco
+			Page *optionsPage = button->GetSubPage();
+			for (int i = 0; i < optionsPage->GetCount(); i++) {
+				ConfigButton *option = (ConfigButton *) optionsPage->Get(i);
+				bool checked = option->GetKey() == button->GetListValue();
+				option->SetChecked(checked);
+				if (checked)
+					option->SetFocus();
+			}
+
+			m_path.push_back(button);
+			ShowPage(optionsPage);
+		} break;
+		case TypeButton::Option: {
+			// La lista es la página abierta: se elige la opción y se vuelve a ella
+			if (m_path.empty() || (m_path.back()->GetTypeButton() != TypeButton::List))
+				break;
+
+			ConfigButton *list = m_path.back();
+			bool changed = list->GetListValue() != button->GetKey();
+			list->SetListValue(button->GetKey());
+			OnMenu(button);
+			if (changed)
+				OnValueChanged(list);
+		} break;
+		default:
+			break;
+	}
+}
+
+// Guarda el valor que ha cambiado en una fila y avisa para aplicarlo
+void SettingsUI::OnValueChanged(ConfigButton *button) {
+	SettingsStore &store = SettingsStore::Instance();
+	switch (button->GetTypeButton()) {
 		case TypeButton::Boolean:
 			store.SetBool(button->GetKey(), button->GetBoolValue());
 			break;

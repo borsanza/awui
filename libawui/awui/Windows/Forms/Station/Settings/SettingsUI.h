@@ -46,6 +46,7 @@ namespace awui::Windows::Forms {
 				void UpdateTitle();
 				void UpdateDescription();
 				void Rebuild();
+				void OnValueChanged(ConfigButton *button);
 
 			  public:
 				SettingsUI();

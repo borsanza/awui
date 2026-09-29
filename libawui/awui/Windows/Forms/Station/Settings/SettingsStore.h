@@ -4,6 +4,8 @@
 
 #include <nlohmann/json.hpp>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace awui::Windows::Forms::Station::Settings {
 	// Ajustes de StationTV: el esquema (menú, tipos y valores por defecto) sale de menu-settings.json
@@ -29,9 +31,8 @@ namespace awui::Windows::Forms::Station::Settings {
 		void SetBool(const std::string &key, bool value);
 		void SetString(const std::string &key, const std::string &value);
 
-		// Un texto del esquema puede ser una cadena o un objeto por idioma: {"en_US": "...", "es_ES": "..."}
-		String Translate(const nlohmann::json &text);
-		// Textos fijos de la interfaz del menú
-		String Text(const std::string &id);
+		// Opciones de una lista del esquema: código y clave de traducción de su nombre.
+		// "options": "languages" en vez de un array es la lista de idiomas disponibles (ficheros de lang/)
+		static std::vector<std::pair<std::string, std::string>> GetOptions(const nlohmann::json &item);
 	};
 } // namespace awui::Windows::Forms::Station::Settings
