@@ -7,6 +7,7 @@
 #include "Image.h"
 
 #include <SDL_opengl.h>
+#include <awui/Console.h>
 #include <awui/String.h>
 #include <cairo.h>
 #include <stdlib.h>
@@ -18,29 +19,29 @@ using namespace awui::Drawing;
 ArrayList Image::list;
 
 Image::Image(int width, int height) {
-	m_class = Classes::Image;
-	m_texture = 0;
-	m_width = width;
-	m_height = height;
-	m_image = (unsigned char *) calloc(BTPP, m_width * m_height);
-	m_cairo_surface = cairo_image_surface_create_for_data(m_image, CAIRO_FORMAT_ARGB32, m_width, m_height, BTPP * m_width);
-	m_cr = cairo_create(m_cairo_surface);
-	m_loaded = false;
-
-	Image::list.Add(this);
+	Create(width, height);
 }
 
+// El PNG se pinta en el buffer propio: así se comporta como cualquier otra imagen (antes la textura se subía desde
+// un buffer nulo y quedaba vacía) y un PNG sin transparencia, que cairo carga como RGB24 con el cuarto byte sin
+// definir, queda opaco. Si no se puede leer, queda una imagen transparente de 1x1
 Image::Image(String filename) {
-	m_class = Classes::Image;
-	m_image = NULL;
-	m_texture = 0;
-	m_cairo_surface = cairo_image_surface_create_from_png(filename.ToCharArray());
-	m_width = cairo_image_surface_get_width(m_cairo_surface);
-	m_height = cairo_image_surface_get_height(m_cairo_surface);
-	m_cr = cairo_create(m_cairo_surface);
-	m_loaded = false;
+	cairo_surface_t *png = cairo_image_surface_create_from_png(filename.ToCharArray());
+	bool ok = cairo_surface_status(png) == CAIRO_STATUS_SUCCESS;
+	if (!ok) {
+		Console::Error->WriteLine("No se puede cargar la imagen: %s (%s)", filename.ToCharArray(), cairo_status_to_string(cairo_surface_status(png)));
+	}
 
-	Image::list.Add(this);
+	Create(ok ? cairo_image_surface_get_width(png) : 1, ok ? cairo_image_surface_get_height(png) : 1);
+
+	if (ok) {
+		cairo_set_source_surface(m_cr, png, 0, 0);
+		cairo_set_operator(m_cr, CAIRO_OPERATOR_SOURCE);
+		cairo_paint(m_cr);
+		cairo_set_operator(m_cr, CAIRO_OPERATOR_OVER);
+	}
+
+	cairo_surface_destroy(png);
 }
 
 Image::~Image() {
@@ -57,6 +58,20 @@ Image::~Image() {
 		free(m_image);
 
 	Unload();
+}
+
+// Toda imagen tiene su propio buffer ARGB32 (el que se sube a la textura y el que tocan SetPixel y Graphics)
+void Image::Create(int width, int height) {
+	m_class = Classes::Image;
+	m_texture = 0;
+	m_width = width;
+	m_height = height;
+	m_image = (unsigned char *) calloc(BTPP, m_width * m_height);
+	m_cairo_surface = cairo_image_surface_create_for_data(m_image, CAIRO_FORMAT_ARGB32, m_width, m_height, BTPP * m_width);
+	m_cr = cairo_create(m_cairo_surface);
+	m_loaded = false;
+
+	Image::list.Add(this);
 }
 
 bool Image::IsClass(Classes objectClass) const {
