@@ -34,9 +34,13 @@ bool SettingsUI::IsClass(Classes objectClass) const {
 }
 
 void SettingsUI::InitializeComponent() {
+	// Si el fichero falta o está mal escrito se muestra el menú vacío en vez de abortar (parse sin excepciones)
 	std::ifstream i("menu-settings.json");
-	json j;
-	i >> j;
+	json j = i ? json::parse(i, nullptr, false) : json();
+	if (!j.is_array()) {
+		Console::Error->WriteLine("menu-settings.json no existe o no es válido (se espera un array)");
+		j = json::array();
+	}
 
 	Font font = Font("Liberation Sans", 40, FontStyle::Bold);
 	m_title = new Label();
@@ -64,11 +68,11 @@ void SettingsUI::InitializeComponent() {
 //    label
 
 Page *SettingsUI::ProcessJson(const json &j, int depth) {
-	Page *page = nullptr;
+	// Siempre se devuelve una página, aunque quede vacía (quien llama la usa sin comprobar)
+	Page *page = new Page();
 	bool added = false;
 	int posY = 25;
 	if (j.is_array()) {
-		page = new Page();
 		// page->SetBackColor(Color::FromArgb(255, 0, 0));
 
 		for (const auto &element : j) {
@@ -80,8 +84,9 @@ Page *SettingsUI::ProcessJson(const json &j, int depth) {
 
 			switch (type) {
 				case TypeButton::Group: {
-					ConfigButton *button = new ConfigButton(TypeButton::Group);
-					if (element.contains("name")) {
+					// Un grupo sin nombre de texto no se muestra (y no se crea el botón, que quedaría sin dueño)
+					if (element.contains("name") && element["name"].is_string()) {
+						ConfigButton *button = new ConfigButton(TypeButton::Group);
 						// std::cout << std::string(depth * 2, ' ') << element["name"] << ":" << std::endl;
 						std::string test = element["name"].get<std::string>();
 						button->SetText(test.c_str());
@@ -127,6 +132,10 @@ Page *SettingsUI::ProcessJson(const json &j, int depth) {
 					if (element.contains("defaultValue")) {
 						// std::cout << element["defaultValue"] << std::endl;
 					}
+
+					// Con el json constante, pedir una clave que no existe es comportamiento indefinido
+					if (!element.contains("options"))
+						break;
 
 					for (const auto &option : element["options"]) {
 						// std::cout << std::string((depth + 1) * 2, ' ');
