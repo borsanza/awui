@@ -551,13 +551,13 @@ void Bitmap::PaintTexture(int left, int top, int right, int bottom) {
 }
 
 void Bitmap::PaintStretched() {
-	PaintTexture(0, 0, GetRight(), GetBottom());
+	PaintTexture(0, 0, GetWidth(), GetHeight());
 }
 
 void Bitmap::PaintAspectFit() {
 	// Obtener dimensiones del área de destino
-	int destWidth = GetRight();
-	int destHeight = GetBottom();
+	int destWidth = GetWidth();
+	int destHeight = GetHeight();
 
 	// Calcular la relación de aspecto de la imagen y del destino
 	float imageAspectRatio = static_cast<float>(m_textureWidth) / m_textureHeight;
@@ -587,8 +587,8 @@ void Bitmap::PaintAspectFit() {
 
 void Bitmap::PaintAspectFill() {
 	// Obtener dimensiones del área de destino
-	int destWidth = GetRight();
-	int destHeight = GetBottom();
+	int destWidth = GetWidth();
+	int destHeight = GetHeight();
 
 	// Calcular la relación de aspecto de la imagen y del destino
 	float imageAspectRatio = static_cast<float>(m_textureWidth) / m_textureHeight;
