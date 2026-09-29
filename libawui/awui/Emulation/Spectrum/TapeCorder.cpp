@@ -41,6 +41,7 @@ void TapeCorder::Clear() {
 		}
 
 		delete this->_list;
+		this->_list = NULL;
 	}
 }
 
@@ -63,8 +64,14 @@ void TapeCorder::LoadFile(const String fileParam) {
 				blocks.L = data;
 				break;
 			case 1:
-				state++;
 				blocks.H = data;
+				// Un bloque de longitud 0 no tiene datos: se ignora (si no, la longitud daría la vuelta a 0xFFFF)
+				if (blocks.W == 0) {
+					state = 0;
+					break;
+				}
+
+				state++;
 				block = new TapeBlock(blocks.W);
 				this->_list->Add(block);
 				cont = 0;
@@ -121,6 +128,12 @@ uint32_t TapeCorder::GetNext() {
 			return 735;
 
 		case 3: { // Mandar Datos
+			// Cinta sin bloques: no hay nada que mandar
+			if (this->_block >= this->_list->GetCount()) {
+				this->_state = 8;
+				return 945;
+			}
+
 			TapeBlock *tapeBlock = (TapeBlock *) this->_list->Get(this->_block);
 			uint8_t data = tapeBlock->GetByte(this->_posByte);
 			data = (data >> (7 - this->_posBit)) & 0x01;
@@ -191,7 +204,8 @@ void TapeCorder::SetFinishCassetteCB(void (*fun)(void *), void *data) {
 /******************************************************************************/
 
 TapeBlock::TapeBlock(int size) {
-	this->_data = (uint8_t *) malloc(size);
+	// A cero: si el fichero está cortado, los bytes que faltan se leen como 0 y no como basura
+	this->_data = (uint8_t *) calloc(size, 1);
 	this->_size = size;
 }
 
