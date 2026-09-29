@@ -183,16 +183,17 @@ void Graphics::DrawString(const String text, Drawing::Font *font, const Color co
 		cairo_antialias_t old = cairo_get_antialias(m_cr);
 		cairo_set_antialias(m_cr, cairo_antialias_t::CAIRO_ANTIALIAS_NONE);
 
+		// Las líneas van donde está la tinta del texto: de x + BORDER a x + BORDER + ancho (como el propio texto)
 		if (font->GetStrikeout()) {
 			float posy = y - (extents.y_bearing / 2.0f) + BORDER;
 			posy = Math::Round(posy);
-			DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
+			DrawLine(&pen, x + BORDER, posy, x + extents.width + BORDER, posy);
 		}
 
 		if (font->GetUnderline()) {
 			float posy = y - extents.y_bearing + BORDER + (size * 1.5f);
 			posy = Math::Round(posy);
-			DrawLine(&pen, BORDER, posy, extents.width + BORDER, posy);
+			DrawLine(&pen, x + BORDER, posy, x + extents.width + BORDER, posy);
 		}
 
 		cairo_set_antialias(m_cr, old);
