@@ -107,8 +107,7 @@ void Application::ProcessEvents() {
 	while (SDL_PollEvent(&event)) {
 		bool ret = false;
 		// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
-		for (int i = 0; i < Form::m_formsList->GetCount(); i++) {
-			Form *formW = (Form *) Form::m_formsList->Get(i);
+		for (Form *formW : *Form::m_formsList) {
 			switch (event.type) {
 				case SDL_JOYDEVICEADDED:
 				case SDL_JOYDEVICEREMOVED:
@@ -187,8 +186,7 @@ void Application::ProcessEvents() {
 		}
 
 		if (windowID != 0) {
-			for (int i = 0; i < Form::m_formsList->GetCount(); i++) {
-				Form *formW = (Form *) Form::m_formsList->Get(i);
+			for (Form *formW : *Form::m_formsList) {
 				if (windowID == formW->GetWindowID()) {
 					formW->ProcessEvents(&event);
 				}

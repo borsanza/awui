@@ -2,16 +2,15 @@
 
 #include <awui/Windows/Forms/Control.h>
 
-namespace awui {
-	namespace Collections {
-		class ArrayList;
-	}
+#include <vector>
 
+namespace awui {
 	namespace Effects {
 		class Effect;
 	}
 
 	namespace Windows::Forms {
+		class Button;
 		class SplitContainer;
 	}
 } // namespace awui
@@ -20,8 +19,8 @@ class Test1 : public awui::Windows::Forms::Control {
   private:
 	awui::Windows::Forms::SplitContainer *m_splitter;
 
-	awui::Collections::ArrayList *m_buttons;
-	awui::Collections::ArrayList *m_effects;
+	std::vector<awui::Windows::Forms::Button *> m_buttons;
+	std::vector<awui::Effects::Effect *> m_effects;
 
   public:
 	Test1();

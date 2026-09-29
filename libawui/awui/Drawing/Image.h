@@ -1,8 +1,8 @@
 #pragma once
 
-#include <awui/Collections/ArrayList.h>
 #include <awui/Object.h>
 #include <stdint.h>
+#include <vector>
 
 typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
@@ -16,7 +16,8 @@ namespace awui {
 			friend class Graphics;
 
 		  private:
-			static Collections::ArrayList list;
+			// Todas las Image vivas (UnloadAll). Nunca se destruye: una Image que muera al salir la encuentra viva
+			static std::vector<Image *> &List();
 			int m_width;
 			int m_height;
 			cairo_surface_t *m_cairo_surface;

@@ -2,16 +2,13 @@
 
 #include <awui/Windows/Forms/Control.h>
 #include <awui/Windows/Forms/SelectionFrame.h>
+#include <vector>
 
 typedef struct SDL_Window SDL_Window;
 typedef void *SDL_GLContext;
 typedef union SDL_Event SDL_Event;
 
 namespace awui {
-	namespace Collections {
-		class ArrayList;
-	}
-
 	namespace Diagnostics {
 		class Process;
 	}
@@ -22,7 +19,7 @@ namespace awui {
 			friend class Control;
 
 		  private:
-			static ArrayList *m_formsList;
+			static std::vector<Form *> *m_formsList;
 			static uint32_t m_buttonsPad1;
 			static uint32_t m_buttonsPad2;
 			Control *m_mouseControlOver;

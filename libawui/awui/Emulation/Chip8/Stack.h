@@ -1,33 +1,16 @@
 #pragma once
 
-#include <awui/Object.h>
+#include <vector>
 
-namespace awui {
-	namespace Collections {
-		class Stack;
-	}
+namespace awui::Emulation::Chip8 {
+	// Pila de direcciones de retorno (CALL / RET)
+	class Stack {
+	  private:
+		std::vector<int> _stack;
 
-	namespace Emulation::Chip8 {
-		class StackInt : public awui::Object {
-		  private:
-			int _i;
-
-		  public:
-			StackInt(int i) { this->_i = i; }
-			int GetValue() const { return this->_i; }
-		};
-
-		class Stack {
-		  private:
-			Collections::Stack *_stack;
-
-		  public:
-			Stack();
-			virtual ~Stack();
-
-			void Push(int value);
-			int Pop();
-			void Clear();
-		};
-	} // namespace Emulation::Chip8
-} // namespace awui
+	  public:
+		void Push(int value);
+		int Pop();
+		void Clear();
+	};
+} // namespace awui::Emulation::Chip8

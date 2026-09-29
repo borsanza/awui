@@ -28,6 +28,15 @@ Bitmap *Control::m_selectedBitmap = NULL;
 int32_t Control::lastTabIndex = 10000;
 int32_t Control::countFocused = 1000;
 
+static bool Contains(const std::vector<Control *> &list, const Control *control) {
+	return std::find(list.begin(), list.end(), control) != list.end();
+}
+
+int Control::IndexOf(Control *control) const {
+	auto it = std::find(m_controls.begin(), m_controls.end(), control);
+	return (it != m_controls.end()) ? (int) (it - m_controls.begin()) : -1;
+}
+
 Control::Control() {
 	m_tabIndex = -1;
 	m_focusedTime = -1;
@@ -42,7 +51,6 @@ Control::Control() {
 	m_drawShadow = true;
 	m_bounds = Drawing::Rectangle(0, 0, 100, 100);
 	m_boundsTo = m_bounds;
-	m_controls = new ArrayList();
 	m_mouseEventArgs = new MouseEventArgs();
 	m_mouseControl = NULL;
 	m_parent = NULL;
@@ -69,17 +77,15 @@ Control::~Control() {
 
 	// Los hijos se sueltan antes de borrarlos (si no, al destruirse intentarían soltarse de este) y solo se
 	// borran los que son suyos
-	while (m_controls->GetCount() > 0) {
-		Control *control = (Control *) m_controls->Get(0);
-		m_controls->RemoveAt(0);
+	while (!m_controls.empty()) {
+		Control *control = m_controls.front();
+		m_controls.erase(m_controls.begin());
 		control->m_parent = nullptr;
 		if (control->m_ownedByParent) {
 			delete control;
 		}
 	}
 
-	m_controls->Clear();
-	delete m_controls;
 }
 
 // Posición y tamaño se fijan por separado: cambiar uno no corta la animación del otro (SetWidth en cada tick
@@ -748,13 +754,12 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 		float distance2 = 30000;
 		Control *selected = NULL;
 
-		ArrayList list;
-		GetRoot()->GetControlsSelectables(&list);
+		std::vector<Control *> list;
+		GetRoot()->GetControlsSelectables(list);
 
 		switch (button) {
 			case RemoteButtons::Left:
-				for (int i = 0; i < list.GetCount(); i++) {
-					Control *control = (Control *) list.Get(i);
+				for (Control *control : list) {
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -773,8 +778,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 				}
 				break;
 			case RemoteButtons::Right:
-				for (int i = 0; i < list.GetCount(); i++) {
-					Control *control = (Control *) list.Get(i);
+				for (Control *control : list) {
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -795,8 +799,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 			case RemoteButtons::Down: {
 				Control *selectedAux = NULL;
 				// Primero busco el mas cercano en Y por abajo
-				for (int i = 0; i < list.GetCount(); i++) {
-					Control *control = (Control *) list.Get(i);
+				for (Control *control : list) {
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -831,8 +834,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 				// Ahora busco de ese cercano, uno que este en la misma horizontal y mas cerca del actual
 				// Y que ademas este por debajo del actual
-				for (int i = 0; i < list.GetCount(); i++) {
-					Control *control = (Control *) list.Get(i);
+				for (Control *control : list) {
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -854,8 +856,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 			case RemoteButtons::Up: {
 				Control *selectedAux = NULL;
 				// Primero busco el mas cercano en Y por arriba
-				for (int i = 0; i < list.GetCount(); i++) {
-					Control *control = (Control *) list.Get(i);
+				for (Control *control : list) {
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -890,8 +891,7 @@ bool Control::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 				// Ahora busco de ese cercano, uno que este en la misma horizontal y mas cerca del actual
 				// Y ademas que este por arriba del actual
-				for (int i = 0; i < list.GetCount(); i++) {
-					Control *control = (Control *) list.Get(i);
+				for (Control *control : list) {
 					if (!control->IsVisible() || (control == this)) {
 						continue;
 					}
@@ -933,14 +933,14 @@ bool Control::OnKeyPress(Keys::Enum key) {
 	return false;
 }
 
-void Control::GetControlsSelectables(ArrayList *list) {
+void Control::GetControlsSelectables(std::vector<Control *> &list) {
 	for (int i = 0; i < GetCount(); i++) {
 		Control *control = Get(i);
 		control->GetControlsSelectables(list);
 	}
 
 	if (IsFocusable())
-		list->Add(this);
+		list.push_back(this);
 }
 
 void Control::CheckMouseControl() {
@@ -1075,8 +1075,8 @@ bool Control::IsFocused() const {
  * @param control El control a agregar.
  */
 void Control::AddWidget(Control *control, WidgetOwnership ownership) {
-	assert(control && !m_controls->Contains(control) && control->GetParent() == nullptr);
-	if (!control || m_controls->Contains(control) || control->GetParent() != nullptr) {
+	assert(control && !Contains(m_controls, control) && control->GetParent() == nullptr);
+	if (!control || Contains(m_controls, control) || control->GetParent() != nullptr) {
 		return;
 	}
 
@@ -1084,7 +1084,7 @@ void Control::AddWidget(Control *control, WidgetOwnership ownership) {
 		control->m_tabIndex = lastTabIndex++;
 	}
 
-	m_controls->Add(control);
+	m_controls.push_back(control);
 	control->SetParent(this);
 	control->m_ownedByParent = (ownership == WidgetOwnership::Owned);
 
@@ -1101,13 +1101,13 @@ void Control::AddWidget(Control *control, WidgetOwnership ownership) {
  * @param control El control a eliminar del contenedor.
  */
 void Control::RemoveWidget(Control *control) {
-	assert(control && m_controls->Contains(control) && control->GetParent() == this);
-	if (!control || !m_controls->Contains(control) || control->GetParent() != this) {
+	assert(control && Contains(m_controls, control) && control->GetParent() == this);
+	if (!control || !Contains(m_controls, control) || control->GetParent() != this) {
 		return;
 	}
 
 	control->ForgetMouse();
-	m_controls->Remove(control);
+	m_controls.erase(std::find(m_controls.begin(), m_controls.end(), control));
 	control->SetParent(nullptr);
 
 	FixFocusImpl();
@@ -1143,14 +1143,14 @@ void Control::ForgetMouse() {
  * @param newControl Nuevo control a insertar.
  */
 void Control::ReplaceWidget(Control *oldControl, Control *newControl, WidgetOwnership ownership) {
-	assert((oldControl != nullptr) && (newControl != nullptr) && (oldControl != newControl) && (m_controls->Contains(oldControl)) && newControl->GetParent() == nullptr);
-	if (oldControl == nullptr || newControl == nullptr || oldControl == newControl || !m_controls->Contains(oldControl) || newControl->GetParent() != nullptr) {
+	assert((oldControl != nullptr) && (newControl != nullptr) && (oldControl != newControl) && (Contains(m_controls, oldControl)) && newControl->GetParent() == nullptr);
+	if (oldControl == nullptr || newControl == nullptr || oldControl == newControl || !Contains(m_controls, oldControl) || newControl->GetParent() != nullptr) {
 		return;
 	}
 
 	oldControl->ForgetMouse();
 	oldControl->SetParent(nullptr);
-	m_controls->Replace(oldControl, newControl);
+	*std::find(m_controls.begin(), m_controls.end(), oldControl) = newControl;
 	newControl->SetParent(this);
 	newControl->m_ownedByParent = (ownership == WidgetOwnership::Owned);
 
@@ -1185,7 +1185,7 @@ void Control::SetVisible(bool isVisible) {
 Control *Control::FindNextFocusableControl() {
 	Control *nextFocusable = nullptr;
 	int32_t highestFocusTime = -1;
-	for (auto aux : *m_controls) {
+	for (auto aux : m_controls) {
 		Control *control = (Control *) aux;
 		if (control->IsVisible() && (nextFocusable == nullptr || control->m_focusedTime > highestFocusTime)) {
 			nextFocusable = control;

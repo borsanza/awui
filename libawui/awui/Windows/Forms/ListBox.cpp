@@ -3,9 +3,8 @@
 
 #include "ListBox.h"
 
-#include <awui/Collections/ArrayList.h>
+#include <algorithm>
 
-using namespace awui::Collections;
 using namespace awui::Windows::Forms;
 
 ListBox::ListBox() {
@@ -22,37 +21,37 @@ ObjectCollection *ListBox::GetItems() const {
 
 ObjectCollection::ObjectCollection(ListBox *owner) : Object() {
 	listbox = owner;
-	arraylist = new ArrayList();
 }
 
 ObjectCollection::~ObjectCollection() {
-	delete arraylist;
 }
 
 int ObjectCollection::GetCount() const {
-	return arraylist->GetCount();
+	return (int) m_items.size();
 }
 
 void ObjectCollection::Add(Object *item) {
-	arraylist->Add(item);
+	m_items.push_back(item);
 }
 
 void ObjectCollection::Clear() {
-	arraylist->Clear();
+	m_items.clear();
 }
 
 bool ObjectCollection::Contains(Object *value) const {
-	return (arraylist->IndexOf(value) != -1);
+	return IndexOf(value) != -1;
 }
 
 int ObjectCollection::IndexOf(Object *value) const {
-	return arraylist->IndexOf(value);
+	auto it = std::find(m_items.begin(), m_items.end(), value);
+	return (it != m_items.end()) ? (int) (it - m_items.begin()) : -1;
 }
 
 void ObjectCollection::Remove(Object *value) {
-	arraylist->Remove(value);
+	m_items.erase(std::remove(m_items.begin(), m_items.end(), value), m_items.end());
 }
 
 void ObjectCollection::RemoveAt(int index) {
-	arraylist->RemoveAt(index);
+	if ((index >= 0) && (index < (int) m_items.size()))
+		m_items.erase(m_items.begin() + index);
 }

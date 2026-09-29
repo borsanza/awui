@@ -8,11 +8,15 @@
 #include <SDL_opengl_glext.h>
 #include <awui/Console.h>
 #include <awui/Math.h>
+#include <algorithm>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
-ArrayList Bitmap::list;
+std::vector<Bitmap *> &Bitmap::List() {
+	static std::vector<Bitmap *> *list = new std::vector<Bitmap *>();
+	return *list;
+}
 
 Bitmap::Bitmap(const String file) {
 	m_loaded = false;
@@ -30,11 +34,11 @@ Bitmap::Bitmap(const String file) {
 
 	m_stretchMode = StretchMode::Stretch;
 
-	Bitmap::list.Add(this);
+	List().push_back(this);
 }
 
 Bitmap::~Bitmap() {
-	Bitmap::list.Remove(this);
+	List().erase(std::remove(List().begin(), List().end(), this), List().end());
 
 	Unload();
 }
@@ -132,8 +136,7 @@ void Bitmap::Unload() {
 
 // Tras un cambio de ventana o de contexto: se vuelven a cargar todas al pintar, también las que fallaron
 void Bitmap::UnloadAll() {
-	for (int i = 0; i < Bitmap::list.GetCount(); i++) {
-		Bitmap *bitmap = (Bitmap *) Bitmap::list.Get(i);
+	for (Bitmap *bitmap : List()) {
 		bitmap->Unload();
 		bitmap->m_failed = false;
 	}

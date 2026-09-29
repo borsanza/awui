@@ -6,7 +6,6 @@
 
 #include "Form.h"
 
-#include <awui/Collections/ArrayList.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Drawing/Image.h>
@@ -18,6 +17,7 @@
 #include <SDL.h>
 #include <SDL_events.h>
 #include <SDL_opengl.h>
+#include <algorithm>
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
@@ -25,11 +25,11 @@ using namespace awui::Windows::Forms::Statistics;
 
 uint32_t Form::m_buttonsPad1 = 0;
 uint32_t Form::m_buttonsPad2 = 0;
-ArrayList *Form::m_formsList = new ArrayList();
+std::vector<Form *> *Form::m_formsList = new std::vector<Form *>();
 
 Form::Form() {
 
-	m_formsList->Add(this);
+	m_formsList->push_back(this);
 
 	m_window = 0;
 	m_context = 0;
@@ -57,7 +57,7 @@ Form::Form() {
 }
 
 Form::~Form() {
-	m_formsList->Remove(this);
+	m_formsList->erase(std::remove(m_formsList->begin(), m_formsList->end(), this), m_formsList->end());
 
 	if (m_context) {
 		SDL_GL_DeleteContext(m_context);

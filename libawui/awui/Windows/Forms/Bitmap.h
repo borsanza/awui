@@ -1,8 +1,8 @@
 #pragma once
 
-#include <awui/Collections/ArrayList.h>
 #include <awui/Core/ColorF.h>
 #include <awui/Windows/Forms/Control.h>
+#include <vector>
 
 typedef unsigned int GLuint;
 
@@ -23,7 +23,8 @@ namespace awui {
 		};
 		class Bitmap : public Control {
 		  private:
-			static Collections::ArrayList list;
+			// Todos los Bitmap vivos (UnloadAll). Nunca se destruye: un Bitmap que muera al salir la encuentra viva
+			static std::vector<Bitmap *> &List();
 			GLuint m_texture;
 			int m_textureWidth;
 			int m_textureHeight;

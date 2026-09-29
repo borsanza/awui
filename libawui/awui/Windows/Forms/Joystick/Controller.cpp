@@ -6,17 +6,15 @@
 
 #include "Controller.h"
 
-#include <awui/Collections/ArrayList.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/String.h>
 
 #include <SDL.h>
 
-using namespace awui::Collections;
 using namespace awui::Windows::Forms::Joystick;
 
-ArrayList *Controller::m_controllersList = new ArrayList();
+std::vector<Controller *> *Controller::m_controllersList = new std::vector<Controller *>();
 
 Controller::Controller(SDL_GameController *controller) {
 	m_controller = controller;
@@ -39,23 +37,23 @@ Controller::~Controller() {
 
 Controller *Controller::AddOnce(SDL_GameController *gController) {
 	Controller *controller;
-	for (int i = 0; i < m_controllersList->GetCount(); i++) {
-		controller = (Controller *) m_controllersList->Get(i);
+	for (int i = 0; i < (int) m_controllersList->size(); i++) {
+		controller = (*m_controllersList)[i];
 		if (controller->m_controller == gController) {
 			return controller;
 		}
 	}
 
 	controller = new Controller(gController);
-	m_controllersList->Add(controller);
+	m_controllersList->push_back(controller);
 
 	return controller;
 }
 
 // nullptr si el mando no está en la lista (por ejemplo, un evento que llega justo después de desconectarlo)
 Controller *Controller::GetByWhich(SDL_JoystickID which) {
-	for (int i = 0; i < m_controllersList->GetCount(); i++) {
-		Controller *controller = (Controller *) m_controllersList->Get(i);
+	for (int i = 0; i < (int) m_controllersList->size(); i++) {
+		Controller *controller = (*m_controllersList)[i];
 		if (controller->m_which == which) {
 			return controller;
 		}
@@ -67,8 +65,8 @@ Controller *Controller::GetByWhich(SDL_JoystickID which) {
 void Controller::Refresh() {
 	Controller *controller;
 
-	for (int i = 0; i < m_controllersList->GetCount(); i++) {
-		controller = (Controller *) m_controllersList->Get(i);
+	for (int i = 0; i < (int) m_controllersList->size(); i++) {
+		controller = (*m_controllersList)[i];
 		controller->SetOrder(-1);
 	}
 
@@ -93,22 +91,22 @@ void Controller::Refresh() {
 		}
 	}
 
-	for (int i = m_controllersList->GetCount() - 1; i >= 0; i--) {
-		controller = (Controller *) m_controllersList->Get(i);
+	for (int i = (int) m_controllersList->size() - 1; i >= 0; i--) {
+		controller = (*m_controllersList)[i];
 		if (controller->GetOrder() == -1) {
 			delete controller;
-			m_controllersList->RemoveAt(i);
+			m_controllersList->erase(m_controllersList->begin() + i);
 		}
 	}
 }
 
 void Controller::CloseAll() {
-	for (int i = m_controllersList->GetCount() - 1; i >= 0; i--) {
-		Joystick::Controller *controller = (Joystick::Controller *) m_controllersList->Get(i);
+	for (int i = (int) m_controllersList->size() - 1; i >= 0; i--) {
+		Joystick::Controller *controller = (*m_controllersList)[i];
 		delete controller;
 	}
 
-	m_controllersList->Clear();
+	m_controllersList->clear();
 }
 
 void Controller::OnButtonDown(uint32_t button) {

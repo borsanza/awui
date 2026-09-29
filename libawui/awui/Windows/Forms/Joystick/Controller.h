@@ -2,20 +2,17 @@
 
 #include <awui/Object.h>
 #include <cstdint>
+#include <vector>
 
 typedef struct _SDL_GameController SDL_GameController;
 typedef int32_t Sint32;
 typedef Sint32 SDL_JoystickID;
 
 namespace awui {
-	namespace Collections {
-		class ArrayList;
-	}
-
 	namespace Windows::Forms::Joystick {
 		class Controller : public Object {
 		  private:
-			static Collections::ArrayList *m_controllersList;
+			static std::vector<Controller *> *m_controllersList;
 			SDL_GameController *m_controller;
 			int m_positionOrder;
 			SDL_JoystickID m_which;

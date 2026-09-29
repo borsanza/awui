@@ -6,7 +6,6 @@
 
 #include "StationUI.h"
 
-#include <awui/Collections/SortedList.h>
 #include <awui/Console.h>
 #include <awui/Emulation/Common/AudioSettings.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
@@ -24,6 +23,7 @@
 #include <awui/Windows/Forms/Station/Settings/SettingsUI.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 #include <awui/Windows/Forms/Station/SettingsWidget.h>
+#include <algorithm>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -147,8 +147,11 @@ void StationUI::RecursiveSearch(NodeFile *parent) {
 
 			child->m_button = new MenuButton(this);
 			child->m_button->SetNodeFile(child);
+			// Sin la extensión, si la tiene (una carpeta como "48" o un ".oculto" se quedan como están)
 			String name = child->m_name;
-			name = name.Substring(0, name.LastIndexOf("."));
+			int dot = name.LastIndexOf('.');
+			if (dot > 0)
+				name = name.Substring(0, dot);
 			child->m_button->SetText(name);
 
 			if (parent->m_emulator == Types::Undefined) {
@@ -191,9 +194,6 @@ void StationUI::RecursiveSearch(NodeFile *parent) {
 				child->m_emulator = parent->m_emulator;
 			}
 
-			if (!parent->m_childList) {
-				parent->m_childList = new SortedList();
-			}
 
 			child->m_path = newFile;
 			child->m_parent = parent;
@@ -207,7 +207,7 @@ void StationUI::RecursiveSearch(NodeFile *parent) {
 			child->m_directory = isDir;
 
 			child->m_key = String::Concat((child->m_directory ? "1" : "2"), child->m_name);
-			parent->m_childList->Add(child->m_key, child);
+			parent->AddChild(child);
 
 			if (child->m_directory) {
 				RecursiveSearch(child);
@@ -221,42 +221,40 @@ void StationUI::RecursiveSearch(NodeFile *parent) {
 bool StationUI::Minimize(NodeFile *parent) {
 	int r = false;
 
-	if (parent->m_childList) {
-		for (int i = parent->m_childList->GetCount() - 1; i >= 0; i--) {
-			NodeFile *child = (NodeFile *) parent->m_childList->GetByIndex(i);
+	for (int i = (int) parent->m_children.size() - 1; i >= 0; i--) {
+		NodeFile *child = parent->m_children[i];
 
-			if (child->m_directory) {
-				r |= Minimize(child);
+		if (child->m_directory) {
+			r |= Minimize(child);
 
-				if (child->m_childList && child->m_childList->GetCount() > 0) {
-					continue;
-				}
-			} else {
-				String path = child->m_path.ToLower();
-				switch (child->m_emulator) {
-					case Types::Chip8:
-						if (path.EndsWith(".ch8") || path.EndsWith(".c8x")) {
-							continue;
-						}
-						break;
-					case Types::GameGear:
-					case Types::MasterSystem:
-						if (path.EndsWith(".sms") || path.EndsWith(".sg") || path.EndsWith(".gg")) {
-							continue;
-						}
-						break;
-					case Types::Spectrum:
-						if (path.EndsWith(".rom") || path.EndsWith(".tap")) {
-							continue;
-						}
-						break;
-				}
+			if (!child->m_children.empty()) {
+				continue;
 			}
-
-			delete child;
-			parent->m_childList->RemoveAt(i);
-			r = true;
+		} else {
+			String path = child->m_path.ToLower();
+			switch (child->m_emulator) {
+				case Types::Chip8:
+					if (path.EndsWith(".ch8") || path.EndsWith(".c8x")) {
+						continue;
+					}
+					break;
+				case Types::GameGear:
+				case Types::MasterSystem:
+					if (path.EndsWith(".sms") || path.EndsWith(".sg") || path.EndsWith(".gg")) {
+						continue;
+					}
+					break;
+				case Types::Spectrum:
+					if (path.EndsWith(".rom") || path.EndsWith(".tap")) {
+						continue;
+					}
+					break;
+			}
 		}
+
+		delete child;
+		parent->m_children.erase(parent->m_children.begin() + i);
+		r = true;
 	}
 
 	return r;
@@ -272,16 +270,17 @@ void StationUI::Refresh() {
 	while (Minimize(m_root))
 		;
 
-	if (!m_root->m_childList) {
-		m_root->m_childList = new SortedList();
+	// Sin ROMs (carpeta vacía o sin ficheros válidos): un aviso en la lista
+	if (m_root->m_children.empty()) {
 		NodeFile *child = new NodeFile();
 		child->m_name = Localization::Tr("station.noRoms");
+		child->m_key = child->m_name;
 		m_noRoms = child;
 		child->m_directory = false;
 		child->m_button = new MenuButton(this);
 		child->m_button->SetNodeFile(child);
 		child->m_button->SetText(child->m_name);
-		m_root->m_childList->Add(child->m_name, child);
+		m_root->AddChild(child);
 	}
 
 	RefreshList();
@@ -291,8 +290,8 @@ void StationUI::RefreshList() {
 	if (m_actual->m_page == nullptr) {
 		int y = 25;
 		m_actual->m_page = new Page();
-		for (int i = 0; i < m_actual->m_childList->GetCount(); i++) {
-			NodeFile *child = (NodeFile *) m_actual->m_childList->GetByIndex(i);
+		for (int i = 0; i < (int) m_actual->m_children.size(); i++) {
+			NodeFile *child = m_actual->m_children[i];
 			child->m_button->SetHeight(MENUBUTTONHEIGHT);
 			child->m_button->SetLocation(40, y);
 			y += MENUBUTTONHEIGHT;
@@ -625,7 +624,6 @@ void FadePanel::OnTick(float deltaSeconds) {
 
 NodeFile::NodeFile() {
 	m_parent = 0;
-	m_childList = 0;
 	m_directory = true;
 	m_emulator = Types::Undefined;
 	m_button = nullptr;
@@ -634,16 +632,16 @@ NodeFile::NodeFile() {
 	m_background = nullptr;
 }
 
+void NodeFile::AddChild(NodeFile *child) {
+	auto pos = std::upper_bound(m_children.begin(), m_children.end(), child, [](const NodeFile *a, const NodeFile *b) { return a->m_key < b->m_key; });
+	m_children.insert(pos, child);
+}
+
 // El nodo es dueño de su botón, de la página con los botones de sus hijos, de su emulador (en el árbol de
 // controles están prestados) y de su imagen de fondo. Primero los hijos, que vacían la página al borrar sus botones
 NodeFile::~NodeFile() {
-	if (m_childList) {
-		for (int i = 0; i < m_childList->GetCount(); i++) {
-			NodeFile *object = (NodeFile *) m_childList->GetByIndex(i);
-			delete object;
-		}
-
-		delete m_childList;
+	for (NodeFile *object : m_children) {
+		delete object;
 	}
 
 	delete m_page;

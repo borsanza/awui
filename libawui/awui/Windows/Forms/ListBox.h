@@ -1,11 +1,9 @@
 #pragma once
 
 #include <awui/Windows/Forms/Control.h>
+#include <vector>
 
 namespace awui {
-	namespace Collections {
-		class ArrayList;
-	}
 
 	namespace Windows::Forms {
 		class ObjectCollection;
@@ -24,7 +22,7 @@ namespace awui {
 		class ObjectCollection : Object {
 		  private:
 			ListBox *listbox;
-			awui::Collections::ArrayList *arraylist;
+			std::vector<Object *> m_items;
 
 		  public:
 			ObjectCollection(ListBox *owner);

@@ -6,13 +6,11 @@
 
 #include "TapeCorder.h"
 
-#include <awui/Collections/ArrayList.h>
 #include <awui/Emulation/Common/Word.h>
 #include <awui/IO/FileStream.h>
 
 #include <stdlib.h>
 
-using namespace awui::Collections;
 using namespace awui::Emulation::Spectrum;
 using namespace awui::IO;
 
@@ -35,8 +33,7 @@ TapeCorder::~TapeCorder() {
 
 void TapeCorder::Clear() {
 	if (this->_list) {
-		for (int i = 0; i < this->_list->GetCount(); i++) {
-			TapeBlock *block = (TapeBlock *) this->_list->Get(i);
+		for (TapeBlock *block : *this->_list) {
 			delete block;
 		}
 
@@ -47,7 +44,7 @@ void TapeCorder::Clear() {
 
 void TapeCorder::LoadFile(const String fileParam) {
 	this->Clear();
-	this->_list = new ArrayList();
+	this->_list = new std::vector<TapeBlock *>();
 
 	FileStream *file = new FileStream(fileParam, FileMode::Open, FileAccess::Read);
 
@@ -73,7 +70,7 @@ void TapeCorder::LoadFile(const String fileParam) {
 
 				state++;
 				block = new TapeBlock(blocks.W);
-				this->_list->Add(block);
+				this->_list->push_back(block);
 				cont = 0;
 				break;
 			case 2:
@@ -129,12 +126,12 @@ uint32_t TapeCorder::GetNext() {
 
 		case 3: { // Mandar Datos
 			// Cinta sin bloques: no hay nada que mandar
-			if (this->_block >= this->_list->GetCount()) {
+			if (this->_block >= (int) this->_list->size()) {
 				this->_state = 8;
 				return 945;
 			}
 
-			TapeBlock *tapeBlock = (TapeBlock *) this->_list->Get(this->_block);
+			TapeBlock *tapeBlock = (*this->_list)[this->_block];
 			uint8_t data = tapeBlock->GetByte(this->_posByte);
 			data = (data >> (7 - this->_posBit)) & 0x01;
 			this->_state = 4;
@@ -145,7 +142,7 @@ uint32_t TapeCorder::GetNext() {
 		}
 
 		case 4: { // Mandar Datos
-			TapeBlock *tapeBlock = (TapeBlock *) this->_list->Get(this->_block);
+			TapeBlock *tapeBlock = (*this->_list)[this->_block];
 			uint8_t data = tapeBlock->GetByte(this->_posByte);
 			data = (data >> (7 - this->_posBit)) & 0x01;
 			this->_posBit++;
@@ -169,7 +166,7 @@ uint32_t TapeCorder::GetNext() {
 		}
 
 		case 5: // Mini Pausa
-			if (this->_list && (this->_block >= this->_list->GetCount()))
+			if (this->_list && (this->_block >= (int) this->_list->size()))
 				this->_state = 8;
 			else
 				this->_state = 6;
@@ -197,15 +194,15 @@ uint32_t TapeCorder::GetNext() {
 }
 
 TapeBlock *TapeCorder::TakeNextBlock() {
-	if (!this->_list || (this->_block >= this->_list->GetCount()))
+	if (!this->_list || (this->_block >= (int) this->_list->size()))
 		return nullptr;
 
-	TapeBlock *block = (TapeBlock *) this->_list->Get(this->_block);
+	TapeBlock *block = (*this->_list)[this->_block];
 	this->_block++;
 	this->_posByte = 0;
 	this->_posBit = 0;
 
-	if (this->_block >= this->_list->GetCount()) {
+	if (this->_block >= (int) this->_list->size()) {
 		this->_state = 9;
 		this->_playing = false;
 		if (this->_finishCassetteCB)

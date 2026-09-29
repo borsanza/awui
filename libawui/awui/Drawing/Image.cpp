@@ -11,12 +11,16 @@
 #include <awui/String.h>
 #include <cairo.h>
 #include <stdlib.h>
+#include <algorithm>
 
 #define BTPP 4
 
 using namespace awui::Drawing;
 
-ArrayList Image::list;
+std::vector<Image *> &Image::List() {
+	static std::vector<Image *> *list = new std::vector<Image *>();
+	return *list;
+}
 
 Image::Image(int width, int height) {
 	Create(width, height);
@@ -45,7 +49,7 @@ Image::Image(String filename) {
 }
 
 Image::~Image() {
-	Image::list.Remove(this);
+	List().erase(std::remove(List().begin(), List().end(), this), List().end());
 
 	// Primero cairo (el contexto y la superficie usan el buffer) y después el buffer
 	if (m_cr != NULL)
@@ -70,7 +74,7 @@ void Image::Create(int width, int height) {
 	m_cr = cairo_create(m_cairo_surface);
 	m_loaded = false;
 
-	Image::list.Add(this);
+	List().push_back(this);
 }
 
 int Image::GetWidth() {
@@ -106,8 +110,7 @@ void Image::Unload() {
 }
 
 void Image::UnloadAll() {
-	for (int i = 0; i < Image::list.GetCount(); i++) {
-		Image *image = (Image *) Image::list.Get(i);
+	for (Image *image : List()) {
 		image->Unload();
 	}
 }

@@ -7,6 +7,8 @@
 #include <awui/Windows/Forms/MouseButtons.h>
 #include <awui/Windows/Forms/RemoteButtons.h>
 
+#include <vector>
+
 namespace awui {
 	namespace Drawing {
 		class Font;
@@ -45,7 +47,7 @@ namespace awui {
 			friend class Form;
 
 		  private:
-			ArrayList *m_controls;
+			std::vector<Control *> m_controls;
 			Control *m_parent;
 			bool m_ownedByParent; // Lo borra su padre al destruirse (WidgetOwnership::Owned)
 			static Bitmap *m_selectedBitmap;
@@ -153,9 +155,10 @@ namespace awui {
 
 			void AddWidget(Control *control, WidgetOwnership ownership = WidgetOwnership::Owned);
 			void RemoveWidget(Control *control);
-			int GetCount() const { return m_controls->GetCount(); }
-			int IndexOf(Control *control) const { return m_controls->IndexOf(control); }
-			Control *Get(int index) const { return (Control *) m_controls->Get(index); }
+			int GetCount() const { return (int) m_controls.size(); }
+			int IndexOf(Control *control) const;
+			// Fuera de rango devuelve nullptr
+			Control *Get(int index) const { return ((index >= 0) && (index < GetCount())) ? m_controls[index] : nullptr; }
 			void MoveToEnd(Control *item);
 			void ReplaceWidget(Control *oldItem, Control *newItem, WidgetOwnership ownership = WidgetOwnership::Owned);
 
@@ -217,7 +220,7 @@ namespace awui {
 			Control *GetRoot();
 			Form *GetForm();
 
-			void GetControlsSelectables(Collections::ArrayList *list);
+			void GetControlsSelectables(std::vector<Control *> &list);
 
 			inline void SetPreventChangeControl(bool mode) { m_preventChangeControl = mode; }
 

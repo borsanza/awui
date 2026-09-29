@@ -3,14 +3,9 @@
 #include <awui/Object.h>
 
 #include <stdint.h>
+#include <vector>
 
 namespace awui {
-	namespace Collections {
-		class ArrayList;
-	}
-
-	using namespace Collections;
-
 	namespace Emulation::Spectrum {
 		class TapeBlock : public awui::Object {
 		  private:
@@ -28,7 +23,7 @@ namespace awui {
 
 		class TapeCorder {
 		  private:
-			ArrayList *_list;
+			std::vector<TapeBlock *> *_list; // Bloques de la cinta (nullptr: no hay cinta cargada)
 			int _posByte;
 			int _posBit;
 			int _block;

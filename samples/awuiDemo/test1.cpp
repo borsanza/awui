@@ -18,8 +18,6 @@ using namespace awui::Effects;
 using namespace awui::Windows::Forms;
 
 Test1::Test1() {
-	m_buttons = NULL;
-	m_effects = NULL;
 	m_splitter = NULL;
 	InitializeComponent();
 }
@@ -41,8 +39,6 @@ void Test1::InitializeComponent() {
 	control1->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	control2->SetBackColor(Color::FromArgb(0, 0, 0, 0));
 
-	m_buttons = new awui::Collections::ArrayList();
-	m_effects = new awui::Collections::ArrayList();
 
 	AddButtonEffect(new EffectLinear(), control1, 5);
 	AddButtonEffect(new EffectSwing(), control1);
@@ -77,8 +73,8 @@ void Test1::AddButtonEffect(Effect *effect, Control *control, int posy) {
 		button->SetTop(y);
 		control->AddWidget(button);
 
-		m_buttons->Add(button);
-		m_effects->Add(effect);
+		m_buttons.push_back(button);
+		m_effects.push_back(effect);
 
 		y += button->GetHeight();
 
@@ -101,7 +97,7 @@ void Test1::OnTick(float deltaSeconds) {
 	py2++;
 
 	// Controles 1
-	Control *control = ((Control *) m_buttons->Get(0))->GetParent();
+	Control *control = m_buttons[0]->GetParent();
 	int time = control->GetWidth() / 3;
 
 	if (py1 > time) {
@@ -111,7 +107,7 @@ void Test1::OnTick(float deltaSeconds) {
 
 	float value1 = py1 / time;
 
-	control = ((Control *) m_buttons->Get(18))->GetParent();
+	control = m_buttons[18]->GetParent();
 	time = control->GetWidth() / 3;
 
 	if (py2 > time) {
@@ -121,9 +117,9 @@ void Test1::OnTick(float deltaSeconds) {
 
 	float value2 = py2 / time;
 
-	for (int i = 0; i < m_buttons->GetCount(); i++) {
-		Effect *effect = (Effect *) m_effects->Get(i);
-		Button *button = (Button *) m_buttons->Get(i);
+	for (size_t i = 0; i < m_buttons.size(); i++) {
+		Effect *effect = m_effects[i];
+		Button *button = m_buttons[i];
 
 		float value3 = 0.0f;
 

@@ -1,13 +1,10 @@
 #pragma once
 
-#include <awui/Collections/ArrayList.h>
 #include <awui/Object.h>
 
 #include <functional>
 #include <string>
 #include <vector>
-
-using namespace awui::Collections;
 
 namespace awui {
 	// Tipo de valor: sin herencia ni métodos virtuales (envuelve un std::string)

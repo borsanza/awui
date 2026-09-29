@@ -4,11 +4,9 @@
 #include <awui/Windows/Forms/Listeners/IExitListener.h>
 #include <awui/Windows/Forms/Listeners/IRemoteListener.h>
 
-namespace awui {
-	namespace Collections {
-		class SortedList;
-	}
+#include <vector>
 
+namespace awui {
 	namespace Windows {
 		namespace Emulators {
 			class ArcadeContainer;
@@ -61,12 +59,15 @@ namespace awui {
 					MenuButton *m_button;
 					Page *m_page;
 					Emulators::ArcadeContainer *m_arcade;
-					SortedList *m_childList;
+					std::vector<NodeFile *> m_children; // Ordenados por m_key; son suyos
 					Bitmap *m_background;
 
 				  public:
 					NodeFile();
 					virtual ~NodeFile();
+
+					// Inserta en su sitio según m_key (con claves iguales, detrás de los que ya estaban)
+					void AddChild(NodeFile *child);
 				};
 
 				using namespace awui::Windows::Forms::Listeners;
@@ -110,7 +111,6 @@ namespace awui {
 					void SetPath(const String path);
 
 					void Refresh();
-					// void GetList(ArrayList * list, NodeFile * parent);
 					virtual void OnTick(float deltaSeconds);
 
 					void SelectChild(NodeFile *node);
