@@ -21,7 +21,7 @@ Este proyecto reúne varios experimentos personales que he ido desarrollando com
 
 ### Partidas guardadas
 
-StationTV guarda las partidas (RAM del cartucho `.sav`, estados `.state` y la partida automática `.autostate`) en `~/.local/share/stationtv/` (o `$XDG_DATA_HOME/stationtv`; en Windows, `%APPDATA%\stationtv`), con la misma estructura que `roms/`: por ejemplo `roms/mastersystem/Golvellius.sms` → `~/.local/share/stationtv/mastersystem/Golvellius.sav`. Así las ROMs pueden estar en una carpeta de solo lectura (NAS, pendrive...).
+StationTV guarda las partidas (RAM del cartucho `.sav`, estados `.state` y la partida automática `.autostate`) en `~/.local/share/stationtv/` (o `$XDG_DATA_HOME/stationtv`; en Windows, `%LOCALAPPDATA%\stationtv`), con la misma estructura que `roms/`: por ejemplo `roms/mastersystem/Golvellius.sms` → `~/.local/share/stationtv/mastersystem/Golvellius.sav`. Así las ROMs pueden estar en una carpeta de solo lectura (NAS, pendrive...).
 
 Las partidas antiguas que estén junto a la ROM se siguen leyendo; al guardar pasan a la carpeta nueva. Para usar otra carpeta, añade `"saveDirectory": "/ruta"` a `settings.json`.
 

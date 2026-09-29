@@ -42,4 +42,9 @@ target_link_libraries(awui PUBLIC
 	nlohmann_json::nlohmann_json
 )
 
+# Environment::GetFolderPath: SHGetKnownFolderPath (shell32) y CoTaskMemFree (ole32)
+if(WIN32)
+	target_link_libraries(awui PRIVATE shell32 ole32)
+endif()
+
 target_compile_options(awui PUBLIC ${CAIRO_CFLAGS_OTHER})

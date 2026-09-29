@@ -7,9 +7,9 @@
 #include "SavePaths.h"
 
 #include <awui/Console.h>
+#include <awui/Environment.h>
 
 #include <filesystem>
-#include <stdlib.h>
 
 using namespace awui;
 using namespace awui::Emulation::Common;
@@ -22,21 +22,11 @@ void SavePaths::Configure(const String &saveDirectory, const String &romsDirecto
 }
 
 String SavePaths::GetDefaultDirectory(const char *application) {
-	fs::path base;
-#ifdef _WIN32
-	if (const char *appData = getenv("APPDATA"))
-		base = appData;
-#else
-	if (const char *dataHome = getenv("XDG_DATA_HOME"); dataHome && *dataHome)
-		base = dataHome;
-	else if (const char *home = getenv("HOME"))
-		base = fs::path(home) / ".local" / "share";
-#endif
-
-	if (base.empty())
+	String base = Environment::GetFolderPath(Environment::SpecialFolder::LocalApplicationData);
+	if (base.GetLength() == 0)
 		return "";
 
-	return (base / application).string().c_str();
+	return (fs::path(base.ToStdString()) / application).string();
 }
 
 std::string SavePaths::Translate(const std::string &path) {

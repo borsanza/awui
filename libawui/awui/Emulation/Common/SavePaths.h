@@ -19,8 +19,8 @@ namespace awui::Emulation::Common {
 	  public:
 		static void Configure(const String &saveDirectory, const String &romsDirectory);
 
-		// Carpeta de datos del usuario para una aplicación: $XDG_DATA_HOME/<app> o ~/.local/share/<app>
-		// (en Windows, %APPDATA%\<app>)
+		// Carpeta de datos del usuario para una aplicación: Environment::GetFolderPath(LocalApplicationData)/<app>,
+		// es decir $XDG_DATA_HOME/<app> o ~/.local/share/<app> (en Windows, %LOCALAPPDATA%\<app>). Vacía si no se sabe
 		static String GetDefaultDirectory(const char *application);
 
 		// Para escribir: crea las carpetas que falten

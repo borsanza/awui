@@ -6,7 +6,9 @@
 #include <awui/Console.h>
 
 #ifdef _WIN32
+#include <knownfolders.h>
 #include <shlobj.h>
+#include <windows.h>
 #else
 #include <cstdlib>
 #endif
@@ -35,8 +37,9 @@ String Environment::GetFolderPath(SpecialFolder folder) {
 #ifndef _WIN32
 	switch (folder) {
 		case SpecialFolder::LocalApplicationData: {
+			// Según la especificación XDG, una ruta relativa no vale y se ignora
 			const char *xdg = std::getenv("XDG_DATA_HOME");
-			if (xdg && *xdg)
+			if (xdg && (xdg[0] == '/'))
 				return String(xdg);
 			const char *home = std::getenv("HOME");
 			if (home && *home)
@@ -49,23 +52,31 @@ String Environment::GetFolderPath(SpecialFolder folder) {
 			return "";
 	}
 #else
-	char path[MAX_PATH];
-	HRESULT result;
-
+	KNOWNFOLDERID id;
 	switch (folder) {
 		case SpecialFolder::LocalApplicationData:
-			result = SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path);
+			id = FOLDERID_LocalAppData;
 			break;
 		default:
 			Console::Error->WriteLine("Folder especial no soportado");
 			return "";
 	}
 
-	if (result != S_OK) {
+	// Se pide en UTF-16 y se devuelve en UTF-8, como el resto de rutas de awui: la versión ANSI (SHGetFolderPathA)
+	// estropea los nombres de usuario con letras fuera de la página de códigos (ñ, acentos en otros idiomas...)
+	PWSTR wide = NULL;
+	if (FAILED(SHGetKnownFolderPath(id, 0, NULL, &wide))) {
+		CoTaskMemFree(wide);
 		Console::Error->WriteLine("Error al obtener la ruta de la carpeta especial");
 		return "";
 	}
 
-	return String(path);
+	int size = WideCharToMultiByte(CP_UTF8, 0, wide, -1, NULL, 0, NULL, NULL);
+	std::string utf8(size > 0 ? size - 1 : 0, '\0');
+	if (size > 1)
+		WideCharToMultiByte(CP_UTF8, 0, wide, -1, utf8.data(), size, NULL, NULL);
+	CoTaskMemFree(wide);
+
+	return String(std::move(utf8));
 #endif
 }
