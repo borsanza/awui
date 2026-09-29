@@ -8,6 +8,7 @@
 
 #include <SDL_opengl.h>
 #include <assert.h>
+#include <algorithm>
 #include <awui/Console.h>
 #include <awui/Drawing/Font.h>
 #include <awui/IO/Directory.h>
@@ -86,28 +87,76 @@ bool Control::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::Control) || Object::IsClass(objectClass);
 }
 
+// Posición y tamaño se fijan por separado: cambiar uno no corta la animación del otro (SetWidth en cada tick
+// no debe parar una página que se está desplazando). SetBounds fija todo y corta cualquier animación
+void Control::SetPosition(bool setX, int x, bool setY, int y) {
+	if ((!setX || ((m_bounds.GetX() == x) && (m_boundsTo.GetX() == x))) && (!setY || ((m_bounds.GetY() == y) && (m_boundsTo.GetY() == y))))
+		return;
+
+	float width = m_bounds.GetWidth();
+	float height = m_bounds.GetHeight();
+	if (setX) {
+		m_bounds.SetX(x);
+		m_boundsTo.SetX(x);
+		m_lastLeft = x;
+		m_lastRight = x + width - 1.0f;
+	}
+
+	if (setY) {
+		m_bounds.SetY(y);
+		m_boundsTo.SetY(y);
+		m_lastTop = y;
+		m_lastBottom = y + height - 1.0f;
+	}
+
+	Refresh();
+}
+
+void Control::SetDimensions(bool setWidth, int width, bool setHeight, int height) {
+	width = std::max(width, (int) m_minimumSize.GetWidth());
+	height = std::max(height, (int) m_minimumSize.GetHeight());
+
+	if ((!setWidth || ((m_bounds.GetWidth() == width) && (m_boundsTo.GetWidth() == width))) && (!setHeight || ((m_bounds.GetHeight() == height) && (m_boundsTo.GetHeight() == height))))
+		return;
+
+	if (setWidth) {
+		m_bounds.SetWidth(width);
+		m_boundsTo.SetWidth(width);
+		m_lastRight = m_lastLeft + width - 1.0f;
+	}
+
+	if (setHeight) {
+		m_bounds.SetHeight(height);
+		m_boundsTo.SetHeight(height);
+		m_lastBottom = m_lastTop + height - 1.0f;
+	}
+
+	Refresh();
+	OnResizePre();
+}
+
 void Control::SetTop(int y) {
-	SetLocation(m_bounds.GetX(), y);
+	SetPosition(false, 0, true, y);
 }
 
 void Control::SetLeft(int x) {
-	SetLocation(x, m_bounds.GetY());
+	SetPosition(true, x, false, 0);
 }
 
 void Control::SetLocation(int x, int y) {
-	SetBounds(x, y, m_bounds.GetWidth(), m_bounds.GetHeight());
+	SetPosition(true, x, true, y);
 }
 
 void Control::SetWidth(int width) {
-	SetSize(width, m_bounds.GetHeight());
+	SetDimensions(true, width, false, 0);
 }
 
 void Control::SetHeight(int height) {
-	SetSize(m_bounds.GetWidth(), height);
+	SetDimensions(false, 0, true, height);
 }
 
 void Control::SetSize(int width, int height) {
-	SetBounds(m_bounds.GetX(), m_bounds.GetY(), width, height);
+	SetDimensions(true, width, true, height);
 }
 
 void Control::SetSize(const Size size) {
@@ -121,7 +170,10 @@ void Control::SetBounds(int x, int y, int width, int height) {
 	if (height < m_minimumSize.GetHeight())
 		height = m_minimumSize.GetHeight();
 
-	if ((m_bounds.GetX() == x) && (m_bounds.GetY() == y) && (m_bounds.GetWidth() == width) && (m_bounds.GetHeight() == height))
+	// Sin cambios solo si ya está ahí y no hay una animación en curso hacia otro sitio (si no, se corta aquí)
+	bool same = (m_bounds.GetX() == x) && (m_bounds.GetY() == y) && (m_bounds.GetWidth() == width) && (m_bounds.GetHeight() == height);
+	bool animating = (m_boundsTo.GetX() != m_bounds.GetX()) || (m_boundsTo.GetY() != m_bounds.GetY()) || (m_boundsTo.GetWidth() != m_bounds.GetWidth()) || (m_boundsTo.GetHeight() != m_bounds.GetHeight());
+	if (same && !animating)
 		return;
 
 	m_bounds = Drawing::Rectangle(x, y, width, height);
@@ -198,8 +250,10 @@ const awui::Drawing::Rectangle Control::GetBounds() const {
 }
 
 void Control::MoveToEnd(Control *item) {
+	// Se conserva de quién es (un prestado seguiría siéndolo)
+	WidgetOwnership ownership = item->m_ownedByParent ? WidgetOwnership::Owned : WidgetOwnership::Borrowed;
 	RemoveWidget(item);
-	AddWidget(item);
+	AddWidget(item, ownership);
 }
 
 void Control::OnResizePre() {
