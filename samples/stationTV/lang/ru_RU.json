@@ -25,6 +25,8 @@
     "settings.sound.desc": "Включить или выключить звук во всех эмуляторах.",
     "settings.volume": "Громкость",
     "settings.volume.desc": "Громкость эмуляторов.",
+    "settings.fmSound": "FM-звук (Master System)",
+    "settings.fmSound.desc": "Эмуляция FM-чипа YM2413 японской Master System. Поддерживающие его игры играют FM-музыку. Применяется при следующем запуске игры.",
     "settings.smsChannels": "Каналы Master System",
     "settings.channel1": "Тон 1",
     "settings.channel1.desc": "Первый канал прямоугольной волны PSG. В игре переключается клавишей 1.",

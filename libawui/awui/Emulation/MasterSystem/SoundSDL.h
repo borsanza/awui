@@ -34,6 +34,8 @@ namespace awui::Emulation::MasterSystem {
 		// samples: estéreo intercalado (izquierda, derecha); count: número de parejas
 		void Queue(Sound *sound, const int16_t *samples, int count);
 		double GetRateAdjust() const;
+		// Descarta lo que queda por sonar (solo si es el Sound que suena)
+		void ClearQueue(Sound *sound);
 
 		static void ToggleChannel(int channel);
 		static void SetChannelEnabled(int channel, bool enabled);

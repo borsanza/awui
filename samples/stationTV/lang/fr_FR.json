@@ -25,6 +25,8 @@
     "settings.sound.desc": "Active ou désactive le son de tous les émulateurs.",
     "settings.volume": "Volume",
     "settings.volume.desc": "Volume des émulateurs.",
+    "settings.fmSound": "Son FM (Master System)",
+    "settings.fmSound.desc": "Émule la puce FM YM2413 de la Master System japonaise. Les jeux compatibles jouent leur musique FM. Prend effet au prochain lancement du jeu.",
     "settings.smsChannels": "Canaux de la Master System",
     "settings.channel1": "Tonalité 1",
     "settings.channel1.desc": "Premier canal d'onde carrée du PSG. En jeu, il se change avec la touche 1.",

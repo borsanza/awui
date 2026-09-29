@@ -101,6 +101,13 @@
                 ]
             },
             {
+                "key": "fmSound",
+                "name": "settings.fmSound",
+                "description": "settings.fmSound.desc",
+                "type": "boolean",
+                "defaultValue": true
+            },
+            {
                 "name": "settings.smsChannels",
                 "type": "group",
                 "items": [

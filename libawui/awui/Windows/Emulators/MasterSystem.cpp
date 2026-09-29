@@ -9,6 +9,7 @@
 #include <awui/DateTime.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
+#include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/SoundSDL.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/OpenGL/GL.h>
@@ -432,6 +433,7 @@ void MasterSystem::TimeReverse() {
 	if (m_actual < m_first)
 		m_actual = m_first;
 	m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
+	m_cpu->GetSound()->OnTimeJump();
 }
 
 void MasterSystem::TimeForward() {
@@ -440,6 +442,7 @@ void MasterSystem::TimeForward() {
 	if (m_actual > m_last)
 		m_actual = m_last;
 	m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
+	m_cpu->GetSound()->OnTimeJump();
 }
 
 void awui::Windows::Emulators::MasterSystem::Pause(bool mode) {

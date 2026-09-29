@@ -10,6 +10,7 @@ namespace awui::Emulation::MasterSystem {
 		uint8_t _ioControl; // Último valor escrito en el puerto 0x3F (control de E/S)
 
 		uint8_t GetPinLevel(uint8_t directionBit, uint8_t outputBit, bool isTH) const;
+		static bool HasFM(Motherboard *cpu);
 
 	  public:
 		Ports();

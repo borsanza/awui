@@ -7,7 +7,7 @@ pkg_search_module(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
 pkg_search_module(CAIRO REQUIRED cairo)
 
 # Define los archivos de fuente y cabecera (CONFIGURE_DEPENDS: detecta ficheros nuevos sin reconfigurar a mano)
-file(GLOB_RECURSE LIBAWUI_SOURCES CONFIGURE_DEPENDS awui/*.cpp)
+file(GLOB_RECURSE LIBAWUI_SOURCES CONFIGURE_DEPENDS awui/*.cpp awui/*.c)
 file(GLOB_RECURSE LIBAWUI_HEADERS CONFIGURE_DEPENDS awui/*.h)
 
 # Organiza los archivos en grupos visuales para IDEs

@@ -25,6 +25,8 @@
     "settings.sound.desc": "Attiva o disattiva l'audio di tutti gli emulatori.",
     "settings.volume": "Volume",
     "settings.volume.desc": "Volume degli emulatori.",
+    "settings.fmSound": "Audio FM (Master System)",
+    "settings.fmSound.desc": "Emula il chip FM YM2413 del Master System giapponese. I giochi compatibili suonano la loro musica FM. Si applica al riavvio del gioco.",
     "settings.smsChannels": "Canali del Master System",
     "settings.channel1": "Tono 1",
     "settings.channel1.desc": "Primo canale a onda quadra del PSG. Nel gioco si cambia con il tasto 1.",

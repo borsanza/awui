@@ -66,6 +66,18 @@ void Ports::WriteByte(Motherboard *cpu, uint8_t port, uint8_t value) {
 		return;
 	}
 
+	// YM2413 (Master System japonesa, FM Sound Unit): este sí decodifica la dirección entera
+	if (HasFM(cpu) && (port >= 0xF0) && (port <= 0xF2)) {
+		Sound *sound = cpu->GetSound();
+		if (port == 0xF0)
+			sound->WriteFMAddress(value);
+		else if (port == 0xF1)
+			sound->WriteFMData(cpu, value);
+		else
+			sound->WriteFMControl(cpu, value);
+		return;
+	}
+
 	// El hardware solo mira los bits A7, A6 y A0 de la dirección: cada puerto se repite por todo su rango
 	switch (port & 0xC1) {
 		// 0x00-0x3F pares: control de memoria (no emulado)
@@ -116,7 +128,16 @@ uint8_t Ports::GetPinLevel(uint8_t directionBit, uint8_t outputBit, bool isTH) c
 	return level;
 }
 
+bool Ports::HasFM(Motherboard *cpu) {
+	return Sound::IsFMEnabled() && !cpu->IsGameGear();
+}
+
 uint8_t Ports::ReadByte(Motherboard *cpu, uint8_t port) const {
+	// Detección del FM: los juegos escriben en 0xF2 y comprueban que leen lo mismo (bits 0-2). Sin FM, 0xF2
+	// es un espejo del puerto de los mandos y no coincide
+	if (HasFM(cpu) && (port == 0xF2))
+		return cpu->GetSound()->GetFMControl() & 0x07;
+
 	// Game Gear: puerto 0x00 = START (bit 7, activo a 0), bit 6 = versión no japonesa, bit 5 = NTSC.
 	// Los puertos 0x01-0x05 son del enlace serie y devuelven sus valores por defecto.
 	if (cpu->IsGameGear() && port <= 0x06) {

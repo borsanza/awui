@@ -25,6 +25,8 @@
     "settings.sound.desc": "Activa o desactiva el so de tots els emuladors.",
     "settings.volume": "Volum",
     "settings.volume.desc": "Volum dels emuladors.",
+    "settings.fmSound": "So FM (Master System)",
+    "settings.fmSound.desc": "Emula el xip FM YM2413 de la Master System japonesa. Els jocs que l'admeten toquen la seua música FM. S'aplica en tornar a arrancar el joc.",
     "settings.smsChannels": "Canals de la Master System",
     "settings.channel1": "To 1",
     "settings.channel1.desc": "Primer canal d'ona quadrada del PSG. En el joc es canvia amb la tecla 1.",
