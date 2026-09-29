@@ -75,7 +75,19 @@ void Controller::Refresh() {
 	int pos = 0;
 	for (int i = 0; i < SDL_NumJoysticks(); i++) {
 		if (SDL_IsGameController(i)) {
-			controller = AddOnce(SDL_GameControllerOpen(i));
+			// Cada SDL_GameControllerOpen suma una referencia y el destructor solo cierra una:
+			// los mandos que ya están abiertos no se vuelven a abrir
+			controller = GetByWhich(SDL_JoystickGetDeviceInstanceID(i));
+			if (!controller) {
+				SDL_GameController *gController = SDL_GameControllerOpen(i);
+				if (!gController) {
+					Console::WriteLine(String("No se puede abrir el mando: ") + SDL_GetError());
+					continue;
+				}
+
+				controller = AddOnce(gController);
+			}
+
 			controller->SetOrder(pos);
 			pos++;
 		}
