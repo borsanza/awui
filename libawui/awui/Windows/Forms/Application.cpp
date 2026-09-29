@@ -123,10 +123,10 @@ void Application::ProcessEvents() {
 					break;
 				case SDL_CONTROLLERAXISMOTION: {
 					// Console::WriteLine(String("SDL_CONTROLLERAXISMOTION [") + Convert::ToString((int)event.caxis.axis) + " - " + Convert::ToString((int)event.caxis.value) + "]");
-					Joystick::Controller *controller = Joystick::Controller::GetByWhich(event.cbutton.which);
+					Joystick::Controller *controller = Joystick::Controller::GetByWhich(event.caxis.which);
 					if (controller) {
-						controller->OnAxisMotion(event.caxis.axis, event.caxis.value);
-						formW->OnJoystickAxisMotionPre(controller->GetOrder(), controller->GetAxisX(), controller->GetAxisY());
+						if (controller->OnAxisMotion(event.caxis.axis, event.caxis.value))
+							formW->OnJoystickAxisMotionPre(controller->GetOrder(), controller->GetAxisX(), controller->GetAxisY());
 						ret = true;
 					}
 					break;

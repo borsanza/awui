@@ -43,7 +43,7 @@ namespace awui {
 
 			void OnButtonDown(uint32_t button);
 			void OnButtonUp(uint32_t button);
-			void OnAxisMotion(uint8_t axis, int16_t value);
+			bool OnAxisMotion(uint8_t axis, int16_t value);
 		};
 	} // namespace Windows::Forms::Joystick
 } // namespace awui

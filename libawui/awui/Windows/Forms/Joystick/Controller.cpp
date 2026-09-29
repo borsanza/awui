@@ -23,6 +23,8 @@ Controller::Controller(SDL_GameController *controller) {
 	m_positionOrder = -1;
 	m_buttons = 0;
 	m_prevButtons = 0;
+	m_axisX = 0;
+	m_axisY = 0;
 
 	SDL_Joystick *joystick = SDL_GameControllerGetJoystick(controller);
 	m_which = SDL_JoystickInstanceID(joystick);
@@ -50,17 +52,16 @@ Controller *Controller::AddOnce(SDL_GameController *gController) {
 	return controller;
 }
 
+// nullptr si el mando no está en la lista (por ejemplo, un evento que llega justo después de desconectarlo)
 Controller *Controller::GetByWhich(SDL_JoystickID which) {
-	Controller *controller = nullptr;
-
 	for (int i = 0; i < m_controllersList->GetCount(); i++) {
-		controller = (Controller *) m_controllersList->Get(i);
+		Controller *controller = (Controller *) m_controllersList->Get(i);
 		if (controller->m_which == which) {
-			break;
+			return controller;
 		}
 	}
 
-	return controller;
+	return nullptr;
 }
 
 void Controller::Refresh() {
@@ -116,10 +117,17 @@ void Controller::OnButtonUp(uint32_t button) {
 	// printf("OnButtonUp: %X\n", m_buttons);
 }
 
-void Controller::OnAxisMotion(uint8_t axis, int16_t value) {
-	if ((axis % 2) == 0) {
-		m_axisX = value;
-	} else {
-		m_axisY = value;
+// Solo el stick izquierdo hace de cruceta. El derecho y los gatillos (ejes 2-5) se ignoran:
+// devuelve false si el eje no cuenta, para no avisar a los controles
+bool Controller::OnAxisMotion(uint8_t axis, int16_t value) {
+	switch (axis) {
+		case SDL_CONTROLLER_AXIS_LEFTX:
+			m_axisX = value;
+			return true;
+		case SDL_CONTROLLER_AXIS_LEFTY:
+			m_axisY = value;
+			return true;
+		default:
+			return false;
 	}
 }
