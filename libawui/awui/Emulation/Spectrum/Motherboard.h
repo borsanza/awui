@@ -28,7 +28,15 @@ namespace awui::Emulation {
 			Processors::Z80::CPU *_z80;
 			ULA *_ula;
 			Sound *_sound;
-			TapeCorder *_tape; // Para la carga instantánea (no es suyo)
+			TapeCorder *_tape; // Para la carga instantánea y el control automático de la cinta (no es suyo)
+
+			// Detección de un cargador (lee el puerto 0xFE en bucle, cientos de veces por frame; el teclado son unas
+			// pocas lecturas): la cinta arranca sola si un cargador la espera y se para si nadie la lee
+			mutable int64_t _lastEarReadCycle;
+			mutable int _loaderReads; // Lecturas seguidas y rápidas del puerto en este frame
+			int _framesWithoutLoader;
+			bool _tapeWasPlaying;
+			void UpdateTapeMotor();
 
 			// No se guarda
 			Common::Rom *_rom;

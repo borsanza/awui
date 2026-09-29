@@ -388,22 +388,19 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 			if (pressed)
 				LoadState();
 			break;
+		// La cinta la pone en marcha y la para el propio cargador (Motherboard::UpdateTapeMotor), como el motor de
+		// un casete con control remoto: estas teclas no la hacen sonar
 		case Keys::Key_F8:
-			// Carga ultrarrápida: con el cargador de la ROM es instantánea; con uno propio la cinta tiene que
-			// sonar, así que se pone en marcha si estaba parada
-			if (pressed) {
+			// Carga ultrarrápida: con el cargador de la ROM es instantánea; con uno propio la cinta pasa a toda
+			// velocidad
+			if (pressed)
 				m_motherboard->SetFast(!m_motherboard->GetFast());
-				if (m_motherboard->GetFast() && !m_tapecorder->IsPlaying())
-					m_tapecorder->Play();
-			}
 			break;
 		case Keys::Key_F9:
+			// Rebobina la cinta al principio (para volver a cargar); arranca sola al hacer LOAD ""
 			if (pressed) {
-				if (!m_tapecorder->IsPlaying()) {
-					m_tapecorder->Rewind();
-					m_tapecorder->Play();
-				} else
-					m_tapecorder->Stop();
+				m_tapecorder->Stop();
+				m_tapecorder->Rewind();
 			}
 			break;
 		default:

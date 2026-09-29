@@ -38,6 +38,12 @@ Content Memory:
 
 static int content_states[] = {5, 4, 3, 2, 1, 0, 0, 6};
 
+// Detección del cargador: lecturas del puerto 0xFE a menos de estos ciclos de la anterior cuentan como bucle de
+// carga; con estas por frame se considera que hay un cargador; y sin él durante estos frames (2 s) se para la cinta
+#define LOADER_READ_GAP 200
+#define LOADER_READS_PER_FRAME 300
+#define TAPE_IDLE_FRAMES 120
+
 void WriteMemoryCB(uint16_t pos, uint8_t value, void *data) {
 	((Motherboard *) data)->WriteMemory(pos, value);
 }
@@ -78,6 +84,10 @@ Motherboard::Motherboard() {
 	this->_cyclesULA = 0;
 	this->_fast = false;
 	this->_tape = nullptr;
+	this->_lastEarReadCycle = 0;
+	this->_loaderReads = 0;
+	this->_framesWithoutLoader = 0;
+	this->_tapeWasPlaying = false;
 
 	this->_rom = new Common::Rom(16384);
 
@@ -270,6 +280,30 @@ void Motherboard::OnTick() {
 
 	// En modo rápido el sonido no tiene sentido (va 9 veces más deprisa): se encola silencio
 	this->_sound->EndFrame(FrameSeconds, this->_fast);
+
+	UpdateTapeMotor();
+}
+
+// Como el motor de las cintas con control remoto: si un cargador está leyendo, la cinta suena; si durante un
+// rato nadie la lee (el juego ya ha cargado, o se ha pulsado F9 sin hacer LOAD ""), se para donde está
+void Motherboard::UpdateTapeMotor() {
+	bool loading = this->_loaderReads >= LOADER_READS_PER_FRAME;
+	this->_loaderReads = 0;
+	this->_framesWithoutLoader = loading ? 0 : this->_framesWithoutLoader + 1;
+
+	if (!this->_tape)
+		return;
+
+	// Si la cinta acaba de arrancar (F9, por ejemplo) tiene su margen entero antes de pararse
+	if (this->_tape->IsPlaying() && !this->_tapeWasPlaying)
+		this->_framesWithoutLoader = 0;
+
+	if (loading && !this->_tape->IsPlaying() && !this->_tape->IsAtEnd())
+		this->_tape->Play();
+	else if (!loading && this->_tape->IsPlaying() && (this->_framesWithoutLoader >= TAPE_IDLE_FRAMES))
+		this->_tape->Stop();
+
+	this->_tapeWasPlaying = this->_tape->IsPlaying();
 }
 
 /**
@@ -365,6 +399,12 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 				value &= this->d._keys[i];
 			row >>= 1;
 		}
+
+		// Un cargador lee el puerto a cada momento (decenas de ciclos entre lecturas)
+		int64_t cycles = this->_z80->GetCycles();
+		if ((cycles - this->_lastEarReadCycle) < LOADER_READ_GAP)
+			this->_loaderReads++;
+		this->_lastEarReadCycle = cycles;
 
 		if (this->_lastReadState)
 			value |= 0x40;
