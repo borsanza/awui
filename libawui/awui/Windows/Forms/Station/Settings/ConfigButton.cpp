@@ -1,5 +1,5 @@
 /**
- * awui/Windows/Forms/Station/MenuButton.cpp
+ * awui/Windows/Forms/Station/Settings/ConfigButton.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano
  */
@@ -25,16 +25,22 @@ ConfigButton::ConfigButton(TypeButton typeButton) {
 	m_class = Classes::ConfigButton;
 	m_typeButton = typeButton;
 	m_subpage = nullptr;
+	m_boolValue = false;
+	m_selected = -1;
 
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
 	SetFocusable(true);
 
+	m_value.SetTextAlign(ContentAlignment::MiddleRight);
+
 	AddWidget(&m_label);
+	AddWidget(&m_value);
 }
 
 ConfigButton::~ConfigButton() {
+	RemoveWidget(&m_value);
 	RemoveWidget(&m_label);
 }
 
@@ -50,7 +56,7 @@ void ConfigButton::OnPaint(GL *gl) {
 		SetForeColor(Color::FromArgb(199, 199, 199));
 	}
 
-	if (m_group) {
+	if (IsGroup()) {
 		glLineWidth(2.5f);
 
 		float x = GetWidth() - 22.0f;
@@ -81,6 +87,7 @@ void ConfigButton::SetForeColor(const Color color) {
 	if (color != GetForeColor()) {
 		Control::SetForeColor(color);
 		m_label.SetForeColor(GetForeColor());
+		m_value.SetForeColor(GetForeColor());
 	}
 }
 
@@ -91,6 +98,7 @@ const awui::String ConfigButton::GetText() const {
 void ConfigButton::SetFont(const Drawing::Font font) {
 	Control::SetFont(font);
 	m_label.SetFont(font);
+	m_value.SetFont(font);
 }
 
 int ConfigButton::GetLabelWidth() const {
@@ -99,11 +107,80 @@ int ConfigButton::GetLabelWidth() const {
 
 void ConfigButton::OnResize() {
 	m_label.SetLocation(23, 0);
-	if (m_group) {
+	if (IsGroup()) {
 		m_label.SetSize(GetWidth() - (50 + m_label.GetLeft()), GetHeight());
-	} else {
-		m_label.SetSize(GetWidth() - (0 + m_label.GetLeft()), GetHeight());
+		m_value.SetSize(0, GetHeight());
+		return;
 	}
+
+	// El valor a la derecha, entero; el nombre ocupa el resto (y se desplaza si no cabe)
+	int valueWidth = (m_value.GetText().GetLength() > 0) ? m_value.GetLabelWidth() + 2 : 0;
+	m_value.SetLocation(GetWidth() - 23 - valueWidth, 0);
+	m_value.SetSize(valueWidth, GetHeight());
+	m_label.SetSize(GetWidth() - (m_label.GetLeft() + 23 + valueWidth + (valueWidth ? 30 : 0)), GetHeight());
+}
+
+void ConfigButton::SetValueText(const String &text) {
+	m_value.SetText(text);
+	OnResize();
+}
+
+void ConfigButton::UpdateValueText() {
+	switch (m_typeButton) {
+		case TypeButton::Boolean:
+			SetValueText(m_boolValue ? m_onText : m_offText);
+			break;
+		case TypeButton::List:
+			SetValueText((m_selected >= 0) ? m_options[m_selected].second : String(""));
+			break;
+		default:
+			break;
+	}
+}
+
+void ConfigButton::SetBoolValue(bool value, const String &onText, const String &offText) {
+	m_boolValue = value;
+	m_onText = onText;
+	m_offText = offText;
+	UpdateValueText();
+}
+
+void ConfigButton::SetOptions(const std::vector<std::pair<std::string, String>> &options, const std::string &selected) {
+	m_options = options;
+	m_selected = m_options.empty() ? -1 : 0;
+	for (int i = 0; i < (int) m_options.size(); i++) {
+		if (m_options[i].first == selected) {
+			m_selected = i;
+			break;
+		}
+	}
+
+	UpdateValueText();
+}
+
+std::string ConfigButton::GetListValue() const {
+	return (m_selected >= 0) ? m_options[m_selected].first : "";
+}
+
+// Cambia el valor (sí/no alterna, las listas avanzan o retroceden de forma circular) y avisa a los listeners
+void ConfigButton::Step(int direction) {
+	switch (m_typeButton) {
+		case TypeButton::Boolean:
+			m_boolValue = !m_boolValue;
+			break;
+		case TypeButton::List: {
+			int count = (int) m_options.size();
+			if (count < 2)
+				return;
+
+			m_selected = (m_selected + direction + count) % count;
+		} break;
+		default:
+			return;
+	}
+
+	UpdateValueText();
+	Click();
 }
 
 void ConfigButton::Click() {
@@ -148,15 +225,45 @@ awui::String ConfigButton::ToString() const {
 	return a;
 }
 
+// Izquierda y derecha cambian el valor de los sí/no y las listas en vez de mover el foco
+bool ConfigButton::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
+	if ((m_typeButton == TypeButton::Boolean) || (m_typeButton == TypeButton::List)) {
+		switch (button) {
+			case RemoteButtons::Left:
+				Step(-1);
+				return true;
+			case RemoteButtons::Right:
+				Step(1);
+				return true;
+			default:
+				break;
+		}
+	}
+
+	// Derecha también abre un grupo
+	if (IsGroup() && (button == RemoteButtons::Right)) {
+		Click();
+		return true;
+	}
+
+	return Control::OnRemoteKeyPress(which, button);
+}
+
 bool ConfigButton::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	switch (button) {
 		case RemoteButtons::Ok:
-			Click();
-			// m_station->SelectChild(m_node);
+			if (IsGroup())
+				Click();
+			else
+				Step(1);
 			break;
-		case RemoteButtons::Menu:
-			// m_station->SelectParent();
-			break;
+		case RemoteButtons::Menu: {
+			// Copia: el listener puede cerrar el menú
+			std::vector<IRemoteListener *> listeners = m_listeners;
+			for (auto *listener : listeners) {
+				listener->OnMenu(this);
+			}
+		} break;
 		default:
 			break;
 	}

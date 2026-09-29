@@ -212,6 +212,7 @@ namespace awui {
 			inline void SetPreventChangeControl(bool mode) { m_preventChangeControl = mode; }
 
 			void SetVisible(bool mode);
+			inline bool GetVisible() const { return m_visible; }
 			void CheckMouseControl();
 
 			static Bitmap *GetSelectedBitmap();

@@ -1,140 +1,145 @@
 [
     {
-        "name": "General",
+        "name": {"en_US": "General", "es_ES": "General"},
         "type": "group",
         "items": [
             {
-                "name": "Test1",
-                "type": "group",
-                "items": [
-                    {}
+                "key": "language",
+                "name": {"en_US": "Language", "es_ES": "Idioma"},
+                "description": {"en_US": "Language of the settings menu.", "es_ES": "Idioma del menú de ajustes."},
+                "type": "list",
+                "defaultValue": "es_ES",
+                "options": [
+                    {"code": "en_US", "name": "English"},
+                    {"code": "es_ES", "name": "Español"}
                 ]
             },
             {
-                "key": "language",
-                "name": "Language",
-                "description": "Interface language of the program.",
+                "key": "clock",
+                "name": {"en_US": "Clock", "es_ES": "Reloj"},
+                "description": {"en_US": "Show the clock in the top right corner.", "es_ES": "Muestra el reloj en la esquina superior derecha."},
+                "type": "boolean",
+                "defaultValue": true
+            },
+            {
+                "key": "timeFormat",
+                "name": {"en_US": "Time format", "es_ES": "Formato de hora"},
+                "description": {"en_US": "Choose between a 12-hour or 24-hour clock.", "es_ES": "Elige entre reloj de 12 o de 24 horas."},
                 "type": "list",
-                "defaultValue": "en_US",
+                "defaultValue": "24",
                 "options": [
-                    {
-                        "code": "en_US",
-                        "name": "English (US)"
-                    },
-                    {
-                        "code": "es_ES",
-                        "name": "Spanish / Español"
-                    }
+                    {"code": "12", "name": {"en_US": "12 hour", "es_ES": "12 horas"}},
+                    {"code": "24", "name": {"en_US": "24 hour", "es_ES": "24 horas"}}
                 ]
             }
         ]
     },
     {
-        "name": "Video",
+        "name": {"en_US": "Video", "es_ES": "Vídeo"},
         "type": "group",
         "items": [
             {
                 "key": "fullScreen",
-                "name": "Fullscreen",
-                "description": "Enable to use the program in full-screen mode.",
+                "name": {"en_US": "Fullscreen", "es_ES": "Pantalla completa"},
+                "description": {"en_US": "Use the whole screen instead of a window.", "es_ES": "Usa toda la pantalla en vez de una ventana."},
                 "type": "boolean",
                 "defaultValue": false
             },
             {
                 "key": "vsync",
-                "name": "Vertical synchronization",
-                "description": "Vertical synchronization to reduce screen tearing.",
-                "type": "boolean",
-                "defaultValue": true
-            }
-        ]
-    },
-    {
-        "name": "Audio",
-        "type": "group",
-        "items": [
-            {
-                "key": "channel1",
-                "name": "Channel 1",
-                "description": "Enable/Disable audio channel 1",
-                "type": "boolean",
-                "defaultValue": true
-            },
-            {
-                "key": "channel2",
-                "name": "Channel 2",
-                "description": "Enable/Disable audio channel 2",
-                "type": "boolean",
-                "defaultValue": true
-            },
-            {
-                "key": "channel3",
-                "name": "Channel 3",
-                "description": "Enable/Disable audio channel 3",
-                "type": "boolean",
-                "defaultValue": true
-            },
-            {
-                "key": "channel4",
-                "name": "Channel 4",
-                "description": "Enable/Disable audio channel 4",
-                "type": "boolean",
-                "defaultValue": true
-            }
-        ]
-    },
-    {
-        "name": "Advanced",
-        "type": "group",
-        "items": [
-            {
-                "key": "clock",
-                "name": "Clock",
-                "description": "Show or hide the display of a clock within the program.",
+                "name": {"en_US": "Vertical sync", "es_ES": "Sincronización vertical"},
+                "description": {"en_US": "Synchronize with the screen refresh to avoid tearing. The 5 key also toggles it.", "es_ES": "Sincroniza con el refresco de la pantalla para evitar cortes en la imagen. También se cambia con la tecla 5."},
                 "type": "boolean",
                 "defaultValue": true
             },
             {
                 "key": "fps",
-                "name": "FPS",
-                "description": "Show or hide the Frames per second.",
+                "name": {"en_US": "Show FPS", "es_ES": "Mostrar FPS"},
+                "description": {"en_US": "Show the frames per second in the bottom right corner.", "es_ES": "Muestra los fotogramas por segundo en la esquina inferior derecha."},
                 "type": "boolean",
                 "defaultValue": false
+            }
+        ]
+    },
+    {
+        "name": {"en_US": "Audio", "es_ES": "Sonido"},
+        "type": "group",
+        "items": [
+            {
+                "key": "sound",
+                "name": {"en_US": "Sound", "es_ES": "Sonido"},
+                "description": {"en_US": "Enable or disable the sound of all the emulators.", "es_ES": "Activa o desactiva el sonido de todos los emuladores."},
+                "type": "boolean",
+                "defaultValue": true
             },
             {
-                "key": "timeFormat",
-                "name": "Time Format",
-                "description": "Choose between a 12-hour or 24-hour clock format.",
+                "key": "volume",
+                "name": {"en_US": "Volume", "es_ES": "Volumen"},
+                "description": {"en_US": "Volume of the emulators.", "es_ES": "Volumen de los emuladores."},
                 "type": "list",
-                "defaultValue": "24",
+                "defaultValue": "100",
                 "options": [
+                    {"code": "25", "name": "25%"},
+                    {"code": "50", "name": "50%"},
+                    {"code": "75", "name": "75%"},
+                    {"code": "100", "name": "100%"}
+                ]
+            },
+            {
+                "name": {"en_US": "Master System channels", "es_ES": "Canales de Master System"},
+                "type": "group",
+                "items": [
                     {
-                        "code": "12",
-                        "name": "12 hour"
+                        "key": "channel1",
+                        "name": {"en_US": "Tone 1", "es_ES": "Tono 1"},
+                        "description": {"en_US": "First square wave channel of the PSG. In game it is toggled with the 1 key.", "es_ES": "Primer canal de onda cuadrada del PSG. En el juego se cambia con la tecla 1."},
+                        "type": "boolean",
+                        "defaultValue": true
                     },
                     {
-                        "code": "24",
-                        "name": "24 hour"
+                        "key": "channel2",
+                        "name": {"en_US": "Tone 2", "es_ES": "Tono 2"},
+                        "description": {"en_US": "Second square wave channel of the PSG. In game it is toggled with the 2 key.", "es_ES": "Segundo canal de onda cuadrada del PSG. En el juego se cambia con la tecla 2."},
+                        "type": "boolean",
+                        "defaultValue": true
+                    },
+                    {
+                        "key": "channel3",
+                        "name": {"en_US": "Tone 3", "es_ES": "Tono 3"},
+                        "description": {"en_US": "Third square wave channel of the PSG. In game it is toggled with the 3 key.", "es_ES": "Tercer canal de onda cuadrada del PSG. En el juego se cambia con la tecla 3."},
+                        "type": "boolean",
+                        "defaultValue": true
+                    },
+                    {
+                        "key": "channel4",
+                        "name": {"en_US": "Noise", "es_ES": "Ruido"},
+                        "description": {"en_US": "Noise channel of the PSG (drums and effects). In game it is toggled with the 4 key.", "es_ES": "Canal de ruido del PSG (percusión y efectos). En el juego se cambia con la tecla 4."},
+                        "type": "boolean",
+                        "defaultValue": true
                     }
                 ]
             }
         ]
     },
     {
-        "name": "About",
+        "name": {"en_US": "About", "es_ES": "Acerca de"},
         "type": "group",
         "items": [
             {
-                "key": "appName",
-                "name": "App Name",
+                "name": {"en_US": "Application", "es_ES": "Aplicación"},
                 "type": "label",
-                "defaultValue": "Station TV"
+                "defaultValue": "StationTV"
             },
             {
-                "key": "version",
-                "name": "Version",
+                "name": {"en_US": "Version", "es_ES": "Versión"},
                 "type": "label",
                 "defaultValue": "0.1"
+            },
+            {
+                "name": {"en_US": "Emulators", "es_ES": "Emuladores"},
+                "description": {"en_US": "Master System, Game Gear, SG-1000, ZX Spectrum and Chip-8.", "es_ES": "Master System, Game Gear, SG-1000, ZX Spectrum y Chip-8."},
+                "type": "label",
+                "defaultValue": "5"
             }
         ]
     }

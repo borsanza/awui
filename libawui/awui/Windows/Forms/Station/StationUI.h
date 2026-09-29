@@ -86,6 +86,8 @@ namespace awui {
 					ImageFader *m_backgroundFader;
 					Settings::SettingsUI *m_settingsUI;
 					Control *m_controlBase;
+					bool m_closeSettings;
+					bool m_clock24;
 
 					void RecursiveSearch(NodeFile *parent);
 					bool Minimize(NodeFile *parent);
@@ -94,6 +96,7 @@ namespace awui {
 
 					void CheckArcade();
 					void RefreshList();
+					void CloseSettings();
 
 				  public:
 					StationUI();
@@ -117,6 +120,7 @@ namespace awui {
 					void ExitArcade();
 
 					void SetBackground(Bitmap *background);
+					void ApplySettings();
 
 					virtual void OnOk(Control *sender) override;
 					virtual void OnMenu(Control *sender) override;

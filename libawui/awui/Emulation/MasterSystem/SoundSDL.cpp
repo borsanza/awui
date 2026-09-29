@@ -6,6 +6,7 @@
 
 #include "SoundSDL.h"
 
+#include <awui/Emulation/Common/AudioSettings.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 
 #include <algorithm>
@@ -94,6 +95,17 @@ void SoundSDL::Queue(Sound *sound, const int16_t *samples, int count) {
 		SDL_QueueAudio(m_audioDevice, silence.data(), (Uint32) (silence.size() * sizeof(int16_t)));
 	}
 
+	// Volumen: se aplica al encolar (con el sonido desactivado se encola silencio para no perder el ritmo)
+	int gain = Common::AudioSettings::GetGain();
+	if (gain != 100) {
+		std::vector<int16_t> scaled(samples, samples + (count * 2));
+		for (int16_t &sample : scaled)
+			sample = (int16_t) ((sample * gain) / 100);
+
+		SDL_QueueAudio(m_audioDevice, scaled.data(), (Uint32) (scaled.size() * sizeof(int16_t)));
+		return;
+	}
+
 	SDL_QueueAudio(m_audioDevice, samples, (Uint32) (count * 2 * sizeof(int16_t)));
 }
 
@@ -110,4 +122,11 @@ double SoundSDL::GetRateAdjust() const {
 
 void SoundSDL::ToggleChannel(int channel) {
 	m_disabledChannels ^= 1 << channel;
+}
+
+void SoundSDL::SetChannelEnabled(int channel, bool enabled) {
+	if (enabled)
+		m_disabledChannels &= ~(1 << channel);
+	else
+		m_disabledChannels |= 1 << channel;
 }

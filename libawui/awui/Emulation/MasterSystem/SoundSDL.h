@@ -36,6 +36,7 @@ namespace awui::Emulation::MasterSystem {
 		double GetRateAdjust() const;
 
 		static void ToggleChannel(int channel);
+		static void SetChannelEnabled(int channel, bool enabled);
 		static inline bool IsChannelEnabled(int channel) { return (m_disabledChannels & (1 << channel)) == 0; }
 	};
 } // namespace awui::Emulation::MasterSystem

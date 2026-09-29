@@ -49,6 +49,15 @@ Browser::Browser() {
 	AddWidget(&m_gradientRight);
 }
 
+// El destructor de Control borra los hijos que queden: los degradados son miembros y la página es de quien la creó
+Browser::~Browser() {
+	SetPage(nullptr);
+	RemoveWidget(&m_gradientUp);
+	RemoveWidget(&m_gradientBottom);
+	RemoveWidget(&m_gradientLeft);
+	RemoveWidget(&m_gradientRight);
+}
+
 bool Browser::IsClass(Classes objectClass) const {
 	return (objectClass == Classes::Browser) || Control::IsClass(objectClass);
 }
@@ -114,7 +123,11 @@ void Browser::SetPage(Page *page) {
 	if (m_page)
 		RemoveWidget(m_page);
 
+	// nullptr: solo se quita la página actual (no se borra, es de quien la creó)
 	m_page = page;
+	if (!m_page)
+		return;
+
 	AddWidget(m_page);
 
 	MoveToEnd(&m_gradientUp);

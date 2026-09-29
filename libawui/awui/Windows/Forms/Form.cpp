@@ -124,10 +124,8 @@ void Form::RefreshVideo() {
 	// Si no se puede saber el tamaño del escritorio se mantiene el actual; SDL avisará del tamaño real al redimensionar
 	int finalWidth = GetWidth();
 	int finalHeight = GetHeight();
-	Uint32 flags = 0;
 
 	if (m_fullscreen) {
-		flags |= SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN_DESKTOP;
 		if (m_lastFullscreenState != 1) {
 			m_lastWidth = GetWidth();
 			m_lastHeight = GetHeight();
@@ -147,8 +145,6 @@ void Form::RefreshVideo() {
 			SDL_Log("[ERROR] SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 		}
 	} else {
-		flags |= SDL_WINDOW_RESIZABLE;
-
 		if (m_lastFullscreenState <= 0) {
 			finalWidth = GetWidth();
 			finalHeight = GetHeight();
@@ -159,8 +155,12 @@ void Form::RefreshVideo() {
 	}
 
 	if (!m_window) {
-		// Crear una nueva ventana si aún no existe
-		m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, finalWidth, finalHeight, flags | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		// La ventana se crea siempre como ventana normal (con bordes y el tamaño del formulario) y luego se pasa a
+		// pantalla completa: si se creara ya sin bordes y del tamaño del escritorio, al salir de pantalla completa
+		// SDL la devolvería así
+		int windowWidth = m_fullscreen ? m_lastWidth : finalWidth;
+		int windowHeight = m_fullscreen ? m_lastHeight : finalHeight;
+		m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 		if (m_window == NULL) {
 			SDL_Log("[ERROR] SDL_CreateWindow failed: %s", SDL_GetError());
 			return;
@@ -197,6 +197,11 @@ void Form::RefreshVideo() {
 
 bool Form::SetSwapInterval(bool mode) {
 	m_swapInterval = mode;
+
+	// Sin contexto de OpenGL todavía: se aplicará al crear la ventana (RefreshVideo)
+	if (!m_initialized)
+		return true;
+
 	if (SDL_GL_SetSwapInterval(m_swapInterval ? 1 : 0) < 0) {
 		SDL_Log("[ERROR] SDL_GL_SetSwapInterval failed: %s", SDL_GetError());
 		return false;

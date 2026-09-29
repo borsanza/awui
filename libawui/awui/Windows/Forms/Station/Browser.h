@@ -15,7 +15,7 @@ namespace awui::Windows::Forms::Station {
 
 	  public:
 		Browser();
-		virtual ~Browser() = default;
+		virtual ~Browser();
 
 		virtual bool IsClass(Classes objectClass) const override;
 

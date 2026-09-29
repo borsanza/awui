@@ -7,6 +7,7 @@
 #include "SoundSDL.h"
 
 #include <awui/DateTime.h>
+#include <awui/Emulation/Common/AudioSettings.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
 #include <awui/Emulation/Spectrum/Sound.h>
 #include <awui/Object.h>
@@ -66,6 +67,7 @@ void SoundSDL::FillAudio(Uint8 *stream, int len) {
 
 void SoundSDL::FillAudioSDL(Sound *sound, Uint8 *stream, int len) {
 	int offset = this->_frame * SOUNDSIZEFRAME;
+	int gain = Common::AudioSettings::GetGain();
 
 	for (int i = 0; i < len; i++) {
 		int bufferPos = offset + i;
@@ -74,7 +76,7 @@ void SoundSDL::FillAudioSDL(Sound *sound, Uint8 *stream, int len) {
 			if (sound->_buffer[bufferPos] != 0)
 				_tone = sound->_buffer[bufferPos];
 
-			stream[i] = _tone;
+			stream[i] = (Uint8) (int8_t) ((_tone * gain) / 100);
 		}
 
 		if (sound->_buffer[bufferPos] != 0)

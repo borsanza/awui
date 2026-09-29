@@ -8,6 +8,8 @@
 
 #include <awui/Collections/SortedList.h>
 #include <awui/Console.h>
+#include <awui/Emulation/Common/AudioSettings.h>
+#include <awui/Emulation/MasterSystem/SoundSDL.h>
 #include <awui/Math.h>
 #include <awui/Windows/Emulators/ArcadeContainer.h>
 #include <awui/Windows/Forms/Bitmap.h>
@@ -16,7 +18,9 @@
 #include <awui/Windows/Forms/Station/Browser.h>
 #include <awui/Windows/Forms/Station/MenuButton.h>
 #include <awui/Windows/Forms/Station/Page.h>
+#include <awui/Windows/Forms/Station/Settings/SettingsStore.h>
 #include <awui/Windows/Forms/Station/Settings/SettingsUI.h>
+#include <awui/Windows/Forms/Statistics/Stats.h>
 #include <awui/Windows/Forms/Station/SettingsWidget.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -40,6 +44,8 @@ StationUI::StationUI() {
 	m_arcade = nullptr;
 	m_root = nullptr;
 	m_settingsUI = nullptr;
+	m_closeSettings = false;
+	m_clock24 = true;
 
 	m_backgroundFader = new ImageFader();
 	m_backgroundFader->SetDock(DockStyle::Fill);
@@ -301,22 +307,34 @@ void StationUI::OnTick(float deltaSeconds) {
 		CheckArcade();
 	}
 
+	// Se cierra aquí y no en OnExit: OnExit llega desde un botón del propio menú, que se borra con él
+	if (m_closeSettings) {
+		m_closeSettings = false;
+		CloseSettings();
+	}
+
 	time_t t;
 	time(&t);
 	struct tm *tm;
 	tm = localtime(&t);
-	char hora[6];
-	strftime(hora, sizeof(hora), "%H:%M", tm);
-	String horaS(hora);
+	String horaS;
+	if (m_clock24) {
+		horaS = String("%02d:%02d", tm->tm_hour, tm->tm_min);
+	} else {
+		int hour = tm->tm_hour % 12;
+		horaS = String("%d:%02d %s", (hour == 0) ? 12 : hour, tm->tm_min, (tm->tm_hour < 12) ? "AM" : "PM");
+	}
 
 	if (m_clock->GetText().CompareTo(horaS) != 0) {
 		m_clock->SetText(horaS);
 	}
 
-	m_settings->SetLocation(GetWidth() - 150, 8);
-
-	m_clock->SetLocation(GetWidth() - 80, 16);
+	// Reloj pegado a la derecha y el botón de ajustes a su izquierda (o en su sitio si el reloj está oculto)
+	int clockLeft = GetWidth() - 10 - m_clock->GetLabelWidth();
+	m_clock->SetLocation(clockLeft, 16);
 	m_clock->SetSize(m_clock->GetLabelWidth(), 45);
+
+	m_settings->SetLocation((m_clock->GetVisible() ? clockLeft : GetWidth() - 10) - 70, 8);
 
 	m_title->SetLocation(GetWidth() >> 1, 0);
 	m_title->SetSize(GetWidth() >> 1, 69);
@@ -439,26 +457,68 @@ void StationUI::ExitArcade() {
 }
 
 void StationUI::OnOk(Control *sender) {
-	m_controlBase->SetVisible(false);
-	// Console::WriteLine("Click %s", sender->ToString());
 	if (m_settingsUI) {
-		RemoveWidget(m_settingsUI);
-		delete m_settingsUI;
-		m_settingsUI = nullptr;
+		return;
 	}
+
+	m_controlBase->SetVisible(false);
 
 	m_settingsUI = new SettingsUI();
 	m_settingsUI->SetDock(DockStyle::Fill);
+	m_settingsUI->SetExitListener(this);
+	m_settingsUI->SetOnChanged([this]() { ApplySettings(); });
 	AddWidget(m_settingsUI);
 	m_settingsUI->InitializeComponent();
 	CheckMouseControl();
-	// Form::SetControlSelected(m_settingsUI);
 }
 
 void StationUI::OnMenu(Control *sender) {
 }
 
 void StationUI::OnExit(Control *sender) {
+	if (m_settingsUI && (sender == m_settingsUI)) {
+		m_closeSettings = true;
+	}
+}
+
+void StationUI::CloseSettings() {
+	if (!m_settingsUI) {
+		return;
+	}
+
+	RemoveWidget(m_settingsUI);
+	delete m_settingsUI;
+	m_settingsUI = nullptr;
+
+	m_controlBase->SetVisible(true);
+	m_settings->SetFocus();
+	CheckMouseControl();
+}
+
+// Aplica los ajustes guardados. Se llama al arrancar y cada vez que cambia uno en el menú
+void StationUI::ApplySettings() {
+	SettingsStore &settings = SettingsStore::Instance();
+
+	Form *form = GetForm();
+	if (form) {
+		form->SetFullscreen(settings.GetBool("fullScreen") ? 1 : 0);
+
+		bool vsync = settings.GetBool("vsync");
+		if (form->GetSwapInterval() != vsync) {
+			form->SetSwapInterval(vsync);
+		}
+	}
+
+	Statistics::Stats::Instance()->SetVisible(settings.GetBool("fps"));
+	m_clock->SetVisible(settings.GetBool("clock"));
+	m_clock24 = settings.GetString("timeFormat") != "12";
+
+	Emulation::Common::AudioSettings::SetEnabled(settings.GetBool("sound"));
+	Emulation::Common::AudioSettings::SetVolume(atoi(settings.GetString("volume").c_str()));
+
+	for (int i = 0; i < 4; i++) {
+		Emulation::MasterSystem::SoundSDL::SetChannelEnabled(i, settings.GetBool(String("channel%d", i + 1).ToCharArray()));
+	}
 }
 
 /********************************* FadePanel **********************************/

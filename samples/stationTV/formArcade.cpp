@@ -6,6 +6,7 @@
 
 #include "formArcade.h"
 
+#include <awui/Windows/Forms/Station/Settings/SettingsStore.h>
 #include <awui/Windows/Forms/Station/StationUI.h>
 
 using namespace awui;
@@ -31,15 +32,24 @@ void FormArcade::InitializeComponent() {
 	AddWidget(m_stationUI);
 
 	SetSize(1280, 720);
-	SetFullscreen(0);
 	SetText("StationTV");
+
+	// Pantalla completa, vsync, reloj, FPS y sonido según settings.json
+	m_stationUI->ApplySettings();
 }
 
 bool FormArcade::OnKeyPress(Keys::Enum key) {
 	bool ret = false;
 	switch (key) {
+		case Keys::Key_F11:
+			// Form cambia la pantalla completa al soltar F11: se guarda ya el valor nuevo para que no lo
+			// deshaga el siguiente cambio en el menú de ajustes
+			Settings::SettingsStore::Instance().SetBool("fullScreen", !GetFullscreen());
+			break;
 		case Keys::Key_5:
+			// Se guarda para que el menú de ajustes muestre el valor real
 			SetSwapInterval(!GetSwapInterval());
+			Settings::SettingsStore::Instance().SetBool("vsync", GetSwapInterval());
 			ret = true;
 			break;
 	}
