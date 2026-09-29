@@ -59,6 +59,7 @@ Motherboard::Motherboard() {
 	m_saveData._wantPause = false;
 	m_saveData._pad1 = 0xFF;
 	m_saveData._pad2 = 0xFF;
+	memset(m_saveData._boardram, 0, 32768 * sizeof(uint8_t));
 
 	Reset();
 }
@@ -77,11 +78,13 @@ void Motherboard::Reset() {
 	for (int i = 0; i < 4; i++)
 		m_saveData._banks8k[i] = 2 + i;
 	m_saveData._codemastersRam = false;
+	m_saveData._wantPause = false; // Una pausa pulsada justo antes del reset no debe llegar como NMI
+	m_saveData._ports = Ports();	 // El reset vuelve a dejar todas las líneas de los mandos como entradas
 	m_z80.Reset();
 	m_vdpCycles = m_z80.GetCycles();
 
+	// La RAM del cartucho no se borra: lleva pila y en ella están las partidas guardadas
 	memset(m_saveData._ram, 0, 8192 * sizeof(uint8_t));
-	memset(m_saveData._boardram, 0, 32768 * sizeof(uint8_t));
 	m_vdp->Reset();
 	m_sound->Reset();
 }
