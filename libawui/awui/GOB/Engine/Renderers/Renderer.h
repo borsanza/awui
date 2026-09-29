@@ -6,20 +6,18 @@
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui::GOB::Engine {
-	using namespace awui::GOB::Engine::Cameras;
-	using namespace awui::Windows::Forms;
 
-	class Renderer : public Control {
+	class Renderer : public Windows::Forms::Control {
 	  private:
 		float m_angle;
-		PerspectiveCamera *m_camera;
+		Cameras::PerspectiveCamera *m_camera;
 		Scene *m_scene;
 		Color m_clearColor = Color(0.0f, 0.0f, 0.0f, 1.0f);
 
 	  public:
 		Renderer();
 
-		void DoRender(Scene &scene, Camera &camera);
+		void DoRender(Scene &scene, Cameras::Camera &camera);
 
 		void SetClearColor(uint32_t color);
 

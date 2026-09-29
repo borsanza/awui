@@ -13,6 +13,8 @@
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
+using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Station;
 
 ArcadeContainer::ArcadeContainer() {
 	SetBackColor(Color::FromArgb(0, 0, 0));

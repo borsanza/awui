@@ -2,8 +2,6 @@
 
 #include <awui/Windows/Forms/Button.h>
 
-using namespace awui::Windows::Forms;
-
 namespace awui {
 	namespace Drawing {
 		class Image;
@@ -12,7 +10,7 @@ namespace awui {
 	namespace Windows::Emulators {
 		class MasterSystem;
 
-		class DebuggerSMS : public Button {
+		class DebuggerSMS : public Forms::Button {
 		  private:
 			MasterSystem *m_rom;
 			Drawing::Image *m_tiles;

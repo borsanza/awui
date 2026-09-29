@@ -24,6 +24,7 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;
 using namespace awui::Emulation::Common;
+using namespace awui::Windows::Forms;
 
 // Memoria máxima del historial de rebobinado. Cada frame ocupa unos pocos KB (solo lo que cambia), así que da
 // para varios minutos

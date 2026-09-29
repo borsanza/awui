@@ -2,14 +2,10 @@
 
 #include <awui/Windows/Forms/Button.h>
 
-using namespace awui::Windows::Forms;
-
 namespace awui::Windows {
 	namespace Forms::Station {
 		class StationUI;
 	}
-
-	using namespace awui::Windows::Forms::Station;
 
 	namespace Emulators {
 		struct Types {
@@ -24,9 +20,9 @@ namespace awui::Windows {
 
 		class DebuggerSMS;
 
-		class ArcadeContainer : public Button {
+		class ArcadeContainer : public Forms::Button {
 		  protected:
-			StationUI *m_station;
+			Forms::Station::StationUI *m_station;
 
 			// Fichero de estado: escritura atómica (temporal y renombrar) y lectura que exige el tamaño exacto
 			static bool WriteStateFile(const String &file, const uint8_t *data, int size);
@@ -45,9 +41,9 @@ namespace awui::Windows {
 			virtual void SetDebugger(DebuggerSMS *debugger){};
 			virtual int GetType() const = 0;
 
-			void SetStationUI(StationUI *station);
+			void SetStationUI(Forms::Station::StationUI *station);
 
-			virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+			virtual bool OnRemoteKeyUp(int which, Forms::RemoteButtons::Enum button);
 		};
 	} // namespace Emulators
 } // namespace awui::Windows

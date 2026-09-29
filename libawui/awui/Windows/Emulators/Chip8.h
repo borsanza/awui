@@ -7,19 +7,17 @@ namespace awui {
 		class CPU;
 	}
 
-	using namespace awui::Emulation::Chip8;
-
 	namespace Windows::Emulators {
 		class Chip8 : public ArcadeContainer {
 		  private:
 			static bool m_invertedColors;
 			bool m_lastInverted;
 
-			CPU *m_cpu;
+			Emulation::Chip8::CPU *m_cpu;
 			Drawing::Image *m_image;
 
-			int ConvertKeyAwToChip8(Keys::Enum key);
-			int ConvertRemoteKeyToChip8(RemoteButtons::Enum button);
+			int ConvertKeyAwToChip8(Forms::Keys::Enum key);
+			int ConvertRemoteKeyToChip8(Forms::RemoteButtons::Enum button);
 			void CheckBackcolor();
 			void UpdateImage();
 
@@ -36,10 +34,10 @@ namespace awui {
 			int GetChip8Mode() const;
 			void SetInvertedColors(bool mode);
 
-			virtual bool OnKeyPress(Keys::Enum key);
-			virtual bool OnKeyUp(Keys::Enum key);
-			bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-			bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+			virtual bool OnKeyPress(Forms::Keys::Enum key);
+			virtual bool OnKeyUp(Forms::Keys::Enum key);
+			bool OnRemoteKeyPress(int which, Forms::RemoteButtons::Enum button);
+			bool OnRemoteKeyUp(int which, Forms::RemoteButtons::Enum button);
 		};
 	} // namespace Windows::Emulators
 } // namespace awui

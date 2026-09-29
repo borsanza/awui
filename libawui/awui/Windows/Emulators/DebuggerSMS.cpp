@@ -16,6 +16,7 @@
 
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
+using namespace awui::Emulation::MasterSystem;
 
 DebuggerSMS::DebuggerSMS() {
 	m_width = 0;

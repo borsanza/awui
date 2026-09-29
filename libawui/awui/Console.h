@@ -2,8 +2,6 @@
 
 #include <awui/IO/TextWriter.h>
 
-using namespace awui;
-
 namespace awui {
 	class Console {
 	  private:

@@ -13,15 +13,13 @@ namespace awui {
 		class RewindBuffer;
 	}
 
-	using namespace awui::Emulation::MasterSystem;
-
 	namespace Windows::Emulators {
 		class DebuggerSMS;
 
 		class MasterSystem : public ArcadeContainer {
 		  private:
 			Drawing::Image *m_image;
-			Motherboard *m_cpu;
+			Emulation::MasterSystem::Motherboard *m_cpu;
 			DebuggerSMS *m_debugger;
 			bool m_pause;
 
@@ -52,15 +50,15 @@ namespace awui {
 			virtual void OnTick(float deltaSeconds);
 			void RunOpcode();
 
-			Motherboard *GetCPU();
+			Emulation::MasterSystem::Motherboard *GetCPU();
 
 			virtual void OnPaint(OpenGL::GL *gl);
-			virtual bool OnKeyPress(Keys::Enum key);
-			virtual bool OnKeyUp(Keys::Enum key);
-			bool RefreshButtons(JoystickButtonEventArgs *e);
-			virtual bool OnJoystickButtonDown(JoystickButtonEventArgs *e);
-			virtual bool OnJoystickButtonUp(JoystickButtonEventArgs *e);
-			virtual bool OnJoystickAxisMotion(JoystickAxisMotionEventArgs *e);
+			virtual bool OnKeyPress(Forms::Keys::Enum key);
+			virtual bool OnKeyUp(Forms::Keys::Enum key);
+			bool RefreshButtons(Forms::JoystickButtonEventArgs *e);
+			virtual bool OnJoystickButtonDown(Forms::JoystickButtonEventArgs *e);
+			virtual bool OnJoystickButtonUp(Forms::JoystickButtonEventArgs *e);
+			virtual bool OnJoystickAxisMotion(Forms::JoystickAxisMotionEventArgs *e);
 
 			virtual bool SaveAutoState() override;
 			virtual bool LoadAutoState() override;

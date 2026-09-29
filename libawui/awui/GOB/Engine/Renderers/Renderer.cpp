@@ -15,6 +15,7 @@
 using namespace awui::GOB::Engine;
 using namespace awui::Windows::Forms;
 using namespace awui::OpenGL;
+using namespace awui::GOB::Engine::Cameras;
 
 Renderer::Renderer() {
 	m_angle = 0.0f;

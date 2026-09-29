@@ -70,9 +70,7 @@ namespace awui {
 					void AddChild(NodeFile *child);
 				};
 
-				using namespace awui::Windows::Forms::Listeners;
-
-				class StationUI : public Control, public IRemoteListener, public IExitListener {
+				class StationUI : public Control, public Listeners::IRemoteListener, public Listeners::IExitListener {
 				  private:
 					FadePanel m_fade;
 					String m_path;
