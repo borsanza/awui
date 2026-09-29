@@ -32,6 +32,9 @@ namespace awui {
 			std::set<Keys::Enum> m_heldKeys; // Teclas del PC pulsadas que van al teclado del Spectrum
 			uint32_t m_heldRemote;			   // Flechas pulsadas (teclas de cursor)
 
+			String m_romFile; // Cinta o ROM cargada: los estados se guardan a su lado
+
+			String GetStateFile() const;
 			void DoKey(Keys::Enum key, bool pressed);
 			void DoRemoteKey(RemoteButtons::Enum button, bool pressed);
 			void UpdateMatrix();

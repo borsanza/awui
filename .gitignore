@@ -32,3 +32,7 @@ CMakeUserPresets.json
 # Partidas guardadas (RAM del cartucho) que genera el emulador junto a cada ROM
 *.sav
 *.sav.tmp
+
+# Estados guardados (F2) junto a cada juego: juego.tap.state, juego.tap.state1...
+*.state
+*.state[0-9]*

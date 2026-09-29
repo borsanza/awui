@@ -73,6 +73,7 @@ bool Spectrum::IsClass(Classes objectClass) const {
 }
 
 void Spectrum::LoadRom(const String file) {
+	m_romFile = file;
 	String ext = file.ToLower();
 	if (ext.EndsWith(".rom"))
 		m_motherboard->LoadRom(file);
@@ -579,10 +580,17 @@ void Spectrum::SetSoundEnabled(bool mode) {
 	SoundSDL::Instance()->SetPlayingSound(mode ? m_motherboard->GetSound() : 0);
 }
 
-void Spectrum::LoadState() {
-	String name = "file.state";
+// Estado junto a la cinta o la ROM del juego: DynamiteDan.tap.state, y con ranura DynamiteDan.tap.state1...
+awui::String Spectrum::GetStateFile() const {
+	String name = String::Concat(m_romFile, ".state");
 	if (m_fileSlot > 0)
 		name = String::Concat(name, Convert::ToString(m_fileSlot));
+
+	return name;
+}
+
+void Spectrum::LoadState() {
+	String name = GetStateFile();
 
 	if (File::Exists(name)) {
 		Console::Write("Cargando: ");
@@ -612,9 +620,7 @@ void Spectrum::LoadState() {
 }
 
 void Spectrum::SaveState() {
-	String name = "file.state";
-	if (m_fileSlot > 0)
-		name = String::Concat(name, Convert::ToString(m_fileSlot));
+	String name = GetStateFile();
 
 	Console::Write("Guardando: ");
 	Console::WriteLine(name);
