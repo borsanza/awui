@@ -483,6 +483,19 @@ void Form::ProcessEvents(SDL_Event *event) {
 					OnKeyPressPre(Keys::Key_F12);
 					break;
 
+				case SDLK_PAGEUP:
+					OnKeyPressPre(Keys::Key_PAGEUP);
+					break;
+				case SDLK_PAGEDOWN:
+					OnKeyPressPre(Keys::Key_PAGEDOWN);
+					break;
+				case SDLK_HOME:
+					OnKeyPressPre(Keys::Key_HOME);
+					break;
+				case SDLK_END:
+					OnKeyPressPre(Keys::Key_END);
+					break;
+
 				case SDLK_KP_0:
 					OnKeyPressPre(Keys::Key_KP0);
 					break;
@@ -738,6 +751,19 @@ void Form::ProcessEvents(SDL_Event *event) {
 					break;
 				case SDLK_F12:
 					OnKeyUpPre(Keys::Key_F12);
+					break;
+
+				case SDLK_PAGEUP:
+					OnKeyUpPre(Keys::Key_PAGEUP);
+					break;
+				case SDLK_PAGEDOWN:
+					OnKeyUpPre(Keys::Key_PAGEDOWN);
+					break;
+				case SDLK_HOME:
+					OnKeyUpPre(Keys::Key_HOME);
+					break;
+				case SDLK_END:
+					OnKeyUpPre(Keys::Key_END);
 					break;
 
 				case SDLK_KP_0:

@@ -87,6 +87,11 @@ namespace awui::Windows::Forms {
 			Key_RIGHT,
 			Key_UP,
 			Key_DOWN,
+
+			Key_PAGEUP,
+			Key_PAGEDOWN,
+			Key_HOME,
+			Key_END,
 		};
 	};
 } // namespace awui::Windows::Forms
