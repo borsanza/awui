@@ -5,7 +5,8 @@
 namespace awui::Drawing {
 	class Size;
 
-	class Point : public Object {
+	// Tipo de valor: sin herencia ni métodos virtuales (se copia y se guarda por valor en todas partes)
+	class Point {
 	  private:
 		float m_x;
 		float m_y;
@@ -14,7 +15,7 @@ namespace awui::Drawing {
 		Point();
 		Point(const Size sz);
 		Point(float x, float y);
-		virtual ~Point();
+		~Point();
 
 		inline float GetX() const { return m_x; }
 		inline float GetLeft() const { return m_x; }
@@ -28,7 +29,7 @@ namespace awui::Drawing {
 
 		Point &operator=(const Point &other);
 
-		virtual String ToString() const override;
+		String ToString() const;
 
 		static float Distance(Point *p1, Point *p2);
 	};

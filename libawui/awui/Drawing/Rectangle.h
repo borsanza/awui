@@ -5,7 +5,8 @@
 #include <awui/Object.h>
 
 namespace awui::Drawing {
-	class Rectangle : public Object {
+	// Tipo de valor: sin herencia ni métodos virtuales (se copia y se guarda por valor en todas partes)
+	class Rectangle {
 	  private:
 		Point m_location;
 		Size m_size;
@@ -14,7 +15,7 @@ namespace awui::Drawing {
 		Rectangle();
 		Rectangle(const Point &location, const Size &size);
 		Rectangle(float x, float y, float width, float height);
-		virtual ~Rectangle();
+		~Rectangle();
 
 		inline float GetWidth() const { return m_size.GetWidth(); }
 		inline float GetHeight() const { return m_size.GetHeight(); }
@@ -47,6 +48,6 @@ namespace awui::Drawing {
 
 		Rectangle &operator=(const Rectangle &other);
 
-		virtual String ToString() const override;
+		String ToString() const;
 	};
 } // namespace awui::Drawing

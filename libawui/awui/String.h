@@ -1,12 +1,14 @@
 #pragma once
 
 #include <awui/Collections/ArrayList.h>
+#include <vector>
 #include <awui/Object.h>
 
 using namespace awui::Collections;
 
 namespace awui {
-	class String final : public Object {
+	// Tipo de valor: sin herencia ni métodos virtuales (envuelve un std::string)
+	class String final {
 	  private:
 		std::string m_string;
 
@@ -23,7 +25,6 @@ namespace awui {
 			AssignFormat(format, arg, args...);
 		}
 
-		virtual ~String() = default;
 
 		int GetLength() const;
 
@@ -60,8 +61,8 @@ namespace awui {
 		String Substring(int startIndex) const;
 		String Substring(int startIndex, int length) const;
 
-		ArrayList Split(const String &value) const;
+		std::vector<String> Split(const String &value) const;
 
-		virtual String ToString() const override;
+		String ToString() const;
 	};
 } // namespace awui

@@ -4,7 +4,8 @@
 #include <cstdint>
 
 namespace awui {
-	class Color : public Object {
+	// Tipo de valor: sin herencia ni métodos virtuales (se copia y se guarda por valor en todas partes)
+	class Color {
 	  private:
 		union {
 			struct {
@@ -21,8 +22,7 @@ namespace awui {
 		Color(uint32_t color);
 		Color(float r, float g, float b, float a = 1.0f);
 
-		virtual bool IsClass(Classes objectClass) const override;
-		virtual String ToString() const override;
+		String ToString() const;
 
 		uint8_t GetA() const;
 		uint8_t GetR() const;

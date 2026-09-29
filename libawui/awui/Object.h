@@ -13,8 +13,6 @@ namespace awui {
 		ImageFader,
 		Label,
 		Keyboard,
-		Color,
-		ColorF,
 		Control,
 		Form,
 		Graphics,

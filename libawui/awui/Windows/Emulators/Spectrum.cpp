@@ -82,19 +82,15 @@ void Spectrum::LoadRom(const String file) {
 
 	if (ext.EndsWith(".tap")) {
 		String rom = "roms/zxspectrum/48.rom";
-		ArrayList list = file.Split("/");
+		std::vector<String> list = file.Split("/");
 		int found = -1;
 		String system;
-		for (int i = 0; i < list.GetCount(); i++) {
-			String *name = (String *) list.Get(i);
-
-			if (name->CompareTo("roms") == 0)
+		for (int i = 0; i < (int) list.size(); i++) {
+			if (list[i].CompareTo("roms") == 0)
 				found = i + 2;
 
 			if (found == i)
-				system = String::Concat(*name, ".rom");
-
-			delete name;
+				system = String::Concat(list[i], ".rom");
 		}
 
 		if (found != -1)

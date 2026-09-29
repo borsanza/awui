@@ -13,16 +13,12 @@
 using namespace awui;
 
 ColorF::ColorF() {
-	m_class = Classes::ColorF;
 	m_a = 0.0f;
 	m_r = 0.0f;
 	m_g = 0.0f;
 	m_b = 0.0f;
 }
 
-bool ColorF::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::ColorF) || Object::IsClass(objectClass);
-}
 
 awui::String ColorF::ToString() const {
 	return String("ColorF [A=%f, R=%f, G=%f, B=%f]", m_a, m_r, m_g, m_b);

@@ -12,7 +12,6 @@
 using namespace awui;
 
 Color::Color() : m_a(0), m_r(0), m_g(0), m_b(0) {
-	m_class = Classes::Color;
 }
 
 Color::Color(uint32_t color) {
@@ -29,9 +28,6 @@ Color::Color(float r, float g, float b, float a) {
 	m_a = static_cast<uint8_t>(Math::Min(Math::Max(a, 0.0f), 1.0f) * 255.0f);
 }
 
-bool Color::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Color) || Object::IsClass(objectClass);
-}
 
 awui::String Color::ToString() const {
 	return String("Color [A=%d, R=%d, G=%d, B=%d]", m_a, m_r, m_g, m_b);

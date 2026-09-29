@@ -160,21 +160,21 @@ int String::LastIndexOf(const String &value) const {
 	return (pos != std::string::npos) ? pos : -1;
 }
 
-ArrayList String::Split(const String &delimiter) const {
-	ArrayList list;
+std::vector<awui::String> String::Split(const String &delimiter) const {
+	std::vector<String> list;
 	size_t startPos = 0;
 	size_t endPos;
 
 	while ((endPos = m_string.find(delimiter.m_string, startPos)) != std::string::npos) {
 		String token(m_string.substr(startPos, endPos - startPos).c_str());
-		list.Add(new String(token));
+		list.push_back(token);
 		startPos = endPos + delimiter.GetLength();
 	}
 
 	// Agrega el último token
 	if (startPos < m_string.length()) { // Asegurarse de que hay algo que agregar
 		String token(m_string.substr(startPos).c_str());
-		list.Add(new String(token));
+		list.push_back(token);
 	}
 
 	return list;

@@ -1,12 +1,14 @@
 #pragma once
 
 #include <awui/Object.h>
+#include <awui/String.h>
 
 namespace awui::Collections {
+	// Lista ordenada por una clave de texto (se guarda una copia). Los valores no son suyos: no los borra
 	class SortedList : public Object {
 	  private:
 		struct SortedListItem {
-			Object *key;
+			String key;
 			Object *value;
 			SortedListItem *next;
 		};
@@ -23,11 +25,11 @@ namespace awui::Collections {
 
 		virtual String ToString() const override;
 
-		virtual void Add(Object *key, Object *value);
+		virtual void Add(const String &key, Object *value);
 		int GetCount();
 
 		void Clear();
-		Object *GetKey(int index);
+		const String *GetKey(int index);
 		Object *GetByIndex(int index);
 		void RemoveAt(int index);
 	};

@@ -3,15 +3,15 @@
 #include <awui/Object.h>
 
 namespace awui {
-	class ColorF : public Object {
+	// Tipo de valor: sin herencia ni métodos virtuales (se copia y se guarda por valor en todas partes)
+	class ColorF {
 	  private:
 		float m_r, m_g, m_b, m_a;
 
 	  public:
 		ColorF();
 
-		virtual bool IsClass(Classes objectClass) const override;
-		virtual String ToString() const override;
+		String ToString() const;
 
 		float GetA() const;
 		float GetR() const;

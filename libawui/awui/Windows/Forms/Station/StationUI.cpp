@@ -212,7 +212,7 @@ void StationUI::RecursiveSearch(NodeFile *parent) {
 			child->m_directory = isDir;
 
 			child->m_key = String::Concat((child->m_directory ? "1" : "2"), child->m_name);
-			parent->m_childList->Add(&child->m_key, child);
+			parent->m_childList->Add(child->m_key, child);
 
 			if (child->m_directory) {
 				RecursiveSearch(child);
@@ -286,7 +286,7 @@ void StationUI::Refresh() {
 		child->m_button = new MenuButton(this);
 		child->m_button->SetNodeFile(child);
 		child->m_button->SetText(child->m_name);
-		m_root->m_childList->Add(&child->m_name, child);
+		m_root->m_childList->Add(child->m_name, child);
 	}
 
 	RefreshList();

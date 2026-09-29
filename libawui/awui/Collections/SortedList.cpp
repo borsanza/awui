@@ -31,8 +31,8 @@ awui::String SortedList::ToString() const {
 	return "awui.Collections.SortedList";
 }
 
-void SortedList::Add(Object *key, Object *value) {
-	SortedListItem *itemList = (SortedListItem *) malloc(sizeof(struct SortedListItem));
+void SortedList::Add(const String &key, Object *value) {
+	SortedListItem *itemList = new SortedListItem();
 	itemList->key = key;
 	itemList->value = value;
 	itemList->next = NULL;
@@ -46,7 +46,7 @@ void SortedList::Add(Object *key, Object *value) {
 
 	// Para acelerar inserciones, miramos si lo podemos insertar en ultima posicion
 	// Este algoritmo es super optimizable, pero para salir del paso lo dejo asi
-	if (key->ToString() >= m_last->key->ToString()) {
+	if (key >= m_last->key) {
 		m_last->next = itemList;
 		m_last = itemList;
 		return;
@@ -54,7 +54,7 @@ void SortedList::Add(Object *key, Object *value) {
 
 	SortedListItem *itemListAux = m_first;
 	while (itemListAux->next != NULL) {
-		if (key->ToString() < itemListAux->key->ToString())
+		if (key < itemListAux->key)
 			break;
 
 		itemListAux = itemListAux->next;
@@ -81,14 +81,14 @@ void SortedList::Clear() {
 		RemoveAt(0);
 }
 
-awui::Object *SortedList::GetKey(int index) {
+const awui::String *SortedList::GetKey(int index) {
 	int pos = 0;
 
 	SortedListItem *itemListAux = m_first;
 
 	while (itemListAux != NULL) {
 		if (pos == index)
-			return itemListAux->key;
+			return &itemListAux->key;
 
 		pos++;
 		itemListAux = itemListAux->next;
@@ -130,7 +130,7 @@ void SortedList::RemoveAt(int index) {
 			if (itemListAux == m_last)
 				m_last = last;
 
-			free(itemListAux);
+			delete itemListAux;
 			return;
 		}
 
