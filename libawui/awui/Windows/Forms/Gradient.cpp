@@ -6,6 +6,8 @@
 
 #include "Gradient.h"
 
+#include <math.h>
+
 #include <SDL_opengl.h>
 #include <awui/Math.h>
 
@@ -59,7 +61,9 @@ ColorF Gradient::InterpolateColor(ColorF *c1, ColorF *c2, float percent) {
 }
 
 void Gradient::OnTick(float deltaSeconds) {
+	// Un 2% del camino por frame a 60 Hz, sea cual sea la tasa de frames: 0.98 de lo que falta cada 1/60 s
+	float percent = 1.0f - powf(0.98f, deltaSeconds * 60.0f);
 	for (int i = 0; i < 4; i++) {
-		this->m_color[i] = this->InterpolateColor(&this->m_color[i], &this->m_colorGo[i], 0.02f);
+		this->m_color[i] = this->InterpolateColor(&this->m_color[i], &this->m_colorGo[i], percent);
 	}
 }
