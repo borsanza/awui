@@ -9,7 +9,6 @@
 #include <assert.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
-#include <awui/DateTime.h>
 #include <awui/Emulation/Common/Rom.h>
 #include <awui/Emulation/Common/Word.h>
 #include <awui/Emulation/Processors/Z80/CPU.h>
@@ -59,7 +58,6 @@ uint8_t ReadPortCB(uint8_t port, void *data) {
 
 Motherboard::Motherboard() {
 	this->_percFrame = 0;
-	this->_initFrame = 0;
 	this->_countReadCycles = 0;
 	this->_lastCycles = 0;
 	this->_writeCassetteDataCB = NULL;
@@ -242,7 +240,6 @@ bool Motherboard::FlashLoad() {
 }
 
 void Motherboard::OnTick() {
-	this->_initFrame = DateTime::GetTotalSeconds();
 	double speed = 3500000.0f;
 	if (this->_fast)
 		speed *= 9;
@@ -440,12 +437,6 @@ void Motherboard::SaveState(uint8_t *data) {
 	memcpy(data, &this->d, sizeof(Motherboard::saveData));
 	this->_z80->SaveState(&data[sizeof(Motherboard::saveData)]);
 	this->_ula->SaveState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
-}
-
-double Motherboard::GetVirtualTime() const {
-	double begin = this->_initFrame;
-	double frameDuration = 1.0 / 59.922743404;
-	return begin + (frameDuration * this->_percFrame);
 }
 
 void Motherboard::OnKeyPress(uint8_t row, uint8_t key) {

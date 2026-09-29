@@ -41,7 +41,6 @@ namespace awui::Emulation {
 			// No se guarda
 			Common::Rom *_rom;
 
-			double _initFrame;
 			double _percFrame;
 
 			int8_t _cyclesULA;
@@ -86,7 +85,6 @@ namespace awui::Emulation {
 			void LoadState(uint8_t *data);
 			void SaveState(uint8_t *data);
 
-			double GetVirtualTime() const;
 			// Parte del frame actual ya emulada (0..1): sitúa los cambios del altavoz dentro del frame
 			inline double GetFramePosition() const { return this->_percFrame; }
 			static constexpr double FrameSeconds = 1.0 / 59.922743404;

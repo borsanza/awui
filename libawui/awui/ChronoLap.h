@@ -7,7 +7,9 @@
 namespace awui {
 	class ChronoLap : public Object {
 	  private:
-		using Clock = std::chrono::high_resolution_clock;
+		// Monótono: el reloj del sistema (y high_resolution_clock, que en GCC es el mismo) salta con NTP o al cambiar
+		// la hora, y daría deltas negativos o enormes
+		using Clock = std::chrono::steady_clock;
 		using TimePoint = std::chrono::time_point<Clock>;
 		using Duration = Clock::duration;
 

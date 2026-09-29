@@ -8,7 +8,7 @@
 
 #include <awui/Console.h>
 #include <awui/Convert.h>
-#include <awui/DateTime.h>
+#include <awui/ChronoLap.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
@@ -57,7 +57,6 @@ Spectrum::Spectrum() {
 
 	m_first = -1;
 	m_last = -1;
-	m_lastTick = 0;
 	m_seconds = 0.0;
 	m_heldRemote = 0;
 	m_fileSlot = 0;
@@ -98,7 +97,6 @@ void Spectrum::LoadRom(const String file) {
 
 	m_first = 0;
 	m_last = 0;
-	m_lastTick = DateTime::GetNow().GetTicks();
 }
 
 void Spectrum::CheckLimits() {
@@ -111,10 +109,11 @@ void Spectrum::OnTick(float deltaSeconds) {
 	// Modo rápido (F8): se emula todo lo que dé tiempo en este tick. Con el cargador de la ROM la carga es
 	// instantánea (Motherboard::FlashLoad); con un cargador propio la cinta pasa a toda velocidad
 	if (m_motherboard->GetFast()) {
-		double start = DateTime::GetTotalSeconds();
+		ChronoLap chrono;
+		chrono.Start();
 		do {
 			m_motherboard->OnTick();
-		} while (m_motherboard->GetFast() && ((DateTime::GetTotalSeconds() - start) < 0.030));
+		} while (m_motherboard->GetFast() && (chrono.GetTotalDuration() < 0.030f));
 
 		m_seconds = 0.0;
 		return;

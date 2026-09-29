@@ -26,12 +26,6 @@ int64_t DateTime::GetTicks() const {
 	return m_time.count() * 10;
 }
 
-// Devuelve el total de segundos actual.
-double DateTime::GetTotalSeconds() {
-	auto now = std::chrono::system_clock::now().time_since_epoch();
-	return now.count() / 1000000.0;
-}
-
 // Devuelve el segundo actual (0-59).
 unsigned char DateTime::GetSecond() const {
 	return static_cast<unsigned char>((m_time.count() / 1000000) % 60);

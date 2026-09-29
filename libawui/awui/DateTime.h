@@ -17,7 +17,6 @@ namespace awui {
 
 		static DateTime GetNow();
 		int64_t GetTicks() const;
-		static double GetTotalSeconds();
 
 		unsigned int GetMillisecond() const;
 		unsigned char GetSecond() const;
