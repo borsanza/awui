@@ -22,13 +22,19 @@ void Stack::Push(int value) {
 	this->_stack->Push(new StackInt(value));
 }
 
+// Devuelve -1 si la pila está vacía
 int Stack::Pop() {
 	StackInt *o = (StackInt *) this->_stack->Pop();
+	if (!o)
+		return -1;
+
 	int r = o->GetValue();
 	delete o;
 	return r;
 }
 
+// Se sacan con Pop para liberar cada StackInt (Collections::Stack::Clear solo quita los nodos)
 void Stack::Clear() {
-	this->_stack->Clear();
+	while (this->Pop() != -1)
+		;
 }

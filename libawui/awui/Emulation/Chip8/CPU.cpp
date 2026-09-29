@@ -257,10 +257,18 @@ int CPU::RunOpcode(int iteration) {
 			break;
 
 		// Returns from a subroutine
-		case Ox00EE:
-			m_pc = m_stack->Pop();
+		case Ox00EE: {
+			// RET sin CALL previo (ROM con fallos): se ignora y se sigue con la siguiente instrucción
+			int pc = m_stack->Pop();
+			if (pc < 0) {
+				printf("CHIP-8: RET con la pila vacía en %.4X\n", m_pc);
+				break;
+			}
+
+			m_pc = pc;
 			advance = false;
 			break;
+		}
 
 		// Scroll screen 4 pixels right. 2 pixels in low Mode
 		case Ox00FB:
