@@ -17,7 +17,6 @@ namespace awui::Drawing {
 		Shader();
 		virtual ~Shader() = default;
 
-		virtual bool IsClass(Classes objectClass) const override;
 		GLuint LoadShaderFromFile(std::string path, GLenum shaderType);
 	};
 } // namespace awui::Drawing

@@ -8,8 +8,6 @@ namespace awui::Windows::Forms {
 		Panel();
 		virtual ~Panel() = default;
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		const virtual awui::Drawing::Size GetMinimumSize() const;
 	};
 } // namespace awui::Windows::Forms

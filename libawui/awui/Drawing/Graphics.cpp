@@ -17,13 +17,8 @@ using namespace awui::Drawing;
 using namespace awui::Drawing::Drawing2D;
 
 Graphics::Graphics() {
-	m_class = Classes::Graphics;
 	m_cairo_surface = NULL;
 	m_cr = NULL;
-}
-
-bool Graphics::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Graphics) || Object::IsClass(objectClass);
 }
 
 Graphics *Graphics::FromImage(Drawing::Image *image) {

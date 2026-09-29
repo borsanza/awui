@@ -62,7 +62,6 @@ Image::~Image() {
 
 // Toda imagen tiene su propio buffer ARGB32 (el que se sube a la textura y el que tocan SetPixel y Graphics)
 void Image::Create(int width, int height) {
-	m_class = Classes::Image;
 	m_texture = 0;
 	m_width = width;
 	m_height = height;
@@ -72,10 +71,6 @@ void Image::Create(int width, int height) {
 	m_loaded = false;
 
 	Image::list.Add(this);
-}
-
-bool Image::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Image) || Object::IsClass(objectClass);
 }
 
 int Image::GetWidth() {

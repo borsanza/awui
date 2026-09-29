@@ -17,8 +17,6 @@ namespace awui::Collections {
 		Stack();
 		virtual ~Stack();
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		virtual String ToString() const override;
 
 		virtual void Push(Object *item);

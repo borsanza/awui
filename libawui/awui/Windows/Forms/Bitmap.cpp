@@ -15,7 +15,6 @@ using namespace awui::Windows::Forms;
 ArrayList Bitmap::list;
 
 Bitmap::Bitmap(const String file) {
-	m_class = Classes::Bitmap;
 	m_loaded = false;
 	m_file = file;
 	m_failed = false;
@@ -38,10 +37,6 @@ Bitmap::~Bitmap() {
 	Bitmap::list.Remove(this);
 
 	Unload();
-}
-
-bool Bitmap::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Bitmap) || Control::IsClass(objectClass);
 }
 
 void Bitmap::SetStretchMode(StretchMode::Enum stretchMode) {

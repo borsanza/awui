@@ -53,7 +53,6 @@ namespace awui {
 			Spectrum();
 			virtual ~Spectrum();
 
-			virtual bool IsClass(Classes objectClass) const override;
 			virtual int GetType() const { return Types::Spectrum; }
 
 			void LoadRom(const String file);

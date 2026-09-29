@@ -11,7 +11,6 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
 ImageFader::ImageFader() {
-	m_class = Classes::ImageFader;
 	m_imageShowing = nullptr;
 	m_imageToShow = nullptr;
 	m_state = State::FadeIn;
@@ -19,10 +18,6 @@ ImageFader::ImageFader() {
 	m_speedFadeOut = 5.0f;
 	m_speedFadeIn = 2.0f;
 	m_color = ColorF::FromArgb(1.0f, 1.0f, 1.0f, 1.0f);
-}
-
-bool ImageFader::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::ImageFader) || Control::IsClass(objectClass);
 }
 
 void ImageFader::SetColor(ColorF color) {

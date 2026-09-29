@@ -22,7 +22,6 @@ using namespace awui::Windows::Forms::Station;
 #define OFFSET 0.5f
 
 MenuButton::MenuButton(StationUI *station) {
-	m_class = Classes::MenuButton;
 	m_node = NULL;
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	m_station = station;
@@ -34,10 +33,6 @@ MenuButton::MenuButton(StationUI *station) {
 }
 
 MenuButton::~MenuButton() {
-}
-
-bool MenuButton::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::MenuButton) || Control::IsClass(objectClass);
 }
 
 void MenuButton::OnMouseDown(MouseEventArgs *e) {

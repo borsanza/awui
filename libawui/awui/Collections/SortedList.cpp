@@ -12,7 +12,6 @@
 using namespace awui::Collections;
 
 SortedList::SortedList() {
-	m_class = Classes::SortedList;
 
 	m_first = NULL;
 	m_last = NULL;
@@ -21,10 +20,6 @@ SortedList::SortedList() {
 
 SortedList::~SortedList() {
 	Clear();
-}
-
-bool SortedList::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::SortedList) || Object::IsClass(objectClass);
 }
 
 awui::String SortedList::ToString() const {

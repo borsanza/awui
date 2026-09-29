@@ -106,8 +106,6 @@ namespace awui {
 					StationUI();
 					virtual ~StationUI();
 
-					virtual bool IsClass(Classes objectClass) const override;
-
 					void Clear();
 					void SetPath(const String path);
 

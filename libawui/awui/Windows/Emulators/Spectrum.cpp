@@ -47,7 +47,6 @@ void FinishCassetteCB(void *data) {
 }
 
 Spectrum::Spectrum() {
-	m_class = Classes::Spectrum;
 	SetSize(1, 1);
 	m_motherboard = new Motherboard();
 	m_motherboard->SetWriteCassetteCB(WriteCassetteCB, this);
@@ -68,10 +67,6 @@ Spectrum::Spectrum() {
 
 Spectrum::~Spectrum() {
 	delete m_motherboard;
-}
-
-bool Spectrum::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Spectrum) || ArcadeContainer::IsClass(objectClass);
 }
 
 void Spectrum::LoadRom(const String file) {
@@ -175,7 +170,6 @@ void Spectrum::OnPaint(GL *gl) {
 
 	GL::DrawImageGL(ula->GetImage(), int(GetWidth() - w) >> 1, int(GetHeight() - h) >> 1, w, h);
 }
-
 
 // Teclas de la matriz del Spectrum (fila * 10 + columna) que pulsa cada tecla del PC
 static void GetMatrixKeys(Keys::Enum key, std::vector<int> &keys) {

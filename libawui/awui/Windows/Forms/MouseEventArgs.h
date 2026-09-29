@@ -24,8 +24,6 @@ namespace awui::Windows::Forms {
 		MouseEventArgs();
 		virtual ~MouseEventArgs() = default;
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		int GetX();
 		int GetY();
 		void GetLocation(int &x, int &y);

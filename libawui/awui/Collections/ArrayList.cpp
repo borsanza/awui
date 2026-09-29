@@ -13,7 +13,6 @@
 using namespace awui::Collections;
 
 ArrayList::ArrayList() {
-	m_class = Classes::ArrayList;
 	m_count = 0;
 	m_size = 8;
 	m_data = (Object **) malloc(m_size * sizeof(Object *));
@@ -21,10 +20,6 @@ ArrayList::ArrayList() {
 
 ArrayList::~ArrayList() {
 	free(m_data);
-}
-
-bool ArrayList::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::ArrayList) || Object::IsClass(objectClass);
 }
 
 awui::String ArrayList::ToString() const {

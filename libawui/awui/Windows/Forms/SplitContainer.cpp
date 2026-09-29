@@ -16,7 +16,6 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 SplitContainer::SplitContainer() {
-	m_class = Classes::SplitContainer;
 	m_splitterDistance = 100;
 	m_splitterIncrement = 1;
 	m_splitterWidth = 4;
@@ -35,10 +34,6 @@ SplitContainer::SplitContainer() {
 	AddWidget(m_panel2);
 
 	SetSize(200, 200);
-}
-
-bool SplitContainer::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::SplitContainer) || Control::IsClass(objectClass);
 }
 
 Panel *SplitContainer::GetPanel1() const {

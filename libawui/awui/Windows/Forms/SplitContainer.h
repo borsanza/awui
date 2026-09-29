@@ -34,8 +34,6 @@ namespace awui::Windows::Forms {
 		SplitContainer();
 		virtual ~SplitContainer() = default;
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		Panel *GetPanel1() const;
 		Panel *GetPanel2() const;
 

@@ -48,8 +48,6 @@ namespace awui::Windows::Forms {
 				ConfigButton(TypeButton typeButton);
 				virtual ~ConfigButton();
 
-				virtual bool IsClass(Classes objectClass) const override;
-
 				const String GetText() const;
 				void SetText(const String str);
 

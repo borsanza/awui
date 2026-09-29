@@ -11,11 +11,6 @@
 using namespace awui;
 
 Object::Object() {
-	m_class = Classes::Object;
-}
-
-bool Object::IsClass(Classes objectClass) const {
-	return objectClass == Classes::Object;
 }
 
 String Object::ToString() const {

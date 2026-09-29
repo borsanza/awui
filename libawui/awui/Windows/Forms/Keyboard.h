@@ -8,6 +8,5 @@ namespace awui::Windows::Forms {
 		Keyboard();
 		virtual ~Keyboard() = default;
 
-		virtual bool IsClass(Classes objectClass) const override;
 	};
 } // namespace awui::Windows::Forms

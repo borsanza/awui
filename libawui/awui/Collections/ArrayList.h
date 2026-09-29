@@ -40,8 +40,6 @@ namespace awui::Collections {
 		ArrayList();
 		virtual ~ArrayList();
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		virtual String ToString() const override;
 
 		virtual void Add(Object *item);

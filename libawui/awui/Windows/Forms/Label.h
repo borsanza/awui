@@ -29,8 +29,6 @@ namespace awui {
 			Label();
 			virtual ~Label();
 
-			virtual bool IsClass(Classes objectClass) const override;
-
 			const String GetText() const;
 			void SetText(const String str);
 

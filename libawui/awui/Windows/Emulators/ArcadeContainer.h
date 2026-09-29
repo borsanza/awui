@@ -36,8 +36,6 @@ namespace awui::Windows {
 			ArcadeContainer();
 			virtual ~ArcadeContainer() = default;
 
-			virtual bool IsClass(Classes objectClass) const override;
-
 			virtual void SetSoundEnabled(bool mode) {}
 
 			// Partida automática (junto a la ROM, <rom>.autostate): se guarda al salir del juego y se recupera al

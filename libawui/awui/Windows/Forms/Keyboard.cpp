@@ -15,7 +15,6 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Keyboard::Keyboard() {
-	m_class = Classes::Keyboard;
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	int pos = 0;
 	const char *letras = "abcdefghijklmnopqrstuvwxyz1234567890";
@@ -82,6 +81,3 @@ Keyboard::Keyboard() {
 	AddWidget(button);
 }
 
-bool Keyboard::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Keyboard) || Control::IsClass(objectClass);
-}

@@ -12,17 +12,12 @@
 using namespace awui::Collections;
 
 Stack::Stack() {
-	m_class = Classes::Stack;
 	m_last = NULL;
 	m_count = 0;
 }
 
 Stack::~Stack() {
 	Clear();
-}
-
-bool Stack::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Stack) || Object::IsClass(objectClass);
 }
 
 awui::String Stack::ToString() const {

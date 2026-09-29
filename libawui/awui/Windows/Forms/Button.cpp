@@ -18,7 +18,6 @@ using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Listeners;
 
 Button::Button() {
-	m_class = Classes::Button;
 	m_label.SetDock(DockStyle::Fill);
 	m_label.SetTextAlign(ContentAlignment::MiddleCenter);
 
@@ -29,10 +28,6 @@ Button::Button() {
 
 Button::~Button() {
 	RemoveAllListeners();
-}
-
-bool Button::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Button) || Control::IsClass(objectClass);
 }
 
 void Button::OnMouseDown(MouseEventArgs *e) {

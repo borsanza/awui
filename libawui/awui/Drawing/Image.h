@@ -33,8 +33,6 @@ namespace awui {
 			Image(String name);
 			virtual ~Image();
 
-			virtual bool IsClass(Classes objectClass) const override;
-
 			int GetWidth();
 			int GetHeight();
 

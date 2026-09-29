@@ -27,8 +27,6 @@ namespace awui {
 			Chip8();
 			virtual ~Chip8();
 
-			virtual bool IsClass(Classes objectClass) const override;
-
 			virtual int GetType() const { return Types::Chip8; }
 
 			void LoadRom(const String file);

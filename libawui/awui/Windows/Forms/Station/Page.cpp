@@ -12,11 +12,6 @@
 using namespace awui::Windows::Forms::Station;
 
 Page::Page() {
-	m_class = Classes::Page;
-}
-
-bool Page::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Page) || Control::IsClass(objectClass);
 }
 
 bool Page::OnKeyPress(Keys::Enum key) {

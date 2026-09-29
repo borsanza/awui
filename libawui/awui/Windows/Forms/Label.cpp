@@ -19,9 +19,7 @@ using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
-
 Label::Label() {
-	m_class = Classes::Label;
 	m_scrolled = 0;
 	m_image = NULL;
 	m_g = NULL;
@@ -37,10 +35,6 @@ Label::~Label() {
 
 	if (m_image)
 		delete m_image;
-}
-
-bool Label::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Label) || Control::IsClass(objectClass);
 }
 
 int Label::GetLabelWidth() const {

@@ -37,7 +37,6 @@ static awui::String Translate(const json &key) {
 }
 
 SettingsUI::SettingsUI() {
-	m_class = Classes::SettingsUI;
 	m_browser = nullptr;
 	m_title = nullptr;
 	m_backgroundFader = nullptr;
@@ -55,10 +54,6 @@ SettingsUI::~SettingsUI() {
 
 	// El fader es hijo (lo borra Control); la imagen que muestra no
 	delete m_background;
-}
-
-bool SettingsUI::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::SettingsUI) || Control::IsClass(objectClass);
 }
 
 void SettingsUI::InitializeComponent() {
@@ -238,7 +233,7 @@ void SettingsUI::UpdateDescription() {
 	String text;
 	Form *form = GetForm();
 	Control *focused = form ? form->GetChildFocused() : nullptr;
-	if (focused && focused->IsClass(Classes::ConfigButton) && (focused->GetParent() == m_browser->GetPage()))
+	if (focused && dynamic_cast<ConfigButton *>(focused) && (focused->GetParent() == m_browser->GetPage()))
 		text = ((ConfigButton *) focused)->GetDescription();
 
 	int left = 66;
@@ -345,7 +340,7 @@ void SettingsUI::OnTick(float deltaSeconds) {
 }
 
 void SettingsUI::OnOk(Control *sender) {
-	if (!sender->IsClass(Classes::ConfigButton))
+	if (!dynamic_cast<ConfigButton *>(sender))
 		return;
 
 	ConfigButton *button = (ConfigButton *) sender;

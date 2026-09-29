@@ -21,8 +21,6 @@ namespace awui::Collections {
 		SortedList();
 		virtual ~SortedList();
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		virtual String ToString() const override;
 
 		virtual void Add(const String &key, Object *value);

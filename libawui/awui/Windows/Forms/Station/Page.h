@@ -6,7 +6,6 @@ namespace awui::Windows::Forms::Station {
 	class Page : public Control {
 	  public:
 		Page();
-		virtual bool IsClass(Classes objectClass) const override;
 
 		// Inicio/Fin: primera/última fila. Re Pág/Av Pág: una pantalla de filas (menos una, para no perder la referencia)
 		virtual bool OnKeyPress(Keys::Enum key) override;

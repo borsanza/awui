@@ -22,7 +22,6 @@ using namespace awui::Windows::Forms::Station::Settings;
 #define OFFSET 0.5f
 
 ConfigButton::ConfigButton(TypeButton typeButton) {
-	m_class = Classes::ConfigButton;
 	m_typeButton = typeButton;
 	m_subpage = nullptr;
 	m_boolValue = false;
@@ -40,10 +39,6 @@ ConfigButton::ConfigButton(TypeButton typeButton) {
 }
 
 ConfigButton::~ConfigButton() {
-}
-
-bool ConfigButton::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::ConfigButton) || Control::IsClass(objectClass);
 }
 
 void ConfigButton::OnPaint(GL *gl) {

@@ -8,21 +8,15 @@
 using namespace awui::Drawing;
 
 Font::Font(const String font, float size) {
-	m_class = Classes::Font;
 	m_font = font;
 	m_size = size;
 	m_style = FontStyle::Regular;
 }
 
 Font::Font(const String font, float size, int style) {
-	m_class = Classes::Font;
 	m_font = font;
 	m_size = size;
 	m_style = style;
-}
-
-bool Font::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Font) || Object::IsClass(objectClass);
 }
 
 bool Font::GetBold() {

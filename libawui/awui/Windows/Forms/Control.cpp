@@ -29,7 +29,6 @@ int32_t Control::lastTabIndex = 10000;
 int32_t Control::countFocused = 1000;
 
 Control::Control() {
-	m_class = Classes::Control;
 	m_tabIndex = -1;
 	m_focusedTime = -1;
 	m_focusable = false;
@@ -81,10 +80,6 @@ Control::~Control() {
 
 	m_controls->Clear();
 	delete m_controls;
-}
-
-bool Control::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Control) || Object::IsClass(objectClass);
 }
 
 // Posición y tamaño se fijan por separado: cambiar uno no corta la animación del otro (SetWidth en cada tick
@@ -493,7 +488,7 @@ void Control::ChangeControlOnMouseOver(Control *control) {
 		return;
 	}
 
-	if (IsClass(Classes::Form)) {
+	if (dynamic_cast<Form *>(this)) {
 		if (((Form *) this)->m_mouseControlOver != control) {
 			if (((Form *) this)->m_mouseControlOver != NULL)
 				((Form *) this)->m_mouseControlOver->OnMouseLeave();
@@ -709,7 +704,7 @@ Control *Control::GetRoot() {
 Form *Control::GetForm() {
 	const Control *root = GetRoot();
 
-	if (!root->IsClass(Classes::Form)) {
+	if (!dynamic_cast<const Form *>(root)) {
 		return nullptr;
 	};
 
@@ -1069,7 +1064,7 @@ bool Control::IsFocused() const {
 		return (parent->m_focused == this) && parent->IsFocused();
 	}
 
-	return IsClass(Classes::Form);
+	return dynamic_cast<const Form *>(this) != nullptr;
 }
 
 /**

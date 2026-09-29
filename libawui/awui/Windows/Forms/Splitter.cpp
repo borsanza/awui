@@ -13,16 +13,11 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
 Splitter::Splitter() {
-	m_class = Classes::Splitter;
 	m_orientation = SplitContainer::Orientation::Horizontal;
 	SetBackColor(Color::FromArgb(255, 255, 255));
 	SetName("Splitter");
 	SetSize(20, 200);
 	m_mouseActive = false;
-}
-
-bool Splitter::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Splitter) || Control::IsClass(objectClass);
 }
 
 SplitContainer::Orientation Splitter::GetOrientation() const {
@@ -42,7 +37,7 @@ void Splitter::OnMouseMove(MouseEventArgs *e) {
 	if (!m_mouseActive)
 		return;
 
-	if (GetParent()->IsClass(Classes::SplitContainer)) {
+	if (dynamic_cast<SplitContainer *>(GetParent())) {
 		if (m_orientation == SplitContainer::Orientation::Vertical)
 			((SplitContainer *) GetParent())->SetSplitterDistance(GetLeft() + e->GetX());
 		else

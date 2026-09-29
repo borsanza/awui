@@ -37,7 +37,6 @@ using namespace awui::Windows::Forms::Station;
 using namespace awui::Windows::Forms::Station::Settings;
 
 StationUI::StationUI() {
-	m_class = Classes::StationUI;
 
 	m_controlBase = new Control();
 
@@ -103,10 +102,6 @@ StationUI::~StationUI() {
 		delete m_root;
 		m_root = nullptr;
 	}
-}
-
-bool StationUI::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::StationUI) || Control::IsClass(objectClass);
 }
 
 void StationUI::SetPath(const String path) {

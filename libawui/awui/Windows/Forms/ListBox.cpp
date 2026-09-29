@@ -9,16 +9,11 @@ using namespace awui::Collections;
 using namespace awui::Windows::Forms;
 
 ListBox::ListBox() {
-	m_class = Classes::ListBox;
 	m_collection = new ObjectCollection(this);
 }
 
 ListBox::~ListBox() {
 	delete m_collection;
-}
-
-bool ListBox::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::ListBox) || Control::IsClass(objectClass);
 }
 
 ObjectCollection *ListBox::GetItems() const {

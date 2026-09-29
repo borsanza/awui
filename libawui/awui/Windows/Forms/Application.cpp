@@ -24,11 +24,6 @@ using namespace awui::Windows::Forms::Statistics;
 int Application::quit = 0;
 
 Application::Application() {
-	m_class = Classes::Application;
-}
-
-bool Application::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Application) || Object::IsClass(objectClass);
 }
 
 void Application::Quit() {

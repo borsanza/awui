@@ -28,7 +28,6 @@ uint32_t Form::m_buttonsPad2 = 0;
 ArrayList *Form::m_formsList = new ArrayList();
 
 Form::Form() {
-	m_class = Classes::Form;
 
 	m_formsList->Add(this);
 
@@ -67,10 +66,6 @@ Form::~Form() {
 	if (m_window) {
 		SDL_DestroyWindow(m_window);
 	}
-}
-
-bool Form::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Form) || Control::IsClass(objectClass);
 }
 
 void Form::Init() {

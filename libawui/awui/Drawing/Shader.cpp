@@ -14,7 +14,6 @@
 using namespace awui::Drawing;
 
 Shader::Shader() {
-	m_class = Classes::Shader;
 	glewInit();
 	m_gProgramID = glCreateProgram();
 	GLuint fragmentShader = LoadShaderFromFile("shader.glfs", GL_FRAGMENT_SHADER);
@@ -22,10 +21,6 @@ Shader::Shader() {
 	glLinkProgram(m_gProgramID);
 	glUseProgram(m_gProgramID);
 	// int texcoord_index = glGetAttribLocation(_gProgramID, "in_coord");
-}
-
-bool Shader::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Shader) || Object::IsClass(objectClass);
 }
 
 void Shader::printShaderLog(GLuint shader) {

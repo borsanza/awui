@@ -15,16 +15,11 @@ using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
 
 ArcadeContainer::ArcadeContainer() {
-	m_class = Classes::ArcadeContainer;
 	SetBackColor(Color::FromArgb(0, 0, 0));
 	SetDrawShadow(false);
 	SetPreventChangeControl(true);
 	m_station = NULL;
 	SetFocusable(false);
-}
-
-bool ArcadeContainer::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::ArcadeContainer) || Button::IsClass(objectClass);
 }
 
 bool ArcadeContainer::WriteStateFile(const String &file, const uint8_t *data, int size) {

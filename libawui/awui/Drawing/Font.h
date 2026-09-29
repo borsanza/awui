@@ -24,8 +24,6 @@ namespace awui::Drawing {
 		Font(const String font, float size);
 		Font(const String font, float size, int style);
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		const String GetFont() const;
 		bool GetBold();
 		bool GetItalic();

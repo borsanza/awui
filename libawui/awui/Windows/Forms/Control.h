@@ -83,7 +83,6 @@ namespace awui {
 			Control *m_mouseControl;
 			String m_name;
 
-
 			void OnResizePre();
 			void SetPosition(bool setX, int x, bool setY, int y);
 			void SetDimensions(bool setWidth, int width, bool setHeight, int height);
@@ -104,8 +103,6 @@ namespace awui {
 		  public:
 			Control();
 			virtual ~Control();
-
-			virtual bool IsClass(Classes objectClass) const override;
 
 			const virtual Drawing::Size GetMinimumSize() const;
 			void SetMinimumSize(Drawing::Size size);

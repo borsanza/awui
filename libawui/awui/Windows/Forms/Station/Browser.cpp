@@ -15,7 +15,6 @@ using namespace awui::Windows::Forms::Station;
 #define GRADIENT_WIDTH 64
 
 Browser::Browser() {
-	m_class = Classes::Browser;
 	// SetBackColor(Color::FromArgb(0, 0, 0));
 	m_page = NULL;
 
@@ -53,10 +52,6 @@ Browser::Browser() {
 void Browser::OnWidgetRemoved(Control *control) {
 	if (control == m_page)
 		m_page = nullptr;
-}
-
-bool Browser::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Browser) || Control::IsClass(objectClass);
 }
 
 void Browser::OnTick(float deltaSeconds) {

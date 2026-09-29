@@ -55,8 +55,6 @@ namespace awui {
 			inline SelectionFrame *GetSelectionFrame() { return &m_selectionFrame; }
 			virtual ~Form();
 
-			virtual bool IsClass(Classes objectClass) const override;
-
 			void Init();
 			void SetText(String title);
 			void RefreshVideo();

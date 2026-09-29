@@ -32,7 +32,6 @@ using namespace awui::Emulation::Common;
 const int DEADZONE = 8192;
 
 MasterSystem::MasterSystem() {
-	m_class = Classes::MasterSystem;
 	m_keys1 = 0xFF;
 	m_keys2 = 0xFF;
 	m_joys1 = 0xFF;
@@ -59,10 +58,6 @@ MasterSystem::~MasterSystem() {
 
 	delete m_cpu;
 	delete m_image;
-}
-
-bool MasterSystem::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::MasterSystem) || ArcadeContainer::IsClass(objectClass);
 }
 
 void MasterSystem::LoadRom(const String file) {

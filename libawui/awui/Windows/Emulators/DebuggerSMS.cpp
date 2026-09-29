@@ -18,16 +18,11 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 
 DebuggerSMS::DebuggerSMS() {
-	m_class = Classes::DebuggerSMS;
 	m_width = 0;
 	m_rom = NULL;
 	m_tiles = new Drawing::Image(128, 256);
 	m_colors = new Drawing::Image(32, 1);
 	m_show = true;
-}
-
-bool DebuggerSMS::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::DebuggerSMS) || Button::IsClass(objectClass);
 }
 
 void DebuggerSMS::OnTick(float deltaSeconds) {

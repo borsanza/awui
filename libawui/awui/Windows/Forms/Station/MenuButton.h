@@ -17,8 +17,6 @@ namespace awui::Windows::Forms::Station {
 		MenuButton(StationUI *station);
 		virtual ~MenuButton();
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		const String GetText() const;
 		void SetText(const String str);
 

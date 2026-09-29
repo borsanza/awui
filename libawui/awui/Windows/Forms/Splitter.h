@@ -13,8 +13,6 @@ namespace awui::Windows::Forms {
 		Splitter();
 		virtual ~Splitter() = default;
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		SplitContainer::Orientation GetOrientation() const;
 		void SetOrientation(SplitContainer::Orientation orientation);
 

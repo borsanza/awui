@@ -23,8 +23,6 @@ class TestWidget : public Button {
 	TestWidget();
 	virtual ~TestWidget();
 
-	//		virtual int IsClass(Classes::Enum objectClass) const;
-
 	virtual void OnTick(float deltaSeconds);
 
 	virtual void OnPaint(OpenGL::GL *gl);

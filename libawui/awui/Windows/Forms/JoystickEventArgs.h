@@ -11,8 +11,6 @@ namespace awui::Windows::Forms {
 		JoystickEventArgs(int which);
 		virtual ~JoystickEventArgs() = default;
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		int GetWhich() { return m_which; };
 	};
 } // namespace awui::Windows::Forms

@@ -14,8 +14,6 @@ namespace awui::Windows::Forms {
 		JoystickButtonEventArgs(int which, int button, uint32_t buttons, uint32_t prevButtons);
 		virtual ~JoystickButtonEventArgs() = default;
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		int GetButton() { return m_button; }
 		int GetButtons() { return m_buttons; }
 	};

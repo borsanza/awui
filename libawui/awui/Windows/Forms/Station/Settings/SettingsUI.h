@@ -56,8 +56,6 @@ namespace awui::Windows::Forms {
 				SettingsUI();
 				virtual ~SettingsUI();
 
-				virtual bool IsClass(Classes objectClass) const override;
-
 				void InitializeComponent();
 
 				inline void SetExitListener(Listeners::IExitListener *listener) { m_exitListener = listener; }

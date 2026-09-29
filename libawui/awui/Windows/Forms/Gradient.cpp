@@ -16,11 +16,6 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Station;
 
 Gradient::Gradient() {
-	m_class = Classes::Gradient;
-}
-
-bool Gradient::IsClass(Classes objectClass) const {
-	return (objectClass == Classes::Gradient) || Control::IsClass(objectClass);
 }
 
 void Gradient::SetColor(int pos, const ColorF color) {

@@ -33,8 +33,6 @@ namespace awui {
 			ImageFader();
 			virtual ~ImageFader() = default;
 
-			virtual bool IsClass(Classes objectClass) const override;
-
 			void SetImage(Bitmap *image);
 			// Deja de mostrar imagen al momento (antes de borrar la que muestra)
 			void Clear();

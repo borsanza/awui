@@ -45,7 +45,6 @@ namespace awui {
 			MasterSystem();
 			virtual ~MasterSystem();
 
-			virtual bool IsClass(Classes objectClass) const override;
 			virtual int GetType() const { return Types::MasterSystem; }
 
 			void LoadRom(const String file);

@@ -18,8 +18,6 @@ namespace awui {
 			ListBox();
 			virtual ~ListBox();
 
-			virtual bool IsClass(Classes objectClass) const override;
-
 			ObjectCollection *GetItems() const;
 		};
 

@@ -24,8 +24,6 @@ namespace awui::Windows::Forms {
 		Button();
 		virtual ~Button();
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		const String GetText();
 		void SetText(const String str);
 

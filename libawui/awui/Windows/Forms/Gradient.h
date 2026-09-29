@@ -14,8 +14,6 @@ namespace awui::Windows::Forms::Station {
 		Gradient();
 		virtual ~Gradient() = default;
 
-		virtual bool IsClass(Classes objectClass) const override;
-
 		void SetColor(int pos, const ColorF color);
 		void SetColorGo(int pos, const ColorF color);
 

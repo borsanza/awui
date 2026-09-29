@@ -26,8 +26,6 @@ namespace awui {
 		  public:
 			virtual ~Graphics() = default;
 
-			virtual bool IsClass(Classes objectClass) const override;
-
 			static Graphics *FromImage(Drawing::Image *image);
 
 			void Clear(const Color color);

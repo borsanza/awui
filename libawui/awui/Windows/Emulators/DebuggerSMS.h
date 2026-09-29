@@ -24,8 +24,6 @@ namespace awui {
 			DebuggerSMS();
 			virtual ~DebuggerSMS() = default;
 
-			virtual bool IsClass(Classes objectClass) const override;
-
 			virtual void OnTick(float deltaSeconds);
 
 			virtual void OnPaint(OpenGL::GL *gl);
