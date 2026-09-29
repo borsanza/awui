@@ -13,7 +13,7 @@ MouseEventArgs::MouseEventArgs() {
 	m_button = 0;
 }
 
-int MouseEventArgs::GetX() {
+int MouseEventArgs::GetX() const {
 	return m_x;
 }
 
@@ -21,7 +21,7 @@ void MouseEventArgs::SetX(int x) {
 	m_x = x;
 }
 
-int MouseEventArgs::GetY() {
+int MouseEventArgs::GetY() const {
 	return m_y;
 }
 
@@ -39,7 +39,7 @@ void MouseEventArgs::SetLocation(int x, int y) {
 	m_y = y;
 }
 
-int MouseEventArgs::GetDelta() {
+int MouseEventArgs::GetDelta() const {
 	return m_delta;
 }
 
@@ -47,7 +47,7 @@ void MouseEventArgs::SetDelta(int delta) {
 	m_delta = delta;
 }
 
-int MouseEventArgs::GetClicks() {
+int MouseEventArgs::GetClicks() const {
 	return m_clicks;
 }
 
@@ -55,7 +55,7 @@ void MouseEventArgs::SetClicks(int clicks) {
 	m_clicks = clicks;
 }
 
-int MouseEventArgs::GetButton() {
+int MouseEventArgs::GetButton() const {
 	return m_button;
 }
 

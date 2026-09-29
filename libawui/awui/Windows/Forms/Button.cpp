@@ -69,7 +69,7 @@ void Button::SetText(const String str) {
 	m_label.SetText(str);
 }
 
-const awui::String Button::GetText() {
+awui::String Button::GetText() const {
 	return m_label.GetText();
 }
 

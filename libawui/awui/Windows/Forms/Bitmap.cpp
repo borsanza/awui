@@ -47,7 +47,7 @@ void Bitmap::SetStretchMode(StretchMode::Enum stretchMode) {
 	m_stretchMode = stretchMode;
 }
 
-StretchMode::Enum Bitmap::GetStretchMode() {
+StretchMode::Enum Bitmap::GetStretchMode() const {
 	return m_stretchMode;
 }
 

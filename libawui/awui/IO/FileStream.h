@@ -23,10 +23,10 @@ namespace awui {
 			bool IsOpen() const;
 			virtual void Close();
 
-			virtual uint32_t GetPosition();
+			virtual uint32_t GetPosition() const override;
 			virtual void SetPosition(uint32_t value);
 
-			virtual uint32_t GetLength();
+			virtual uint32_t GetLength() const override;
 
 			virtual uint8_t ReadByte();
 			virtual void WriteByte(uint8_t value);

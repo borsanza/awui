@@ -13,7 +13,8 @@ namespace awui::Emulation::Chip8 {
 		virtual ~Input();
 
 		bool IsKeyPressed(uint8_t key);
-		int GetKey();
+		// Última tecla pulsada, y la olvida (-1 si no hay ninguna): cada pulsación se recoge una sola vez
+		int TakeLastKey();
 
 		void KeyDown(uint8_t key);
 		void KeyUp(uint8_t key);

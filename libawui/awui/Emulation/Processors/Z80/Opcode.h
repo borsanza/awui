@@ -1292,7 +1292,9 @@ namespace awui::Emulation::Processors::Z80 {
 		inline void SetByte2(uint8_t byte2) { this->_byte2 = byte2; }
 		inline void SetByte4(uint8_t byte4) { this->_byte4 = byte4; }
 
-		int GetEnum();
+		// Decodifica el opcode de los bytes leídos: devuelve su valor del enum y calcula GetAdvance()
+		// (1 si es un prefijo DD/FD ignorado que hay que saltar)
+		int Decode();
 		inline uint16_t GetAdvance() const { return this->_advance; }
 
 		void ShowLogOpcode(CPUInst *cpu, uint16_t enumOpcode);

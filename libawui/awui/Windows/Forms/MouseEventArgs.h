@@ -24,11 +24,11 @@ namespace awui::Windows::Forms {
 		MouseEventArgs();
 		virtual ~MouseEventArgs() = default;
 
-		int GetX();
-		int GetY();
+		int GetX() const;
+		int GetY() const;
 		void GetLocation(int &x, int &y);
-		int GetDelta();
-		int GetClicks();
-		int GetButton();
+		int GetDelta() const;
+		int GetClicks() const;
+		int GetButton() const;
 	};
 } // namespace awui::Windows::Forms

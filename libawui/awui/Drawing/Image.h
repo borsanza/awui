@@ -34,13 +34,13 @@ namespace awui {
 			Image(String name);
 			virtual ~Image();
 
-			int GetWidth();
-			int GetHeight();
+			int GetWidth() const;
+			int GetHeight() const;
 
 			void Load();
 			void Unload();
 			static void UnloadAll();
-			GLuint GetTexture();
+			GLuint GetTexture() const;
 
 			void SetPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 0xFF);
 			void Update();

@@ -83,11 +83,11 @@ uint32_t Screen::GetPixel(uint16_t x, uint16_t y) {
 	return 0;
 }
 
-uint16_t Screen::GetWidth() {
+uint16_t Screen::GetWidth() const {
 	return this->_width;
 }
 
-uint16_t Screen::GetHeight() {
+uint16_t Screen::GetHeight() const {
 	return this->_height;
 }
 

@@ -442,7 +442,7 @@ void Motherboard::SaveState(uint8_t *data) {
 	this->_ula->SaveState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
 }
 
-double Motherboard::GetVirtualTime() {
+double Motherboard::GetVirtualTime() const {
 	double begin = this->_initFrame;
 	double frameDuration = 1.0 / 59.922743404;
 	return begin + (frameDuration * this->_percFrame);

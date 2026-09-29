@@ -266,7 +266,7 @@ void Control::SetBackColor(const awui::Color color) {
 	m_backColor = color;
 }
 
-awui::Color Control::GetBackColor() {
+awui::Color Control::GetBackColor() const {
 	return m_backColor;
 }
 
@@ -274,7 +274,7 @@ void Control::SetForeColor(const awui::Color color) {
 	m_foreColor = color;
 }
 
-awui::Color Control::GetForeColor() {
+awui::Color Control::GetForeColor() const {
 	return m_foreColor;
 }
 
@@ -546,7 +546,7 @@ void Control::SetName(const String str) {
 	m_name = str;
 }
 
-const awui::String Control::GetName() {
+awui::String Control::GetName() const {
 	return m_name;
 }
 
@@ -613,7 +613,7 @@ void Control::SetScissorEnabled(bool mode) {
 	m_scissorEnabled = mode;
 }
 
-bool Control::GetScissorEnabled() {
+bool Control::GetScissorEnabled() const {
 	return m_scissorEnabled;
 }
 
@@ -983,7 +983,7 @@ awui::String Control::ToString() const {
  *
  * @return True si el control es enfocable, False de lo contrario.
  */
-bool Control::IsFocusable() {
+bool Control::IsFocusable() const {
 	return m_focusable;
 }
 

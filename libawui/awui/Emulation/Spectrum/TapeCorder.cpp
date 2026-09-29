@@ -241,6 +241,6 @@ uint8_t TapeBlock::GetByte(int pos) {
 	return this->_data[pos];
 }
 
-int TapeBlock::GetLength() {
+int TapeBlock::GetLength() const {
 	return this->_size;
 }

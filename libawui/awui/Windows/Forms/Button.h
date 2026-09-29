@@ -24,7 +24,7 @@ namespace awui::Windows::Forms {
 		Button();
 		virtual ~Button();
 
-		const String GetText();
+		String GetText() const;
 		void SetText(const String str);
 
 		virtual void OnMouseDown(MouseEventArgs *e);

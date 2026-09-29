@@ -19,23 +19,23 @@ Font::Font(const String font, float size, int style) {
 	m_style = style;
 }
 
-bool Font::GetBold() {
+bool Font::GetBold() const {
 	return m_style & FontStyle::Bold;
 }
 
-bool Font::GetItalic() {
+bool Font::GetItalic() const {
 	return m_style & FontStyle::Italic;
 }
 
-bool Font::GetStrikeout() {
+bool Font::GetStrikeout() const {
 	return m_style & FontStyle::Strikeout;
 }
 
-bool Font::GetUnderline() {
+bool Font::GetUnderline() const {
 	return m_style & FontStyle::Underline;
 }
 
-float Font::GetSize() {
+float Font::GetSize() const {
 	return m_size;
 }
 

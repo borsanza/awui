@@ -30,7 +30,7 @@ bool Input::IsKeyPressed(uint8_t key) {
 	return this->_keys[key];
 }
 
-int Input::GetKey() {
+int Input::TakeLastKey() {
 	int r = this->_lastKey;
 	this->_lastKey = -1;
 	return r;

@@ -27,7 +27,7 @@ namespace awui {
 			virtual void OnPaint(OpenGL::GL *gl);
 
 			void SetRom(MasterSystem *rom);
-			bool GetShow() { return m_show; }
+			bool GetShow() const { return m_show; }
 			void SetShow(bool show) { m_show = show; }
 		};
 	} // namespace Windows::Emulators

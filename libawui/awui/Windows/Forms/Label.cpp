@@ -135,7 +135,7 @@ const awui::String Label::GetText() const {
 	return m_text;
 }
 
-const awui::Drawing::ContentAlignment::Enum Label::GetTextAlign() {
+awui::Drawing::ContentAlignment::Enum Label::GetTextAlign() const {
 	return m_textAlign;
 }
 

@@ -14,7 +14,7 @@ Effect::Effect(String name1) {
 	this->name = name1;
 }
 
-awui::String Effect::GetName() {
+awui::String Effect::GetName() const {
 	return this->name;
 }
 

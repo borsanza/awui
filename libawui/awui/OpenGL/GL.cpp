@@ -24,15 +24,15 @@ void GL::SetClipping(awui::Drawing::Rectangle rectangle) {
 	this->rectangle2 = rectangle;
 }
 
-awui::Drawing::Rectangle GL::GetClippingBase() {
+awui::Drawing::Rectangle GL::GetClippingBase() const {
 	return this->rectangle1;
 }
 
-awui::Drawing::Rectangle GL::GetClipping() {
+awui::Drawing::Rectangle GL::GetClipping() const {
 	return this->rectangle2;
 }
 
-awui::Drawing::Rectangle GL::GetClippingResult() {
+awui::Drawing::Rectangle GL::GetClippingResult() const {
 	return Rectangle::Intersect(this->rectangle1, this->rectangle2);
 }
 

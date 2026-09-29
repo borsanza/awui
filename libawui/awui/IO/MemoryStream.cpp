@@ -32,11 +32,11 @@ void MemoryStream::SetPosition(uint32_t value) {
 	this->_position = value;
 }
 
-uint32_t MemoryStream::GetPosition() {
+uint32_t MemoryStream::GetPosition() const {
 	return this->_position;
 }
 
-uint32_t MemoryStream::GetLength() {
+uint32_t MemoryStream::GetLength() const {
 	return this->_length;
 }
 

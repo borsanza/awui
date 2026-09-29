@@ -112,7 +112,7 @@ namespace awui {
 			DockStyle GetDock() const;
 			void SetDock(DockStyle dock);
 
-			const String GetName();
+			String GetName() const;
 			void SetName(const String str);
 
 			int GetLeft() const;
@@ -129,7 +129,7 @@ namespace awui {
 			void SetLocation(int x, int y);
 
 			inline void SetDrawShadow(bool mode) { m_drawShadow = mode; }
-			inline bool GetDrawShadow() { return m_drawShadow; }
+			inline bool GetDrawShadow() const { return m_drawShadow; }
 
 			int GetWidth() const;
 			void SetWidth(int width);
@@ -142,10 +142,10 @@ namespace awui {
 			void SetSize(const Drawing::Size size);
 			inline void SetSizeGo(int w, int h) { m_boundsTo.SetSize(w, h); }
 			inline void SetLocationGo(int x, int y) { m_boundsTo.SetLocation(x, y); }
-			inline int GetLeftGo() { return m_boundsTo.GetLeft(); }
-			inline int GetRightGo() { return m_boundsTo.GetRight(); }
-			inline int GetTopGo() { return m_boundsTo.GetTop(); }
-			inline int GetBottomGo() { return m_boundsTo.GetBottom(); }
+			inline int GetLeftGo() const { return m_boundsTo.GetLeft(); }
+			inline int GetRightGo() const { return m_boundsTo.GetRight(); }
+			inline int GetTopGo() const { return m_boundsTo.GetTop(); }
+			inline int GetBottomGo() const { return m_boundsTo.GetBottom(); }
 
 			const Drawing::Rectangle GetBounds() const;
 			void SetBounds(int x, int y, int width, int height);
@@ -162,10 +162,10 @@ namespace awui {
 			void MoveToEnd(Control *item);
 			void ReplaceWidget(Control *oldItem, Control *newItem, WidgetOwnership ownership = WidgetOwnership::Owned);
 
-			Color GetBackColor();
+			Color GetBackColor() const;
 			void SetBackColor(const Color color);
 
-			Color GetForeColor();
+			Color GetForeColor() const;
 			virtual void SetForeColor(const Color color);
 
 			Drawing::Font *GetFont();
@@ -207,9 +207,9 @@ namespace awui {
 			// Un hijo acaba de salir (RemoveWidget, ReplaceWidget o porque se ha destruido)
 			virtual void OnWidgetRemoved(Control *control) {}
 			void SetScissorEnabled(bool mode);
-			bool GetScissorEnabled();
+			bool GetScissorEnabled() const;
 
-			bool IsFocusable();
+			bool IsFocusable() const;
 			void SetFocusable(bool focusable);
 
 			void SetFocus(bool forced = true);

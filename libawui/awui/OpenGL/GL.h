@@ -23,13 +23,13 @@ namespace awui {
 
 			GL();
 			void SetClippingBase(awui::Drawing::Rectangle rectangle);
-			awui::Drawing::Rectangle GetClippingBase();
+			awui::Drawing::Rectangle GetClippingBase() const;
 
 		  public:
 			void SetClipping(awui::Drawing::Rectangle rectangle);
-			awui::Drawing::Rectangle GetClipping();
+			awui::Drawing::Rectangle GetClipping() const;
 
-			awui::Drawing::Rectangle GetClippingResult();
+			awui::Drawing::Rectangle GetClippingResult() const;
 
 			void SetClipping();
 

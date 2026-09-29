@@ -16,10 +16,10 @@ namespace awui::IO {
 
 		virtual void Close();
 
-		virtual uint32_t GetPosition();
+		virtual uint32_t GetPosition() const override;
 		virtual void SetPosition(uint32_t value);
 
-		virtual uint32_t GetLength();
+		virtual uint32_t GetLength() const override;
 		void SetLength(uint32_t value);
 
 		uint32_t GetCapacity();

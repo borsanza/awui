@@ -32,7 +32,7 @@ namespace awui {
 			const String GetText() const;
 			void SetText(const String str);
 
-			const Drawing::ContentAlignment::Enum GetTextAlign();
+			Drawing::ContentAlignment::Enum GetTextAlign() const;
 			void SetTextAlign(Drawing::ContentAlignment::Enum textAlign);
 
 			void Draw(int x, int y, int width, int height);

@@ -211,7 +211,7 @@ bool Form::SetSwapInterval(bool mode) {
 	return true;
 }
 
-bool Form::GetSwapInterval() {
+bool Form::GetSwapInterval() const {
 	return m_swapInterval;
 }
 

@@ -77,11 +77,11 @@ void Image::Create(int width, int height) {
 	List().push_back(this);
 }
 
-int Image::GetWidth() {
+int Image::GetWidth() const {
 	return m_width;
 }
 
-int Image::GetHeight() {
+int Image::GetHeight() const {
 	return m_height;
 }
 
@@ -134,7 +134,7 @@ void Image::SyncWithCairo() {
 	cairo_surface_mark_dirty(m_cairo_surface);
 }
 
-GLuint Image::GetTexture() {
+GLuint Image::GetTexture() const {
 	return m_texture;
 }
 

@@ -8,14 +8,14 @@ namespace awui {
 		class OutClass : public IO::TextWriter {
 		  public:
 			virtual void Flush();
-			virtual String GetNewLine();
+			virtual String GetNewLine() const override;
 			virtual void Write(const char *value, va_list args);
 		};
 
 		class ErrorClass : public IO::TextWriter {
 		  public:
 			virtual void Flush();
-			virtual String GetNewLine();
+			virtual String GetNewLine() const override;
 			virtual void Write(const char *value, va_list args);
 		};
 

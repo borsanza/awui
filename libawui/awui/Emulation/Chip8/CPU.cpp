@@ -578,7 +578,7 @@ int CPU::RunOpcode(int iteration) {
 
 		// A key press is awaited, and then stored in VX
 		case OxFX0A: {
-			int key = m_input->GetKey();
+			int key = m_input->TakeLastKey();
 			if (key != -1)
 				m_registers->SetV(m_opcode.GetX(), key);
 			else

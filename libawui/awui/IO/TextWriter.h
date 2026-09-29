@@ -12,7 +12,7 @@ namespace awui {
 			virtual ~TextWriter();
 
 			virtual void Flush() = 0;
-			virtual String GetNewLine() = 0;
+			virtual String GetNewLine() const = 0;
 			virtual void Write(Object *value);
 			virtual void Write(String value);
 			virtual void Write(const char *value, ...);

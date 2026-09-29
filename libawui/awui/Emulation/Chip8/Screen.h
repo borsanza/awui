@@ -19,8 +19,8 @@ namespace awui::Emulation::Chip8 {
 		void SetPixel(uint16_t x, uint16_t y, uint32_t value);
 		uint32_t GetPixel(uint16_t x, uint16_t y);
 
-		uint16_t GetWidth();
-		uint16_t GetHeight();
+		uint16_t GetWidth() const;
+		uint16_t GetHeight() const;
 
 		void ScrollLeft(uint8_t columns);
 		void ScrollRight(uint8_t columns);

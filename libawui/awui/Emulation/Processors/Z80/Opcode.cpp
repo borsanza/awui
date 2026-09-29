@@ -21,7 +21,7 @@ Opcode::Opcode() {
 Opcode::~Opcode() {
 }
 
-int Opcode::GetEnum() {
+int Opcode::Decode() {
 	this->_advance = 0;
 	switch (this->_byte1) {
 		case 0x00:

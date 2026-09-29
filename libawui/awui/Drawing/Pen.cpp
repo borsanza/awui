@@ -25,7 +25,7 @@ Pen::Pen(Color color, float width) {
 	m_lineJoin = LineJoin::Miter;
 }
 
-Color Pen::GetColor() {
+Color Pen::GetColor() const {
 	return m_color;
 }
 
@@ -33,7 +33,7 @@ void Pen::SetColor(Color color) {
 	m_color = color;
 }
 
-float Pen::GetWidth() {
+float Pen::GetWidth() const {
 	return m_width;
 }
 

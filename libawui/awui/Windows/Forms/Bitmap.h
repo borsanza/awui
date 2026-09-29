@@ -61,7 +61,7 @@ namespace awui {
 			void SetColor(ColorF color);
 
 			void SetStretchMode(StretchMode::Enum stretchMode);
-			StretchMode::Enum GetStretchMode();
+			StretchMode::Enum GetStretchMode() const;
 
 			static void UnloadAll();
 		};

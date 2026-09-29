@@ -18,7 +18,7 @@ void awui::Console::OutClass::Flush() {
 	fflush(stdout);
 }
 
-String awui::Console::OutClass::GetNewLine() {
+String awui::Console::OutClass::GetNewLine() const {
 	return Environment::GetNewLine();
 }
 
@@ -30,7 +30,7 @@ void awui::Console::ErrorClass::Flush() {
 	fflush(stderr);
 }
 
-String awui::Console::ErrorClass::GetNewLine() {
+String awui::Console::ErrorClass::GetNewLine() const {
 	return Environment::GetNewLine();
 }
 

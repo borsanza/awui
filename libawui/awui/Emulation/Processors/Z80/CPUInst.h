@@ -206,7 +206,7 @@ namespace awui::Emulation::Processors::Z80 {
 		void SetReadPortCB(uint8_t (*fun)(uint8_t, void *), void *data);
 
 		inline void SetInInterrupt(bool mode) { this->d._inInterrupt = mode; }
-		inline bool IsInInterrupt() { return this->d._inInterrupt; }
+		inline bool IsInInterrupt() const { return this->d._inInterrupt; }
 		inline bool IsAfterEI() const { return this->d._afterEI; }
 	};
 } // namespace awui::Emulation::Processors::Z80

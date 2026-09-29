@@ -95,7 +95,7 @@ void CPU::RunOpcode() {
 #endif
 	}
 
-	uint16_t opcodeEnum = this->_opcode.GetEnum();
+	uint16_t opcodeEnum = this->_opcode.Decode();
 	uint8_t advance = this->_opcode.GetAdvance();
 	if (advance != 0) {
 		// Prefijo DD/FD sin efecto: solo consume su ciclo M1 (4 ciclos). Hay que deshacer

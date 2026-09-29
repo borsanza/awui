@@ -18,10 +18,10 @@ namespace awui::Drawing {
 		Pen(awui::Color color, float width);
 		virtual ~Pen() = default;
 
-		awui::Color GetColor();
+		awui::Color GetColor() const;
 		void SetColor(awui::Color color);
 
-		float GetWidth();
+		float GetWidth() const;
 		void SetWidth(float width);
 
 		void SetLineJoin(Drawing2D::LineJoin lineJoin);

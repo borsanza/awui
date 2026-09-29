@@ -95,11 +95,11 @@ void FileStream::SetPosition(uint32_t value) {
 		fseek(this->_file, this->_pos, SEEK_SET);
 }
 
-uint32_t FileStream::GetPosition() {
+uint32_t FileStream::GetPosition() const {
 	return this->_pos;
 }
 
-uint32_t FileStream::GetLength() {
+uint32_t FileStream::GetLength() const {
 	return _length;
 }
 

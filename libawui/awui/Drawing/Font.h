@@ -25,11 +25,11 @@ namespace awui::Drawing {
 		Font(const String font, float size, int style);
 
 		const String GetFont() const;
-		bool GetBold();
-		bool GetItalic();
-		bool GetUnderline();
-		bool GetStrikeout();
-		float GetSize();
+		bool GetBold() const;
+		bool GetItalic() const;
+		bool GetUnderline() const;
+		bool GetStrikeout() const;
+		float GetSize() const;
 		virtual String ToString() const override;
 
 		Font &operator=(const Font &other);

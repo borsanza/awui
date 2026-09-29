@@ -62,7 +62,7 @@ namespace awui::Windows::Forms {
 
 				void SetSubPage(Page *subpage) { m_subpage = subpage; }
 				Page *GetSubPage() const { return m_subpage; }
-				TypeButton GetTypeButton() { return m_typeButton; }
+				TypeButton GetTypeButton() const { return m_typeButton; }
 
 				inline void SetKey(const std::string &key) { m_key = key; }
 				inline const std::string &GetKey() const { return m_key; }

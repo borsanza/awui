@@ -18,7 +18,7 @@ namespace awui {
 
 			void SetByte(int pos, uint8_t value);
 			uint8_t GetByte(int pos);
-			int GetLength();
+			int GetLength() const;
 		};
 
 		class TapeCorder {

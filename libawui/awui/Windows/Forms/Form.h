@@ -56,7 +56,7 @@ namespace awui {
 			void SetText(String title);
 			void RefreshVideo();
 			void SetFullscreen(int mode);
-			inline int GetFullscreen() { return m_fullscreen; }
+			inline int GetFullscreen() const { return m_fullscreen; }
 
 			virtual void OnRemoteHeartbeat();
 
@@ -75,7 +75,7 @@ namespace awui {
 			void ProcessEvents(SDL_Event *event);
 
 			bool SetSwapInterval(bool mode);
-			bool GetSwapInterval();
+			bool GetSwapInterval() const;
 		};
 	} // namespace Windows::Forms
 } // namespace awui

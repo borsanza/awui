@@ -11,7 +11,7 @@ namespace awui::Effects {
 	  public:
 		Effect(String name1);
 
-		String GetName();
+		String GetName() const;
 
 		virtual float Calculate(float p) const = 0;
 	};

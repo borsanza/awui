@@ -86,7 +86,7 @@ namespace awui::Emulation {
 			void LoadState(uint8_t *data);
 			void SaveState(uint8_t *data);
 
-			double GetVirtualTime();
+			double GetVirtualTime() const;
 			// Parte del frame actual ya emulada (0..1): sitúa los cambios del altavoz dentro del frame
 			inline double GetFramePosition() const { return this->_percFrame; }
 			static constexpr double FrameSeconds = 1.0 / 59.922743404;
@@ -108,7 +108,7 @@ namespace awui::Emulation {
 			void SetReadCassetteCB(int32_t (*fun)(void *), void *data);
 
 			void SetFast(bool mode) { this->_fast = mode; };
-			bool GetFast() { return this->_fast; };
+			bool GetFast() const { return this->_fast; };
 			inline void SetTapeCorder(TapeCorder *tape) { this->_tape = tape; }
 		};
 	} // namespace Spectrum
