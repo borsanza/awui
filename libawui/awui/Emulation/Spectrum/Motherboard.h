@@ -14,6 +14,7 @@ namespace awui::Emulation {
 
 	namespace Spectrum {
 		class Sound;
+		class TapeCorder;
 		class ULA;
 
 		class Motherboard {
@@ -27,6 +28,7 @@ namespace awui::Emulation {
 			Processors::Z80::CPU *_z80;
 			ULA *_ula;
 			Sound *_sound;
+			TapeCorder *_tape; // Para la carga instantánea (no es suyo)
 
 			// No se guarda
 			Common::Rom *_rom;
@@ -53,6 +55,7 @@ namespace awui::Emulation {
 			int32_t (*_readCassetteCB)(void *);
 			void *_readCassetteDataCB;
 			void ProcessCassette();
+			bool FlashLoad();
 
 		  public:
 			Motherboard();
@@ -97,6 +100,7 @@ namespace awui::Emulation {
 
 			void SetFast(bool mode) { this->_fast = mode; };
 			bool GetFast() { return this->_fast; };
+			inline void SetTapeCorder(TapeCorder *tape) { this->_tape = tape; }
 		};
 	} // namespace Spectrum
 } // namespace awui::Emulation

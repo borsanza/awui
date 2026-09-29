@@ -53,6 +53,10 @@ namespace awui {
 			uint32_t GetNext();
 			inline bool IsPlaying() const { return this->_playing; }
 
+			// Carga instantánea: devuelve el siguiente bloque entero (nullptr si no quedan) y deja la cinta en
+			// el siguiente. Al acabar la cinta la para y avisa como si hubiera terminado de sonar
+			TapeBlock *TakeNextBlock();
+
 			void SetFinishCassetteCB(void (*fun)(void *), void *data);
 		};
 	} // namespace Emulation::Spectrum

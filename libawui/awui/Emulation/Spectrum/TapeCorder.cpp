@@ -196,6 +196,29 @@ uint32_t TapeCorder::GetNext() {
 	return -1;
 }
 
+TapeBlock *TapeCorder::TakeNextBlock() {
+	if (!this->_list || (this->_block >= this->_list->GetCount()))
+		return nullptr;
+
+	TapeBlock *block = (TapeBlock *) this->_list->Get(this->_block);
+	this->_block++;
+	this->_posByte = 0;
+	this->_posBit = 0;
+
+	if (this->_block >= this->_list->GetCount()) {
+		this->_state = 9;
+		this->_playing = false;
+		if (this->_finishCassetteCB)
+			this->_finishCassetteCB(this->_finishCassetteDataCB);
+	} else {
+		// Si luego se sigue a velocidad normal, la cinta está en el tono guía del siguiente bloque
+		this->_state = 7;
+		this->_cycle = 3223;
+	}
+
+	return block;
+}
+
 void TapeCorder::SetFinishCassetteCB(void (*fun)(void *), void *data) {
 	this->_finishCassetteCB = fun;
 	this->_finishCassetteDataCB = data;

@@ -57,6 +57,7 @@ Spectrum::Spectrum() {
 	m_fileSlot = 0;
 	m_tapecorder = new TapeCorder();
 	m_tapecorder->SetFinishCassetteCB(FinishCassetteCB, this);
+	m_motherboard->SetTapeCorder(m_tapecorder);
 }
 
 Spectrum::~Spectrum() {
@@ -107,6 +108,18 @@ void Spectrum::CheckLimits() {
 void Spectrum::OnTick(float deltaSeconds) {
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET)
 		m_motherboard->Reset();
+
+	// Modo rápido (F8): se emula todo lo que dé tiempo en este tick. Con el cargador de la ROM la carga es
+	// instantánea (Motherboard::FlashLoad); con un cargador propio la cinta pasa a toda velocidad
+	if (m_motherboard->GetFast()) {
+		double start = DateTime::GetTotalSeconds();
+		do {
+			m_motherboard->OnTick();
+		} while (m_motherboard->GetFast() && ((DateTime::GetTotalSeconds() - start) < 0.030));
+
+		m_seconds = 0.0;
+		return;
+	}
 
 	// Se emulan los frames que correspondan al tiempo real (no uno por tick: a 144Hz o sin vsync iría más rápido)
 	m_seconds += deltaSeconds;
@@ -178,8 +191,13 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 				LoadState();
 			break;
 		case Keys::Key_F8:
-			if (pressed)
+			// Carga ultrarrápida: con el cargador de la ROM es instantánea; con uno propio la cinta tiene que
+			// sonar, así que se pone en marcha si estaba parada
+			if (pressed) {
 				m_motherboard->SetFast(!m_motherboard->GetFast());
+				if (m_motherboard->GetFast() && !m_tapecorder->IsPlaying())
+					m_tapecorder->Play();
+			}
 			break;
 		case Keys::Key_F9:
 			if (pressed) {

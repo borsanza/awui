@@ -14,6 +14,7 @@
 #include <awui/Emulation/Common/Word.h>
 #include <awui/Emulation/Processors/Z80/CPU.h>
 #include <awui/Emulation/Spectrum/Sound.h>
+#include <awui/Emulation/Spectrum/TapeCorder.h>
 #include <awui/Emulation/Spectrum/ULA.h>
 #include <string.h>
 
@@ -76,6 +77,7 @@ Motherboard::Motherboard() {
 	this->_cycles = 0;
 	this->_cyclesULA = 0;
 	this->_fast = false;
+	this->_tape = nullptr;
 
 	this->_rom = new Common::Rom(16384);
 
@@ -167,6 +169,68 @@ void Motherboard::ProcessCassette() {
 	this->_lastReadCycle = this->_lastCycles;
 }
 
+/**
+ * Carga instantánea de un bloque con la rutina LD-BYTES de la ROM, como hacen otros emuladores.
+ * Se engancha en LD-START (0x056C), por donde la ROM pasa una y otra vez mientras espera el tono guía: así
+ * funciona también si se activa el modo rápido con la carga ya empezada. En ese punto:
+ *   A' = byte de bandera esperado, acarreo de F' = cargar (sin acarreo: verificar), IX = destino, DE = longitud,
+ *   y en la pila está SA/LD-RET (0x053F), que restaura el borde, hace EI y vuelve a quien llamó a LD-BYTES.
+ * Sale con acarreo si ha ido bien (con otra bandera, como la ROM, se consume el bloque y sale sin acarreo).
+ * Si no está la ROM estándar o no quedan bloques, no hace nada y la ROM sigue a velocidad normal (un
+ * cargador propio también sigue funcionando así).
+ */
+bool Motherboard::FlashLoad() {
+	// INC D; EX AF,AF'; DEC D: principio de LD-BYTES en la ROM del 48K
+	if (!this->_tape || (this->ReadMemory(0x0556) != 0x14) || (this->ReadMemory(0x0557) != 0x08) || (this->ReadMemory(0x0558) != 0x15))
+		return false;
+
+	TapeBlock *block = this->_tape->TakeNextBlock();
+	if (!block)
+		return false;
+
+	Processors::Z80::Registers *regs = this->_z80->GetRegisters();
+	regs->AlternateAF();
+	uint8_t flag = regs->GetA();
+	bool load = (regs->GetF() & Processors::Z80::Flag_C) != 0;
+	regs->AlternateAF();
+	uint16_t ix = regs->GetIX();
+	uint16_t de = regs->GetDE();
+	int length = block->GetLength();
+
+	bool ok = (length > 0) && (block->GetByte(0) == flag);
+	if (ok) {
+		uint8_t parity = block->GetByte(0);
+		int pos = 1;
+		while ((de > 0) && (pos < length)) {
+			uint8_t value = block->GetByte(pos++);
+			parity ^= value;
+			if (load)
+				this->WriteMemory(ix, value);
+			else if (this->ReadMemory(ix) != value)
+				ok = false;
+			ix++;
+			de--;
+		}
+
+		// Byte de comprobación
+		if (pos < length)
+			parity ^= block->GetByte(pos);
+
+		ok = ok && (de == 0) && (pos < length) && (parity == 0);
+	}
+
+	regs->SetIX(ix);
+	regs->SetDE(de);
+	regs->SetF(ok ? (regs->GetF() | Processors::Z80::Flag_C) : (regs->GetF() & ~Processors::Z80::Flag_C));
+
+	// RET (a SA/LD-RET)
+	uint16_t sp = regs->GetSP();
+	regs->SetPC(this->ReadMemory(sp) | (this->ReadMemory(sp + 1) << 8));
+	regs->SetSP(sp + 2);
+
+	return true;
+}
+
 void Motherboard::OnTick() {
 	this->_initFrame = DateTime::GetTotalSeconds();
 	double speed = 3500000.0f;
@@ -177,6 +241,10 @@ void Motherboard::OnTick() {
 
 	this->_percFrame = 0;
 	do {
+		// Modo rápido: la rutina de carga de la ROM se sustituye por copiar el bloque de la cinta
+		if (this->_fast && (this->_z80->GetPC() == 0x056C) && this->FlashLoad())
+			continue;
+
 		this->_lastCycles = this->_z80->GetCycles();
 		this->_z80->RunOpcode();
 		this->_cycles += this->_z80->GetCycles() - this->_lastCycles;
