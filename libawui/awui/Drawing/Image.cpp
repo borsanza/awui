@@ -46,14 +46,15 @@ Image::Image(String filename) {
 Image::~Image() {
 	Image::list.Remove(this);
 
-	if (m_image != NULL)
-		free(m_image);
-
+	// Primero cairo (el contexto y la superficie usan el buffer) y después el buffer
 	if (m_cr != NULL)
 		cairo_destroy(m_cr);
 
 	if (m_cairo_surface != NULL)
 		cairo_surface_destroy(m_cairo_surface);
+
+	if (m_image != NULL)
+		free(m_image);
 
 	Unload();
 }
