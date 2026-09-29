@@ -76,22 +76,26 @@ void ArrayList::Remove(Object *item) {
 }
 
 void ArrayList::RemoveAt(int index) {
+	// Fuera de rango no se toca nada (con -1, el bucle desplazaría toda la lista y se perdería el primero)
+	if ((index < 0) || (index >= m_count)) {
+		assert(0);
+		return;
+	}
+
 	for (int i = index + 1; i < m_count; i++)
 		m_data[i - 1] = m_data[i];
 
-	if (index < m_count) {
-		m_count--;
+	m_count--;
 
-		if ((m_size > 8) && ((m_size >> 1) > m_count)) {
-			m_size = m_size >> 1;
-			m_data = (Object **) realloc(m_data, m_size * sizeof(Object *));
-		}
+	if ((m_size > 8) && ((m_size >> 1) > m_count)) {
+		m_size = m_size >> 1;
+		m_data = (Object **) realloc(m_data, m_size * sizeof(Object *));
 	}
 }
 
 void ArrayList::SetChildIndex(Object *item, int newIndex) {
-	// newIndex no puede ser mayor que el tamaño
-	if (newIndex >= m_count)
+	// newIndex tiene que ser una posición de la lista (negativo leería y escribiría antes del buffer)
+	if ((newIndex < 0) || (newIndex >= m_count))
 		return;
 
 	// Sino encontramos el item, no se mueve nada
