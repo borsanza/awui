@@ -18,6 +18,8 @@ FormArcade::FormArcade() {
 }
 
 FormArcade::~FormArcade() {
+	// Es hijo del formulario: si no se saca, ~Control lo borraría otra vez
+	RemoveWidget(m_stationUI);
 	delete m_stationUI;
 }
 

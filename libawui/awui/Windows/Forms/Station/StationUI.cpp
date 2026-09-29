@@ -94,7 +94,14 @@ StationUI::StationUI() {
 }
 
 StationUI::~StationUI() {
-	// printf("~StationUI\n");
+	// m_fade es un miembro: si está en el árbol (durante un fundido), ~Control le haría delete
+	if (IndexOf(&m_fade) != -1) {
+		RemoveWidget(&m_fade);
+	}
+
+	// Los botones de los nodos son hijos de sus páginas: se suelta la que se ve antes de borrarlos
+	m_browser->SetPage(nullptr);
+
 	if (m_root) {
 		delete m_root;
 		m_root = nullptr;
