@@ -121,7 +121,9 @@ void Form::RefreshVideo() {
 	if (!m_initialized)
 		return;
 
-	int finalWidth, finalHeight;
+	// Si no se puede saber el tamaño del escritorio se mantiene el actual; SDL avisará del tamaño real al redimensionar
+	int finalWidth = GetWidth();
+	int finalHeight = GetHeight();
 	Uint32 flags = 0;
 
 	if (m_fullscreen) {
@@ -134,11 +136,15 @@ void Form::RefreshVideo() {
 		int windowDisplayIndex = 0;
 		if (m_window)
 			windowDisplayIndex = SDL_GetWindowDisplayIndex(m_window);
+		if (windowDisplayIndex < 0)
+			windowDisplayIndex = 0;
 
 		SDL_DisplayMode current;
 		if (SDL_GetDesktopDisplayMode(windowDisplayIndex, &current) == 0) {
 			finalWidth = current.w;
 			finalHeight = current.h;
+		} else {
+			SDL_Log("[ERROR] SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 		}
 	} else {
 		flags |= SDL_WINDOW_RESIZABLE;
