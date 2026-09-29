@@ -127,6 +127,9 @@ void SortedList::RemoveAt(int index) {
 			else
 				last->next = itemListAux->next;
 
+			if (itemListAux == m_last)
+				m_last = last;
+
 			free(itemListAux);
 			return;
 		}
