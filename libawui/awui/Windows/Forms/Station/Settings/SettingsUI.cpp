@@ -11,7 +11,9 @@
 #include <awui/Drawing/Font.h>
 #include <awui/Localization.h>
 #include <awui/String.h>
+#include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/Form.h>
+#include <awui/Windows/Forms/ImageFader.h>
 #include <awui/Windows/Forms/Label.h>
 #include <awui/Windows/Forms/Station/Browser.h>
 #include <awui/Windows/Forms/Station/Page.h>
@@ -38,6 +40,8 @@ SettingsUI::SettingsUI() {
 	m_class = Classes::SettingsUI;
 	m_browser = nullptr;
 	m_title = nullptr;
+	m_backgroundFader = nullptr;
+	m_background = nullptr;
 	m_rootPage = nullptr;
 	m_rebuild = false;
 	m_exitListener = nullptr;
@@ -48,6 +52,15 @@ SettingsUI::SettingsUI() {
 
 SettingsUI::~SettingsUI() {
 	DeletePages();
+
+	// El fader (hijo) lo borra Control, pero la imagen que muestra no
+	if (m_backgroundFader) {
+		RemoveWidget(m_backgroundFader);
+		delete m_backgroundFader;
+		m_backgroundFader = nullptr;
+	}
+
+	delete m_background;
 }
 
 bool SettingsUI::IsClass(Classes objectClass) const {
@@ -55,6 +68,15 @@ bool SettingsUI::IsClass(Classes objectClass) const {
 }
 
 void SettingsUI::InitializeComponent() {
+	// Fondo como el de las secciones del menú: a pantalla completa, atenuado y con fundido de entrada
+	m_background = new Bitmap("./images/settings-bg.jpg");
+	m_background->SetStretchMode(StretchMode::AspectFill);
+	m_backgroundFader = new ImageFader();
+	m_backgroundFader->SetDock(DockStyle::Fill);
+	m_backgroundFader->SetColor(ColorF::FromArgb(0.25f, 1.0f, 1.0f, 1.0f));
+	m_backgroundFader->SetImage(m_background);
+	AddWidget(m_backgroundFader);
+
 	Font font = Font("Liberation Sans", 40, FontStyle::Bold);
 	m_title = new Label();
 	m_title->SetTextAlign(ContentAlignment::BottomCenter);

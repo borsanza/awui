@@ -11,6 +11,8 @@
 using json = nlohmann::json;
 
 namespace awui::Windows::Forms {
+	class Bitmap;
+	class ImageFader;
 	class Label;
 
 	namespace Station {
@@ -28,6 +30,8 @@ namespace awui::Windows::Forms {
 
 				Browser *m_browser;
 				Label *m_title;
+				ImageFader *m_backgroundFader;
+				Bitmap *m_background; // No es hijo de ningún control: se borra en el destructor
 				Label *m_description[DescriptionLines];
 				String m_lastDescription;
 
