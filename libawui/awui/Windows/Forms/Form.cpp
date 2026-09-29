@@ -325,6 +325,21 @@ void Form::ProcessEvents(SDL_Event *event) {
 				case SDLK_LALT:
 					OnKeyPressPre(Keys::Key_LALT);
 					break;
+				case SDLK_RALT:
+					OnKeyPressPre(Keys::Key_RALT);
+					break;
+				case SDLK_LCTRL:
+					OnKeyPressPre(Keys::Key_LCTRL);
+					break;
+				case SDLK_RCTRL:
+					OnKeyPressPre(Keys::Key_RCTRL);
+					break;
+				case SDLK_PLUS:
+					OnKeyPressPre(Keys::Key_PLUS);
+					break;
+				case SDLK_LESS:
+					OnKeyPressPre(Keys::Key_LESS);
+					break;
 				case SDLK_SPACE:
 					OnKeyPressPre(Keys::Key_SPACE);
 					break;
@@ -593,6 +608,21 @@ void Form::ProcessEvents(SDL_Event *event) {
 					break;
 				case SDLK_LALT:
 					OnKeyUpPre(Keys::Key_LALT);
+					break;
+				case SDLK_RALT:
+					OnKeyUpPre(Keys::Key_RALT);
+					break;
+				case SDLK_LCTRL:
+					OnKeyUpPre(Keys::Key_LCTRL);
+					break;
+				case SDLK_RCTRL:
+					OnKeyUpPre(Keys::Key_RCTRL);
+					break;
+				case SDLK_PLUS:
+					OnKeyUpPre(Keys::Key_PLUS);
+					break;
+				case SDLK_LESS:
+					OnKeyUpPre(Keys::Key_LESS);
 					break;
 				case SDLK_SPACE:
 					OnKeyUpPre(Keys::Key_SPACE);

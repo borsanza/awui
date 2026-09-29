@@ -18,6 +18,9 @@
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Form.h>
 
+#include <set>
+#include <vector>
+
 using namespace awui::Drawing;
 using namespace awui::Emulation::Spectrum;
 using namespace awui::IO;
@@ -54,6 +57,7 @@ Spectrum::Spectrum() {
 	m_last = -1;
 	m_lastTick = 0;
 	m_seconds = 0.0;
+	m_heldRemote = 0;
 	m_fileSlot = 0;
 	m_tapecorder = new TapeCorder();
 	m_tapecorder->SetFinishCassetteCB(FinishCassetteCB, this);
@@ -173,11 +177,202 @@ void Spectrum::OnPaint(GL *gl) {
 	GL::DrawImageGL(ula->GetImage(), int(GetWidth() - w) >> 1, int(GetHeight() - h) >> 1, w, h);
 }
 
-void Spectrum::CallKey(int key, bool pressed) {
-	if (pressed)
-		m_motherboard->OnKeyPress(key / 10, 1 << (key % 10));
-	else
-		m_motherboard->OnKeyUp(key / 10, 1 << (key % 10));
+
+// Teclas de la matriz del Spectrum (fila * 10 + columna) que pulsa cada tecla del PC
+static void GetMatrixKeys(Keys::Enum key, std::vector<int> &keys) {
+	switch (key) {
+		case Keys::Key_LSHIFT:
+		case Keys::Key_RSHIFT:
+			keys.push_back(0);
+			break;
+		case Keys::Key_Z:
+			keys.push_back(1);
+			break;
+		case Keys::Key_X:
+			keys.push_back(2);
+			break;
+		case Keys::Key_C:
+			keys.push_back(3);
+			break;
+		case Keys::Key_V:
+			keys.push_back(4);
+			break;
+		case Keys::Key_A:
+			keys.push_back(10);
+			break;
+		case Keys::Key_S:
+			keys.push_back(11);
+			break;
+		case Keys::Key_D:
+			keys.push_back(12);
+			break;
+		case Keys::Key_F:
+			keys.push_back(13);
+			break;
+		case Keys::Key_G:
+			keys.push_back(14);
+			break;
+		case Keys::Key_Q:
+			keys.push_back(20);
+			break;
+		case Keys::Key_W:
+			keys.push_back(21);
+			break;
+		case Keys::Key_E:
+			keys.push_back(22);
+			break;
+		case Keys::Key_R:
+			keys.push_back(23);
+			break;
+		case Keys::Key_T:
+			keys.push_back(24);
+			break;
+		case Keys::Key_KP1:
+		case Keys::Key_1:
+			keys.push_back(30);
+			break;
+		case Keys::Key_KP2:
+		case Keys::Key_2:
+			keys.push_back(31);
+			break;
+		case Keys::Key_KP3:
+		case Keys::Key_3:
+			keys.push_back(32);
+			break;
+		case Keys::Key_KP4:
+		case Keys::Key_4:
+			keys.push_back(33);
+			break;
+		case Keys::Key_KP5:
+		case Keys::Key_5:
+			keys.push_back(34);
+			break;
+		case Keys::Key_KP0:
+		case Keys::Key_0:
+			keys.push_back(40);
+			break;
+		case Keys::Key_KP9:
+		case Keys::Key_9:
+			keys.push_back(41);
+			break;
+		case Keys::Key_KP8:
+		case Keys::Key_8:
+			keys.push_back(42);
+			break;
+		case Keys::Key_KP7:
+		case Keys::Key_7:
+			keys.push_back(43);
+			break;
+		case Keys::Key_KP6:
+		case Keys::Key_6:
+			keys.push_back(44);
+			break;
+		case Keys::Key_P:
+			keys.push_back(50);
+			break;
+		case Keys::Key_O:
+			keys.push_back(51);
+			break;
+		case Keys::Key_I:
+			keys.push_back(52);
+			break;
+		case Keys::Key_U:
+			keys.push_back(53);
+			break;
+		case Keys::Key_Y:
+			keys.push_back(54);
+			break;
+		case Keys::Key_KP_ENTER:
+		case Keys::Key_ENTER:
+			keys.push_back(60);
+			break;
+		case Keys::Key_L:
+			keys.push_back(61);
+			break;
+		case Keys::Key_K:
+			keys.push_back(62);
+			break;
+		case Keys::Key_J:
+			keys.push_back(63);
+			break;
+		case Keys::Key_H:
+			keys.push_back(64);
+			break;
+		case Keys::Key_SPACE:
+			keys.push_back(70);
+			break;
+		case Keys::Key_LALT:
+		case Keys::Key_RALT:
+		case Keys::Key_LCTRL:
+		case Keys::Key_RCTRL:
+			keys.push_back(71);
+			break;
+		case Keys::Key_M:
+			keys.push_back(72);
+			break;
+		case Keys::Key_N:
+			keys.push_back(73);
+			break;
+		case Keys::Key_B:
+			keys.push_back(74);
+			break;
+
+		case Keys::Key_COMMA:
+			keys.push_back(71);
+			keys.push_back(73);
+			break;
+
+		case Keys::Key_QUOTE:
+			keys.push_back(71);
+			keys.push_back(43);
+			break;
+
+		case Keys::Key_KP_MINUS:
+		case Keys::Key_MINUS:
+			keys.push_back(71);
+			keys.push_back(63);
+			break;
+
+		case Keys::Key_KP_PLUS:
+		case Keys::Key_PLUS:
+			keys.push_back(71);
+			keys.push_back(62);
+			break;
+
+		case Keys::Key_KP_DIVIDE:
+			keys.push_back(71);
+			keys.push_back(4);
+			break;
+
+		case Keys::Key_KP_MULTIPLY:
+			keys.push_back(71);
+			keys.push_back(74);
+			break;
+
+		case Keys::Key_KP_PERIOD:
+		case Keys::Key_PERIOD:
+			keys.push_back(71);
+			keys.push_back(72);
+			break;
+
+		case Keys::Key_LESS:
+			keys.push_back(71);
+			keys.push_back(23);
+			break;
+
+		case Keys::Key_BACKSPACE:
+			keys.push_back(0);
+			keys.push_back(40);
+			break;
+
+		case Keys::Key_F5:
+			keys.push_back(0);
+			keys.push_back(30);
+			break;
+
+		default:
+			break;
+	}
 }
 
 void Spectrum::DoKey(Keys::Enum key, bool pressed) {
@@ -208,212 +403,89 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 					m_tapecorder->Stop();
 			}
 			break;
-		case Keys::Key_LSHIFT:
-		case Keys::Key_RSHIFT:
-			CallKey(00, pressed);
+		default:
 			break;
-		case Keys::Key_Z:
-			CallKey(01, pressed);
-			break;
-		case Keys::Key_X:
-			CallKey(02, pressed);
-			break;
-		case Keys::Key_C:
-			CallKey(03, pressed);
-			break;
-		case Keys::Key_V:
-			CallKey(04, pressed);
-			break;
-		case Keys::Key_A:
-			CallKey(10, pressed);
-			break;
-		case Keys::Key_S:
-			CallKey(11, pressed);
-			break;
-		case Keys::Key_D:
-			CallKey(12, pressed);
-			break;
-		case Keys::Key_F:
-			CallKey(13, pressed);
-			break;
-		case Keys::Key_G:
-			CallKey(14, pressed);
-			break;
-		case Keys::Key_Q:
-			CallKey(20, pressed);
-			break;
-		case Keys::Key_W:
-			CallKey(21, pressed);
-			break;
-		case Keys::Key_E:
-			CallKey(22, pressed);
-			break;
-		case Keys::Key_R:
-			CallKey(23, pressed);
-			break;
-		case Keys::Key_T:
-			CallKey(24, pressed);
-			break;
-		case Keys::Key_KP1:
-		case Keys::Key_1:
-			CallKey(30, pressed);
-			break;
-		case Keys::Key_KP2:
-		case Keys::Key_2:
-			CallKey(31, pressed);
-			break;
-		case Keys::Key_KP3:
-		case Keys::Key_3:
-			CallKey(32, pressed);
-			break;
-		case Keys::Key_KP4:
-		case Keys::Key_4:
-			CallKey(33, pressed);
-			break;
-		case Keys::Key_KP5:
-		case Keys::Key_5:
-			CallKey(34, pressed);
-			break;
-		case Keys::Key_KP0:
-		case Keys::Key_0:
-			CallKey(40, pressed);
-			break;
-		case Keys::Key_KP9:
-		case Keys::Key_9:
-			CallKey(41, pressed);
-			break;
-		case Keys::Key_KP8:
-		case Keys::Key_8:
-			CallKey(42, pressed);
-			break;
-		case Keys::Key_KP7:
-		case Keys::Key_7:
-			CallKey(43, pressed);
-			break;
-		case Keys::Key_KP6:
-		case Keys::Key_6:
-			CallKey(44, pressed);
-			break;
-		case Keys::Key_P:
-			CallKey(50, pressed);
-			break;
-		case Keys::Key_O:
-			CallKey(51, pressed);
-			break;
-		case Keys::Key_I:
-			CallKey(52, pressed);
-			break;
-		case Keys::Key_U:
-			CallKey(53, pressed);
-			break;
-		case Keys::Key_Y:
-			CallKey(54, pressed);
-			break;
-		case Keys::Key_KP_ENTER:
-		case Keys::Key_ENTER:
-			CallKey(60, pressed);
-			break;
-		case Keys::Key_L:
-			CallKey(61, pressed);
-			break;
-		case Keys::Key_K:
-			CallKey(62, pressed);
-			break;
-		case Keys::Key_J:
-			CallKey(63, pressed);
-			break;
-		case Keys::Key_H:
-			CallKey(64, pressed);
-			break;
-		case Keys::Key_SPACE:
-			CallKey(70, pressed);
-			break;
-		case Keys::Key_LALT:
-			CallKey(71, pressed);
-			break;
-		case Keys::Key_M:
-			CallKey(72, pressed);
-			break;
-		case Keys::Key_N:
-			CallKey(73, pressed);
-			break;
-		case Keys::Key_B:
-			CallKey(74, pressed);
-			break;
+	}
 
-		case Keys::Key_COMMA:
-			CallKey(71, pressed);
-			CallKey(73, pressed);
-			break;
+	std::vector<int> keys;
+	GetMatrixKeys(key, keys);
+	if (keys.empty())
+		return;
 
-		case Keys::Key_QUOTE:
-			CallKey(71, pressed);
-			CallKey(43, pressed);
-			break;
+	// Se apunta qué teclas del PC están pulsadas y se recalcula la matriz entera: así una tecla del Spectrum
+	// compartida (Caps o Symbol Shift) sigue pulsada mientras la mantenga cualquier tecla del PC
+	if (pressed)
+		m_heldKeys.insert(key);
+	else
+		m_heldKeys.erase(key);
 
-		case Keys::Key_KP_MINUS:
-		case Keys::Key_MINUS:
-			CallKey(71, pressed);
-			CallKey(63, pressed);
-			break;
+	UpdateMatrix();
+}
 
-		case Keys::Key_KP_PLUS:
-			CallKey(71, pressed);
-			CallKey(62, pressed);
-			break;
+// Las flechas son las teclas de cursor del Spectrum (Caps Shift + 5/6/7/8), además del joystick Kempston
+void Spectrum::DoRemoteKey(RemoteButtons::Enum button, bool pressed) {
+	switch (button) {
+		case RemoteButtons::Up:
+		case RemoteButtons::Down:
+		case RemoteButtons::Left:
+		case RemoteButtons::Right:
+			if (pressed)
+				m_heldRemote |= button;
+			else
+				m_heldRemote &= ~button;
 
-		case Keys::Key_KP_DIVIDE:
-			CallKey(71, pressed);
-			CallKey(04, pressed);
+			UpdateMatrix();
 			break;
-
-		case Keys::Key_KP_MULTIPLY:
-			CallKey(71, pressed);
-			CallKey(74, pressed);
-			break;
-
-		case Keys::Key_KP_PERIOD:
-		case Keys::Key_PERIOD:
-			CallKey(71, pressed);
-			CallKey(72, pressed);
-			break;
-
-		case Keys::Key_BACKSPACE:
-			CallKey(00, pressed);
-			CallKey(40, pressed);
-			break;
-
-		case Keys::Key_F5:
-			CallKey(00, pressed);
-			CallKey(30, pressed);
-			break;
-
 		default:
 			break;
 	}
 }
 
-void Spectrum::DoRemoteKey(RemoteButtons::Enum button, bool pressed) {
-	switch (button) {
-		case RemoteButtons::Up:
-			CallKey(00, pressed);
-			CallKey(43, pressed);
-			break;
-		case RemoteButtons::Down:
-			CallKey(00, pressed);
-			CallKey(44, pressed);
-			break;
-		case RemoteButtons::Left:
-			CallKey(00, pressed);
-			CallKey(34, pressed);
-			break;
-		case RemoteButtons::Right:
-			CallKey(00, pressed);
-			CallKey(42, pressed);
-			break;
-		default:
-			break;
+// Recalcula la matriz del teclado del Spectrum a partir de todo lo que está pulsado
+void Spectrum::UpdateMatrix() {
+	std::set<int> matrix;
+	bool shift = false;
+	bool symbolKey = false;
+
+	for (Keys::Enum key : m_heldKeys) {
+		if ((key == Keys::Key_LSHIFT) || (key == Keys::Key_RSHIFT)) {
+			shift = true;
+			continue;
+		}
+
+		std::vector<int> keys;
+		GetMatrixKeys(key, keys);
+		// Un signo que es Symbol Shift + tecla (coma, punto, +...)
+		if ((keys.size() == 2) && (keys[0] == 71))
+			symbolKey = true;
+
+		matrix.insert(keys.begin(), keys.end());
 	}
+
+	// Mayúsculas + un signo sería Caps + Symbol Shift (modo extendido): se escribe solo el signo
+	if (shift && !symbolKey)
+		matrix.insert(0);
+
+	static const struct {
+		uint32_t button;
+		int key;
+	} cursors[] = {{RemoteButtons::Up, 43}, {RemoteButtons::Down, 44}, {RemoteButtons::Left, 34}, {RemoteButtons::Right, 42}};
+	for (const auto &cursor : cursors) {
+		if (m_heldRemote & cursor.button) {
+			matrix.insert(0);
+			matrix.insert(cursor.key);
+		}
+	}
+
+	m_motherboard->ReleaseAllKeys();
+	for (int key : matrix)
+		m_motherboard->OnKeyPress(key / 10, 1 << (key % 10));
+}
+
+void Spectrum::ReleaseAllKeys() {
+	m_heldKeys.clear();
+	m_heldRemote = 0;
+	UpdateMatrix();
 }
 
 bool Spectrum::OnKeyPress(Keys::Enum key) {
@@ -500,6 +572,10 @@ bool Spectrum::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 }
 
 void Spectrum::SetSoundEnabled(bool mode) {
+	// Deja de ser el juego activo (se sale al menú): lo que estuviera pulsado ya no recibirá el soltar
+	if (!mode)
+		ReleaseAllKeys();
+
 	SoundSDL::Instance()->SetPlayingSound(mode ? m_motherboard->GetSound() : 0);
 }
 

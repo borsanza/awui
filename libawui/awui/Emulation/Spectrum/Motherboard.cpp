@@ -413,6 +413,11 @@ void Motherboard::OnKeyPress(uint8_t row, uint8_t key) {
 	// printf("Press %d: %x\n", row, this->d._keys[row]);
 }
 
+void Motherboard::ReleaseAllKeys() {
+	for (int i = 0; i < 8; i++)
+		this->d._keys[i] = 0xFF;
+}
+
 void Motherboard::OnKeyUp(uint8_t row, uint8_t key) {
 	this->d._keys[row] |= key;
 	// printf("Up %d: %x\n", row, this->d._keys[row]);

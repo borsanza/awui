@@ -92,6 +92,12 @@ namespace awui::Windows::Forms {
 			Key_PAGEDOWN,
 			Key_HOME,
 			Key_END,
+
+			Key_RALT,
+			Key_LCTRL,
+			Key_RCTRL,
+			Key_PLUS,
+			Key_LESS,
 		};
 	};
 } // namespace awui::Windows::Forms

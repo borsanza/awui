@@ -91,6 +91,7 @@ namespace awui::Emulation {
 
 			void OnKeyPress(uint8_t row, uint8_t key);
 			void OnKeyUp(uint8_t row, uint8_t key);
+			void ReleaseAllKeys();
 			void OnPadEvent(uint8_t status);
 
 			inline ULA *GetULA() const { return this->_ula; }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+
 #include "ArcadeContainer.h"
 
 #define TOTALSAVED 60
@@ -27,9 +29,13 @@ namespace awui {
 			double m_seconds; // Tiempo real pendiente de emular (menos de un frame salvo tras un parón)
 			void CheckLimits();
 
-			void CallKey(int key, bool pressed);
+			std::set<Keys::Enum> m_heldKeys; // Teclas del PC pulsadas que van al teclado del Spectrum
+			uint32_t m_heldRemote;			   // Flechas pulsadas (teclas de cursor)
+
 			void DoKey(Keys::Enum key, bool pressed);
 			void DoRemoteKey(RemoteButtons::Enum button, bool pressed);
+			void UpdateMatrix();
+			void ReleaseAllKeys();
 
 			void SaveState();
 			void LoadState();
