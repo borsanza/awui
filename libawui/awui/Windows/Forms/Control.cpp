@@ -516,7 +516,8 @@ bool Control::IsVisible(bool checkInside) const {
 
 void Control::OnTickPre(float deltaSeconds) {
 	float percent = 10.0f * deltaSeconds;
-	// awui::Console::WriteLine("%lld %.3f", ellapsed, percent);
+	int oldWidth = GetWidth();
+	int oldHeight = GetHeight();
 
 	m_lastRight = Math::Interpolate(m_lastRight, m_boundsTo.GetRight(), percent);
 	m_lastBottom = Math::Interpolate(m_lastBottom, m_boundsTo.GetBottom(), percent);
@@ -524,6 +525,13 @@ void Control::OnTickPre(float deltaSeconds) {
 	m_lastTop = Math::Interpolate(m_lastTop, m_boundsTo.GetTop(), percent);
 	m_bounds.SetSize(m_lastRight - m_lastLeft + 1.0f, m_lastBottom - m_lastTop + 1.0f);
 	m_bounds.SetLocation(m_lastLeft, m_lastTop);
+
+	// Si la animación cambia el tamaño (en píxeles enteros), se avisa como hace SetBounds: OnResize y Layout
+	// recolocan a los hijos acoplados en cada paso, no solo al final
+	if ((GetWidth() != oldWidth) || (GetHeight() != oldHeight)) {
+		Refresh();
+		OnResizePre();
+	}
 
 	if (IsVisible()) {
 		OnTick(deltaSeconds);
