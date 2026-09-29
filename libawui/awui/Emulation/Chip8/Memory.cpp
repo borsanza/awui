@@ -7,7 +7,8 @@
 #include "Memory.h"
 
 #include <awui/Console.h>
-#include <awui/IO/FileStream.h>
+#include <awui/IO/File.h>
+#include <vector>
 #include <awui/IO/MemoryStream.h>
 #include <awui/String.h>
 #include <stdint.h>
@@ -27,11 +28,15 @@ Memory::~Memory() {
 
 void Memory::LoadRom(const String file) {
 	this->_file = file;
-	FileStream *fs = new FileStream(file, FileMode::Open, FileAccess::Read);
+	std::vector<uint8_t> data;
+	if (!File::ReadAllBytes(file, data)) {
+		Console::Error->WriteLine(String("No se puede abrir el fichero: ") + file);
+		data.clear();
+	}
 
 	// La ROM empieza en 0x200. Si no cabe, la memoria crece (MegaChip: hasta 16MB, lo que alcanza I con
 	// 24 bits) conservando lo que ya hay, como las fuentes
-	int64_t needed = 0x200 + fs->GetLength();
+	int64_t needed = 0x200 + (int64_t) data.size();
 	if (needed > MaxCapacity) {
 		Console::Error->WriteLine(String("ROM demasiado grande para Chip-8, se trunca: ") + file);
 		needed = MaxCapacity;
@@ -41,16 +46,7 @@ void Memory::LoadRom(const String file) {
 		this->_memory->SetCapacity((uint32_t) needed);
 
 	this->_memory->SetPosition(0x200);
-
-	while ((fs->GetPosition() < fs->GetLength()) && (this->_memory->GetPosition() < MaxCapacity)) {
-		uint8_t b = fs->ReadByte();
-		//		Console::WriteLine(Convert::ToString(b));
-		this->_memory->WriteByte(b);
-	}
-
-	fs->Close();
-
-	delete fs;
+	this->_memory->Write(data.data(), (uint32_t) (needed - 0x200));
 }
 
 void Memory::Reload() {

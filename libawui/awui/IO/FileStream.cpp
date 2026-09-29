@@ -113,7 +113,24 @@ uint8_t FileStream::ReadByte() {
 }
 
 void FileStream::WriteByte(uint8_t value) {
+	Write(&value, 1);
+}
+
+uint32_t FileStream::Read(uint8_t *buffer, uint32_t count) {
+	if (!this->_file)
+		return 0;
+
+	uint32_t read = (uint32_t) fread(buffer, 1, count, this->_file);
+	this->_pos += read;
+	return read;
+}
+
+// Escribir más allá del final alarga el fichero (antes GetLength seguía dando la longitud inicial)
+void FileStream::Write(const uint8_t *buffer, uint32_t count) {
 	if (this->_file)
-		fwrite(&value, 1, 1, this->_file);
-	this->_pos++;
+		fwrite(buffer, 1, count, this->_file);
+
+	this->_pos += count;
+	if (this->_pos > this->_length)
+		this->_length = this->_pos;
 }

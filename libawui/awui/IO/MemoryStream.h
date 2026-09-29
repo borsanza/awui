@@ -29,6 +29,8 @@ namespace awui::IO {
 		// Fuera de la capacidad se lee 0 y las escrituras se ignoran
 		virtual uint8_t ReadByte();
 		virtual void WriteByte(uint8_t value);
+		virtual uint32_t Read(uint8_t *buffer, uint32_t count) override;
+		virtual void Write(const uint8_t *buffer, uint32_t count) override;
 
 		inline uint8_t ReadByte(uint32_t pos) const { return (pos < this->_capacity) ? this->_data[pos] : 0; }
 		inline void WriteByte(uint32_t pos, uint8_t value) {

@@ -7,7 +7,8 @@
 #include "TapeCorder.h"
 
 #include <awui/Emulation/Common/Word.h>
-#include <awui/IO/FileStream.h>
+#include <awui/IO/File.h>
+#include <vector>
 
 #include <stdlib.h>
 
@@ -46,15 +47,16 @@ void TapeCorder::LoadFile(const String fileParam) {
 	this->Clear();
 	this->_list = new std::vector<TapeBlock *>();
 
-	FileStream *file = new FileStream(fileParam, FileMode::Open, FileAccess::Read);
+	std::vector<uint8_t> bytes;
+	if (!File::ReadAllBytes(fileParam, bytes))
+		fprintf(stderr, "No se puede abrir el fichero: %s\n", fileParam.ToCharArray());
 
 	Word blocks;
 	int state = 0;
 
 	int cont;
 	TapeBlock *block;
-	for (unsigned int i = 0; i < file->GetLength(); i++) {
-		uint8_t data = file->ReadByte();
+	for (uint8_t data : bytes) {
 		switch (state) {
 			case 0:
 				state++;
@@ -82,9 +84,6 @@ void TapeCorder::LoadFile(const String fileParam) {
 				break;
 		}
 	}
-
-	file->Close();
-	delete file;
 
 	this->Rewind();
 }

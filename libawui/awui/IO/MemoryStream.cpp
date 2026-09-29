@@ -81,6 +81,30 @@ uint8_t MemoryStream::ReadByte() {
 	return r;
 }
 
+uint32_t MemoryStream::Read(uint8_t *buffer, uint32_t count) {
+	uint32_t available = (this->_position < this->_length) ? (this->_length - this->_position) : 0;
+	uint32_t read = (count < available) ? count : available;
+	if (read == 0)
+		return 0;
+
+	memcpy(buffer, this->_data + this->_position, read);
+	this->_position += read;
+	return read;
+}
+
+// Lo que no cabe en la capacidad se descarta (como WriteByte)
+void MemoryStream::Write(const uint8_t *buffer, uint32_t count) {
+	uint32_t room = (this->_position < this->_capacity) ? (this->_capacity - this->_position) : 0;
+	uint32_t written = (count < room) ? count : room;
+	if (written == 0)
+		return;
+
+	memcpy(this->_data + this->_position, buffer, written);
+	this->_position += written;
+	if (this->_position > this->_length)
+		this->_length = this->_position;
+}
+
 void MemoryStream::WriteByte(uint8_t value) {
 	if (this->_position >= this->_capacity)
 		return;

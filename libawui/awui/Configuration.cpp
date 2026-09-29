@@ -6,8 +6,9 @@
 #include "Configuration.h"
 
 #include <awui/Console.h>
+#include <awui/IO/File.h>
 
-#include <fstream>
+#include <vector>
 
 using namespace awui;
 
@@ -34,10 +35,10 @@ Configuration::Configuration(const String &filePath) {
 bool Configuration::Load(const String &filePath) {
 	m_configJson = nlohmann::json::object();
 
-	std::ifstream file(filePath.ToCharArray());
-	if (file.is_open()) {
+	std::vector<uint8_t> bytes;
+	if (IO::File::ReadAllBytes(filePath, bytes)) {
 		// Sin excepciones: un fichero mal escrito se trata como vacío (se reescribe al guardar)
-		nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
+		nlohmann::json json = nlohmann::json::parse(bytes.begin(), bytes.end(), nullptr, false);
 		if (!json.is_object()) {
 			Console::Error->WriteLine(String("Invalid configuration in ") + filePath);
 			return false;
@@ -45,24 +46,18 @@ bool Configuration::Load(const String &filePath) {
 
 		m_configJson = json;
 		return true;
-	} else {
-		std::ofstream outFile(filePath.ToCharArray());
-		if (outFile) {
-			nlohmann::json defaultConfig = nlohmann::json::object();
-			outFile << defaultConfig.dump(4);
-			outFile.close();
-			m_configJson = defaultConfig;
-			return true;
-		}
 	}
 
-	return false;
+	std::string text = m_configJson.dump(4);
+	return IO::File::WriteAllBytes(filePath, (const uint8_t *) text.data(), text.size());
 }
 
 void Configuration::Save() {
+	// Atómica: si se corta a medias no se pierden los ajustes
 	if (m_currentFilePath.GetLength() > 0) {
-		std::ofstream file(m_currentFilePath.ToCharArray());
-		file << m_configJson.dump(4);
+		std::string text = m_configJson.dump(4);
+		if (!IO::File::WriteAllBytes(m_currentFilePath, (const uint8_t *) text.data(), text.size()))
+			Console::Error->WriteLine(String("No se puede guardar la configuración en ") + m_currentFilePath);
 	}
 }
 

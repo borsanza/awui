@@ -6,7 +6,8 @@
 
 #include "Rom.h"
 
-#include <awui/IO/FileStream.h>
+#include <awui/IO/File.h>
+#include <vector>
 #include <awui/String.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -27,24 +28,19 @@ Rom::~Rom() {
 
 void Rom::LoadRom(const String file) {
 	this->_file = file;
-	FileStream *fs = new FileStream(file, FileMode::Open, FileAccess::Read);
+	std::vector<uint8_t> data;
+	if (!File::ReadAllBytes(file, data)) {
+		fprintf(stderr, "No se puede abrir el fichero: %s\n", file.ToCharArray());
+		data.clear();
+	}
 
-	if (this->_rom->GetCapacity() < fs->GetLength())
-		this->_rom->SetCapacity(fs->GetLength());
+	if (this->_rom->GetCapacity() < data.size())
+		this->_rom->SetCapacity((uint32_t) data.size());
 
 	this->_rom->SetPosition(0x0);
 	// Si la ROM es más pequeña que la capacidad inicial, la longitud (y el CRC) debe ser la del fichero
 	this->_rom->SetLength(0);
-
-	while (fs->GetPosition() < fs->GetLength()) {
-		uint8_t b = fs->ReadByte();
-		//		Console::WriteLine(Convert::ToString(b));
-		this->_rom->WriteByte(b);
-	}
-
-	fs->Close();
-
-	delete fs;
+	this->_rom->Write(data.data(), (uint32_t) data.size());
 
 	this->UpdateSize();
 }

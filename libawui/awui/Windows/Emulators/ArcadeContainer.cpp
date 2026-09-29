@@ -10,9 +10,13 @@
 #include <awui/Windows/Forms/Station/StationUI.h>
 
 #include <stdio.h>
+#include <awui/IO/File.h>
+#include <cstring>
+#include <vector>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Emulators;
+using namespace awui::IO;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Station;
 
@@ -25,18 +29,8 @@ ArcadeContainer::ArcadeContainer() {
 }
 
 bool ArcadeContainer::WriteStateFile(const String &file, const uint8_t *data, int size) {
-	// Se escribe en un temporal y se renombra: si se corta a medias, el estado anterior sigue entero
-	String tmp = String::Concat(file, ".tmp");
-	FILE *f = fopen(tmp.ToCharArray(), "wb");
-	if (!f) {
-		Console::Error->WriteLine(String("No se puede guardar el estado: ") + file);
-		return false;
-	}
-
-	bool ok = fwrite(data, 1, size, f) == (size_t) size;
-	ok = (fclose(f) == 0) && ok;
-	if (!ok || (rename(tmp.ToCharArray(), file.ToCharArray()) != 0)) {
-		remove(tmp.ToCharArray());
+	// Atómica: si se corta a medias, el estado anterior sigue entero
+	if (!File::WriteAllBytes(file, data, size)) {
 		Console::Error->WriteLine(String("No se puede guardar el estado: ") + file);
 		return false;
 	}
@@ -45,21 +39,18 @@ bool ArcadeContainer::WriteStateFile(const String &file, const uint8_t *data, in
 }
 
 bool ArcadeContainer::ReadStateFile(const String &file, uint8_t *data, int size) {
-	FILE *f = fopen(file.ToCharArray(), "rb");
-	if (!f)
+	std::vector<uint8_t> bytes;
+	if (!File::ReadAllBytes(file, bytes))
 		return false;
 
 	// Un estado de otro tamaño es de otra versión del emulador: no se carga
-	fseek(f, 0, SEEK_END);
-	long length = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	bool ok = (length == size) && (fread(data, 1, size, f) == (size_t) size);
-	fclose(f);
+	if (bytes.size() != (size_t) size) {
+		Console::Error->WriteLine("Estado incompatible (%zu bytes, se esperaban %d): no se carga %s", bytes.size(), size, file.ToCharArray());
+		return false;
+	}
 
-	if (!ok)
-		Console::Error->WriteLine(String("Estado incompatible, no se carga: ") + file);
-
-	return ok;
+	memcpy(data, bytes.data(), size);
+	return true;
 }
 
 void ArcadeContainer::SetStationUI(StationUI *station) {

@@ -30,6 +30,8 @@ namespace awui {
 
 			virtual uint8_t ReadByte();
 			virtual void WriteByte(uint8_t value);
+			virtual uint32_t Read(uint8_t *buffer, uint32_t count) override;
+			virtual void Write(const uint8_t *buffer, uint32_t count) override;
 		};
 	} // namespace IO
 } // namespace awui

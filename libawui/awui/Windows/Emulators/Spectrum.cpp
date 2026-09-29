@@ -15,7 +15,7 @@
 #include <awui/Emulation/Spectrum/SoundSDL.h>
 #include <awui/Emulation/Spectrum/TapeCorder.h>
 #include <awui/Emulation/Spectrum/ULA.h>
-#include <awui/IO/FileStream.h>
+#include <awui/IO/File.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Form.h>
 
@@ -602,26 +602,11 @@ void Spectrum::LoadState() {
 		Console::Write("Cargando: ");
 		Console::WriteLine(name);
 
-		FileStream *file = new FileStream(name, FileMode::Open, FileAccess::Read);
-
-		// Un estado de otro tamaño es de otra versión del emulador: cargarlo desbordaría el buffer
-		// (si es más grande) o dejaría la máquina a medias (si es más pequeño)
-		unsigned int size = Motherboard::GetSaveSize();
-		if (file->GetLength() != size) {
-			Console::Error->WriteLine("Estado incompatible (%u bytes, se esperaban %u): no se carga", file->GetLength(), size);
-			file->Close();
-			delete file;
-			return;
-		}
-
-		uint8_t *savedData = (uint8_t *) calloc(size, sizeof(uint8_t));
-		for (unsigned int i = 0; i < size; i++)
-			savedData[i] = file->ReadByte();
-		file->Close();
-		delete file;
-
-		m_motherboard->LoadState(savedData);
-		free(savedData);
+		// Un estado de otro tamaño es de otra versión del emulador: ReadStateFile no lo carga (desbordaría el
+		// buffer o dejaría la máquina a medias)
+		std::vector<uint8_t> savedData(Motherboard::GetSaveSize());
+		if (ReadStateFile(name, savedData.data(), (int) savedData.size()))
+			m_motherboard->LoadState(savedData.data());
 	}
 }
 
@@ -631,15 +616,7 @@ void Spectrum::SaveState() {
 	Console::Write("Guardando: ");
 	Console::WriteLine(name);
 
-	uint8_t *savedData = (uint8_t *) calloc(Motherboard::GetSaveSize(), sizeof(uint8_t));
-	FileStream *file = new FileStream(name, FileMode::Truncate, FileAccess::Write);
-	m_motherboard->SaveState(savedData);
-
-	for (int i = 0; i < Motherboard::GetSaveSize(); i++)
-		file->WriteByte(savedData[i]);
-
-	file->Close();
-	delete file;
-
-	free(savedData);
+	std::vector<uint8_t> savedData(Motherboard::GetSaveSize());
+	m_motherboard->SaveState(savedData.data());
+	WriteStateFile(name, savedData.data(), (int) savedData.size());
 }
