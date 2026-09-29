@@ -84,6 +84,19 @@ void Graphics::SetPen(Drawing::Pen *pen) {
 			cairo_set_line_cap(m_cr, CAIRO_LINE_CAP_SQUARE);
 			break;
 	}
+
+	// Unión entre segmentos de un mismo trazo (esquinas de DrawRectangle, por ejemplo)
+	switch (pen->GetLineJoin()) {
+		case LineJoin::Miter:
+			cairo_set_line_join(m_cr, CAIRO_LINE_JOIN_MITER);
+			break;
+		case LineJoin::Round:
+			cairo_set_line_join(m_cr, CAIRO_LINE_JOIN_ROUND);
+			break;
+		case LineJoin::Bevel:
+			cairo_set_line_join(m_cr, CAIRO_LINE_JOIN_BEVEL);
+			break;
+	}
 }
 
 void Graphics::DrawLine(Drawing::Pen *pen, float x1, float y1, float x2, float y2) {
