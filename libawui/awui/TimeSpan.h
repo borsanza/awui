@@ -1,32 +1,33 @@
 #pragma once
 
-#include <awui/Object.h>
+#include <cstdint>
 
 namespace awui {
 	class String;
 
-	class TimeSpan : public Object {
+	// Intervalo de tiempo en ticks de 100 ns, como System.TimeSpan de .NET. Tipo valor: se copia con el operador
+	// por defecto
+	class TimeSpan {
 	  public:
-		const long long TicksPerDay = 864000000000;
-		const long long TicksPerHour = 36000000000;
-		const long TicksPerMillisecond = 10000;
-		const long TicksPerMinute = 600000000;
-		const long TicksPerSecond = 10000000;
+		static constexpr int64_t TicksPerMillisecond = 10000;
+		static constexpr int64_t TicksPerSecond = TicksPerMillisecond * 1000;
+		static constexpr int64_t TicksPerMinute = TicksPerSecond * 60;
+		static constexpr int64_t TicksPerHour = TicksPerMinute * 60;
+		static constexpr int64_t TicksPerDay = TicksPerHour * 24;
 
 	  private:
-		long long ticks;
+		int64_t ticks;
 
 		String ConvertDecimals(int value, int decimals) const;
 
 	  public:
 		TimeSpan();
-		TimeSpan(long long ticks);
+		TimeSpan(int64_t ticks);
 		TimeSpan(int hours, int minutes, int seconds);
 		TimeSpan(int days, int hours, int minutes, int seconds);
 		TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds);
-		virtual ~TimeSpan() = default;
 
-		long long GetTicks() const;
+		int64_t GetTicks() const;
 		double GetTotalMilliseconds() const;
 		double GetTotalSeconds() const;
 		double GetTotalMinutes() const;
@@ -39,8 +40,6 @@ namespace awui {
 		int GetHours() const;
 		int GetDays() const;
 
-		virtual String ToString() const override;
-
-		TimeSpan &operator=(const TimeSpan &other);
+		String ToString() const;
 	};
 } // namespace awui

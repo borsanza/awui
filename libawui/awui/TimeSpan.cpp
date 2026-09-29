@@ -4,7 +4,6 @@
 #include "TimeSpan.h"
 
 #include <awui/Convert.h>
-#include <awui/Math.h>
 #include <awui/String.h>
 
 using namespace awui;
@@ -13,7 +12,7 @@ TimeSpan::TimeSpan() {
 	this->ticks = 0;
 }
 
-TimeSpan::TimeSpan(long long ticks) {
+TimeSpan::TimeSpan(int64_t ticks) {
 	this->ticks = ticks;
 }
 
@@ -29,7 +28,7 @@ TimeSpan::TimeSpan(int days, int hours, int minutes, int seconds, int millisecon
 	this->ticks = (days * TicksPerDay) + (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond) + (milliseconds * TicksPerMillisecond);
 }
 
-long long TimeSpan::GetTicks() const {
+int64_t TimeSpan::GetTicks() const {
 	return this->ticks;
 }
 
@@ -53,31 +52,32 @@ double TimeSpan::GetTotalDays() const {
 	return (double) this->ticks / TicksPerDay;
 }
 
+// Con enteros: pasando por double e int, los milisegundos se desbordaban a partir de 24 días
 int TimeSpan::GetMilliseconds() const {
-	return ((int) Math::Floor(this->GetTotalMilliseconds())) % 1000;
+	return (int) ((this->ticks / TicksPerMillisecond) % 1000);
 }
 
 int TimeSpan::GetSeconds() const {
-	return ((int) Math::Floor(this->GetTotalSeconds())) % 60;
+	return (int) ((this->ticks / TicksPerSecond) % 60);
 }
 
 int TimeSpan::GetMinutes() const {
-	return ((int) Math::Floor(this->GetTotalMinutes())) % 60;
+	return (int) ((this->ticks / TicksPerMinute) % 60);
 }
 
 int TimeSpan::GetHours() const {
-	return ((int) Math::Floor(this->GetTotalHours())) % 24;
+	return (int) ((this->ticks / TicksPerHour) % 24);
 }
 
 int TimeSpan::GetDays() const {
-	return Math::Floor(this->GetTotalDays());
+	return (int) (this->ticks / TicksPerDay);
 }
 
 awui::String TimeSpan::ConvertDecimals(int value, int decimals) const {
 	String output = "";
 	for (int i = 0; i < decimals; i++) {
 		output = Convert::ToString(value % 10) + output;
-		value = Math::Floor((float) value / 10);
+		value /= 10;
 	}
 
 	return output;
@@ -95,14 +95,8 @@ awui::String TimeSpan::ToString() const {
 	output += ConvertDecimals(GetMinutes(), 2) + ":";
 	output += ConvertDecimals(GetSeconds(), 2) + ".";
 
-	value = GetTicks() % 10000000;
+	value = (int) (GetTicks() % TicksPerSecond);
 	output += ConvertDecimals(value, 7);
 
 	return output;
-}
-
-TimeSpan &TimeSpan::operator=(const TimeSpan &other) {
-	this->ticks = other.ticks;
-
-	return *this;
 }
