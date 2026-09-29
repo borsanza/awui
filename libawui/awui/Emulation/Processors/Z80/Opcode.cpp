@@ -1699,6 +1699,11 @@ int Opcode::GetEnum() {
 					return OxDDE9;
 				case 0xF9:
 					return OxDDF9;
+
+				// El resto no usa HL: el prefijo no tiene efecto y la siguiente instrucción se ejecuta normal
+				default:
+					this->_advance = 1;
+					return 0;
 			}
 			break;
 
@@ -2641,6 +2646,11 @@ int Opcode::GetEnum() {
 					return OxFDE9;
 				case 0xF9:
 					return OxFDF9;
+
+				// El resto no usa HL: el prefijo no tiene efecto y la siguiente instrucción se ejecuta normal
+				default:
+					this->_advance = 1;
+					return 0;
 			}
 			break;
 
