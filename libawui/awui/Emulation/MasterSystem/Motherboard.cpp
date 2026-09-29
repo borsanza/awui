@@ -135,6 +135,14 @@ static bool IsGameGearInSmsMode(uint32_t crc) {
 void Motherboard::LoadRom(const String file) {
 	m_rom->LoadRom(file);
 
+	// Algunos volcados llevan delante la cabecera de 512 bytes de las copiadoras de cartuchos.
+	// Los tamaños reales son múltiplos de 8KB, así que si sobran 512 bytes es esa cabecera
+	uint32_t size = m_rom->GetSize();
+	if ((size >= 0x2200) && ((size & 0x1FFF) == 0x200)) {
+		m_rom->RemoveHeader(0x200);
+		printf("Quitada la cabecera de copiadora de 512 bytes\n");
+	}
+
 	// Las partidas guardadas van junto a la ROM, con el mismo nombre y extensión .sav
 	int dot = file.LastIndexOf(".");
 	m_savePath = String::Concat((dot > file.LastIndexOf("/")) ? file.Substring(0, dot) : file, ".sav");

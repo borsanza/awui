@@ -11,6 +11,8 @@ namespace awui::Emulation::Common {
 		uint32_t _size; // Tamaño del fichero
 		uint32_t _mask; // Tamaño redondeado a la siguiente potencia de 2, menos 1
 
+		void UpdateSize();
+
 	  public:
 		Rom(int32_t capacity);
 		virtual ~Rom();
@@ -24,6 +26,9 @@ namespace awui::Emulation::Common {
 			return (pos < this->_size) ? this->_rom->ReadByte(pos) : 0xFF;
 		}
 		inline void WriteByte(uint32_t pos, uint8_t value) { this->_rom->WriteByte(pos, value); }
+
+		// Quita los primeros bytes de la ROM (p. ej. la cabecera de 512 bytes de las copiadoras)
+		void RemoveHeader(uint32_t bytes);
 
 		void Reload();
 		uint32_t GetCRC32() const;

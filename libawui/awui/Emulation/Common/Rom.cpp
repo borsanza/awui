@@ -46,11 +46,26 @@ void Rom::LoadRom(const String file) {
 
 	delete fs;
 
+	this->UpdateSize();
+}
+
+void Rom::UpdateSize() {
 	this->_size = this->_rom->GetLength();
 	this->_mask = 1;
 	while (this->_mask < this->_size)
 		this->_mask <<= 1;
 	this->_mask--;
+}
+
+void Rom::RemoveHeader(uint32_t bytes) {
+	if (bytes >= this->_size)
+		return;
+
+	for (uint32_t i = bytes; i < this->_size; i++)
+		this->_rom->WriteByte(i - bytes, this->_rom->ReadByte(i));
+
+	this->_rom->SetLength(this->_size - bytes);
+	this->UpdateSize();
 }
 
 void Rom::Reload() {
