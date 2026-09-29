@@ -106,7 +106,8 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
 
 	GLboolean oldBlend = glIsEnabled(GL_BLEND);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// El buffer de Image es de cairo (ARGB32), con el color ya multiplicado por el alfa
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 	glBindTexture(GL_TEXTURE_2D, image->GetTexture());
 
@@ -122,6 +123,8 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
 	glVertex2i(x, y); // Left Top
 	glEnd();
 
+	// El resto del código (rellenos con alfa, GOB) usa la mezcla normal sin fijarla
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (!oldBlend)
 		glDisable(GL_BLEND);
 	if (oldDepth)
@@ -142,7 +145,8 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int h
 
 	GLboolean oldBlend = glIsEnabled(GL_BLEND);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// El buffer de Image es de cairo (ARGB32), con el color ya multiplicado por el alfa
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 	glBindTexture(GL_TEXTURE_2D, image->GetTexture());
 
@@ -158,6 +162,8 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int h
 	glVertex2i(x, y); // Left Top
 	glEnd();
 
+	// El resto del código (rellenos con alfa, GOB) usa la mezcla normal sin fijarla
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (!oldBlend)
 		glDisable(GL_BLEND);
 	if (oldDepth)
