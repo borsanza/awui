@@ -277,579 +277,150 @@ uint32_t Form::GetWindowID() {
 	return SDL_GetWindowID(m_window);
 }
 
+namespace {
+	// Teclas de SDL que entiende awui: la tecla (Keys) y, para las que también manejan los menús, el botón del mando a
+	// distancia (RemoteButtons) que simulan. Una sola tabla para pulsar y soltar, así las dos no se desincronizan
+	const int NoKey = -1;
+
+	struct KeyMapping {
+		SDL_Keycode sdl;
+		int key; // Keys::Enum, o NoKey
+		RemoteButtons::Enum remote;
+	};
+
+	const KeyMapping keyMappings[] = {
+		{SDLK_ESCAPE, NoKey, RemoteButtons::Menu},
+		{SDLK_RETURN, Keys::Key_ENTER, RemoteButtons::Ok},
+		{SDLK_KP_ENTER, Keys::Key_KP_ENTER, RemoteButtons::Ok},
+		{SDLK_LEFT, Keys::Key_LEFT, RemoteButtons::Left},
+		{SDLK_RIGHT, Keys::Key_RIGHT, RemoteButtons::Right},
+		{SDLK_UP, Keys::Key_UP, RemoteButtons::Up},
+		{SDLK_DOWN, Keys::Key_DOWN, RemoteButtons::Down},
+		{SDLK_QUOTE, Keys::Key_QUOTE, RemoteButtons::None},
+		{SDLK_COMMA, Keys::Key_COMMA, RemoteButtons::None},
+		{SDLK_MINUS, Keys::Key_MINUS, RemoteButtons::None},
+		{SDLK_PERIOD, Keys::Key_PERIOD, RemoteButtons::None},
+		{SDLK_LALT, Keys::Key_LALT, RemoteButtons::None},
+		{SDLK_RALT, Keys::Key_RALT, RemoteButtons::None},
+		{SDLK_LCTRL, Keys::Key_LCTRL, RemoteButtons::None},
+		{SDLK_RCTRL, Keys::Key_RCTRL, RemoteButtons::None},
+		{SDLK_PLUS, Keys::Key_PLUS, RemoteButtons::None},
+		{SDLK_LESS, Keys::Key_LESS, RemoteButtons::None},
+		{SDLK_SPACE, Keys::Key_SPACE, RemoteButtons::None},
+		{SDLK_LSHIFT, Keys::Key_LSHIFT, RemoteButtons::None},
+		{SDLK_RSHIFT, Keys::Key_RSHIFT, RemoteButtons::None},
+		{SDLK_BACKSPACE, Keys::Key_BACKSPACE, RemoteButtons::None},
+		{SDLK_0, Keys::Key_0, RemoteButtons::None},
+		{SDLK_1, Keys::Key_1, RemoteButtons::None},
+		{SDLK_2, Keys::Key_2, RemoteButtons::None},
+		{SDLK_3, Keys::Key_3, RemoteButtons::None},
+		{SDLK_4, Keys::Key_4, RemoteButtons::None},
+		{SDLK_5, Keys::Key_5, RemoteButtons::None},
+		{SDLK_6, Keys::Key_6, RemoteButtons::None},
+		{SDLK_7, Keys::Key_7, RemoteButtons::None},
+		{SDLK_8, Keys::Key_8, RemoteButtons::None},
+		{SDLK_9, Keys::Key_9, RemoteButtons::None},
+		{SDLK_a, Keys::Key_A, RemoteButtons::None},
+		{SDLK_b, Keys::Key_B, RemoteButtons::None},
+		{SDLK_c, Keys::Key_C, RemoteButtons::None},
+		{SDLK_d, Keys::Key_D, RemoteButtons::None},
+		{SDLK_e, Keys::Key_E, RemoteButtons::None},
+		{SDLK_f, Keys::Key_F, RemoteButtons::None},
+		{SDLK_g, Keys::Key_G, RemoteButtons::None},
+		{SDLK_h, Keys::Key_H, RemoteButtons::None},
+		{SDLK_i, Keys::Key_I, RemoteButtons::None},
+		{SDLK_j, Keys::Key_J, RemoteButtons::None},
+		{SDLK_k, Keys::Key_K, RemoteButtons::None},
+		{SDLK_l, Keys::Key_L, RemoteButtons::None},
+		{SDLK_m, Keys::Key_M, RemoteButtons::None},
+		{SDLK_n, Keys::Key_N, RemoteButtons::None},
+		{SDLK_o, Keys::Key_O, RemoteButtons::None},
+		{SDLK_p, Keys::Key_P, RemoteButtons::None},
+		{SDLK_q, Keys::Key_Q, RemoteButtons::None},
+		{SDLK_r, Keys::Key_R, RemoteButtons::None},
+		{SDLK_s, Keys::Key_S, RemoteButtons::None},
+		{SDLK_t, Keys::Key_T, RemoteButtons::None},
+		{SDLK_u, Keys::Key_U, RemoteButtons::None},
+		{SDLK_v, Keys::Key_V, RemoteButtons::None},
+		{SDLK_w, Keys::Key_W, RemoteButtons::None},
+		{SDLK_x, Keys::Key_X, RemoteButtons::None},
+		{SDLK_y, Keys::Key_Y, RemoteButtons::None},
+		{SDLK_z, Keys::Key_Z, RemoteButtons::None},
+		{SDLK_F1, Keys::Key_F1, RemoteButtons::None},
+		{SDLK_F2, Keys::Key_F2, RemoteButtons::None},
+		{SDLK_F3, Keys::Key_F3, RemoteButtons::None},
+		{SDLK_F4, Keys::Key_F4, RemoteButtons::None},
+		{SDLK_F5, Keys::Key_F5, RemoteButtons::None},
+		{SDLK_F6, Keys::Key_F6, RemoteButtons::None},
+		{SDLK_F7, Keys::Key_F7, RemoteButtons::None},
+		{SDLK_F8, Keys::Key_F8, RemoteButtons::None},
+		{SDLK_F9, Keys::Key_F9, RemoteButtons::None},
+		{SDLK_F10, Keys::Key_F10, RemoteButtons::None},
+		{SDLK_F11, Keys::Key_F11, RemoteButtons::None},
+		{SDLK_F12, Keys::Key_F12, RemoteButtons::None},
+		{SDLK_PAGEUP, Keys::Key_PAGEUP, RemoteButtons::None},
+		{SDLK_PAGEDOWN, Keys::Key_PAGEDOWN, RemoteButtons::None},
+		{SDLK_HOME, Keys::Key_HOME, RemoteButtons::None},
+		{SDLK_END, Keys::Key_END, RemoteButtons::None},
+		{SDLK_KP_0, Keys::Key_KP0, RemoteButtons::None},
+		{SDLK_KP_1, Keys::Key_KP1, RemoteButtons::None},
+		{SDLK_KP_2, Keys::Key_KP2, RemoteButtons::None},
+		{SDLK_KP_3, Keys::Key_KP3, RemoteButtons::None},
+		{SDLK_KP_4, Keys::Key_KP4, RemoteButtons::None},
+		{SDLK_KP_5, Keys::Key_KP5, RemoteButtons::None},
+		{SDLK_KP_6, Keys::Key_KP6, RemoteButtons::None},
+		{SDLK_KP_7, Keys::Key_KP7, RemoteButtons::None},
+		{SDLK_KP_8, Keys::Key_KP8, RemoteButtons::None},
+		{SDLK_KP_9, Keys::Key_KP9, RemoteButtons::None},
+		{SDLK_KP_DIVIDE, Keys::Key_KP_DIVIDE, RemoteButtons::None},
+		{SDLK_KP_EQUALS, Keys::Key_KP_EQUALS, RemoteButtons::None},
+		{SDLK_KP_MINUS, Keys::Key_KP_MINUS, RemoteButtons::None},
+		{SDLK_KP_MULTIPLY, Keys::Key_KP_MULTIPLY, RemoteButtons::None},
+		{SDLK_KP_PERIOD, Keys::Key_KP_PERIOD, RemoteButtons::None},
+		{SDLK_KP_PLUS, Keys::Key_KP_PLUS, RemoteButtons::None},
+	};
+
+	const KeyMapping *FindKeyMapping(SDL_Keycode code) {
+		for (const KeyMapping &mapping : keyMappings) {
+			if (mapping.sdl == code)
+				return &mapping;
+		}
+
+		return nullptr;
+	}
+} // namespace
+
 void Form::ProcessEvents(SDL_Event *event) {
 	int resizex = -1;
 	int resizey = -1;
 
 	switch (event->type) {
 		case SDL_KEYDOWN:
-			switch (event->key.keysym.sym) {
-				case SDLK_ESCAPE:
-					OnRemoteKeyPressPre(0, RemoteButtons::Menu);
-					break;
-				case SDLK_RETURN:
-					OnRemoteKeyPressPre(0, RemoteButtons::Ok);
-					OnKeyPressPre(Keys::Key_ENTER);
-					break;
-				case SDLK_KP_ENTER:
-					OnRemoteKeyPressPre(0, RemoteButtons::Ok);
-					OnKeyPressPre(Keys::Key_KP_ENTER);
-					break;
-				case SDLK_LEFT:
-					OnRemoteKeyPressPre(0, RemoteButtons::Left);
-					OnKeyPressPre(Keys::Key_LEFT);
-					break;
-				case SDLK_RIGHT:
-					OnRemoteKeyPressPre(0, RemoteButtons::Right);
-					OnKeyPressPre(Keys::Key_RIGHT);
-					break;
-				case SDLK_UP:
-					OnRemoteKeyPressPre(0, RemoteButtons::Up);
-					OnKeyPressPre(Keys::Key_UP);
-					break;
-				case SDLK_DOWN:
-					OnRemoteKeyPressPre(0, RemoteButtons::Down);
-					OnKeyPressPre(Keys::Key_DOWN);
-					break;
-				case SDLK_QUOTE:
-					OnKeyPressPre(Keys::Key_QUOTE);
-					break;
-				case SDLK_COMMA:
-					OnKeyPressPre(Keys::Key_COMMA);
-					break;
-				case SDLK_MINUS:
-					OnKeyPressPre(Keys::Key_MINUS);
-					break;
-				case SDLK_PERIOD:
-					OnKeyPressPre(Keys::Key_PERIOD);
-					break;
-				case SDLK_LALT:
-					OnKeyPressPre(Keys::Key_LALT);
-					break;
-				case SDLK_RALT:
-					OnKeyPressPre(Keys::Key_RALT);
-					break;
-				case SDLK_LCTRL:
-					OnKeyPressPre(Keys::Key_LCTRL);
-					break;
-				case SDLK_RCTRL:
-					OnKeyPressPre(Keys::Key_RCTRL);
-					break;
-				case SDLK_PLUS:
-					OnKeyPressPre(Keys::Key_PLUS);
-					break;
-				case SDLK_LESS:
-					OnKeyPressPre(Keys::Key_LESS);
-					break;
-				case SDLK_SPACE:
-					OnKeyPressPre(Keys::Key_SPACE);
-					break;
-				case SDLK_LSHIFT:
-					OnKeyPressPre(Keys::Key_LSHIFT);
-					break;
-				case SDLK_RSHIFT:
-					OnKeyPressPre(Keys::Key_RSHIFT);
-					break;
-				case SDLK_BACKSPACE:
-					OnKeyPressPre(Keys::Key_BACKSPACE);
-					break;
-				case SDLK_0:
-					OnKeyPressPre(Keys::Key_0);
-					break;
-				case SDLK_1:
-					OnKeyPressPre(Keys::Key_1);
-					break;
-				case SDLK_2:
-					OnKeyPressPre(Keys::Key_2);
-					break;
-				case SDLK_3:
-					OnKeyPressPre(Keys::Key_3);
-					break;
-				case SDLK_4:
-					OnKeyPressPre(Keys::Key_4);
-					break;
-				case SDLK_5:
-					OnKeyPressPre(Keys::Key_5);
-					break;
-				case SDLK_6:
-					OnKeyPressPre(Keys::Key_6);
-					break;
-				case SDLK_7:
-					OnKeyPressPre(Keys::Key_7);
-					break;
-				case SDLK_8:
-					OnKeyPressPre(Keys::Key_8);
-					break;
-				case SDLK_9:
-					OnKeyPressPre(Keys::Key_9);
-					break;
-				case SDLK_a:
-					OnKeyPressPre(Keys::Key_A);
-					break;
-				case SDLK_b:
-					OnKeyPressPre(Keys::Key_B);
-					break;
-				case SDLK_c:
-					OnKeyPressPre(Keys::Key_C);
-					break;
-				case SDLK_d:
-					OnKeyPressPre(Keys::Key_D);
-					break;
-				case SDLK_e:
-					OnKeyPressPre(Keys::Key_E);
-					break;
-				case SDLK_f:
-					OnKeyPressPre(Keys::Key_F);
-					break;
-				case SDLK_g:
-					OnKeyPressPre(Keys::Key_G);
-					break;
-				case SDLK_h:
-					OnKeyPressPre(Keys::Key_H);
-					break;
-				case SDLK_i:
-					OnKeyPressPre(Keys::Key_I);
-					break;
-				case SDLK_j:
-					OnKeyPressPre(Keys::Key_J);
-					break;
-				case SDLK_k:
-					OnKeyPressPre(Keys::Key_K);
-					break;
-				case SDLK_l:
-					OnKeyPressPre(Keys::Key_L);
-					break;
-				case SDLK_m:
-					OnKeyPressPre(Keys::Key_M);
-					break;
-				case SDLK_n:
-					OnKeyPressPre(Keys::Key_N);
-					break;
-				case SDLK_o:
-					OnKeyPressPre(Keys::Key_O);
-					break;
-				case SDLK_p:
-					OnKeyPressPre(Keys::Key_P);
-					break;
-				case SDLK_q:
-					OnKeyPressPre(Keys::Key_Q);
-					break;
-				case SDLK_r:
-					OnKeyPressPre(Keys::Key_R);
-					break;
-				case SDLK_s:
-					OnKeyPressPre(Keys::Key_S);
-					break;
-				case SDLK_t:
-					OnKeyPressPre(Keys::Key_T);
-					break;
-				case SDLK_u:
-					OnKeyPressPre(Keys::Key_U);
-					break;
-				case SDLK_v:
-					OnKeyPressPre(Keys::Key_V);
-					break;
-				case SDLK_w:
-					OnKeyPressPre(Keys::Key_W);
-					break;
-				case SDLK_x:
-					OnKeyPressPre(Keys::Key_X);
-					break;
-				case SDLK_y:
-					OnKeyPressPre(Keys::Key_Y);
-					break;
-				case SDLK_z:
-					OnKeyPressPre(Keys::Key_Z);
-					break;
+		case SDL_KEYUP: {
+			const KeyMapping *mapping = FindKeyMapping(event->key.keysym.sym);
+			if (!mapping)
+				break;
 
-				case SDLK_F1:
-					OnKeyPressPre(Keys::Key_F1);
-					break;
-				case SDLK_F2:
-					OnKeyPressPre(Keys::Key_F2);
-					break;
-				case SDLK_F3:
-					OnKeyPressPre(Keys::Key_F3);
-					break;
-				case SDLK_F4:
-					OnKeyPressPre(Keys::Key_F4);
-					break;
-				case SDLK_F5:
-					OnKeyPressPre(Keys::Key_F5);
-					break;
-				case SDLK_F6:
-					OnKeyPressPre(Keys::Key_F6);
-					break;
-				case SDLK_F7:
-					OnKeyPressPre(Keys::Key_F7);
-					break;
-				case SDLK_F8:
-					OnKeyPressPre(Keys::Key_F8);
-					break;
-				case SDLK_F9:
-					OnKeyPressPre(Keys::Key_F9);
-					break;
-				case SDLK_F10:
-					OnKeyPressPre(Keys::Key_F10);
-					break;
-				case SDLK_F11:
-					OnKeyPressPre(Keys::Key_F11);
-					break;
-				case SDLK_F12:
-					OnKeyPressPre(Keys::Key_F12);
-					break;
-
-				case SDLK_PAGEUP:
-					OnKeyPressPre(Keys::Key_PAGEUP);
-					break;
-				case SDLK_PAGEDOWN:
-					OnKeyPressPre(Keys::Key_PAGEDOWN);
-					break;
-				case SDLK_HOME:
-					OnKeyPressPre(Keys::Key_HOME);
-					break;
-				case SDLK_END:
-					OnKeyPressPre(Keys::Key_END);
-					break;
-
-				case SDLK_KP_0:
-					OnKeyPressPre(Keys::Key_KP0);
-					break;
-				case SDLK_KP_1:
-					OnKeyPressPre(Keys::Key_KP1);
-					break;
-				case SDLK_KP_2:
-					OnKeyPressPre(Keys::Key_KP2);
-					break;
-				case SDLK_KP_3:
-					OnKeyPressPre(Keys::Key_KP3);
-					break;
-				case SDLK_KP_4:
-					OnKeyPressPre(Keys::Key_KP4);
-					break;
-				case SDLK_KP_5:
-					OnKeyPressPre(Keys::Key_KP5);
-					break;
-				case SDLK_KP_6:
-					OnKeyPressPre(Keys::Key_KP6);
-					break;
-				case SDLK_KP_7:
-					OnKeyPressPre(Keys::Key_KP7);
-					break;
-				case SDLK_KP_8:
-					OnKeyPressPre(Keys::Key_KP8);
-					break;
-				case SDLK_KP_9:
-					OnKeyPressPre(Keys::Key_KP9);
-					break;
-				case SDLK_KP_DIVIDE:
-					OnKeyPressPre(Keys::Key_KP_DIVIDE);
-					break;
-				case SDLK_KP_EQUALS:
-					OnKeyPressPre(Keys::Key_KP_EQUALS);
-					break;
-				case SDLK_KP_MINUS:
-					OnKeyPressPre(Keys::Key_KP_MINUS);
-					break;
-				case SDLK_KP_MULTIPLY:
-					OnKeyPressPre(Keys::Key_KP_MULTIPLY);
-					break;
-				case SDLK_KP_PERIOD:
-					OnKeyPressPre(Keys::Key_KP_PERIOD);
-					break;
-				case SDLK_KP_PLUS:
-					OnKeyPressPre(Keys::Key_KP_PLUS);
-					break;
-
-				default:
-					break;
+			// Primero el botón del mando a distancia y luego la tecla
+			bool pressed = (event->type == SDL_KEYDOWN);
+			if (mapping->remote != RemoteButtons::None) {
+				if (pressed)
+					OnRemoteKeyPressPre(0, mapping->remote);
+				else
+					OnRemoteKeyUpPre(0, mapping->remote);
 			}
-			break;
 
-		case SDL_KEYUP:
-			switch (event->key.keysym.sym) {
-				case SDLK_ESCAPE:
-					OnRemoteKeyUpPre(0, RemoteButtons::Menu);
-					break;
-				case SDLK_RETURN:
-					OnRemoteKeyUpPre(0, RemoteButtons::Ok);
-					OnKeyUpPre(Keys::Key_ENTER);
-					break;
-				case SDLK_KP_ENTER:
-					OnRemoteKeyUpPre(0, RemoteButtons::Ok);
-					OnKeyUpPre(Keys::Key_KP_ENTER);
-					break;
-				case SDLK_LEFT:
-					OnRemoteKeyUpPre(0, RemoteButtons::Left);
-					OnKeyUpPre(Keys::Key_LEFT);
-					break;
-				case SDLK_RIGHT:
-					OnRemoteKeyUpPre(0, RemoteButtons::Right);
-					OnKeyUpPre(Keys::Key_RIGHT);
-					break;
-				case SDLK_UP:
-					OnRemoteKeyUpPre(0, RemoteButtons::Up);
-					OnKeyUpPre(Keys::Key_UP);
-					break;
-				case SDLK_DOWN:
-					OnRemoteKeyUpPre(0, RemoteButtons::Down);
-					OnKeyUpPre(Keys::Key_DOWN);
-					break;
-				case SDLK_QUOTE:
-					OnKeyUpPre(Keys::Key_QUOTE);
-					break;
-				case SDLK_COMMA:
-					OnKeyUpPre(Keys::Key_COMMA);
-					break;
-				case SDLK_MINUS:
-					OnKeyUpPre(Keys::Key_MINUS);
-					break;
-				case SDLK_PERIOD:
-					OnKeyUpPre(Keys::Key_PERIOD);
-					break;
-				case SDLK_LALT:
-					OnKeyUpPre(Keys::Key_LALT);
-					break;
-				case SDLK_RALT:
-					OnKeyUpPre(Keys::Key_RALT);
-					break;
-				case SDLK_LCTRL:
-					OnKeyUpPre(Keys::Key_LCTRL);
-					break;
-				case SDLK_RCTRL:
-					OnKeyUpPre(Keys::Key_RCTRL);
-					break;
-				case SDLK_PLUS:
-					OnKeyUpPre(Keys::Key_PLUS);
-					break;
-				case SDLK_LESS:
-					OnKeyUpPre(Keys::Key_LESS);
-					break;
-				case SDLK_SPACE:
-					OnKeyUpPre(Keys::Key_SPACE);
-					break;
-				case SDLK_LSHIFT:
-					OnKeyUpPre(Keys::Key_LSHIFT);
-					break;
-				case SDLK_RSHIFT:
-					OnKeyUpPre(Keys::Key_RSHIFT);
-					break;
-				case SDLK_BACKSPACE:
-					OnKeyUpPre(Keys::Key_BACKSPACE);
-					break;
-				case SDLK_0:
-					OnKeyUpPre(Keys::Key_0);
-					break;
-				case SDLK_1:
-					OnKeyUpPre(Keys::Key_1);
-					break;
-				case SDLK_2:
-					OnKeyUpPre(Keys::Key_2);
-					break;
-				case SDLK_3:
-					OnKeyUpPre(Keys::Key_3);
-					break;
-				case SDLK_4:
-					OnKeyUpPre(Keys::Key_4);
-					break;
-				case SDLK_5:
-					OnKeyUpPre(Keys::Key_5);
-					break;
-				case SDLK_6:
-					OnKeyUpPre(Keys::Key_6);
-					break;
-				case SDLK_7:
-					OnKeyUpPre(Keys::Key_7);
-					break;
-				case SDLK_8:
-					OnKeyUpPre(Keys::Key_8);
-					break;
-				case SDLK_9:
-					OnKeyUpPre(Keys::Key_9);
-					break;
-				case SDLK_a:
-					OnKeyUpPre(Keys::Key_A);
-					break;
-				case SDLK_b:
-					OnKeyUpPre(Keys::Key_B);
-					break;
-				case SDLK_c:
-					OnKeyUpPre(Keys::Key_C);
-					break;
-				case SDLK_d:
-					OnKeyUpPre(Keys::Key_D);
-					break;
-				case SDLK_e:
-					OnKeyUpPre(Keys::Key_E);
-					break;
-				case SDLK_f:
-					OnKeyUpPre(Keys::Key_F);
-					break;
-				case SDLK_g:
-					OnKeyUpPre(Keys::Key_G);
-					break;
-				case SDLK_h:
-					OnKeyUpPre(Keys::Key_H);
-					break;
-				case SDLK_i:
-					OnKeyUpPre(Keys::Key_I);
-					break;
-				case SDLK_j:
-					OnKeyUpPre(Keys::Key_J);
-					break;
-				case SDLK_k:
-					OnKeyUpPre(Keys::Key_K);
-					break;
-				case SDLK_l:
-					OnKeyUpPre(Keys::Key_L);
-					break;
-				case SDLK_m:
-					OnKeyUpPre(Keys::Key_M);
-					break;
-				case SDLK_n:
-					OnKeyUpPre(Keys::Key_N);
-					break;
-				case SDLK_o:
-					OnKeyUpPre(Keys::Key_O);
-					break;
-				case SDLK_p:
-					OnKeyUpPre(Keys::Key_P);
-					break;
-				case SDLK_q:
-					OnKeyUpPre(Keys::Key_Q);
-					break;
-				case SDLK_r:
-					OnKeyUpPre(Keys::Key_R);
-					break;
-				case SDLK_s:
-					OnKeyUpPre(Keys::Key_S);
-					break;
-				case SDLK_t:
-					OnKeyUpPre(Keys::Key_T);
-					break;
-				case SDLK_u:
-					OnKeyUpPre(Keys::Key_U);
-					break;
-				case SDLK_v:
-					OnKeyUpPre(Keys::Key_V);
-					break;
-				case SDLK_w:
-					OnKeyUpPre(Keys::Key_W);
-					break;
-				case SDLK_x:
-					OnKeyUpPre(Keys::Key_X);
-					break;
-				case SDLK_y:
-					OnKeyUpPre(Keys::Key_Y);
-					break;
-				case SDLK_z:
-					OnKeyUpPre(Keys::Key_Z);
-					break;
-
-				case SDLK_F1:
-					OnKeyUpPre(Keys::Key_F1);
-					break;
-				case SDLK_F2:
-					OnKeyUpPre(Keys::Key_F2);
-					break;
-				case SDLK_F3:
-					OnKeyUpPre(Keys::Key_F3);
-					break;
-				case SDLK_F4:
-					OnKeyUpPre(Keys::Key_F4);
-					break;
-				case SDLK_F5:
-					OnKeyUpPre(Keys::Key_F5);
-					break;
-				case SDLK_F6:
-					OnKeyUpPre(Keys::Key_F6);
-					break;
-				case SDLK_F7:
-					OnKeyUpPre(Keys::Key_F7);
-					break;
-				case SDLK_F8:
-					OnKeyUpPre(Keys::Key_F8);
-					break;
-				case SDLK_F9:
-					OnKeyUpPre(Keys::Key_F9);
-					break;
-				case SDLK_F10:
-					OnKeyUpPre(Keys::Key_F10);
-					break;
-				case SDLK_F11:
-					OnKeyUpPre(Keys::Key_F11);
-					SetFullscreen(!GetFullscreen());
-					break;
-				case SDLK_F12:
-					OnKeyUpPre(Keys::Key_F12);
-					break;
-
-				case SDLK_PAGEUP:
-					OnKeyUpPre(Keys::Key_PAGEUP);
-					break;
-				case SDLK_PAGEDOWN:
-					OnKeyUpPre(Keys::Key_PAGEDOWN);
-					break;
-				case SDLK_HOME:
-					OnKeyUpPre(Keys::Key_HOME);
-					break;
-				case SDLK_END:
-					OnKeyUpPre(Keys::Key_END);
-					break;
-
-				case SDLK_KP_0:
-					OnKeyUpPre(Keys::Key_KP0);
-					break;
-				case SDLK_KP_1:
-					OnKeyUpPre(Keys::Key_KP1);
-					break;
-				case SDLK_KP_2:
-					OnKeyUpPre(Keys::Key_KP2);
-					break;
-				case SDLK_KP_3:
-					OnKeyUpPre(Keys::Key_KP3);
-					break;
-				case SDLK_KP_4:
-					OnKeyUpPre(Keys::Key_KP4);
-					break;
-				case SDLK_KP_5:
-					OnKeyUpPre(Keys::Key_KP5);
-					break;
-				case SDLK_KP_6:
-					OnKeyUpPre(Keys::Key_KP6);
-					break;
-				case SDLK_KP_7:
-					OnKeyUpPre(Keys::Key_KP7);
-					break;
-				case SDLK_KP_8:
-					OnKeyUpPre(Keys::Key_KP8);
-					break;
-				case SDLK_KP_9:
-					OnKeyUpPre(Keys::Key_KP9);
-					break;
-				case SDLK_KP_DIVIDE:
-					OnKeyUpPre(Keys::Key_KP_DIVIDE);
-					break;
-				case SDLK_KP_EQUALS:
-					OnKeyUpPre(Keys::Key_KP_EQUALS);
-					break;
-				case SDLK_KP_MINUS:
-					OnKeyUpPre(Keys::Key_KP_MINUS);
-					break;
-				case SDLK_KP_MULTIPLY:
-					OnKeyUpPre(Keys::Key_KP_MULTIPLY);
-					break;
-				case SDLK_KP_PERIOD:
-					OnKeyUpPre(Keys::Key_KP_PERIOD);
-					break;
-				case SDLK_KP_PLUS:
-					OnKeyUpPre(Keys::Key_KP_PLUS);
-					break;
-
-				default:
-					break;
+			if (mapping->key != NoKey) {
+				if (pressed)
+					OnKeyPressPre((Keys::Enum) mapping->key);
+				else
+					OnKeyUpPre((Keys::Enum) mapping->key);
 			}
-			break;
+
+			// F11 al soltarla: pantalla completa
+			if (!pressed && (mapping->sdl == SDLK_F11))
+				SetFullscreen(!GetFullscreen());
+		} break;
 
 		case SDL_MOUSEBUTTONDOWN: {
 			MouseButtons::Enum button = MouseButtons::None;
