@@ -19,7 +19,6 @@ using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
-#define SCROLLMARGIN 80
 
 Label::Label() {
 	m_class = Classes::Label;
@@ -111,7 +110,7 @@ void Label::OnPaint(GL *gl) {
 	Draw(scrolled, 0, GetWidth(), GetHeight());
 
 	if (scrolled != 0)
-		Draw(scrolled + (GetLabelWidth() + SCROLLMARGIN), 0, GetWidth(), GetHeight());
+		Draw(scrolled + (GetLabelWidth() + ScrollMargin), 0, GetWidth(), GetHeight());
 }
 
 void Label::DrawLines(int x, int y) {
@@ -178,11 +177,11 @@ void Label::UpdateBufferText() {
 
 void Label::SetScrolled(float scroll) {
 	m_scrolled = scroll;
-	while (m_scrolled <= -(GetLabelWidth() + SCROLLMARGIN))
-		m_scrolled += GetLabelWidth() + SCROLLMARGIN;
+	while (m_scrolled <= -(GetLabelWidth() + ScrollMargin))
+		m_scrolled += GetLabelWidth() + ScrollMargin;
 
-	while (m_scrolled >= (GetLabelWidth() + SCROLLMARGIN))
-		m_scrolled -= GetLabelWidth() + SCROLLMARGIN;
+	while (m_scrolled >= (GetLabelWidth() + ScrollMargin))
+		m_scrolled -= GetLabelWidth() + ScrollMargin;
 }
 
 float Label::GetScrolled() const {

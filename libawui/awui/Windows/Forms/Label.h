@@ -23,6 +23,9 @@ namespace awui {
 			void UpdateBufferText();
 
 		  public:
+			// Hueco entre el final del texto y su repetición cuando se desplaza (texto más ancho que el control)
+			static constexpr int ScrollMargin = 80;
+
 			Label();
 			virtual ~Label();
 

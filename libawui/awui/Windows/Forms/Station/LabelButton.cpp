@@ -58,7 +58,7 @@ void LabelButton::OnTick(float deltaSeconds) {
 		float scrolled = GetScrolled();
 		if (scrolled != 0) {
 			float dst = 0;
-			float min = -(GetLabelWidth() + 80);
+			float min = -(GetLabelWidth() + ScrollMargin);
 			if ((GetLabelWidth() >> 1) < -scrolled)
 				dst = min;
 
