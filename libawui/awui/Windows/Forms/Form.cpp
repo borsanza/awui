@@ -111,6 +111,11 @@ void Form::OnRemoteHeartbeat() {
 	stats->OnRemoteHeartbeat();
 }
 
+void Form::OnTickPre(float deltaSeconds) {
+	Control::OnTickPre(deltaSeconds);
+	m_selectionFrame.OnTick(GetChildFocused(), deltaSeconds);
+}
+
 void Form::OnTick(float deltaSeconds) {
 	Stats *stats = Stats::Instance();
 	MoveToEnd(stats);

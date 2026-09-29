@@ -1,6 +1,7 @@
 #pragma once
 
 #include <awui/Windows/Forms/Control.h>
+#include <awui/Windows/Forms/SelectionFrame.h>
 
 typedef struct SDL_Window SDL_Window;
 typedef void *SDL_GLContext;
@@ -40,11 +41,18 @@ namespace awui {
 			int m_lastWidth;
 			int m_lastHeight;
 			bool m_swapInterval;
+			SelectionFrame m_selectionFrame;
 
 			void OnPaintForm();
 
+		  protected:
+			// Oculta el de Control (no es virtual): Application y los tests llaman a este en el formulario raíz.
+			// El marco de selección avanza cuando todo el árbol ya tiene su posición de este frame
+			void OnTickPre(float deltaSeconds);
+
 		  public:
 			Form();
+			inline SelectionFrame *GetSelectionFrame() { return &m_selectionFrame; }
 			virtual ~Form();
 
 			virtual bool IsClass(Classes objectClass) const override;

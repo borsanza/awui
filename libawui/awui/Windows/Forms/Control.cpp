@@ -34,7 +34,6 @@ Control::Control() {
 	m_focusable = false;
 	m_focused = NULL;
 
-	m_deltaSeconds = 0.0f;
 	m_refreshed = 0;
 	m_lastRight = 0;
 	m_lastBottom = 0;
@@ -365,49 +364,11 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL *gl, bool first)
 	return r;
 }
 
-// Lo usamos para dibujar el skin
+// Por defecto solo pinta el marco de selección cuando el control con el foco es hijo de este
 void Control::OnPaint(OpenGL::GL *gl) {
-	static float lastx1, lasty1, lastright, lastbottom;
-	static Control *lastParent = NULL;
-	Control *focused = nullptr;
 	Form *form = GetForm();
-	if (form) {
-		focused = form->GetChildFocused();
-	}
-
-	for (int i = 0; i < GetCount(); i++) {
-		Control *control = Get(i);
-		if (!control->IsVisible()) {
-			continue;
-		}
-
-		if ((focused == control) && (control->GetDrawShadow())) {
-			int x1, y1, x2, y2;
-			Bitmap *bitmap = Control::GetSelectedBitmap();
-			float percent = m_deltaSeconds * 10.0f;
-
-			if (lastParent != this) {
-				lastParent = this;
-				percent = 1.0f;
-			}
-
-			bitmap->GetFixedMargins(&x1, &y1, &x2, &y2);
-			float right = control->m_bounds.GetRight() + x2;
-			float bottom = control->m_bounds.GetBottom() + y2;
-
-			lastright = Math::Interpolate(lastright, right, percent);
-			lastbottom = Math::Interpolate(lastbottom, bottom, percent);
-
-			lastx1 = Math::Interpolate(lastx1, control->m_bounds.GetLeft() - x1, percent);
-			lasty1 = Math::Interpolate(lasty1, control->m_bounds.GetTop() - y1, percent);
-
-			bitmap->SetSize(Math::Round(lastright - lastx1 + 1.0f), Math::Round(lastbottom - lasty1 + 1.0f));
-
-			glTranslatef(Math::Round(lastx1), Math::Round(lasty1), 0);
-			bitmap->OnPaint(NULL);
-			glTranslatef(-Math::Round(lastx1), -Math::Round(lasty1), 0);
-		}
-	}
+	if (form)
+		form->GetSelectionFrame()->Paint(this);
 }
 
 void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons) {
@@ -554,7 +515,6 @@ bool Control::IsVisible(bool checkInside) const {
 #include <inttypes.h>
 
 void Control::OnTickPre(float deltaSeconds) {
-	m_deltaSeconds = deltaSeconds;
 	float percent = 10.0f * deltaSeconds;
 	// awui::Console::WriteLine("%lld %.3f", ellapsed, percent);
 

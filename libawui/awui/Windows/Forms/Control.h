@@ -83,7 +83,6 @@ namespace awui {
 			Control *m_mouseControl;
 			String m_name;
 
-			float m_deltaSeconds;
 
 			void OnResizePre();
 			int OnPaintPre(int x, int y, int width, int height, OpenGL::GL *gl, bool first = false);
