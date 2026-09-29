@@ -72,7 +72,9 @@ namespace awui::Emulation {
 			void SyncVDP();
 			void LoadBoardRam();
 			void SaveBoardRam();
+			void FlushBoardRam();
 			inline void MarkBoardRamDirty() { m_boardRamIdleFrames = 0; }
+			static void FlushAllBoardRam();
 
 		  public:
 			Motherboard();

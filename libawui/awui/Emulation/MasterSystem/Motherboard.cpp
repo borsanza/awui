@@ -13,7 +13,9 @@
 #include <awui/Emulation/MasterSystem/Ports.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
+#include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 using namespace awui;
 using namespace awui::Emulation::Common;
@@ -32,7 +34,26 @@ uint8_t MasterGearReadPortCB(uint8_t port, void *data) {
 	return ((Motherboard *) data)->ReadPort(port);
 }
 
+// Placas vivas, para guardar sus partidas al salir del programa: la aplicación no destruye
+// los emuladores al cerrar, así que no se puede contar con el destructor
+static std::vector<Motherboard *> &GetMotherboards() {
+	static std::vector<Motherboard *> *list = new std::vector<Motherboard *>(); // Nunca se destruye: se usa en atexit
+	return *list;
+}
+
+void Motherboard::FlushAllBoardRam() {
+	for (Motherboard *motherboard : GetMotherboards())
+		motherboard->FlushBoardRam();
+}
+
 Motherboard::Motherboard() {
+	static bool atexitRegistered = false;
+	if (!atexitRegistered) {
+		atexit(Motherboard::FlushAllBoardRam);
+		atexitRegistered = true;
+	}
+	GetMotherboards().push_back(this);
+
 	m_seconds = 0.0;
 	m_boardRamIdleFrames = -1;
 	m_vdpCycles = 0;
@@ -66,8 +87,15 @@ Motherboard::Motherboard() {
 }
 
 Motherboard::~Motherboard() {
-	if (m_boardRamIdleFrames >= 0)
-		SaveBoardRam();
+	FlushBoardRam();
+
+	std::vector<Motherboard *> &list = GetMotherboards();
+	for (size_t i = 0; i < list.size(); i++) {
+		if (list[i] == this) {
+			list.erase(list.begin() + i);
+			break;
+		}
+	}
 
 	delete m_sound;
 	delete m_rom;
@@ -257,10 +285,17 @@ void Motherboard::DoTick() {
 
 	// La RAM del cartucho se guarda en disco un segundo después de la última escritura:
 	// así un juego que guarda muchos bytes seguidos no escribe el fichero en cada frame
-	if ((m_boardRamIdleFrames >= 0) && (++m_boardRamIdleFrames >= 60)) {
-		SaveBoardRam();
-		m_boardRamIdleFrames = -1;
-	}
+	if ((m_boardRamIdleFrames >= 0) && (++m_boardRamIdleFrames >= 60))
+		FlushBoardRam();
+}
+
+// Guarda ya la RAM del cartucho si hay escrituras pendientes de pasar a disco
+void Motherboard::FlushBoardRam() {
+	if (m_boardRamIdleFrames < 0)
+		return;
+
+	SaveBoardRam();
+	m_boardRamIdleFrames = -1;
 }
 
 void Motherboard::LoadBoardRam() {
