@@ -110,7 +110,11 @@ Rectangle Rectangle::Intersect(const Rectangle &rectangle1, const Rectangle &rec
 	float right = rectangle1.GetRight() < rectangle2.GetRight() ? rectangle1.GetRight() : rectangle2.GetRight();
 	float bottom = rectangle1.GetBottom() < rectangle2.GetBottom() ? rectangle1.GetBottom() : rectangle2.GetBottom();
 
-	return Rectangle::FromLTRB(left, top, right, bottom);
+	// Sin intersección el resultado es un rectángulo vacío, nunca con tamaño negativo
+	// (glScissor rechaza tamaños negativos y se quedaría con el recorte anterior)
+	float width = right - left + 1.0f;
+	float height = bottom - top + 1.0f;
+	return Rectangle(left, top, (width > 0.0f) ? width : 0.0f, (height > 0.0f) ? height : 0.0f);
 }
 
 void Rectangle::Intersect(const Rectangle &rectangle) {
