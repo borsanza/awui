@@ -24,6 +24,7 @@ namespace awui {
 			int m_first;
 			int m_last;
 			long long m_lastTick;
+			double m_seconds; // Tiempo real pendiente de emular (menos de un frame salvo tras un parón)
 			void CheckLimits();
 
 			void CallKey(int key, bool pressed);

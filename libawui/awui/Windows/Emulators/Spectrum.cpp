@@ -53,6 +53,7 @@ Spectrum::Spectrum() {
 	m_first = -1;
 	m_last = -1;
 	m_lastTick = 0;
+	m_seconds = 0.0;
 	m_fileSlot = 0;
 	m_tapecorder = new TapeCorder();
 	m_tapecorder->SetFinishCassetteCB(FinishCassetteCB, this);
@@ -107,7 +108,16 @@ void Spectrum::OnTick(float deltaSeconds) {
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET)
 		m_motherboard->Reset();
 
-	m_motherboard->OnTick();
+	// Se emulan los frames que correspondan al tiempo real (no uno por tick: a 144Hz o sin vsync iría más rápido)
+	m_seconds += deltaSeconds;
+	if (m_seconds > 0.25) {
+		m_seconds = Motherboard::FrameSeconds; // Tras un parón no se intenta recuperar
+	}
+
+	while (m_seconds >= Motherboard::FrameSeconds) {
+		m_seconds -= Motherboard::FrameSeconds;
+		m_motherboard->OnTick();
+	}
 }
 
 Motherboard *Spectrum::GetCPU() {

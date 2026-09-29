@@ -26,6 +26,8 @@ CMakeUserPresets.json
 *.gg
 *.sg
 *.zip
+*.rom
+*.tap
 
 # Partidas guardadas (RAM del cartucho) que genera el emulador junto a cada ROM
 *.sav

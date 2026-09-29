@@ -1,37 +1,41 @@
 #pragma once
 
 #include <stdint.h>
+#include <vector>
 
-// 48000, 44100, 22050, 11025
 #define SOUNDFREQ 44100
-#define SOUNDFORMAT 1
-#define SOUNDSAMPLES 1024
-
-#define TOTALFRAMES 8
-#define SOUNDSIZEFRAME ((SOUNDSAMPLES * SOUNDFORMAT) / 2)
-#define SOUNDBUFFER (SOUNDSIZEFRAME * TOTALFRAMES)
 
 #include <awui/Object.h>
 
 namespace awui::Emulation::Spectrum {
 	class Motherboard;
 
+	// Altavoz del Spectrum (bits EAR y MIC del puerto 0xFE). Durante el frame se apuntan los cambios de nivel con
+	// su posición dentro del frame; al acabarlo se convierten en muestras y se encolan en SoundSDL
 	class Sound : public Object {
 	  private:
-		Motherboard *_cpu;
+		struct Change {
+			double position; // 0..1 dentro del frame
+			int16_t level;
+		};
 
-		int GetPosBuffer(Motherboard *cpu);
+		Motherboard *_cpu;
+		std::vector<Change> _changes;
+		std::vector<int16_t> _samples;
+		int16_t _level;		 // Nivel al empezar el frame
+		double _pendingSamples; // Fracción de muestra que queda para el siguiente frame
+		float _dcIn;			 // Filtro que quita la continua (el altavoz en reposo no está a cero)
+		float _dcOut;
 
 	  public:
-		int16_t _buffer[SOUNDBUFFER];
-
 		Sound();
 
 		inline void SetCPU(Motherboard *cpu) { this->_cpu = cpu; }
 		inline Motherboard *GetCPU() { return this->_cpu; }
 
-		void WriteByte(Motherboard *cpu, int16_t value);
+		void WriteSound(Motherboard *cpu, int value);
 
-		void WriteSound(Motherboard *cpu, int sound);
+		// Genera las muestras del frame que acaba de emularse (duración en segundos reales)
+		void EndFrame(double seconds, bool silent);
 	};
 } // namespace awui::Emulation::Spectrum

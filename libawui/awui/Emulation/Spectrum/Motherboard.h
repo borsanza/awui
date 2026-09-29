@@ -76,6 +76,9 @@ namespace awui::Emulation {
 			void SaveState(uint8_t *data);
 
 			double GetVirtualTime();
+			// Parte del frame actual ya emulada (0..1): sitúa los cambios del altavoz dentro del frame
+			inline double GetFramePosition() const { return this->_percFrame; }
+			static constexpr double FrameSeconds = 1.0 / 59.922743404;
 			inline Sound *GetSound() const { return this->_sound; }
 
 			void WriteMemory(uint16_t offset, uint8_t value);

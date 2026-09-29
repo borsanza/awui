@@ -199,6 +199,9 @@ void Motherboard::OnTick() {
 	} while (true);
 
 	this->_cycles -= cyclesFrame;
+
+	// En modo rápido el sonido no tiene sentido (va 9 veces más deprisa): se encola silencio
+	this->_sound->EndFrame(FrameSeconds, this->_fast);
 }
 
 /**
