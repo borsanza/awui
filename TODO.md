@@ -1,6 +1,6 @@
 # Prompt
 
-Revisa bien Core, Drawing, Effects, IO, OpenGL y Windows, ademas de las clases que hay en la raiz de awi, quiero que lo revises bien y me digas mejoras, problemas y si faltan componentes logicos. Con lo que saques, actualiza el TODO.md
+Revisa bien Core, Drawing, Effects, IO, OpenGL y Windows, ademas de las clases que hay en la raiz de awi, quiero que lo revises bien y me digas mejoras, problemas y si faltan componentes logicos. Replantea tambien si los ficheros y directorios estan como te gustarian. Con lo que saques, actualiza el TODO.md
 
 # Pendiente
 
