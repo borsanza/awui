@@ -77,8 +77,12 @@ void MasterSystem::OnTick(float deltaSeconds) {
 		m_lastTick = now;
 		m_actual++;
 
-		if (m_last < m_actual) {
-			m_last = m_actual;
+		// Guardar tras rebobinar empieza otra línea de tiempo: los estados posteriores ya no sirven
+		m_last = m_actual;
+
+		// Buffer circular: el hueco que se va a pisar era el estado más antiguo
+		if (m_actual - m_first >= TOTALSAVED) {
+			m_first = m_actual - TOTALSAVED + 1;
 		}
 
 		m_cpu->SaveState(m_savedData[m_actual % TOTALSAVED]);
