@@ -591,7 +591,8 @@ uint16_t VDP::GetLegacyPixel() {
 		int magnify = reg[1] & 0x01;
 		uint16_t base = (reg[5] & 0x7F) << 7;
 		uint16_t patterns = (reg[6] & 0x07) << 11;
-		bool found = false;
+		bool hit = false;	// Algún sprite anterior tiene un píxel del patrón aquí
+		bool found = false; // Ya hay un sprite con color visible
 		uint8_t spriteColor = 0;
 
 		for (int i = 0; i < this->d._lineSpriteCount; i++) {
@@ -623,9 +624,12 @@ uint16_t VDP::GetLegacyPixel() {
 			if (!(vram[addr & 0x3FFF] & (0x80 >> (dx & 7))))
 				continue;
 
-			if (found)
+			// La colisión cuenta cualquier píxel del patrón; el color solo decide qué sprite se ve
+			if (hit)
 				this->d._status |= 0x20;
-			else if (color & 0x0F) {
+			hit = true;
+
+			if (!found && (color & 0x0F)) {
 				found = true;
 				spriteColor = color & 0x0F;
 			}
