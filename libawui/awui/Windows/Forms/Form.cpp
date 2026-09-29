@@ -8,10 +8,8 @@
 
 #include <awui/Console.h>
 #include <awui/Convert.h>
-#include <awui/Drawing/Image.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Application.h>
-#include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/Statistics/Stats.h>
 
 #include <SDL.h>
@@ -221,8 +219,8 @@ void Form::SetFullscreen(int mode) {
 
 	m_fullscreen = mode;
 
-	Bitmap::UnloadAll();
-	Drawing::Image::UnloadAll();
+	// No se descargan las texturas: la ventana y el contexto de OpenGL son los mismos (SDL_SetWindowFullscreen no
+	// los recrea, ni en Linux ni en Windows), así que siguen valiendo y no hay tirón al recargarlas todas
 	RefreshVideo();
 }
 
