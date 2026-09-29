@@ -75,6 +75,8 @@ void Image::Load() {
 	if (m_loaded)
 		return;
 
+	SyncWithCairo();
+
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -102,9 +104,21 @@ void Image::UnloadAll() {
 
 void Image::Update() {
 	if (m_loaded) {
+		SyncWithCairo();
 		glBindTexture(GL_TEXTURE_2D, m_texture);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, GetWidth(), GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, m_image);
 	}
+}
+
+// El buffer lo comparten cairo (Graphics) y SetPixel/Clear. Antes de leerlo para subirlo a la textura hay que
+// pedir a cairo que termine lo pendiente (flush) y avisarle de que el buffer puede haber cambiado por fuera
+// (mark_dirty), para que no use datos cacheados si vuelve a dibujar en él
+void Image::SyncWithCairo() {
+	if (m_cairo_surface == NULL)
+		return;
+
+	cairo_surface_flush(m_cairo_surface);
+	cairo_surface_mark_dirty(m_cairo_surface);
 }
 
 GLuint Image::GetTexture() {

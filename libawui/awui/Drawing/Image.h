@@ -25,6 +25,8 @@ namespace awui {
 			bool m_loaded;
 			GLuint m_texture;
 
+			void SyncWithCairo();
+
 		  public:
 			Image(int width, int height);
 			Image(String name);
