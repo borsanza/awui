@@ -14,14 +14,15 @@ using namespace awui::IO;
 TextWriter::~TextWriter() {
 }
 
+// El texto se escribe tal cual ("%s"): si se pasara como formato, un '%' en él leería argumentos que no existen.
+// El String se guarda en una variable para que el puntero de ToCharArray() siga siendo válido al escribir
 void TextWriter::Write(Object *value) {
-	const char *str = value->ToString().ToCharArray();
-	Write(str);
+	String text = value->ToString();
+	Write("%s", text.ToCharArray());
 }
 
 void awui::IO::TextWriter::Write(String value) {
-	const char *str = value.ToCharArray();
-	Write(str);
+	Write("%s", value.ToCharArray());
 }
 
 void TextWriter::WriteLine() {
@@ -30,14 +31,12 @@ void TextWriter::WriteLine() {
 }
 
 void TextWriter::WriteLine(Object *value) {
-	const char *str = value->ToString().ToCharArray();
-	Write(str);
+	Write(value);
 	WriteLine();
 }
 
 void TextWriter::WriteLine(String value) {
-	const char *str = value.ToCharArray();
-	Write(str);
+	Write(value);
 	WriteLine();
 }
 

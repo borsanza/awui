@@ -13,6 +13,9 @@ namespace awui {
 	  public:
 		String();
 		String(const char);
+		// Copia el texto tal cual. Tiene preferencia sobre el constructor con formato cuando solo hay un argumento,
+		// así que un '%' en un nombre de fichero no se interpreta como formato de printf
+		String(const char *value);
 		String(const char *format, ...);
 
 		virtual ~String() = default;

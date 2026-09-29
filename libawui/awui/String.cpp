@@ -20,6 +20,9 @@ String::String(const char value) {
 	m_string = std::string(1, value);
 }
 
+String::String(const char *value) : m_string(value ? value : "") {
+}
+
 String::String(const char *format, ...) {
 	va_list args;
 	va_start(args, format);
