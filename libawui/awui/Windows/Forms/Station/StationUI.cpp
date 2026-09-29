@@ -481,14 +481,16 @@ void FadePanel::HideFade() {
 }
 
 void FadePanel::OnTick(float deltaSeconds) {
+	// 200 unidades en 1/3 de segundo, sea cual sea la tasa de frames
+	float step = 600.0f * deltaSeconds;
 	if (m_showing) {
-		m_status += 10;
+		m_status += step;
 		if (Math::Round(m_status) >= 200.0f) {
 			m_status = 200.0f;
 			m_station->SetArcadeFullScreen();
 		}
 	} else {
-		m_status -= 10;
+		m_status -= step;
 		if (Math::Round(m_status) <= 0.0f) {
 			m_status = 0.0f;
 			m_station->ExitArcade();

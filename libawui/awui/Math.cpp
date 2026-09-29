@@ -228,5 +228,9 @@ float Math::Tanh(float value) {
 }
 
 float Math::Interpolate(float from, float to, float percent, bool rounding) {
+	// Con frames lentos el porcentaje (10 * deltaSeconds) puede pasar de 1 y el valor se saldría del destino
+	if (percent > 1.0f)
+		percent = 1.0f;
+
 	return (rounding && (Round(from) == Round(to))) ? to : from + ((to - from) * percent);
 }
