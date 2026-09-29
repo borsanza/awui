@@ -60,6 +60,8 @@ namespace awui::Emulation {
 			Sound *m_sound;
 			Processors::Z80::CPU m_z80;
 			double m_seconds; // Tiempo real pendiente de emular (siempre menor que un tick salvo tras un parón)
+			String m_savePath;		 // Fichero .sav con la RAM del cartucho (partidas guardadas)
+			int m_boardRamIdleFrames; // Frames desde la última escritura en la RAM del cartucho (-1: nada pendiente)
 			int64_t m_vdpCycles; // Ciclo de CPU hasta el que ha avanzado el VDP
 			bool m_frameDone;	 // El VDP ha llegado al final del frame
 
@@ -68,6 +70,9 @@ namespace awui::Emulation {
 			bool IsCodemastersRom() const;
 			void DoTick();
 			void SyncVDP();
+			void LoadBoardRam();
+			void SaveBoardRam();
+			inline void MarkBoardRamDirty() { m_boardRamIdleFrames = 0; }
 
 		  public:
 			Motherboard();

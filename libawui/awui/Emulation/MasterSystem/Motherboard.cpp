@@ -34,6 +34,7 @@ uint8_t MasterGearReadPortCB(uint8_t port, void *data) {
 
 Motherboard::Motherboard() {
 	m_seconds = 0.0;
+	m_boardRamIdleFrames = -1;
 	m_vdpCycles = 0;
 	m_frameDone = false;
 
@@ -65,6 +66,9 @@ Motherboard::Motherboard() {
 }
 
 Motherboard::~Motherboard() {
+	if (m_boardRamIdleFrames >= 0)
+		SaveBoardRam();
+
 	delete m_sound;
 	delete m_rom;
 	delete m_vdp;
@@ -130,6 +134,12 @@ static bool IsGameGearInSmsMode(uint32_t crc) {
 
 void Motherboard::LoadRom(const String file) {
 	m_rom->LoadRom(file);
+
+	// Las partidas guardadas van junto a la ROM, con el mismo nombre y extensión .sav
+	int dot = file.LastIndexOf(".");
+	m_savePath = String::Concat((dot > file.LastIndexOf("/")) ? file.Substring(0, dot) : file, ".sav");
+	LoadBoardRam();
+
 	m_vdp->SetGameGear(file.ToLower().EndsWith(".gg") && !IsGameGearInSmsMode(m_rom->GetCRC32()));
 	if (file.ToLower().EndsWith(".sg"))
 		m_saveData._mapper = MAPPER_SG1000;
@@ -236,6 +246,55 @@ void Motherboard::DoTick() {
 	}
 
 	m_sound->EndFrame(this);
+
+	// La RAM del cartucho se guarda en disco un segundo después de la última escritura:
+	// así un juego que guarda muchos bytes seguidos no escribe el fichero en cada frame
+	if ((m_boardRamIdleFrames >= 0) && (++m_boardRamIdleFrames >= 60)) {
+		SaveBoardRam();
+		m_boardRamIdleFrames = -1;
+	}
+}
+
+void Motherboard::LoadBoardRam() {
+	FILE *file = fopen(m_savePath.ToCharArray(), "rb");
+	if (!file)
+		return;
+
+	size_t size = fread(m_saveData._boardram, 1, sizeof(m_saveData._boardram), file);
+	fclose(file);
+	printf("Partida guardada cargada: %s (%zu bytes)\n", m_savePath.ToCharArray(), size);
+}
+
+void Motherboard::SaveBoardRam() {
+	if (m_savePath.GetLength() == 0)
+		return;
+
+	// No se crea un .sav vacío para juegos que nunca han guardado nada
+	bool empty = true;
+	for (size_t i = 0; empty && (i < sizeof(m_saveData._boardram)); i++)
+		empty = (m_saveData._boardram[i] == 0);
+
+	FILE *existing = fopen(m_savePath.ToCharArray(), "rb");
+	if (existing)
+		fclose(existing);
+	else if (empty)
+		return;
+
+	// Se escribe en un temporal y se renombra, para no dejar el .sav a medias si algo falla
+	String tmpPath = String::Concat(m_savePath, ".tmp");
+	FILE *file = fopen(tmpPath.ToCharArray(), "wb");
+	if (!file) {
+		printf("No se puede guardar la partida en %s\n", m_savePath.ToCharArray());
+		return;
+	}
+
+	bool ok = fwrite(m_saveData._boardram, 1, sizeof(m_saveData._boardram), file) == sizeof(m_saveData._boardram);
+	ok = (fclose(file) == 0) && ok;
+	if (ok && (rename(tmpPath.ToCharArray(), m_savePath.ToCharArray()) == 0))
+		return;
+
+	remove(tmpPath.ToCharArray());
+	printf("No se puede guardar la partida en %s\n", m_savePath.ToCharArray());
 }
 
 // El VDP avanza exactamente 1,5 píxeles por ciclo de CPU (reloj maestro / 10 frente a / 15)
@@ -299,8 +358,10 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 					return;
 				}
 
-				if ((pos >= 0x8000) && (m_saveData._controlbyte & 0x08))
+				if ((pos >= 0x8000) && (m_saveData._controlbyte & 0x08)) {
 					m_saveData._boardram[GetBoardRamOffset(pos)] = value;
+					MarkBoardRamDirty();
+				}
 				return;
 			}
 
@@ -339,6 +400,7 @@ void Motherboard::WriteMemory(uint16_t pos, uint8_t value) {
 			if (pos < 0xC000) {
 				if ((pos >= 0xA000) && m_saveData._codemastersRam) {
 					m_saveData._boardram[pos - 0xA000] = value;
+					MarkBoardRamDirty();
 					return;
 				}
 
