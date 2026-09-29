@@ -89,6 +89,7 @@ namespace awui {
 					Control *m_controlBase;
 					bool m_closeSettings;
 					bool m_clock24;
+					bool m_showClock;
 
 					void RecursiveSearch(NodeFile *parent);
 					bool Minimize(NodeFile *parent);

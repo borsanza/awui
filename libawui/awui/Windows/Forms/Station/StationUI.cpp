@@ -47,6 +47,7 @@ StationUI::StationUI() {
 	m_settingsUI = nullptr;
 	m_closeSettings = false;
 	m_clock24 = true;
+	m_showClock = true;
 	m_noRoms = nullptr;
 
 	m_backgroundFader = new ImageFader();
@@ -84,10 +85,12 @@ StationUI::StationUI() {
 	m_clock->SetForeColor(Color::FromArgb(151, 151, 151));
 	m_clock->SetTextAlign(ContentAlignment::TopCenter);
 	m_clock->SetText("11:59");
-	m_controlBase->AddWidget(m_clock);
 
 	AddWidget(m_controlBase);
 	m_controlBase->SetDock(DockStyle::Fill);
+
+	// El reloj va fuera de m_controlBase para que se siga viendo con los ajustes abiertos (que ocultan el menú)
+	AddWidget(m_clock);
 }
 
 StationUI::~StationUI() {
@@ -333,12 +336,18 @@ void StationUI::OnTick(float deltaSeconds) {
 		m_clock->SetText(horaS);
 	}
 
+	// Se ve con el menú o con los ajustes, pero no con un juego a pantalla completa
+	bool clockVisible = m_showClock && (m_controlBase->GetVisible() || m_settingsUI);
+	if (m_clock->GetVisible() != clockVisible) {
+		m_clock->SetVisible(clockVisible);
+	}
+
 	// Reloj pegado a la derecha y el botón de ajustes a su izquierda (o en su sitio si el reloj está oculto)
 	int clockLeft = GetWidth() - 10 - m_clock->GetLabelWidth();
 	m_clock->SetLocation(clockLeft, 16);
 	m_clock->SetSize(m_clock->GetLabelWidth(), 45);
 
-	m_settings->SetLocation((m_clock->GetVisible() ? clockLeft : GetWidth() - 10) - 70, 8);
+	m_settings->SetLocation((m_showClock ? clockLeft : GetWidth() - 10) - 70, 8);
 
 	m_title->SetLocation(GetWidth() >> 1, 0);
 	m_title->SetSize(GetWidth() >> 1, 69);
@@ -473,6 +482,7 @@ void StationUI::OnOk(Control *sender) {
 	m_settingsUI->SetOnChanged([this]() { ApplySettings(); });
 	AddWidget(m_settingsUI);
 	m_settingsUI->InitializeComponent();
+	MoveToEnd(m_clock);
 	CheckMouseControl();
 }
 
@@ -520,7 +530,7 @@ void StationUI::ApplySettings() {
 	}
 
 	Statistics::Stats::Instance()->SetVisible(settings.GetBool("fps"));
-	m_clock->SetVisible(settings.GetBool("clock"));
+	m_showClock = settings.GetBool("clock");
 	m_clock24 = settings.GetString("timeFormat") != "12";
 
 	Emulation::Common::AudioSettings::SetEnabled(settings.GetBool("sound"));
