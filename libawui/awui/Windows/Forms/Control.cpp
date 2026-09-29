@@ -1077,10 +1077,32 @@ void Control::RemoveWidget(Control *control) {
 		return;
 	}
 
+	control->ForgetMouse();
 	m_controls->Remove(control);
 	control->SetParent(nullptr);
 
 	FixFocusImpl();
+}
+
+/**
+ * Antes de sacar este control del árbol, quita las referencias del ratón que apuntan a él o a sus hijos:
+ * la captura del padre (si no, el padre se queda esperando un MouseUp de un control que ya no está y deja
+ * de repartir los clics) y el control bajo el ratón del formulario (quedaría colgando si luego se borra).
+ */
+void Control::ForgetMouse() {
+	CheckMouseControl();
+
+	Form *form = GetForm();
+	if (!form) {
+		return;
+	}
+
+	for (Control *over = form->m_mouseControlOver; over; over = over->GetParent()) {
+		if (over == this) {
+			form->m_mouseControlOver = nullptr;
+			break;
+		}
+	}
 }
 
 /**
@@ -1096,7 +1118,7 @@ void Control::ReplaceWidget(Control *oldControl, Control *newControl) {
 		return;
 	}
 
-	oldControl->CheckMouseControl();
+	oldControl->ForgetMouse();
 	oldControl->SetParent(nullptr);
 	m_controls->Replace(oldControl, newControl);
 	newControl->SetParent(this);

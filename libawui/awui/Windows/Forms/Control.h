@@ -80,6 +80,7 @@ namespace awui {
 			void ChangeControlOnMouseOver(Control *control);
 			bool IsVisible(bool checkInside = true) const;
 			void CleanMouseControl();
+			void ForgetMouse();
 
 			Control *GetChildFocusedImp(Control *focused);
 			void SetFocusImpl(bool forced, int32_t time);
