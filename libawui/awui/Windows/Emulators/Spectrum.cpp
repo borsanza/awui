@@ -67,10 +67,11 @@ bool Spectrum::IsClass(Classes objectClass) const {
 }
 
 void Spectrum::LoadRom(const String file) {
-	if (file.EndsWith(".rom"))
+	String ext = file.ToLower();
+	if (ext.EndsWith(".rom"))
 		m_motherboard->LoadRom(file);
 
-	if (file.EndsWith(".tap")) {
+	if (ext.EndsWith(".tap")) {
 		String rom = "roms/zxspectrum/48.rom";
 		ArrayList list = file.Split("/");
 		int found = -1;

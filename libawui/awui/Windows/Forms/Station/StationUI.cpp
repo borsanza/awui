@@ -218,20 +218,21 @@ bool StationUI::Minimize(NodeFile *parent) {
 					continue;
 				}
 			} else {
+				String path = child->m_path.ToLower();
 				switch (child->m_emulator) {
 					case Types::Chip8:
-						if (child->m_path.EndsWith("ch8") || child->m_path.EndsWith("c8x")) {
+						if (path.EndsWith(".ch8") || path.EndsWith(".c8x")) {
 							continue;
 						}
 						break;
 					case Types::GameGear:
 					case Types::MasterSystem:
-						if (child->m_path.EndsWith("sms") || child->m_path.EndsWith("sg") || child->m_path.EndsWith("gg")) {
+						if (path.EndsWith(".sms") || path.EndsWith(".sg") || path.EndsWith(".gg")) {
 							continue;
 						}
 						break;
 					case Types::Spectrum:
-						if (child->m_path.EndsWith("rom") || child->m_path.EndsWith("tap")) {
+						if (path.EndsWith(".rom") || path.EndsWith(".tap")) {
 							continue;
 						}
 						break;
