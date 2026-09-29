@@ -62,6 +62,17 @@ La compilación Debug va a `build-debug/`; para ejecutarla, lánzala igualmente 
 
 Opción `-DAWUI_WARNINGS=ON` para activar los warnings del compilador.
 
+### Con sanitizers (desarrollo)
+
+`-DAWUI_SANITIZE=ON` compila con AddressSanitizer y UndefinedBehaviorSanitizer: el programa se para y muestra la pila en cuanto accede fuera de memoria, usa algo ya liberado, hace un `delete` doble, etc. Va 2-3 veces más lento, así que es para desarrollo:
+
+```bash
+cmake --preset sanitize && cmake --build --preset sanitize
+cd build/samples/stationTV && ../../../build-sanitize/samples/stationTV/stationTV
+```
+
+Al cerrar informa también de la memoria que no se ha liberado; para ver solo los errores: `ASAN_OPTIONS=detect_leaks=0`.
+
 ### Desde Visual Studio Code
 
 Con la extensión C/C++ (`ms-vscode.cpptools`) y `gdb`:

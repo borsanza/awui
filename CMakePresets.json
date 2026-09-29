@@ -20,10 +20,18 @@
 			"inherits": "base",
 			"binaryDir": "${sourceDir}/build-debug",
 			"cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+		},
+		{
+			"name": "sanitize",
+			"displayName": "Sanitizers (ASan + UBSan)",
+			"inherits": "base",
+			"binaryDir": "${sourceDir}/build-sanitize",
+			"cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo", "AWUI_SANITIZE": "ON" }
 		}
 	],
 	"buildPresets": [
 		{ "name": "release", "configurePreset": "release" },
-		{ "name": "debug", "configurePreset": "debug" }
+		{ "name": "debug", "configurePreset": "debug" },
+		{ "name": "sanitize", "configurePreset": "sanitize" }
 	]
 }

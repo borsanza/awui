@@ -39,5 +39,20 @@ if(AWUI_WARNINGS)
 	endif()
 endif()
 
+# AddressSanitizer + UndefinedBehaviorSanitizer para desarrollo: detectan accesos fuera de memoria, usos tras
+# liberar, delete dobles, desbordamientos de enteros con signo, etc. en el momento en que ocurren.
+# Va unas 2-3 veces más lento; usar con RelWithDebInfo o Debug (preset "sanitize")
+option(AWUI_SANITIZE "Compila con AddressSanitizer y UndefinedBehaviorSanitizer" OFF)
+
+if(AWUI_SANITIZE)
+	if(MSVC)
+		# MSVC solo tiene AddressSanitizer
+		add_compile_options(/fsanitize=address)
+	else()
+		add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+		add_link_options(-fsanitize=address,undefined)
+	endif()
+endif()
+
 add_subdirectory(libawui)
 add_subdirectory(samples)
