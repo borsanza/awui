@@ -12,6 +12,9 @@
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Station;
 
+// Recorrido máximo (en píxeles, desde cualquiera de los dos extremos) con el que el texto vuelve deslizándose
+static const float MaxSlideBack = 80.0f;
+
 LabelButton::LabelButton() {
 	m_time = 0.0f;
 	m_lastSelected = false;
@@ -57,6 +60,8 @@ void LabelButton::OnTick(float deltaSeconds) {
 	} else {
 		float scrolled = GetScrolled();
 		if (scrolled != 0) {
+			// Al perder la selección el texto vuelve a su sitio por el camino más corto: hacia atrás al principio o,
+			// pasada la mitad, hacia delante hasta la copia repetida (que visualmente es lo mismo)
 			float dst = 0;
 			float min = -(GetLabelWidth() + ScrollMargin);
 			if ((GetLabelWidth() >> 1) < -scrolled)
@@ -66,7 +71,9 @@ void LabelButton::OnTick(float deltaSeconds) {
 			if ((Math::Abs(dst) <= 1) || ((dst - 1) <= min))
 				dst = 0;
 
-			if ((dst <= -80) && (dst >= (min + 80)))
+			// Solo se desliza si le queda poco recorrido; si está lejos de los dos extremos salta al principio a
+			// propósito (no se ve el texto entero pasando a toda velocidad)
+			if ((dst <= -MaxSlideBack) && (dst >= (min + MaxSlideBack)))
 				dst = 0;
 
 			SetScrolled(dst);
