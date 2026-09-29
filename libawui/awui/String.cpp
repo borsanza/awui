@@ -62,8 +62,13 @@ int String::CompareTo(const String &strB) const {
 	return m_string.compare(strB.m_string);
 }
 
+bool String::StartsWith(const String &value) const {
+	return m_string.compare(0, value.m_string.length(), value.m_string) == 0;
+}
+
 bool String::EndsWith(const String &value) const {
-	return (IndexOf(value, GetLength() - value.GetLength()) != -1);
+	size_t length = value.m_string.length();
+	return (length <= m_string.length()) && (m_string.compare(m_string.length() - length, length, value.m_string) == 0);
 }
 
 bool String::operator==(const String &value) const {
@@ -91,7 +96,7 @@ bool String::operator<=(const String &value) const {
 }
 
 String String::operator+(const String &strB) const {
-	return String((m_string + strB.m_string).c_str());
+	return String(m_string + strB.m_string);
 }
 
 void String::operator+=(const String &strB) {
@@ -109,7 +114,8 @@ char String::operator[](int pos) const {
 String String::ToUpper() const {
 	String str2;
 	str2.m_string.reserve(m_string.length());
-	std::transform(m_string.begin(), m_string.end(), std::back_inserter(str2.m_string), ::toupper);
+	// toupper con un char negativo (bytes de UTF-8) es comportamiento indefinido: se pasa como unsigned char
+	std::transform(m_string.begin(), m_string.end(), std::back_inserter(str2.m_string), [](unsigned char c) { return (char) ::toupper(c); });
 
 	return str2;
 }
@@ -117,7 +123,7 @@ String String::ToUpper() const {
 String String::ToLower() const {
 	String str2;
 	str2.m_string.reserve(m_string.length());
-	std::transform(m_string.begin(), m_string.end(), std::back_inserter(str2.m_string), ::tolower);
+	std::transform(m_string.begin(), m_string.end(), std::back_inserter(str2.m_string), [](unsigned char c) { return (char) ::tolower(c); });
 
 	return str2;
 }
@@ -139,11 +145,63 @@ bool String::Contains(const String &strB) const {
 }
 
 String String::Substring(int startIndex) const {
-	return String(m_string.substr(startIndex).c_str());
+	if ((startIndex < 0) || ((size_t) startIndex >= m_string.length()))
+		return String((startIndex < 0) ? m_string : std::string());
+
+	return String(m_string.substr(startIndex));
 }
 
 String String::Substring(int startIndex, int length) const {
-	return String(m_string.substr(startIndex, length).c_str());
+	if (startIndex < 0) {
+		length += startIndex;
+		startIndex = 0;
+	}
+
+	if ((length <= 0) || ((size_t) startIndex >= m_string.length()))
+		return String();
+
+	return String(m_string.substr(startIndex, length));
+}
+
+static bool IsSpace(char c) {
+	return (c == ' ') || (c == '\t') || (c == '\n') || (c == '\r') || (c == '\v') || (c == '\f');
+}
+
+String String::TrimStart() const {
+	size_t start = 0;
+	while ((start < m_string.length()) && IsSpace(m_string[start]))
+		start++;
+
+	return String(m_string.substr(start));
+}
+
+String String::TrimEnd() const {
+	size_t end = m_string.length();
+	while ((end > 0) && IsSpace(m_string[end - 1]))
+		end--;
+
+	return String(m_string.substr(0, end));
+}
+
+String String::Trim() const {
+	return TrimStart().TrimEnd();
+}
+
+String String::Replace(const String &oldValue, const String &newValue) const {
+	if (oldValue.m_string.empty())
+		return *this;
+
+	std::string result;
+	size_t pos = 0;
+	size_t found;
+	while ((found = m_string.find(oldValue.m_string, pos)) != std::string::npos) {
+		result.append(m_string, pos, found - pos);
+		result.append(newValue.m_string);
+		pos = found + oldValue.m_string.length();
+	}
+
+	result.append(m_string, pos, std::string::npos);
+	return String(std::move(result));
 }
 
 String String::ToString() const {
@@ -153,6 +211,19 @@ String String::ToString() const {
 int String::IndexOf(const String &value, int startIndex) const {
 	size_t pos = m_string.find(value.m_string, startIndex);
 	return (pos != std::string::npos) ? pos : -1;
+}
+
+int String::IndexOf(char value, int startIndex) const {
+	if (startIndex < 0)
+		startIndex = 0;
+
+	size_t pos = m_string.find(value, startIndex);
+	return (pos != std::string::npos) ? (int) pos : -1;
+}
+
+int String::LastIndexOf(char value) const {
+	size_t pos = m_string.rfind(value);
+	return (pos != std::string::npos) ? (int) pos : -1;
 }
 
 int String::LastIndexOf(const String &value) const {
