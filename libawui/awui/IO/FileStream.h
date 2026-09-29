@@ -20,6 +20,7 @@ namespace awui {
 			FileStream(const String path, FileMode::Enum mode);
 			virtual ~FileStream();
 
+			bool IsOpen() const;
 			virtual void Close();
 
 			virtual uint32_t GetPosition();

@@ -23,7 +23,7 @@ String::String(const char value) {
 String::String(const char *value) : m_string(value ? value : "") {
 }
 
-String::String(const char *format, ...) {
+void String::AssignFormat(const char *format, ...) {
 	va_list args;
 	va_start(args, format);
 

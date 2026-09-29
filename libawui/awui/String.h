@@ -10,13 +10,18 @@ namespace awui {
 	  private:
 		std::string m_string;
 
+		void AssignFormat(const char *format, ...);
+
 	  public:
 		String();
 		String(const char);
-		// Copia el texto tal cual. Tiene preferencia sobre el constructor con formato cuando solo hay un argumento,
-		// así que un '%' en un nombre de fichero no se interpreta como formato de printf
+		// Copia el texto tal cual: un '%' (por ejemplo en un nombre de fichero) no se interpreta como formato
 		String(const char *value);
-		String(const char *format, ...);
+		// Formato de printf. Solo se usa cuando hay al menos un argumento además del formato
+		template <typename Arg, typename... Args>
+		String(const char *format, Arg arg, Args... args) {
+			AssignFormat(format, arg, args...);
+		}
 
 		virtual ~String() = default;
 
