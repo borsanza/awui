@@ -34,6 +34,8 @@ uint8_t MasterGearReadPortCB(uint8_t port, void *data) {
 
 Motherboard::Motherboard() {
 	m_seconds = 0.0;
+	m_vdpCycles = 0;
+	m_frameDone = false;
 
 	m_z80.SetWriteMemoryCB(MasterGearWriteMemoryCB, this);
 	m_z80.SetReadMemoryCB(MasterGearReadMemoryCB, this);
@@ -76,6 +78,7 @@ void Motherboard::Reset() {
 		m_saveData._banks8k[i] = 2 + i;
 	m_saveData._codemastersRam = false;
 	m_z80.Reset();
+	m_vdpCycles = m_z80.GetCycles();
 
 	memset(m_saveData._ram, 0, 8192 * sizeof(uint8_t));
 	memset(m_saveData._boardram, 0, 32768 * sizeof(uint8_t));
@@ -203,8 +206,7 @@ void Motherboard::OnTick(float deltaSeconds) {
 }
 
 void Motherboard::DoTick() {
-	double fps = m_vdp->GetNTSC() ? 59.922743404f : 49.7014591858f;
-	double speed = m_vdp->GetNTSC() ? 3.579545f : 3.5468949f;
+	double fps = m_vdp->GetNTSC() ? 59.922743404 : 49.7014591858;
 	// NTSC emula un frame por tick; PAL, 49.70 de cada 59.92 (se salta uno de cada seis ticks, repartidos)
 	m_saveData._frameAccumulator += fps / 59.922743404;
 	if (m_saveData._frameAccumulator < 1.0)
@@ -212,17 +214,10 @@ void Motherboard::DoTick() {
 
 	m_saveData._frameAccumulator -= 1.0;
 
-	double iters = (speed * 1000000.0f) / fps;
-	double itersVDP = m_vdp->GetTotalWidth() * m_vdp->GetTotalHeight();
-
-	bool vsync = false;
-	int vdpCount = 0;
-	double vdpIters = 0;
-
-	int realIters = 0;
-
-	for (int i = 0; i < iters; i++) {
-		int64_t oldCycles = m_z80.GetCycles();
+	// El frame dura lo que tarda el VDP en llegar al VSYNC. Los ciclos de la última instrucción que se pasan
+	// del frame (y los de reconocer las interrupciones) no se pierden: el VDP los recupera en el siguiente
+	m_frameDone = false;
+	while (!m_frameDone) {
 		RunOpcode();
 
 		// NMI del botón de pausa: no se puede enmascarar, entra aunque haya una IRQ en curso.
@@ -233,26 +228,22 @@ void Motherboard::DoTick() {
 			m_saveData._wantPause = false;
 		}
 
-		double times = (m_z80.GetCycles() - oldCycles);
-		i = i + times - 1;
-
-		vdpIters += times * (itersVDP / iters);
-		if (!vsync) {
-			for (; vdpCount < vdpIters; vdpCount++) {
-				if (vsync)
-					continue;
-				vsync = m_vdp->OnTick(realIters);
-			}
-		}
-
+		SyncVDP();
 		CheckInterrupts();
-		realIters++;
 	}
 
-	while (!vsync)
-		vsync = m_vdp->OnTick(realIters);
-
 	m_sound->EndFrame(this);
+}
+
+// El VDP avanza exactamente 1,5 píxeles por ciclo de CPU (reloj maestro / 10 frente a / 15)
+void Motherboard::SyncVDP() {
+	int64_t cycles = m_z80.GetCycles();
+	int64_t pixels = ((cycles * 3) >> 1) - ((m_vdpCycles * 3) >> 1);
+	m_vdpCycles = cycles;
+
+	for (; pixels > 0; pixels--)
+		if (m_vdp->OnTick(0))
+			m_frameDone = true;
 }
 
 uint16_t Motherboard::GetAddressBus() const {
@@ -515,6 +506,7 @@ void Motherboard::LoadState(uint8_t *data) {
 
 	m_vdp->LoadState(&data[sizeof(Motherboard::saveData)]);
 	m_z80.LoadState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize()]);
+	m_vdpCycles = m_z80.GetCycles();
 	m_sound->LoadState(&data[sizeof(Motherboard::saveData) + VDP::GetSaveSize() + awui::Emulation::Processors::Z80::CPU::GetSaveSize()], m_z80.GetCycles());
 }
 
