@@ -2,11 +2,15 @@
 
 #include "ArcadeContainer.h"
 
-#define TOTALSAVED 60
+#include <vector>
 
 namespace awui {
 	namespace Emulation::MasterSystem {
 		class Motherboard;
+	}
+
+	namespace Emulation::Common {
+		class RewindBuffer;
 	}
 
 	using namespace awui::Emulation::MasterSystem;
@@ -29,11 +33,11 @@ namespace awui {
 			uint8_t m_axis2;
 			bool m_invertButtons;
 
-			int m_first;
-			int m_last;
-			int m_actual;
-			long long m_lastTick;
-			uint8_t *m_savedData[TOTALSAVED];
+			// Rebobinado: un estado por tick. Mientras se mantiene el botón se retrocede (o avanza) un frame por tick
+			Emulation::Common::RewindBuffer *m_rewind;
+			std::vector<uint8_t> m_state;
+			bool m_rewinding;
+			bool m_forwarding;
 
 			void RefreshPads();
 
@@ -59,8 +63,8 @@ namespace awui {
 			virtual bool OnJoystickButtonUp(JoystickButtonEventArgs *e);
 			virtual bool OnJoystickAxisMotion(JoystickAxisMotionEventArgs *e);
 
-			void TimeReverse();
-			void TimeForward();
+			void SetRewinding(bool mode);
+			void SetForwarding(bool mode);
 			void Pause(bool mode);
 
 			uint32_t GetCRC32();

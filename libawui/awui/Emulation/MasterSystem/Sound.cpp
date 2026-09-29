@@ -23,8 +23,7 @@ using namespace awui::Emulation::MasterSystem;
 // El chip avanza un paso cada 16 ciclos de reloj
 #define CYCLES_PER_TICK 16
 
-// Silencio tras un salto de rebobinado y duración del fundido de entrada
-#define TIME_JUMP_MUTE_SECONDS 0.12
+// Duración del fundido de entrada al cambiar de sentido (rebobinado)
 #define FADE_IN_SAMPLES (SOUNDFREQ / 100)
 
 // Mezcla del FM con el PSG: emu2413 da una salida más baja que la de los 4 canales del PSG.
@@ -55,7 +54,7 @@ Sound::Sound() {
 
 	// El YM2413 va con el mismo reloj que la CPU; emu2413 convierte su salida (reloj / 72) a SOUNDFREQ
 	m_opll = OPLL_new((uint32_t) CLOCK_NTSC, SOUNDFREQ);
-	m_muteSamples = 0;
+	m_reverse = false;
 	m_fadeSamples = FADE_IN_SAMPLES;
 
 	Reset();
@@ -88,7 +87,6 @@ void Sound::Reset() {
 	m_sampleTicks = 0;
 	m_samples.clear();
 
-	memset(m_saveData._fmRegisters, 0, sizeof(m_saveData._fmRegisters));
 	m_saveData._fmAddress = 0;
 	m_saveData._fmControl = 0;
 	OPLL_reset(m_opll);
@@ -172,11 +170,7 @@ void Sound::Tick() {
 
 		int left = psgLeft + fm;
 		int right = psgRight + fm;
-		if (m_muteSamples > 0) {
-			m_muteSamples--;
-			left = 0;
-			right = 0;
-		} else if (m_fadeSamples < FADE_IN_SAMPLES) {
+		if (m_fadeSamples < FADE_IN_SAMPLES) {
 			m_fadeSamples++;
 			left = (left * m_fadeSamples) / FADE_IN_SAMPLES;
 			right = (right * m_fadeSamples) / FADE_IN_SAMPLES;
@@ -250,7 +244,6 @@ void Sound::WriteFMAddress(uint8_t value) {
 void Sound::WriteFMData(Motherboard *cpu, uint8_t value) {
 	// Primero genera el audio hasta el momento de la escritura
 	Render(cpu->GetCycles());
-	m_saveData._fmRegisters[m_saveData._fmAddress] = value;
 	OPLL_writeReg(m_opll, m_saveData._fmAddress, value);
 }
 
@@ -267,27 +260,21 @@ void Sound::WriteStereo(Motherboard *cpu, uint8_t value) {
 }
 
 int Sound::GetSaveSize() {
-	return sizeof(Sound::saveData);
+	return sizeof(Sound::saveData) + sizeof(OPLL);
 }
 
 void Sound::SaveState(uint8_t *data) {
 	memcpy(data, &m_saveData, sizeof(Sound::saveData));
+	// Sus punteros son a su propia estructura, a tablas fijas de emu2413 y a su conversor: al restaurar en la
+	// misma instancia siguen valiendo
+	memcpy(data + sizeof(Sound::saveData), m_opll, sizeof(OPLL));
 }
 
 // cycle: contador de ciclos de la CPU ya restaurada. El audio se resincroniza ahí
 // sin generar el salto de tiempo (hacia atrás o hacia delante) del estado cargado.
 void Sound::LoadState(uint8_t *data, int64_t cycle) {
 	memcpy(&m_saveData, data, sizeof(Sound::saveData));
-
-	// El estado interno de emu2413 no se guarda: se rehace el chip con sus registros (primero instrumento
-	// y frecuencias, al final los de nota para que las notas activas vuelvan a sonar)
-	OPLL_reset(m_opll);
-	for (int reg = 0; reg < 0x40; reg++) {
-		if ((reg & 0xF0) != 0x20)
-			OPLL_writeReg(m_opll, reg, m_saveData._fmRegisters[reg]);
-	}
-	for (int reg = 0x20; reg < 0x30; reg++)
-		OPLL_writeReg(m_opll, reg, m_saveData._fmRegisters[reg]);
+	memcpy(m_opll, data + sizeof(Sound::saveData), sizeof(OPLL));
 
 	m_lastCycle = cycle;
 	m_tickPos = 0;
@@ -297,11 +284,12 @@ void Sound::LoadState(uint8_t *data, int64_t cycle) {
 	m_samples.clear();
 }
 
-void Sound::OnTimeJump() {
-	m_samples.clear();
-	m_muteSamples = (int) (TIME_JUMP_MUTE_SECONDS * SOUNDFREQ);
+void Sound::SetReverse(bool reverse) {
+	if (m_reverse == reverse)
+		return;
+
+	m_reverse = reverse;
 	m_fadeSamples = 0;
-	SoundSDL::Instance().ClearQueue(this);
 }
 
 void Sound::EndFrame(Motherboard *cpu) {
@@ -312,6 +300,15 @@ void Sound::EndFrame(Motherboard *cpu) {
 	m_ticksPerSample = ((clock / CYCLES_PER_TICK) / SOUNDFREQ) * soundSDL.GetRateAdjust();
 
 	Render(cpu->GetCycles());
+
+	if (m_reverse) {
+		// Pares estéreo en orden inverso
+		size_t pairs = m_samples.size() / 2;
+		for (size_t i = 0; i < pairs / 2; i++) {
+			std::swap(m_samples[i * 2], m_samples[(pairs - 1 - i) * 2]);
+			std::swap(m_samples[i * 2 + 1], m_samples[(pairs - 1 - i) * 2 + 1]);
+		}
+	}
 
 	if (!m_samples.empty()) {
 		soundSDL.Queue(this, m_samples.data(), (int) (m_samples.size() / 2));

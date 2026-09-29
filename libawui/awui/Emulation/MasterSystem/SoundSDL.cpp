@@ -109,11 +109,6 @@ void SoundSDL::Queue(Sound *sound, const int16_t *samples, int count) {
 	SDL_QueueAudio(m_audioDevice, samples, (Uint32) (count * 2 * sizeof(int16_t)));
 }
 
-void SoundSDL::ClearQueue(Sound *sound) {
-	if (IsPlaying(sound))
-		SDL_ClearQueuedAudio(m_audioDevice);
-}
-
 // > 1 cuando sobran muestras en la cola (hay que generar menos), < 1 cuando faltan
 double SoundSDL::GetRateAdjust() const {
 	if (m_audioDevice == 0)

@@ -262,7 +262,10 @@ void Motherboard::DoTick() {
 		return;
 
 	m_saveData._frameAccumulator -= 1.0;
+	RunFrame();
+}
 
+void Motherboard::RunFrame() {
 	// El frame dura lo que tarda el VDP en llegar al VSYNC. Los ciclos de la última instrucción que se pasan
 	// del frame (y los de reconocer las interrupciones) no se pierden: el VDP los recupera en el siguiente
 	m_frameDone = false;

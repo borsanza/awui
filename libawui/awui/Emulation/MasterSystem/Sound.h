@@ -32,7 +32,6 @@ namespace awui::Emulation::MasterSystem {
 			bool _latchedVolume;
 			int _pendingCycles; // Ciclos de CPU que aún no llegan a un paso del chip (16)
 			uint8_t _stereo; // Game Gear (puerto 0x06): bits 7-4 canales 3-0 a la izquierda, bits 3-0 a la derecha
-			uint8_t _fmRegisters[0x40]; // Copia de los registros del YM2413 (para restaurarlo al cargar un estado)
 			uint8_t _fmAddress;			// Registro seleccionado (puerto 0xF0)
 			uint8_t _fmControl;			// Puerto 0xF2. Bits 0-1: 0 = PSG, 1 = FM, 2 = ninguno, 3 = los dos (bit 2 solo se lee)
 		} m_saveData;
@@ -40,8 +39,8 @@ namespace awui::Emulation::MasterSystem {
 		static inline bool m_fmEnabled = true; // Ajuste: consola con FM (los juegos lo detectan al arrancar)
 		struct __OPLL *m_opll;
 
-		int m_muteSamples; // Muestras que quedan en silencio (tras rebobinar)
-		int m_fadeSamples; // Muestras del fundido de entrada ya hechas (al volver el sonido)
+		bool m_reverse;	   // Rebobinando: el audio de cada frame se envía al revés
+		int m_fadeSamples; // Muestras del fundido de entrada ya hechas (al cambiar de sentido)
 
 		int64_t m_lastCycle;
 		double m_ticksPerSample;
@@ -74,9 +73,12 @@ namespace awui::Emulation::MasterSystem {
 		inline uint8_t GetFMControl() const { return m_saveData._fmControl; }
 		void EndFrame(Motherboard *cpu);
 
-		// Salto en el tiempo (rebobinado): se descarta el audio pendiente y se silencia un momento, así pulsaciones
-		// seguidas no suenan a trozos sueltos, y luego vuelve con un fundido corto (sin chasquido)
-		void OnTimeJump();
+		// Rebobinado: cada frame emulado se oye al revés; como se rebobina frame a frame hacia atrás, el resultado
+		// es el sonido invertido y continuo. Al cambiar de sentido hay un fundido corto para que no chasquee
+		void SetReverse(bool reverse);
+
+		// El estado incluye el del YM2413 entero (su estructura de emu2413): solo vale para esta misma instancia,
+		// que es lo que usan el rebobinado y los estados en memoria
 
 		static int GetSaveSize();
 		void SaveState(uint8_t *data);

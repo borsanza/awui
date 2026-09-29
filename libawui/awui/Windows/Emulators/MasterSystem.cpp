@@ -7,6 +7,7 @@
 #include "MasterSystem.h"
 
 #include <awui/DateTime.h>
+#include <awui/Emulation/Common/RewindBuffer.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
@@ -21,6 +22,11 @@
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;
+using namespace awui::Emulation::Common;
+
+// Memoria máxima del historial de rebobinado. Cada frame ocupa unos pocos KB (solo lo que cambia), así que da
+// para varios minutos
+#define REWIND_MAX_BYTES (64 * 1024 * 1024)
 
 const int DEADZONE = 8192;
 
@@ -39,19 +45,16 @@ MasterSystem::MasterSystem() {
 	m_image = new Drawing::Image(1, 1);
 	m_cpu = new Motherboard();
 
-	m_first = -1;
-	m_last = -1;
-	m_actual = -1;
-	m_lastTick = 0;
 	m_debugger = NULL;
 
-	for (int i = 0; i < TOTALSAVED; i++)
-		m_savedData[i] = (uint8_t *) calloc(Motherboard::GetSaveSize(), sizeof(uint8_t));
+	m_state.resize(Motherboard::GetSaveSize());
+	m_rewind = new RewindBuffer(m_state.size(), REWIND_MAX_BYTES);
+	m_rewinding = false;
+	m_forwarding = false;
 }
 
 MasterSystem::~MasterSystem() {
-	for (int i = 0; i < TOTALSAVED; i++)
-		free(m_savedData[i]);
+	delete m_rewind;
 
 	delete m_cpu;
 	delete m_image;
@@ -64,32 +67,31 @@ bool MasterSystem::IsClass(Classes objectClass) const {
 void MasterSystem::LoadRom(const String file) {
 	SetName(file);
 	m_cpu->LoadRom(file);
-	m_first = 0;
-	m_last = 0;
-	m_actual = 0;
-	m_lastTick = DateTime::GetNow().GetTicks();
-	m_cpu->SaveState(m_savedData[m_actual]);
+	m_rewind->Clear();
+	m_cpu->SaveState(m_state.data());
+	m_rewind->Push(m_state.data());
 }
 
 void MasterSystem::OnTick(float deltaSeconds) {
-	long long now = DateTime::GetNow().GetTicks();
-
-	if ((now - m_lastTick) > 10000000) {
-		m_lastTick = now;
-		m_actual++;
-
-		// Guardar tras rebobinar empieza otra línea de tiempo: los estados posteriores ya no sirven
-		m_last = m_actual;
-
-		// Buffer circular: el hueco que se va a pisar era el estado más antiguo
-		if (m_actual - m_first >= TOTALSAVED) {
-			m_first = m_actual - TOTALSAVED + 1;
+	// Rebobinando (o avanzando por lo rebobinado): cada tick carga el estado anterior (o siguiente) y emula ese
+	// frame para verlo y oírlo (al revés si se retrocede). Al acabarse el historial se queda en el último
+	if (m_rewinding || m_forwarding) {
+		bool ok = m_rewinding ? m_rewind->Back(m_state.data()) : m_rewind->Forward(m_state.data());
+		if (ok) {
+			m_cpu->LoadState(m_state.data());
+			m_cpu->GetSound()->SetReverse(m_rewinding);
+			m_cpu->RunFrame();
 		}
 
-		m_cpu->SaveState(m_savedData[m_actual % TOTALSAVED]);
+		return;
 	}
 
+	m_cpu->GetSound()->SetReverse(false);
 	m_cpu->OnTick(deltaSeconds);
+
+	// Guardar tras rebobinar empieza otra línea de tiempo: lo que se podía volver a avanzar se descarta
+	m_cpu->SaveState(m_state.data());
+	m_rewind->Push(m_state.data());
 }
 
 void MasterSystem::RunOpcode() {
@@ -218,13 +220,11 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			ret = true;
 		} break;
 		case Keys::Key_Q:
-			TimeReverse();
-			RefreshPads();
+			SetRewinding(true);
 			ret = true;
 			break;
 		case Keys::Key_E:
-			TimeForward();
-			RefreshPads();
+			SetForwarding(true);
 			ret = true;
 			break;
 		case Keys::Key_1:
@@ -312,6 +312,14 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 			m_cpu->Reset();
 			ret = true;
 			break;
+		case Keys::Key_Q:
+			SetRewinding(false);
+			ret = true;
+			break;
+		case Keys::Key_E:
+			SetForwarding(false);
+			ret = true;
+			break;
 	}
 
 	if (button1) {
@@ -365,12 +373,12 @@ bool MasterSystem::RefreshButtons(JoystickButtonEventArgs *e) {
 
 bool MasterSystem::OnJoystickButtonDown(JoystickButtonEventArgs *e) {
 	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_LEFTSHOULDER) {
-		TimeReverse();
+		SetRewinding(true);
 		return true;
 	}
 
 	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_RIGHTSHOULDER) {
-		TimeForward();
+		SetForwarding(true);
 		return true;
 	}
 
@@ -388,6 +396,16 @@ bool MasterSystem::OnJoystickButtonDown(JoystickButtonEventArgs *e) {
 }
 
 bool MasterSystem::OnJoystickButtonUp(JoystickButtonEventArgs *e) {
+	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_LEFTSHOULDER) {
+		SetRewinding(false);
+		return true;
+	}
+
+	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_RIGHTSHOULDER) {
+		SetForwarding(false);
+		return true;
+	}
+
 	if (e->GetButton() & JoystickButtons::JOYSTICK_BUTTON_START) {
 		Pause(false);
 		return true;
@@ -427,22 +445,17 @@ uint32_t MasterSystem::GetCRC32() {
 	return m_cpu->GetCRC32();
 }
 
-void MasterSystem::TimeReverse() {
-	m_lastTick = DateTime::GetNow().GetTicks();
-	m_actual--;
-	if (m_actual < m_first)
-		m_actual = m_first;
-	m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
-	m_cpu->GetSound()->OnTimeJump();
+void MasterSystem::SetRewinding(bool mode) {
+	m_rewinding = mode;
+	// Los estados cargados traen los mandos de cuando se guardaron: al soltar vuelven los que se pulsan ahora
+	if (!mode)
+		RefreshPads();
 }
 
-void MasterSystem::TimeForward() {
-	m_lastTick = DateTime::GetNow().GetTicks();
-	m_actual++;
-	if (m_actual > m_last)
-		m_actual = m_last;
-	m_cpu->LoadState(m_savedData[m_actual % TOTALSAVED]);
-	m_cpu->GetSound()->OnTimeJump();
+void MasterSystem::SetForwarding(bool mode) {
+	m_forwarding = mode;
+	if (!mode)
+		RefreshPads();
 }
 
 void awui::Windows::Emulators::MasterSystem::Pause(bool mode) {

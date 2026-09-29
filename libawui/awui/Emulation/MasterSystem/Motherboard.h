@@ -82,6 +82,8 @@ namespace awui::Emulation {
 
 			void LoadRom(const String file);
 			void OnTick(float deltaSeconds);
+			// Emula exactamente un frame (sin mirar el tiempo real): lo usa el rebobinado
+			void RunFrame();
 			bool IsEndlessLoop() const;
 
 			uint16_t GetAddressBus() const;
