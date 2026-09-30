@@ -8,6 +8,7 @@
 
 #include <awui/Console.h>
 #include <awui/Convert.h>
+#include <awui/Drawing/Graphics.h>
 #include <awui/Emulation/Common/AudioSettings.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Localization.h>
@@ -542,6 +543,7 @@ void StationUI::ApplySettings() {
 	SettingsStore &settings = SettingsStore::Instance();
 
 	Localization::SetLanguage(settings.GetString("language"));
+	Drawing::Graphics::SetTextLanguage(settings.GetString("language"));
 	if (m_noRoms) {
 		m_noRoms->m_name = Localization::Tr("station.noRoms");
 		m_noRoms->m_button->SetText(m_noRoms->m_name);

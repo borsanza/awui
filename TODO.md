@@ -147,7 +147,7 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 11. **Controles deshabilitados:** no hay `Enabled`. Un control se puede ocultar, pero no dejarlo visible e inactivo.
 12. **Orden de foco con el tabulador:** `m_tabIndex` se asigna pero no se usa; no hay navegación con Tab.
 13. **Registro de mensajes con niveles:** hoy se mezclan `Console`, `printf` y `fprintf(stderr)`. Con niveles (depuración, aviso, error) se podrían silenciar mensajes como "Partida guardada cargada".
-14. **Texto con Pango** en vez de la API sencilla de cairo: permitiría usar otra fuente cuando falta un carácter (japonés, chino…), texto de derecha a izquierda y cortar líneas de forma correcta.
+14. **`Label` de varias líneas:** el texto ya pasa por Pango y las descripciones de los ajustes ya se cortan con `TextRenderer::SplitLines` (también en japonés y chino). Falta un `Label` que haga eso solo (ancho máximo, alto según las líneas), para usarlo en otros sitios sin repetir la cuenta de `SettingsUI`.
 15. **Pruebas automáticas en el repositorio**, con las pruebas sin ventana que ya existen como base (ajustes, paginación, estados, cintas, Chip-8…) y un `ctest` que las lance con los sanitizers.
 
 ## Windows y otras plataformas

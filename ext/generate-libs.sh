@@ -59,6 +59,7 @@ FILES=(
     "/mingw64/bin/SDL2.dll"
     "/mingw64/bin/SDL2_image.dll"
     "/mingw64/bin/libcairo-2.dll"
+    "/mingw64/bin/libpangocairo-1.0-0.dll"
 )
 
 rm ${DEST_DIR}/*
@@ -77,6 +78,7 @@ FILES=(
     "/mingw32/bin/SDL2.dll"
     "/mingw32/bin/SDL2_image.dll"
     "/mingw32/bin/libcairo-2.dll"
+    "/mingw32/bin/libpangocairo-1.0-0.dll"
 )
 
 rm ${DEST_DIR}/*

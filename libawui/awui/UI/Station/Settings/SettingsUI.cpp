@@ -250,33 +250,10 @@ void SettingsUI::UpdateDescription() {
 
 	m_lastDescription = text;
 
-	Font *font = m_description[0]->GetFont();
-	std::string words = text.ToCharArray();
-	std::string line;
-	int lineIndex = 0;
-	size_t pos = 0;
-	while ((pos < words.size()) && (lineIndex < DescriptionLines)) {
-		size_t end = words.find(' ', pos);
-		if (end == std::string::npos)
-			end = words.size();
-
-		std::string word = words.substr(pos, end - pos);
-		std::string candidate = line.empty() ? word : line + " " + word;
-		if (!line.empty() && (TextRenderer::GetMeasureText(candidate.c_str(), font).GetWidth() > width)) {
-			m_description[lineIndex++]->SetText(line.c_str());
-			line = word;
-		} else {
-			line = candidate;
-		}
-
-		pos = end + 1;
-	}
-
-	if (lineIndex < DescriptionLines)
-		m_description[lineIndex++]->SetText(line.c_str());
-
-	while (lineIndex < DescriptionLines)
-		m_description[lineIndex++]->SetText("");
+	// Pango corta por palabras, y en japonés o chino (sin espacios) por donde lo permita el idioma
+	std::vector<String> lines = TextRenderer::SplitLines(text, m_description[0]->GetFont(), width);
+	for (int i = 0; i < DescriptionLines; i++)
+		m_description[i]->SetText((i < (int) lines.size()) ? lines[i] : String());
 }
 
 // Vuelve a crear el menú (al cambiar de idioma) conservando los grupos abiertos y la fila con el foco

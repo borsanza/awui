@@ -11,14 +11,17 @@
 using namespace awui::Drawing;
 using namespace awui::UI;
 
-Graphics *TextRenderer::s_graphics = NULL;
-Image *TextRenderer::s_image = NULL;
+
+static Graphics *GetGraphics() {
+	static Image *image = new Image(1, 1);
+	static Graphics *graphics = Graphics::FromImage(image);
+	return graphics;
+}
 
 GlyphMetrics TextRenderer::GetMeasureText(const String text, Font *font) {
-	if (s_graphics == NULL) {
-		s_image = new Drawing::Image(1, 1);
-		s_graphics = Graphics::FromImage(s_image);
-	}
+	return GetGraphics()->GetMeasureText(text, font);
+}
 
-	return s_graphics->GetMeasureText(text, font);
+std::vector<awui::String> TextRenderer::SplitLines(const String &text, Font *font, int width) {
+	return GetGraphics()->SplitLines(text, font, width);
 }

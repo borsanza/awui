@@ -5,6 +5,7 @@ find_package(nlohmann_json REQUIRED)
 pkg_search_module(SDL2 REQUIRED sdl2)
 pkg_search_module(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
 pkg_search_module(CAIRO REQUIRED cairo)
+pkg_search_module(PANGOCAIRO REQUIRED pangocairo)
 
 # Define los archivos de fuente y cabecera (CONFIGURE_DEPENDS: detecta ficheros nuevos sin reconfigurar a mano)
 file(GLOB_RECURSE LIBAWUI_SOURCES CONFIGURE_DEPENDS awui/*.cpp awui/*.c)
@@ -48,3 +49,8 @@ if(WIN32)
 endif()
 
 target_compile_options(awui PUBLIC ${CAIRO_CFLAGS_OTHER})
+
+# Pango solo lo usa Drawing/Graphics.cpp (ninguna cabecera de awui lo incluye): dependencia privada
+target_include_directories(awui PRIVATE ${PANGOCAIRO_INCLUDE_DIRS})
+target_link_libraries(awui PRIVATE ${PANGOCAIRO_LINK_LIBRARIES})
+target_compile_options(awui PRIVATE ${PANGOCAIRO_CFLAGS_OTHER})

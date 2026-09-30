@@ -48,7 +48,7 @@ Requiere CMake ≥ 3.21, Ninja y un compilador con C++20.
 Dependencias en Debian/Ubuntu:
 
 ```bash
-sudo apt-get install cmake ninja-build libsdl2-dev libsdl2-image-dev libglew-dev libcairo2-dev nlohmann-json3-dev libgl-dev
+sudo apt-get install cmake ninja-build libsdl2-dev libsdl2-image-dev libglew-dev libcairo2-dev libpango1.0-dev nlohmann-json3-dev libgl-dev
 ```
 
 En Windows, con MSYS2 (ver paquetes más abajo).
@@ -112,6 +112,7 @@ Windows:
     pacman -S mingw-w64-i686-SDL2
     pacman -S mingw-w64-i686-SDL2_image
     pacman -S mingw-w64-i686-cairo
+    pacman -S mingw-w64-i686-pango
     pacman -S mingw-w64-i686-nlohmann-json
 
     pacman -S mingw-w64-x86_64-toolchain
@@ -119,6 +120,7 @@ Windows:
     pacman -S mingw-w64-x86_64-SDL2
     pacman -S mingw-w64-x86_64-SDL2_image
     pacman -S mingw-w64-x86_64-cairo
+    pacman -S mingw-w64-x86_64-pango
     pacman -S mingw-w64-x86_64-nlohmann-json
 
     cd /c/awui/ext/

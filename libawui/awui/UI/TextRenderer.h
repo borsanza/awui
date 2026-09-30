@@ -2,6 +2,8 @@
 
 #include <awui/String.h>
 
+#include <vector>
+
 namespace awui {
 	namespace Drawing {
 		class Font;
@@ -12,12 +14,10 @@ namespace awui {
 
 	namespace UI {
 		class TextRenderer {
-		  private:
-			static awui::Drawing::Graphics *s_graphics;
-			static awui::Drawing::Image *s_image;
-
 		  public:
 			static awui::Drawing::GlyphMetrics GetMeasureText(const String text, awui::Drawing::Font *font);
+			// Texto partido en líneas de como mucho width píxeles (Graphics::SplitLines)
+			static std::vector<String> SplitLines(const String &text, awui::Drawing::Font *font, int width);
 		};
 	} // namespace UI
 } // namespace awui

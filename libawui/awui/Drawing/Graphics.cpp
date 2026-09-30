@@ -10,10 +10,13 @@
 #include <awui/Drawing/Pen.h>
 #include <awui/Drawing/Size.h>
 #include <awui/Math.h>
+#include <awui/String.h>
 
 #include <cairo.h>
+#include <pango/pangocairo.h>
 
 #include <algorithm>
+#include <string>
 
 using namespace awui::Drawing;
 
@@ -129,70 +132,118 @@ void Graphics::DrawLine(Drawing::Pen *pen, float x1, float y1, float x2, float y
 
 #define BORDER 2
 
+// Texto con Pango (sobre cairo): si a la fuente le falta un carácter (japonés, chino...) busca otra que lo tenga, y
+// compone bien las escrituras complejas y las de derecha a izquierda
+static std::string s_textLanguage;
+
+void Graphics::SetTextLanguage(const String &code) {
+	s_textLanguage = code.ToStdString();
+}
+
+static PangoLayout *CreateLayout(cairo_t *cr, const awui::String &text, Font *font) {
+	PangoLayout *layout = pango_cairo_create_layout(cr);
+
+	if (!s_textLanguage.empty()) {
+		PangoAttrList *attributes = pango_attr_list_new();
+		pango_attr_list_insert(attributes, pango_attr_language_new(pango_language_from_string(s_textLanguage.c_str())));
+		pango_layout_set_attributes(layout, attributes);
+		pango_attr_list_unref(attributes);
+	}
+
+	PangoFontDescription *description = pango_font_description_new();
+	pango_font_description_set_family(description, font->GetFont().ToCharArray());
+	pango_font_description_set_weight(description, font->GetBold() ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL);
+	pango_font_description_set_style(description, font->GetItalic() ? PANGO_STYLE_ITALIC : PANGO_STYLE_NORMAL);
+	// En píxeles, como cairo_set_font_size (el tamaño normal de Pango va en puntos)
+	pango_font_description_set_absolute_size(description, font->GetSize() * PANGO_SCALE);
+	pango_layout_set_font_description(layout, description);
+	pango_font_description_free(description);
+
+	pango_layout_set_text(layout, text.ToCharArray(), -1);
+	return layout;
+}
+
+// Medidas del texto como las daba cairo: la tinta (ink) respecto al punto de partida en la línea base
+struct TextExtents {
+	int bearingX; // Desde el punto de partida hasta el primer píxel de tinta
+	int bearingY; // Desde la línea base hasta el píxel de tinta más alto (negativo: por encima)
+	int width;	  // Tinta
+	int height;
+	int advance; // Hasta donde empezaría el texto siguiente
+	int ascent;	 // De la línea (no de la tinta): por encima y por debajo de la línea base
+	int descent;
+	int inkX; // Tinta respecto a la esquina superior izquierda del layout (para colocarlo al pintar)
+	int inkY;
+};
+
+static TextExtents GetExtents(PangoLayout *layout) {
+	PangoRectangle ink, logical;
+	pango_layout_get_pixel_extents(layout, &ink, &logical);
+	int baseline = pango_layout_get_baseline(layout) / PANGO_SCALE;
+
+	TextExtents e;
+	e.bearingX = ink.x - logical.x;
+	e.bearingY = ink.y - baseline;
+	e.width = ink.width;
+	e.height = ink.height;
+	e.advance = logical.width;
+	e.ascent = baseline - logical.y;
+	e.descent = logical.y + logical.height - baseline;
+	e.inkX = ink.x;
+	e.inkY = ink.y;
+	return e;
+}
+
 GlyphMetrics Graphics::GetMeasureText(const String text, Drawing::Font *font) const {
-	cairo_font_weight_t weight;
-	cairo_font_slant_t slant;
-
-	if (font->GetBold())
-		weight = CAIRO_FONT_WEIGHT_BOLD;
-	else
-		weight = CAIRO_FONT_WEIGHT_NORMAL;
-
-	if (font->GetItalic())
-		slant = CAIRO_FONT_SLANT_ITALIC;
-	else
-		slant = CAIRO_FONT_SLANT_NORMAL;
-
-	cairo_text_extents_t extents;
-	cairo_font_extents_t fontExtents;
-
-	cairo_save(m_cr);
-	cairo_select_font_face(m_cr, font->GetFont().ToCharArray(), slant, weight);
-	cairo_set_font_size(m_cr, font->GetSize());
-	cairo_text_extents(m_cr, text.ToCharArray(), &extents);
-	cairo_font_extents(m_cr, &fontExtents);
-	cairo_restore(m_cr);
+	PangoLayout *layout = CreateLayout(m_cr, text, font);
+	TextExtents extents = GetExtents(layout);
+	g_object_unref(layout);
 
 	GlyphMetrics metrics;
 	metrics.SetWidth(extents.width + BORDER * 2);
 	metrics.SetHeight(extents.height + BORDER * 2);
-	metrics.SetAdvanceX(extents.x_advance);
-	metrics.SetAdvanceY(extents.y_advance);
-	metrics.SetBearingX(extents.x_bearing);
-	metrics.SetBearingY(extents.y_bearing);
-
-	metrics.SetAscent(fontExtents.ascent);
-	metrics.SetDescent(fontExtents.descent);
+	metrics.SetAdvanceX(extents.advance);
+	metrics.SetAdvanceY(0);
+	metrics.SetBearingX(extents.bearingX);
+	metrics.SetBearingY(extents.bearingY);
+	metrics.SetAscent(extents.ascent);
+	metrics.SetDescent(extents.descent);
 	return metrics;
 }
 
+std::vector<awui::String> Graphics::SplitLines(const String &text, Drawing::Font *font, int width) const {
+	std::vector<String> lines;
+	if (text.IsEmpty())
+		return lines;
+
+	PangoLayout *layout = CreateLayout(m_cr, text, font);
+	// El ancho de cada línea al dibujarla lleva un margen (BORDER) a cada lado
+	pango_layout_set_width(layout, std::max(1, width - (BORDER * 2)) * PANGO_SCALE);
+	pango_layout_set_wrap(layout, PANGO_WRAP_WORD_CHAR);
+
+	const std::string &utf8 = text.ToStdString();
+	int count = pango_layout_get_line_count(layout);
+	for (int i = 0; i < count; i++) {
+		PangoLayoutLine *line = pango_layout_get_line_readonly(layout, i);
+		String part(utf8.substr(line->start_index, line->length));
+		lines.push_back(part.TrimEnd());
+	}
+
+	g_object_unref(layout);
+	return lines;
+}
+
 void Graphics::DrawString(const String text, Drawing::Font *font, const Color color, float x, float y) {
-	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
+	PangoLayout *layout = CreateLayout(m_cr, text, font);
+	TextExtents extents = GetExtents(layout);
 
-	cairo_font_weight_t weight;
-	cairo_font_slant_t slant;
-
-	if (font->GetBold())
-		weight = CAIRO_FONT_WEIGHT_BOLD;
-	else
-		weight = CAIRO_FONT_WEIGHT_NORMAL;
-
-	if (font->GetItalic())
-		slant = CAIRO_FONT_SLANT_ITALIC;
-	else
-		slant = CAIRO_FONT_SLANT_NORMAL;
-
-	cairo_text_extents_t extents;
+	// La tinta empieza en (x + BORDER, y + BORDER), como antes con cairo
 	cairo_save(m_cr);
-	cairo_select_font_face(m_cr, font->GetFont().ToCharArray(), slant, weight);
-	cairo_set_font_size(m_cr, font->GetSize());
-	cairo_text_extents(m_cr, text.ToCharArray(), &extents);
-
-	int posx = x - extents.x_bearing + BORDER;
-	int posy = y - extents.y_bearing + BORDER;
-	cairo_move_to(m_cr, posx, posy);
-	cairo_show_text(m_cr, text.ToCharArray());
+	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
+	cairo_move_to(m_cr, (int) x - extents.inkX + BORDER, (int) y - extents.inkY + BORDER);
+	pango_cairo_show_layout(m_cr, layout);
 	cairo_restore(m_cr);
+	g_object_unref(layout);
 
 	if (font->GetStrikeout() || font->GetUnderline()) {
 		float size = font->GetSize() * 0.07f;
@@ -204,13 +255,13 @@ void Graphics::DrawString(const String text, Drawing::Font *font, const Color co
 
 		// Las líneas van donde está la tinta del texto: de x + BORDER a x + BORDER + ancho (como el propio texto)
 		if (font->GetStrikeout()) {
-			float posy = y - (extents.y_bearing / 2.0f) + BORDER;
+			float posy = y - (extents.bearingY / 2.0f) + BORDER;
 			posy = Math::Round(posy);
 			DrawLine(&pen, x + BORDER, posy, x + extents.width + BORDER, posy);
 		}
 
 		if (font->GetUnderline()) {
-			float posy = y - extents.y_bearing + BORDER + (size * 1.5f);
+			float posy = y - extents.bearingY + BORDER + (size * 1.5f);
 			posy = Math::Round(posy);
 			DrawLine(&pen, x + BORDER, posy, x + extents.width + BORDER, posy);
 		}
