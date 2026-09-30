@@ -126,7 +126,7 @@ void Form::OnTick(float deltaSeconds) {
 	stats->SetLocation(0, GetHeight() - stats->GetHeight());
 
 	int bottom = stats->GetVisible() ? stats->GetTop() : GetHeight();
-	m_toast.SetLocation(40, bottom - m_toast.GetHeight() - 20);
+	m_toast.SetAnchor(40, bottom - 20);
 }
 
 

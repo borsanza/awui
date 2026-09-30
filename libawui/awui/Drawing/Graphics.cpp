@@ -13,6 +13,8 @@
 
 #include <cairo.h>
 
+#include <algorithm>
+
 using namespace awui::Drawing;
 
 Graphics::Graphics() {
@@ -42,6 +44,29 @@ void Graphics::Clear(const Color color) {
 void Graphics::FillRectangle(const Color color, float x, float y, float width, float height) {
 	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
 	cairo_rectangle(m_cr, x, y, width, height);
+	cairo_fill(m_cr);
+}
+
+// Contorno de un rectángulo con las esquinas redondeadas (sin pintar)
+static void RoundedRectanglePath(cairo_t *cr, float x, float y, float width, float height, float radius) {
+	float r = std::min(radius, std::min(width, height) / 2.0f);
+	cairo_new_sub_path(cr);
+	cairo_arc(cr, x + width - r, y + r, r, -awui::Math::PI / 2.0, 0.0);
+	cairo_arc(cr, x + width - r, y + height - r, r, 0.0, awui::Math::PI / 2.0);
+	cairo_arc(cr, x + r, y + height - r, r, awui::Math::PI / 2.0, awui::Math::PI);
+	cairo_arc(cr, x + r, y + r, r, awui::Math::PI, 3.0 * awui::Math::PI / 2.0);
+	cairo_close_path(cr);
+}
+
+void Graphics::DrawRoundedRectangle(Drawing::Pen *pen, float x, float y, float width, float height, float radius) {
+	SetPen(pen);
+	RoundedRectanglePath(m_cr, x, y, width, height, radius);
+	cairo_stroke(m_cr);
+}
+
+void Graphics::FillRoundedRectangle(const Color color, float x, float y, float width, float height, float radius) {
+	cairo_set_source_rgba(m_cr, color.GetR() / 255.0f, color.GetG() / 255.0f, color.GetB() / 255.0f, color.GetA() / 255.0f);
+	RoundedRectanglePath(m_cr, x, y, width, height, radius);
 	cairo_fill(m_cr);
 }
 

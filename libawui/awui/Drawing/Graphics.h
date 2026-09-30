@@ -31,6 +31,9 @@ namespace awui {
 			void Clear(const Drawing::Color color);
 			void DrawRectangle(Drawing::Pen *pen, float x, float y, float width, float height);
 			void FillRectangle(const Drawing::Color color, float x, float y, float width, float height);
+			// Con las esquinas redondeadas (radius: radio de las esquinas, en píxeles)
+			void DrawRoundedRectangle(Drawing::Pen *pen, float x, float y, float width, float height, float radius);
+			void FillRoundedRectangle(const Drawing::Color color, float x, float y, float width, float height, float radius);
 			void DrawImage(Drawing::Image *image, float x, float y);
 			void DrawImage(Drawing::Image *image, float x, float y, float width, float height);
 			void DrawLine(Drawing::Pen *pen, float x1, float y1, float x2, float y2);
