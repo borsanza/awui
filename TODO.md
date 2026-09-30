@@ -145,7 +145,6 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 
 ### Estilo y normas del repositorio
 
-- **Finales de línea:** hay 168 ficheros con CRLF y no hay `.gitattributes`, así que cada editor o script puede cambiarlos sin querer (ya pasó con `Graphics.cpp`). Un `.gitattributes` con `* text=auto eol=lf` (y `*.bat eol=crlf`) y una conversión única lo resuelve.
 - **Nombres de miembros:** hay dos estilos, `m_nombre` (67 ficheros) y `this->_nombre` (21, sobre todo emuladores y `IO`). Conviene quedarse con uno (`m_`, que es el mayoritario).
 - **Cabeceras de copyright:** conviven tres formatos (`/** awui/... Copyright */`, `// (c) Copyright ... (BSD License)` y ninguno). Uno solo, igual en todos.
 
