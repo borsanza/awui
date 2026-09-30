@@ -48,7 +48,7 @@ void SelectionFrame::OnTick(Control *focused, float deltaSeconds) {
 		m_right = right;
 		m_bottom = bottom;
 	} else {
-		float percent = deltaSeconds * 10.0f;
+		float percent = Math::SmoothFactor(10.0f / 60.0f, deltaSeconds);
 		m_left = Math::Interpolate(m_left, left, percent);
 		m_top = Math::Interpolate(m_top, top, percent);
 		m_right = Math::Interpolate(m_right, right, percent);

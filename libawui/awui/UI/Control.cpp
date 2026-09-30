@@ -596,7 +596,8 @@ bool Control::IsVisible(bool checkInside) const {
 #include <inttypes.h>
 
 void Control::OnTickPre(float deltaSeconds) {
-	float percent = 10.0f * deltaSeconds;
+	// Un sexto de lo que falta por frame a 60 Hz (lo mismo que antes a 60 Hz; ahora también a otras tasas)
+	float percent = Math::SmoothFactor(10.0f / 60.0f, deltaSeconds);
 	int oldWidth = GetWidth();
 	int oldHeight = GetHeight();
 

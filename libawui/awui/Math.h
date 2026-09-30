@@ -86,5 +86,10 @@ namespace awui {
 		static float Tanh(float value);
 
 		static float Interpolate(float from, float to, float percent, bool rounding = true);
+
+		// Parte del camino que falta que hay que recorrer en este tick para un acercamiento suave (exponencial) que
+		// dure lo mismo a cualquier tasa de frames: a 60 Hz es exactamente perFrame; a 30 Hz, lo que harían dos
+		// frames de 60; a 144 Hz, menos por frame. Para usar con Interpolate
+		static float SmoothFactor(float perFrame, float deltaSeconds);
 	};
 } // namespace awui

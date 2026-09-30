@@ -227,6 +227,10 @@ float Math::Tanh(float value) {
 	return tanhf(value);
 }
 
+float Math::SmoothFactor(float perFrame, float deltaSeconds) {
+	return 1.0f - powf(1.0f - perFrame, deltaSeconds * 60.0f);
+}
+
 float Math::Interpolate(float from, float to, float percent, bool rounding) {
 	// Con frames lentos el porcentaje (10 * deltaSeconds) puede pasar de 1 y el valor se saldría del destino
 	if (percent > 1.0f)

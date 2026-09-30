@@ -68,7 +68,7 @@ void LabelButton::OnTick(float deltaSeconds) {
 			if ((GetLabelWidth() >> 1) < -scrolled)
 				dst = min;
 
-			dst = Math::Interpolate(scrolled, dst, deltaSeconds * 10.0f);
+			dst = Math::Interpolate(scrolled, dst, Math::SmoothFactor(10.0f / 60.0f, deltaSeconds));
 			if ((Math::Abs(dst) <= 1) || ((dst - 1) <= min))
 				dst = 0;
 

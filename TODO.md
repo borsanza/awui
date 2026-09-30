@@ -82,7 +82,6 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
   - `EffectExpo` es `p⁶`, no una exponencial.
   - `EffectIn`/`Out`/`InOut` son clases sin estado que podrían ser funciones.
   - Cada `Effect` guarda un `String` con su nombre.
-- **Suavizado dependiente de los frames:** `Control::OnTickPre` y `SelectionFrame` usan `percent = 10 * deltaSeconds`, que es una aproximación lineal. Con frames lentos cambia la curva. Lo correcto es `1 - exp(-10 * deltaSeconds)` (como ya hace `Gradient` con `powf`).
 - **Animaciones congeladas:** un control invisible no recibe `OnTick`, así que su animación se congela y salta al volver a mostrarse.
 - **Navegación con las flechas:** el código de las cuatro direcciones en `Control::OnRemoteKeyPress` está repetido casi igual, y en cada pulsación recorre todo el árbol para recoger los controles seleccionables.
 - **Teclas por código de tecla (`SDL_Keycode`) y no por posición (`SDL_Scancode`):** en un teclado no inglés, las teclas del emulador cambian de sitio (por ejemplo, las comillas del Spectrum con teclado español).
