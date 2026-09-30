@@ -179,8 +179,10 @@ namespace awui {
 			void SetParent(Control *parent);
 
 			void OnMouseMovePre(int x, int y, int buttons);
-			void OnMouseUpPre(Input::MouseButtons::Enum button, int buttons);
-			void OnMouseDownPre(int x, int y, Input::MouseButtons::Enum button, int buttons);
+			void OnMouseUpPre(Input::MouseButtons::Enum button, int buttons, int clicks = 1);
+			void OnMouseDownPre(int x, int y, Input::MouseButtons::Enum button, int buttons, int clicks = 1);
+			// Rueda: delta > 0 hacia arriba, < 0 hacia abajo (una unidad por muesca). Devuelve si algún control la ha usado
+			bool OnMouseWheelPre(int x, int y, int delta);
 			void OnRemoteKeyPressPre(int which, Input::RemoteButtons::Enum button);
 			void OnRemoteKeyUpPre(int which, Input::RemoteButtons::Enum button);
 			void OnJoystickButtonDownPre(int which, int button, uint32_t buttons, uint32_t prevButtons);
@@ -193,6 +195,8 @@ namespace awui {
 			virtual void OnMouseDown(Events::MouseEventArgs *e) {}
 			virtual void OnMouseMove(Events::MouseEventArgs *e) {}
 			virtual void OnMouseUp(Events::MouseEventArgs *e) {}
+			// La rueda le llega al control que está bajo el ratón; si devuelve false, sube a su padre
+			virtual bool OnMouseWheel(Events::MouseEventArgs *e) { return false; }
 			virtual bool OnRemoteKeyPress(int which, Input::RemoteButtons::Enum button);
 			virtual bool OnRemoteKeyUp(int which, Input::RemoteButtons::Enum button);
 			virtual bool OnJoystickButtonDown(Events::JoystickButtonEventArgs *e);

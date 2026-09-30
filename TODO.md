@@ -9,7 +9,6 @@ Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra d
 ## Fallos con efecto hoy
 
 - **Teclas mantenidas:** `Form::ProcessEvents` no mira `event.key.repeat`, así que al mantener pulsada una tecla llegan pulsaciones repetidas. En el Spectrum, mantener F8 activa y desactiva el modo rápido sin parar, y F2 guarda el estado varias veces. La repetición sí conviene para moverse por los menús (botones del mando a distancia), pero no para las teclas de función ni para los emuladores.
-- **Rueda del ratón:** en `Form::ProcessEvents` hay un `break` antes del código de `SDL_MOUSEWHEEL`, así que la rueda no hace nada. `MouseEventArgs` tampoco rellena nunca `Delta` ni `Clicks` (no hay doble clic).
 - **Pérdida de foco de la ventana:** no se atiende `SDL_WINDOWEVENT_FOCUS_LOST`. Si se cambia de ventana (Alt+Tab) con una tecla o un botón pulsados, se quedan pulsados (`Form::s_buttonsPad1/2`, las teclas del Spectrum). Tampoco se pausa nada al minimizar.
 - **Bucle sin límite:** no hay `SDL_Delay` en ningún sitio. Sin vsync, o con la ventana minimizada (donde el vsync no frena), el programa usa el 100 % de un núcleo.
 - **`SliderBrowser` cuenta en frames:** su animación dura 10 frames, así que va más rápida en una pantalla de 144 Hz que en una de 60 Hz. Debería contar tiempo (`deltaSeconds`).

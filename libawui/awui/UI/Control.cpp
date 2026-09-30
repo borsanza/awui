@@ -428,7 +428,7 @@ void Control::OnPaint(OpenGL::GL *gl) {
 		form->GetSelectionFrame()->Paint(this);
 }
 
-void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons) {
+void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons, int clicks) {
 	m_mouseEventArgs->SetLocation(x, y);
 
 	for (int i = GetCount() - 1; i >= 0; i--) {
@@ -438,20 +438,22 @@ void Control::OnMouseDownPre(int x, int y, MouseButtons::Enum button, int button
 
 		if (m_mouseControl != NULL) {
 			if (m_mouseControl == control) {
-				control->OnMouseDownPre(x - control->GetLeft(), y - control->GetTop(), button, buttons);
+				control->OnMouseDownPre(x - control->GetLeft(), y - control->GetTop(), button, buttons, clicks);
 				return;
 			}
 		} else {
 			if ((control->GetLeft() <= x) && (x <= control->GetRight()) && (control->GetTop() <= y) && (y <= control->GetBottom())) {
 				m_mouseControl = control;
 				ChangeControlOnMouseOver(control);
-				control->OnMouseDownPre(x - control->GetLeft(), y - control->GetTop(), button, buttons);
+				control->OnMouseDownPre(x - control->GetLeft(), y - control->GetTop(), button, buttons, clicks);
 				return;
 			}
 		}
 	}
 
 	m_mouseEventArgs->SetButton(button);
+	m_mouseEventArgs->SetClicks(clicks);
+	m_mouseEventArgs->SetDelta(0);
 	OnMouseDown(m_mouseEventArgs);
 
 	//	std::cout << "Down: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
@@ -507,7 +509,7 @@ void Control::ChangeControlOnMouseOver(Control *control) {
 	}
 }
 
-void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons) {
+void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons, int clicks) {
 	int x = m_mouseEventArgs->GetX();
 	int y = m_mouseEventArgs->GetY();
 
@@ -519,21 +521,43 @@ void Control::OnMouseUpPre(MouseButtons::Enum button, int buttons) {
 		if (m_mouseControl != NULL) {
 			if (m_mouseControl == control) {
 				m_mouseControl = NULL;
-				control->OnMouseUpPre(button, buttons);
+				control->OnMouseUpPre(button, buttons, clicks);
 				return;
 			}
 		} else {
 			if ((control->GetLeft() <= x) && (x <= control->GetRight()) && (control->GetTop() <= y) && (y <= control->GetBottom())) {
-				control->OnMouseUpPre(button, buttons);
+				control->OnMouseUpPre(button, buttons, clicks);
 				return;
 			}
 		}
 	}
 
 	m_mouseEventArgs->SetButton(button);
+	m_mouseEventArgs->SetClicks(clicks);
+	m_mouseEventArgs->SetDelta(0);
 	OnMouseUp(m_mouseEventArgs);
 
 	//	std::cout << "Up: " << mouseEventArgs->GetX() << "x" << mouseEventArgs->GetY() << "   " << mouseEventArgs->GetButton() << "   " << GetName() << std::endl;
+}
+
+bool Control::OnMouseWheelPre(int x, int y, int delta) {
+	// Primero los hijos que están bajo el ratón, del de encima al de debajo (o el que lo tiene capturado): uno que no
+	// la use, como la barra de FPS o un aviso, la deja pasar al de debajo. Si nadie la usa, este control
+	for (int i = GetCount() - 1; i >= 0; i--) {
+		Control *control = Get(i);
+		if (!control->IsVisible())
+			continue;
+
+		bool under = (m_mouseControl != NULL) ? (m_mouseControl == control) : ((control->GetLeft() <= x) && (x <= control->GetRight()) && (control->GetTop() <= y) && (y <= control->GetBottom()));
+		if (under && control->OnMouseWheelPre(x - control->GetLeft(), y - control->GetTop(), delta))
+			return true;
+	}
+
+	m_mouseEventArgs->SetLocation(x, y);
+	m_mouseEventArgs->SetButton(MouseButtons::None);
+	m_mouseEventArgs->SetClicks(0);
+	m_mouseEventArgs->SetDelta(delta);
+	return OnMouseWheel(m_mouseEventArgs);
 }
 
 void Control::OnMouseLeave() {

@@ -16,6 +16,7 @@
 #include <SDL_events.h>
 #include <SDL_opengl.h>
 #include <algorithm>
+#include <cstdlib>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -434,41 +435,7 @@ void Form::ProcessEvents(SDL_Event *event) {
 				SetFullscreen(!GetFullscreen());
 		} break;
 
-		case SDL_MOUSEBUTTONDOWN: {
-			MouseButtons::Enum button = MouseButtons::None;
-			switch (event->button.button) {
-				case SDL_BUTTON_LEFT:
-					button = MouseButtons::Left;
-					break;
-				case SDL_BUTTON_RIGHT:
-					button = MouseButtons::Right;
-					break;
-				case SDL_BUTTON_MIDDLE:
-					button = MouseButtons::Middle;
-					break;
-			}
-			if (button) {
-				m_mouseButtons |= button;
-				OnMouseDownPre(m_mouseX, m_mouseY, button, m_mouseButtons);
-			}
-			break;
-		}
-		case SDL_MOUSEWHEEL: {
-			MouseButtons::Enum button = MouseButtons::None;
-			if (event->wheel.y < 0)
-				button = MouseButtons::XButton2;
-			else
-				button = MouseButtons::XButton1;
-			break;
-			if (button) {
-				m_mouseButtons &= ~button;
-				OnMouseUpPre(button, m_mouseButtons);
-
-				m_mouseButtons |= button;
-				OnMouseDownPre(m_mouseX, m_mouseY, button, m_mouseButtons);
-			}
-		}
-
+		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP: {
 			MouseButtons::Enum button = MouseButtons::None;
 			switch (event->button.button) {
@@ -481,13 +448,41 @@ void Form::ProcessEvents(SDL_Event *event) {
 				case SDL_BUTTON_MIDDLE:
 					button = MouseButtons::Middle;
 					break;
-				default:
+				case SDL_BUTTON_X1: // Botones laterales (atrás, adelante)
+					button = MouseButtons::XButton1;
+					break;
+				case SDL_BUTTON_X2:
+					button = MouseButtons::XButton2;
 					break;
 			}
 
-			if (button) {
+			if (!button)
+				break;
+
+			// clicks: 1, o 2 en un doble clic (3 en un triple...)
+			if (event->type == SDL_MOUSEBUTTONDOWN) {
+				m_mouseButtons |= button;
+				OnMouseDownPre(m_mouseX, m_mouseY, button, m_mouseButtons, event->button.clicks);
+			} else {
 				m_mouseButtons &= ~button;
-				OnMouseUpPre(button, m_mouseButtons);
+				OnMouseUpPre(button, m_mouseButtons, event->button.clicks);
+			}
+			break;
+		}
+
+		case SDL_MOUSEWHEEL: {
+			int delta = event->wheel.y;
+			if (event->wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
+				delta = -delta;
+
+			// Si ningún control la usa, cada muesca es como las flechas arriba y abajo: así se recorren los menús.
+			// Como mucho 3 pasos por evento (un panel táctil puede mandar muchas muescas de golpe)
+			if ((delta != 0) && !OnMouseWheelPre(m_mouseX, m_mouseY, delta)) {
+				RemoteButtons::Enum arrow = (delta > 0) ? RemoteButtons::Up : RemoteButtons::Down;
+				for (int n = std::min(std::abs(delta), 3); n > 0; n--) {
+					OnRemoteKeyPressPre(0, arrow);
+					OnRemoteKeyUpPre(0, arrow);
+				}
 			}
 			break;
 		}

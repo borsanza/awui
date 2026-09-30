@@ -45,6 +45,8 @@ namespace awui::UI {
 			void SetStationUI(UI::Station::StationUI *station);
 
 			virtual bool OnRemoteKeyUp(int which, UI::Input::RemoteButtons::Enum button);
+			// La rueda no hace nada en un juego (si no, llegaría como flechas al mando del juego)
+			virtual bool OnMouseWheel(UI::Events::MouseEventArgs *e) override { return true; }
 		};
 	} // namespace Emulators
 } // namespace awui::UI
