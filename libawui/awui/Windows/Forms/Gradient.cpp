@@ -20,11 +20,11 @@ Gradient::Gradient() {
 }
 
 void Gradient::SetColor(int pos, const ColorF color) {
-	this->m_color[pos] = this->m_colorGo[pos] = color;
+	m_color[pos] = m_colorGo[pos] = color;
 }
 
 void Gradient::SetColorGo(int pos, const ColorF color) {
-	this->m_colorGo[pos] = color;
+	m_colorGo[pos] = color;
 }
 
 // GL_CCW
@@ -33,19 +33,19 @@ void Gradient::OnPaint(GL *gl) {
 
 	glBegin(GL_QUADS);
 
-	c = &this->m_color[3];
+	c = &m_color[3];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(0.0f, this->GetHeight(), 0.0f); // Left Bottom
+	glVertex3f(0.0f, GetHeight(), 0.0f); // Left Bottom
 
-	c = &this->m_color[2];
+	c = &m_color[2];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(this->GetWidth(), this->GetHeight(), 0.0f); // Right Bottom
+	glVertex3f(GetWidth(), GetHeight(), 0.0f); // Right Bottom
 
-	c = &this->m_color[1];
+	c = &m_color[1];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(this->GetWidth(), 0.0f, 0.0f); // Right Top
+	glVertex3f(GetWidth(), 0.0f, 0.0f); // Right Top
 
-	c = &this->m_color[0];
+	c = &m_color[0];
 	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
 	glVertex3f(0.0f, 0.0f, 0.0f); // Left Top
 
@@ -60,6 +60,6 @@ void Gradient::OnTick(float deltaSeconds) {
 	// Un 2% del camino por frame a 60 Hz, sea cual sea la tasa de frames: 0.98 de lo que falta cada 1/60 s
 	float percent = 1.0f - powf(0.98f, deltaSeconds * 60.0f);
 	for (int i = 0; i < 4; i++) {
-		this->m_color[i] = this->InterpolateColor(&this->m_color[i], &this->m_colorGo[i], percent);
+		m_color[i] = InterpolateColor(&m_color[i], &m_colorGo[i], percent);
 	}
 }

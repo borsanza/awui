@@ -18,8 +18,8 @@ namespace awui {
 			friend class awui::Windows::Forms::Form;
 
 		  private:
-			awui::Drawing::Rectangle rectangle1;
-			awui::Drawing::Rectangle rectangle2;
+			awui::Drawing::Rectangle m_clippingBase;
+			awui::Drawing::Rectangle m_clipping;
 
 			GL();
 			void SetClippingBase(awui::Drawing::Rectangle rectangle);

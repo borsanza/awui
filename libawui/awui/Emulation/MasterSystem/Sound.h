@@ -22,21 +22,21 @@ namespace awui::Emulation::MasterSystem {
 
 		// Estado del chip: se guarda en los estados de la placa (rebobinado)
 		struct saveData {
-			uint16_t _registers[4]; // 0-2: periodo del tono (10 bits), 3: control del ruido (3 bits)
-			uint8_t _volumes[4];	// Atenuación (4 bits, 0xF = silencio)
-			int _counters[4];
-			int8_t _outputs[4]; // +1 / -1
-			bool _noiseToggle;
-			uint16_t _lfsr;
-			uint8_t _latchedChannel;
-			bool _latchedVolume;
-			int _pendingCycles; // Ciclos de CPU que aún no llegan a un paso del chip (16)
-			uint8_t _stereo; // Game Gear (puerto 0x06): bits 7-4 canales 3-0 a la izquierda, bits 3-0 a la derecha
-			uint8_t _fmAddress;			// Registro seleccionado (puerto 0xF0)
-			uint8_t _fmControl;			// Puerto 0xF2. Bits 0-1: 0 = PSG, 1 = FM, 2 = ninguno, 3 = los dos (bit 2 solo se lee)
+			uint16_t registers[4]; // 0-2: periodo del tono (10 bits), 3: control del ruido (3 bits)
+			uint8_t volumes[4];	// Atenuación (4 bits, 0xF = silencio)
+			int counters[4];
+			int8_t outputs[4]; // +1 / -1
+			bool noiseToggle;
+			uint16_t lfsr;
+			uint8_t latchedChannel;
+			bool latchedVolume;
+			int pendingCycles; // Ciclos de CPU que aún no llegan a un paso del chip (16)
+			uint8_t stereo; // Game Gear (puerto 0x06): bits 7-4 canales 3-0 a la izquierda, bits 3-0 a la derecha
+			uint8_t fmAddress;			// Registro seleccionado (puerto 0xF0)
+			uint8_t fmControl;			// Puerto 0xF2. Bits 0-1: 0 = PSG, 1 = FM, 2 = ninguno, 3 = los dos (bit 2 solo se lee)
 		} m_saveData;
 
-		static inline bool m_fmEnabled = true; // Ajuste: consola con FM (los juegos lo detectan al arrancar)
+		static inline bool s_fmEnabled = true; // Ajuste: consola con FM (los juegos lo detectan al arrancar)
 		struct __OPLL *m_opll;
 
 		bool m_reverse;	   // Rebobinando: el audio de cada frame se envía al revés
@@ -65,12 +65,12 @@ namespace awui::Emulation::MasterSystem {
 		void WriteStereo(Motherboard *cpu, uint8_t value);
 
 		// YM2413 (puertos 0xF0 dirección, 0xF1 dato, 0xF2 control)
-		static inline void SetFMEnabled(bool enabled) { m_fmEnabled = enabled; }
-		static inline bool IsFMEnabled() { return m_fmEnabled; }
+		static inline void SetFMEnabled(bool enabled) { s_fmEnabled = enabled; }
+		static inline bool IsFMEnabled() { return s_fmEnabled; }
 		void WriteFMAddress(uint8_t value);
 		void WriteFMData(Motherboard *cpu, uint8_t value);
 		void WriteFMControl(Motherboard *cpu, uint8_t value);
-		inline uint8_t GetFMControl() const { return m_saveData._fmControl; }
+		inline uint8_t GetFMControl() const { return m_saveData.fmControl; }
 		void EndFrame(Motherboard *cpu);
 
 		// Rebobinado: cada frame emulado se oye al revés; como se rebobina frame a frame hacia atrás, el resultado

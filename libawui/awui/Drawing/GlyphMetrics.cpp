@@ -6,82 +6,82 @@
 using namespace awui::Drawing;
 
 GlyphMetrics::GlyphMetrics() {
-	this->width = 0;
-	this->height = 0;
-	this->ascent = 0;
-	this->descent = 0;
-	this->advancex = 0;
-	this->advancey = 0;
-	this->bearingx = 0;
-	this->bearingy = 0;
+	m_width = 0;
+	m_height = 0;
+	m_ascent = 0;
+	m_descent = 0;
+	m_advanceX = 0;
+	m_advanceY = 0;
+	m_bearingX = 0;
+	m_bearingY = 0;
 }
 
 int GlyphMetrics::GetWidth() const {
-	return this->width;
+	return m_width;
 }
 
 int GlyphMetrics::GetHeight() const {
-	return this->height;
+	return m_height;
 }
 
 void GlyphMetrics::SetWidth(int width) {
 	if (width < 1)
 		width = 1;
 
-	this->width = width;
+	m_width = width;
 }
 
 void GlyphMetrics::SetHeight(int height) {
 	if (height < 1)
 		height = 1;
 
-	this->height = height;
+	m_height = height;
 }
 
 int GlyphMetrics::GetAdvanceX() const {
-	return this->advancex;
+	return m_advanceX;
 }
 
 int GlyphMetrics::GetAdvanceY() const {
-	return this->advancey;
+	return m_advanceY;
 }
 
 void GlyphMetrics::SetAdvanceX(int advancex) {
-	this->advancex = advancex;
+	m_advanceX = advancex;
 }
 
 void GlyphMetrics::SetAdvanceY(int advancey) {
-	this->advancey = advancey;
+	m_advanceY = advancey;
 }
 
 int GlyphMetrics::GetBearingX() const {
-	return this->bearingx;
+	return m_bearingX;
 }
 
 int GlyphMetrics::GetBearingY() const {
-	return this->bearingy;
+	return m_bearingY;
 }
 
 void GlyphMetrics::SetBearingX(int bearingx) {
-	this->bearingx = bearingx;
+	m_bearingX = bearingx;
 }
 
 void GlyphMetrics::SetBearingY(int bearingy) {
-	this->bearingy = bearingy;
+	m_bearingY = bearingy;
 }
 
 int GlyphMetrics::GetAscent() const {
-	return this->ascent;
+	return m_ascent;
 }
 
 int GlyphMetrics::GetDescent() const {
-	return this->descent;
+	return m_descent;
 }
 
 void GlyphMetrics::SetAscent(int ascent) {
-	this->ascent = ascent;
+	m_ascent = ascent;
 }
 
 void GlyphMetrics::SetDescent(int descent) {
-	this->descent = descent;
+	m_descent = descent;
 }

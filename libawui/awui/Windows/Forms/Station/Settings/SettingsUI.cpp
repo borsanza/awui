@@ -324,8 +324,8 @@ void SettingsUI::OnTick(float deltaSeconds) {
 
 	m_title->SetLocation(0, 21);
 	m_title->SetSize(GetWidth(), 69);
-	m_browser->SetLocation((this->GetWidth() / 2.0) + 42, 118);
-	m_browser->SetSize((this->GetWidth() / 2.0) - 66, this->GetHeight() - 260);
+	m_browser->SetLocation((GetWidth() / 2.0) + 42, 118);
+	m_browser->SetSize((GetWidth() / 2.0) - 66, GetHeight() - 260);
 	Page *page = m_browser->GetPage();
 	if (page) {
 		page->SetWidth(m_browser->GetWidth());

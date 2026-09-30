@@ -11,8 +11,8 @@ namespace awui::Emulation::Common {
 	// Así se puede jugar con las ROMs en una carpeta de solo lectura. Sin configurar, todo sigue junto a la ROM.
 	class SavePaths {
 	  private:
-		static inline std::string m_saveDirectory;
-		static inline std::string m_romsDirectory;
+		static inline std::string s_saveDirectory;
+		static inline std::string s_romsDirectory;
 
 		static std::string Translate(const std::string &path);
 

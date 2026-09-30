@@ -12,18 +12,18 @@
 using namespace awui::Emulation::Processors::Z80;
 
 Opcode::Opcode() {
-	this->_byte1 = 0;
-	this->_byte2 = 0;
-	this->_byte4 = 0;
-	this->_advance = 0;
+	m_byte1 = 0;
+	m_byte2 = 0;
+	m_byte4 = 0;
+	m_advance = 0;
 }
 
 Opcode::~Opcode() {
 }
 
 int Opcode::Decode() {
-	this->_advance = 0;
-	switch (this->_byte1) {
+	m_advance = 0;
+	switch (m_byte1) {
 		case 0x00:
 			return Ox00;
 		case 0x01:
@@ -431,7 +431,7 @@ int Opcode::Decode() {
 		case 0xCA:
 			return OxCA;
 		case 0xCB:
-			switch (this->_byte2) {
+			switch (m_byte2) {
 				case 0x00:
 					return OxCB00;
 				case 0x01:
@@ -982,7 +982,7 @@ int Opcode::Decode() {
 		case 0xDC:
 			return OxDC;
 		case 0xDD:
-			switch (this->_byte2) {
+			switch (m_byte2) {
 				case 0x40:
 				case 0x41:
 				case 0x42:
@@ -1009,7 +1009,7 @@ int Opcode::Decode() {
 				case 0x7A:
 				case 0x7B:
 				case 0x7F:
-					this->_advance = 1;
+					m_advance = 1;
 					return 0;
 
 				case 0x09:
@@ -1173,7 +1173,7 @@ int Opcode::Decode() {
 				case 0xBE:
 					return OxDDBE;
 				case 0xCB:
-					switch (this->_byte4) {
+					switch (m_byte4) {
 						case 0x00:
 							return OxDDCBnn00;
 						case 0x01:
@@ -1702,7 +1702,7 @@ int Opcode::Decode() {
 
 				// El resto no usa HL: el prefijo no tiene efecto y la siguiente instrucción se ejecuta normal
 				default:
-					this->_advance = 1;
+					m_advance = 1;
 					return 0;
 			}
 			break;
@@ -1738,7 +1738,7 @@ int Opcode::Decode() {
 		case 0xEC:
 			return OxEC;
 		case 0xED:
-			switch (this->_byte2) {
+			switch (m_byte2) {
 				case 0x40:
 					return OxED40;
 				case 0x41:
@@ -1929,7 +1929,7 @@ int Opcode::Decode() {
 		case 0xFC:
 			return OxFC;
 		case 0xFD:
-			switch (this->_byte2) {
+			switch (m_byte2) {
 				case 0x40:
 				case 0x41:
 				case 0x42:
@@ -1956,7 +1956,7 @@ int Opcode::Decode() {
 				case 0x7A:
 				case 0x7B:
 				case 0x7F:
-					this->_advance = 1;
+					m_advance = 1;
 					return 0;
 
 				case 0x09:
@@ -2120,7 +2120,7 @@ int Opcode::Decode() {
 				case 0xBE:
 					return OxFDBE;
 				case 0xCB:
-					switch (this->_byte4) {
+					switch (m_byte4) {
 						case 0x00:
 							return OxFDCBnn00;
 						case 0x01:
@@ -2649,7 +2649,7 @@ int Opcode::Decode() {
 
 				// El resto no usa HL: el prefijo no tiene efecto y la siguiente instrucción se ejecuta normal
 				default:
-					this->_advance = 1;
+					m_advance = 1;
 					return 0;
 			}
 			break;
@@ -2664,7 +2664,7 @@ int Opcode::Decode() {
 }
 
 void Opcode::ShowLogOpcode(CPUInst *cpu, uint16_t enumOpcode) {
-	//	printf(" %3d x %3d ", this->_cpu->GetVDP()->GetLine(), this->_cpu->GetVDP()->GetColumn());
+	//	printf(" %3d x %3d ", m_cpu->GetVDP()->GetLine(), m_cpu->GetVDP()->GetColumn());
 	uint16_t pc = cpu->GetPC();
 	uint8_t opcode2 = cpu->ReadMemory(pc + 1);
 	uint8_t opcode3 = cpu->ReadMemory(pc + 2);

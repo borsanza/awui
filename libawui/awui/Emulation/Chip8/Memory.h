@@ -11,8 +11,8 @@ namespace awui {
 	namespace Emulation::Chip8 {
 		class Memory {
 		  private:
-			IO::MemoryStream *_memory;
-			String _file;
+			IO::MemoryStream *m_memory;
+			String m_file;
 
 		  public:
 			static const int64_t MaxCapacity = 0x1000000;

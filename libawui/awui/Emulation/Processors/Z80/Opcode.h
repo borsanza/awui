@@ -1279,23 +1279,23 @@ namespace awui::Emulation::Processors::Z80 {
 
 	class Opcode {
 	  private:
-		uint8_t _byte1;
-		uint8_t _byte2;
-		uint8_t _byte4;
-		uint16_t _advance;
+		uint8_t m_byte1;
+		uint8_t m_byte2;
+		uint8_t m_byte4;
+		uint16_t m_advance;
 
 	  public:
 		Opcode();
 		virtual ~Opcode();
 
-		inline void SetByte1(uint8_t byte1) { this->_byte1 = byte1; }
-		inline void SetByte2(uint8_t byte2) { this->_byte2 = byte2; }
-		inline void SetByte4(uint8_t byte4) { this->_byte4 = byte4; }
+		inline void SetByte1(uint8_t byte1) { m_byte1 = byte1; }
+		inline void SetByte2(uint8_t byte2) { m_byte2 = byte2; }
+		inline void SetByte4(uint8_t byte4) { m_byte4 = byte4; }
 
 		// Decodifica el opcode de los bytes leídos: devuelve su valor del enum y calcula GetAdvance()
 		// (1 si es un prefijo DD/FD ignorado que hay que saltar)
 		int Decode();
-		inline uint16_t GetAdvance() const { return this->_advance; }
+		inline uint16_t GetAdvance() const { return m_advance; }
 
 		void ShowLogOpcode(CPUInst *cpu, uint16_t enumOpcode);
 	};

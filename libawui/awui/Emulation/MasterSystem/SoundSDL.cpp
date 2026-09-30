@@ -21,7 +21,7 @@ using namespace awui::Emulation::MasterSystem;
 // Máxima corrección de ritmo (0.5%, inapreciable en el tono)
 #define MAX_RATE_ADJUST 0.005
 
-uint8_t SoundSDL::m_disabledChannels = 0x00;
+uint8_t SoundSDL::s_disabledChannels = 0x00;
 
 SoundSDL::SoundSDL() {
 	m_playing = NULL;
@@ -121,12 +121,12 @@ double SoundSDL::GetRateAdjust() const {
 }
 
 void SoundSDL::ToggleChannel(int channel) {
-	m_disabledChannels ^= 1 << channel;
+	s_disabledChannels ^= 1 << channel;
 }
 
 void SoundSDL::SetChannelEnabled(int channel, bool enabled) {
 	if (enabled)
-		m_disabledChannels &= ~(1 << channel);
+		s_disabledChannels &= ~(1 << channel);
 	else
-		m_disabledChannels |= 1 << channel;
+		s_disabledChannels |= 1 << channel;
 }

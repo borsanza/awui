@@ -13,52 +13,52 @@
 using namespace awui::Emulation::Chip8;
 
 Screen::Screen(uint16_t width, uint16_t height) {
-	this->_width = width;
-	this->_height = height;
-	this->_data = (uint32_t *) malloc(sizeof(uint32_t *) * width * height);
-	this->Clear();
+	m_width = width;
+	m_height = height;
+	m_data = (uint32_t *) malloc(sizeof(uint32_t *) * width * height);
+	Clear();
 }
 
 Screen::~Screen() {
-	free(this->_data);
+	free(m_data);
 }
 
 void Screen::Clear() {
-	uint16_t length = this->_width * this->_height;
+	uint16_t length = m_width * m_height;
 	for (uint16_t i = 0; i < length; i++)
-		this->_data[i] = 0;
+		m_data[i] = 0;
 }
 
 bool Screen::SetPixelXOR(uint16_t x, uint16_t y, bool value) {
-	x = x % this->_width;
+	x = x % m_width;
 
 	bool r = false;
-	uint16_t offset = (y * this->_width) + x;
+	uint16_t offset = (y * m_width) + x;
 
-	bool oldValue = this->_data[offset];
+	bool oldValue = m_data[offset];
 	bool newValue = oldValue ^ value;
 
 	if (oldValue != newValue) {
 		if (newValue == 0)
 			r = true;
-		if (offset < (this->_width * this->_height))
-			this->_data[offset] = newValue;
+		if (offset < (m_width * m_height))
+			m_data[offset] = newValue;
 	}
 
 	return r;
 }
 
 void Screen::SetPixel(uint16_t x, uint16_t y, uint32_t value) {
-	if ((x >= this->_width) || (y >= this->_height))
+	if ((x >= m_width) || (y >= m_height))
 		return;
 
-	uint16_t offset = (y * this->_width) + x;
+	uint16_t offset = (y * m_width) + x;
 
 	uint8_t a = (value >> 24) & 0xFF;
 	if (a == 255) {
-		this->_data[offset] = value;
+		m_data[offset] = value;
 	} else {
-		uint32_t oldvalue = this->_data[offset];
+		uint32_t oldvalue = m_data[offset];
 		float p = a / 255.0f;
 		int16_t ro = (oldvalue >> 16) & 0xFF;
 		int16_t go = (oldvalue >> 8) & 0xFF;
@@ -71,64 +71,64 @@ void Screen::SetPixel(uint16_t x, uint16_t y, uint32_t value) {
 		g = ((uint8_t) (go + ((g - go) * p))) & 0xFF;
 		b = ((uint8_t) (bo + ((b - bo) * p))) & 0xFF;
 
-		if (offset < (this->_width * this->_height))
-			this->_data[offset] = 0xFF000000 | r << 16 | g << 8 | b;
+		if (offset < (m_width * m_height))
+			m_data[offset] = 0xFF000000 | r << 16 | g << 8 | b;
 	}
 }
 
 uint32_t Screen::GetPixel(uint16_t x, uint16_t y) {
-	if (this->_data)
-		return this->_data[(y * this->_width) + x];
+	if (m_data)
+		return m_data[(y * m_width) + x];
 
 	return 0;
 }
 
 uint16_t Screen::GetWidth() const {
-	return this->_width;
+	return m_width;
 }
 
 uint16_t Screen::GetHeight() const {
-	return this->_height;
+	return m_height;
 }
 
 void Screen::ScrollLeft(uint8_t columns) {
 	for (uint8_t scroll = 0; scroll < columns; scroll++) {
-		for (uint16_t i = 0; i < this->_height; i++) {
-			uint32_t aux = this->_data[(i * this->_width)];
-			for (uint16_t j = 0; j < this->_width - 1; j++)
-				this->_data[(i * this->_width) + j] = this->_data[(i * this->_width) + (j + 1)];
-			this->_data[(i * this->_width) + (this->_width - 1)] = aux;
+		for (uint16_t i = 0; i < m_height; i++) {
+			uint32_t aux = m_data[(i * m_width)];
+			for (uint16_t j = 0; j < m_width - 1; j++)
+				m_data[(i * m_width) + j] = m_data[(i * m_width) + (j + 1)];
+			m_data[(i * m_width) + (m_width - 1)] = aux;
 		}
 	}
 }
 
 void Screen::ScrollRight(uint8_t columns) {
 	for (uint8_t scroll = 0; scroll < columns; scroll++) {
-		for (uint16_t i = 0; i < this->_height; i++) {
-			uint32_t aux = this->_data[(i * this->_width) + this->_width - 1];
-			for (uint16_t j = this->_width - 1; j >= 1; j--)
-				this->_data[(i * this->_width) + j] = this->_data[(i * this->_width) + (j - 1)];
-			this->_data[(i * this->_width)] = aux;
+		for (uint16_t i = 0; i < m_height; i++) {
+			uint32_t aux = m_data[(i * m_width) + m_width - 1];
+			for (uint16_t j = m_width - 1; j >= 1; j--)
+				m_data[(i * m_width) + j] = m_data[(i * m_width) + (j - 1)];
+			m_data[(i * m_width)] = aux;
 		}
 	}
 }
 
 void Screen::ScrollUp(uint8_t lines) {
 	for (uint8_t scroll = 0; scroll < lines; scroll++) {
-		for (uint16_t j = 0; j < this->_width; j++) {
-			for (uint16_t i = 0; i < this->_height - 1; i++)
-				this->_data[(i * this->_width) + j] = this->_data[((i + 1) * this->_width) + j];
-			this->_data[((this->_height - 1) * this->_width) + j] = 0;
+		for (uint16_t j = 0; j < m_width; j++) {
+			for (uint16_t i = 0; i < m_height - 1; i++)
+				m_data[(i * m_width) + j] = m_data[((i + 1) * m_width) + j];
+			m_data[((m_height - 1) * m_width) + j] = 0;
 		}
 	}
 }
 
 void Screen::ScrollDown(uint8_t lines) {
 	for (uint8_t scroll = 0; scroll < lines; scroll++) {
-		for (uint16_t j = 0; j < this->_width; j++) {
-			for (uint16_t i = this->_height - 1; i >= 1; i--)
-				this->_data[(i * this->_width) + j] = this->_data[((i - 1) * this->_width) + j];
-			this->_data[j] = 0;
+		for (uint16_t j = 0; j < m_width; j++) {
+			for (uint16_t i = m_height - 1; i >= 1; i--)
+				m_data[(i * m_width) + j] = m_data[((i - 1) * m_width) + j];
+			m_data[j] = 0;
 		}
 	}
 }

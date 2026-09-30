@@ -17,27 +17,27 @@ GL::GL() {
 }
 
 void GL::SetClippingBase(awui::Drawing::Rectangle rectangle) {
-	this->rectangle1 = rectangle;
+	m_clippingBase = rectangle;
 }
 
 void GL::SetClipping(awui::Drawing::Rectangle rectangle) {
-	this->rectangle2 = rectangle;
+	m_clipping = rectangle;
 }
 
 awui::Drawing::Rectangle GL::GetClippingBase() const {
-	return this->rectangle1;
+	return m_clippingBase;
 }
 
 awui::Drawing::Rectangle GL::GetClipping() const {
-	return this->rectangle2;
+	return m_clipping;
 }
 
 awui::Drawing::Rectangle GL::GetClippingResult() const {
-	return Rectangle::Intersect(this->rectangle1, this->rectangle2);
+	return Rectangle::Intersect(m_clippingBase, m_clipping);
 }
 
 void GL::SetClipping() {
-	awui::Drawing::Rectangle rect = this->GetClippingResult();
+	awui::Drawing::Rectangle rect = GetClippingResult();
 
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
 }

@@ -20,7 +20,7 @@ Shader::Shader() {
 	glAttachShader(m_gProgramID, fragmentShader);
 	glLinkProgram(m_gProgramID);
 	glUseProgram(m_gProgramID);
-	// int texcoord_index = glGetAttribLocation(_gProgramID, "in_coord");
+	// int texcoord_index = glGetAttribLocation(m_gProgramID, "in_coord");
 }
 
 void Shader::printShaderLog(GLuint shader) {

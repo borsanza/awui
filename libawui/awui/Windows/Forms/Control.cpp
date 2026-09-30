@@ -24,9 +24,9 @@ using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 
-Bitmap *Control::m_selectedBitmap = NULL;
-int32_t Control::lastTabIndex = 10000;
-int32_t Control::countFocused = 1000;
+Bitmap *Control::s_selectedBitmap = NULL;
+int32_t Control::s_lastTabIndex = 10000;
+int32_t Control::s_countFocused = 1000;
 
 static bool Contains(const std::vector<Control *> &list, const Control *control) {
 	return std::find(list.begin(), list.end(), control) != list.end();
@@ -956,7 +956,7 @@ void Control::CleanMouseControl() {
 }
 
 Bitmap *Control::GetSelectedBitmap() {
-	if (!Control::m_selectedBitmap) {
+	if (!Control::s_selectedBitmap) {
 		String file = IO::Directory::GetWorkingDirectory();
 		Bitmap *bitmap = new Bitmap(file + "/images/button.png");
 		bitmap->SetDock(DockStyle::None);
@@ -964,10 +964,10 @@ Bitmap *Control::GetSelectedBitmap() {
 		bitmap->SetFixedMargins(28, 25, 28, 24);
 		bitmap->SetLocation(0, 0);
 		bitmap->SetSize(Drawing::Size(97, 97));
-		Control::m_selectedBitmap = bitmap;
+		Control::s_selectedBitmap = bitmap;
 	}
 
-	return Control::m_selectedBitmap;
+	return Control::s_selectedBitmap;
 }
 
 awui::String Control::ToString() const {
@@ -1020,10 +1020,10 @@ void Control::SetFocusImpl(bool forced, int32_t time) {
  * @param forced Indica si el enfoque debe ser forzado.
  */
 void Control::SetFocus(bool forced) {
-	SetFocusImpl(forced, forced ? countFocused : m_focusedTime);
+	SetFocusImpl(forced, forced ? s_countFocused : m_focusedTime);
 
 	if (forced) {
-		countFocused++;
+		s_countFocused++;
 	}
 }
 
@@ -1081,7 +1081,7 @@ void Control::AddWidget(Control *control, WidgetOwnership ownership) {
 	}
 
 	if (control->m_tabIndex == -1) {
-		control->m_tabIndex = lastTabIndex++;
+		control->m_tabIndex = s_lastTabIndex++;
 	}
 
 	m_controls.push_back(control);

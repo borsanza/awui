@@ -16,7 +16,7 @@ const float TimeToMeasure = 1.0f;
 namespace awui::Windows::Forms::Statistics {
 	class Stats : public Panel {
 	  private:
-		static Stats *m_instance;
+		static Stats *s_instance;
 
 #ifdef SHOW_WIDGETS
 		Label *m_labelControls;

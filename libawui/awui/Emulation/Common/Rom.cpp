@@ -16,60 +16,60 @@ using namespace awui::Emulation::Common;
 using namespace awui::IO;
 
 Rom::Rom(int32_t capacity) {
-	this->_size = 0;
-	this->_mask = 0;
-	this->_rom = new MemoryStream(capacity);
-	this->_rom->SetLength(capacity);
+	m_size = 0;
+	m_mask = 0;
+	m_rom = new MemoryStream(capacity);
+	m_rom->SetLength(capacity);
 }
 
 Rom::~Rom() {
-	delete this->_rom;
+	delete m_rom;
 }
 
 void Rom::LoadRom(const String file) {
-	this->_file = file;
+	m_file = file;
 	std::vector<uint8_t> data;
 	if (!File::ReadAllBytes(file, data)) {
 		fprintf(stderr, "No se puede abrir el fichero: %s\n", file.ToCharArray());
 		data.clear();
 	}
 
-	if (this->_rom->GetCapacity() < data.size())
-		this->_rom->SetCapacity((uint32_t) data.size());
+	if (m_rom->GetCapacity() < data.size())
+		m_rom->SetCapacity((uint32_t) data.size());
 
-	this->_rom->SetPosition(0x0);
+	m_rom->SetPosition(0x0);
 	// Si la ROM es más pequeña que la capacidad inicial, la longitud (y el CRC) debe ser la del fichero
-	this->_rom->SetLength(0);
-	this->_rom->Write(data.data(), (uint32_t) data.size());
+	m_rom->SetLength(0);
+	m_rom->Write(data.data(), (uint32_t) data.size());
 
-	this->UpdateSize();
+	UpdateSize();
 }
 
 void Rom::UpdateSize() {
-	this->_size = this->_rom->GetLength();
-	this->_mask = 1;
-	while (this->_mask < this->_size)
-		this->_mask <<= 1;
-	this->_mask--;
+	m_size = m_rom->GetLength();
+	m_mask = 1;
+	while (m_mask < m_size)
+		m_mask <<= 1;
+	m_mask--;
 }
 
 void Rom::RemoveHeader(uint32_t bytes) {
-	if (bytes >= this->_size)
+	if (bytes >= m_size)
 		return;
 
-	for (uint32_t i = bytes; i < this->_size; i++)
-		this->_rom->WriteByte(i - bytes, this->_rom->ReadByte(i));
+	for (uint32_t i = bytes; i < m_size; i++)
+		m_rom->WriteByte(i - bytes, m_rom->ReadByte(i));
 
-	this->_rom->SetLength(this->_size - bytes);
-	this->UpdateSize();
+	m_rom->SetLength(m_size - bytes);
+	UpdateSize();
 }
 
 void Rom::Reload() {
-	this->_rom->Clear();
-	if (this->_file != "")
-		this->LoadRom(this->_file);
+	m_rom->Clear();
+	if (m_file != "")
+		LoadRom(m_file);
 }
 
 uint32_t Rom::GetCRC32() const {
-	return this->_rom->GetCRC32();
+	return m_rom->GetCRC32();
 }

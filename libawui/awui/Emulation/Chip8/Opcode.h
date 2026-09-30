@@ -70,8 +70,8 @@ namespace awui::Emulation::Chip8 {
 
 	class Opcode {
 	  private:
-		uint8_t _byte1;
-		uint8_t _byte2;
+		uint8_t m_byte1;
+		uint8_t m_byte2;
 
 		char DecToHex(int value) const;
 		void ShowLogOpcode(int enumOpcode) const;

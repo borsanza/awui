@@ -32,21 +32,21 @@ namespace awui::Emulation {
 		class Motherboard {
 		  private:
 			struct saveData {
-				double _frameAccumulator; // Fracción de frame de la consola pendiente (PAL: 49.70 frames por cada 59.92 ticks)
-				uint8_t _controlbyte;
-				uint8_t _frame0;
-				uint8_t _frame1;
-				uint8_t _frame2;
-				uint8_t _banks8k[4]; // Mapper MSX: bancos de 8KB en 0x4000, 0x6000, 0x8000 y 0xA000
-				uint8_t _mapper;
-				uint8_t _pad1;
-				uint8_t _pad2;
-				bool _wantPause : 1;
-				bool _codemastersRam : 1; // Ernie Els Golf: 8KB de RAM en 0xA000-0xBFFF
-				Word _addressBus;
-				Ports _ports;
-				uint8_t _boardram[32768];
-				uint8_t _ram[8192];
+				double frameAccumulator; // Fracción de frame de la consola pendiente (PAL: 49.70 frames por cada 59.92 ticks)
+				uint8_t controlbyte;
+				uint8_t frame0;
+				uint8_t frame1;
+				uint8_t frame2;
+				uint8_t banks8k[4]; // Mapper MSX: bancos de 8KB en 0x4000, 0x6000, 0x8000 y 0xA000
+				uint8_t mapper;
+				uint8_t pad1;
+				uint8_t pad2;
+				bool wantPause : 1;
+				bool codemastersRam : 1; // Ernie Els Golf: 8KB de RAM en 0xA000-0xBFFF
+				Word addressBus;
+				Ports ports;
+				uint8_t boardram[32768];
+				uint8_t ram[8192];
 			} m_saveData;
 
 			// No se guarda
@@ -100,10 +100,10 @@ namespace awui::Emulation {
 
 			inline VDP *GetVDP() const { return m_vdp; }
 			inline Sound *GetSound() const { return m_sound; }
-			inline void SetPad1(uint8_t pad1) { m_saveData._pad1 = pad1; }
-			inline void SetPad2(uint8_t pad2) { m_saveData._pad2 = pad2; }
-			inline uint8_t GetPad1() const { return m_saveData._pad1; }
-			inline uint8_t GetPad2() const { return m_saveData._pad2; }
+			inline void SetPad1(uint8_t pad1) { m_saveData.pad1 = pad1; }
+			inline void SetPad2(uint8_t pad2) { m_saveData.pad2 = pad2; }
+			inline uint8_t GetPad1() const { return m_saveData.pad1; }
+			inline uint8_t GetPad2() const { return m_saveData.pad2; }
 
 			uint32_t GetCRC32();
 			void SetMapper(uint8_t mapper);

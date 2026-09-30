@@ -6,7 +6,7 @@
 namespace awui::Effects {
 	class Effect : public Object {
 	  private:
-		String name;
+		String m_name;
 
 	  public:
 		Effect(String name1);

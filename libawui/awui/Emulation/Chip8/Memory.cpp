@@ -18,16 +18,16 @@ using namespace awui::Emulation::Chip8;
 using namespace awui::IO;
 
 Memory::Memory(int32_t capacity) {
-	this->_memory = new MemoryStream(capacity);
-	this->_memory->SetLength(capacity);
+	m_memory = new MemoryStream(capacity);
+	m_memory->SetLength(capacity);
 }
 
 Memory::~Memory() {
-	delete this->_memory;
+	delete m_memory;
 }
 
 void Memory::LoadRom(const String file) {
-	this->_file = file;
+	m_file = file;
 	std::vector<uint8_t> data;
 	if (!File::ReadAllBytes(file, data)) {
 		Console::Error->WriteLine(String("No se puede abrir el fichero: ") + file);
@@ -42,30 +42,30 @@ void Memory::LoadRom(const String file) {
 		needed = MaxCapacity;
 	}
 
-	if (this->_memory->GetCapacity() < needed)
-		this->_memory->SetCapacity((uint32_t) needed);
+	if (m_memory->GetCapacity() < needed)
+		m_memory->SetCapacity((uint32_t) needed);
 
-	this->_memory->SetPosition(0x200);
-	this->_memory->Write(data.data(), (uint32_t) (needed - 0x200));
+	m_memory->SetPosition(0x200);
+	m_memory->Write(data.data(), (uint32_t) (needed - 0x200));
 }
 
 void Memory::Reload() {
-	this->_memory->Clear();
-	if (this->_file != "")
-		this->LoadRom(this->_file);
+	m_memory->Clear();
+	if (m_file != "")
+		LoadRom(m_file);
 }
 
 // Fuera de la memoria se lee 0 y no se escribe (I puede apuntar a cualquier sitio)
 uint8_t Memory::ReadByte(int64_t pos) {
-	if ((pos < 0) || (pos >= this->_memory->GetCapacity()))
+	if ((pos < 0) || (pos >= m_memory->GetCapacity()))
 		return 0;
 
-	return this->_memory->ReadByte((uint32_t) pos);
+	return m_memory->ReadByte((uint32_t) pos);
 }
 
 void Memory::WriteByte(int64_t pos, uint8_t value) {
-	if ((pos < 0) || (pos >= this->_memory->GetCapacity()))
+	if ((pos < 0) || (pos >= m_memory->GetCapacity()))
 		return;
 
-	this->_memory->WriteByte((uint32_t) pos, value);
+	m_memory->WriteByte((uint32_t) pos, value);
 }

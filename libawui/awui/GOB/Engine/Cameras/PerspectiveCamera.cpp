@@ -70,7 +70,7 @@ void PerspectiveCamera::MakeLookAtMatrix(Matrix4 &matrix, const Vector3 &eye, co
 // Configurar la matriz de vista
 void PerspectiveCamera::SetViewMatrix() {
 	Matrix4 viewMatrix;
-	MakeLookAtMatrix(viewMatrix, position, m_target, m_upVector);
+	MakeLookAtMatrix(viewMatrix, m_position, m_target, m_upVector);
 
 	// Establecer el modo de matriz a GL_MODELVIEW para trabajar con la matriz de vista
 	glMatrixMode(GL_MODELVIEW);

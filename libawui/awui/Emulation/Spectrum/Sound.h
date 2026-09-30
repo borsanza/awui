@@ -19,19 +19,19 @@ namespace awui::Emulation::Spectrum {
 			int16_t level;
 		};
 
-		Motherboard *_cpu;
-		std::vector<Change> _changes;
-		std::vector<int16_t> _samples;
-		int16_t _level;		 // Nivel al empezar el frame
-		double _pendingSamples; // Fracción de muestra que queda para el siguiente frame
-		float _dcIn;			 // Filtro que quita la continua (el altavoz en reposo no está a cero)
-		float _dcOut;
+		Motherboard *m_cpu;
+		std::vector<Change> m_changes;
+		std::vector<int16_t> m_samples;
+		int16_t m_level;		 // Nivel al empezar el frame
+		double m_pendingSamples; // Fracción de muestra que queda para el siguiente frame
+		float m_dcIn;			 // Filtro que quita la continua (el altavoz en reposo no está a cero)
+		float m_dcOut;
 
 	  public:
 		Sound();
 
-		inline void SetCPU(Motherboard *cpu) { this->_cpu = cpu; }
-		inline Motherboard *GetCPU() { return this->_cpu; }
+		inline void SetCPU(Motherboard *cpu) { m_cpu = cpu; }
+		inline Motherboard *GetCPU() { return m_cpu; }
 
 		void WriteSound(Motherboard *cpu, int value);
 

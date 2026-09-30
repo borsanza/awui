@@ -8,12 +8,12 @@ namespace awui::GOB::Engine {
 
 	class Object3D {
 	  private:
-		std::vector<Object3D *> _children;
+		std::vector<Object3D *> m_children;
 
 	  protected:
-		Vector3 position;
-		Euler rotation;
-		Vector3 scale;
+		Vector3 m_position;
+		Euler m_rotation;
+		Vector3 m_scale;
 
 	  public:
 		Object3D();

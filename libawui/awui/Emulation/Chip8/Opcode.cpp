@@ -13,57 +13,57 @@
 using namespace awui::Emulation::Chip8;
 
 Opcode::Opcode() {
-	this->_byte1 = 0;
-	this->_byte2 = 0;
+	m_byte1 = 0;
+	m_byte2 = 0;
 }
 
 Opcode::~Opcode() {
 }
 
 void Opcode::SetByte1(uint8_t byte1) {
-	this->_byte1 = byte1;
+	m_byte1 = byte1;
 }
 
 void Opcode::SetByte2(uint8_t byte2) {
-	this->_byte2 = byte2;
+	m_byte2 = byte2;
 }
 
 uint8_t Opcode::GetX() const {
-	return this->_byte1 & 0xf;
+	return m_byte1 & 0xf;
 }
 
 uint8_t Opcode::GetY() const {
-	return this->_byte2 >> 4;
+	return m_byte2 >> 4;
 }
 
 uint16_t Opcode::GetNNN() const {
-	return ((this->_byte1 & 0xf) << 8) | this->_byte2;
+	return ((m_byte1 & 0xf) << 8) | m_byte2;
 }
 
 uint8_t Opcode::GetKK() const {
-	return this->_byte2;
+	return m_byte2;
 }
 
 uint8_t Opcode::GetNN() const {
-	return this->_byte2;
+	return m_byte2;
 }
 
 uint8_t Opcode::GetN() const {
-	return this->_byte2 & 0xf;
+	return m_byte2 & 0xf;
 }
 
 uint16_t Opcode::GetOpcode() const {
-	return (this->_byte1 << 8) | (this->_byte2);
+	return (m_byte1 << 8) | (m_byte2);
 }
 
 int Opcode::GetEnum(uint8_t chipmode) const {
-	switch (this->_byte1 >> 4) {
+	switch (m_byte1 >> 4) {
 		case 0x0:
-			switch (this->GetX()) {
+			switch (GetX()) {
 				case 0x0:
-					switch (this->GetY()) {
+					switch (GetY()) {
 						case 0x1:
-							switch (this->GetN()) {
+							switch (GetN()) {
 								case 0x0:
 									return Ox0010;
 								case 0x1:
@@ -78,7 +78,7 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 							return Ox00CN;
 
 						case 0xE:
-							switch (this->GetN()) {
+							switch (GetN()) {
 								case 0x0:
 									return Ox00E0;
 								case 0xE:
@@ -87,7 +87,7 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 							break;
 
 						case 0xF:
-							switch (this->GetN()) {
+							switch (GetN()) {
 								case 0xB:
 									return Ox00FB;
 
@@ -111,7 +111,7 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 					return Ox01NN;
 
 				case 0x2:
-					if ((chipmode == CHIP8HIRES) && (this->_byte2 == 0x30))
+					if ((chipmode == CHIP8HIRES) && (m_byte2 == 0x30))
 						return Ox0230;
 
 					return Ox02NN;
@@ -143,7 +143,7 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 			return Ox4XKK;
 
 		case 0x5:
-			switch (this->GetN()) {
+			switch (GetN()) {
 				case 0x0:
 					return Ox5XY0;
 			}
@@ -156,7 +156,7 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 			return Ox7XKK;
 
 		case 0x8:
-			switch (this->GetN()) {
+			switch (GetN()) {
 				case 0x0:
 					return Ox8XY0;
 				case 0x1:
@@ -179,7 +179,7 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 			break;
 
 		case 0x9:
-			switch (this->GetN()) {
+			switch (GetN()) {
 				case 0x0:
 					return Ox9XY0;
 			}
@@ -198,7 +198,7 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 			return OxDXYN;
 
 		case 0xE:
-			switch (this->_byte2) {
+			switch (m_byte2) {
 				case 0x9E:
 					return OxEX9E;
 				case 0xA1:
@@ -207,7 +207,7 @@ int Opcode::GetEnum(uint8_t chipmode) const {
 			break;
 
 		case 0xF:
-			switch (this->_byte2) {
+			switch (m_byte2) {
 				case 0x07:
 					return OxFX07;
 				case 0x0A:
@@ -249,10 +249,10 @@ char Opcode::DecToHex(int value) const {
 void Opcode::ShowLog(int pc, int enumopcode) const {
 	Console::Write(Convert::ToString(pc));
 	Console::Write(": ");
-	Console::Write(Convert::ToString(this->DecToHex(this->_byte1 >> 4)));
-	Console::Write(Convert::ToString(this->DecToHex(this->_byte1 & 0xF)));
-	Console::Write(Convert::ToString(this->DecToHex(this->_byte2 >> 4)));
-	Console::Write(Convert::ToString(this->DecToHex(this->_byte2 & 0xF)));
+	Console::Write(Convert::ToString(DecToHex(m_byte1 >> 4)));
+	Console::Write(Convert::ToString(DecToHex(m_byte1 & 0xF)));
+	Console::Write(Convert::ToString(DecToHex(m_byte2 >> 4)));
+	Console::Write(Convert::ToString(DecToHex(m_byte2 & 0xF)));
 	Console::Write(": ");
 	ShowLogOpcode(enumopcode);
 	Console::WriteLine("");
@@ -268,69 +268,69 @@ void Opcode::ShowLogOpcode(int enumOpcode) const {
 			break;
 		case Ox1NNN:
 			Console::Write("JP ");
-			Console::Write(Convert::ToString(this->GetNNN()));
+			Console::Write(Convert::ToString(GetNNN()));
 			break;
 		case Ox3XKK:
 			Console::Write("SE V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			Console::Write(", ");
-			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write(Convert::ToString(GetKK()));
 			Console::Write("        ; Skip if Equal V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			Console::Write(" == ");
-			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write(Convert::ToString(GetKK()));
 			break;
 		case Ox6XKK:
 			Console::Write("LD V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			Console::Write(", ");
-			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write(Convert::ToString(GetKK()));
 			Console::Write("       ; V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			Console::Write(" := ");
-			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write(Convert::ToString(GetKK()));
 			break;
 		case Ox7XKK:
 			Console::Write("ADD V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			Console::Write(", ");
-			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write(Convert::ToString(GetKK()));
 			break;
 		case OxANNN:
 			Console::Write("LD I, ");
-			Console::Write(Convert::ToString(this->GetNNN()));
+			Console::Write(Convert::ToString(GetNNN()));
 			Console::Write("       ; I := ");
-			Console::Write(Convert::ToString(this->GetNNN()));
+			Console::Write(Convert::ToString(GetNNN()));
 			break;
 		case OxCXKK:
 			Console::Write("RND V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			Console::Write(", ");
-			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write(Convert::ToString(GetKK()));
 			Console::Write("       ; V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			Console::Write(" := Random(0..255) & ");
-			Console::Write(Convert::ToString(this->GetKK()));
+			Console::Write(Convert::ToString(GetKK()));
 			break;
 		case OxDXYN:
 			Console::Write("DRW V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			Console::Write(", V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetY())));
+			Console::Write(Convert::ToString(DecToHex(GetY())));
 			Console::Write(", ");
-			Console::Write(Convert::ToString(this->GetN()));
+			Console::Write(Convert::ToString(GetN()));
 			break;
 		case OxFX1E:
 			Console::Write("ADD I, V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			break;
 		case OxFX29:
 			Console::Write("LD F, V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			break;
 		case OxFX33:
 			Console::Write("LD B, V");
-			Console::Write(Convert::ToString(this->DecToHex(this->GetX())));
+			Console::Write(Convert::ToString(DecToHex(GetX())));
 			break;
 	}
 }

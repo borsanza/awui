@@ -88,6 +88,13 @@ Con la extensión C/C++ (`ms-vscode.cpptools`) y `gdb`:
 * Ambas preguntan qué programa lanzar (stationTV por defecto).
 * **Ctrl+Shift+B** solo compila (Debug).
 
+## ✍️ Convenciones de código
+
+- **Miembros de datos de una clase:** `m_nombre` (`m_width`, `m_saveData`). Estáticos: `s_nombre` (`s_formsList`). No se usa `this->` salvo que haga falta.
+- **Campos de un `struct` de datos** (los `saveData` de los emuladores, por ejemplo): sin prefijo (`m_saveData.line`).
+- **Constantes** (`static constexpr`): en PascalCase (`TicksPerSecond`).
+- **Nada empieza por `_`:** los nombres con `_` y mayúscula, o con `__`, están reservados para el compilador.
+
 ## Anotaciones antiguas
 
 Windows:

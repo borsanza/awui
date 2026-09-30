@@ -15,7 +15,7 @@ namespace awui::Emulation::MasterSystem {
 	  private:
 		SDL_AudioDeviceID m_audioDevice;
 		Sound *m_playing;
-		static uint8_t m_disabledChannels;
+		static uint8_t s_disabledChannels;
 
 		SoundSDL(const SoundSDL &) = delete;
 		SoundSDL &operator=(const SoundSDL &) = delete;
@@ -37,6 +37,6 @@ namespace awui::Emulation::MasterSystem {
 
 		static void ToggleChannel(int channel);
 		static void SetChannelEnabled(int channel, bool enabled);
-		static inline bool IsChannelEnabled(int channel) { return (m_disabledChannels & (1 << channel)) == 0; }
+		static inline bool IsChannelEnabled(int channel) { return (s_disabledChannels & (1 << channel)) == 0; }
 	};
 } // namespace awui::Emulation::MasterSystem

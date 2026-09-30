@@ -8,53 +8,53 @@
 using namespace awui::GOB::Engine;
 
 Object3D::Object3D() {
-	scale.Set(1, 1, 1);
+	m_scale.Set(1, 1, 1);
 }
 
 Object3D::~Object3D() {
-	for (auto *child : _children) {
+	for (auto *child : m_children) {
 		delete child;
 	}
 
-	_children.clear();
+	m_children.clear();
 }
 
 void Object3D::Add(Object3D *object) {
 	if (object) {
-		_children.push_back(object);
+		m_children.push_back(object);
 	}
 }
 
 // Eliminar un objeto hijo del contenedor
 void Object3D::Remove(Object3D *object) {
 	if (object) {
-		_children.erase(std::remove(_children.begin(), _children.end(), object), _children.end());
+		m_children.erase(std::remove(m_children.begin(), m_children.end(), object), m_children.end());
 	}
 }
 
 void Object3D::SetPosition(const Vector3 &newPosition) {
-	position = newPosition;
+	m_position = newPosition;
 }
 
 void Object3D::SetPosition(float x, float y, float z) {
-	position.Set(x, y, z);
+	m_position.Set(x, y, z);
 }
 
 void Object3D::SetScale(float x, float y, float z) {
-	scale.Set(x, y, z);
+	m_scale.Set(x, y, z);
 }
 
 void Object3D::SetRotation(float x, float y, float z) {
-	rotation.Set(x, y, z);
+	m_rotation.Set(x, y, z);
 }
 
 Vector3 Object3D::GetPosition() const {
-	return position;
+	return m_position;
 }
 
 void Object3D::PreRender(const Matrix4 &parentMatrix) {
 	Matrix4 matrix;
-	matrix.Compose(position, rotation.GetQuaternion(), scale);
+	matrix.Compose(m_position, m_rotation.GetQuaternion(), m_scale);
 	matrix = matrix * parentMatrix;
 
 	// glPushMatrix();
@@ -62,7 +62,7 @@ void Object3D::PreRender(const Matrix4 &parentMatrix) {
 
 	Render(matrix);
 
-	for (auto *child : _children) {
+	for (auto *child : m_children) {
 		child->PreRender(matrix);
 	}
 

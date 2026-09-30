@@ -16,36 +16,36 @@ using namespace awui::Emulation::Spectrum;
 using namespace awui::IO;
 
 TapeCorder::TapeCorder() {
-	this->_finishCassetteCB = NULL;
-	this->_finishCassetteDataCB = NULL;
-	this->_cycle = 0;
-	this->_state = 0;
-	this->_block = 0;
-	this->_posBit = 0;
-	this->_posByte = 0;
-	this->_list = 0;
-	this->_playing = false;
-	this->Rewind();
+	m_finishCassetteCB = NULL;
+	m_finishCassetteDataCB = NULL;
+	m_cycle = 0;
+	m_state = 0;
+	m_block = 0;
+	m_posBit = 0;
+	m_posByte = 0;
+	m_list = 0;
+	m_playing = false;
+	Rewind();
 }
 
 TapeCorder::~TapeCorder() {
-	this->Clear();
+	Clear();
 }
 
 void TapeCorder::Clear() {
-	if (this->_list) {
-		for (TapeBlock *block : *this->_list) {
+	if (m_list) {
+		for (TapeBlock *block : *m_list) {
 			delete block;
 		}
 
-		delete this->_list;
-		this->_list = NULL;
+		delete m_list;
+		m_list = NULL;
 	}
 }
 
 void TapeCorder::LoadFile(const String fileParam) {
-	this->Clear();
-	this->_list = new std::vector<TapeBlock *>();
+	Clear();
+	m_list = new std::vector<TapeBlock *>();
 
 	std::vector<uint8_t> bytes;
 	if (!File::ReadAllBytes(fileParam, bytes))
@@ -72,7 +72,7 @@ void TapeCorder::LoadFile(const String fileParam) {
 
 				state++;
 				block = new TapeBlock(blocks.W);
-				this->_list->push_back(block);
+				m_list->push_back(block);
 				cont = 0;
 				break;
 			case 2:
@@ -85,55 +85,55 @@ void TapeCorder::LoadFile(const String fileParam) {
 		}
 	}
 
-	this->Rewind();
+	Rewind();
 }
 
 void TapeCorder::Play() {
-	this->_playing = true;
+	m_playing = true;
 }
 
 void TapeCorder::Rewind() {
-	this->_posByte = 0;
-	this->_posBit = 0;
-	this->_state = 0;
-	this->_cycle = 8063;
-	this->_block = 0;
+	m_posByte = 0;
+	m_posBit = 0;
+	m_state = 0;
+	m_cycle = 8063;
+	m_block = 0;
 }
 
 uint32_t TapeCorder::GetNext() {
-	if (!this->_playing)
+	if (!m_playing)
 		return -1;
 
-	if (!this->_list)
+	if (!m_list)
 		return -1;
 
-	// if (this->_state != 8) printf("%d\n", this->_state);
+	// if (m_state != 8) printf("%d\n", m_state);
 
-	switch (this->_state) {
+	switch (m_state) {
 		case 0: // Carga lenta
-			this->_cycle--;
-			if (this->_cycle == 0)
-				this->_state = 1;
+			m_cycle--;
+			if (m_cycle == 0)
+				m_state = 1;
 
 			return 2168;
 		case 1:
-			this->_state = 2;
+			m_state = 2;
 			return 667;
 		case 2:
-			this->_state = 3;
+			m_state = 3;
 			return 735;
 
 		case 3: { // Mandar Datos
 			// Cinta sin bloques: no hay nada que mandar
-			if (this->_block >= (int) this->_list->size()) {
-				this->_state = 8;
+			if (m_block >= (int) m_list->size()) {
+				m_state = 8;
 				return 945;
 			}
 
-			TapeBlock *tapeBlock = (*this->_list)[this->_block];
-			uint8_t data = tapeBlock->GetByte(this->_posByte);
-			data = (data >> (7 - this->_posBit)) & 0x01;
-			this->_state = 4;
+			TapeBlock *tapeBlock = (*m_list)[m_block];
+			uint8_t data = tapeBlock->GetByte(m_posByte);
+			data = (data >> (7 - m_posBit)) & 0x01;
+			m_state = 4;
 			if (data == 0)
 				return 855;
 
@@ -141,20 +141,20 @@ uint32_t TapeCorder::GetNext() {
 		}
 
 		case 4: { // Mandar Datos
-			TapeBlock *tapeBlock = (*this->_list)[this->_block];
-			uint8_t data = tapeBlock->GetByte(this->_posByte);
-			data = (data >> (7 - this->_posBit)) & 0x01;
-			this->_posBit++;
-			this->_state = 3;
+			TapeBlock *tapeBlock = (*m_list)[m_block];
+			uint8_t data = tapeBlock->GetByte(m_posByte);
+			data = (data >> (7 - m_posBit)) & 0x01;
+			m_posBit++;
+			m_state = 3;
 
-			if (this->_posBit == 8) {
-				this->_posBit = 0;
-				this->_posByte++;
+			if (m_posBit == 8) {
+				m_posBit = 0;
+				m_posByte++;
 
-				if (this->_posByte == tapeBlock->GetLength()) {
-					this->_state = 5;
-					this->_posByte = 0;
-					this->_block++;
+				if (m_posByte == tapeBlock->GetLength()) {
+					m_state = 5;
+					m_posByte = 0;
+					m_block++;
 				}
 			}
 
@@ -165,25 +165,25 @@ uint32_t TapeCorder::GetNext() {
 		}
 
 		case 5: // Mini Pausa
-			if (this->_list && (this->_block >= (int) this->_list->size()))
-				this->_state = 8;
+			if (m_list && (m_block >= (int) m_list->size()))
+				m_state = 8;
 			else
-				this->_state = 6;
+				m_state = 6;
 			return 945;
 		case 6: // Pausa
-			this->_state = 7;
-			this->_cycle = 3223;
+			m_state = 7;
+			m_cycle = 3223;
 			return 3462773;
 		case 7: // Carga mas rapida
-			this->_cycle--;
-			if (this->_cycle == 0)
-				this->_state = 1;
+			m_cycle--;
+			if (m_cycle == 0)
+				m_state = 1;
 
 			return 2168;
 		case 8: // Fin
-			if (this->_finishCassetteCB)
-				this->_finishCassetteCB(this->_finishCassetteDataCB);
-			this->_state = 9;
+			if (m_finishCassetteCB)
+				m_finishCassetteCB(m_finishCassetteDataCB);
+			m_state = 9;
 			break;
 		case 9:
 			break;
@@ -193,53 +193,53 @@ uint32_t TapeCorder::GetNext() {
 }
 
 TapeBlock *TapeCorder::TakeNextBlock() {
-	if (!this->_list || (this->_block >= (int) this->_list->size()))
+	if (!m_list || (m_block >= (int) m_list->size()))
 		return nullptr;
 
-	TapeBlock *block = (*this->_list)[this->_block];
-	this->_block++;
-	this->_posByte = 0;
-	this->_posBit = 0;
+	TapeBlock *block = (*m_list)[m_block];
+	m_block++;
+	m_posByte = 0;
+	m_posBit = 0;
 
-	if (this->_block >= (int) this->_list->size()) {
-		this->_state = 9;
-		this->_playing = false;
-		if (this->_finishCassetteCB)
-			this->_finishCassetteCB(this->_finishCassetteDataCB);
+	if (m_block >= (int) m_list->size()) {
+		m_state = 9;
+		m_playing = false;
+		if (m_finishCassetteCB)
+			m_finishCassetteCB(m_finishCassetteDataCB);
 	} else {
 		// Si luego se sigue a velocidad normal, la cinta está en el tono guía del siguiente bloque
-		this->_state = 7;
-		this->_cycle = 3223;
+		m_state = 7;
+		m_cycle = 3223;
 	}
 
 	return block;
 }
 
 void TapeCorder::SetFinishCassetteCB(void (*fun)(void *), void *data) {
-	this->_finishCassetteCB = fun;
-	this->_finishCassetteDataCB = data;
+	m_finishCassetteCB = fun;
+	m_finishCassetteDataCB = data;
 }
 
 /******************************************************************************/
 
 TapeBlock::TapeBlock(int size) {
 	// A cero: si el fichero está cortado, los bytes que faltan se leen como 0 y no como basura
-	this->_data = (uint8_t *) calloc(size, 1);
-	this->_size = size;
+	m_data = (uint8_t *) calloc(size, 1);
+	m_size = size;
 }
 
 TapeBlock::~TapeBlock() {
-	free(this->_data);
+	free(m_data);
 }
 
 void TapeBlock::SetByte(int pos, uint8_t value) {
-	this->_data[pos] = value;
+	m_data[pos] = value;
 }
 
 uint8_t TapeBlock::GetByte(int pos) {
-	return this->_data[pos];
+	return m_data[pos];
 }
 
 int TapeBlock::GetLength() const {
-	return this->_size;
+	return m_size;
 }

@@ -12,7 +12,7 @@ namespace awui {
 	namespace Windows::Forms::Joystick {
 		class Controller : public Object {
 		  private:
-			static std::vector<Controller *> *m_controllersList;
+			static std::vector<Controller *> *s_controllersList;
 			SDL_GameController *m_controller;
 			int m_positionOrder;
 			SDL_JoystickID m_which;

@@ -5,8 +5,8 @@
 namespace awui::Emulation::Chip8 {
 	class Input {
 	  private:
-		bool _keys[16];
-		int _lastKey;
+		bool m_keys[16];
+		int m_lastKey;
 
 	  public:
 		Input();

@@ -48,27 +48,27 @@ Asi que la resolucion real de un televisor es 360x270
 */
 
 ULA::ULA() {
-	this->d._line = 0;
-	this->d._col = 0;
-	this->d._backcolor = 0;
-	this->d._blinkCount = 0;
-	this->d._blink = false;
+	m_saveData.line = 0;
+	m_saveData.col = 0;
+	m_saveData.backcolor = 0;
+	m_saveData.blinkCount = 0;
+	m_saveData.blink = false;
 
-	this->_image = new Drawing::Image(SPECTRUM_VIDEO_WIDTH_VISUAL, SPECTRUM_VIDEO_HEIGHT_VISUAL);
+	m_image = new Drawing::Image(SPECTRUM_VIDEO_WIDTH_VISUAL, SPECTRUM_VIDEO_HEIGHT_VISUAL);
 
-	this->Reset();
+	Reset();
 }
 
 ULA::~ULA() {
-	delete this->_image;
+	delete m_image;
 }
 
 void ULA::Reset() {
-	memset(this->d._vram, 0, 16384 * sizeof(uint8_t));
+	memset(m_saveData.vram, 0, 16384 * sizeof(uint8_t));
 	// Me gusta no vaciar la memoria de video, se parece mas al reset que se producia en el spectrum
 	// cuando se pulsaba el boton, queda mas realista
-	// memset(this->d._data, 0, SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL * sizeof(uint8_t));
-	this->_image->Clear();
+	// memset(m_saveData.data, 0, SPECTRUM_VIDEO_WIDTH_TOTAL * SPECTRUM_VIDEO_HEIGHT_TOTAL * sizeof(uint8_t));
+	m_image->Clear();
 }
 
 /* VSYNC
@@ -101,7 +101,7 @@ void ULA::CalcNextPixel(uint16_t *col, uint16_t *line, bool *hsync, bool *vsync)
 		*line = (*line + 1) % SPECTRUM_VIDEO_HEIGHT_TOTAL;
 
 	if (*col == (SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT)) {
-		this->d._lastbackcolor = this->d._backcolor;
+		m_saveData.lastbackcolor = m_saveData.backcolor;
 		*hsync = true;
 	}
 
@@ -113,30 +113,30 @@ bool ULA::OnTick(uint32_t counter) {
 	bool vsync;
 	bool hsync;
 
-	this->CalcNextPixel(&this->d._col, &this->d._line, &hsync, &vsync);
+	CalcNextPixel(&m_saveData.col, &m_saveData.line, &hsync, &vsync);
 
-	uint16_t col = this->d._col;
-	uint16_t line = this->d._line;
+	uint16_t col = m_saveData.col;
+	uint16_t line = m_saveData.line;
 	uint32_t pos = col + (line * SPECTRUM_VIDEO_WIDTH_TOTAL);
 
-	if ((pos == 0) && (++(this->d._blinkCount) >= 16)) {
-		this->d._blinkCount = 0;
-		this->d._blink = !this->d._blink;
+	if ((pos == 0) && (++(m_saveData.blinkCount) >= 16)) {
+		m_saveData.blinkCount = 0;
+		m_saveData.blink = !m_saveData.blink;
 	}
 
 	if (col == (SPECTRUM_VIDEO_WIDTH + SPECTRUM_VIDEO_WIDTH_RIGHT))
 		if (line == (SPECTRUM_VIDEO_HEIGHT + SPECTRUM_VIDEO_HEIGHT_BOTTOM))
-			this->DrawImage();
+			DrawImage();
 
 	if ((col < SPECTRUM_VIDEO_WIDTH) && (line < SPECTRUM_VIDEO_HEIGHT)) {
 		uint8_t newY = (line & 0xC0) | ((line & 0x38) >> 3) | ((line & 0x7) << 3);
-		uint8_t v = this->d._vram[(col >> 3) + (newY * 32)];
+		uint8_t v = m_saveData.vram[(col >> 3) + (newY * 32)];
 		int bit = 7 - (col & 0x7);
 		bool active = ((v & (1 << bit)) != 0) ? true : false;
 
-		uint8_t reg = this->d._vram[0x1800 + (col >> 3) + ((line >> 3) * 32)];
+		uint8_t reg = m_saveData.vram[0x1800 + (col >> 3) + ((line >> 3) * 32)];
 
-		if ((reg & 0x80) && this->d._blink)
+		if ((reg & 0x80) && m_saveData.blink)
 			active = !active;
 
 		uint8_t color;
@@ -145,7 +145,7 @@ bool ULA::OnTick(uint32_t counter) {
 		else
 			color = (reg & 0x78) >> 3;
 
-		this->d._data[pos] = color;
+		m_saveData.data[pos] = color;
 	} else {
 		/*
 				Es mucho mas rapido asignarlo simplemente
@@ -156,7 +156,7 @@ bool ULA::OnTick(uint32_t counter) {
 				bool border = !(((col >= vsync_begin) && (col < vsync_end)) || ((line >= hsync_begin) && (line < hsync_end)));
 				if (border)
 		*/
-		this->d._data[pos] = this->d._lastbackcolor;
+		m_saveData.data[pos] = m_saveData.lastbackcolor;
 	}
 
 	return vsync;
@@ -167,11 +167,11 @@ int ULA::GetSaveSize() {
 }
 
 void ULA::LoadState(uint8_t *data) {
-	memcpy(&this->d, data, sizeof(ULA::saveData));
+	memcpy(&m_saveData, data, sizeof(ULA::saveData));
 }
 
 void ULA::SaveState(uint8_t *data) {
-	memcpy(data, &this->d, sizeof(ULA::saveData));
+	memcpy(data, &m_saveData, sizeof(ULA::saveData));
 }
 
 void ULA::DrawImage() {
@@ -183,9 +183,9 @@ void ULA::DrawImage() {
 	// VIDEO + Border derecho + Borde Inferior
 	for (int x = 0; x < width; x++)
 		for (int y = 0; y < height; y++) {
-			c = this->d._data[(y * SPECTRUM_VIDEO_WIDTH_TOTAL) + x];
-			color = _colors[c];
-			this->_image->SetPixel(x + SPECTRUM_VIDEO_WIDTH_LEFT, y + SPECTRUM_VIDEO_HEIGHT_TOP, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+			c = m_saveData.data[(y * SPECTRUM_VIDEO_WIDTH_TOTAL) + x];
+			color = m_colors[c];
+			m_image->SetPixel(x + SPECTRUM_VIDEO_WIDTH_LEFT, y + SPECTRUM_VIDEO_HEIGHT_TOP, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
 		}
 
 	// Borde superior izquierdo
@@ -193,28 +193,28 @@ void ULA::DrawImage() {
 		for (int y = 0; y < SPECTRUM_VIDEO_HEIGHT_TOP; y++) {
 			int newX = SPECTRUM_VIDEO_WIDTH_TOTAL - SPECTRUM_VIDEO_WIDTH_LEFT + x;
 			int newY = SPECTRUM_VIDEO_HEIGHT_TOTAL - SPECTRUM_VIDEO_HEIGHT_TOP + y;
-			c = this->d._data[(newY * SPECTRUM_VIDEO_WIDTH_TOTAL) + newX];
-			color = _colors[c];
-			this->_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+			c = m_saveData.data[(newY * SPECTRUM_VIDEO_WIDTH_TOTAL) + newX];
+			color = m_colors[c];
+			m_image->SetPixel(x, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
 		}
 
 	// Borde superior
 	for (int x = 0; x < width; x++)
 		for (int y = 0; y < SPECTRUM_VIDEO_HEIGHT_TOP; y++) {
 			int newY = SPECTRUM_VIDEO_HEIGHT_TOTAL - SPECTRUM_VIDEO_HEIGHT_TOP + y;
-			c = this->d._data[(newY * SPECTRUM_VIDEO_WIDTH_TOTAL) + x];
-			color = _colors[c];
-			this->_image->SetPixel(x + SPECTRUM_VIDEO_WIDTH_LEFT, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+			c = m_saveData.data[(newY * SPECTRUM_VIDEO_WIDTH_TOTAL) + x];
+			color = m_colors[c];
+			m_image->SetPixel(x + SPECTRUM_VIDEO_WIDTH_LEFT, y, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
 		}
 
 	// Borde Izquierdo
 	for (int x = 0; x < SPECTRUM_VIDEO_WIDTH_LEFT; x++)
 		for (int y = 0; y < height; y++) {
 			int newX = SPECTRUM_VIDEO_WIDTH_TOTAL - SPECTRUM_VIDEO_WIDTH_LEFT + x;
-			c = this->d._data[(y * SPECTRUM_VIDEO_WIDTH_TOTAL) + newX];
-			color = _colors[c];
-			this->_image->SetPixel(x, y + SPECTRUM_VIDEO_HEIGHT_TOP, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+			c = m_saveData.data[(y * SPECTRUM_VIDEO_WIDTH_TOTAL) + newX];
+			color = m_colors[c];
+			m_image->SetPixel(x, y + SPECTRUM_VIDEO_HEIGHT_TOP, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
 		}
 
-	this->_image->Update();
+	m_image->Update();
 }

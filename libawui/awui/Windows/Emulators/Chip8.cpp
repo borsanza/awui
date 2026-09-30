@@ -17,12 +17,12 @@ using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::Chip8;
 using namespace awui::Windows::Forms;
 
-bool Chip8::m_invertedColors = false;
+bool Chip8::s_invertedColors = false;
 
 Chip8::Chip8() {
 	m_image = new Drawing::Image(64, 32);
 	m_cpu = new CPU();
-	m_lastInverted = Chip8::m_invertedColors;
+	m_lastInverted = Chip8::s_invertedColors;
 }
 
 Chip8::~Chip8() {
@@ -33,7 +33,7 @@ void Chip8::CheckBackcolor() {
 	if (m_cpu->GetChip8Mode() == MEGACHIP8)
 		SetBackColor(Color::FromArgb(0, 0, 0));
 	else {
-		if (!Chip8::m_invertedColors)
+		if (!Chip8::s_invertedColors)
 			SetBackColor(Color::FromArgb(163, 218, 2));
 		else
 			SetBackColor(Color::FromArgb(0, 0, 0));
@@ -49,9 +49,9 @@ void Chip8::LoadRom(const String file) {
 }
 
 void Chip8::OnTick(float deltaSeconds) {
-	if (m_lastInverted != Chip8::m_invertedColors) {
+	if (m_lastInverted != Chip8::s_invertedColors) {
 		UpdateImage();
-		m_lastInverted = Chip8::m_invertedColors;
+		m_lastInverted = Chip8::s_invertedColors;
 	}
 
 	m_cpu->OnTick(deltaSeconds);
@@ -77,7 +77,7 @@ void Chip8::UpdateImage() {
 	} else {
 		for (int y = 0; y < screen->GetHeight(); y++) {
 			for (int x = 0; x < screen->GetWidth(); x++) {
-				if (!Chip8::m_invertedColors) {
+				if (!Chip8::s_invertedColors) {
 					if (screen->GetPixel(x, y))
 						m_image->SetPixel(x, y, 50, 88, 4, 255);
 					else
@@ -253,7 +253,7 @@ bool Chip8::OnKeyPress(Keys::Enum key) {
 		m_cpu->KeyDown(keypressed);
 
 	if (key == Keys::Key_I)
-		SetInvertedColors(!Chip8::m_invertedColors);
+		SetInvertedColors(!Chip8::s_invertedColors);
 
 	return true;
 }
@@ -267,7 +267,7 @@ bool Chip8::OnKeyUp(Keys::Enum key) {
 }
 
 void Chip8::SetInvertedColors(bool mode) {
-	Chip8::m_invertedColors = mode;
+	Chip8::s_invertedColors = mode;
 	UpdateImage();
 }
 

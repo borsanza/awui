@@ -12,26 +12,26 @@ using namespace awui::Emulation::Chip8;
 #include <unistd.h>
 
 Sound::Sound() {
-	this->_playing = true;
-	this->_console_fd = open("/dev/console", O_WRONLY);
-	this->Stop();
+	m_playing = true;
+	m_consoleFd = open("/dev/console", O_WRONLY);
+	Stop();
 }
 
 Sound::~Sound() {
-	this->Stop();
-	close(this->_console_fd);
+	Stop();
+	close(m_consoleFd);
 }
 
 void Sound::Play() {
-	if (!this->_playing) {
-		//		ioctl(this->_console_fd, KIOCSOUND, 1193180/440);
-		this->_playing = true;
+	if (!m_playing) {
+		//		ioctl(m_consoleFd, KIOCSOUND, 1193180/440);
+		m_playing = true;
 	}
 }
 
 void Sound::Stop() {
-	if (this->_playing) {
-		//		ioctl(this->_console_fd, KIOCSOUND, 0);
-		this->_playing = false;
+	if (m_playing) {
+		//		ioctl(m_consoleFd, KIOCSOUND, 0);
+		m_playing = false;
 	}
 }

@@ -13,8 +13,8 @@ namespace awui {
 	namespace Windows::Forms {
 		class TextRenderer {
 		  private:
-			static awui::Drawing::Graphics *graphics;
-			static awui::Drawing::Image *image;
+			static awui::Drawing::Graphics *s_graphics;
+			static awui::Drawing::Image *s_image;
 
 		  public:
 			static awui::Drawing::GlyphMetrics GetMeasureText(const String text, awui::Drawing::Font *font);

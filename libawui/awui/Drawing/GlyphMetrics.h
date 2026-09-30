@@ -17,14 +17,14 @@ namespace awui::Drawing {
 
 	class GlyphMetrics {
 	  private:
-		int width;
-		int height;
-		int advancex;
-		int advancey;
-		int bearingx;
-		int bearingy;
-		int ascent;
-		int descent;
+		int m_width;
+		int m_height;
+		int m_advanceX;
+		int m_advanceY;
+		int m_bearingX;
+		int m_bearingY;
+		int m_ascent;
+		int m_descent;
 
 	  public:
 		GlyphMetrics();

@@ -9,68 +9,68 @@
 using namespace awui;
 
 TimeSpan::TimeSpan() {
-	this->ticks = 0;
+	m_ticks = 0;
 }
 
 TimeSpan::TimeSpan(int64_t ticks) {
-	this->ticks = ticks;
+	m_ticks = ticks;
 }
 
 TimeSpan::TimeSpan(int hours, int minutes, int seconds) {
-	this->ticks = (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond);
+	m_ticks = (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond);
 }
 
 TimeSpan::TimeSpan(int days, int hours, int minutes, int seconds) {
-	this->ticks = (days * TicksPerDay) + (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond);
+	m_ticks = (days * TicksPerDay) + (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond);
 }
 
 TimeSpan::TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds) {
-	this->ticks = (days * TicksPerDay) + (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond) + (milliseconds * TicksPerMillisecond);
+	m_ticks = (days * TicksPerDay) + (hours * TicksPerHour) + (minutes * TicksPerMinute) + (seconds * TicksPerSecond) + (milliseconds * TicksPerMillisecond);
 }
 
 int64_t TimeSpan::GetTicks() const {
-	return this->ticks;
+	return m_ticks;
 }
 
 double TimeSpan::GetTotalMilliseconds() const {
-	return (double) this->ticks / TicksPerMillisecond;
+	return (double) m_ticks / TicksPerMillisecond;
 }
 
 double TimeSpan::GetTotalSeconds() const {
-	return (double) this->ticks / TicksPerSecond;
+	return (double) m_ticks / TicksPerSecond;
 }
 
 double TimeSpan::GetTotalMinutes() const {
-	return (double) this->ticks / TicksPerMinute;
+	return (double) m_ticks / TicksPerMinute;
 }
 
 double TimeSpan::GetTotalHours() const {
-	return (double) this->ticks / TicksPerHour;
+	return (double) m_ticks / TicksPerHour;
 }
 
 double TimeSpan::GetTotalDays() const {
-	return (double) this->ticks / TicksPerDay;
+	return (double) m_ticks / TicksPerDay;
 }
 
 // Con enteros: pasando por double e int, los milisegundos se desbordaban a partir de 24 días
 int TimeSpan::GetMilliseconds() const {
-	return (int) ((this->ticks / TicksPerMillisecond) % 1000);
+	return (int) ((m_ticks / TicksPerMillisecond) % 1000);
 }
 
 int TimeSpan::GetSeconds() const {
-	return (int) ((this->ticks / TicksPerSecond) % 60);
+	return (int) ((m_ticks / TicksPerSecond) % 60);
 }
 
 int TimeSpan::GetMinutes() const {
-	return (int) ((this->ticks / TicksPerMinute) % 60);
+	return (int) ((m_ticks / TicksPerMinute) % 60);
 }
 
 int TimeSpan::GetHours() const {
-	return (int) ((this->ticks / TicksPerHour) % 24);
+	return (int) ((m_ticks / TicksPerHour) % 24);
 }
 
 int TimeSpan::GetDays() const {
-	return (int) (this->ticks / TicksPerDay);
+	return (int) (m_ticks / TicksPerDay);
 }
 
 awui::String TimeSpan::ConvertDecimals(int value, int decimals) const {

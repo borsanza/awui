@@ -13,106 +13,106 @@
 using namespace awui::IO;
 
 MemoryStream::MemoryStream(uint32_t capacity) {
-	this->_data = 0;
-	this->_capacity = 0;
-	this->_position = 0;
-	this->_length = 0;
-	this->SetCapacity(capacity);
+	m_data = 0;
+	m_capacity = 0;
+	m_position = 0;
+	m_length = 0;
+	SetCapacity(capacity);
 }
 
 MemoryStream::~MemoryStream() {
-	if (this->_data)
-		free(this->_data);
+	if (m_data)
+		free(m_data);
 }
 
 void MemoryStream::Close() {
 }
 
 void MemoryStream::SetPosition(uint32_t value) {
-	this->_position = value;
+	m_position = value;
 }
 
 uint32_t MemoryStream::GetPosition() const {
-	return this->_position;
+	return m_position;
 }
 
 uint32_t MemoryStream::GetLength() const {
-	return this->_length;
+	return m_length;
 }
 
 void MemoryStream::SetLength(uint32_t value) {
-	this->_length = value;
+	m_length = value;
 }
 
 void MemoryStream::Clear() {
-	for (uint32_t i = 0; i < this->_capacity; i++)
-		this->_data[i] = 0;
+	for (uint32_t i = 0; i < m_capacity; i++)
+		m_data[i] = 0;
 }
 
 void MemoryStream::SetCapacity(uint32_t value) {
-	if (this->_capacity == value)
+	if (m_capacity == value)
 		return;
 
 	uint8_t *data = (uint8_t *) calloc(value ? value : 1, sizeof(uint8_t));
-	if (this->_data) {
-		memcpy(data, this->_data, (this->_capacity < value) ? this->_capacity : value);
-		free(this->_data);
+	if (m_data) {
+		memcpy(data, m_data, (m_capacity < value) ? m_capacity : value);
+		free(m_data);
 	}
 
-	this->_data = data;
-	this->_capacity = value;
-	if (this->_length > value)
-		this->_length = value;
-	if (this->_position > value)
-		this->_position = value;
+	m_data = data;
+	m_capacity = value;
+	if (m_length > value)
+		m_length = value;
+	if (m_position > value)
+		m_position = value;
 }
 
 uint32_t MemoryStream::GetCapacity() {
-	return this->_capacity;
+	return m_capacity;
 }
 
 uint8_t MemoryStream::ReadByte() {
-	if (this->_position >= this->_capacity)
+	if (m_position >= m_capacity)
 		return 0;
 
-	uint8_t r = this->_data[this->_position];
-	if (this->_position < this->_length)
-		this->_position++;
+	uint8_t r = m_data[m_position];
+	if (m_position < m_length)
+		m_position++;
 	return r;
 }
 
 uint32_t MemoryStream::Read(uint8_t *buffer, uint32_t count) {
-	uint32_t available = (this->_position < this->_length) ? (this->_length - this->_position) : 0;
+	uint32_t available = (m_position < m_length) ? (m_length - m_position) : 0;
 	uint32_t read = (count < available) ? count : available;
 	if (read == 0)
 		return 0;
 
-	memcpy(buffer, this->_data + this->_position, read);
-	this->_position += read;
+	memcpy(buffer, m_data + m_position, read);
+	m_position += read;
 	return read;
 }
 
 // Lo que no cabe en la capacidad se descarta (como WriteByte)
 void MemoryStream::Write(const uint8_t *buffer, uint32_t count) {
-	uint32_t room = (this->_position < this->_capacity) ? (this->_capacity - this->_position) : 0;
+	uint32_t room = (m_position < m_capacity) ? (m_capacity - m_position) : 0;
 	uint32_t written = (count < room) ? count : room;
 	if (written == 0)
 		return;
 
-	memcpy(this->_data + this->_position, buffer, written);
-	this->_position += written;
-	if (this->_position > this->_length)
-		this->_length = this->_position;
+	memcpy(m_data + m_position, buffer, written);
+	m_position += written;
+	if (m_position > m_length)
+		m_length = m_position;
 }
 
 void MemoryStream::WriteByte(uint8_t value) {
-	if (this->_position >= this->_capacity)
+	if (m_position >= m_capacity)
 		return;
 
-	this->_data[this->_position] = value;
-	this->_position++;
-	if (this->_position > this->_length)
-		this->_length = this->_position;
+	m_data[m_position] = value;
+	m_position++;
+	if (m_position > m_length)
+		m_length = m_position;
 }
 
 /*-
@@ -144,10 +144,10 @@ static uint32_t crc32_tab[] = {
 
 uint32_t MemoryStream::GetCRC32() const {
 	uint32_t crc = 0;
-	size_t size = this->_length;
+	size_t size = m_length;
 	const uint8_t *p;
 
-	p = this->_data;
+	p = m_data;
 	crc = crc ^ ~0U;
 
 	while (size--)

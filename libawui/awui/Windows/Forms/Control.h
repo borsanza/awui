@@ -50,12 +50,12 @@ namespace awui {
 			std::vector<Control *> m_controls;
 			Control *m_parent;
 			bool m_ownedByParent; // Lo borra su padre al destruirse (WidgetOwnership::Owned)
-			static Bitmap *m_selectedBitmap;
+			static Bitmap *s_selectedBitmap;
 
 			// Sirve para saber en que orden se han insertado los componentes
-			static int32_t lastTabIndex;
+			static int32_t s_lastTabIndex;
 			// Sirve para saber en que orden se hizo un focus
-			static int32_t countFocused;
+			static int32_t s_countFocused;
 
 			int32_t m_tabIndex;
 			Control *m_focused;

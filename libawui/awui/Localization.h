@@ -12,10 +12,10 @@ namespace awui {
 	// Cada fichero incluye "language.name" con el nombre del idioma tal como se muestra en el menú.
 	class Localization {
 	  private:
-		static inline std::string m_directory = "lang";
-		static inline std::string m_language;
-		static inline nlohmann::json m_texts = nlohmann::json::object();
-		static inline nlohmann::json m_fallback = nlohmann::json::object();
+		static inline std::string s_directory = "lang";
+		static inline std::string s_language;
+		static inline nlohmann::json s_texts = nlohmann::json::object();
+		static inline nlohmann::json s_fallback = nlohmann::json::object();
 
 		static nlohmann::json LoadFile(const std::string &code);
 
@@ -24,7 +24,7 @@ namespace awui {
 
 		static void SetDirectory(const std::string &directory);
 		static void SetLanguage(const std::string &code);
-		static inline const std::string &GetLanguage() { return m_language; }
+		static inline const std::string &GetLanguage() { return s_language; }
 
 		// Texto de la clave en el idioma elegido; si falta, en inglés; si tampoco, la propia clave
 		// (así un texto sin traducir se ve enseguida, y un texto que no es clave, como "25%", sale tal cual)

@@ -11,11 +11,11 @@
 using namespace awui::Effects;
 
 Effect::Effect(String name1) {
-	this->name = name1;
+	m_name = name1;
 }
 
 awui::String Effect::GetName() const {
-	return this->name;
+	return m_name;
 }
 
 float EffectLinear::Calculate(float p) const {

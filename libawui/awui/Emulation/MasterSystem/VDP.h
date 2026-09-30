@@ -21,48 +21,48 @@ namespace awui::Emulation::MasterSystem {
 	class VDP {
 	  private:
 		struct saveData {
-			uint16_t _width;
-			uint16_t _height;
-			uint16_t _line;
-			uint16_t _col;
-			uint16_t _baseAddress;
-			uint16_t _dataByte;
-			uint16_t _address;
-			uint8_t _portState;
-			uint8_t _readbuffer;
-			uint8_t _verticalScroll;
-			uint8_t _horizontalScroll; // Registro 8 fijado al empezar cada línea
-			uint8_t _hcounterLatch;	// Contador horizontal capturado (puerto 0x7F)
-			uint8_t _status;
-			uint8_t _spriteSize;
-			uint8_t _lineCounter;
-			uint8_t _lineSprites[64]; // Sprites que se dibujan en la línea actual, en orden de la SAT
-			uint8_t _lineSpriteCount;
-			bool _controlMode : 1;
-			bool _lineInterruptPending : 1;
-			bool _ntsc : 1;
-			bool _showBorder : 1;
-			bool _visible : 1;
-			uint8_t _cram[64]; // Master System: 32 colores de 1 byte. Game Gear: 32 colores de 2 bytes
-			uint8_t _cramLatch; // Game Gear: byte par pendiente de escribir en la CRAM
-			uint8_t _registers[11];
-			uint8_t _vram[16384];
-			uint16_t _sizeData;
-			uint16_t _data[(256 + LEFTBORDER + RIGHTBORDER) * 294]; // Color 12 bits (0x0BGR). 294 parece que es el maximo en alto
-		} d;
+			uint16_t width;
+			uint16_t height;
+			uint16_t line;
+			uint16_t col;
+			uint16_t baseAddress;
+			uint16_t dataByte;
+			uint16_t address;
+			uint8_t portState;
+			uint8_t readbuffer;
+			uint8_t verticalScroll;
+			uint8_t horizontalScroll; // Registro 8 fijado al empezar cada línea
+			uint8_t hcounterLatch;	// Contador horizontal capturado (puerto 0x7F)
+			uint8_t status;
+			uint8_t spriteSize;
+			uint8_t lineCounter;
+			uint8_t lineSprites[64]; // Sprites que se dibujan en la línea actual, en orden de la SAT
+			uint8_t lineSpriteCount;
+			bool controlMode : 1;
+			bool lineInterruptPending : 1;
+			bool ntsc : 1;
+			bool showBorder : 1;
+			bool visible : 1;
+			uint8_t cram[64]; // Master System: 32 colores de 1 byte. Game Gear: 32 colores de 2 bytes
+			uint8_t cramLatch; // Game Gear: byte par pendiente de escribir en la CRAM
+			uint8_t registers[11];
+			uint8_t vram[16384];
+			uint16_t sizeData;
+			uint16_t data[(256 + LEFTBORDER + RIGHTBORDER) * 294]; // Color 12 bits (0x0BGR). 294 parece que es el maximo en alto
+		} m_saveData;
 
 		// No salvable
-		Motherboard *_cpu;
-		bool _spriteLimit;
-		bool _gameGear;
+		Motherboard *m_cpu;
+		bool m_spriteLimit;
+		bool m_gameGear;
 
-		uint8_t NTSCx192[262];
-		uint8_t NTSCx224[262];
-		uint8_t NTSCx240[262];
-		uint8_t PALx192[313];
-		uint8_t PALx224[313];
-		uint8_t PALx240[313];
-		uint8_t HORSYNC[342];
+		uint8_t m_vCounterNtsc192[262];
+		uint8_t m_vCounterNtsc224[262];
+		uint8_t m_vCounterNtsc240[262];
+		uint8_t m_vCounterPal192[313];
+		uint8_t m_vCounterPal224[313];
+		uint8_t m_vCounterPal240[313];
+		uint8_t m_hCounter[342];
 
 		uint8_t GetStatus(bool resetStatus = true);
 		void UpdateAllRegisters();
@@ -76,7 +76,7 @@ namespace awui::Emulation::MasterSystem {
 		void EvaluateSprites();
 		void EvaluateLegacySprites();
 		uint16_t GetLegacyPixel();
-		inline bool IsMode4() const { return (this->d._registers[0] & 0x04) != 0; }
+		inline bool IsMode4() const { return (m_saveData.registers[0] & 0x04) != 0; }
 		bool GetSpritePixel(uint8_t *color);
 		uint16_t GetBackgroundPixel(uint16_t sprite, int16_t x, int16_t y, bool flipx, bool flipy, bool otherPalete, bool bgPriority, bool hasSprite, uint8_t spriteColor) const;
 
@@ -122,14 +122,14 @@ namespace awui::Emulation::MasterSystem {
 
 		// Game Gear: paleta de 12 bits y ventana visible de 160x144 en el centro de la pantalla
 		void SetGameGear(bool mode);
-		inline bool IsGameGear() const { return _gameGear; }
+		inline bool IsGameGear() const { return m_gameGear; }
 
 		bool GetShowBorder() const;
 
 		// Límite de 8 sprites por línea como en el hardware. Desactivarlo evita el parpadeo,
 		// pero el flag de desbordamiento se sigue activando igual.
-		inline void SetSpriteLimit(bool mode) { _spriteLimit = mode; }
-		inline bool GetSpriteLimit() const { return _spriteLimit; }
+		inline void SetSpriteLimit(bool mode) { m_spriteLimit = mode; }
+		inline bool GetSpriteLimit() const { return m_spriteLimit; }
 		void SetShowBorder(bool mode);
 
 		void Clear();

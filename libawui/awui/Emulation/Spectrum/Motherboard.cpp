@@ -57,67 +57,67 @@ uint8_t ReadPortCB(uint8_t port, void *data) {
 }
 
 Motherboard::Motherboard() {
-	this->_percFrame = 0;
-	this->_countReadCycles = 0;
-	this->_lastCycles = 0;
-	this->_writeCassetteDataCB = NULL;
-	this->_readCassetteDataCB = NULL;
+	m_percFrame = 0;
+	m_countReadCycles = 0;
+	m_lastCycles = 0;
+	m_writeCassetteDataCB = NULL;
+	m_readCassetteDataCB = NULL;
 
-	this->_z80 = new awui::Emulation::Processors::Z80::CPU();
-	this->_z80->SetWriteMemoryCB(WriteMemoryCB, this);
-	this->_z80->SetReadMemoryCB(ReadMemoryCB, this);
-	this->_z80->SetWritePortCB(WritePortCB, this);
-	this->_z80->SetReadPortCB(ReadPortCB, this);
+	m_z80 = new awui::Emulation::Processors::Z80::CPU();
+	m_z80->SetWriteMemoryCB(WriteMemoryCB, this);
+	m_z80->SetReadMemoryCB(ReadMemoryCB, this);
+	m_z80->SetWritePortCB(WritePortCB, this);
+	m_z80->SetReadPortCB(ReadPortCB, this);
 
-	this->_writeCassetteCB = 0;
-	this->_readCassetteCB = 0;
-	this->_lastWriteState = 0;
-	this->_lastWriteCycle = 0;
-	this->_lastReadCycle = 0;
-	this->_lastReadState = 0;
+	m_writeCassetteCB = 0;
+	m_readCassetteCB = 0;
+	m_lastWriteState = 0;
+	m_lastWriteCycle = 0;
+	m_lastReadCycle = 0;
+	m_lastReadState = 0;
 
-	this->_ula = new ULA();
-	this->_sound = new Sound();
-	this->_cycles = 0;
-	this->_cyclesULA = 0;
-	this->_fast = false;
-	this->_tape = nullptr;
-	this->_lastEarReadCycle = 0;
-	this->_loaderReads = 0;
-	this->_framesWithoutLoader = 0;
-	this->_tapeWasPlaying = false;
+	m_ula = new ULA();
+	m_sound = new Sound();
+	m_cycles = 0;
+	m_cyclesULA = 0;
+	m_fast = false;
+	m_tape = nullptr;
+	m_lastEarReadCycle = 0;
+	m_loaderReads = 0;
+	m_framesWithoutLoader = 0;
+	m_tapeWasPlaying = false;
 
-	this->_rom = new Common::Rom(16384);
+	m_rom = new Common::Rom(16384);
 
 	for (int i = 0; i < 8; i++)
-		this->d._keys[i] = 0xFF;
+		m_saveData.keys[i] = 0xFF;
 
-	this->Reset();
+	Reset();
 }
 
 Motherboard::~Motherboard() {
-	delete this->_rom;
-	delete this->_z80;
-	delete this->_ula;
+	delete m_rom;
+	delete m_z80;
+	delete m_ula;
 }
 
 void Motherboard::Reset() {
-	this->_z80->Reset();
-	this->_ula->Reset();
+	m_z80->Reset();
+	m_ula->Reset();
 
-	memset(this->d._ram, 0, 32768 * sizeof(uint8_t));
+	memset(m_saveData.ram, 0, 32768 * sizeof(uint8_t));
 }
 
 void Motherboard::LoadRom(const String file) {
-	this->_rom->LoadRom(file);
+	m_rom->LoadRom(file);
 }
 
 void Motherboard::CheckInterrupts() {
-	if (!this->_z80->GetRegisters()->GetIFF1())
+	if (!m_z80->GetRegisters()->GetIFF1())
 		return;
 
 	Word newPC;
-	switch (this->_z80->GetRegisters()->GetIM()) {
+	switch (m_z80->GetRegisters()->GetIM()) {
 		case 0:
 			printf("Motherboard::CheckInterrupts: Mode 0 IM: No testeado\n");
 			newPC.W = 0x0038;
@@ -127,54 +127,54 @@ void Motherboard::CheckInterrupts() {
 			break;
 		case 2: {
 			Word address;
-			address.H = this->_z80->GetRegisters()->GetI();
+			address.H = m_z80->GetRegisters()->GetI();
 			address.L = 0xFF;
-			newPC.L = this->_z80->ReadMemory(address.W);
+			newPC.L = m_z80->ReadMemory(address.W);
 			address.W++;
-			newPC.H = this->_z80->ReadMemory(address.W);
+			newPC.H = m_z80->ReadMemory(address.W);
 			break;
 		}
 		default:
 			newPC.W = 0x0038;
-			printf("Motherboard::CheckInterrupts: Mode %d IM: Desconocido\n", this->_z80->GetRegisters()->GetIM());
+			printf("Motherboard::CheckInterrupts: Mode %d IM: Desconocido\n", m_z80->GetRegisters()->GetIM());
 			break;
 	}
 
-	this->_z80->SetInInterrupt(true);
-	this->_z80->GetRegisters()->SetIFF1(false);
-	this->_z80->GetRegisters()->SetIFF2(false);
-	this->_z80->CallInterrupt(newPC.W);
+	m_z80->SetInInterrupt(true);
+	m_z80->GetRegisters()->SetIFF1(false);
+	m_z80->GetRegisters()->SetIFF2(false);
+	m_z80->CallInterrupt(newPC.W);
 }
 
 void Motherboard::ProcessCassette() {
 	int data = -2;
-	if ((this->_countReadCycles <= 0) && this->_readCassetteCB)
-		data = this->_readCassetteCB(this->_readCassetteDataCB);
+	if ((m_countReadCycles <= 0) && m_readCassetteCB)
+		data = m_readCassetteCB(m_readCassetteDataCB);
 
 	// Para testear si funciona
-	// if (this->_countReadCycles <= 0)
+	// if (m_countReadCycles <= 0)
 	//	data = 2168;
 
 	switch (data) {
 		case -2: // Hay que dejarlo para que no ejecute el default
 			break;
 		case -1: // Lee del cassette pero no hay datos
-			this->_countReadCycles = 0;
+			m_countReadCycles = 0;
 			break;
 		default:
-			this->_countReadCycles += data;
-			this->_lastReadState = !this->_lastReadState;
-			if (!this->_fast)
-				this->_sound->WriteSound(this, this->_lastReadState ? 0x08 : 0x10);
+			m_countReadCycles += data;
+			m_lastReadState = !m_lastReadState;
+			if (!m_fast)
+				m_sound->WriteSound(this, m_lastReadState ? 0x08 : 0x10);
 			break;
 	}
 
-	if (this->_countReadCycles > 0) {
-		int16_t diff = (int16_t) (this->_lastCycles - this->_lastReadCycle);
-		this->_countReadCycles -= diff;
+	if (m_countReadCycles > 0) {
+		int16_t diff = (int16_t) (m_lastCycles - m_lastReadCycle);
+		m_countReadCycles -= diff;
 	}
 
-	this->_lastReadCycle = this->_lastCycles;
+	m_lastReadCycle = m_lastCycles;
 }
 
 /**
@@ -189,14 +189,14 @@ void Motherboard::ProcessCassette() {
  */
 bool Motherboard::FlashLoad() {
 	// INC D; EX AF,AF'; DEC D: principio de LD-BYTES en la ROM del 48K
-	if (!this->_tape || (this->ReadMemory(0x0556) != 0x14) || (this->ReadMemory(0x0557) != 0x08) || (this->ReadMemory(0x0558) != 0x15))
+	if (!m_tape || (ReadMemory(0x0556) != 0x14) || (ReadMemory(0x0557) != 0x08) || (ReadMemory(0x0558) != 0x15))
 		return false;
 
-	TapeBlock *block = this->_tape->TakeNextBlock();
+	TapeBlock *block = m_tape->TakeNextBlock();
 	if (!block)
 		return false;
 
-	Processors::Z80::Registers *regs = this->_z80->GetRegisters();
+	Processors::Z80::Registers *regs = m_z80->GetRegisters();
 	regs->AlternateAF();
 	uint8_t flag = regs->GetA();
 	bool load = (regs->GetF() & Processors::Z80::Flag_C) != 0;
@@ -213,8 +213,8 @@ bool Motherboard::FlashLoad() {
 			uint8_t value = block->GetByte(pos++);
 			parity ^= value;
 			if (load)
-				this->WriteMemory(ix, value);
-			else if (this->ReadMemory(ix) != value)
+				WriteMemory(ix, value);
+			else if (ReadMemory(ix) != value)
 				ok = false;
 			ix++;
 			de--;
@@ -233,7 +233,7 @@ bool Motherboard::FlashLoad() {
 
 	// RET (a SA/LD-RET)
 	uint16_t sp = regs->GetSP();
-	regs->SetPC(this->ReadMemory(sp) | (this->ReadMemory(sp + 1) << 8));
+	regs->SetPC(ReadMemory(sp) | (ReadMemory(sp + 1) << 8));
 	regs->SetSP(sp + 2);
 
 	return true;
@@ -241,42 +241,42 @@ bool Motherboard::FlashLoad() {
 
 void Motherboard::OnTick() {
 	double speed = 3500000.0f;
-	if (this->_fast)
+	if (m_fast)
 		speed *= 9;
 
 	double cyclesFrame = speed / 59.922743404f;
 
-	this->_percFrame = 0;
+	m_percFrame = 0;
 	do {
 		// Modo rápido: la rutina de carga de la ROM se sustituye por copiar el bloque de la cinta
-		if (this->_fast && (this->_z80->GetPC() == 0x056C) && this->FlashLoad())
+		if (m_fast && (m_z80->GetPC() == 0x056C) && FlashLoad())
 			continue;
 
-		this->_lastCycles = this->_z80->GetCycles();
-		this->_z80->RunOpcode();
-		this->_cycles += this->_z80->GetCycles() - this->_lastCycles;
-		this->_cyclesULA += this->_z80->GetCycles() - this->_lastCycles;
+		m_lastCycles = m_z80->GetCycles();
+		m_z80->RunOpcode();
+		m_cycles += m_z80->GetCycles() - m_lastCycles;
+		m_cyclesULA += m_z80->GetCycles() - m_lastCycles;
 
-		this->_percFrame = this->_cycles / cyclesFrame;
+		m_percFrame = m_cycles / cyclesFrame;
 
-		this->ProcessCassette();
+		ProcessCassette();
 
-		while (this->_cyclesULA > 0) {
-			if (this->_ula->OnTick(0))
-				this->CheckInterrupts();
-			if (this->_ula->OnTick(0))
-				this->CheckInterrupts();
-			this->_cyclesULA--;
+		while (m_cyclesULA > 0) {
+			if (m_ula->OnTick(0))
+				CheckInterrupts();
+			if (m_ula->OnTick(0))
+				CheckInterrupts();
+			m_cyclesULA--;
 		}
 
-		if (this->_cycles > cyclesFrame)
+		if (m_cycles > cyclesFrame)
 			break;
 	} while (true);
 
-	this->_cycles -= cyclesFrame;
+	m_cycles -= cyclesFrame;
 
 	// En modo rápido el sonido no tiene sentido (va 9 veces más deprisa): se encola silencio
-	this->_sound->EndFrame(FrameSeconds, this->_fast);
+	m_sound->EndFrame(FrameSeconds, m_fast);
 
 	UpdateTapeMotor();
 }
@@ -284,23 +284,23 @@ void Motherboard::OnTick() {
 // Como el motor de las cintas con control remoto: si un cargador está leyendo, la cinta suena; si durante un
 // rato nadie la lee (el juego ya ha cargado, o se ha pulsado F9 sin hacer LOAD ""), se para donde está
 void Motherboard::UpdateTapeMotor() {
-	bool loading = this->_loaderReads >= LOADER_READS_PER_FRAME;
-	this->_loaderReads = 0;
-	this->_framesWithoutLoader = loading ? 0 : this->_framesWithoutLoader + 1;
+	bool loading = m_loaderReads >= LOADER_READS_PER_FRAME;
+	m_loaderReads = 0;
+	m_framesWithoutLoader = loading ? 0 : m_framesWithoutLoader + 1;
 
-	if (!this->_tape)
+	if (!m_tape)
 		return;
 
 	// Si la cinta acaba de arrancar (F9, por ejemplo) tiene su margen entero antes de pararse
-	if (this->_tape->IsPlaying() && !this->_tapeWasPlaying)
-		this->_framesWithoutLoader = 0;
+	if (m_tape->IsPlaying() && !m_tapeWasPlaying)
+		m_framesWithoutLoader = 0;
 
-	if (loading && !this->_tape->IsPlaying() && !this->_tape->IsAtEnd())
-		this->_tape->Play();
-	else if (!loading && this->_tape->IsPlaying() && (this->_framesWithoutLoader >= TAPE_IDLE_FRAMES))
-		this->_tape->Stop();
+	if (loading && !m_tape->IsPlaying() && !m_tape->IsAtEnd())
+		m_tape->Play();
+	else if (!loading && m_tape->IsPlaying() && (m_framesWithoutLoader >= TAPE_IDLE_FRAMES))
+		m_tape->Stop();
 
-	this->_tapeWasPlaying = this->_tape->IsPlaying();
+	m_tapeWasPlaying = m_tape->IsPlaying();
 }
 
 /**
@@ -317,14 +317,14 @@ void Motherboard::WriteMemory(uint16_t offset, uint8_t data) {
 
 		// 4000 - 7FFF
 		case 1:
-			this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
-			this->_ula->WriteByte(offset & 0x3FFF, data);
+			m_z80->IncCycles(content_states[m_z80->GetCycles() % 8]);
+			m_ula->WriteByte(offset & 0x3FFF, data);
 			break;
 
 		// 8000 - FFFF
 		case 2:
 		case 3:
-			this->d._ram[offset & 0x7FFF] = data;
+			m_saveData.ram[offset & 0x7FFF] = data;
 			break;
 	}
 }
@@ -335,19 +335,19 @@ uint8_t Motherboard::ReadMemory(uint16_t offset) const {
 	switch (offset >> 14) {
 		// 0000 - 3FFF
 		case 0:
-			data = this->_rom->ReadByte(offset);
+			data = m_rom->ReadByte(offset);
 			break;
 
 		// 4000 - 7FFF
 		case 1:
-			this->_z80->IncCycles(content_states[this->_z80->GetCycles() % 8]);
-			data = this->_ula->ReadByte(offset & 0x3FFF);
+			m_z80->IncCycles(content_states[m_z80->GetCycles() % 8]);
+			data = m_ula->ReadByte(offset & 0x3FFF);
 			break;
 
 		// 8000 - FFFF
 		case 2:
 		case 3:
-			data = this->d._ram[offset & 0x7FFF];
+			data = m_saveData.ram[offset & 0x7FFF];
 			break;
 	}
 
@@ -356,16 +356,16 @@ uint8_t Motherboard::ReadMemory(uint16_t offset) const {
 
 void Motherboard::WritePort(uint8_t port, uint8_t value) {
 	if (port == 0xFE) {
-		this->_ula->SetBackColor(value & 0x07);
-		if (!this->_fast && this->_countReadCycles == 0)
-			this->_sound->WriteSound(this, value);
+		m_ula->SetBackColor(value & 0x07);
+		if (!m_fast && m_countReadCycles == 0)
+			m_sound->WriteSound(this, value);
 
-		if (((value >> 3) & 0x01) != this->_lastWriteState) {
-			this->_lastWriteState = ((value >> 3) & 0x01);
-			int32_t diff = (int32_t) this->_lastCycles - this->_lastWriteCycle;
-			if (this->_writeCassetteCB)
-				this->_writeCassetteCB(diff, this->_writeCassetteDataCB);
-			this->_lastWriteCycle = this->_lastCycles;
+		if (((value >> 3) & 0x01) != m_lastWriteState) {
+			m_lastWriteState = ((value >> 3) & 0x01);
+			int32_t diff = (int32_t) m_lastCycles - m_lastWriteCycle;
+			if (m_writeCassetteCB)
+				m_writeCassetteCB(diff, m_writeCassetteDataCB);
+			m_lastWriteCycle = m_lastCycles;
 		}
 
 		return;
@@ -376,12 +376,12 @@ void Motherboard::WritePort(uint8_t port, uint8_t value) {
 
 uint8_t Motherboard::ReadPort(uint8_t port) const {
 	if ((port & 0x20) == 0)
-		return this->d._kempston;
+		return m_saveData.kempston;
 
 	// Entra en todas las direcciones pares
 	if ((port & 0x01) == 0) {
-		assert(this->_z80->GetAddressBus().L == port);
-		uint8_t row = this->_z80->GetAddressBus().H;
+		assert(m_z80->GetAddressBus().L == port);
+		uint8_t row = m_z80->GetAddressBus().H;
 
 		uint8_t value = 0xFF;
 		/*
@@ -393,17 +393,17 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 		*/
 		for (int i = 0; i <= 7; i++) {
 			if ((row & 0x01) == 0)
-				value &= this->d._keys[i];
+				value &= m_saveData.keys[i];
 			row >>= 1;
 		}
 
 		// Un cargador lee el puerto a cada momento (decenas de ciclos entre lecturas)
-		int64_t cycles = this->_z80->GetCycles();
-		if ((cycles - this->_lastEarReadCycle) < LOADER_READ_GAP)
-			this->_loaderReads++;
-		this->_lastEarReadCycle = cycles;
+		int64_t cycles = m_z80->GetCycles();
+		if ((cycles - m_lastEarReadCycle) < LOADER_READ_GAP)
+			m_loaderReads++;
+		m_lastEarReadCycle = cycles;
 
-		if (this->_lastReadState)
+		if (m_lastReadState)
 			value |= 0x40;
 		else
 			value &= 0xBF;
@@ -416,7 +416,7 @@ uint8_t Motherboard::ReadPort(uint8_t port) const {
 }
 
 uint32_t Motherboard::GetCRC32() {
-	return this->_rom->GetCRC32();
+	return m_rom->GetCRC32();
 }
 
 int Motherboard::GetSaveSize() {
@@ -428,42 +428,42 @@ int Motherboard::GetSaveSize() {
 }
 
 void Motherboard::LoadState(uint8_t *data) {
-	memcpy(&this->d, data, sizeof(Motherboard::saveData));
-	this->_z80->LoadState(&data[sizeof(Motherboard::saveData)]);
-	this->_ula->LoadState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
+	memcpy(&m_saveData, data, sizeof(Motherboard::saveData));
+	m_z80->LoadState(&data[sizeof(Motherboard::saveData)]);
+	m_ula->LoadState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
 }
 
 void Motherboard::SaveState(uint8_t *data) {
-	memcpy(data, &this->d, sizeof(Motherboard::saveData));
-	this->_z80->SaveState(&data[sizeof(Motherboard::saveData)]);
-	this->_ula->SaveState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
+	memcpy(data, &m_saveData, sizeof(Motherboard::saveData));
+	m_z80->SaveState(&data[sizeof(Motherboard::saveData)]);
+	m_ula->SaveState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
 }
 
 void Motherboard::OnKeyPress(uint8_t row, uint8_t key) {
-	this->d._keys[row] &= ~key;
-	// printf("Press %d: %x\n", row, this->d._keys[row]);
+	m_saveData.keys[row] &= ~key;
+	// printf("Press %d: %x\n", row, m_saveData.keys[row]);
 }
 
 void Motherboard::ReleaseAllKeys() {
 	for (int i = 0; i < 8; i++)
-		this->d._keys[i] = 0xFF;
+		m_saveData.keys[i] = 0xFF;
 }
 
 void Motherboard::OnKeyUp(uint8_t row, uint8_t key) {
-	this->d._keys[row] |= key;
-	// printf("Up %d: %x\n", row, this->d._keys[row]);
+	m_saveData.keys[row] |= key;
+	// printf("Up %d: %x\n", row, m_saveData.keys[row]);
 }
 
 void Motherboard::OnPadEvent(uint8_t status) {
-	this->d._kempston = status;
+	m_saveData.kempston = status;
 }
 
 void Motherboard::SetWriteCassetteCB(void (*fun)(int32_t, void *), void *data) {
-	this->_writeCassetteCB = fun;
-	this->_writeCassetteDataCB = data;
+	m_writeCassetteCB = fun;
+	m_writeCassetteDataCB = data;
 }
 
 void Motherboard::SetReadCassetteCB(int32_t (*fun)(void *), void *data) {
-	this->_readCassetteCB = fun;
-	this->_readCassetteDataCB = data;
+	m_readCassetteCB = fun;
+	m_readCassetteDataCB = data;
 }

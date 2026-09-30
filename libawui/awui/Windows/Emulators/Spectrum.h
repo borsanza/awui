@@ -68,8 +68,8 @@ namespace awui {
 			virtual bool OnRemoteKeyUp(int which, Forms::RemoteButtons::Enum button);
 			virtual void SetSoundEnabled(bool mode);
 
-			awui::Emulation::Spectrum::TapeCorder *GetTapeCorder() { return this->m_tapecorder; }
-			awui::Emulation::Spectrum::Motherboard *GetMotherboard() { return this->m_motherboard; }
+			awui::Emulation::Spectrum::TapeCorder *GetTapeCorder() { return m_tapecorder; }
+			awui::Emulation::Spectrum::Motherboard *GetMotherboard() { return m_motherboard; }
 		};
 	} // namespace Windows::Emulators
 } // namespace awui

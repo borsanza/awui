@@ -22,7 +22,7 @@ Renderer::Renderer() {
 	m_angle = 0.0f;
 
 	m_scene = new Scene();
-	m_camera = new PerspectiveCamera(60, ((float) this->GetWidth()) / ((float) this->GetHeight()), 0.1, 1000);
+	m_camera = new PerspectiveCamera(60, ((float) GetWidth()) / ((float) GetHeight()), 0.1, 1000);
 	m_camera->SetPosition(5, 5, 10);
 	m_camera->LookAt(0.5f, 0.5f, 0.5f);
 
@@ -144,7 +144,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	glViewport(this->GetLeft(), this->GetTop(), this->GetWidth(), this->GetHeight());
+	glViewport(GetLeft(), GetTop(), GetWidth(), GetHeight());
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -156,7 +156,7 @@ void Renderer::OnPaint(OpenGL::GL *gl) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	m_camera->SetAspectRatio(((float) this->GetWidth()) / ((float) this->GetHeight()));
+	m_camera->SetAspectRatio(((float) GetWidth()) / ((float) GetHeight()));
 	m_camera->SetPosition(50.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 50.5f + -4.0f + 8.0f * Math::Sin(m_angle));
 
 	DoRender(*m_scene, *m_camera);

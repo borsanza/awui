@@ -47,7 +47,7 @@ static uint8_t GetTHLevels(uint8_t control) {
 
 Ports::Ports() {
 	// Al encender todas las líneas son entradas
-	this->_ioControl = 0xFF;
+	m_ioControl = 0xFF;
 }
 
 void Ports::WriteByte(Motherboard *cpu, uint8_t port, uint8_t value) {
@@ -87,12 +87,12 @@ void Ports::WriteByte(Motherboard *cpu, uint8_t port, uint8_t value) {
 		// 0x00-0x3F impares: control de E/S
 		case 0x01: {
 			// Subir la línea TH de cualquiera de los dos mandos (0 -> 1) captura el contador horizontal
-			uint8_t oldTH = GetTHLevels(this->_ioControl);
+			uint8_t oldTH = GetTHLevels(m_ioControl);
 			uint8_t newTH = GetTHLevels(value);
 			if (~oldTH & newTH)
 				cpu->GetVDP()->LatchHCounter();
 
-			this->_ioControl = value;
+			m_ioControl = value;
 			return;
 		}
 
@@ -118,10 +118,10 @@ void Ports::WriteByte(Motherboard *cpu, uint8_t port, uint8_t value) {
 // Como entrada queda a 1 (resistencia de pull-up); como salida vale lo escrito,
 // salvo en las consolas japonesas, donde TH se lee invertido (así detectan la región los juegos).
 uint8_t Ports::GetPinLevel(uint8_t directionBit, uint8_t outputBit, bool isTH) const {
-	if (this->_ioControl & directionBit)
+	if (m_ioControl & directionBit)
 		return 1;
 
-	uint8_t level = (this->_ioControl & outputBit) ? 1 : 0;
+	uint8_t level = (m_ioControl & outputBit) ? 1 : 0;
 	if (isTH && (DEFAULTREGION == 3))
 		level ^= 1;
 

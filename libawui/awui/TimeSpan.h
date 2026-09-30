@@ -16,7 +16,7 @@ namespace awui {
 		static constexpr int64_t TicksPerDay = TicksPerHour * 24;
 
 	  private:
-		int64_t ticks;
+		int64_t m_ticks;
 
 		String ConvertDecimals(int value, int decimals) const;
 

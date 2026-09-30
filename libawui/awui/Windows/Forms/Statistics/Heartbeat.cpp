@@ -12,8 +12,8 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Statistics;
 
 Heartbeat::Heartbeat() {
-	this->heartbeat = false;
-	this->SetWidth(24);
+	m_heartbeat = false;
+	SetWidth(24);
 }
 
 Heartbeat::~Heartbeat() {
@@ -21,19 +21,19 @@ Heartbeat::~Heartbeat() {
 
 void Heartbeat::OnPaint(OpenGL::GL *gl) {
 	int size = 4;
-	int left = (this->GetWidth() - size) / 2;
-	int top = (this->GetHeight() - size) / 2;
+	int left = (GetWidth() - size) / 2;
+	int top = (GetHeight() - size) / 2;
 	int right = left + size - 1;
 	int bottom = top + size - 1;
-	Color color = this->GetForeColor();
+	Color color = GetForeColor();
 	glColor4ub(color.GetR(), color.GetG(), color.GetB(), color.GetA());
 
-	if (this->heartbeat) {
+	if (m_heartbeat) {
 		GL::DrawRectangle(left, top, right, bottom);
-		this->heartbeat = false;
+		m_heartbeat = false;
 	}
 }
 
 void Heartbeat::OnRemoteHeartbeat() {
-	this->heartbeat = true;
+	m_heartbeat = true;
 }

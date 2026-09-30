@@ -212,7 +212,7 @@ int CPU::RunOpcode(int iteration) {
 	int drawed = 0;
 	int enumopcode = m_opcode.GetEnum(m_chip8mode);
 	bool advance = true;
-	//	_opcode.ShowLog(_pc, enumopcode);
+	//	m_opcode.ShowLog(m_pc, enumopcode);
 
 	switch (enumopcode) {
 		// Disable Megachip mode
@@ -644,7 +644,7 @@ int CPU::RunOpcode(int iteration) {
 			for (int i = 0; i <= x; i++)
 				m_memory->WriteByte(offset + i, m_registers->GetV(i));
 
-			//				_registers->SetI(offset + x + 1);
+			//				m_registers->SetI(offset + x + 1);
 		} break;
 
 		// Fills V0 to VX with values from memory starting at address I
@@ -655,7 +655,7 @@ int CPU::RunOpcode(int iteration) {
 			for (int i = 0; i <= x; i++)
 				m_registers->SetV(i, m_memory->ReadByte(offset + i));
 
-			//				_registers->SetI(offset + x + 1);
+			//				m_registers->SetI(offset + x + 1);
 		} break;
 
 		// FX75: Stores V0 to VX in RPL memory

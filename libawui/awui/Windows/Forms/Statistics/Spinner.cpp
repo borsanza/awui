@@ -12,8 +12,8 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Statistics;
 
 Spinner::Spinner() {
-	this->position = 0;
-	this->SetWidth(36);
+	m_position = 0;
+	SetWidth(36);
 }
 
 Spinner::~Spinner() {
@@ -23,19 +23,19 @@ void Spinner::OnTick(float deltaSeconds) {
 	static int mode = 0;
 
 	mode++;
-	this->position = (mode / 4 % 4);
+	m_position = (mode / 4 % 4);
 }
 
 void Spinner::OnPaint(OpenGL::GL *gl) {
 	int size = 15;
-	int left = (this->GetWidth() - size) / 2;
-	int top = (this->GetHeight() - size) / 2;
+	int left = (GetWidth() - size) / 2;
+	int top = (GetHeight() - size) / 2;
 	int right = left + size - 1;
 	int bottom = top + size - 1;
-	Color color = this->GetForeColor();
+	Color color = GetForeColor();
 	glColor4ub(color.GetR(), color.GetG(), color.GetB(), color.GetA());
 
-	switch (this->position) {
+	switch (m_position) {
 		case 0:
 			GL::DrawLine(left, top, right, top);
 			break;

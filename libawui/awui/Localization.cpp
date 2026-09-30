@@ -18,16 +18,16 @@ using json = nlohmann::json;
 const char *Localization::FallbackLanguage = "en_US";
 
 void Localization::SetDirectory(const std::string &directory) {
-	m_directory = directory;
-	m_fallback = LoadFile(FallbackLanguage);
-	m_texts = LoadFile(m_language);
+	s_directory = directory;
+	s_fallback = LoadFile(FallbackLanguage);
+	s_texts = LoadFile(s_language);
 }
 
 json Localization::LoadFile(const std::string &code) {
 	if (code.empty())
 		return json::object();
 
-	std::string path = m_directory + "/" + code + ".json";
+	std::string path = s_directory + "/" + code + ".json";
 	std::ifstream file(path);
 	json texts = file ? json::parse(file, nullptr, false) : json();
 	if (!texts.is_object()) {
@@ -39,18 +39,18 @@ json Localization::LoadFile(const std::string &code) {
 }
 
 void Localization::SetLanguage(const std::string &code) {
-	if ((code == m_language) && !m_texts.empty())
+	if ((code == s_language) && !s_texts.empty())
 		return;
 
-	m_language = code;
-	if (m_fallback.empty())
-		m_fallback = LoadFile(FallbackLanguage);
+	s_language = code;
+	if (s_fallback.empty())
+		s_fallback = LoadFile(FallbackLanguage);
 
-	m_texts = (code == FallbackLanguage) ? m_fallback : LoadFile(code);
+	s_texts = (code == FallbackLanguage) ? s_fallback : LoadFile(code);
 }
 
 String Localization::Tr(const std::string &key) {
-	for (const json *texts : {&m_texts, &m_fallback}) {
+	for (const json *texts : {&s_texts, &s_fallback}) {
 		auto it = texts->find(key);
 		if ((it != texts->end()) && it->is_string())
 			return it->get<std::string>().c_str();
@@ -62,7 +62,7 @@ String Localization::Tr(const std::string &key) {
 std::vector<std::pair<std::string, String>> Localization::GetLanguages() {
 	std::vector<std::pair<std::string, String>> languages;
 
-	DIR *dir = opendir(m_directory.c_str());
+	DIR *dir = opendir(s_directory.c_str());
 	if (!dir)
 		return languages;
 

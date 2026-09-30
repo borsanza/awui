@@ -20,7 +20,7 @@ ObjectCollection *ListBox::GetItems() const {
 }
 
 ObjectCollection::ObjectCollection(ListBox *owner) : Object() {
-	listbox = owner;
+	m_listbox = owner;
 }
 
 ObjectCollection::~ObjectCollection() {

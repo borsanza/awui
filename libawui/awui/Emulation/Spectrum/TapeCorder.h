@@ -9,8 +9,8 @@ namespace awui {
 	namespace Emulation::Spectrum {
 		class TapeBlock : public awui::Object {
 		  private:
-			uint8_t *_data;
-			int _size;
+			uint8_t *m_data;
+			int m_size;
 
 		  public:
 			TapeBlock(int size);
@@ -23,16 +23,16 @@ namespace awui {
 
 		class TapeCorder {
 		  private:
-			std::vector<TapeBlock *> *_list; // Bloques de la cinta (nullptr: no hay cinta cargada)
-			int _posByte;
-			int _posBit;
-			int _block;
-			int _state;
-			int32_t _cycle;
-			bool _playing;
+			std::vector<TapeBlock *> *m_list; // Bloques de la cinta (nullptr: no hay cinta cargada)
+			int m_posByte;
+			int m_posBit;
+			int m_block;
+			int m_state;
+			int32_t m_cycle;
+			bool m_playing;
 
-			void (*_finishCassetteCB)(void *);
-			void *_finishCassetteDataCB;
+			void (*m_finishCassetteCB)(void *);
+			void *m_finishCassetteDataCB;
 
 			void Clear();
 
@@ -44,11 +44,11 @@ namespace awui {
 
 			void Rewind();
 			void Play();
-			void Stop() { this->_playing = false; }
+			void Stop() { m_playing = false; }
 			uint32_t GetNext();
-			inline bool IsPlaying() const { return this->_playing; }
+			inline bool IsPlaying() const { return m_playing; }
 			// Ya ha sonado entera (o no tiene bloques): no hay nada que reproducir hasta rebobinar
-			inline bool IsAtEnd() const { return (this->_state >= 8) || !this->_list; }
+			inline bool IsAtEnd() const { return (m_state >= 8) || !m_list; }
 
 			// Carga instantánea: devuelve el siguiente bloque entero (nullptr si no quedan) y deja la cinta en
 			// el siguiente. Al acabar la cinta la para y avisa como si hubiera terminado de sonar

@@ -9,19 +9,19 @@
 using namespace awui::Emulation::Chip8;
 
 void Stack::Push(int value) {
-	this->_stack.push_back(value);
+	m_stack.push_back(value);
 }
 
 // Devuelve -1 si la pila está vacía
 int Stack::Pop() {
-	if (this->_stack.empty())
+	if (m_stack.empty())
 		return -1;
 
-	int value = this->_stack.back();
-	this->_stack.pop_back();
+	int value = m_stack.back();
+	m_stack.pop_back();
 	return value;
 }
 
 void Stack::Clear() {
-	this->_stack.clear();
+	m_stack.clear();
 }

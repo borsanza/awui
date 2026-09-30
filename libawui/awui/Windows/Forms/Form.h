@@ -19,9 +19,9 @@ namespace awui {
 			friend class Control;
 
 		  private:
-			static std::vector<Form *> *m_formsList;
-			static uint32_t m_buttonsPad1;
-			static uint32_t m_buttonsPad2;
+			static std::vector<Form *> *s_formsList;
+			static uint32_t s_buttonsPad1;
+			static uint32_t s_buttonsPad2;
 			Control *m_mouseControlOver;
 			// awui::Diagnostics::Process* remoteProcess;
 			String m_text;
@@ -67,8 +67,8 @@ namespace awui {
 			virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
 			virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
 
-			inline static uint32_t GetButtonsPad1() { return Form::m_buttonsPad1; }
-			inline static uint32_t GetButtonsPad2() { return Form::m_buttonsPad2; }
+			inline static uint32_t GetButtonsPad1() { return Form::s_buttonsPad1; }
+			inline static uint32_t GetButtonsPad2() { return Form::s_buttonsPad2; }
 			void SwapGL();
 
 			uint32_t GetWindowID();

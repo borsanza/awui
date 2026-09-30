@@ -6,7 +6,7 @@ namespace awui::Emulation::Chip8 {
 	// Pila de direcciones de retorno (CALL / RET)
 	class Stack {
 	  private:
-		std::vector<int> _stack;
+		std::vector<int> m_stack;
 
 	  public:
 		void Push(int value);

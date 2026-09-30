@@ -5,7 +5,7 @@
 namespace awui::Windows::Forms::Statistics {
 	class Heartbeat : public Control {
 	  private:
-		bool heartbeat;
+		bool m_heartbeat;
 
 	  public:
 		Heartbeat();

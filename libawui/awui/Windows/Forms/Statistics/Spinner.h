@@ -5,7 +5,7 @@
 namespace awui::Windows::Forms::Statistics {
 	class Spinner : public Control {
 	  private:
-		int position;
+		int m_position;
 
 	  public:
 		Spinner();

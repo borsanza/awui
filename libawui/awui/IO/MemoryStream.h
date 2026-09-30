@@ -5,10 +5,10 @@
 namespace awui::IO {
 	class MemoryStream : Stream {
 	  private:
-		uint8_t *_data;
-		uint32_t _capacity;
-		uint32_t _length;
-		uint32_t _position;
+		uint8_t *m_data;
+		uint32_t m_capacity;
+		uint32_t m_length;
+		uint32_t m_position;
 
 	  public:
 		MemoryStream(uint32_t capacity);
@@ -32,10 +32,10 @@ namespace awui::IO {
 		virtual uint32_t Read(uint8_t *buffer, uint32_t count) override;
 		virtual void Write(const uint8_t *buffer, uint32_t count) override;
 
-		inline uint8_t ReadByte(uint32_t pos) const { return (pos < this->_capacity) ? this->_data[pos] : 0; }
+		inline uint8_t ReadByte(uint32_t pos) const { return (pos < m_capacity) ? m_data[pos] : 0; }
 		inline void WriteByte(uint32_t pos, uint8_t value) {
-			if (pos < this->_capacity)
-				this->_data[pos] = value;
+			if (pos < m_capacity)
+				m_data[pos] = value;
 		}
 
 		uint32_t GetCRC32() const;

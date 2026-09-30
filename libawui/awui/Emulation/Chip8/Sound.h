@@ -3,8 +3,8 @@
 namespace awui::Emulation::Chip8 {
 	class Sound {
 	  private:
-		bool _playing;
-		int _console_fd;
+		bool m_playing;
+		int m_consoleFd;
 
 	  public:
 		Sound();

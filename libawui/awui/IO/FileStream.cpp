@@ -13,18 +13,18 @@
 using namespace awui::IO;
 
 FileStream::FileStream(const String path, FileMode::Enum mode, FileAccess::Enum access) {
-	this->_file = NULL;
-	this->_length = 0;
-	this->_pos = 0;
+	m_file = NULL;
+	m_length = 0;
+	m_pos = 0;
 
 	switch (mode) {
 		case FileMode::Enum::Append:
 			switch (access) {
 				case FileAccess::Enum::Write:
-					this->_file = fopen(path.ToCharArray(), "ab");
+					m_file = fopen(path.ToCharArray(), "ab");
 					break;
 				case FileAccess::Enum::ReadWrite:
-					this->_file = fopen(path.ToCharArray(), "a+b");
+					m_file = fopen(path.ToCharArray(), "a+b");
 					break;
 				case FileAccess::Enum::Read:
 					assert(0 && "Esto no tiene sentido");
@@ -35,39 +35,39 @@ FileStream::FileStream(const String path, FileMode::Enum mode, FileAccess::Enum 
 			switch (access) {
 				case FileAccess::Enum::Write:
 				case FileAccess::Enum::ReadWrite:
-					this->_file = fopen(path.ToCharArray(), "r+b");
+					m_file = fopen(path.ToCharArray(), "r+b");
 					break;
 				case FileAccess::Enum::Read:
-					this->_file = fopen(path.ToCharArray(), "rb");
+					m_file = fopen(path.ToCharArray(), "rb");
 					break;
 			}
 			break;
 		case FileMode::Enum::Create:
-			this->_file = fopen(path.ToCharArray(), "rb");
+			m_file = fopen(path.ToCharArray(), "rb");
 			break;
 		case FileMode::Enum::CreateNew:
-			this->_file = fopen(path.ToCharArray(), "rb");
+			m_file = fopen(path.ToCharArray(), "rb");
 			break;
 		case FileMode::Enum::OpenOrCreate:
-			this->_file = fopen(path.ToCharArray(), "r+b");
+			m_file = fopen(path.ToCharArray(), "r+b");
 			break;
 		case FileMode::Enum::Truncate:
-			this->_file = fopen(path.ToCharArray(), "w+b");
+			m_file = fopen(path.ToCharArray(), "w+b");
 			break;
 	}
 
 	// Si no se ha podido abrir (no existe, sin permisos...) queda como un fichero vacío:
 	// longitud 0, las lecturas devuelven 0 y las escrituras no hacen nada
-	if (!this->_file) {
+	if (!m_file) {
 		fprintf(stderr, "No se puede abrir el fichero: %s\n", path.ToCharArray());
 		return;
 	}
 
-	fseek(this->_file, 0L, SEEK_END);
-	this->_length = ftell(this->_file);
-	if (this->_length < 0)
-		this->_length = 0;
-	fseek(this->_file, 0L, SEEK_SET);
+	fseek(m_file, 0L, SEEK_END);
+	m_length = ftell(m_file);
+	if (m_length < 0)
+		m_length = 0;
+	fseek(m_file, 0L, SEEK_SET);
 }
 
 FileStream::FileStream(const String path, FileMode::Enum mode) :
@@ -79,36 +79,36 @@ FileStream::~FileStream() {
 }
 
 bool FileStream::IsOpen() const {
-	return this->_file != NULL;
+	return m_file != NULL;
 }
 
 void FileStream::Close() {
-	if (this->_file) {
-		fclose(this->_file);
-		this->_file = NULL;
+	if (m_file) {
+		fclose(m_file);
+		m_file = NULL;
 	}
 }
 
 void FileStream::SetPosition(uint32_t value) {
-	this->_pos = value;
-	if (this->_file)
-		fseek(this->_file, this->_pos, SEEK_SET);
+	m_pos = value;
+	if (m_file)
+		fseek(m_file, m_pos, SEEK_SET);
 }
 
 uint32_t FileStream::GetPosition() const {
-	return this->_pos;
+	return m_pos;
 }
 
 uint32_t FileStream::GetLength() const {
-	return _length;
+	return m_length;
 }
 
 uint8_t FileStream::ReadByte() {
 	uint8_t r = 0;
-	if (!this->_file || !fread(&r, 1, 1, this->_file))
+	if (!m_file || !fread(&r, 1, 1, m_file))
 		r = 0;
 
-	this->_pos++;
+	m_pos++;
 	return r;
 }
 
@@ -117,20 +117,20 @@ void FileStream::WriteByte(uint8_t value) {
 }
 
 uint32_t FileStream::Read(uint8_t *buffer, uint32_t count) {
-	if (!this->_file)
+	if (!m_file)
 		return 0;
 
-	uint32_t read = (uint32_t) fread(buffer, 1, count, this->_file);
-	this->_pos += read;
+	uint32_t read = (uint32_t) fread(buffer, 1, count, m_file);
+	m_pos += read;
 	return read;
 }
 
 // Escribir más allá del final alarga el fichero (antes GetLength seguía dando la longitud inicial)
 void FileStream::Write(const uint8_t *buffer, uint32_t count) {
-	if (this->_file)
-		fwrite(buffer, 1, count, this->_file);
+	if (m_file)
+		fwrite(buffer, 1, count, m_file);
 
-	this->_pos += count;
-	if (this->_pos > this->_length)
-		this->_length = this->_pos;
+	m_pos += count;
+	if (m_pos > m_length)
+		m_length = m_pos;
 }

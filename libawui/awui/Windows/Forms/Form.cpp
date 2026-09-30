@@ -22,13 +22,13 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;
 
-uint32_t Form::m_buttonsPad1 = 0;
-uint32_t Form::m_buttonsPad2 = 0;
-std::vector<Form *> *Form::m_formsList = new std::vector<Form *>();
+uint32_t Form::s_buttonsPad1 = 0;
+uint32_t Form::s_buttonsPad2 = 0;
+std::vector<Form *> *Form::s_formsList = new std::vector<Form *>();
 
 Form::Form() {
 
-	m_formsList->push_back(this);
+	s_formsList->push_back(this);
 
 	m_window = 0;
 	m_context = 0;
@@ -56,7 +56,7 @@ Form::Form() {
 }
 
 Form::~Form() {
-	m_formsList->erase(std::remove(m_formsList->begin(), m_formsList->end(), this), m_formsList->end());
+	s_formsList->erase(std::remove(s_formsList->begin(), s_formsList->end(), this), s_formsList->end());
 
 	if (m_context) {
 		SDL_GL_DeleteContext(m_context);
@@ -237,10 +237,10 @@ bool Form::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	switch (which) {
 		default:
 		case 0:
-			buttons = &Form::m_buttonsPad1;
+			buttons = &Form::s_buttonsPad1;
 			break;
 		case 1:
-			buttons = &Form::m_buttonsPad2;
+			buttons = &Form::s_buttonsPad2;
 			break;
 	}
 
@@ -253,10 +253,10 @@ bool Form::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	switch (which) {
 		default:
 		case 0:
-			buttons = &Form::m_buttonsPad1;
+			buttons = &Form::s_buttonsPad1;
 			break;
 		case 1:
-			buttons = &Form::m_buttonsPad2;
+			buttons = &Form::s_buttonsPad2;
 			break;
 	}
 

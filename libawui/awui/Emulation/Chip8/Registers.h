@@ -5,9 +5,9 @@
 namespace awui::Emulation::Chip8 {
 	class Registers {
 	  private:
-		uint8_t *_v;
-		uint8_t _length;
-		uint32_t _i;
+		uint8_t *m_v;
+		uint8_t m_length;
+		uint32_t m_i;
 
 	  public:
 		Registers(uint8_t n);

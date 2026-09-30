@@ -11,14 +11,14 @@
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
-Graphics *TextRenderer::graphics = NULL;
-Image *TextRenderer::image = NULL;
+Graphics *TextRenderer::s_graphics = NULL;
+Image *TextRenderer::s_image = NULL;
 
 GlyphMetrics TextRenderer::GetMeasureText(const String text, Font *font) {
-	if (graphics == NULL) {
-		image = new Drawing::Image(1, 1);
-		graphics = Graphics::FromImage(image);
+	if (s_graphics == NULL) {
+		s_image = new Drawing::Image(1, 1);
+		s_graphics = Graphics::FromImage(s_image);
 	}
 
-	return graphics->GetMeasureText(text, font);
+	return s_graphics->GetMeasureText(text, font);
 }

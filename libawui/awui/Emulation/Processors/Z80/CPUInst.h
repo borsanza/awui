@@ -11,28 +11,28 @@ namespace awui::Emulation::Processors::Z80 {
 
 	  protected:
 		struct saveData {
-			int64_t _cycles;
-			bool _inInterrupt : 1;
-			bool _isSuspended : 1;
-			bool _isEndlessLoop : 1;
-			bool _afterEI : 1; // La instrucción anterior fue EI: no se aceptan interrupciones todavía
-			Word _addressBus;
-			Registers _registers;
-		} d;
+			int64_t cycles;
+			bool inInterrupt : 1;
+			bool isSuspended : 1;
+			bool isEndlessLoop : 1;
+			bool afterEI : 1; // La instrucción anterior fue EI: no se aceptan interrupciones todavía
+			Word addressBus;
+			Registers registers;
+		} m_saveData;
 
 		// No se guarda
-		bool _showLog : 1;
-		bool _showNotImplemented : 1;
-		Opcode _opcode;
+		bool m_showLog : 1;
+		bool m_showNotImplemented : 1;
+		Opcode m_opcode;
 
-		void (*_writeMemoryCB)(uint16_t pos, uint8_t value, void *);
-		void *_writeMemoryDataCB;
-		uint8_t (*_readMemoryCB)(uint16_t pos, void *);
-		void *_readMemoryDataCB;
-		void (*_writePortCB)(uint8_t port, uint8_t value, void *);
-		void *_writePortDataCB;
-		uint8_t (*_readPortCB)(uint8_t pos, void *);
-		void *_readPortDataCB;
+		void (*m_writeMemoryCB)(uint16_t pos, uint8_t value, void *);
+		void *m_writeMemoryDataCB;
+		uint8_t (*m_readMemoryCB)(uint16_t pos, void *);
+		void *m_readMemoryDataCB;
+		void (*m_writePortCB)(uint8_t port, uint8_t value, void *);
+		void *m_writePortDataCB;
+		uint8_t (*m_readPortCB)(uint8_t pos, void *);
+		void *m_readPortDataCB;
 
 		void WriteMemory(uint16_t pos, uint8_t value);
 		uint8_t ReadPort(uint8_t port) const;
@@ -186,12 +186,12 @@ namespace awui::Emulation::Processors::Z80 {
 		CPUInst();
 		virtual ~CPUInst();
 
-		inline uint16_t GetPC() const { return this->d._registers.GetPC(); }
-		inline void SetPC(uint16_t pc) { this->d._registers.SetPC(pc); }
-		inline int64_t GetCycles() const { return this->d._cycles; }
-		inline void IncCycles(uint8_t inc) { this->d._cycles += inc; }
-		inline Registers *GetRegisters() { return &(this->d._registers); }
-		inline uint32_t GetAddressBus() const { return this->d._addressBus.W; }
+		inline uint16_t GetPC() const { return m_saveData.registers.GetPC(); }
+		inline void SetPC(uint16_t pc) { m_saveData.registers.SetPC(pc); }
+		inline int64_t GetCycles() const { return m_saveData.cycles; }
+		inline void IncCycles(uint8_t inc) { m_saveData.cycles += inc; }
+		inline Registers *GetRegisters() { return &(m_saveData.registers); }
+		inline uint32_t GetAddressBus() const { return m_saveData.addressBus.W; }
 
 		uint8_t ReadMemory(uint16_t pos);
 		void CallInterrupt(uint16_t offset);
@@ -205,8 +205,8 @@ namespace awui::Emulation::Processors::Z80 {
 		void SetWritePortCB(void (*fun)(uint8_t, uint8_t, void *), void *data);
 		void SetReadPortCB(uint8_t (*fun)(uint8_t, void *), void *data);
 
-		inline void SetInInterrupt(bool mode) { this->d._inInterrupt = mode; }
-		inline bool IsInInterrupt() const { return this->d._inInterrupt; }
-		inline bool IsAfterEI() const { return this->d._afterEI; }
+		inline void SetInInterrupt(bool mode) { m_saveData.inInterrupt = mode; }
+		inline bool IsInInterrupt() const { return m_saveData.inInterrupt; }
+		inline bool IsAfterEI() const { return m_saveData.afterEI; }
 	};
 } // namespace awui::Emulation::Processors::Z80

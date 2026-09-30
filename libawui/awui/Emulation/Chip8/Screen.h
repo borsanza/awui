@@ -5,9 +5,9 @@
 namespace awui::Emulation::Chip8 {
 	class Screen {
 	  private:
-		uint16_t _width;
-		uint16_t _height;
-		uint32_t *_data;
+		uint16_t m_width;
+		uint16_t m_height;
+		uint32_t *m_data;
 
 	  public:
 		Screen(uint16_t width, uint16_t height);

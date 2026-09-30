@@ -14,18 +14,18 @@ using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms;
 
 FormTIS100::FormTIS100() {
-	this->InitializeComponent();
+	InitializeComponent();
 }
 
 FormTIS100::~FormTIS100() {
 }
 
 void FormTIS100::InitializeComponent() {
-	this->SetBackColor(Color::FromArgb(255, 8, 8, 8));
+	SetBackColor(Color::FromArgb(255, 8, 8, 8));
 
-	this->SetSize(100, 100);
-	this->SetFullscreen(0);
-	this->SetText("awTIS100");
+	SetSize(100, 100);
+	SetFullscreen(0);
+	SetText("awTIS100");
 }
 
 void FormTIS100::OnTick(float deltaSeconds) {

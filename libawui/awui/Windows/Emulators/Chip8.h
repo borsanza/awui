@@ -10,7 +10,7 @@ namespace awui {
 	namespace Windows::Emulators {
 		class Chip8 : public ArcadeContainer {
 		  private:
-			static bool m_invertedColors;
+			static bool s_invertedColors;
 			bool m_lastInverted;
 
 			Emulation::Chip8::CPU *m_cpu;

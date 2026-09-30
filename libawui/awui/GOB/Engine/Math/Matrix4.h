@@ -8,7 +8,7 @@ namespace awui::GOB::Engine {
 		friend class Vector3;
 
 	  private:
-		float m[16];
+		float m_elements[16];
 
 	  public:
 		Matrix4();

@@ -21,13 +21,13 @@ using namespace awui;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;
 
-int Application::quit = 0;
+int Application::s_quit = 0;
 
 Application::Application() {
 }
 
 void Application::Quit() {
-	Application::quit = 1;
+	Application::s_quit = 1;
 }
 
 void Application::Run(Form *form = NULL) {
@@ -62,7 +62,7 @@ void Application::Run(Form *form = NULL) {
 
 	// Lo inicializo en una frecuencia de 60Hz
 	float lastDeltaSeconds = 1.0f / 60.0f;
-	while (!Application::quit) {
+	while (!Application::s_quit) {
 		ProcessEvents();
 
 		chronoLap.Lap();
@@ -107,7 +107,7 @@ void Application::ProcessEvents() {
 	while (SDL_PollEvent(&event)) {
 		bool ret = false;
 		// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
-		for (Form *formW : *Form::m_formsList) {
+		for (Form *formW : *Form::s_formsList) {
 			switch (event.type) {
 				case SDL_JOYDEVICEADDED:
 				case SDL_JOYDEVICEREMOVED:
@@ -186,7 +186,7 @@ void Application::ProcessEvents() {
 		}
 
 		if (windowID != 0) {
-			for (Form *formW : *Form::m_formsList) {
+			for (Form *formW : *Form::s_formsList) {
 				if (windowID == formW->GetWindowID()) {
 					formW->ProcessEvents(&event);
 				}

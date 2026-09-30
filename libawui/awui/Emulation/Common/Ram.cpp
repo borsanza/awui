@@ -11,22 +11,22 @@
 using namespace awui::Emulation::Common;
 
 Ram::Ram(uint32_t size) {
-	this->_data = (uint8_t *) calloc(size, sizeof(uint8_t));
-	this->_size = size;
+	m_data = (uint8_t *) calloc(size, sizeof(uint8_t));
+	m_size = size;
 }
 
 Ram::~Ram() {
-	free(this->_data);
+	free(m_data);
 }
 
 void Ram::Clear() {
-	memset(this->_data, 0, this->_size * sizeof(uint8_t));
+	memset(m_data, 0, m_size * sizeof(uint8_t));
 }
 
 void Ram::Resize(uint32_t size) {
-	if (this->_size != size) {
-		free(this->_data);
-		this->_data = (uint8_t *) calloc(size, sizeof(uint8_t));
-		this->_size = size;
+	if (m_size != size) {
+		free(m_data);
+		m_data = (uint8_t *) calloc(size, sizeof(uint8_t));
+		m_size = size;
 	}
 }

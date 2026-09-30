@@ -21,7 +21,7 @@ namespace awui {
 
 		class ObjectCollection : Object {
 		  private:
-			ListBox *listbox;
+			ListBox *m_listbox;
 			std::vector<Object *> m_items;
 
 		  public:

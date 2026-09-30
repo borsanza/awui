@@ -9,7 +9,7 @@
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Statistics;
 
-Stats *Stats::m_instance = 0;
+Stats *Stats::s_instance = 0;
 
 Stats::Stats() {
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
@@ -89,10 +89,10 @@ void Stats::SetTimeAfterIddle() {
 }
 
 Stats *Stats::Instance() {
-	if (Stats::m_instance == 0)
-		Stats::m_instance = new Stats;
+	if (Stats::s_instance == 0)
+		Stats::s_instance = new Stats;
 
-	return Stats::m_instance;
+	return Stats::s_instance;
 }
 
 void Stats::OnRemoteHeartbeat() {

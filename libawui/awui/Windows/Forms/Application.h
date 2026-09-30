@@ -6,7 +6,7 @@ namespace awui::Windows::Forms {
 	class Form;
 
 	class Application : public Object {
-		static int quit;
+		static int s_quit;
 
 	  private:
 		static void ProcessEvents();
