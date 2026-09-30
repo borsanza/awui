@@ -18,6 +18,7 @@ namespace awui {
 			awui::Emulation::Spectrum::Motherboard *m_motherboard;
 			bool m_pause;
 			int m_fileSlot;
+			bool m_resetHeld; // La combinación de reinicio sigue pulsada (el aviso sale una sola vez)
 
 			awui::Emulation::Spectrum::TapeCorder *m_tapecorder;
 

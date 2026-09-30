@@ -18,6 +18,7 @@
 #include <awui/UI/Events/JoystickAxisMotionEventArgs.h>
 #include <awui/UI/Events/JoystickButtonEventArgs.h>
 #include <awui/UI/Input/JoystickButtons.h>
+#include <awui/Localization.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -227,19 +228,19 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			ret = true;
 			break;
 		case Keys::Key_1:
-			awui::Emulation::MasterSystem::Sound::ToggleChannel(0);
+			ToggleSoundChannel(0);
 			ret = true;
 			break;
 		case Keys::Key_2:
-			awui::Emulation::MasterSystem::Sound::ToggleChannel(1);
+			ToggleSoundChannel(1);
 			ret = true;
 			break;
 		case Keys::Key_3:
-			awui::Emulation::MasterSystem::Sound::ToggleChannel(2);
+			ToggleSoundChannel(2);
 			ret = true;
 			break;
 		case Keys::Key_4:
-			awui::Emulation::MasterSystem::Sound::ToggleChannel(3);
+			ToggleSoundChannel(3);
 			ret = true;
 			break;
 	}
@@ -442,6 +443,13 @@ bool MasterSystem::OnJoystickAxisMotion(JoystickAxisMotionEventArgs *e) {
 
 uint32_t MasterSystem::GetCRC32() {
 	return m_cpu->GetCRC32();
+}
+
+// Silencia o vuelve a activar un canal del PSG (teclas 1-4) y lo avisa en pantalla
+void MasterSystem::ToggleSoundChannel(int channel) {
+	awui::Emulation::MasterSystem::Sound::ToggleChannel(channel);
+	bool enabled = awui::Emulation::MasterSystem::Sound::IsChannelEnabled(channel);
+	ShowNotification(String(Localization::Tr(enabled ? "osd.channelOn" : "osd.channelOff").ToCharArray(), channel + 1));
 }
 
 bool MasterSystem::SaveAutoState() {

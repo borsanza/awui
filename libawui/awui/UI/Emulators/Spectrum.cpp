@@ -7,6 +7,7 @@
 #include "Spectrum.h"
 
 #include <awui/Console.h>
+#include <awui/Localization.h>
 #include <awui/Convert.h>
 #include <awui/Time/ChronoLap.h>
 #include <awui/Drawing/Image.h>
@@ -61,6 +62,7 @@ Spectrum::Spectrum() {
 	m_seconds = 0.0;
 	m_heldRemote = 0;
 	m_fileSlot = 0;
+	m_resetHeld = false;
 	m_tapecorder = new TapeCorder();
 	m_tapecorder->SetFinishCassetteCB(FinishCassetteCB, this);
 	m_motherboard->SetTapeCorder(m_tapecorder);
@@ -104,8 +106,14 @@ void Spectrum::CheckLimits() {
 }
 
 void Spectrum::OnTick(float deltaSeconds) {
-	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET)
+	// Mientras se mantiene la combinación se sigue reiniciando; el aviso sale una vez
+	bool reset = (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_RESET);
+	if (reset) {
 		m_motherboard->Reset();
+		if (!m_resetHeld)
+			ShowNotification(Localization::Tr("osd.reset"));
+	}
+	m_resetHeld = reset;
 
 	// Modo rápido (F8): se emula todo lo que dé tiempo en este tick. Con el cargador de la ROM la carga es
 	// instantánea (Motherboard::FlashLoad); con un cargador propio la cinta pasa a toda velocidad
@@ -384,14 +392,17 @@ void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 		case Keys::Key_F8:
 			// Carga ultrarrápida: con el cargador de la ROM es instantánea; con uno propio la cinta pasa a toda
 			// velocidad
-			if (pressed)
+			if (pressed) {
 				m_motherboard->SetFast(!m_motherboard->GetFast());
+				ShowNotification(Localization::Tr(m_motherboard->GetFast() ? "osd.fastOn" : "osd.fastOff"));
+			}
 			break;
 		case Keys::Key_F9:
 			// Rebobina la cinta al principio (para volver a cargar); arranca sola al hacer LOAD ""
 			if (pressed) {
 				m_tapecorder->Stop();
 				m_tapecorder->Rewind();
+				ShowNotification(Localization::Tr("osd.tapeRewound"));
 			}
 			break;
 		default:
@@ -520,14 +531,12 @@ bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 
 	if (m_fileSlot > 0 && (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_DECREASE)) {
 		m_fileSlot--;
-		Console::Write("Estado: ");
-		Console::WriteLine(Convert::ToString(m_fileSlot));
+		ShowNotification(String(Localization::Tr("osd.slot").ToCharArray(), m_fileSlot));
 	}
 
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_INCREASE) {
 		m_fileSlot++;
-		Console::Write("Estado: ");
-		Console::WriteLine(Convert::ToString(m_fileSlot));
+		ShowNotification(String(Localization::Tr("osd.slot").ToCharArray(), m_fileSlot));
 	}
 
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_LOAD)
@@ -598,25 +607,29 @@ bool Spectrum::LoadAutoState() {
 void Spectrum::LoadState() {
 	String name = SavePaths::GetReadPath(GetStateFile());
 
-	if (File::Exists(name)) {
-		Console::Write("Cargando: ");
-		Console::WriteLine(name);
+	if (!File::Exists(name)) {
+		ShowNotification(String(Localization::Tr("osd.stateMissing").ToCharArray(), m_fileSlot));
+		return;
+	}
 
-		// Un estado de otro tamaño es de otra versión del emulador: ReadStateFile no lo carga (desbordaría el
-		// buffer o dejaría la máquina a medias)
-		std::vector<uint8_t> savedData(Motherboard::GetSaveSize());
-		if (ReadStateFile(name, savedData.data(), (int) savedData.size()))
-			m_motherboard->LoadState(savedData.data());
+	Console::WriteLine(String("Cargando: ") + name);
+
+	// Un estado de otro tamaño es de otra versión del emulador: ReadStateFile no lo carga (desbordaría el buffer o
+	// dejaría la máquina a medias) y lo avisa
+	std::vector<uint8_t> savedData(Motherboard::GetSaveSize());
+	if (ReadStateFile(name, savedData.data(), (int) savedData.size())) {
+		m_motherboard->LoadState(savedData.data());
+		ShowNotification(String(Localization::Tr("osd.stateLoaded").ToCharArray(), m_fileSlot));
 	}
 }
 
 void Spectrum::SaveState() {
 	String name = SavePaths::GetWritePath(GetStateFile());
 
-	Console::Write("Guardando: ");
-	Console::WriteLine(name);
+	Console::WriteLine(String("Guardando: ") + name);
 
 	std::vector<uint8_t> savedData(Motherboard::GetSaveSize());
 	m_motherboard->SaveState(savedData.data());
-	WriteStateFile(name, savedData.data(), (int) savedData.size());
+	if (WriteStateFile(name, savedData.data(), (int) savedData.size()))
+		ShowNotification(String(Localization::Tr("osd.stateSaved").ToCharArray(), m_fileSlot));
 }

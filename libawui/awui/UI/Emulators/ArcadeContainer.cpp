@@ -7,6 +7,7 @@
 #include "ArcadeContainer.h"
 
 #include <awui/Console.h>
+#include <awui/Localization.h>
 #include <awui/UI/Station/StationUI.h>
 
 #include <stdio.h>
@@ -33,6 +34,7 @@ bool ArcadeContainer::WriteStateFile(const String &file, const uint8_t *data, in
 	// Atómica: si se corta a medias, el estado anterior sigue entero
 	if (!File::WriteAllBytes(file, data, size)) {
 		Console::Error->WriteLine(String("No se puede guardar el estado: ") + file);
+		ShowNotification(Localization::Tr("osd.stateSaveError"));
 		return false;
 	}
 
@@ -47,6 +49,7 @@ bool ArcadeContainer::ReadStateFile(const String &file, uint8_t *data, int size)
 	// Un estado de otro tamaño es de otra versión del emulador: no se carga
 	if (bytes.size() != (size_t) size) {
 		Console::Error->WriteLine("Estado incompatible (%zu bytes, se esperaban %d): no se carga %s", bytes.size(), size, file.ToCharArray());
+		ShowNotification(Localization::Tr("osd.stateIncompatible"));
 		return false;
 	}
 

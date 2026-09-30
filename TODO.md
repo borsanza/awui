@@ -13,7 +13,6 @@ Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra d
 - **Pérdida de foco de la ventana:** no se atiende `SDL_WINDOWEVENT_FOCUS_LOST`. Si se cambia de ventana (Alt+Tab) con una tecla o un botón pulsados, se quedan pulsados (`Form::s_buttonsPad1/2`, las teclas del Spectrum). Tampoco se pausa nada al minimizar.
 - **Bucle sin límite:** no hay `SDL_Delay` en ningún sitio. Sin vsync, o con la ventana minimizada (donde el vsync no frena), el programa usa el 100 % de un núcleo.
 - **`SliderBrowser` cuenta en frames:** su animación dura 10 frames, así que va más rápida en una pantalla de 144 Hz que en una de 60 Hz. Debería contar tiempo (`deltaSeconds`).
-- **`Form::OnTick` recoloca `Stats` en cada frame:** `MoveToEnd(stats)` quita y vuelve a añadir el control, lo que recalcula el foco y hace `Layout()` del formulario 60 veces por segundo. Basta con hacerlo si no es ya el último.
 
 ## Fallos latentes
 
@@ -65,7 +64,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 ### Pintado
 
 - **OpenGL antiguo:** todo usa el modo inmediato (`glBegin`/`glEnd`, sin shaders), que no existe en perfiles modernos ni en OpenGL ES. Importa si algún día stationTV va a una Raspberry Pi o a una tele Android. [Shader.cpp](libawui/awui/OpenGL/Shader.cpp) es un experimento sin usar: llama a `glewInit` en el constructor y carga un `shader.glfs` fijo.
-- **Estado de OpenGL a mano:** cada `DrawImageGL` y `Bitmap::OnPaint` consulta y restaura `GL_TEXTURE_2D`, `GL_BLEND` y `GL_DEPTH_TEST` con `glIsEnabled`. Las dos versiones de `DrawImageGL` están duplicadas.
+- **Estado de OpenGL a mano:** cada `DrawImageGL` y `Bitmap::OnPaint` consulta y restaura `GL_TEXTURE_2D`, `GL_BLEND` y `GL_DEPTH_TEST` con `glIsEnabled`.
 - **Dos formas de mezclar:** `Image` (cairo) sube el alfa premultiplicado y `Bitmap` (SDL_image) sin premultiplicar, cada uno con su `glBlendFunc`.
 - **`OnPaint(OpenGL::GL *gl)`** recibe siempre `NULL`: el parámetro no sirve.
 - **`Refresh()` y `m_needRefresh`** no se usan para nada: se repinta todo en cada frame. O se quitan, o se usan para no repintar si nada cambia (ahorra consumo en la tele).
@@ -148,9 +147,8 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 11. **Controles deshabilitados:** no hay `Enabled`. Un control se puede ocultar, pero no dejarlo visible e inactivo.
 12. **Orden de foco con el tabulador:** `m_tabIndex` se asigna pero no se usa; no hay navegación con Tab.
 13. **Registro de mensajes con niveles:** hoy se mezclan `Console`, `printf` y `fprintf(stderr)`. Con niveles (depuración, aviso, error) se podrían silenciar mensajes como "Partida guardada cargada".
-14. **Avisos en pantalla:** "Estado guardado", "Ranura 2", "Cargando cinta…". Hoy solo salen por consola, que en la tele no se ve.
-15. **Texto con Pango** en vez de la API sencilla de cairo: permitiría usar otra fuente cuando falta un carácter (japonés, chino…), texto de derecha a izquierda y cortar líneas de forma correcta.
-16. **Pruebas automáticas en el repositorio**, con las pruebas sin ventana que ya existen como base (ajustes, paginación, estados, cintas, Chip-8…) y un `ctest` que las lance con los sanitizers.
+14. **Texto con Pango** en vez de la API sencilla de cairo: permitiría usar otra fuente cuando falta un carácter (japonés, chino…), texto de derecha a izquierda y cortar líneas de forma correcta.
+15. **Pruebas automáticas en el repositorio**, con las pruebas sin ventana que ya existen como base (ajustes, paginación, estados, cintas, Chip-8…) y un `ctest` que las lance con los sanitizers.
 
 ## Windows y otras plataformas
 

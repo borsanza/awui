@@ -24,9 +24,10 @@ namespace awui::UI {
 		  protected:
 			UI::Station::StationUI *m_station;
 
-			// Fichero de estado: escritura atómica (temporal y renombrar) y lectura que exige el tamaño exacto
-			static bool WriteStateFile(const String &file, const uint8_t *data, int size);
-			static bool ReadStateFile(const String &file, uint8_t *data, int size);
+			// Fichero de estado: escritura atómica (temporal y renombrar) y lectura que exige el tamaño exacto.
+			// Los errores se avisan en pantalla
+			bool WriteStateFile(const String &file, const uint8_t *data, int size);
+			bool ReadStateFile(const String &file, uint8_t *data, int size);
 
 		  public:
 			ArcadeContainer();

@@ -42,5 +42,17 @@
     "settings.about.application": "Anwendung",
     "settings.about.version": "Version",
     "settings.about.emulators": "Emulatoren",
-    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum und Chip-8."
+    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum und Chip-8.",
+    "osd.stateSaved": "Spielstand gespeichert (Slot %d)",
+    "osd.stateLoaded": "Spielstand geladen (Slot %d)",
+    "osd.stateMissing": "Kein Spielstand in Slot %d",
+    "osd.stateIncompatible": "Spielstand einer anderen Version: kann nicht geladen werden",
+    "osd.stateSaveError": "Spielstand konnte nicht gespeichert werden",
+    "osd.slot": "Slot %d",
+    "osd.fastOn": "Schnellladen an",
+    "osd.fastOff": "Schnellladen aus",
+    "osd.tapeRewound": "Band zurückgespult",
+    "osd.reset": "Neustart",
+    "osd.channelOn": "Kanal %d an",
+    "osd.channelOff": "Kanal %d stumm"
 }

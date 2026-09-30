@@ -35,6 +35,8 @@ namespace awui {
 			Emulation::Common::RewindBuffer *m_rewind;
 			std::vector<uint8_t> m_state;
 			bool m_rewinding;
+
+			void ToggleSoundChannel(int channel);
 			bool m_forwarding;
 
 			void RefreshPads();

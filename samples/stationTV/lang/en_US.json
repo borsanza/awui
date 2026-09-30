@@ -42,5 +42,17 @@
     "settings.about.application": "Application",
     "settings.about.version": "Version",
     "settings.about.emulators": "Emulators",
-    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum and Chip-8."
+    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum and Chip-8.",
+    "osd.stateSaved": "State saved (slot %d)",
+    "osd.stateLoaded": "State loaded (slot %d)",
+    "osd.stateMissing": "No state in slot %d",
+    "osd.stateIncompatible": "State from another version: cannot load",
+    "osd.stateSaveError": "Could not save the state",
+    "osd.slot": "Slot %d",
+    "osd.fastOn": "Fast loading on",
+    "osd.fastOff": "Fast loading off",
+    "osd.tapeRewound": "Tape rewound",
+    "osd.reset": "Reset",
+    "osd.channelOn": "Channel %d on",
+    "osd.channelOff": "Channel %d muted"
 }

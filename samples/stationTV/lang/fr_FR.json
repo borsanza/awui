@@ -42,5 +42,17 @@
     "settings.about.application": "Application",
     "settings.about.version": "Version",
     "settings.about.emulators": "Émulateurs",
-    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum et Chip-8."
+    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum et Chip-8.",
+    "osd.stateSaved": "État sauvegardé (emplacement %d)",
+    "osd.stateLoaded": "État chargé (emplacement %d)",
+    "osd.stateMissing": "Aucun état dans l'emplacement %d",
+    "osd.stateIncompatible": "État d'une autre version : impossible de le charger",
+    "osd.stateSaveError": "Impossible de sauvegarder l'état",
+    "osd.slot": "Emplacement %d",
+    "osd.fastOn": "Chargement rapide activé",
+    "osd.fastOff": "Chargement rapide désactivé",
+    "osd.tapeRewound": "Cassette rembobinée",
+    "osd.reset": "Réinitialisation",
+    "osd.channelOn": "Canal %d activé",
+    "osd.channelOff": "Canal %d coupé"
 }

@@ -96,46 +96,13 @@ void GL::FillRectangle(int x1, int y1, int x2, int y2) {
 
 // GL_CCW
 void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
-	image->Load();
-	// Mas rapido guardandose solo el valor y recuperarlo despues
-	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
-
-	GLboolean oldDepth = glIsEnabled(GL_DEPTH_TEST);
-	glDisable(GL_DEPTH_TEST);
-
-	GLboolean oldBlend = glIsEnabled(GL_BLEND);
-	glEnable(GL_BLEND);
-	// El buffer de Image es de cairo (ARGB32), con el color ya multiplicado por el alfa
-	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-	glBindTexture(GL_TEXTURE_2D, image->GetTexture());
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2i(x, y + image->GetHeight()); // Left Bottom
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2i(x + image->GetWidth(), y + image->GetHeight()); // Right Bottom
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2i(x + image->GetWidth(), y); // Right Top
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2i(x, y); // Left Top
-	glEnd();
-
-	// El resto del código (rellenos con alfa, GOB) usa la mezcla normal sin fijarla
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	if (!oldBlend)
-		glDisable(GL_BLEND);
-	if (oldDepth)
-		glEnable(GL_DEPTH_TEST);
-	if (!oldTexture)
-		glDisable(GL_TEXTURE_2D);
+	DrawImageGL(image, x, y, image->GetWidth(), image->GetHeight());
 }
 
-// GL_CCW
-void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int height) {
+// GL_CCW. opacity: 0 transparente, 1 opaca (fundidos)
+void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int height, float opacity) {
 	image->Load();
+
 	// Mas rapido guardandose solo el valor y recuperarlo despues
 	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_2D);
@@ -145,12 +112,13 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int h
 
 	GLboolean oldBlend = glIsEnabled(GL_BLEND);
 	glEnable(GL_BLEND);
-	// El buffer de Image es de cairo (ARGB32), con el color ya multiplicado por el alfa
+	// El buffer de Image es de cairo (ARGB32), con el color ya multiplicado por el alfa: la opacidad se aplica
+	// igual a color y alfa
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 	glBindTexture(GL_TEXTURE_2D, image->GetTexture());
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(opacity, opacity, opacity, opacity);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex2i(x, y + height); // Left Bottom
@@ -161,13 +129,17 @@ void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int h
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex2i(x, y); // Left Top
 	glEnd();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// El resto del código (rellenos con alfa, GOB) usa la mezcla normal sin fijarla
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	if (!oldBlend)
 		glDisable(GL_BLEND);
+
 	if (oldDepth)
 		glEnable(GL_DEPTH_TEST);
+
 	if (!oldTexture)
 		glDisable(GL_TEXTURE_2D);
 }

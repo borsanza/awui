@@ -42,5 +42,17 @@
     "settings.about.application": "Aplicació",
     "settings.about.version": "Versió",
     "settings.about.emulators": "Emuladors",
-    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum i Chip-8."
+    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum i Chip-8.",
+    "osd.stateSaved": "Estat guardat (ranura %d)",
+    "osd.stateLoaded": "Estat carregat (ranura %d)",
+    "osd.stateMissing": "No hi ha estat en la ranura %d",
+    "osd.stateIncompatible": "Estat d'una altra versió: no es pot carregar",
+    "osd.stateSaveError": "No s'ha pogut guardar l'estat",
+    "osd.slot": "Ranura %d",
+    "osd.fastOn": "Càrrega ràpida activada",
+    "osd.fastOff": "Càrrega ràpida desactivada",
+    "osd.tapeRewound": "Cinta rebobinada",
+    "osd.reset": "Reinici",
+    "osd.channelOn": "Canal %d activat",
+    "osd.channelOff": "Canal %d silenciat"
 }

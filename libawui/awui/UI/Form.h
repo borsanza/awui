@@ -2,6 +2,7 @@
 
 #include <awui/UI/Control.h>
 #include <awui/UI/SelectionFrame.h>
+#include <awui/UI/Toast.h>
 #include <vector>
 
 typedef struct SDL_Window SDL_Window;
@@ -39,6 +40,7 @@ namespace awui {
 			int m_lastHeight;
 			bool m_swapInterval;
 			SelectionFrame m_selectionFrame;
+			Toast m_toast; // Avisos en pantalla (ShowNotification)
 
 			void OnPaintForm();
 

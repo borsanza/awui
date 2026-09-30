@@ -222,6 +222,10 @@ namespace awui {
 			Control *GetRoot();
 			Form *GetForm();
 
+			// Aviso breve en pantalla del formulario de este control (abajo a la izquierda; sustituye al que se esté
+			// viendo). Sin formulario no hace nada
+			void ShowNotification(const String &text);
+
 			void GetControlsSelectables(std::vector<Control *> &list);
 
 			inline void SetPreventChangeControl(bool mode) { m_preventChangeControl = mode; }

@@ -42,5 +42,17 @@
     "settings.about.application": "Приложение",
     "settings.about.version": "Версия",
     "settings.about.emulators": "Эмуляторы",
-    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum и Chip-8."
+    "settings.about.emulators.desc": "Master System, Game Gear, SG-1000, ZX Spectrum и Chip-8.",
+    "osd.stateSaved": "Состояние сохранено (слот %d)",
+    "osd.stateLoaded": "Состояние загружено (слот %d)",
+    "osd.stateMissing": "В слоте %d нет состояния",
+    "osd.stateIncompatible": "Состояние другой версии: загрузить нельзя",
+    "osd.stateSaveError": "Не удалось сохранить состояние",
+    "osd.slot": "Слот %d",
+    "osd.fastOn": "Быстрая загрузка включена",
+    "osd.fastOff": "Быстрая загрузка выключена",
+    "osd.tapeRewound": "Лента перемотана",
+    "osd.reset": "Сброс",
+    "osd.channelOn": "Канал %d включён",
+    "osd.channelOff": "Канал %d выключен"
 }

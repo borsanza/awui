@@ -719,6 +719,12 @@ Form *Control::GetForm() {
 	return (Form *) root;
 }
 
+void Control::ShowNotification(const String &text) {
+	Form *form = GetForm();
+	if (form)
+		form->m_toast.Show(text);
+}
+
 bool Control::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	return false;
 }

@@ -54,6 +54,7 @@ Form::Form() {
 	stats->SetDock(DockStyle::None);
 	// Es único y compartido: el formulario no lo borra
 	AddWidget(stats, WidgetOwnership::Borrowed);
+	AddWidget(&m_toast, WidgetOwnership::Borrowed);
 }
 
 Form::~Form() {
@@ -112,11 +113,22 @@ void Form::OnTickPre(float deltaSeconds) {
 }
 
 void Form::OnTick(float deltaSeconds) {
+	// Estadísticas y avisos, por encima de todo (los últimos se pintan encima). Solo se recolocan si alguien ha
+	// añadido un control después: moverlos en cada frame recalculaba el foco y la disposición sin necesidad
 	Stats *stats = Stats::Instance();
-	MoveToEnd(stats);
+	int count = GetCount();
+	if ((IndexOf(stats) != count - 2) || (IndexOf(&m_toast) != count - 1)) {
+		MoveToEnd(stats);
+		MoveToEnd(&m_toast);
+	}
+
 	stats->SetWidth(GetWidth());
 	stats->SetLocation(0, GetHeight() - stats->GetHeight());
+
+	int bottom = stats->GetVisible() ? stats->GetTop() : GetHeight();
+	m_toast.SetLocation(40, bottom - m_toast.GetHeight() - 20);
 }
+
 
 void Form::RefreshVideo() {
 	if (!m_initialized)
