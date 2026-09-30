@@ -6,6 +6,8 @@
 
 #include "SliderBrowser.h"
 
+#include <algorithm>
+
 #include <awui/Console.h>
 #include <awui/Effects/Effect.h>
 #include <awui/UI/Form.h>
@@ -65,9 +67,10 @@ void SliderBrowser::OnTick(float deltaSeconds) {
 			m_initPos = w->GetLeft();
 		}
 
-		if (m_lastTime < 10) {
-			m_lastTime++;
-			float p = m_effect->Calculate(m_lastTime / 10.0f);
+		// En segundos, no en frames: dura lo mismo a 60 Hz que a 144 Hz
+		if (m_lastTime < AnimationSeconds) {
+			m_lastTime = std::min(m_lastTime + deltaSeconds, AnimationSeconds);
+			float p = m_effect->Calculate(m_lastTime / AnimationSeconds);
 			left = m_initPos + ((left - m_initPos) * p);
 		}
 
