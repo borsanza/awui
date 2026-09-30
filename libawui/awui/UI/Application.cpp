@@ -1,0 +1,208 @@
+/**
+ * awui/UI/Application.cpp
+ *
+ * Copyright (C) 2013 Borja Sánchez Zamorano
+ */
+
+#include "Application.h"
+
+#include <SDL.h>
+#include <SDL_opengl.h>
+#include <awui/Time/ChronoLap.h>
+#include <awui/Console.h>
+#include <awui/Convert.h>
+#include <awui/Math.h>
+// #include <awui/OpenGL/GL.h>
+#include <awui/UI/Form.h>
+#include <awui/UI/Input/Controller.h>
+#include <awui/UI/Diagnostics/Stats.h>
+
+using namespace awui;
+using namespace awui::UI;
+using namespace awui::UI::Diagnostics;
+
+int Application::s_quit = 0;
+
+Application::Application() {
+}
+
+void Application::Quit() {
+	Application::s_quit = 1;
+}
+
+void Application::Run(Form *form = NULL) {
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
+		SDL_Log("[ERROR] SDL_Init failed: %s", SDL_GetError());
+		return;
+	}
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	// No se ve si no pongo modo de compatiblidad
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+	Input::Controller::Refresh();
+
+	form->Init();
+
+	atexit(SDL_Quit);
+
+	Stats *stats = Stats::Instance();
+
+	Time::ChronoLap chronoLap;
+
+	chronoLap.Start();
+
+	glEnable(GL_MULTISAMPLE);
+
+	// Lo inicializo en una frecuencia de 60Hz
+	float lastDeltaSeconds = 1.0f / 60.0f;
+	while (!Application::s_quit) {
+		ProcessEvents();
+
+		chronoLap.Lap();
+		float deltaSeconds = chronoLap.GetLapDuration();
+
+		// Se comporta mejor en fullscreen si amortiguo el deltaseconds
+		lastDeltaSeconds = Math::Interpolate(lastDeltaSeconds, deltaSeconds, 0.2, false);
+		// lastDeltaSeconds = 1.0 / 60.0;
+
+		form->OnTickPre(lastDeltaSeconds);
+
+		glViewport(0, 0, form->GetWidth(), form->GetHeight());
+		glClearColor(form->GetBackColor().GetR() / 255.0f, form->GetBackColor().GetG() / 255.0f, form->GetBackColor().GetB() / 255.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		form->OnPaintForm();
+
+		/*
+				int top = 640;
+				for (int i = -top; i < 0; i++) {
+					for (int j = -top; j < 0; j++) {
+						OpenGL::GL::FillRectangle(i << 3, j << 3, (i << 3) + 5, (j << 3) + 5);
+					}
+				}
+		*/
+
+		stats->SetTimeBeforeIddle();
+		form->SwapGL();
+		stats->SetTimeAfterIddle();
+	}
+
+	if (form)
+		form->OnClosing();
+
+	Input::Controller::CloseAll();
+
+	SDL_Quit();
+}
+
+void Application::ProcessEvents() {
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		bool ret = false;
+		// Console::WriteLine(String("Event [") + Convert::ToString((int)event.type) + "]");
+		for (Form *formW : *Form::s_formsList) {
+			switch (event.type) {
+				case SDL_JOYDEVICEADDED:
+				case SDL_JOYDEVICEREMOVED:
+					ret = true;
+					break;
+				case SDL_CONTROLLERDEVICEADDED:
+				case SDL_CONTROLLERDEVICEREMOVED:
+					Input::Controller::Refresh();
+					ret = true;
+					break;
+				case SDL_CONTROLLERAXISMOTION: {
+					// Console::WriteLine(String("SDL_CONTROLLERAXISMOTION [") + Convert::ToString((int)event.caxis.axis) + " - " + Convert::ToString((int)event.caxis.value) + "]");
+					Input::Controller *controller = Input::Controller::GetByWhich(event.caxis.which);
+					if (controller) {
+						if (controller->OnAxisMotion(event.caxis.axis, event.caxis.value))
+							formW->OnJoystickAxisMotionPre(controller->GetOrder(), controller->GetAxisX(), controller->GetAxisY());
+						ret = true;
+					}
+					break;
+				}
+				case SDL_CONTROLLERBUTTONDOWN: {
+					Input::Controller *controller = Input::Controller::GetByWhich(event.cbutton.which);
+					if (controller) {
+						controller->OnButtonDown(2 << event.cbutton.button);
+						formW->OnJoystickButtonDownPre(controller->GetOrder(), 2 << event.cbutton.button, controller->GetButtons(), controller->GetPrevButtons());
+						ret = true;
+					}
+					break;
+				}
+				case SDL_CONTROLLERBUTTONUP: {
+					Input::Controller *controller = Input::Controller::GetByWhich(event.cbutton.which);
+					if (controller) {
+						controller->OnButtonUp(2 << event.cbutton.button);
+						formW->OnJoystickButtonUpPre(controller->GetOrder(), 2 << event.cbutton.button, controller->GetButtons(), controller->GetPrevButtons());
+						ret = true;
+					}
+					break;
+				}
+				// TODO: Mostrar la bateria del Joystick
+				case SDL_JOYBATTERYUPDATED:
+					ret = true;
+					break;
+				// Ya las he implementado como Controllers
+				case SDL_JOYHATMOTION:
+				case SDL_JOYAXISMOTION:
+				case SDL_JOYBUTTONDOWN:
+				case SDL_JOYBUTTONUP:
+					ret = true;
+					break;
+			}
+		}
+
+		if (ret) {
+			continue;
+		}
+
+		Uint32 windowID = 0;
+		switch (event.type) {
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+				windowID = event.key.windowID;
+				break;
+			case SDL_MOUSEWHEEL:
+				windowID = event.wheel.windowID;
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				windowID = event.button.windowID;
+				break;
+			case SDL_MOUSEMOTION:
+				windowID = event.motion.windowID;
+				break;
+			case SDL_WINDOWEVENT:
+				windowID = event.window.windowID;
+				break;
+		}
+
+		if (windowID != 0) {
+			for (Form *formW : *Form::s_formsList) {
+				if (windowID == formW->GetWindowID()) {
+					formW->ProcessEvents(&event);
+				}
+			}
+
+			continue;
+		}
+
+		switch (event.type) {
+			case SDL_QUIT:
+				Application::Quit();
+				break;
+
+			default:
+				// Console::WriteLine("Event [%d]", event.type);
+				break;
+		}
+	}
+}

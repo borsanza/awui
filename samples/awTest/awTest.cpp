@@ -3,9 +3,9 @@
 
 #include "formTest.h"
 
-#include <awui/Windows/Forms/Application.h>
+#include <awui/UI/Application.h>
 
-using namespace awui::Windows::Forms;
+using namespace awui::UI;
 
 int main(int argc, char **argv) {
 	FormTest *form = new FormTest();

@@ -7,11 +7,11 @@
 #include "formArcade.h"
 
 #include <awui/Emulation/MasterSystem/Motherboard.h>
-#include <awui/Windows/Emulators/MasterSystem.h>
-#include <awui/Windows/Forms/Application.h>
+#include <awui/UI/Emulators/MasterSystem.h>
+#include <awui/UI/Application.h>
 
 using namespace awui;
-using namespace awui::Windows::Emulators;
+using namespace awui::UI::Emulators;
 
 int main(int argc, char **argv) {
 	if (argc == 3) {

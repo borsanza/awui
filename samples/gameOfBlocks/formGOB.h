@@ -2,13 +2,13 @@
 
 #include <awui/GOB/Engine/Renderers/Renderer.h>
 #include <awui/String.h>
-#include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Input/Keys.h>
+#include <awui/UI/Form.h>
+#include <awui/UI/Input/Keys.h>
 
 using namespace awui::GOB::Engine;
-using namespace awui::Windows::Forms;
+using namespace awui::UI;
 
-class FormGOB : public awui::Windows::Forms::Form {
+class FormGOB : public awui::UI::Form {
   private:
 	Renderer *m_renderer;
 

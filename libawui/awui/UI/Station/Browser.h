@@ -1,0 +1,26 @@
+#pragma once
+
+#include <awui/UI/Station/Gradient.h>
+
+namespace awui::UI::Station {
+	class Page;
+
+	class Browser : public Control {
+	  private:
+		Gradient m_gradientUp;
+		Gradient m_gradientBottom;
+		Gradient m_gradientLeft;
+		Gradient m_gradientRight;
+		Page *m_page;
+
+	  public:
+		Browser();
+		virtual ~Browser() = default;
+
+		void SetPage(Page *page);
+		Page *GetPage() const { return m_page; };
+
+		virtual void OnTick(float deltaSeconds) override;
+		virtual void OnWidgetRemoved(Control *control) override;
+	};
+} // namespace awui::UI::Station

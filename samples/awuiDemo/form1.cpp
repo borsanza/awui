@@ -8,7 +8,7 @@
 
 using namespace awui::Drawing;
 using namespace awui;
-using namespace awui::Windows::Forms;
+using namespace awui::UI;
 
 Form1::Form1() {
 	m_bitmap2 = nullptr;

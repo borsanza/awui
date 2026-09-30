@@ -7,8 +7,8 @@
 #include "formGOB.h"
 
 using namespace awui::Drawing;
-using namespace awui::Windows::Forms;
-using namespace awui::Windows::Forms::Input;
+using namespace awui::UI;
+using namespace awui::UI::Input;
 
 FormGOB::FormGOB() {
 	m_renderer = NULL;

@@ -1,20 +1,20 @@
 #pragma once
 
-#include <awui/Windows/Forms/Control.h>
+#include <awui/UI/Control.h>
 
-namespace awui::Windows::Forms {
+namespace awui::UI {
 	class ListBox;
 
 	namespace Diagnostics {
 		class Process;
 	}
-} // namespace awui::Windows::Forms
+} // namespace awui::UI
 
-class Test2 : public awui::Windows::Forms::Control {
+class Test2 : public awui::UI::Control {
   private:
 	bool m_runMame;
 	bool m_endMame;
-	awui::Windows::Forms::ListBox *m_listbox;
+	awui::UI::ListBox *m_listbox;
 
 	void InitializeComponent();
 

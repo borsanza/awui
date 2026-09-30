@@ -1,17 +1,17 @@
 #pragma once
 
 #include <awui/String.h>
-#include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Input/Keys.h>
+#include <awui/UI/Form.h>
+#include <awui/UI/Input/Keys.h>
 
-namespace awui::Windows::Forms::Station {
+namespace awui::UI::Station {
 	class StationUI;
 }
 
-using namespace awui::Windows::Forms;
-using namespace awui::Windows::Forms::Station;
+using namespace awui::UI;
+using namespace awui::UI::Station;
 
-class FormArcade : public awui::Windows::Forms::Form {
+class FormArcade : public awui::UI::Form {
   private:
 	StationUI *m_stationUI;
 

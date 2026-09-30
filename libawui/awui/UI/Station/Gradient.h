@@ -1,0 +1,23 @@
+#pragma once
+
+#include <awui/Drawing/ColorF.h>
+#include <awui/UI/Control.h>
+
+namespace awui::UI::Station {
+	class Gradient : public Control {
+	  private:
+		Drawing::ColorF m_color[4];
+		Drawing::ColorF m_colorGo[4];
+		Drawing::ColorF InterpolateColor(Drawing::ColorF *c1, Drawing::ColorF *c2, float percent);
+
+	  public:
+		Gradient();
+		virtual ~Gradient() = default;
+
+		void SetColor(int pos, const Drawing::ColorF color);
+		void SetColorGo(int pos, const Drawing::ColorF color);
+
+		virtual void OnPaint(OpenGL::GL *gl);
+		virtual void OnTick(float deltaSeconds);
+	};
+} // namespace awui::UI::Station

@@ -8,13 +8,13 @@
 
 #include <awui/Console.h>
 #include <awui/Emulation/Common/SavePaths.h>
-#include <awui/Windows/Forms/Station/Settings/SettingsStore.h>
-#include <awui/Windows/Forms/Station/StationUI.h>
+#include <awui/UI/Station/Settings/SettingsStore.h>
+#include <awui/UI/Station/StationUI.h>
 
 using namespace awui::Drawing;
 using namespace awui;
-using namespace awui::Windows::Forms;
-using namespace awui::Windows::Forms::Input;
+using namespace awui::UI;
+using namespace awui::UI::Input;
 
 FormArcade::FormArcade() {
 	m_stationUI = NULL;

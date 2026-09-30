@@ -1,14 +1,14 @@
 #pragma once
 
-#include <awui/Windows/Forms/Form.h>
+#include <awui/UI/Form.h>
 
-namespace awui::Windows::Forms {
+namespace awui::UI {
 	class SliderBrowser;
 }
 
-class FormSlider : public awui::Windows::Forms::Form {
+class FormSlider : public awui::UI::Form {
   private:
-	awui::Windows::Forms::SliderBrowser *m_slider;
+	awui::UI::SliderBrowser *m_slider;
 
 	void InitializeComponent();
 

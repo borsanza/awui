@@ -1,6 +1,6 @@
 #pragma once
 
-#include <awui/Windows/Forms/Control.h>
+#include <awui/UI/Control.h>
 
 #include <vector>
 
@@ -9,17 +9,17 @@ namespace awui {
 		class Effect;
 	}
 
-	namespace Windows::Forms {
+	namespace UI {
 		class Button;
 		class SplitContainer;
 	}
 } // namespace awui
 
-class Test1 : public awui::Windows::Forms::Control {
+class Test1 : public awui::UI::Control {
   private:
-	awui::Windows::Forms::SplitContainer *m_splitter;
+	awui::UI::SplitContainer *m_splitter;
 
-	std::vector<awui::Windows::Forms::Button *> m_buttons;
+	std::vector<awui::UI::Button *> m_buttons;
 	std::vector<awui::Effects::Effect *> m_effects;
 
   public:

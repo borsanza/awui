@@ -6,7 +6,7 @@
 
 #include "formGOB.h"
 
-#include <awui/Windows/Forms/Application.h>
+#include <awui/UI/Application.h>
 
 using namespace awui;
 

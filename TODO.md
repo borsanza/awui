@@ -39,7 +39,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
   - **`ToArgb`** desborda un `int` con alfa 255.
   - **`FromArgb(int)`** falla con alfa de 128 o más, porque el número es negativo y `%` da restos negativos.
 - **`Random::Next(min, max)`** con `max <= min` es comportamiento indefinido (`uniform_int_distribution` con `a > b`).
-- **Eventos del mando con varios formularios** ([Application.cpp](libawui/awui/Windows/Forms/Application.cpp)): se procesan dentro del bucle de formularios. Con más de uno, cada pulsación llegaría varias veces y `Controller::Refresh` se ejecutaría una vez por formulario.
+- **Eventos del mando con varios formularios** ([Application.cpp](libawui/awui/UI/Application.cpp)): se procesan dentro del bucle de formularios. Con más de uno, cada pulsación llegaría varias veces y `Controller::Refresh` se ejecutaría una vez por formulario.
 - **`Stats` con varios formularios:** es un único control que cada `Form` añade como hijo. El segundo formulario falla en el `assert` de `AddWidget`, porque ya tiene padre.
 - **`Application::Run(NULL)`:** el valor por defecto `NULL` hace que falle en `form->Init()`. Además, `SDL_Quit` se llama dos veces (con `atexit` y al final).
 - **`GL::FillRectangle` toma el extremo como incluido y `Bitmap` como excluido.** `Control::OnPaintPre` rellena el fondo con `FillRectangle(0, 0, ancho, alto)`, que pinta un píxel de más; ahora mismo lo tapa el recorte (scissor). Lo mismo pasa con `Rectangle::GetRight`/`GetBottom` (incluidos, `x + ancho - 1`) usados con coordenadas `float`. Hay que elegir un criterio (lo normal es el extremo excluido) y usarlo en todas partes.
@@ -113,17 +113,13 @@ Hoy todo está en una única `libawui.so`: la interfaz, los emuladores, el motor
 libawui/awui/          librería de interfaz: String, IO, Drawing, OpenGL, UI...
 libemulation/          núcleos de los emuladores (hoy Emulation/): Z80, Master System, Spectrum, Chip-8, Common
 libgob/                motor 3D (hoy awui/GOB/), solo lo usa gameOfBlocks
-samples/stationTV/     la aplicación: menús (hoy Windows/Forms/Station), controles de los emuladores
-                       (hoy Windows/Emulators), formArcade, main, lang, menu-settings.json
+samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los emuladores
+                       (hoy UI/Emulators), formArcade, main, lang, menu-settings.json
 third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSystem/emu2413)
 ```
 
 - **Dependencias en su sitio:** la librería de interfaz no sabría nada de ROMs, partidas ni ajustes de stationTV, y los emuladores se podrían probar sin ventana (como ya hacen los arneses).
 - **Código de terceros aparte:** con emu2413 en `third_party/`, la excepción de UBSan de [libawui/CMakeLists.txt](libawui/CMakeLists.txt) apunta a una carpeta en vez de a un fichero dentro de nuestro código.
-
-### Dentro de `libawui/awui`
-
-- **Espacio de nombres `awui::Windows::Forms`:** copia el de .NET, pero aquí confunde. No tiene nada que ver con Windows, y ahora que la librería tiene que funcionar en Windows se mezcla con `#ifdef _WIN32` y con "la build de Windows". Algo como `awui::UI` sería más claro. Es el cambio más grande de la lista (toca todos los ficheros y samples), así que lo dejaría para el final o para cuando se separe la aplicación.
 
 ### Raíz del repositorio
 
@@ -140,7 +136,7 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 ## Componentes que faltan
 
 1. **Entrada de texto:** no hay `TextBox` ni se atiende `SDL_TEXTINPUT`, así que no se puede escribir nada (buscar un juego, elegir la carpeta de partidas en los ajustes, las comillas en el Spectrum con teclado español).
-2. **Teclado en pantalla:** [OnScreenKeyboard.cpp](libawui/awui/Windows/Forms/OnScreenKeyboard.cpp) es un esqueleto: pinta botones con letras que no hacen nada. En una tele es la única forma de escribir con el mando, así que va junto con el `TextBox`.
+2. **Teclado en pantalla:** [OnScreenKeyboard.cpp](libawui/awui/UI/OnScreenKeyboard.cpp) es un esqueleto: pinta botones con letras que no hacen nada. En una tele es la única forma de escribir con el mando, así que va junto con el `TextBox`.
 3. **Navegar con el mando:** los botones del mando no se traducen a `RemoteButtons`, así que el mando no mueve los menús.
 4. **Contenedores de maquetación:** una pila vertical u horizontal y una rejilla. StationUI y SettingsUI colocan todo a mano en cada `OnTick` con números fijos (`GetWidth() - 150`, `+ 42`, `- 66`…).
 5. **Lista con desplazamiento reutilizable:** `ListBox` es un esqueleto sin pintado, y lo que funciona (`Browser` + `Page`) está dentro de Station.

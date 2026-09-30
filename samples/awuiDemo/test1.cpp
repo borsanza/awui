@@ -7,15 +7,15 @@
 #include <awui/Drawing/Font.h>
 #include <awui/Effects/Effect.h>
 #include <awui/Math.h>
-#include <awui/Windows/Forms/Button.h>
-#include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Panel.h>
-#include <awui/Windows/Forms/SplitContainer.h>
+#include <awui/UI/Button.h>
+#include <awui/UI/Form.h>
+#include <awui/UI/Panel.h>
+#include <awui/UI/SplitContainer.h>
 
 using namespace awui;
 using namespace awui::Drawing;
 using namespace awui::Effects;
-using namespace awui::Windows::Forms;
+using namespace awui::UI;
 
 Test1::Test1() {
 	m_splitter = NULL;

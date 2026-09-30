@@ -8,10 +8,10 @@
 #include "testWidget.h"
 
 #include <awui/Drawing/Color.h>
-#include <awui/Windows/Forms/SliderBrowser.h>
+#include <awui/UI/SliderBrowser.h>
 
 using namespace awui::Drawing;
-using namespace awui::Windows::Forms;
+using namespace awui::UI;
 
 FormSlider::FormSlider() {
 	m_slider = NULL;

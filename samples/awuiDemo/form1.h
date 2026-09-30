@@ -1,14 +1,14 @@
 #pragma once
 
-#include <awui/Windows/Forms/Form.h>
+#include <awui/UI/Form.h>
 
-namespace awui::Windows::Forms {
+namespace awui::UI {
 	class Bitmap;
 }
 
-class Form1 : public awui::Windows::Forms::Form {
+class Form1 : public awui::UI::Form {
   private:
-	awui::Windows::Forms::Bitmap *m_bitmap2;
+	awui::UI::Bitmap *m_bitmap2;
 
   public:
 	Form1();

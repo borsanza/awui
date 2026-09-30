@@ -2,11 +2,11 @@
 #define _FORMTIS100_H
 
 #include <awui/String.h>
-#include <awui/Windows/Forms/Form.h>
+#include <awui/UI/Form.h>
 
-using namespace awui::Windows::Forms;
+using namespace awui::UI;
 
-class FormTIS100 : public awui::Windows::Forms::Form {
+class FormTIS100 : public awui::UI::Form {
   private:
 	void InitializeComponent();
 

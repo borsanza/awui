@@ -6,12 +6,12 @@
 #include "test2.h"
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
-#include <awui/Windows/Forms/Button.h>
+#include <awui/UI/Button.h>
 
 using namespace awui;
 using namespace awui::Drawing;
-using namespace awui::Windows::Forms;
-using namespace awui::Windows::Forms::Input;
+using namespace awui::UI;
+using namespace awui::UI::Input;
 
 FormTest::FormTest() {
 	m_buttonPressed = RemoteButtons::None;

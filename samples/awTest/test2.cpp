@@ -8,13 +8,13 @@
 #include <awui/Time/DateTime.h>
 #include <awui/String.h>
 #include <awui/Time/TimeSpan.h>
-#include <awui/Windows/Forms/Button.h>
-#include <awui/Windows/Forms/OnScreenKeyboard.h>
-#include <awui/Windows/Forms/ListBox.h>
-#include <awui/Windows/Forms/Diagnostics/Stats.h>
+#include <awui/UI/Button.h>
+#include <awui/UI/OnScreenKeyboard.h>
+#include <awui/UI/ListBox.h>
+#include <awui/UI/Diagnostics/Stats.h>
 
 using namespace awui::Drawing;
-using namespace awui::Windows::Forms;
+using namespace awui::UI;
 using namespace awui;
 
 Test2::Test2() {

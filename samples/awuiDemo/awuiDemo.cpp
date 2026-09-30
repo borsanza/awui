@@ -3,9 +3,9 @@
 
 #include "form1.h"
 
-#include <awui/Windows/Forms/Application.h>
+#include <awui/UI/Application.h>
 
-using namespace awui::Windows::Forms;
+using namespace awui::UI;
 
 int main(int argc, char **argv) {
 	Form1 *form = new Form1();

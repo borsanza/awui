@@ -7,11 +7,11 @@
 #include "formTIS100.h"
 
 #include <awui/Drawing/Color.h>
-#include <awui/Windows/Emulators/TIS100.h>
+#include <awui/UI/Emulators/TIS100.h>
 
 using namespace awui::Drawing;
-using namespace awui::Windows::Emulators;
-using namespace awui::Windows::Forms;
+using namespace awui::UI::Emulators;
+using namespace awui::UI;
 
 FormTIS100::FormTIS100() {
 	InitializeComponent();

@@ -1,15 +1,15 @@
 #pragma once
 
 #include <awui/Random.h>
-#include <awui/Windows/Forms/Form.h>
+#include <awui/UI/Form.h>
 
-namespace awui::Windows::Forms {
+namespace awui::UI {
 	class Button;
 }
 
-using namespace awui::Windows::Forms;
+using namespace awui::UI;
 
-class FormTest : public awui::Windows::Forms::Form {
+class FormTest : public awui::UI::Form {
   private:
 	Button *m_buttonL;
 	Input::RemoteButtons::Enum m_buttonPressed;

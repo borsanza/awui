@@ -1,0 +1,50 @@
+// (c) Copyright 2011 Borja Sánchez Zamorano (BSD License)
+// feedback: borsanza AT gmail DOT com
+
+#include "Panel.h"
+
+#include <awui/Drawing/Color.h>
+#include <awui/UI/Control.h>
+
+using namespace awui::Drawing;
+using namespace awui::UI;
+
+Panel::Panel() {
+}
+
+const Size Panel::GetMinimumSize() const {
+	Size size = Control::GetMinimumSize();
+
+	Size minSize;
+	minSize.SetWidth(0);
+	minSize.SetHeight(0);
+
+	int count = GetCount();
+	for (int i = 0; i < count; i++) {
+		Control *control = Get(i);
+		switch (control->GetDock()) {
+			case DockStyle::None:
+				break;
+			case DockStyle::Left:
+			case DockStyle::Right:
+				minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
+				break;
+			case DockStyle::Top:
+			case DockStyle::Bottom:
+				minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
+				break;
+			case DockStyle::Fill:
+				minSize.SetWidth(minSize.GetWidth() + control->GetMinimumSize().GetWidth());
+				minSize.SetHeight(minSize.GetHeight() + control->GetMinimumSize().GetHeight());
+				break;
+		}
+	}
+
+	if (minSize.GetWidth() < size.GetWidth())
+		minSize.SetWidth(size.GetWidth());
+
+	if (minSize.GetHeight() < size.GetHeight())
+		minSize.SetHeight(size.GetHeight());
+
+	return minSize;
+}

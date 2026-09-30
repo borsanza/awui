@@ -7,15 +7,15 @@ namespace awui {
 		class Image;
 	}
 
-	namespace Windows::Forms {
+	namespace UI {
 		class Control;
 		class Form;
-	} // namespace Windows::Forms
+	} // namespace UI
 
 	namespace OpenGL {
 		class GL {
-			friend class awui::Windows::Forms::Control;
-			friend class awui::Windows::Forms::Form;
+			friend class awui::UI::Control;
+			friend class awui::UI::Form;
 
 		  private:
 			awui::Drawing::Rectangle m_clippingBase;

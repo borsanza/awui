@@ -3,11 +3,11 @@
 #include <awui/Drawing/Color.h>
 #include <awui/GOB/Engine/Cameras/PerspectiveCamera.h>
 #include <awui/GOB/Engine/Scenes/Scene.h>
-#include <awui/Windows/Forms/Control.h>
+#include <awui/UI/Control.h>
 
 namespace awui::GOB::Engine {
 
-	class Renderer : public Windows::Forms::Control {
+	class Renderer : public UI::Control {
 	  private:
 		float m_angle;
 		Cameras::PerspectiveCamera *m_camera;
