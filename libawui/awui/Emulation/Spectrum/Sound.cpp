@@ -6,9 +6,8 @@
 
 #include "Sound.h"
 
-#include <awui/Emulation/Common/AudioSettings.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
-#include <awui/Emulation/Spectrum/SoundSDL.h>
+#include <awui/Emulation/Common/AudioOutput.h>
 
 #include <algorithm>
 
@@ -26,7 +25,7 @@ Sound::Sound() {
 	m_dcOut = 0.0f;
 
 	// Abre el dispositivo de audio
-	SoundSDL::Instance();
+	Common::AudioOutput::Instance();
 }
 
 void Sound::WriteSound(Motherboard *cpu, int value) {
@@ -41,10 +40,10 @@ void Sound::WriteSound(Motherboard *cpu, int value) {
 }
 
 void Sound::EndFrame(double seconds, bool silent) {
-	SoundSDL *soundSDL = SoundSDL::Instance();
+	Common::AudioOutput &output = Common::AudioOutput::Instance();
 
 	// Muestras de este frame, corrigiendo un poco el ritmo para que la cola de SDL no crezca ni se vacíe
-	m_pendingSamples += seconds * SOUNDFREQ * soundSDL->GetRateAdjust();
+	m_pendingSamples += seconds * Common::AudioOutput::Frequency / output.GetRateAdjust();
 	int count = (int) m_pendingSamples;
 	m_pendingSamples -= count;
 
@@ -53,7 +52,8 @@ void Sound::EndFrame(double seconds, bool silent) {
 	}
 
 	m_samples.resize(count);
-	int gain = silent ? 0 : Common::AudioSettings::GetGain();
+	// El volumen lo aplica AudioOutput; en modo rápido se envía silencio
+	float gain = silent ? 0.0f : 1.0f;
 
 	// Cada muestra es la media del nivel durante su intervalo: suaviza los flancos de la onda cuadrada
 	int16_t current = m_level;
@@ -80,11 +80,11 @@ void Sound::EndFrame(double seconds, bool silent) {
 		m_dcIn = x;
 		m_dcOut = y;
 
-		m_samples[i] = (int16_t) std::clamp((y * gain) / 100.0f, -32768.0f, 32767.0f);
+		m_samples[i] = (int16_t) std::clamp(y * gain, -32768.0f, 32767.0f);
 	}
 
 	m_level = current;
 	m_changes.clear();
 
-	soundSDL->Queue(this, m_samples.data(), count);
+	output.Queue(this, m_samples.data(), count, 1);
 }

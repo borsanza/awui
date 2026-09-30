@@ -123,7 +123,6 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 
 ### Dentro de `libawui/awui`
 
-- **Audio de los emuladores:** `Emulation/MasterSystem/SoundSDL` y `Emulation/Spectrum/SoundSDL` son casi iguales: uno solo en `Emulation/Common/` (va con "Salida de audio común").
 - **Espacio de nombres `awui::Windows::Forms`:** copia el de .NET, pero aquí confunde. No tiene nada que ver con Windows, y ahora que la librería tiene que funcionar en Windows se mezcla con `#ifdef _WIN32` y con "la build de Windows". Algo como `awui::UI` sería más claro. Es el cambio más grande de la lista (toca todos los ficheros y samples), así que lo dejaría para el final o para cuando se separe la aplicación.
 
 ### Raíz del repositorio
@@ -155,9 +154,8 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 13. **Convertir texto a número:** `Convert` solo pasa números a texto; falta `ToInt32`, `ToFloat` y `TryParse`.
 14. **Registro de mensajes con niveles:** hoy se mezclan `Console`, `printf` y `fprintf(stderr)`. Con niveles (depuración, aviso, error) se podrían silenciar mensajes como "Partida guardada cargada".
 15. **Avisos en pantalla:** "Estado guardado", "Ranura 2", "Cargando cinta…". Hoy solo salen por consola, que en la tele no se ve.
-16. **Salida de audio común** para los emuladores: hoy cada uno abre su propio dispositivo (`SDL_OpenAudioDevice` en dos sitios). Un solo dispositivo y la mezcla en un único sitio.
-17. **Texto con Pango** en vez de la API sencilla de cairo: permitiría usar otra fuente cuando falta un carácter (japonés, chino…), texto de derecha a izquierda y cortar líneas de forma correcta.
-18. **Pruebas automáticas en el repositorio**, con las pruebas sin ventana que ya existen como base (ajustes, paginación, estados, cintas, Chip-8…) y un `ctest` que las lance con los sanitizers.
+16. **Texto con Pango** en vez de la API sencilla de cairo: permitiría usar otra fuente cuando falta un carácter (japonés, chino…), texto de derecha a izquierda y cortar líneas de forma correcta.
+17. **Pruebas automáticas en el repositorio**, con las pruebas sin ventana que ya existen como base (ajustes, paginación, estados, cintas, Chip-8…) y un `ctest` que las lance con los sanitizers.
 
 ## Windows y otras plataformas
 

@@ -12,7 +12,7 @@
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
-#include <awui/Emulation/Spectrum/SoundSDL.h>
+#include <awui/Emulation/Common/AudioOutput.h>
 #include <awui/Emulation/Spectrum/TapeCorder.h>
 #include <awui/Emulation/Spectrum/ULA.h>
 #include <awui/IO/File.h>
@@ -567,7 +567,7 @@ void Spectrum::SetSoundEnabled(bool mode) {
 	if (!mode)
 		ReleaseAllKeys();
 
-	SoundSDL::Instance()->SetPlayingSound(mode ? m_motherboard->GetSound() : 0);
+	AudioOutput::Instance().SetPlaying(mode ? m_motherboard->GetSound() : 0);
 }
 
 // Estado junto a la cinta o la ROM del juego: DynamiteDan.tap.state, y con ranura DynamiteDan.tap.state1...

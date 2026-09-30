@@ -7,7 +7,7 @@
 #include "Sound.h"
 
 #include <awui/Emulation/MasterSystem/Motherboard.h>
-#include <awui/Emulation/MasterSystem/SoundSDL.h>
+#include <awui/Emulation/Common/AudioOutput.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/Emulation/MasterSystem/emu2413/emu2413.h>
 
@@ -24,7 +24,7 @@ using namespace awui::Emulation::MasterSystem;
 #define CYCLES_PER_TICK 16
 
 // Duración del fundido de entrada al cambiar de sentido (rebobinado)
-#define FADE_IN_SAMPLES (SOUNDFREQ / 100)
+#define FADE_IN_SAMPLES (Common::AudioOutput::Frequency / 100)
 
 // Mezcla del FM con el PSG: emu2413 da una salida más baja que la de los 4 canales del PSG.
 // Con 3.5 la música de Out Run tiene el mismo volumen medio con FM que con PSG
@@ -50,10 +50,10 @@ Sound::Sound() {
 	m_cpu = NULL;
 
 	// Abre el dispositivo de audio
-	SoundSDL::Instance();
+	Common::AudioOutput::Instance();
 
-	// El YM2413 va con el mismo reloj que la CPU; emu2413 convierte su salida (reloj / 72) a SOUNDFREQ
-	m_opll = OPLL_new((uint32_t) CLOCK_NTSC, SOUNDFREQ);
+	// El YM2413 va con el mismo reloj que la CPU; emu2413 convierte su salida (reloj / 72) a Common::AudioOutput::Frequency
+	m_opll = OPLL_new((uint32_t) CLOCK_NTSC, Common::AudioOutput::Frequency);
 	m_reverse = false;
 	m_fadeSamples = FADE_IN_SAMPLES;
 
@@ -79,7 +79,7 @@ void Sound::Reset() {
 
 	m_lastCycle = 0;
 	m_saveData.pendingCycles = 0;
-	m_ticksPerSample = (CLOCK_NTSC / CYCLES_PER_TICK) / SOUNDFREQ;
+	m_ticksPerSample = (CLOCK_NTSC / CYCLES_PER_TICK) / Common::AudioOutput::Frequency;
 	m_tickPos = 0;
 	m_sampleSumLeft = 0;
 	m_sampleSumRight = 0;
@@ -126,7 +126,7 @@ void Sound::Tick() {
 	int left = 0;
 	int right = 0;
 	for (int i = 0; i < 4; i++) {
-		if (!SoundSDL::IsChannelEnabled(i))
+		if (!IsChannelEnabled(i))
 			continue;
 
 		// En el chip de Sega un periodo de 0 o 1 deja la salida fija a +1.
@@ -193,7 +193,7 @@ void Sound::Render(int64_t cycle) {
 		return;
 
 	// Si este emulador no es el que suena, solo se mantienen los registros
-	if (!SoundSDL::Instance().IsPlaying(this)) {
+	if (!Common::AudioOutput::Instance().IsPlaying(this)) {
 		m_saveData.pendingCycles = 0;
 		return;
 	}
@@ -312,11 +312,11 @@ void Sound::SetReverse(bool reverse) {
 }
 
 void Sound::EndFrame(Motherboard *cpu) {
-	SoundSDL &soundSDL = SoundSDL::Instance();
+	Common::AudioOutput &output = Common::AudioOutput::Instance();
 
 	// El ajuste de ritmo corrige la pequeña diferencia entre el reloj emulado y el de la tarjeta de sonido
 	double clock = cpu->GetVDP()->GetNTSC() ? CLOCK_NTSC : CLOCK_PAL;
-	m_ticksPerSample = ((clock / CYCLES_PER_TICK) / SOUNDFREQ) * soundSDL.GetRateAdjust();
+	m_ticksPerSample = ((clock / CYCLES_PER_TICK) / Common::AudioOutput::Frequency) * output.GetRateAdjust();
 
 	Render(cpu->GetCycles());
 
@@ -330,7 +330,7 @@ void Sound::EndFrame(Motherboard *cpu) {
 	}
 
 	if (!m_samples.empty()) {
-		soundSDL.Queue(this, m_samples.data(), (int) (m_samples.size() / 2));
+		output.Queue(this, m_samples.data(), (int) (m_samples.size() / 2), 2);
 		m_samples.clear();
 	}
 }

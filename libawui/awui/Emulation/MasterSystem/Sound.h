@@ -15,7 +15,7 @@ namespace awui::Emulation::MasterSystem {
 	//
 	// Las escrituras de registros se aplican en el ciclo de CPU exacto en el que ocurren:
 	// antes de cada escritura se genera el audio hasta ese ciclo, y al final de cada frame
-	// se envían las muestras generadas a SoundSDL.
+	// se envían las muestras generadas a Common::AudioOutput.
 	class Sound : public Object {
 	  private:
 		Motherboard *m_cpu;
@@ -36,6 +36,7 @@ namespace awui::Emulation::MasterSystem {
 			uint8_t fmControl;			// Puerto 0xF2. Bits 0-1: 0 = PSG, 1 = FM, 2 = ninguno, 3 = los dos (bit 2 solo se lee)
 		} m_saveData;
 
+		static inline uint8_t s_disabledChannels = 0x00; // Canales del PSG silenciados (bit n: canal n)
 		static inline bool s_fmEnabled = true; // Ajuste: consola con FM (los juegos lo detectan al arrancar)
 		struct __OPLL *m_opll;
 
@@ -54,6 +55,16 @@ namespace awui::Emulation::MasterSystem {
 		void Render(int64_t cycle);
 
 	  public:
+		// Canales del PSG que suenan (teclas 1-4 y ajustes): se pueden silenciar uno a uno
+		static void ToggleChannel(int channel) { s_disabledChannels ^= 1 << channel; }
+		static void SetChannelEnabled(int channel, bool enabled) {
+			if (enabled)
+				s_disabledChannels &= ~(1 << channel);
+			else
+				s_disabledChannels |= 1 << channel;
+		}
+		static bool IsChannelEnabled(int channel) { return (s_disabledChannels & (1 << channel)) == 0; }
+
 		Sound();
 		virtual ~Sound();
 

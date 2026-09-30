@@ -11,7 +11,7 @@
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
-#include <awui/Emulation/MasterSystem/SoundSDL.h>
+#include <awui/Emulation/Common/AudioOutput.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
@@ -227,19 +227,19 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			ret = true;
 			break;
 		case Keys::Key_1:
-			SoundSDL::ToggleChannel(0);
+			awui::Emulation::MasterSystem::Sound::ToggleChannel(0);
 			ret = true;
 			break;
 		case Keys::Key_2:
-			SoundSDL::ToggleChannel(1);
+			awui::Emulation::MasterSystem::Sound::ToggleChannel(1);
 			ret = true;
 			break;
 		case Keys::Key_3:
-			SoundSDL::ToggleChannel(2);
+			awui::Emulation::MasterSystem::Sound::ToggleChannel(2);
 			ret = true;
 			break;
 		case Keys::Key_4:
-			SoundSDL::ToggleChannel(3);
+			awui::Emulation::MasterSystem::Sound::ToggleChannel(3);
 			ret = true;
 			break;
 	}
@@ -488,7 +488,7 @@ void awui::Windows::Emulators::MasterSystem::Pause(bool mode) {
 }
 
 void MasterSystem::SetSoundEnabled(bool mode) {
-	SoundSDL::Instance().SetPlayingSound(mode ? m_cpu->GetSound() : 0);
+	AudioOutput::Instance().SetPlaying(mode ? m_cpu->GetSound() : 0);
 }
 
 void MasterSystem::RefreshPads() {
