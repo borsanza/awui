@@ -8,7 +8,7 @@
 
 #include <SDL.h>
 #include <SDL_opengl.h>
-#include <awui/ChronoLap.h>
+#include <awui/Time/ChronoLap.h>
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Math.h>
@@ -54,7 +54,7 @@ void Application::Run(Form *form = NULL) {
 
 	Stats *stats = Stats::Instance();
 
-	ChronoLap chronoLap;
+	Time::ChronoLap chronoLap;
 
 	chronoLap.Start();
 

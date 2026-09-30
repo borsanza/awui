@@ -6,7 +6,6 @@
 
 #include "MasterSystem.h"
 
-#include <awui/DateTime.h>
 #include <awui/Emulation/Common/RewindBuffer.h>
 #include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Drawing/Image.h>

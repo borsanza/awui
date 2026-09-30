@@ -5,7 +5,7 @@
 #include <chrono>
 #include <cstdint>
 
-namespace awui {
+namespace awui::Time {
 	class DateTime : public Object {
 	  private:
 		std::chrono::microseconds m_time;
@@ -23,4 +23,4 @@ namespace awui {
 		unsigned char GetMinute() const;
 		unsigned char GetHour() const;
 	};
-} // namespace awui
+} // namespace awui::Time

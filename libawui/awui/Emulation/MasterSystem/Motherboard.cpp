@@ -8,7 +8,6 @@
 
 #include <assert.h>
 #include <awui/Console.h>
-#include <awui/DateTime.h>
 #include <awui/Emulation/Common/Rom.h>
 #include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Emulation/MasterSystem/Ports.h>

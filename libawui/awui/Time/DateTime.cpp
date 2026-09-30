@@ -6,6 +6,7 @@
 #include <cstdint>
 
 using namespace awui;
+using namespace awui::Time;
 
 DateTime::DateTime()
 	: m_time(0) {

@@ -4,6 +4,7 @@
 #include "ChronoLap.h"
 
 using namespace awui;
+using namespace awui::Time;
 
 ChronoLap::ChronoLap() {
 	m_running = false;

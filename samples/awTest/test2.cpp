@@ -5,9 +5,9 @@
 
 #include <awui/Console.h>
 #include <awui/Drawing/Color.h>
-#include <awui/DateTime.h>
+#include <awui/Time/DateTime.h>
 #include <awui/String.h>
-#include <awui/TimeSpan.h>
+#include <awui/Time/TimeSpan.h>
 #include <awui/Windows/Forms/Button.h>
 #include <awui/Windows/Forms/Keyboard.h>
 #include <awui/Windows/Forms/ListBox.h>
@@ -61,12 +61,12 @@ void Test2::CheckMame() {
 /*
 void Test2::CheckGames() {
 	static int lines = 0;
-	static awui::TimeSpan lastTime;
+	static awui::Time::TimeSpan lastTime;
 	Statistics::Stats *stats = Statistics::Stats::Instance();
 
-	awui::TimeSpan time = stats->GetIdle();
-	awui::DateTime begin = awui::DateTime::GetNow();
-	awui::DateTime end = begin;
+	awui::Time::TimeSpan time = stats->GetIdle();
+	awui::Time::DateTime begin = awui::Time::DateTime::GetNow();
+	awui::Time::DateTime end = begin;
 	bool reRun = false;
 
 	do {
@@ -74,7 +74,7 @@ void Test2::CheckGames() {
 		if (lines == 1)
 			continue;
 
-		end = awui::DateTime::GetNow();
+		end = awui::Time::DateTime::GetNow();
 
 	} while ((end.GetTicks() - begin.GetTicks()) < ((time.GetTicks() - lastTime.GetTicks()) * 0.25));
 

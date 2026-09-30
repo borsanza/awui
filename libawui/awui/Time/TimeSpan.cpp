@@ -7,6 +7,7 @@
 #include <awui/String.h>
 
 using namespace awui;
+using namespace awui::Time;
 
 TimeSpan::TimeSpan() {
 	m_ticks = 0;

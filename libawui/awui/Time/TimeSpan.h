@@ -4,7 +4,9 @@
 
 namespace awui {
 	class String;
+}
 
+namespace awui::Time {
 	// Intervalo de tiempo en ticks de 100 ns, como System.TimeSpan de .NET. Tipo valor: se copia con el operador
 	// por defecto
 	class TimeSpan {
@@ -42,4 +44,4 @@ namespace awui {
 
 		String ToString() const;
 	};
-} // namespace awui
+} // namespace awui::Time

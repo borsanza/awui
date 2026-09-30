@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-namespace awui {
+namespace awui::Time {
 	class ChronoLap : public Object {
 	  private:
 		// Monótono: el reloj del sistema (y high_resolution_clock, que en GCC es el mismo) salta con NTP o al cambiar
@@ -28,4 +28,4 @@ namespace awui {
 		float GetLapDuration() const;
 		float GetTotalDuration() const;
 	};
-} // namespace awui
+} // namespace awui::Time
