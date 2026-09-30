@@ -28,7 +28,7 @@ namespace awui {
 			double m_seconds; // Tiempo real pendiente de emular (menos de un frame salvo tras un parón)
 			void CheckLimits();
 
-			std::set<Forms::Keys::Enum> m_heldKeys; // Teclas del PC pulsadas que van al teclado del Spectrum
+			std::set<Forms::Input::Keys::Enum> m_heldKeys; // Teclas del PC pulsadas que van al teclado del Spectrum
 			uint32_t m_heldRemote;			   // Flechas pulsadas (teclas de cursor)
 
 			String m_romFile; // Cinta o ROM cargada: los estados se guardan a su lado
@@ -40,8 +40,8 @@ namespace awui {
 			virtual bool LoadAutoState() override;
 
 		  private:
-			void DoKey(Forms::Keys::Enum key, bool pressed);
-			void DoRemoteKey(Forms::RemoteButtons::Enum button, bool pressed);
+			void DoKey(Forms::Input::Keys::Enum key, bool pressed);
+			void DoRemoteKey(Forms::Input::RemoteButtons::Enum button, bool pressed);
 			void UpdateMatrix();
 			void ReleaseAllKeys();
 
@@ -62,10 +62,10 @@ namespace awui {
 
 			virtual void OnPaint(OpenGL::GL *gl);
 
-			virtual bool OnKeyPress(Forms::Keys::Enum key);
-			virtual bool OnKeyUp(Forms::Keys::Enum key);
-			virtual bool OnRemoteKeyPress(int which, Forms::RemoteButtons::Enum button);
-			virtual bool OnRemoteKeyUp(int which, Forms::RemoteButtons::Enum button);
+			virtual bool OnKeyPress(Forms::Input::Keys::Enum key);
+			virtual bool OnKeyUp(Forms::Input::Keys::Enum key);
+			virtual bool OnRemoteKeyPress(int which, Forms::Input::RemoteButtons::Enum button);
+			virtual bool OnRemoteKeyUp(int which, Forms::Input::RemoteButtons::Enum button);
 			virtual void SetSoundEnabled(bool mode);
 
 			awui::Emulation::Spectrum::TapeCorder *GetTapeCorder() { return m_tapecorder; }

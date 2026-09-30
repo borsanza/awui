@@ -9,7 +9,7 @@ typedef int32_t Sint32;
 typedef Sint32 SDL_JoystickID;
 
 namespace awui {
-	namespace Windows::Forms::Joystick {
+	namespace Windows::Forms::Input {
 		class Controller : public Object {
 		  private:
 			static std::vector<Controller *> *s_controllersList;
@@ -42,5 +42,5 @@ namespace awui {
 			void OnButtonUp(uint32_t button);
 			bool OnAxisMotion(uint8_t axis, int16_t value);
 		};
-	} // namespace Windows::Forms::Joystick
+	} // namespace Windows::Forms::Input
 } // namespace awui

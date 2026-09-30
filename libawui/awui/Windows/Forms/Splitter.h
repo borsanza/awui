@@ -16,9 +16,9 @@ namespace awui::Windows::Forms {
 		SplitContainer::Orientation GetOrientation() const;
 		void SetOrientation(SplitContainer::Orientation orientation);
 
-		virtual void OnMouseDown(MouseEventArgs *e) override;
-		virtual void OnMouseMove(MouseEventArgs *e) override;
-		virtual void OnMouseUp(MouseEventArgs *e) override;
+		virtual void OnMouseDown(Events::MouseEventArgs *e) override;
+		virtual void OnMouseMove(Events::MouseEventArgs *e) override;
+		virtual void OnMouseUp(Events::MouseEventArgs *e) override;
 		virtual void OnMouseEnter() override;
 		virtual void OnMouseLeave() override;
 	};

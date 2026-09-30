@@ -3,9 +3,9 @@
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Rectangle.h>
 #include <awui/String.h>
-#include <awui/Windows/Forms/Keys.h>
-#include <awui/Windows/Forms/MouseButtons.h>
-#include <awui/Windows/Forms/RemoteButtons.h>
+#include <awui/Windows/Forms/Input/Keys.h>
+#include <awui/Windows/Forms/Input/MouseButtons.h>
+#include <awui/Windows/Forms/Input/RemoteButtons.h>
 
 #include <vector>
 
@@ -21,9 +21,11 @@ namespace awui {
 	namespace Windows::Forms {
 		class Bitmap;
 		class Form;
-		class MouseEventArgs;
-		class JoystickButtonEventArgs;
-		class JoystickAxisMotionEventArgs;
+		namespace Events {
+			class MouseEventArgs;
+			class JoystickButtonEventArgs;
+			class JoystickAxisMotionEventArgs;
+		} // namespace Events
 
 		// Quién libera un control hijo:
 		//   Owned: el padre (lo borra en su destructor). Para controles creados con new para ese padre.
@@ -81,7 +83,7 @@ namespace awui {
 			DockStyle m_dock;
 			Drawing::Color m_backColor;
 			Drawing::Color m_foreColor;
-			MouseEventArgs *m_mouseEventArgs;
+			Events::MouseEventArgs *m_mouseEventArgs;
 			Control *m_mouseControl;
 			String m_name;
 
@@ -177,27 +179,27 @@ namespace awui {
 			void SetParent(Control *parent);
 
 			void OnMouseMovePre(int x, int y, int buttons);
-			void OnMouseUpPre(MouseButtons::Enum button, int buttons);
-			void OnMouseDownPre(int x, int y, MouseButtons::Enum button, int buttons);
-			void OnRemoteKeyPressPre(int which, RemoteButtons::Enum button);
-			void OnRemoteKeyUpPre(int which, RemoteButtons::Enum button);
+			void OnMouseUpPre(Input::MouseButtons::Enum button, int buttons);
+			void OnMouseDownPre(int x, int y, Input::MouseButtons::Enum button, int buttons);
+			void OnRemoteKeyPressPre(int which, Input::RemoteButtons::Enum button);
+			void OnRemoteKeyUpPre(int which, Input::RemoteButtons::Enum button);
 			void OnJoystickButtonDownPre(int which, int button, uint32_t buttons, uint32_t prevButtons);
 			void OnJoystickButtonUpPre(int which, int button, uint32_t buttons, uint32_t prevButtons);
 			void OnJoystickAxisMotionPre(int which, int16_t axisX, int16_t axisY);
-			void OnKeyPressPre(Keys::Enum key);
-			void OnKeyUpPre(Keys::Enum key);
+			void OnKeyPressPre(Input::Keys::Enum key);
+			void OnKeyUpPre(Input::Keys::Enum key);
 
 			virtual void Layout();
-			virtual void OnMouseDown(MouseEventArgs *e) {}
-			virtual void OnMouseMove(MouseEventArgs *e) {}
-			virtual void OnMouseUp(MouseEventArgs *e) {}
-			virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-			virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
-			virtual bool OnJoystickButtonDown(JoystickButtonEventArgs *e);
-			virtual bool OnJoystickButtonUp(JoystickButtonEventArgs *e);
-			virtual bool OnJoystickAxisMotion(JoystickAxisMotionEventArgs *e);
-			virtual bool OnKeyPress(Keys::Enum key);
-			virtual bool OnKeyUp(Keys::Enum key);
+			virtual void OnMouseDown(Events::MouseEventArgs *e) {}
+			virtual void OnMouseMove(Events::MouseEventArgs *e) {}
+			virtual void OnMouseUp(Events::MouseEventArgs *e) {}
+			virtual bool OnRemoteKeyPress(int which, Input::RemoteButtons::Enum button);
+			virtual bool OnRemoteKeyUp(int which, Input::RemoteButtons::Enum button);
+			virtual bool OnJoystickButtonDown(Events::JoystickButtonEventArgs *e);
+			virtual bool OnJoystickButtonUp(Events::JoystickButtonEventArgs *e);
+			virtual bool OnJoystickAxisMotion(Events::JoystickAxisMotionEventArgs *e);
+			virtual bool OnKeyPress(Input::Keys::Enum key);
+			virtual bool OnKeyUp(Input::Keys::Enum key);
 			virtual void OnRemoteHeartbeat() {}
 			virtual void OnMouseEnter();
 			virtual void OnMouseLeave();

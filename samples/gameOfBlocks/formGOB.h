@@ -3,7 +3,7 @@
 #include <awui/GOB/Engine/Renderers/Renderer.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Keys.h>
+#include <awui/Windows/Forms/Input/Keys.h>
 
 using namespace awui::GOB::Engine;
 using namespace awui::Windows::Forms;
@@ -18,5 +18,5 @@ class FormGOB : public awui::Windows::Forms::Form {
 	FormGOB();
 	virtual ~FormGOB();
 
-	bool OnKeyPress(Keys::Enum key);
+	bool OnKeyPress(Input::Keys::Enum key);
 };

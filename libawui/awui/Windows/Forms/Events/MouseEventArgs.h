@@ -1,11 +1,15 @@
 #pragma once
 
-#include <awui/Windows/Forms/EventArgs.h>
+#include <awui/Windows/Forms/Events/EventArgs.h>
 
 namespace awui::Windows::Forms {
+	class Control;
+}
+
+namespace awui::Windows::Forms::Events {
 	class MouseEventArgs : public EventArgs {
 	  private:
-		friend class Control;
+		friend class awui::Windows::Forms::Control;
 
 		int m_x, m_y;
 		int m_delta;
@@ -31,4 +35,4 @@ namespace awui::Windows::Forms {
 		int GetClicks() const;
 		int GetButton() const;
 	};
-} // namespace awui::Windows::Forms
+} // namespace awui::Windows::Forms::Events

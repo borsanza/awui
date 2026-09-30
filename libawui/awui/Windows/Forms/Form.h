@@ -64,8 +64,8 @@ namespace awui {
 			// Se va a cerrar el programa (tras el último frame, con todo aún en pie)
 			virtual void OnClosing() {}
 
-			virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-			virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+			virtual bool OnRemoteKeyPress(int which, Input::RemoteButtons::Enum button);
+			virtual bool OnRemoteKeyUp(int which, Input::RemoteButtons::Enum button);
 
 			inline static uint32_t GetButtonsPad1() { return Form::s_buttonsPad1; }
 			inline static uint32_t GetButtonsPad2() { return Form::s_buttonsPad2; }

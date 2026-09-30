@@ -12,8 +12,8 @@ namespace awui::Windows::Forms::Station {
 		LabelButton();
 		virtual ~LabelButton() = default;
 
-		virtual void OnMouseUp(MouseEventArgs *e);
-		virtual void OnMouseDown(MouseEventArgs *e);
+		virtual void OnMouseUp(Events::MouseEventArgs *e);
+		virtual void OnMouseDown(Events::MouseEventArgs *e);
 		virtual void OnTick(float deltaSeconds);
 	};
 } // namespace awui::Windows::Forms::Station

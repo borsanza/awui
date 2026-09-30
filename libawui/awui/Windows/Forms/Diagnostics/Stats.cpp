@@ -7,7 +7,7 @@
 #include <awui/Math.h>
 
 using namespace awui::Drawing;
-using namespace awui::Windows::Forms::Statistics;
+using namespace awui::Windows::Forms::Diagnostics;
 
 Stats *Stats::s_instance = 0;
 

@@ -9,13 +9,14 @@
 #include <algorithm>
 #include <awui/Drawing/Font.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Listeners/IRemoteListener.h>
-#include <awui/Windows/Forms/MouseEventArgs.h>
+#include <awui/Windows/Forms/Events/IRemoteListener.h>
+#include <awui/Windows/Forms/Events/MouseEventArgs.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
-using namespace awui::Windows::Forms::Listeners;
+using namespace awui::Windows::Forms::Events;
+using namespace awui::Windows::Forms::Input;
 
 Button::Button() {
 	m_label.SetDock(DockStyle::Fill);

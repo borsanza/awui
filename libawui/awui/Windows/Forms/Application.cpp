@@ -14,12 +14,12 @@
 #include <awui/Math.h>
 // #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Joystick/Controller.h>
-#include <awui/Windows/Forms/Statistics/Stats.h>
+#include <awui/Windows/Forms/Input/Controller.h>
+#include <awui/Windows/Forms/Diagnostics/Stats.h>
 
 using namespace awui;
 using namespace awui::Windows::Forms;
-using namespace awui::Windows::Forms::Statistics;
+using namespace awui::Windows::Forms::Diagnostics;
 
 int Application::s_quit = 0;
 
@@ -46,7 +46,7 @@ void Application::Run(Form *form = NULL) {
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-	Joystick::Controller::Refresh();
+	Input::Controller::Refresh();
 
 	form->Init();
 
@@ -97,7 +97,7 @@ void Application::Run(Form *form = NULL) {
 	if (form)
 		form->OnClosing();
 
-	Joystick::Controller::CloseAll();
+	Input::Controller::CloseAll();
 
 	SDL_Quit();
 }
@@ -115,12 +115,12 @@ void Application::ProcessEvents() {
 					break;
 				case SDL_CONTROLLERDEVICEADDED:
 				case SDL_CONTROLLERDEVICEREMOVED:
-					Joystick::Controller::Refresh();
+					Input::Controller::Refresh();
 					ret = true;
 					break;
 				case SDL_CONTROLLERAXISMOTION: {
 					// Console::WriteLine(String("SDL_CONTROLLERAXISMOTION [") + Convert::ToString((int)event.caxis.axis) + " - " + Convert::ToString((int)event.caxis.value) + "]");
-					Joystick::Controller *controller = Joystick::Controller::GetByWhich(event.caxis.which);
+					Input::Controller *controller = Input::Controller::GetByWhich(event.caxis.which);
 					if (controller) {
 						if (controller->OnAxisMotion(event.caxis.axis, event.caxis.value))
 							formW->OnJoystickAxisMotionPre(controller->GetOrder(), controller->GetAxisX(), controller->GetAxisY());
@@ -129,7 +129,7 @@ void Application::ProcessEvents() {
 					break;
 				}
 				case SDL_CONTROLLERBUTTONDOWN: {
-					Joystick::Controller *controller = Joystick::Controller::GetByWhich(event.cbutton.which);
+					Input::Controller *controller = Input::Controller::GetByWhich(event.cbutton.which);
 					if (controller) {
 						controller->OnButtonDown(2 << event.cbutton.button);
 						formW->OnJoystickButtonDownPre(controller->GetOrder(), 2 << event.cbutton.button, controller->GetButtons(), controller->GetPrevButtons());
@@ -138,7 +138,7 @@ void Application::ProcessEvents() {
 					break;
 				}
 				case SDL_CONTROLLERBUTTONUP: {
-					Joystick::Controller *controller = Joystick::Controller::GetByWhich(event.cbutton.which);
+					Input::Controller *controller = Input::Controller::GetByWhich(event.cbutton.which);
 					if (controller) {
 						controller->OnButtonUp(2 << event.cbutton.button);
 						formW->OnJoystickButtonUpPre(controller->GetOrder(), 2 << event.cbutton.button, controller->GetButtons(), controller->GetPrevButtons());

@@ -43,7 +43,7 @@ namespace awui::Windows {
 
 			void SetStationUI(Forms::Station::StationUI *station);
 
-			virtual bool OnRemoteKeyUp(int which, Forms::RemoteButtons::Enum button);
+			virtual bool OnRemoteKeyUp(int which, Forms::Input::RemoteButtons::Enum button);
 		};
 	} // namespace Emulators
 } // namespace awui::Windows

@@ -53,12 +53,12 @@ namespace awui {
 			Emulation::MasterSystem::Motherboard *GetCPU();
 
 			virtual void OnPaint(OpenGL::GL *gl);
-			virtual bool OnKeyPress(Forms::Keys::Enum key);
-			virtual bool OnKeyUp(Forms::Keys::Enum key);
-			bool RefreshButtons(Forms::JoystickButtonEventArgs *e);
-			virtual bool OnJoystickButtonDown(Forms::JoystickButtonEventArgs *e);
-			virtual bool OnJoystickButtonUp(Forms::JoystickButtonEventArgs *e);
-			virtual bool OnJoystickAxisMotion(Forms::JoystickAxisMotionEventArgs *e);
+			virtual bool OnKeyPress(Forms::Input::Keys::Enum key);
+			virtual bool OnKeyUp(Forms::Input::Keys::Enum key);
+			bool RefreshButtons(Forms::Events::JoystickButtonEventArgs *e);
+			virtual bool OnJoystickButtonDown(Forms::Events::JoystickButtonEventArgs *e);
+			virtual bool OnJoystickButtonUp(Forms::Events::JoystickButtonEventArgs *e);
+			virtual bool OnJoystickAxisMotion(Forms::Events::JoystickAxisMotionEventArgs *e);
 
 			virtual bool SaveAutoState() override;
 			virtual bool LoadAutoState() override;

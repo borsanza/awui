@@ -15,9 +15,9 @@
 #include <awui/Emulation/MasterSystem/VDP.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Emulators/DebuggerSMS.h>
-#include <awui/Windows/Forms/JoystickAxisMotionEventArgs.h>
-#include <awui/Windows/Forms/JoystickButtonEventArgs.h>
-#include <awui/Windows/Forms/JoystickButtons.h>
+#include <awui/Windows/Forms/Events/JoystickAxisMotionEventArgs.h>
+#include <awui/Windows/Forms/Events/JoystickButtonEventArgs.h>
+#include <awui/Windows/Forms/Input/JoystickButtons.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -25,6 +25,8 @@ using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;
 using namespace awui::Emulation::Common;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Input;
+using namespace awui::Windows::Forms::Events;
 
 // Memoria máxima del historial de rebobinado. Cada frame ocupa unos pocos KB (solo lo que cambia), así que da
 // para varios minutos

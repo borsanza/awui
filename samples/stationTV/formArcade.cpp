@@ -14,6 +14,7 @@
 using namespace awui::Drawing;
 using namespace awui;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Input;
 
 FormArcade::FormArcade() {
 	m_stationUI = NULL;

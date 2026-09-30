@@ -1,9 +1,9 @@
 #pragma once
 
-#include <awui/Windows/Forms/JoystickEventArgs.h>
+#include <awui/Windows/Forms/Events/JoystickEventArgs.h>
 #include <cstdint>
 
-namespace awui::Windows::Forms {
+namespace awui::Windows::Forms::Events {
 	class JoystickButtonEventArgs : public JoystickEventArgs {
 	  private:
 		int m_button;
@@ -17,4 +17,4 @@ namespace awui::Windows::Forms {
 		int GetButton() const { return m_button; }
 		int GetButtons() const { return m_buttons; }
 	};
-} // namespace awui::Windows::Forms
+} // namespace awui::Windows::Forms::Events

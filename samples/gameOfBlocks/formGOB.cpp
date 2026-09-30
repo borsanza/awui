@@ -8,6 +8,7 @@
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Input;
 
 FormGOB::FormGOB() {
 	m_renderer = NULL;

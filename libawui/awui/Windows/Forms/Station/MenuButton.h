@@ -20,12 +20,12 @@ namespace awui::Windows::Forms::Station {
 		const String GetText() const;
 		void SetText(const String str);
 
-		virtual void OnMouseDown(MouseEventArgs *e);
+		virtual void OnMouseDown(Events::MouseEventArgs *e);
 		virtual void OnPaint(OpenGL::GL *gl);
 		virtual void SetForeColor(const Drawing::Color color);
 		virtual void SetFont(const Drawing::Font font);
 		int GetLabelWidth() const;
-		virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+		virtual bool OnRemoteKeyUp(int which, Input::RemoteButtons::Enum button);
 
 		void SetNodeFile(NodeFile *node);
 

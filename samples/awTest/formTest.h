@@ -12,7 +12,7 @@ using namespace awui::Windows::Forms;
 class FormTest : public awui::Windows::Forms::Form {
   private:
 	Button *m_buttonL;
-	RemoteButtons::Enum m_buttonPressed;
+	Input::RemoteButtons::Enum m_buttonPressed;
 	awui::Random m_rand;
 
 	void InitializeComponent();
@@ -21,7 +21,7 @@ class FormTest : public awui::Windows::Forms::Form {
 	FormTest();
 	virtual ~FormTest() = default;
 
-	virtual bool OnRemoteKeyPress(int which, RemoteButtons::Enum button) override;
-	virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button) override;
+	virtual bool OnRemoteKeyPress(int which, Input::RemoteButtons::Enum button) override;
+	virtual bool OnRemoteKeyUp(int which, Input::RemoteButtons::Enum button) override;
 	virtual void OnTick(float deltaSeconds) override;
 };

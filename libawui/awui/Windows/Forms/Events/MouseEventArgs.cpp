@@ -3,7 +3,7 @@
 
 #include "MouseEventArgs.h"
 
-using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Events;
 
 MouseEventArgs::MouseEventArgs() {
 	m_x = 0;

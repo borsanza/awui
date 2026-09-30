@@ -1,8 +1,8 @@
 #pragma once
 
 #include <awui/Windows/Forms/Control.h>
-#include <awui/Windows/Forms/Listeners/IExitListener.h>
-#include <awui/Windows/Forms/Listeners/IRemoteListener.h>
+#include <awui/Windows/Forms/Events/IExitListener.h>
+#include <awui/Windows/Forms/Events/IRemoteListener.h>
 
 #include <functional>
 #include <vector>
@@ -24,7 +24,7 @@ namespace awui::Windows::Forms {
 
 			// Menú de ajustes. Atrás (Esc, botón Menu o clic derecho) vuelve al grupo anterior y, desde la
 			// raíz, avisa al IExitListener para que lo cierre. Cada cambio se guarda al momento y se avisa con onChanged.
-			class SettingsUI : public Control, Listeners::IRemoteListener {
+			class SettingsUI : public Control, Events::IRemoteListener {
 			  private:
 				static const int DescriptionLines = 4;
 
@@ -40,7 +40,7 @@ namespace awui::Windows::Forms {
 				std::vector<ConfigButton *> m_path; // Grupos abiertos, del primero al actual
 				bool m_rebuild;
 
-				Listeners::IExitListener *m_exitListener;
+				Events::IExitListener *m_exitListener;
 				std::function<void()> m_onChanged;
 
 				Page *ProcessJson(const json &j);
@@ -58,7 +58,7 @@ namespace awui::Windows::Forms {
 
 				void InitializeComponent();
 
-				inline void SetExitListener(Listeners::IExitListener *listener) { m_exitListener = listener; }
+				inline void SetExitListener(Events::IExitListener *listener) { m_exitListener = listener; }
 				inline void SetOnChanged(std::function<void()> onChanged) { m_onChanged = onChanged; }
 
 				virtual void OnTick(float deltaSeconds) override;

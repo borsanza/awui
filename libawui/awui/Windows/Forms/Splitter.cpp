@@ -4,13 +4,15 @@
 #include "Splitter.h"
 
 #include <awui/Drawing/Color.h>
-#include <awui/Windows/Forms/MouseEventArgs.h>
+#include <awui/Windows/Forms/Events/MouseEventArgs.h>
 #include <awui/Windows/Forms/SplitContainer.h>
 
 #include <iostream>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Input;
+using namespace awui::Windows::Forms::Events;
 
 Splitter::Splitter() {
 	m_orientation = SplitContainer::Orientation::Horizontal;

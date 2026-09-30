@@ -10,7 +10,7 @@
 #include <awui/Convert.h>
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Application.h>
-#include <awui/Windows/Forms/Statistics/Stats.h>
+#include <awui/Windows/Forms/Diagnostics/Stats.h>
 
 #include <SDL.h>
 #include <SDL_events.h>
@@ -20,7 +20,8 @@
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
-using namespace awui::Windows::Forms::Statistics;
+using namespace awui::Windows::Forms::Diagnostics;
+using namespace awui::Windows::Forms::Input;
 
 uint32_t Form::s_buttonsPad1 = 0;
 uint32_t Form::s_buttonsPad2 = 0;

@@ -11,6 +11,7 @@
 using namespace awui;
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Input;
 
 FormTest::FormTest() {
 	m_buttonPressed = RemoteButtons::None;

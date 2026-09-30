@@ -3,8 +3,8 @@
 #include <awui/Time/ChronoLap.h>
 #include <awui/Windows/Forms/Label.h>
 #include <awui/Windows/Forms/Panel.h>
-#include <awui/Windows/Forms/Statistics/Heartbeat.h>
-#include <awui/Windows/Forms/Statistics/Spinner.h>
+#include <awui/Windows/Forms/Diagnostics/Heartbeat.h>
+#include <awui/Windows/Forms/Diagnostics/Spinner.h>
 
 // #define SHOW_SPINNER
 #define SHOW_FPS
@@ -13,7 +13,7 @@
 
 const float TimeToMeasure = 1.0f;
 
-namespace awui::Windows::Forms::Statistics {
+namespace awui::Windows::Forms::Diagnostics {
 	class Stats : public Panel {
 	  private:
 		static Stats *s_instance;
@@ -50,4 +50,4 @@ namespace awui::Windows::Forms::Statistics {
 		virtual void OnRemoteHeartbeat();
 		void SetDrawedControls(int drawedControls);
 	};
-} // namespace awui::Windows::Forms::Statistics
+} // namespace awui::Windows::Forms::Diagnostics

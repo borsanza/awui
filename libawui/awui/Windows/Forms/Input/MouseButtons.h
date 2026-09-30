@@ -1,6 +1,6 @@
 #pragma once
 
-namespace awui::Windows::Forms {
+namespace awui::Windows::Forms::Input {
 	struct MouseButtons {
 		enum Enum {
 			None = 0,
@@ -11,4 +11,4 @@ namespace awui::Windows::Forms {
 			XButton2 = 16,
 		};
 	};
-} // namespace awui::Windows::Forms
+} // namespace awui::Windows::Forms::Input

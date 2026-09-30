@@ -16,8 +16,8 @@ namespace awui {
 			Emulation::Chip8::CPU *m_cpu;
 			Drawing::Image *m_image;
 
-			int ConvertKeyAwToChip8(Forms::Keys::Enum key);
-			int ConvertRemoteKeyToChip8(Forms::RemoteButtons::Enum button);
+			int ConvertKeyAwToChip8(Forms::Input::Keys::Enum key);
+			int ConvertRemoteKeyToChip8(Forms::Input::RemoteButtons::Enum button);
 			void CheckBackcolor();
 			void UpdateImage();
 
@@ -34,10 +34,10 @@ namespace awui {
 			int GetChip8Mode() const;
 			void SetInvertedColors(bool mode);
 
-			virtual bool OnKeyPress(Forms::Keys::Enum key);
-			virtual bool OnKeyUp(Forms::Keys::Enum key);
-			bool OnRemoteKeyPress(int which, Forms::RemoteButtons::Enum button);
-			bool OnRemoteKeyUp(int which, Forms::RemoteButtons::Enum button);
+			virtual bool OnKeyPress(Forms::Input::Keys::Enum key);
+			virtual bool OnKeyUp(Forms::Input::Keys::Enum key);
+			bool OnRemoteKeyPress(int which, Forms::Input::RemoteButtons::Enum button);
+			bool OnRemoteKeyUp(int which, Forms::Input::RemoteButtons::Enum button);
 		};
 	} // namespace Windows::Emulators
 } // namespace awui

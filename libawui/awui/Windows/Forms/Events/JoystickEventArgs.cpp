@@ -3,7 +3,7 @@
 
 #include "JoystickEventArgs.h"
 
-using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Events;
 
 JoystickEventArgs::JoystickEventArgs(int which) {
 	m_which = which;

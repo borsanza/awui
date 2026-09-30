@@ -5,18 +5,18 @@
 #include <functional>
 
 namespace awui::Windows::Forms {
-	namespace Listeners {
+	namespace Events {
 		class IRemoteListener;
 		class IExitListener;
-	} // namespace Listeners
+	} // namespace Events
 
 	class Button : public Control {
 	  private:
 		Label m_label;
 		String m_text;
 		int m_nextId = 0;
-		std::vector<Listeners::IRemoteListener *> m_buttonListeners;
-		std::vector<Listeners::IExitListener *> m_exitListeners;
+		std::vector<Events::IRemoteListener *> m_buttonListeners;
+		std::vector<Events::IExitListener *> m_exitListeners;
 
 		void Click();
 
@@ -27,17 +27,17 @@ namespace awui::Windows::Forms {
 		String GetText() const;
 		void SetText(const String str);
 
-		virtual void OnMouseDown(MouseEventArgs *e);
-		virtual bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+		virtual void OnMouseDown(Events::MouseEventArgs *e);
+		virtual bool OnRemoteKeyUp(int which, Input::RemoteButtons::Enum button);
 		virtual void OnPaint(OpenGL::GL *gl);
 		virtual void SetForeColor(const Drawing::Color color);
 		virtual void SetFont(const Drawing::Font font);
 		int GetLabelWidth() const;
 
-		void AddOnClickListener(Listeners::IRemoteListener *listener);
-		void AddOnExitListener(Listeners::IExitListener *listener);
-		void RemoveOnClickListener(Listeners::IRemoteListener *listener);
-		void RemoveOnExitListener(Listeners::IExitListener *listener);
+		void AddOnClickListener(Events::IRemoteListener *listener);
+		void AddOnExitListener(Events::IExitListener *listener);
+		void RemoveOnClickListener(Events::IRemoteListener *listener);
+		void RemoveOnExitListener(Events::IExitListener *listener);
 		void RemoveAllListeners();
 	};
 } // namespace awui::Windows::Forms

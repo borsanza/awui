@@ -16,13 +16,15 @@
 #include <awui/OpenGL/GL.h>
 #include <awui/Windows/Forms/Bitmap.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/JoystickAxisMotionEventArgs.h>
-#include <awui/Windows/Forms/JoystickButtonEventArgs.h>
-#include <awui/Windows/Forms/MouseEventArgs.h>
+#include <awui/Windows/Forms/Events/JoystickAxisMotionEventArgs.h>
+#include <awui/Windows/Forms/Events/JoystickButtonEventArgs.h>
+#include <awui/Windows/Forms/Events/MouseEventArgs.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Input;
+using namespace awui::Windows::Forms::Events;
 
 Bitmap *Control::s_selectedBitmap = NULL;
 int32_t Control::s_lastTabIndex = 10000;

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <awui/Windows/Forms/Control.h>
-#include <awui/Windows/Forms/Listeners/IExitListener.h>
-#include <awui/Windows/Forms/Listeners/IRemoteListener.h>
+#include <awui/Windows/Forms/Events/IExitListener.h>
+#include <awui/Windows/Forms/Events/IRemoteListener.h>
 
 #include <vector>
 
@@ -70,7 +70,7 @@ namespace awui {
 					void AddChild(NodeFile *child);
 				};
 
-				class StationUI : public Control, public Listeners::IRemoteListener, public Listeners::IExitListener {
+				class StationUI : public Control, public Events::IRemoteListener, public Events::IExitListener {
 				  private:
 					FadePanel m_fade;
 					String m_path;

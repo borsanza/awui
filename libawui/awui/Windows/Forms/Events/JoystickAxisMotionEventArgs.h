@@ -1,9 +1,9 @@
 #pragma once
 
-#include <awui/Windows/Forms/JoystickEventArgs.h>
+#include <awui/Windows/Forms/Events/JoystickEventArgs.h>
 #include <cstdint>
 
-namespace awui::Windows::Forms {
+namespace awui::Windows::Forms::Events {
 	class JoystickAxisMotionEventArgs : public JoystickEventArgs {
 	  private:
 		int16_t m_axisX;
@@ -16,4 +16,4 @@ namespace awui::Windows::Forms {
 		int16_t GetAxisX() { return m_axisX; }
 		int16_t GetAxisY() { return m_axisY; }
 	};
-} // namespace awui::Windows::Forms
+} // namespace awui::Windows::Forms::Events

@@ -21,7 +21,7 @@
 #include <awui/Windows/Forms/Station/Page.h>
 #include <awui/Windows/Forms/Station/Settings/SettingsStore.h>
 #include <awui/Windows/Forms/Station/Settings/SettingsUI.h>
-#include <awui/Windows/Forms/Statistics/Stats.h>
+#include <awui/Windows/Forms/Diagnostics/Stats.h>
 #include <awui/Windows/Forms/Station/SettingsWidget.h>
 #include <algorithm>
 #include <dirent.h>
@@ -557,7 +557,7 @@ void StationUI::ApplySettings() {
 		}
 	}
 
-	Statistics::Stats::Instance()->SetVisible(settings.GetBool("fps"));
+	Diagnostics::Stats::Instance()->SetVisible(settings.GetBool("fps"));
 	m_showClock = settings.GetBool("clock");
 	m_clock24 = settings.GetString("timeFormat") != "12";
 

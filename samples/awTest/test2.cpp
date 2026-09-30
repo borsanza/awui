@@ -9,9 +9,9 @@
 #include <awui/String.h>
 #include <awui/Time/TimeSpan.h>
 #include <awui/Windows/Forms/Button.h>
-#include <awui/Windows/Forms/Keyboard.h>
+#include <awui/Windows/Forms/OnScreenKeyboard.h>
 #include <awui/Windows/Forms/ListBox.h>
-#include <awui/Windows/Forms/Statistics/Stats.h>
+#include <awui/Windows/Forms/Diagnostics/Stats.h>
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
@@ -29,12 +29,12 @@ void Test2::InitializeComponent() {
 	SetDock(DockStyle::Left);
 	SetSize(480, 400);
 
-	Keyboard *keyboard = new Keyboard();
+	OnScreenKeyboard *keyboard = new OnScreenKeyboard();
 	keyboard->SetDock(DockStyle::Top);
 	keyboard->SetSize(480, 480);
 	AddWidget(keyboard);
 
-	Keyboard *keyboard2 = new Keyboard();
+	OnScreenKeyboard *keyboard2 = new OnScreenKeyboard();
 	keyboard2->SetDock(DockStyle::Top);
 	keyboard2->SetSize(480, 480);
 	AddWidget(keyboard2);
@@ -62,7 +62,7 @@ void Test2::CheckMame() {
 void Test2::CheckGames() {
 	static int lines = 0;
 	static awui::Time::TimeSpan lastTime;
-	Statistics::Stats *stats = Statistics::Stats::Instance();
+	Diagnostics::Stats *stats = Diagnostics::Stats::Instance();
 
 	awui::Time::TimeSpan time = stats->GetIdle();
 	awui::Time::DateTime begin = awui::Time::DateTime::GetNow();

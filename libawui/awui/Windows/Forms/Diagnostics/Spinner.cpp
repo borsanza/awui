@@ -9,7 +9,7 @@
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
-using namespace awui::Windows::Forms::Statistics;
+using namespace awui::Windows::Forms::Diagnostics;
 
 Spinner::Spinner() {
 	m_position = 0;

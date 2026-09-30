@@ -2,7 +2,7 @@
 
 #include <awui/Windows/Forms/Control.h>
 
-namespace awui::Windows::Forms::Statistics {
+namespace awui::Windows::Forms::Diagnostics {
 	class Heartbeat : public Control {
 	  private:
 		bool m_heartbeat;
@@ -14,4 +14,4 @@ namespace awui::Windows::Forms::Statistics {
 		virtual void OnPaint(OpenGL::GL *gl);
 		virtual void OnRemoteHeartbeat();
 	};
-} // namespace awui::Windows::Forms::Statistics
+} // namespace awui::Windows::Forms::Diagnostics

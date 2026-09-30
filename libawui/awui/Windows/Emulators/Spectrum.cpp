@@ -29,6 +29,7 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::Common;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Input;
 
 void WriteCassetteCB(int32_t value, void *data) { /* printf("%d\n", value); */
 }

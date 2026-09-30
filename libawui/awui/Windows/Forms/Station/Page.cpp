@@ -10,6 +10,7 @@
 #include <vector>
 
 using namespace awui::Windows::Forms::Station;
+using namespace awui::Windows::Forms::Input;
 
 Page::Page() {
 }

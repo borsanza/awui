@@ -1,6 +1,6 @@
 #pragma once
 
-namespace awui::Windows::Forms {
+namespace awui::Windows::Forms::Input {
 	struct Keys {
 		enum Enum {
 			Key_0 = 0,
@@ -100,4 +100,4 @@ namespace awui::Windows::Forms {
 			Key_LESS,
 		};
 	};
-} // namespace awui::Windows::Forms
+} // namespace awui::Windows::Forms::Input

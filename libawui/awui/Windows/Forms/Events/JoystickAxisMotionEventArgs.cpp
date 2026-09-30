@@ -3,7 +3,7 @@
 
 #include "JoystickAxisMotionEventArgs.h"
 
-using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Events;
 
 JoystickAxisMotionEventArgs::JoystickAxisMotionEventArgs(int which, int16_t axisX, int16_t axisY) : JoystickEventArgs(which) {
 	m_axisX = axisX;

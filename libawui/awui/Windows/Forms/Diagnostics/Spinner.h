@@ -2,7 +2,7 @@
 
 #include <awui/Windows/Forms/Control.h>
 
-namespace awui::Windows::Forms::Statistics {
+namespace awui::Windows::Forms::Diagnostics {
 	class Spinner : public Control {
 	  private:
 		int m_position;
@@ -14,4 +14,4 @@ namespace awui::Windows::Forms::Statistics {
 		virtual void OnTick(float deltaSeconds);
 		virtual void OnPaint(OpenGL::GL *gl);
 	};
-} // namespace awui::Windows::Forms::Statistics
+} // namespace awui::Windows::Forms::Diagnostics

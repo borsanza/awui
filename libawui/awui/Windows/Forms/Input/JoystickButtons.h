@@ -1,6 +1,6 @@
 #pragma once
 
-namespace awui::Windows::Forms {
+namespace awui::Windows::Forms::Input {
 	struct JoystickButtons {
 		enum Enum {
 			// clang-format off
@@ -28,4 +28,4 @@ namespace awui::Windows::Forms {
 			// clang-format on
 		};
 	};
-} // namespace awui::Windows::Forms
+} // namespace awui::Windows::Forms::Input

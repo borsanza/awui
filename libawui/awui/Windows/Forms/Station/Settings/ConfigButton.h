@@ -10,7 +10,7 @@
 #include <vector>
 
 namespace awui::Windows::Forms {
-	namespace Listeners {
+	namespace Events {
 		class IRemoteListener;
 	}
 
@@ -29,7 +29,7 @@ namespace awui::Windows::Forms {
 				LabelButton m_label;
 				LabelButton m_value;
 				Page *m_subpage;
-				std::vector<Listeners::IRemoteListener *> m_listeners;
+				std::vector<Events::IRemoteListener *> m_listeners;
 				std::function<void(ConfigButton *)> m_onValueChanged;
 				TypeButton m_typeButton;
 				std::string m_key;
@@ -79,12 +79,12 @@ namespace awui::Windows::Forms {
 				void SetValueText(const String &text);
 
 				void Click();
-				void AddOnClickListener(Listeners::IRemoteListener *listener);
-				void RemoveOnClickListener(Listeners::IRemoteListener *listener);
+				void AddOnClickListener(Events::IRemoteListener *listener);
+				void RemoveOnClickListener(Events::IRemoteListener *listener);
 				void RemoveAllListeners();
-				void OnMouseDown(MouseEventArgs *e);
-				bool OnRemoteKeyPress(int which, RemoteButtons::Enum button);
-				bool OnRemoteKeyUp(int which, RemoteButtons::Enum button);
+				void OnMouseDown(Events::MouseEventArgs *e);
+				bool OnRemoteKeyPress(int which, Input::RemoteButtons::Enum button);
+				bool OnRemoteKeyUp(int which, Input::RemoteButtons::Enum button);
 
 				String ToString() const override;
 			};

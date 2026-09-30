@@ -1,6 +1,6 @@
 #pragma once
 
-#include <awui/Windows/Forms/Gradient.h>
+#include <awui/Windows/Forms/Station/Gradient.h>
 
 namespace awui::Windows::Forms::Station {
 	class Page;

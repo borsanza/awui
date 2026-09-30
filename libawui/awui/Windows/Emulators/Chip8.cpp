@@ -16,6 +16,7 @@ using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::Chip8;
 using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Input;
 
 bool Chip8::s_invertedColors = false;
 

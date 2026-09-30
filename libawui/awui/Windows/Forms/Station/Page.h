@@ -8,6 +8,6 @@ namespace awui::Windows::Forms::Station {
 		Page();
 
 		// Inicio/Fin: primera/última fila. Re Pág/Av Pág: una pantalla de filas (menos una, para no perder la referencia)
-		virtual bool OnKeyPress(Keys::Enum key) override;
+		virtual bool OnKeyPress(Input::Keys::Enum key) override;
 	};
 } // namespace awui::Windows::Forms::Station

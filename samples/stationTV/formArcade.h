@@ -2,7 +2,7 @@
 
 #include <awui/String.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/Keys.h>
+#include <awui/Windows/Forms/Input/Keys.h>
 
 namespace awui::Windows::Forms::Station {
 	class StationUI;
@@ -21,6 +21,6 @@ class FormArcade : public awui::Windows::Forms::Form {
 	FormArcade();
 	virtual ~FormArcade();
 
-	bool OnKeyPress(Keys::Enum key);
+	bool OnKeyPress(Input::Keys::Enum key);
 	virtual void OnClosing() override;
 };

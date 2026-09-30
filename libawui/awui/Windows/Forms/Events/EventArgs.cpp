@@ -3,7 +3,7 @@
 
 #include "EventArgs.h"
 
-using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Events;
 
 EventArgs::EventArgs() {
 }

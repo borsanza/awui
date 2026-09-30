@@ -11,6 +11,7 @@
 
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms::Station;
+using namespace awui::Windows::Forms::Events;
 
 // Recorrido máximo (en píxeles, desde cualquiera de los dos extremos) con el que el texto vuelve deslizándose
 static const float MaxSlideBack = 80.0f;

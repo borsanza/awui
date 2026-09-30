@@ -11,13 +11,15 @@
 #include <awui/Windows/Emulators/MasterSystem.h>
 #include <awui/Windows/Emulators/Spectrum.h>
 #include <awui/Windows/Forms/Form.h>
-#include <awui/Windows/Forms/MouseEventArgs.h>
+#include <awui/Windows/Forms/Events/MouseEventArgs.h>
 #include <awui/Windows/Forms/Station/StationUI.h>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Windows::Forms::Station;
+using namespace awui::Windows::Forms::Input;
+using namespace awui::Windows::Forms::Events;
 
 #define OFFSET 0.5f
 

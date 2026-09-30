@@ -1,10 +1,10 @@
 /*
- * awui/Windows/Forms/Keyboard.cpp
+ * awui/Windows/Forms/OnScreenKeyboard.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano
  */
 
-#include "Keyboard.h"
+#include "OnScreenKeyboard.h"
 
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
@@ -14,7 +14,7 @@
 using namespace awui::Drawing;
 using namespace awui::Windows::Forms;
 
-Keyboard::Keyboard() {
+OnScreenKeyboard::OnScreenKeyboard() {
 	SetBackColor(Color::FromArgb(0, 0, 0, 0));
 	int pos = 0;
 	const char *letras = "abcdefghijklmnopqrstuvwxyz1234567890";

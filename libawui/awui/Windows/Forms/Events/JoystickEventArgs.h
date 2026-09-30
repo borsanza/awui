@@ -1,8 +1,8 @@
 #pragma once
 
-#include <awui/Windows/Forms/EventArgs.h>
+#include <awui/Windows/Forms/Events/EventArgs.h>
 
-namespace awui::Windows::Forms {
+namespace awui::Windows::Forms::Events {
 	class JoystickEventArgs : public EventArgs {
 	  private:
 		int m_which;
@@ -13,4 +13,4 @@ namespace awui::Windows::Forms {
 
 		int GetWhich() const { return m_which; };
 	};
-} // namespace awui::Windows::Forms
+} // namespace awui::Windows::Forms::Events

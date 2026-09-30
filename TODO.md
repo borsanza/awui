@@ -10,7 +10,7 @@ Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra d
 
 - **Teclas mantenidas:** `Form::ProcessEvents` no mira `event.key.repeat`, así que al mantener pulsada una tecla llegan pulsaciones repetidas. En el Spectrum, mantener F8 activa y desactiva el modo rápido sin parar, y F2 guarda el estado varias veces. La repetición sí conviene para moverse por los menús (botones del mando a distancia), pero no para las teclas de función ni para los emuladores.
 - **Rueda del ratón:** en `Form::ProcessEvents` hay un `break` antes del código de `SDL_MOUSEWHEEL`, así que la rueda no hace nada. `MouseEventArgs` tampoco rellena nunca `Delta` ni `Clicks` (no hay doble clic).
-- **Pérdida de foco de la ventana:** no se atiende `SDL_WINDOWEVENT_FOCUS_LOST`. Si se cambia de ventana (Alt+Tab) con una tecla o un botón pulsados, se quedan pulsados (`Form::m_buttonsPad1/2`, las teclas del Spectrum). Tampoco se pausa nada al minimizar.
+- **Pérdida de foco de la ventana:** no se atiende `SDL_WINDOWEVENT_FOCUS_LOST`. Si se cambia de ventana (Alt+Tab) con una tecla o un botón pulsados, se quedan pulsados (`Form::s_buttonsPad1/2`, las teclas del Spectrum). Tampoco se pausa nada al minimizar.
 - **Bucle sin límite:** no hay `SDL_Delay` en ningún sitio. Sin vsync, o con la ventana minimizada (donde el vsync no frena), el programa usa el 100 % de un núcleo.
 - **`SliderBrowser` cuenta en frames:** su animación dura 10 frames, así que va más rápida en una pantalla de 144 Hz que en una de 60 Hz. Debería contar tiempo (`deltaSeconds`).
 - **`Form::OnTick` recoloca `Stats` en cada frame:** `MoveToEnd(stats)` quita y vuelve a añadir el control, lo que recalcula el foco y hace `Layout()` del formulario 60 veces por segundo. Basta con hacerlo si no es ya el último.
@@ -89,7 +89,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 - **Mando:**
   - Solo se lee el stick izquierdo, sin zona muerta, y los gatillos se ignoran.
   - Los mandos que SDL no reconoce como *GameController* (sin entrada en su base de datos) no funcionan: se descartan los eventos `SDL_JOY*`.
-  - Solo hay dos mandos (`Form::m_buttonsPad1/2`, estáticos).
+  - Solo hay dos mandos (`Form::s_buttonsPad1/2`, estáticos).
   - `RemoteButtons` mezcla el mando a distancia y el de SNES en los mismos bits (`SNES_Y == Ok`, `SNES_SELECT == Menu`).
 
 ### Otros
@@ -123,11 +123,6 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 
 ### Dentro de `libawui/awui`
 
-- **`Windows/Forms/` tiene 46 ficheros sueltos mezclados:**
-  - **Entrada:** `Keys.h`, `RemoteButtons.h`, `JoystickButtons.h`, `MouseButtons.h` y `Joystick/` irían a `Input/`.
-  - **Eventos:** `EventArgs`, `MouseEventArgs`, `Joystick*EventArgs` y `Listeners/` irían a `Events/`.
-  - **Controles:** el resto (`Control`, `Form`, `Label`, `Button`, `Bitmap`…) se queda donde está.
-  - **Otros:** `Statistics/` es una capa de depuración (FPS): iría a `Diagnostics/`. `Gradient` está en `Windows/Forms` pero en el espacio de nombres `Station`: iría con Station. `Keyboard` es un teclado en pantalla, no el teclado físico: mejor `OnScreenKeyboard`.
 - **Audio de los emuladores:** `Emulation/MasterSystem/SoundSDL` y `Emulation/Spectrum/SoundSDL` son casi iguales: uno solo en `Emulation/Common/` (va con "Salida de audio común").
 - **Espacio de nombres `awui::Windows::Forms`:** copia el de .NET, pero aquí confunde. No tiene nada que ver con Windows, y ahora que la librería tiene que funcionar en Windows se mezcla con `#ifdef _WIN32` y con "la build de Windows". Algo como `awui::UI` sería más claro. Es el cambio más grande de la lista (toca todos los ficheros y samples), así que lo dejaría para el final o para cuando se separe la aplicación.
 
@@ -146,7 +141,7 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 ## Componentes que faltan
 
 1. **Entrada de texto:** no hay `TextBox` ni se atiende `SDL_TEXTINPUT`, así que no se puede escribir nada (buscar un juego, elegir la carpeta de partidas en los ajustes, las comillas en el Spectrum con teclado español).
-2. **Teclado en pantalla:** [Keyboard.cpp](libawui/awui/Windows/Forms/Keyboard.cpp) es un esqueleto: pinta botones con letras que no hacen nada. En una tele es la única forma de escribir con el mando, así que va junto con el `TextBox`.
+2. **Teclado en pantalla:** [OnScreenKeyboard.cpp](libawui/awui/Windows/Forms/OnScreenKeyboard.cpp) es un esqueleto: pinta botones con letras que no hacen nada. En una tele es la única forma de escribir con el mando, así que va junto con el `TextBox`.
 3. **Navegar con el mando:** los botones del mando no se traducen a `RemoteButtons`, así que el mando no mueve los menús.
 4. **Contenedores de maquetación:** una pila vertical u horizontal y una rejilla. StationUI y SettingsUI colocan todo a mano en cada `OnTick` con números fijos (`GetWidth() - 150`, `+ 42`, `- 66`…).
 5. **Lista con desplazamiento reutilizable:** `ListBox` es un esqueleto sin pintado, y lo que funciona (`Browser` + `Page`) está dentro de Station.

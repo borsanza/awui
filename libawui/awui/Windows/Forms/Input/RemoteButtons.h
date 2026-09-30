@@ -1,6 +1,6 @@
 #pragma once
 
-namespace awui::Windows::Forms {
+namespace awui::Windows::Forms::Input {
 	struct RemoteButtons {
 		enum Enum {
 			// clang-format off
@@ -37,4 +37,4 @@ namespace awui::Windows::Forms {
 			SPECIAL_SAVE = SNES_SELECT | SNES_R,
 		};
 	};
-} // namespace awui::Windows::Forms
+} // namespace awui::Windows::Forms::Input

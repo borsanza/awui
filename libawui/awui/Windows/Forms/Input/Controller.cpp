@@ -1,5 +1,5 @@
 /**
- * awui/Windows/Forms/Joystick/Controller.cpp
+ * awui/Windows/Forms/Input/Controller.cpp
  *
  * Copyright (C) 2024 Borja Sánchez Zamorano
  */
@@ -12,7 +12,7 @@
 
 #include <SDL.h>
 
-using namespace awui::Windows::Forms::Joystick;
+using namespace awui::Windows::Forms::Input;
 
 std::vector<Controller *> *Controller::s_controllersList = new std::vector<Controller *>();
 
@@ -102,7 +102,7 @@ void Controller::Refresh() {
 
 void Controller::CloseAll() {
 	for (int i = (int) s_controllersList->size() - 1; i >= 0; i--) {
-		Joystick::Controller *controller = (*s_controllersList)[i];
+		Input::Controller *controller = (*s_controllersList)[i];
 		delete controller;
 	}
 

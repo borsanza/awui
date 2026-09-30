@@ -3,7 +3,7 @@
 
 #include "JoystickButtonEventArgs.h"
 
-using namespace awui::Windows::Forms;
+using namespace awui::Windows::Forms::Events;
 
 JoystickButtonEventArgs::JoystickButtonEventArgs(int which, int button, uint32_t buttons, uint32_t prevButtons) : JoystickEventArgs(which) {
 	m_button = button;
