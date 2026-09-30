@@ -10,6 +10,7 @@
 #include <awui/Math.h>
 #include <algorithm>
 
+using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 

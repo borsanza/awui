@@ -262,19 +262,19 @@ void Control::OnResizePre() {
 	Layout();
 }
 
-void Control::SetBackColor(const awui::Color color) {
+void Control::SetBackColor(const awui::Drawing::Color color) {
 	m_backColor = color;
 }
 
-awui::Color Control::GetBackColor() const {
+awui::Drawing::Color Control::GetBackColor() const {
 	return m_backColor;
 }
 
-void Control::SetForeColor(const awui::Color color) {
+void Control::SetForeColor(const awui::Drawing::Color color) {
 	m_foreColor = color;
 }
 
-awui::Color Control::GetForeColor() const {
+awui::Drawing::Color Control::GetForeColor() const {
 	return m_foreColor;
 }
 

@@ -4,7 +4,7 @@
 #include "test2.h"
 
 #include <awui/Console.h>
-#include <awui/Core/Color.h>
+#include <awui/Drawing/Color.h>
 #include <awui/DateTime.h>
 #include <awui/String.h>
 #include <awui/TimeSpan.h>

@@ -3,7 +3,7 @@
 
 #include "test1.h"
 
-#include <awui/Core/Color.h>
+#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Effects/Effect.h>
 #include <awui/Math.h>

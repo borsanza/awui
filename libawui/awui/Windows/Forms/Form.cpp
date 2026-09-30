@@ -17,6 +17,7 @@
 #include <SDL_opengl.h>
 #include <algorithm>
 
+using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;
 using namespace awui::Windows::Forms::Statistics;

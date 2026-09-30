@@ -1,9 +1,9 @@
 #pragma once
 
-#include <awui/Object.h>
+#include <awui/String.h>
 #include <cstdint>
 
-namespace awui {
+namespace awui::Drawing {
 	// Tipo de valor: sin herencia ni métodos virtuales (se copia y se guarda por valor en todas partes)
 	class Color {
 	  private:
@@ -42,4 +42,4 @@ namespace awui {
 
 		bool operator!=(const Color &b) const;
 	};
-} // namespace awui
+} // namespace awui::Drawing

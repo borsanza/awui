@@ -1,6 +1,6 @@
 #pragma once
 
-#include <awui/Core/ColorF.h>
+#include <awui/Drawing/ColorF.h>
 #include <awui/Windows/Forms/Control.h>
 #include <vector>
 
@@ -33,7 +33,7 @@ namespace awui {
 			int m_fixY1;
 			int m_fixY2;
 			StretchMode::Enum m_stretchMode;
-			ColorF m_color;
+			Drawing::ColorF m_color;
 
 			String m_file;
 			bool m_loaded;
@@ -58,7 +58,7 @@ namespace awui {
 
 			virtual void OnPaint(OpenGL::GL *gl);
 
-			void SetColor(ColorF color);
+			void SetColor(Drawing::ColorF color);
 
 			void SetStretchMode(StretchMode::Enum stretchMode);
 			StretchMode::Enum GetStretchMode() const;

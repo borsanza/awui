@@ -4,9 +4,10 @@
 #include "Heartbeat.h"
 
 #include <SDL_opengl.h>
-#include <awui/Core/Color.h>
+#include <awui/Drawing/Color.h>
 #include <awui/OpenGL/GL.h>
 
+using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms::Statistics;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stdint.h"
-#include <awui/Core/Color.h>
+#include <awui/Drawing/Color.h>
 #include <awui/GOB/Engine/Materials/Material.h>
 
 namespace awui::GOB::Engine {
@@ -9,7 +9,7 @@ namespace awui::GOB::Engine {
 
 	class MeshBasicMaterial : public Material {
 	  private:
-		Color m_color;
+		Drawing::Color m_color;
 		Texture *m_texture;
 		bool m_wireframe;
 

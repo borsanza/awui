@@ -20,6 +20,7 @@
 #include <awui/Windows/Forms/JoystickButtonEventArgs.h>
 #include <awui/Windows/Forms/JoystickButtons.h>
 
+using namespace awui::Drawing;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Emulators;
 using namespace awui::Emulation::MasterSystem;

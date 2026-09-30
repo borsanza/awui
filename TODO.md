@@ -32,7 +32,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 - **`Graphics::DrawImage` con tamaño escala al revés** ([Graphics.cpp](libawui/awui/Drawing/Graphics.cpp)): usa `imagen/destino` en vez de `destino/imagen`, así que pedir el doble dibuja a la mitad.
 - **`Graphics::FromImage`:** devuelve un `new Graphics` que usa el contexto de cairo de la imagen. No está claro quién lo libera, y si la imagen se borra antes el `Graphics` queda colgando.
 - **`Color`:**
-  - **Dos interpretaciones del mismo número:** `Color(uint32_t)` lo lee como RGBA y `FromArgb(uint32_t)` como ARGB ([Color.cpp](libawui/awui/Core/Color.cpp)).
+  - **Dos interpretaciones del mismo número:** `Color(uint32_t)` lo lee como RGBA y `FromArgb(uint32_t)` como ARGB ([Color.cpp](libawui/awui/Drawing/Color.cpp)).
   - **`Color(float…)` trunca en vez de redondear:** 0.5 da 127 y 0.999 da 254.
 - **`ColorF` (además de la escala, ver "Mejoras"):**
   - **`GetBrightness`/`GetHue`/`GetSaturation`** pasan las componentes a `int`, y con valores de 0 a 1 salen siempre 0.
@@ -123,7 +123,6 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 
 ### Dentro de `libawui/awui`
 
-- **`Core/`** solo tiene `Color` y `ColorF`: irían a `Drawing/` (como `System.Drawing.Color` en .NET) y `Core/` desaparece.
 - **`Drawing/Drawing2D/`** solo tiene dos enums (`LineCap`, `LineJoin`): irían a `Drawing/` o dentro de `Pen.h`.
 - **`Drawing/Shader`** es OpenGL: iría a `OpenGL/`, si no se borra (ver "OpenGL antiguo").
 - **`ContentAlignment`** está definido en `GlyphMetrics.h`, que no tiene nada que ver: iría a su propio fichero.

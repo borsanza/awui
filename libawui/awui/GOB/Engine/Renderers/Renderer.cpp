@@ -12,6 +12,7 @@
 #include <awui/OpenGL/GL.h>
 #include <vector>
 
+using namespace awui::Drawing;
 using namespace awui::GOB::Engine;
 using namespace awui::Windows::Forms;
 using namespace awui::OpenGL;

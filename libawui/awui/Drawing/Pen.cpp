@@ -3,7 +3,7 @@
 
 #include "Pen.h"
 
-#include <awui/Core/Color.h>
+#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Drawing2D/LineCap.h>
 #include <stdlib.h>
 

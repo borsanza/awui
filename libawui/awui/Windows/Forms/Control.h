@@ -1,6 +1,6 @@
 #pragma once
 
-#include <awui/Core/Color.h>
+#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Rectangle.h>
 #include <awui/String.h>
 #include <awui/Windows/Forms/Keys.h>
@@ -79,8 +79,8 @@ namespace awui {
 			bool m_scissorEnabled;
 			Drawing::Font *m_font;
 			DockStyle m_dock;
-			Color m_backColor;
-			Color m_foreColor;
+			Drawing::Color m_backColor;
+			Drawing::Color m_foreColor;
 			MouseEventArgs *m_mouseEventArgs;
 			Control *m_mouseControl;
 			String m_name;
@@ -162,11 +162,11 @@ namespace awui {
 			void MoveToEnd(Control *item);
 			void ReplaceWidget(Control *oldItem, Control *newItem, WidgetOwnership ownership = WidgetOwnership::Owned);
 
-			Color GetBackColor() const;
-			void SetBackColor(const Color color);
+			Drawing::Color GetBackColor() const;
+			void SetBackColor(const Drawing::Color color);
 
-			Color GetForeColor() const;
-			virtual void SetForeColor(const Color color);
+			Drawing::Color GetForeColor() const;
+			virtual void SetForeColor(const Drawing::Color color);
 
 			Drawing::Font *GetFont();
 			virtual void SetFont(const Drawing::Font font);

@@ -3,9 +3,10 @@
 
 #include "ImageFader.h"
 
-#include <awui/Core/ColorF.h>
+#include <awui/Drawing/ColorF.h>
 #include <awui/Windows/Forms/Bitmap.h>
 
+using namespace awui::Drawing;
 using namespace awui;
 using namespace awui::OpenGL;
 using namespace awui::Windows::Forms;

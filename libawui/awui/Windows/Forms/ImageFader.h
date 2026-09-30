@@ -1,6 +1,6 @@
 #pragma once
 
-#include <awui/Core/ColorF.h>
+#include <awui/Drawing/ColorF.h>
 #include <awui/Windows/Forms/Control.h>
 
 namespace awui {
@@ -24,7 +24,7 @@ namespace awui {
 			Bitmap *m_imageShowing;
 			Bitmap *m_imageToShow;
 			State m_state;
-			ColorF m_color;
+			Drawing::ColorF m_color;
 			float m_percentage;
 			float m_speedFadeOut;
 			float m_speedFadeIn;
@@ -36,7 +36,7 @@ namespace awui {
 			void SetImage(Bitmap *image);
 			// Deja de mostrar imagen al momento (antes de borrar la que muestra)
 			void Clear();
-			void SetColor(ColorF color);
+			void SetColor(Drawing::ColorF color);
 			void SetSpeedFadeOut(float speed) { m_speedFadeOut = speed; }
 			void SetSpeedFadeIn(float speed) { m_speedFadeIn = speed; }
 

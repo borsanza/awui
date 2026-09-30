@@ -3,7 +3,7 @@
 
 #include "Graphics.h"
 
-#include <awui/Core/Color.h>
+#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Font.h>
 #include <awui/Drawing/GlyphMetrics.h>
 #include <awui/Drawing/Image.h>

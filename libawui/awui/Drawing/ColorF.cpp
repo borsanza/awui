@@ -1,5 +1,5 @@
 /**
- * awui/Core/ColorF.cpp
+ * awui/Drawing/ColorF.cpp
  *
  * Copyright (C) 2016 Borja Sánchez Zamorano
  */
@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 using namespace awui;
+using namespace awui::Drawing;
 
 ColorF::ColorF() {
 	m_a = 0.0f;

@@ -1,5 +1,5 @@
 /**
- * awui/Core/Color.cpp
+ * awui/Drawing/Color.cpp
  *
  * Copyright (C) 2013 Borja Sánchez Zamorano
  */
@@ -10,6 +10,7 @@
 #include <awui/String.h>
 
 using namespace awui;
+using namespace awui::Drawing;
 
 Color::Color() : m_a(0), m_r(0), m_g(0), m_b(0) {
 }

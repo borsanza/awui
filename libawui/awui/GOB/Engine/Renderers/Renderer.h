@@ -1,6 +1,6 @@
 #pragma once
 
-#include <awui/Core/Color.h>
+#include <awui/Drawing/Color.h>
 #include <awui/GOB/Engine/Cameras/PerspectiveCamera.h>
 #include <awui/GOB/Engine/Scenes/Scene.h>
 #include <awui/Windows/Forms/Control.h>
@@ -12,7 +12,7 @@ namespace awui::GOB::Engine {
 		float m_angle;
 		Cameras::PerspectiveCamera *m_camera;
 		Scene *m_scene;
-		Color m_clearColor = Color(0.0f, 0.0f, 0.0f, 1.0f);
+		Drawing::Color m_clearColor = Drawing::Color(0.0f, 0.0f, 0.0f, 1.0f);
 
 	  public:
 		Renderer();
