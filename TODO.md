@@ -56,7 +56,6 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### Estructura
 
-- **La aplicación está dentro de la librería:** `Windows/Forms/Station` (menús de stationTV) y `Windows/Emulators` son de stationTV, no de awui. Deberían estar en `samples/stationTV`, y la librería no tendría que saber de ROMs ni de ajustes de la aplicación. `Gradient` está en `Windows/Forms` pero en el espacio de nombres `Station`.
 - **Recursos relativos al directorio de trabajo:** `images/button.png` (en `Control::GetSelectedBitmap`), `./images/*.jpg`, `roms/zxspectrum/48.rom`, `lang/`… Si se arranca el programa desde otra carpeta, no encuentra nada. Hace falta una carpeta de recursos (con `SDL_GetBasePath` o configurable).
 - **`Object` donde no hace falta:** `Convert`, `Pen`, `Font`, `Graphics`, `Effect`, `Application` y `Controller` heredan de `Object` (vtable) sin usarlo. `Convert` y `Application` solo tienen métodos estáticos.
 - **Tipos valor con código de sobra:** `Point`, `Size`, `Rectangle`, `Color`, `ColorF` y `Font` tienen destructores vacíos y `operator=` escritos a mano que no hacen falta. Además, les faltan `operator==` (en `Color` solo hay `!=`), `Rectangle::Contains(Point)`, `IsEmpty` y `Union`, y colores con nombre (`Color::White`…).
@@ -101,6 +100,55 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 - **`Stats`:** se configura con `#define` en la cabecera (`SHOW_FPS`…), así que los FPS se ven siempre. Debería ser un ajuste. Además, es un singleton que nunca se libera.
 - **`ImageFader`:** guarda `Bitmap *` sin ser su dueño. Si alguien borra la imagen sin llamar antes a `Clear`, queda colgando.
 - **Sample `awTest/test2`:** mide tiempos con `DateTime::GetNow` (reloj del sistema, que puede saltar). Debería usar `ChronoLap`.
+
+## Ficheros y directorios
+
+Cómo lo organizaría. Son cambios de sitio y de nombre, sin tocar el comportamiento, y conviene hacerlos cada uno en su propio commit (con `git mv`) para no perder el historial.
+
+### Separar librería, emuladores y aplicación
+
+Hoy todo está en una única `libawui.so`: la interfaz, los emuladores, el motor 3D de gameOfBlocks y los menús de stationTV. Cualquier sample enlaza con todo.
+
+```text
+libawui/awui/          librería de interfaz: String, IO, Drawing, OpenGL, UI...
+libemulation/          núcleos de los emuladores (hoy Emulation/): Z80, Master System, Spectrum, Chip-8, Common
+libgob/                motor 3D (hoy awui/GOB/), solo lo usa gameOfBlocks
+samples/stationTV/     la aplicación: menús (hoy Windows/Forms/Station), controles de los emuladores
+                       (hoy Windows/Emulators), formArcade, main, lang, menu-settings.json
+third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSystem/emu2413)
+```
+
+- **Dependencias en su sitio:** la librería de interfaz no sabría nada de ROMs, partidas ni ajustes de stationTV, y los emuladores se podrían probar sin ventana (como ya hacen los arneses).
+- **Código de terceros aparte:** con emu2413 en `third_party/`, la excepción de UBSan de [libawui/CMakeLists.txt](libawui/CMakeLists.txt) apunta a una carpeta en vez de a un fichero dentro de nuestro código.
+
+### Dentro de `libawui/awui`
+
+- **`Core/`** solo tiene `Color` y `ColorF`: irían a `Drawing/` (como `System.Drawing.Color` en .NET) y `Core/` desaparece.
+- **`Drawing/Drawing2D/`** solo tiene dos enums (`LineCap`, `LineJoin`): irían a `Drawing/` o dentro de `Pen.h`.
+- **`Drawing/Shader`** es OpenGL: iría a `OpenGL/`, si no se borra (ver "OpenGL antiguo").
+- **`ContentAlignment`** está definido en `GlyphMetrics.h`, que no tiene nada que ver: iría a su propio fichero.
+- **Tiempo:** `ChronoLap`, `DateTime` y `TimeSpan` están sueltos en la raíz. Irían juntos en `Time/` (o se quedan en la raíz, pero los tres igual).
+- **`Windows/Forms/` tiene 46 ficheros sueltos mezclados:**
+  - **Entrada:** `Keys.h`, `RemoteButtons.h`, `JoystickButtons.h`, `MouseButtons.h` y `Joystick/` irían a `Input/`.
+  - **Eventos:** `EventArgs`, `MouseEventArgs`, `Joystick*EventArgs` y `Listeners/` irían a `Events/`.
+  - **Controles:** el resto (`Control`, `Form`, `Label`, `Button`, `Bitmap`…) se queda donde está.
+  - **Otros:** `Statistics/` es una capa de depuración (FPS): iría a `Diagnostics/`. `Gradient` está en `Windows/Forms` pero en el espacio de nombres `Station`: iría con Station. `Keyboard` es un teclado en pantalla, no el teclado físico: mejor `OnScreenKeyboard`.
+- **Audio de los emuladores:** `Emulation/MasterSystem/SoundSDL` y `Emulation/Spectrum/SoundSDL` son casi iguales: uno solo en `Emulation/Common/` (va con "Salida de audio común").
+- **Espacio de nombres `awui::Windows::Forms`:** copia el de .NET, pero aquí confunde. No tiene nada que ver con Windows, y ahora que la librería tiene que funcionar en Windows se mezcla con `#ifdef _WIN32` y con "la build de Windows". Algo como `awui::UI` sería más claro. Es el cambio más grande de la lista (toca todos los ficheros y samples), así que lo dejaría para el final o para cuando se separe la aplicación.
+
+### Raíz del repositorio
+
+- **Assets dentro de `build/`:** las imágenes de los samples y las ROMs de Chip-8 están versionadas en `build/samples/*/images` y `build/samples/stationTV/roms`, con un `.gitignore` enrevesado para excluir lo demás de `build/`. Por eso `build-debug/` y `build-sanitize/` no tienen imágenes (las pruebas con sanitizers tienen que ejecutarse desde `build/`). Irían en `samples/<nombre>/images` y `samples/stationTV/roms`, copiados junto al ejecutable con el `FILES` de `awui_add_sample`, como ya se hace con `lang` y `menu-settings.json`.
+- **Scripts de Windows sueltos:** `bbd.bat`, `bbr.bat`, sus versiones de 32 bits, `buildvars*.bat`, `clean*.bat`, `stationTV.bat` y `gameOfBlocks.bat` irían a `scripts/windows/` (o se sustituyen por los presets de CMake, que ya existen). Habría que ver si la versión de 32 bits sigue haciendo falta.
+- **`ext/`** mezcla cosas distintas: las DLL de Windows (`lib32`/`lib64`), `generate-libs.sh`, los fuentes de GIMP (`button.xcf`, `settings.xcf`) y `Cursors/` (56 ficheros que no usa nadie). Las DLL irían a `third_party/`, los `.xcf` a `art/` (junto a `samples/stationTV/art`), y `Cursors/` se borraría si no hace falta.
+- **`arduino/`** (el receptor del mando de Apple) es un proyecto aparte: iría a `tools/arduino-remote/`.
+- **`doc/obsolete`:** si ya no sirve, se borra (queda en git).
+
+### Estilo y normas del repositorio
+
+- **Finales de línea:** hay 168 ficheros con CRLF y no hay `.gitattributes`, así que cada editor o script puede cambiarlos sin querer (ya pasó con `Graphics.cpp`). Un `.gitattributes` con `* text=auto eol=lf` (y `*.bat eol=crlf`) y una conversión única lo resuelve.
+- **Nombres de miembros:** hay dos estilos, `m_nombre` (67 ficheros) y `this->_nombre` (21, sobre todo emuladores y `IO`). Conviene quedarse con uno (`m_`, que es el mayoritario).
+- **Cabeceras de copyright:** conviven tres formatos (`/** awui/... Copyright */`, `// (c) Copyright ... (BSD License)` y ninguno). Uno solo, igual en todos.
 
 ## Componentes que faltan
 
