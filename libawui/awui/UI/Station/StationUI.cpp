@@ -7,6 +7,7 @@
 #include "StationUI.h"
 
 #include <awui/Console.h>
+#include <awui/Convert.h>
 #include <awui/Emulation/Common/AudioSettings.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Localization.h>
@@ -561,7 +562,7 @@ void StationUI::ApplySettings() {
 	m_clock24 = settings.GetString("timeFormat") != "12";
 
 	Emulation::Common::AudioSettings::SetEnabled(settings.GetBool("sound"));
-	Emulation::Common::AudioSettings::SetVolume(atoi(settings.GetString("volume").c_str()));
+	Emulation::Common::AudioSettings::SetVolume(Convert::ToInt32(settings.GetString("volume"), 100));
 
 	Emulation::MasterSystem::Sound::SetFMEnabled(settings.GetBool("fmSound"));
 

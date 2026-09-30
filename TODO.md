@@ -147,11 +147,10 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 10. **Rutas y carpetas:** `Path::GetFileName` / `GetExtension` / `GetDirectoryName` y `Directory::Exists` / `Create` / `GetFiles`. Hoy `Directory` solo tiene `GetWorkingDirectory`, y se usan `opendir`, `std::filesystem` o `LastIndexOf("/")` según el sitio. `Path::Combine` no reconoce `/` como separador en Windows ni una segunda ruta absoluta.
 11. **Controles deshabilitados:** no hay `Enabled`. Un control se puede ocultar, pero no dejarlo visible e inactivo.
 12. **Orden de foco con el tabulador:** `m_tabIndex` se asigna pero no se usa; no hay navegación con Tab.
-13. **Convertir texto a número:** `Convert` solo pasa números a texto; falta `ToInt32`, `ToFloat` y `TryParse`.
-14. **Registro de mensajes con niveles:** hoy se mezclan `Console`, `printf` y `fprintf(stderr)`. Con niveles (depuración, aviso, error) se podrían silenciar mensajes como "Partida guardada cargada".
-15. **Avisos en pantalla:** "Estado guardado", "Ranura 2", "Cargando cinta…". Hoy solo salen por consola, que en la tele no se ve.
-16. **Texto con Pango** en vez de la API sencilla de cairo: permitiría usar otra fuente cuando falta un carácter (japonés, chino…), texto de derecha a izquierda y cortar líneas de forma correcta.
-17. **Pruebas automáticas en el repositorio**, con las pruebas sin ventana que ya existen como base (ajustes, paginación, estados, cintas, Chip-8…) y un `ctest` que las lance con los sanitizers.
+13. **Registro de mensajes con niveles:** hoy se mezclan `Console`, `printf` y `fprintf(stderr)`. Con niveles (depuración, aviso, error) se podrían silenciar mensajes como "Partida guardada cargada".
+14. **Avisos en pantalla:** "Estado guardado", "Ranura 2", "Cargando cinta…". Hoy solo salen por consola, que en la tele no se ve.
+15. **Texto con Pango** en vez de la API sencilla de cairo: permitiría usar otra fuente cuando falta un carácter (japonés, chino…), texto de derecha a izquierda y cortar líneas de forma correcta.
+16. **Pruebas automáticas en el repositorio**, con las pruebas sin ventana que ya existen como base (ajustes, paginación, estados, cintas, Chip-8…) y un `ctest` que las lance con los sanitizers.
 
 ## Windows y otras plataformas
 
