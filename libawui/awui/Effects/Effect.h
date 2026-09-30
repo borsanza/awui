@@ -1,15 +1,15 @@
 #pragma once
 
-#include <awui/Object.h>
 #include <awui/String.h>
 
 namespace awui::Effects {
-	class Effect : public Object {
+	class Effect {
 	  private:
 		String m_name;
 
 	  public:
 		Effect(String name1);
+		virtual ~Effect() = default; // Se borran como Effect * (SliderBrowser)
 
 		String GetName() const;
 

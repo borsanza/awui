@@ -7,6 +7,10 @@
 #include <vector>
 
 namespace awui {
+	class String;
+}
+
+namespace awui {
 	namespace UI {
 		namespace Emulators {
 			class ArcadeContainer;
@@ -47,7 +51,7 @@ namespace awui {
 				inline void SetStationUI(StationUI *station) { m_station = station; }
 			};
 
-			class NodeFile : public awui::Object {
+			class NodeFile {
 			  public:
 				NodeFile *m_parent;
 				bool m_directory;
@@ -63,7 +67,7 @@ namespace awui {
 
 			  public:
 				NodeFile();
-				virtual ~NodeFile();
+				~NodeFile();
 
 				// Inserta en su sitio según m_key (con claves iguales, detrás de los que ya estaban)
 				void AddChild(NodeFile *child);

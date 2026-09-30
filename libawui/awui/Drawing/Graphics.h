@@ -1,6 +1,5 @@
 #pragma once
 
-#include <awui/Object.h>
 #include <awui/String.h>
 
 #include <vector>
@@ -18,7 +17,7 @@ namespace awui {
 		class Pen;
 		class GlyphMetrics;
 
-		class Graphics : public Object {
+		class Graphics {
 		  private:
 			cairo_surface_t *m_cairo_surface;
 			cairo_t *m_cr;
@@ -27,7 +26,7 @@ namespace awui {
 			Graphics();
 
 		  public:
-			virtual ~Graphics() = default;
+			~Graphics() = default;
 
 			static Graphics *FromImage(Drawing::Image *image);
 

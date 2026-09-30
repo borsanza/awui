@@ -1,20 +1,22 @@
 #pragma once
 
-#include <awui/Object.h>
-
 #include <stdint.h>
 #include <vector>
 
 namespace awui {
+	class String;
+}
+
+namespace awui {
 	namespace Emulation::Spectrum {
-		class TapeBlock : public awui::Object {
+		class TapeBlock {
 		  private:
 			uint8_t *m_data;
 			int m_size;
 
 		  public:
 			TapeBlock(int size);
-			virtual ~TapeBlock();
+			~TapeBlock();
 
 			void SetByte(int pos, uint8_t value);
 			uint8_t GetByte(int pos);
@@ -38,7 +40,7 @@ namespace awui {
 
 		  public:
 			TapeCorder();
-			virtual ~TapeCorder();
+			~TapeCorder();
 
 			void LoadFile(const String file);
 

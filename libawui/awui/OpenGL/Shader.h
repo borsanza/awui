@@ -1,13 +1,12 @@
 #pragma once
 
-#include <awui/Object.h>
 #include <string>
 
 typedef unsigned int GLuint;
 typedef unsigned int GLenum;
 
 namespace awui::OpenGL {
-	class Shader : public Object {
+	class Shader {
 	  private:
 		GLuint m_gProgramID;
 
@@ -15,7 +14,7 @@ namespace awui::OpenGL {
 
 	  public:
 		Shader();
-		virtual ~Shader() = default;
+		~Shader() = default;
 
 		GLuint LoadShaderFromFile(std::string path, GLenum shaderType);
 	};

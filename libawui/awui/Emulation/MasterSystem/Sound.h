@@ -1,7 +1,5 @@
 #pragma once
 
-#include <awui/Object.h>
-
 #include <cstdint>
 #include <vector>
 
@@ -16,7 +14,7 @@ namespace awui::Emulation::MasterSystem {
 	// Las escrituras de registros se aplican en el ciclo de CPU exacto en el que ocurren:
 	// antes de cada escritura se genera el audio hasta ese ciclo, y al final de cada frame
 	// se envían las muestras generadas a Common::AudioOutput.
-	class Sound : public Object {
+	class Sound {
 	  private:
 		Motherboard *m_cpu;
 
@@ -66,7 +64,7 @@ namespace awui::Emulation::MasterSystem {
 		static bool IsChannelEnabled(int channel) { return (s_disabledChannels & (1 << channel)) == 0; }
 
 		Sound();
-		virtual ~Sound();
+		~Sound();
 
 		inline void SetCPU(Motherboard *cpu) { m_cpu = cpu; }
 		inline Motherboard *GetCPU() const { return m_cpu; }

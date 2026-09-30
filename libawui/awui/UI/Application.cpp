@@ -23,8 +23,6 @@ using namespace awui::UI::Diagnostics;
 
 int Application::s_quit = 0;
 
-Application::Application() {
-}
 
 void Application::Quit() {
 	Application::s_quit = 1;

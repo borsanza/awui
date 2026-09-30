@@ -1,18 +1,16 @@
 #pragma once
 
-#include <awui/Object.h>
-
 namespace awui::UI {
 	class Form;
 
-	class Application : public Object {
+	class Application {
 		static int s_quit;
 
 	  private:
 		static void ProcessEvents();
 
 	  public:
-		Application();
+		Application() = delete; // Solo métodos estáticos
 
 		static void Run(Form *form);
 

@@ -3,14 +3,12 @@
 #include <stdint.h>
 #include <vector>
 
-#include <awui/Object.h>
-
 namespace awui::Emulation::Spectrum {
 	class Motherboard;
 
 	// Altavoz del Spectrum (bits EAR y MIC del puerto 0xFE). Durante el frame se apuntan los cambios de nivel con
 	// su posición dentro del frame; al acabarlo se convierten en muestras y se encolan en Common::AudioOutput
-	class Sound : public Object {
+	class Sound {
 	  private:
 		struct Change {
 			double position; // 0..1 dentro del frame

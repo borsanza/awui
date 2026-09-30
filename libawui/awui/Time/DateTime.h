@@ -1,19 +1,17 @@
 #pragma once
 
-#include <awui/Object.h>
-
 #include <chrono>
 #include <cstdint>
 
 namespace awui::Time {
-	class DateTime : public Object {
+	class DateTime {
 	  private:
 		std::chrono::microseconds m_time;
 
 	  public:
 		DateTime();
 		DateTime(std::chrono::microseconds time);
-		virtual ~DateTime() = default;
+		~DateTime() = default;
 
 		static DateTime GetNow();
 		int64_t GetTicks() const;

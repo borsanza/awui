@@ -1,6 +1,5 @@
 #pragma once
 
-#include <awui/Object.h>
 #include <cstdint>
 #include <vector>
 
@@ -10,7 +9,7 @@ typedef Sint32 SDL_JoystickID;
 
 namespace awui {
 	namespace UI::Input {
-		class Controller : public Object {
+		class Controller {
 		  private:
 			static std::vector<Controller *> *s_controllersList;
 			SDL_GameController *m_controller;
@@ -22,7 +21,7 @@ namespace awui {
 			int16_t m_axisY;
 
 			Controller(SDL_GameController *controller);
-			virtual ~Controller();
+			~Controller();
 
 			void SetOrder(int position) { m_positionOrder = position; }
 

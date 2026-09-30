@@ -1,6 +1,5 @@
 #pragma once
 
-#include <awui/Object.h>
 #include <stdint.h>
 #include <vector>
 
@@ -12,7 +11,7 @@ namespace awui {
 	class String;
 
 	namespace Drawing {
-		class Image : public Object {
+		class Image {
 			friend class Graphics;
 
 		  private:
@@ -32,7 +31,7 @@ namespace awui {
 		  public:
 			Image(int width, int height);
 			Image(String name);
-			virtual ~Image();
+			~Image();
 
 			int GetWidth() const;
 			int GetHeight() const;

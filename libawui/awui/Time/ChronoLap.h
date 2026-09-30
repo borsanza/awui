@@ -1,11 +1,9 @@
 #pragma once
 
-#include <awui/Object.h>
-
 #include <chrono>
 
 namespace awui::Time {
-	class ChronoLap : public Object {
+	class ChronoLap {
 	  private:
 		// Monótono: el reloj del sistema (y high_resolution_clock, que en GCC es el mismo) salta con NTP o al cambiar
 		// la hora, y daría deltas negativos o enormes

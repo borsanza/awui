@@ -1,12 +1,16 @@
 #pragma once
 
-#include <awui/Object.h>
-
 #include <cstdint>
 
 namespace awui {
-	class Convert final : public Object {
+	class String;
+}
+
+namespace awui {
+	class Convert final {
 	  public:
+		Convert() = delete; // Solo métodos estáticos
+
 		static String ToString(int value);
 		static String ToString(float value);
 		static String ToString(float value, int precision);

@@ -2,10 +2,9 @@
 
 #include <awui/Drawing/Color.h>
 #include <awui/Drawing/LineStyle.h>
-#include <awui/Object.h>
 
 namespace awui::Drawing {
-	class Pen : public Object {
+	class Pen {
 	  private:
 		awui::Drawing::Color m_color;
 		float m_width;
@@ -15,7 +14,7 @@ namespace awui::Drawing {
 	  public:
 		Pen(awui::Drawing::Color color);
 		Pen(awui::Drawing::Color color, float width);
-		virtual ~Pen() = default;
+		~Pen() = default;
 
 		awui::Drawing::Color GetColor() const;
 		void SetColor(awui::Drawing::Color color);
