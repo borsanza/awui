@@ -123,7 +123,6 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 
 ### Dentro de `libawui/awui`
 
-- **`ContentAlignment`** está definido en `GlyphMetrics.h`, que no tiene nada que ver: iría a su propio fichero.
 - **Tiempo:** `ChronoLap`, `DateTime` y `TimeSpan` están sueltos en la raíz. Irían juntos en `Time/` (o se quedan en la raíz, pero los tres igual).
 - **`Windows/Forms/` tiene 46 ficheros sueltos mezclados:**
   - **Entrada:** `Keys.h`, `RemoteButtons.h`, `JoystickButtons.h`, `MouseButtons.h` y `Joystick/` irían a `Input/`.

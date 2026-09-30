@@ -1,5 +1,6 @@
 #pragma once
 
+#include <awui/Drawing/ContentAlignment.h>
 #include <awui/Drawing/GlyphMetrics.h>
 #include <awui/Windows/Forms/Control.h>
 
