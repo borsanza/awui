@@ -62,7 +62,7 @@ void Test2::CheckMame() {
 void Test2::CheckGames() {
 	static int lines = 0;
 	static awui::Time::TimeSpan lastTime;
-	Diagnostics::Stats *stats = Diagnostics::Stats::Instance();
+	Diagnostics::Stats *stats = GetForm()->GetStats();
 
 	awui::Time::TimeSpan time = stats->GetIdle();
 	awui::Time::DateTime begin = awui::Time::DateTime::GetNow();

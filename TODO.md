@@ -37,7 +37,6 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
   - **`FromArgb(int)`** falla con alfa de 128 o más, porque el número es negativo y `%` da restos negativos.
 - **`Random::Next(min, max)`** con `max <= min` es comportamiento indefinido (`uniform_int_distribution` con `a > b`).
 - **Eventos del mando con varios formularios** ([Application.cpp](libawui/awui/UI/Application.cpp)): se procesan dentro del bucle de formularios. Con más de uno, cada pulsación llegaría varias veces y `Controller::Refresh` se ejecutaría una vez por formulario.
-- **`Stats` con varios formularios:** es un único control que cada `Form` añade como hijo. El segundo formulario falla en el `assert` de `AddWidget`, porque ya tiene padre.
 - **`Application::Run(NULL)`:** el valor por defecto `NULL` hace que falle en `form->Init()`. Además, `SDL_Quit` se llama dos veces (con `atexit` y al final).
 - **`GL::FillRectangle` toma el extremo como incluido y `Bitmap` como excluido.** `Control::OnPaintPre` rellena el fondo con `FillRectangle(0, 0, ancho, alto)`, que pinta un píxel de más; ahora mismo lo tapa el recorte (scissor). Lo mismo pasa con `Rectangle::GetRight`/`GetBottom` (incluidos, `x + ancho - 1`) usados con coordenadas `float`. Hay que elegir un criterio (lo normal es el extremo excluido) y usarlo en todas partes.
 - **Texturas borradas sin contexto:** los destructores de `Image` y `Bitmap` llaman a `glDeleteTextures`. Si mueren después de destruir el contexto de OpenGL (al salir), esa llamada no tiene contexto.
@@ -93,7 +92,6 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 - **`Configuration`:** cada `Write` reescribe el fichero entero, y cada `Read` de una clave que falta también escribe. Al arrancar se guarda el fichero una vez por ajuste. Mejor marcarlo como modificado y guardar al final o tras un rato.
 - **`Console` y `TextWriter` con formato de `printf` sin comprobar:** `Console::WriteLine("50%")` interpreta el `%` como formato. Con `__attribute__((format(printf, …)))` el compilador avisaría de los errores de formato.
 - **`String` trabaja en bytes, no en caracteres:** `GetLength` y `Substring` pueden cortar una letra UTF-8 por la mitad. Además, `operator[]` no comprueba límites, `IndexOf(String)` con inicio negativo devuelve -1 (el de `char` empieza en 0), y el constructor implícito desde `char` permite conversiones inesperadas.
-- **`Stats`:** se configura con `#define` en la cabecera (`SHOW_FPS`…), así que los FPS se ven siempre. Debería ser un ajuste. Además, es un singleton que nunca se libera.
 - **`ImageFader`:** guarda `Bitmap *` sin ser su dueño. Si alguien borra la imagen sin llamar antes a `Clear`, queda colgando.
 - **Sample `awTest/test2`:** mide tiempos con `DateTime::GetNow` (reloj del sistema, que puede saltar). Debería usar `ChronoLap`.
 

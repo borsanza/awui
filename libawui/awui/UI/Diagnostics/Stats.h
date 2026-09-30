@@ -3,51 +3,46 @@
 #include <awui/Time/ChronoLap.h>
 #include <awui/UI/Label.h>
 #include <awui/UI/Panel.h>
-#include <awui/UI/Diagnostics/Heartbeat.h>
-#include <awui/UI/Diagnostics/Spinner.h>
-
-// #define SHOW_SPINNER
-#define SHOW_FPS
-// #define SHOW_WIDGETS
-//  #define SHOW_HEARTBEAT
-
-const float TimeToMeasure = 1.0f;
 
 namespace awui::UI::Diagnostics {
+	class Heartbeat;
+	class Spinner;
+
+	// Barra de depuración al pie del formulario (cada Form tiene la suya: Form::GetStats). Qué indicadores muestra se
+	// elige en tiempo de ejecución; por defecto, solo los FPS. La barra entera se oculta con SetVisible
 	class Stats : public Panel {
 	  private:
-		static Stats *s_instance;
-
-#ifdef SHOW_WIDGETS
-		Label *m_labelControls;
-		int m_drawedControls;
-#endif
-
-#ifdef SHOW_HEARTBEAT
+		Label *m_labelFps;
+		Label *m_labelWidgets;
 		Heartbeat *m_heartbeat;
-#endif
-
-#ifdef SHOW_FPS
-		Time::ChronoLap m_fpsChronoLap;
-		int m_fps;
-		float m_fpsPreviousElapsedTime;
-		Label *m_labelFPS;
-#endif
-
-#ifdef SHOW_SPINNER
 		Spinner *m_spinner;
-#endif
 
-		Stats();
-		virtual ~Stats();
+		Time::ChronoLap m_fpsChronoLap;
+		int m_frames;
+		float m_fpsPreviousElapsedTime;
+		int m_drawedControls;
+
+		void ShowIndicator(Control *indicator, bool show);
 
 	  public:
-		static Stats *Instance();
+		// Cada cuánto se recalculan los FPS
+		static constexpr float TimeToMeasure = 1.0f;
+
+		Stats();
+		virtual ~Stats() = default;
+
+		// Fotogramas por segundo
+		void SetShowFps(bool show);
+		// Controles pintados en el último frame
+		void SetShowWidgetCount(bool show);
+		// Parpadea con cada latido del mando a distancia
+		void SetShowHeartbeat(bool show);
+		// Gira mientras el programa sigue vivo (para ver si se ha colgado)
+		void SetShowSpinner(bool show);
 
 		void SetTimeBeforeIddle();
 		void SetTimeAfterIddle();
-
-		virtual void OnRemoteHeartbeat();
+		virtual void OnRemoteHeartbeat() override;
 		void SetDrawedControls(int drawedControls);
 	};
 } // namespace awui::UI::Diagnostics

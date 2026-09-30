@@ -63,11 +63,38 @@
                 "defaultValue": true
             },
             {
-                "key": "fps",
-                "name": "settings.fps",
-                "description": "settings.fps.desc",
-                "type": "boolean",
-                "defaultValue": false
+                "name": "settings.stats",
+                "type": "group",
+                "items": [
+                    {
+                        "key": "fps",
+                        "name": "settings.fps",
+                        "description": "settings.fps.desc",
+                        "type": "boolean",
+                        "defaultValue": false
+                    },
+                    {
+                        "key": "statsWidgets",
+                        "name": "settings.statsWidgets",
+                        "description": "settings.statsWidgets.desc",
+                        "type": "boolean",
+                        "defaultValue": false
+                    },
+                    {
+                        "key": "statsSpinner",
+                        "name": "settings.statsSpinner",
+                        "description": "settings.statsSpinner.desc",
+                        "type": "boolean",
+                        "defaultValue": false
+                    },
+                    {
+                        "key": "statsHeartbeat",
+                        "name": "settings.statsHeartbeat",
+                        "description": "settings.statsHeartbeat.desc",
+                        "type": "boolean",
+                        "defaultValue": false
+                    }
+                ]
             }
         ]
     },

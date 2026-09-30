@@ -5,107 +5,109 @@
 
 #include <awui/Drawing/Font.h>
 #include <awui/Math.h>
+#include <awui/UI/Diagnostics/Heartbeat.h>
+#include <awui/UI/Diagnostics/Spinner.h>
 
 using namespace awui::Drawing;
 using namespace awui::UI::Diagnostics;
 
-Stats *Stats::s_instance = 0;
-
 Stats::Stats() {
 	SetBackColor(Color::Transparent);
 
-	// Font font = Font("DejaVu Sans Mono", 16, FontStyle::Bold);
-	// Font font = Font("Courier New", 16, FontStyle::Bold);
-	// Font font = Font("Consolas", 16, FontStyle::Bold);
 	Font font = Font("Liberation Sans", 16, FontStyle::Bold);
-	Color backColor = Color::Transparent;
 	Color foreColor = Color::FromArgb(151, 151, 151);
 
-#ifdef SHOW_HEARTBEAT
 	m_heartbeat = new Heartbeat();
 	m_heartbeat->SetDock(DockStyle::Left);
-	m_heartbeat->SetBackColor(backColor);
+	m_heartbeat->SetBackColor(Color::Transparent);
 	m_heartbeat->SetForeColor(foreColor);
 	AddWidget(m_heartbeat);
-#endif
 
-#ifdef SHOW_SPINNER
 	m_spinner = new Spinner();
 	m_spinner->SetDock(DockStyle::Right);
-	m_spinner->SetBackColor(backColor);
+	m_spinner->SetBackColor(Color::Transparent);
 	m_spinner->SetForeColor(foreColor);
 	AddWidget(m_spinner);
-#endif
 
-#ifdef SHOW_FPS
-	m_fps = 0;
+	m_frames = 0;
 	m_fpsPreviousElapsedTime = 0;
-
-	m_labelFPS = new Label();
-	m_labelFPS->SetFont(font);
-	m_labelFPS->SetDock(DockStyle::Right);
-	m_labelFPS->SetTextAlign(ContentAlignment::MiddleRight);
-	m_labelFPS->SetBackColor(backColor);
-	m_labelFPS->SetForeColor(foreColor);
-	m_labelFPS->SetWidth(120);
-	AddWidget(m_labelFPS);
-
+	m_labelFps = new Label();
+	m_labelFps->SetFont(font);
+	m_labelFps->SetDock(DockStyle::Right);
+	m_labelFps->SetTextAlign(ContentAlignment::MiddleRight);
+	m_labelFps->SetBackColor(Color::Transparent);
+	m_labelFps->SetForeColor(foreColor);
+	m_labelFps->SetWidth(120);
+	AddWidget(m_labelFps);
 	m_fpsChronoLap.Start();
-#endif
 
-#ifdef SHOW_WIDGETS
 	m_drawedControls = 0;
-	m_labelControls = new Label();
-	m_labelControls->SetFont(font);
-	m_labelControls->SetDock(DockStyle::Right);
-	m_labelControls->SetTextAlign(ContentAlignment::MiddleRight);
-	m_labelControls->SetBackColor(backColor);
-	m_labelControls->SetForeColor(foreColor);
-	m_labelControls->SetWidth(120);
-	AddWidget(m_labelControls);
-#endif
+	m_labelWidgets = new Label();
+	m_labelWidgets->SetFont(font);
+	m_labelWidgets->SetDock(DockStyle::Right);
+	m_labelWidgets->SetTextAlign(ContentAlignment::MiddleRight);
+	m_labelWidgets->SetBackColor(Color::Transparent);
+	m_labelWidgets->SetForeColor(foreColor);
+	m_labelWidgets->SetWidth(120);
+	AddWidget(m_labelWidgets);
 
 	SetHeight(24);
+
+	// Como estaba antes con los #define: solo los FPS
+	SetShowFps(true);
+	SetShowWidgetCount(false);
+	SetShowHeartbeat(false);
+	SetShowSpinner(false);
 }
 
-Stats::~Stats() {
+// Los indicadores ocultos no ocupan sitio: se vuelve a repartir la barra
+void Stats::ShowIndicator(Control *indicator, bool show) {
+	indicator->SetVisible(show);
+	Layout();
+}
+
+void Stats::SetShowFps(bool show) {
+	ShowIndicator(m_labelFps, show);
+}
+
+void Stats::SetShowWidgetCount(bool show) {
+	ShowIndicator(m_labelWidgets, show);
+	if (show)
+		m_labelWidgets->SetText(String("%d widgets", m_drawedControls));
+}
+
+void Stats::SetShowHeartbeat(bool show) {
+	ShowIndicator(m_heartbeat, show);
+}
+
+void Stats::SetShowSpinner(bool show) {
+	ShowIndicator(m_spinner, show);
 }
 
 void Stats::SetTimeBeforeIddle() {
 }
 
 void Stats::SetTimeAfterIddle() {
-#ifdef SHOW_FPS
-	m_fps++;
-
+	m_frames++;
 	float elapsedTime = m_fpsChronoLap.GetTotalDuration();
 	if ((elapsedTime - m_fpsPreviousElapsedTime) >= TimeToMeasure) {
-		float fps = m_fps / (elapsedTime - m_fpsPreviousElapsedTime);
-		m_labelFPS->SetText(String("%.0f FPS", Math::Round(fps)));
-		m_fps = 0;
+		float fps = m_frames / (elapsedTime - m_fpsPreviousElapsedTime);
+		// Solo se vuelve a dibujar el texto si se ve
+		if (m_labelFps->GetVisible())
+			m_labelFps->SetText(String("%.0f FPS", Math::Round(fps)));
+		m_frames = 0;
 		m_fpsPreviousElapsedTime = elapsedTime;
 	}
-#endif
-}
-
-Stats *Stats::Instance() {
-	if (Stats::s_instance == 0)
-		Stats::s_instance = new Stats;
-
-	return Stats::s_instance;
 }
 
 void Stats::OnRemoteHeartbeat() {
-#ifdef SHOW_HEARTBEAT
 	m_heartbeat->OnRemoteHeartbeat();
-#endif
 }
 
 void Stats::SetDrawedControls(int drawedControls) {
-#ifdef SHOW_WIDGETS
 	if (m_drawedControls != drawedControls) {
 		m_drawedControls = drawedControls;
-		m_labelControls->SetText(String("%d widgets", m_drawedControls));
+		if (m_labelWidgets->GetVisible())
+			m_labelWidgets->SetText(String("%d widgets", m_drawedControls));
 	}
-#endif
 }

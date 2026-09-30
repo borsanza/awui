@@ -557,9 +557,19 @@ void StationUI::ApplySettings() {
 		if (form->GetSwapInterval() != vsync) {
 			form->SetSwapInterval(vsync);
 		}
-	}
 
-	Diagnostics::Stats::Instance()->SetVisible(settings.GetBool("fps"));
+		// Estadísticas en pantalla: cada indicador por separado; la barra solo se ve si hay alguno
+		Diagnostics::Stats *stats = form->GetStats();
+		bool fps = settings.GetBool("fps");
+		bool widgets = settings.GetBool("statsWidgets");
+		bool spinner = settings.GetBool("statsSpinner");
+		bool heartbeat = settings.GetBool("statsHeartbeat");
+		stats->SetShowFps(fps);
+		stats->SetShowWidgetCount(widgets);
+		stats->SetShowSpinner(spinner);
+		stats->SetShowHeartbeat(heartbeat);
+		stats->SetVisible(fps || widgets || spinner || heartbeat);
+	}
 	m_showClock = settings.GetBool("clock");
 	m_clock24 = settings.GetString("timeFormat") != "12";
 

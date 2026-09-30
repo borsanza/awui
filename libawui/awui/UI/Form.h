@@ -1,6 +1,7 @@
 #pragma once
 
 #include <awui/UI/Control.h>
+#include <awui/UI/Diagnostics/Stats.h>
 #include <awui/UI/SelectionFrame.h>
 #include <awui/UI/Toast.h>
 #include <vector>
@@ -40,7 +41,8 @@ namespace awui {
 			int m_lastHeight;
 			bool m_swapInterval;
 			SelectionFrame m_selectionFrame;
-			Toast m_toast; // Avisos en pantalla (ShowNotification)
+			Toast m_toast;				 // Avisos en pantalla (ShowNotification)
+			Diagnostics::Stats m_stats; // Barra de depuración al pie (FPS...)
 
 			void OnPaintForm();
 
@@ -52,6 +54,7 @@ namespace awui {
 		  public:
 			Form();
 			inline SelectionFrame *GetSelectionFrame() { return &m_selectionFrame; }
+			inline Diagnostics::Stats *GetStats() { return &m_stats; }
 			virtual ~Form();
 
 			void Init();

@@ -52,7 +52,7 @@ void Application::Run(Form *form = NULL) {
 
 	atexit(SDL_Quit);
 
-	Stats *stats = Stats::Instance();
+	Stats *stats = form->GetStats();
 
 	Time::ChronoLap chronoLap;
 

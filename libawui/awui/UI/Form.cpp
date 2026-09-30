@@ -51,10 +51,9 @@ Form::Form() {
 	m_lastWidth = 0;
 	m_lastHeight = 0;
 
-	Stats *stats = Stats::Instance();
-	stats->SetDock(DockStyle::None);
-	// Es único y compartido: el formulario no lo borra
-	AddWidget(stats, WidgetOwnership::Borrowed);
+	m_stats.SetDock(DockStyle::None);
+	// Es un miembro: el formulario no lo borra como hijo
+	AddWidget(&m_stats, WidgetOwnership::Borrowed);
 	AddWidget(&m_toast, WidgetOwnership::Borrowed);
 }
 
@@ -99,13 +98,11 @@ void Form::OnPaintForm() {
 
 	int r = OnPaintPre(0, 0, GetWidth(), GetHeight(), &gl, true);
 
-	Stats *stats = Stats::Instance();
-	stats->SetDrawedControls(r);
+	m_stats.SetDrawedControls(r);
 }
 
 void Form::OnRemoteHeartbeat() {
-	Stats *stats = Stats::Instance();
-	stats->OnRemoteHeartbeat();
+	m_stats.OnRemoteHeartbeat();
 }
 
 void Form::OnTickPre(float deltaSeconds) {
@@ -116,7 +113,7 @@ void Form::OnTickPre(float deltaSeconds) {
 void Form::OnTick(float deltaSeconds) {
 	// Estadísticas y avisos, por encima de todo (los últimos se pintan encima). Solo se recolocan si alguien ha
 	// añadido un control después: moverlos en cada frame recalculaba el foco y la disposición sin necesidad
-	Stats *stats = Stats::Instance();
+	Stats *stats = &m_stats;
 	int count = GetCount();
 	if ((IndexOf(stats) != count - 2) || (IndexOf(&m_toast) != count - 1)) {
 		MoveToEnd(stats);
