@@ -64,7 +64,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### Pintado
 
-- **OpenGL antiguo:** todo usa el modo inmediato (`glBegin`/`glEnd`, sin shaders), que no existe en perfiles modernos ni en OpenGL ES. Importa si algún día stationTV va a una Raspberry Pi o a una tele Android. [Shader.cpp](libawui/awui/Drawing/Shader.cpp) es un experimento sin usar: llama a `glewInit` en el constructor y carga un `shader.glfs` fijo.
+- **OpenGL antiguo:** todo usa el modo inmediato (`glBegin`/`glEnd`, sin shaders), que no existe en perfiles modernos ni en OpenGL ES. Importa si algún día stationTV va a una Raspberry Pi o a una tele Android. [Shader.cpp](libawui/awui/OpenGL/Shader.cpp) es un experimento sin usar: llama a `glewInit` en el constructor y carga un `shader.glfs` fijo.
 - **Estado de OpenGL a mano:** cada `DrawImageGL` y `Bitmap::OnPaint` consulta y restaura `GL_TEXTURE_2D`, `GL_BLEND` y `GL_DEPTH_TEST` con `glIsEnabled`. Las dos versiones de `DrawImageGL` están duplicadas.
 - **Dos formas de mezclar:** `Image` (cairo) sube el alfa premultiplicado y `Bitmap` (SDL_image) sin premultiplicar, cada uno con su `glBlendFunc`.
 - **`OnPaint(OpenGL::GL *gl)`** recibe siempre `NULL`: el parámetro no sirve.
@@ -123,7 +123,6 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 
 ### Dentro de `libawui/awui`
 
-- **`Drawing/Shader`** es OpenGL: iría a `OpenGL/`, si no se borra (ver "OpenGL antiguo").
 - **`ContentAlignment`** está definido en `GlyphMetrics.h`, que no tiene nada que ver: iría a su propio fichero.
 - **Tiempo:** `ChronoLap`, `DateTime` y `TimeSpan` están sueltos en la raíz. Irían juntos en `Time/` (o se quedan en la raíz, pero los tres igual).
 - **`Windows/Forms/` tiene 46 ficheros sueltos mezclados:**
@@ -172,7 +171,7 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 La librería tiene que compilar y funcionar igual en Windows, aunque todavía no haya build.
 
 - **Montar la build:** probar al menos a compilar con MinGW (`mingw-w64`) para detectar lo que no compila.
-- **Rutas UTF-8:** awui pasa las rutas en UTF-8 como `char*` a `fopen`, `std::fstream` y `std::filesystem` (en `IO/File`, `IO/FileStream`, `Localization`, `SettingsStore` y `Drawing/Shader`). En Windows esas funciones interpretan la ruta en la página de códigos ANSI, y una ruta con "ñ" fallaría. Lo más sencillo es un manifiesto con `activeCodePage = UTF-8` en el ejecutable (Windows 10 1903 o posterior). Si no, habría que convertir a UTF-16 dentro de `File`/`FileStream`.
+- **Rutas UTF-8:** awui pasa las rutas en UTF-8 como `char*` a `fopen`, `std::fstream` y `std::filesystem` (en `IO/File`, `IO/FileStream`, `Localization`, `SettingsStore` y `OpenGL/Shader`). En Windows esas funciones interpretan la ruta en la página de códigos ANSI, y una ruta con "ñ" fallaría. Lo más sencillo es un manifiesto con `activeCodePage = UTF-8` en el ejecutable (Windows 10 1903 o posterior). Si no, habría que convertir a UTF-16 dentro de `File`/`FileStream`.
 - **`opendir`:** `Localization::GetLanguages` usa `opendir`/`readdir`, que no existen con MSVC. Mejor `std::filesystem::directory_iterator`.
 - **`Directory.cpp`** solo contempla `__linux__` y `_WIN32`: en macOS no compila.
 - **Contexto de OpenGL:** `Application::Run` pide un contexto 3.3 de compatibilidad. macOS no lo da (solo 2.1, o 3.2+ *core*); va unido a pasar a OpenGL moderno.

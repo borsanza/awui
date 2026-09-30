@@ -1,5 +1,5 @@
 /**
- * awui/Drawing/Shader.cpp
+ * awui/OpenGL/Shader.cpp
  *
  * Copyright (C) 2016 Borja Sánchez Zamorano
  */
@@ -11,7 +11,7 @@
 #include <GL/glew.h>
 #include <fstream>
 
-using namespace awui::Drawing;
+using namespace awui::OpenGL;
 
 Shader::Shader() {
 	glewInit();

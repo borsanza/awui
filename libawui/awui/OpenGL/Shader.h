@@ -6,7 +6,7 @@
 typedef unsigned int GLuint;
 typedef unsigned int GLenum;
 
-namespace awui::Drawing {
+namespace awui::OpenGL {
 	class Shader : public Object {
 	  private:
 		GLuint m_gProgramID;
@@ -19,4 +19,4 @@ namespace awui::Drawing {
 
 		GLuint LoadShaderFromFile(std::string path, GLenum shaderType);
 	};
-} // namespace awui::Drawing
+} // namespace awui::OpenGL
