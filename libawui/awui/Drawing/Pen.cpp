@@ -4,12 +4,10 @@
 #include "Pen.h"
 
 #include <awui/Drawing/Color.h>
-#include <awui/Drawing/Drawing2D/LineCap.h>
 #include <stdlib.h>
 
 using namespace awui;
 using namespace awui::Drawing;
-using namespace awui::Drawing::Drawing2D;
 
 Pen::Pen(Color color) {
 	m_color = color;
@@ -45,7 +43,7 @@ void Pen::SetLineJoin(LineJoin lineJoin) {
 	m_lineJoin = lineJoin;
 }
 
-LineJoin Pen::GetLineJoin() {
+LineJoin Pen::GetLineJoin() const {
 	return m_lineJoin;
 }
 
@@ -53,6 +51,6 @@ void Pen::SetLineCap(LineCap lineCap) {
 	m_lineCap = lineCap;
 }
 
-LineCap Pen::GetLineCap() {
+LineCap Pen::GetLineCap() const {
 	return m_lineCap;
 }

@@ -14,7 +14,6 @@
 #include <cairo.h>
 
 using namespace awui::Drawing;
-using namespace awui::Drawing::Drawing2D;
 
 Graphics::Graphics() {
 	m_cairo_surface = NULL;

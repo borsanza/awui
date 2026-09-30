@@ -123,7 +123,6 @@ third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSy
 
 ### Dentro de `libawui/awui`
 
-- **`Drawing/Drawing2D/`** solo tiene dos enums (`LineCap`, `LineJoin`): irían a `Drawing/` o dentro de `Pen.h`.
 - **`Drawing/Shader`** es OpenGL: iría a `OpenGL/`, si no se borra (ver "OpenGL antiguo").
 - **`ContentAlignment`** está definido en `GlyphMetrics.h`, que no tiene nada que ver: iría a su propio fichero.
 - **Tiempo:** `ChronoLap`, `DateTime` y `TimeSpan` están sueltos en la raíz. Irían juntos en `Time/` (o se quedan en la raíz, pero los tres igual).
