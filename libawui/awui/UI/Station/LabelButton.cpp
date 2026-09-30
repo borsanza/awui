@@ -19,7 +19,7 @@ static const float MaxSlideBack = 80.0f;
 LabelButton::LabelButton() {
 	m_time = 0.0f;
 	m_lastSelected = false;
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 	SetTextAlign(ContentAlignment::MiddleLeft);
 }
 

@@ -23,7 +23,7 @@ SplitContainer::SplitContainer() {
 
 	SetName("SplitContainer");
 
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 
 	m_panel1 = new Panel();
 	m_splitter = new Splitter();

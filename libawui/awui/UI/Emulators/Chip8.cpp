@@ -32,12 +32,12 @@ Chip8::~Chip8() {
 
 void Chip8::CheckBackcolor() {
 	if (m_cpu->GetChip8Mode() == MEGACHIP8)
-		SetBackColor(Color::FromArgb(0, 0, 0));
+		SetBackColor(Color::Black);
 	else {
 		if (!Chip8::s_invertedColors)
 			SetBackColor(Color::FromArgb(163, 218, 2));
 		else
-			SetBackColor(Color::FromArgb(0, 0, 0));
+			SetBackColor(Color::Black);
 	}
 }
 

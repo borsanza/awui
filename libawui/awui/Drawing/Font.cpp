@@ -48,11 +48,3 @@ awui::String Font::ToString() const {
 	value = String("[Font: Name=") + m_font + ", Size=" + Convert::ToString(m_size) + "]";
 	return value;
 }
-
-Font &Font::operator=(const Font &other) {
-	m_font = other.m_font;
-	m_size = other.m_size;
-	m_style = other.m_style;
-
-	return *this;
-}

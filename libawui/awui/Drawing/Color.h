@@ -7,18 +7,24 @@ namespace awui::Drawing {
 	// Tipo de valor: sin herencia ni métodos virtuales (se copia y se guarda por valor en todas partes)
 	class Color {
 	  private:
-		union {
-			struct {
-				uint8_t m_r, m_g, m_b, m_a;
-			};
-			struct {
-				uint32_t m_color32;
-			};
-			uint8_t m_color[4];
-		};
+		uint8_t m_r, m_g, m_b, m_a;
+
+		// Para los colores con nombre (constexpr: sin coste al arrancar)
+		struct Argb {};
+		constexpr Color(Argb, uint8_t a, uint8_t r, uint8_t g, uint8_t b) : m_r(r), m_g(g), m_b(b), m_a(a) {}
 
 	  public:
-		Color();
+		// Colores con nombre (los mismos valores que System.Drawing.Color de .NET)
+		static const Color Transparent;
+		static const Color Black;
+		static const Color White;
+		static const Color Gray;
+		static const Color Red;
+		static const Color Green;
+		static const Color Blue;
+		static const Color Yellow;
+
+		constexpr Color() : m_r(0), m_g(0), m_b(0), m_a(0) {}
 		Color(uint32_t color);
 		Color(float r, float g, float b, float a = 1.0f);
 
@@ -38,8 +44,15 @@ namespace awui::Drawing {
 		static Color FromArgb(uint8_t red, uint8_t green, uint8_t blue);
 		static Color FromArgb(uint8_t alpha, uint8_t red, uint8_t green, uint8_t blue);
 
-		Color &operator=(const Color &other);
-
-		bool operator!=(const Color &b) const;
+		bool operator==(const Color &other) const = default;
 	};
+
+	inline constexpr Color Color::Transparent = Color(Color::Argb{}, 0, 0, 0, 0);
+	inline constexpr Color Color::Black = Color(Color::Argb{}, 255, 0, 0, 0);
+	inline constexpr Color Color::White = Color(Color::Argb{}, 255, 255, 255, 255);
+	inline constexpr Color Color::Gray = Color(Color::Argb{}, 255, 128, 128, 128);
+	inline constexpr Color Color::Red = Color(Color::Argb{}, 255, 255, 0, 0);
+	inline constexpr Color Color::Green = Color(Color::Argb{}, 255, 0, 128, 0);
+	inline constexpr Color Color::Blue = Color(Color::Argb{}, 255, 0, 0, 255);
+	inline constexpr Color Color::Yellow = Color(Color::Argb{}, 255, 255, 255, 0);
 } // namespace awui::Drawing

@@ -20,7 +20,7 @@ FormGOB::~FormGOB() {
 }
 
 void FormGOB::InitializeComponent() {
-	SetBackColor(awui::Drawing::Color::FromArgb(0, 0, 0));
+	SetBackColor(awui::Drawing::Color::Black);
 
 	m_renderer = new Renderer();
 	m_renderer->SetClearColor(0xaad1feff);

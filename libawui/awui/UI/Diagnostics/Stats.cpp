@@ -12,13 +12,13 @@ using namespace awui::UI::Diagnostics;
 Stats *Stats::s_instance = 0;
 
 Stats::Stats() {
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 
 	// Font font = Font("DejaVu Sans Mono", 16, FontStyle::Bold);
 	// Font font = Font("Courier New", 16, FontStyle::Bold);
 	// Font font = Font("Consolas", 16, FontStyle::Bold);
 	Font font = Font("Liberation Sans", 16, FontStyle::Bold);
-	Color backColor = Color::FromArgb(0, 0, 0, 0);
+	Color backColor = Color::Transparent;
 	Color foreColor = Color::FromArgb(151, 151, 151);
 
 #ifdef SHOW_HEARTBEAT

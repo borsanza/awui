@@ -15,7 +15,7 @@ using namespace awui::Drawing;
 using namespace awui::UI;
 
 OnScreenKeyboard::OnScreenKeyboard() {
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 	int pos = 0;
 	const char *letras = "abcdefghijklmnopqrstuvwxyz1234567890";
 
@@ -28,8 +28,8 @@ OnScreenKeyboard::OnScreenKeyboard() {
 			button->SetLocation(30 + j * 70, 30 + i * 55);
 			button->SetSize(50, 50);
 			button->SetFont(font);
-			button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-			button->SetForeColor(Color::FromArgb(255, 255, 255));
+			button->SetBackColor(Color::Transparent);
+			button->SetForeColor(Color::White);
 			char frase[2];
 			frase[0] = letras[pos];
 			frase[1] = 0;
@@ -55,8 +55,8 @@ OnScreenKeyboard::OnScreenKeyboard() {
 	button->SetLocation(30, 360);
 	button->SetSize(120, 50);
 	button->SetFont(font);
-	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	button->SetForeColor(Color::FromArgb(255, 255, 255));
+	button->SetBackColor(Color::Transparent);
+	button->SetForeColor(Color::White);
 	button->SetText("SPACE");
 	AddWidget(button);
 
@@ -65,8 +65,8 @@ OnScreenKeyboard::OnScreenKeyboard() {
 	button->SetLocation(170, 360);
 	button->SetSize(120, 50);
 	button->SetFont(font);
-	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	button->SetForeColor(Color::FromArgb(255, 255, 255));
+	button->SetBackColor(Color::Transparent);
+	button->SetForeColor(Color::White);
 	button->SetText("DELETE");
 	AddWidget(button);
 
@@ -75,8 +75,8 @@ OnScreenKeyboard::OnScreenKeyboard() {
 	button->SetLocation(310, 360);
 	button->SetSize(120, 50);
 	button->SetFont(font);
-	button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	button->SetForeColor(Color::FromArgb(255, 255, 255));
+	button->SetBackColor(Color::Transparent);
+	button->SetForeColor(Color::White);
 	button->SetText("CLEAR");
 	AddWidget(button);
 }

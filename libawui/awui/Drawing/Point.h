@@ -1,6 +1,8 @@
 #pragma once
 
-#include <awui/Object.h>
+namespace awui {
+	class String;
+}
 
 namespace awui::Drawing {
 	class Size;
@@ -15,7 +17,6 @@ namespace awui::Drawing {
 		Point();
 		Point(const Size sz);
 		Point(float x, float y);
-		~Point();
 
 		inline float GetX() const { return m_x; }
 		inline float GetLeft() const { return m_x; }
@@ -27,7 +28,7 @@ namespace awui::Drawing {
 		inline float GetBottom() const { return m_y; }
 		void SetY(float y);
 
-		Point &operator=(const Point &other);
+		bool operator==(const Point &other) const = default;
 
 		String ToString() const;
 

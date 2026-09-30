@@ -28,22 +28,12 @@ Point::Point(float x, float y) {
 	m_y = y;
 }
 
-Point::~Point() {
-}
-
 void Point::SetX(float x) {
 	m_x = x;
 }
 
 void Point::SetY(float y) {
 	m_y = y;
-}
-
-Point &Point::operator=(const Point &other) {
-	m_x = other.m_x;
-	m_y = other.m_y;
-
-	return *this;
 }
 
 awui::String Point::ToString() const {

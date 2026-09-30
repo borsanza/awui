@@ -23,7 +23,7 @@ Button::Button() {
 	m_label.SetTextAlign(ContentAlignment::MiddleCenter);
 
 	SetSize(75, 23);
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 	SetFocusable(true);
 }
 

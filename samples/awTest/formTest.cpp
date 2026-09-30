@@ -43,7 +43,7 @@ void FormTest::InitializeComponent() {
 	Font font = Font("sans-serif", 34, FontStyle::Bold);
 	m_buttonL = new Button();
 	m_buttonL->SetDock(DockStyle::None);
-	m_buttonL->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	m_buttonL->SetBackColor(Color::Transparent);
 	m_buttonL->SetLocation(500, 50);
 	m_buttonL->SetSize(Size(200, 48));
 	m_buttonL->SetText("SILVIA");

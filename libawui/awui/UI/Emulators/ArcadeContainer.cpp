@@ -23,7 +23,7 @@ using namespace awui::UI::Station;
 using namespace awui::UI::Input;
 
 ArcadeContainer::ArcadeContainer() {
-	SetBackColor(Color::FromArgb(0, 0, 0));
+	SetBackColor(Color::Black);
 	SetDrawShadow(false);
 	SetPreventChangeControl(true);
 	m_station = NULL;

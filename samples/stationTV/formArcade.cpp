@@ -26,7 +26,7 @@ FormArcade::~FormArcade() {
 }
 
 void FormArcade::InitializeComponent() {
-	SetBackColor(Color::FromArgb(0, 0, 0));
+	SetBackColor(Color::Black);
 
 	// Partidas (.sav, estados) fuera de roms/, que puede ser de solo lectura: en la carpeta de datos del usuario
 	// o en la que diga "saveDirectory" en settings.json

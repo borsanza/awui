@@ -6,6 +6,8 @@
 
 #include "Rectangle.h"
 
+#include <algorithm>
+
 #include <awui/Convert.h>
 #include <awui/Drawing/Point.h>
 #include <awui/Drawing/Size.h>
@@ -26,9 +28,6 @@ Rectangle::Rectangle(const Point &location, const Size &size) {
 Rectangle::Rectangle(float x, float y, float width, float height) {
 	m_location = Point(x, y);
 	m_size = Size(width, height);
-}
-
-Rectangle::~Rectangle() {
 }
 
 void Rectangle::SetWidth(float width) {
@@ -93,13 +92,6 @@ void Rectangle::Offset(float x, float y) {
 	SetY(GetY() + y);
 }
 
-Rectangle &Rectangle::operator=(const Rectangle &other) {
-	m_size = other.m_size;
-	m_location = other.m_location;
-
-	return *this;
-}
-
 Rectangle Rectangle::FromLTRB(float left, float top, float right, float bottom) {
 	return Rectangle(left, top, right - left + 1.0f, bottom - top + 1.0f);
 }
@@ -126,4 +118,30 @@ awui::String Rectangle::ToString() const {
 	value = String("{X=") + Convert::ToString(m_location.GetX()) + ",Y=" + Convert::ToString(m_location.GetY()) + ",Width=" + Convert::ToString(m_size.GetWidth()) +
 			", Height=" + Convert::ToString(m_size.GetHeight()) + "}";
 	return value;
+}
+
+bool Rectangle::IsEmpty() const {
+	return (GetWidth() <= 0.0f) || (GetHeight() <= 0.0f);
+}
+
+bool Rectangle::Contains(float x, float y) const {
+	return (x >= GetX()) && (x < GetX() + GetWidth()) && (y >= GetY()) && (y < GetY() + GetHeight());
+}
+
+bool Rectangle::Contains(const Point &point) const {
+	return Contains(point.GetX(), point.GetY());
+}
+
+Rectangle Rectangle::Union(const Rectangle &rectangle1, const Rectangle &rectangle2) {
+	if (rectangle1.IsEmpty())
+		return rectangle2;
+
+	if (rectangle2.IsEmpty())
+		return rectangle1;
+
+	float left = std::min(rectangle1.GetX(), rectangle2.GetX());
+	float top = std::min(rectangle1.GetY(), rectangle2.GetY());
+	float right = std::max(rectangle1.GetX() + rectangle1.GetWidth(), rectangle2.GetX() + rectangle2.GetWidth());
+	float bottom = std::max(rectangle1.GetY() + rectangle1.GetHeight(), rectangle2.GetY() + rectangle2.GetHeight());
+	return Rectangle(left, top, right - left, bottom - top);
 }

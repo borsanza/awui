@@ -25,7 +25,7 @@ using namespace awui::UI::Events;
 
 MenuButton::MenuButton(StationUI *station) {
 	m_node = NULL;
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 	m_station = station;
 	SetFocusable(true);
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
@@ -57,7 +57,7 @@ void MenuButton::OnMouseDown(MouseEventArgs *e) {
 void MenuButton::OnPaint(GL *gl) {
 	Form *form = GetForm();
 	if (form && (form->GetChildFocused() == this)) {
-		SetForeColor(Color::FromArgb(255, 255, 255));
+		SetForeColor(Color::White);
 	} else {
 		SetForeColor(Color::FromArgb(199, 199, 199));
 	}

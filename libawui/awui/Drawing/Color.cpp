@@ -12,9 +12,6 @@
 using namespace awui;
 using namespace awui::Drawing;
 
-Color::Color() : m_a(0), m_r(0), m_g(0), m_b(0) {
-}
-
 Color::Color(uint32_t color) {
 	m_r = (color >> 24) & 0xFF;
 	m_g = (color >> 16) & 0xFF;
@@ -130,19 +127,4 @@ Color Color::FromArgb(uint8_t alpha, uint8_t red, uint8_t green, uint8_t blue) {
 	color.m_b = Math::Clamp(blue, 0, 255);
 
 	return color;
-}
-
-Color &Color::operator=(const Color &other) {
-	if (this != &other) {
-		m_r = other.m_r;
-		m_g = other.m_g;
-		m_b = other.m_b;
-		m_a = other.m_a;
-	}
-
-	return *this;
-}
-
-bool Color::operator!=(const Color &b) const {
-	return ((m_r != b.m_r) || (m_g != b.m_g) || (m_b != b.m_b) || (m_a != b.m_a));
 }

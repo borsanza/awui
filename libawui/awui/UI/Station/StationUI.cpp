@@ -76,14 +76,14 @@ StationUI::StationUI() {
 	m_settings->AddOnExitListener(this);
 	m_settings->SetDock(DockStyle::None);
 	m_settings->SetFont(font2);
-	m_settings->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	m_settings->SetBackColor(Color::Transparent);
 	m_settings->SetSize(44, 46);
 	m_controlBase->AddWidget(m_settings);
 
 	m_clock = new Label();
 	m_clock->SetDock(DockStyle::None);
 	m_clock->SetFont(fontClock);
-	m_clock->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	m_clock->SetBackColor(Color::Transparent);
 	m_clock->SetForeColor(Color::FromArgb(151, 151, 151));
 	m_clock->SetTextAlign(ContentAlignment::TopCenter);
 	m_clock->SetText("11:59");

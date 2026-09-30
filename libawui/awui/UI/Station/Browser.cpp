@@ -15,7 +15,7 @@ using namespace awui::UI::Station;
 #define GRADIENT_WIDTH 64
 
 Browser::Browser() {
-	// SetBackColor(Color::FromArgb(0, 0, 0));
+	// SetBackColor(Color::Black);
 	m_page = NULL;
 
 	m_gradientUp.SetColor(0, ColorF::FromArgb(0, 0, 0, 0));

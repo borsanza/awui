@@ -28,7 +28,7 @@ ConfigButton::ConfigButton(TypeButton typeButton) {
 	m_boolValue = false;
 	m_selected = -1;
 
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 	SetFont(Font("Liberation Sans", 28, FontStyle::Bold));
 	SetDock(DockStyle::None);
 	SetFocusable(true);
@@ -45,7 +45,7 @@ ConfigButton::~ConfigButton() {
 void ConfigButton::OnPaint(GL *gl) {
 	Form *form = GetForm();
 	if (form && (form->GetChildFocused() == this)) {
-		SetForeColor(Color::FromArgb(255, 255, 255));
+		SetForeColor(Color::White);
 	} else {
 		SetForeColor(Color::FromArgb(199, 199, 199));
 	}

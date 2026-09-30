@@ -130,16 +130,3 @@ ColorF ColorF::FromArgb(float alpha, float red, float green, float blue) {
 
 	return color;
 }
-
-ColorF &ColorF::operator=(const ColorF &other) {
-	m_r = other.m_r;
-	m_g = other.m_g;
-	m_b = other.m_b;
-	m_a = other.m_a;
-
-	return *this;
-}
-
-bool ColorF::operator!=(const ColorF &b) const {
-	return ((m_r != b.m_r) || (m_g != b.m_g) || (m_b != b.m_b) || (m_a != b.m_a));
-}

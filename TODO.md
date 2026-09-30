@@ -54,8 +54,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 ### Estructura
 
 - **Recursos relativos al directorio de trabajo:** `images/button.png` (en `Control::GetSelectedBitmap`), `./images/*.jpg`, `roms/zxspectrum/48.rom`, `lang/`… Si se arranca el programa desde otra carpeta, no encuentra nada. Hace falta una carpeta de recursos (con `SDL_GetBasePath` o configurable).
-- **`Object` donde no hace falta:** `Convert`, `Pen`, `Font`, `Graphics`, `Effect`, `Application` y `Controller` heredan de `Object` (vtable) sin usarlo. `Convert` y `Application` solo tienen métodos estáticos.
-- **Tipos valor con código de sobra:** `Point`, `Size`, `Rectangle`, `Color`, `ColorF` y `Font` tienen destructores vacíos y `operator=` escritos a mano que no hacen falta. Además, les faltan `operator==` (en `Color` solo hay `!=`), `Rectangle::Contains(Point)`, `IsEmpty` y `Union`, y colores con nombre (`Color::White`…).
+- **`Object` donde no hace falta:** `Convert`, `Pen`, `Graphics`, `Effect`, `Application` y `Controller` heredan de `Object` (vtable) sin usarlo. `Convert` y `Application` solo tienen métodos estáticos.
 - **Escalas de `ColorF`:** `FromArgb` recorta de 0 a 255, pero `Bitmap` e `ImageFader` lo usan de 0 a 1 (`glColor4f`), y `Gradient` de 0 a 255 (`glColor4ub`). Hay que unificar el rango (lo natural es 0 a 1).
 - **Tres formas de avisar de eventos:** interfaces (`IRemoteListener`, `IExitListener`), `std::function` (en el código nuevo) y métodos virtuales, cada una en una parte del código. Conviene elegir una.
 

@@ -2,7 +2,10 @@
 
 #include <awui/Drawing/Point.h>
 #include <awui/Drawing/Size.h>
-#include <awui/Object.h>
+
+namespace awui {
+	class String;
+}
 
 namespace awui::Drawing {
 	// Tipo de valor: sin herencia ni métodos virtuales (se copia y se guarda por valor en todas partes)
@@ -15,7 +18,6 @@ namespace awui::Drawing {
 		Rectangle();
 		Rectangle(const Point &location, const Size &size);
 		Rectangle(float x, float y, float width, float height);
-		~Rectangle();
 
 		inline float GetWidth() const { return m_size.GetWidth(); }
 		inline float GetHeight() const { return m_size.GetHeight(); }
@@ -46,7 +48,15 @@ namespace awui::Drawing {
 		static Rectangle Intersect(const Rectangle &rectangle1, const Rectangle &rectangle2);
 		void Intersect(const Rectangle &rectangle);
 
-		Rectangle &operator=(const Rectangle &other);
+		bool operator==(const Rectangle &other) const = default;
+
+		// Sin área (ancho o alto nulos)
+		bool IsEmpty() const;
+		// El punto está dentro (de X a X + ancho sin incluir, como los píxeles que ocupa)
+		bool Contains(float x, float y) const;
+		bool Contains(const Point &point) const;
+		// El rectángulo más pequeño que contiene a los dos (uno vacío no cuenta)
+		static Rectangle Union(const Rectangle &rectangle1, const Rectangle &rectangle2);
 
 		String ToString() const;
 	};

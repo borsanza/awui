@@ -59,8 +59,8 @@ Control::Control() {
 	m_ownedByParent = true;
 	m_needRefresh = 1;
 	m_dock = DockStyle::None;
-	m_backColor = Color::FromArgb(0, 0, 0, 0);
-	m_foreColor = Color::FromArgb(255, 255, 255);
+	m_backColor = Color::Transparent;
+	m_foreColor = Color::White;
 	OnResizePre();
 	m_font = new Font("sans-serif", 12);
 	m_scissorEnabled = true;
@@ -992,7 +992,7 @@ Bitmap *Control::GetSelectedBitmap() {
 		String file = IO::Directory::GetWorkingDirectory();
 		Bitmap *bitmap = new Bitmap(file + "/images/button.png");
 		bitmap->SetDock(DockStyle::None);
-		bitmap->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+		bitmap->SetBackColor(Color::Transparent);
 		bitmap->SetFixedMargins(28, 25, 28, 24);
 		bitmap->SetLocation(0, 0);
 		bitmap->SetSize(Drawing::Size(97, 97));

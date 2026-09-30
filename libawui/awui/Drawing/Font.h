@@ -1,6 +1,5 @@
 #pragma once
 
-#include <awui/Object.h>
 #include <awui/String.h>
 
 namespace awui::Drawing {
@@ -14,7 +13,8 @@ namespace awui::Drawing {
 		};
 	};
 
-	class Font : public Object {
+	// Tipo de valor: sin herencia ni métodos virtuales (se copia y se guarda por valor en todas partes)
+	class Font {
 	  private:
 		String m_font;
 		float m_size;
@@ -30,8 +30,8 @@ namespace awui::Drawing {
 		bool GetUnderline() const;
 		bool GetStrikeout() const;
 		float GetSize() const;
-		virtual String ToString() const override;
+		String ToString() const;
 
-		Font &operator=(const Font &other);
+		bool operator==(const Font &other) const = default;
 	};
 } // namespace awui::Drawing

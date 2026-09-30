@@ -27,8 +27,6 @@ namespace awui::Drawing {
 		static ColorF FromArgb(float red, float green, float blue);
 		static ColorF FromArgb(float alpha, float red, float green, float blue);
 
-		ColorF &operator=(const ColorF &other);
-
-		bool operator!=(const ColorF &b) const;
+		bool operator==(const ColorF &other) const = default;
 	};
 } // namespace awui::Drawing

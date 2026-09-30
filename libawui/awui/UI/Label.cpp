@@ -23,10 +23,10 @@ Label::Label() {
 	m_scrolled = 0;
 	m_image = NULL;
 	m_g = NULL;
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 	SetSize(75, 23);
 	m_textAlign = ContentAlignment::TopLeft;
-	SetForeColor(Color::FromArgb(255, 255, 255));
+	SetForeColor(Color::White);
 }
 
 Label::~Label() {

@@ -24,9 +24,6 @@ Size::Size(float width, float height) {
 	m_height = height;
 }
 
-Size::~Size() {
-}
-
 float Size::GetWidth() const {
 	return m_width;
 }
@@ -41,13 +38,6 @@ float Size::GetHeight() const {
 
 void Size::SetHeight(float height) {
 	m_height = (height < 0.0f) ? 0.0f : height;
-}
-
-Size &Size::operator=(const Size &other) {
-	m_width = other.m_width;
-	m_height = other.m_height;
-
-	return *this;
 }
 
 awui::String Size::ToString() const {

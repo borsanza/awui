@@ -27,8 +27,8 @@ Toast::Toast() {
 	m_opacity = 0.0f;
 	m_anchorLeft = 0;
 	m_anchorBottom = 0;
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	SetForeColor(Color::FromArgb(255, 255, 255));
+	SetBackColor(Color::Transparent);
+	SetForeColor(Color::White);
 	SetFont(Font("Liberation Sans", 24, FontStyle::Bold));
 	SetDrawShadow(false);
 	SetScissorEnabled(false); // Al entrar y salir asoma por debajo del formulario

@@ -23,7 +23,7 @@ Test1::Test1() {
 }
 
 void Test1::InitializeComponent() {
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 	SetDock(DockStyle::Fill);
 
 	m_splitter = new SplitContainer();
@@ -36,8 +36,8 @@ void Test1::InitializeComponent() {
 
 	Control *control1 = m_splitter->GetPanel1();
 	Control *control2 = m_splitter->GetPanel2();
-	control1->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-	control2->SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	control1->SetBackColor(Color::Transparent);
+	control2->SetBackColor(Color::Transparent);
 
 
 	AddButtonEffect(new EffectLinear(), control1, 5);
@@ -67,8 +67,8 @@ void Test1::AddButtonEffect(Effect *effect, Control *control, int posy) {
 		button->SetDock(DockStyle::None);
 		button->SetText(effect->GetName());
 		button->SetSize(150, 52);
-		button->SetBackColor(Color::FromArgb(0, 0, 0, 0));
-		button->SetForeColor(Color::FromArgb(255, 255, 255));
+		button->SetBackColor(Color::Transparent);
+		button->SetForeColor(Color::White);
 		button->SetFont(Font("Monospace", 20, FontStyle::Bold));
 		button->SetTop(y);
 		control->AddWidget(button);

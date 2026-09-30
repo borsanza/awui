@@ -16,7 +16,7 @@ using namespace awui::UI::Events;
 
 Splitter::Splitter() {
 	m_orientation = SplitContainer::Orientation::Horizontal;
-	SetBackColor(Color::FromArgb(255, 255, 255));
+	SetBackColor(Color::White);
 	SetName("Splitter");
 	SetSize(20, 200);
 	m_mouseActive = false;

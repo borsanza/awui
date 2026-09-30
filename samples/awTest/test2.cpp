@@ -25,7 +25,7 @@ Test2::Test2() {
 }
 
 void Test2::InitializeComponent() {
-	SetBackColor(Color::FromArgb(0, 0, 0, 0));
+	SetBackColor(Color::Transparent);
 	SetDock(DockStyle::Left);
 	SetSize(480, 400);
 
