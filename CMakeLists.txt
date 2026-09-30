@@ -54,5 +54,6 @@ if(AWUI_SANITIZE)
 	endif()
 endif()
 
+add_subdirectory(third_party)
 add_subdirectory(libawui)
 add_subdirectory(samples)

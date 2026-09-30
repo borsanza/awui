@@ -132,11 +132,9 @@ libemulation/          núcleos de los emuladores (hoy Emulation/): Z80, Master 
 libgob/                motor 3D (hoy awui/GOB/), solo lo usa gameOfBlocks
 samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los emuladores
                        (hoy UI/Emulators), formArcade, main, lang, menu-settings.json
-third_party/emu2413/   código de terceros sin modificar (hoy Emulation/MasterSystem/emu2413)
 ```
 
 - **Dependencias en su sitio:** la librería de interfaz no sabría nada de ROMs, partidas ni ajustes de stationTV, y los emuladores se podrían probar sin ventana (como ya hacen los arneses).
-- **Código de terceros aparte:** con emu2413 en `third_party/`, la excepción de UBSan de [libawui/CMakeLists.txt](libawui/CMakeLists.txt) apunta a una carpeta en vez de a un fichero dentro de nuestro código.
 
 ### Raíz del repositorio
 

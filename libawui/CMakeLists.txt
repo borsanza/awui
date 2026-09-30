@@ -16,11 +16,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/awui" FILES ${LIBAWUI_SOURCES} ${
 
 add_library(awui SHARED ${LIBAWUI_SOURCES} ${LIBAWUI_HEADERS})
 
-# emu2413 (externo, sin modificar) desplaza negativos a la izquierda para duplicarlos: en C es indefinido, pero
-# todos los compiladores lo hacen bien. Se quita esa comprobación para que UBSan solo avise de lo nuestro
-if(AWUI_SANITIZE AND NOT MSVC)
-	set_source_files_properties(awui/Emulation/MasterSystem/emu2413/emu2413.c PROPERTIES COMPILE_OPTIONS "-fno-sanitize=shift")
-endif()
+# Código de terceros (third_party/): solo lo usan ficheros .cpp de awui, así que es una dependencia privada
+target_link_libraries(awui PRIVATE emu2413)
 
 # Con MSVC exporta todos los símbolos de la DLL (MinGW ya lo hace por defecto)
 set_target_properties(awui PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)

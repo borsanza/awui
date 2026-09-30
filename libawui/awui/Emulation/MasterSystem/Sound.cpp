@@ -9,7 +9,7 @@
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/Common/AudioOutput.h>
 #include <awui/Emulation/MasterSystem/VDP.h>
-#include <awui/Emulation/MasterSystem/emu2413/emu2413.h>
+#include <emu2413.h>
 
 #include <algorithm>
 #include <cmath>
