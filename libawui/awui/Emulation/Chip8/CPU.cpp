@@ -225,6 +225,16 @@ int CPU::RunOpcode(int iteration) {
 		m_opcode.SetByte2(0xc0);
 	}
 
+	// ETI-660: 0NNN llama a código máquina del 1802 y FX00 cambia el tono del pitido. No se emulan: se ignoran (00FF,
+	// por ejemplo, no hace nada en el ETI-660 y aquí cambiaría a 128x64)
+	if (m_memory->GetStartAddress() == 0x600) {
+		uint16_t op = m_opcode.GetOpcode();
+		if (((op < 0x1000) && (op != 0x00E0) && (op != 0x00EE)) || ((op & 0xF0FF) == 0xF000)) {
+			m_pc += 2;
+			return 0;
+		}
+	}
+
 	int drawed = 0;
 	int enumopcode = m_opcode.GetEnum(m_chip8mode);
 	bool advance = true;
