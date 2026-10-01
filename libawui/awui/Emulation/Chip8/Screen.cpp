@@ -17,7 +17,7 @@ using namespace awui::Emulation::Chip8;
 Screen::Screen(uint16_t width, uint16_t height) {
 	m_width = width;
 	m_height = height;
-	m_data = (uint32_t *) malloc(sizeof(uint32_t *) * width * height);
+	m_data = (uint32_t *) malloc(sizeof(uint32_t) * width * height);
 	Clear();
 }
 
@@ -36,30 +36,27 @@ void Screen::CopyFrom(const Screen &other) {
 		memcpy(m_data, other.m_data, sizeof(uint32_t) * m_width * m_height);
 }
 
+// La pantalla es circular: lo que se sale por un borde aparece por el contrario, en horizontal y en vertical (el COSMAC
+// VIP y SuperChip recortaban; aquí se da la vuelta, como XO-CHIP y los juegos hechos para emuladores, como Minimal
+// game). Devuelve si se ha borrado un píxel encendido (colisión)
 bool Screen::SetPixelXOR(uint16_t x, uint16_t y, bool value) {
-	x = x % m_width;
+	if (!value)
+		return false;
 
-	bool r = false;
-	uint16_t offset = (y * m_width) + x;
+	x %= m_width;
+	y %= m_height;
 
+	uint32_t offset = (y * m_width) + x;
 	bool oldValue = m_data[offset];
-	bool newValue = oldValue ^ value;
-
-	if (oldValue != newValue) {
-		if (newValue == 0)
-			r = true;
-		if (offset < (m_width * m_height))
-			m_data[offset] = newValue;
-	}
-
-	return r;
+	m_data[offset] = !oldValue;
+	return oldValue;
 }
 
 void Screen::SetPixel(uint16_t x, uint16_t y, uint32_t value) {
 	if ((x >= m_width) || (y >= m_height))
 		return;
 
-	uint16_t offset = (y * m_width) + x;
+	uint32_t offset = (y * m_width) + x;
 
 	uint8_t a = (value >> 24) & 0xFF;
 	if (a == 255) {
@@ -78,16 +75,15 @@ void Screen::SetPixel(uint16_t x, uint16_t y, uint32_t value) {
 		g = ((uint8_t) (go + ((g - go) * p))) & 0xFF;
 		b = ((uint8_t) (bo + ((b - bo) * p))) & 0xFF;
 
-		if (offset < (m_width * m_height))
-			m_data[offset] = 0xFF000000 | r << 16 | g << 8 | b;
+		m_data[offset] = 0xFF000000 | r << 16 | g << 8 | b;
 	}
 }
 
 uint32_t Screen::GetPixel(uint16_t x, uint16_t y) {
-	if (m_data)
-		return m_data[(y * m_width) + x];
+	if ((x >= m_width) || (y >= m_height))
+		return 0;
 
-	return 0;
+	return m_data[(y * m_width) + x];
 }
 
 uint16_t Screen::GetWidth() const {
