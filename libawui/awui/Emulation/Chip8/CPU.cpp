@@ -66,6 +66,10 @@ CPU::~CPU() {
 	delete m_sound;
 }
 
+const KeyMap &CPU::GetKeyMap() const {
+	return m_memory->GetKeyMap();
+}
+
 void CPU::LoadRom(const String file) {
 	m_memory->LoadRom(file);
 

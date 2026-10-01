@@ -40,6 +40,7 @@ void Memory::LoadRom(const String file) {
 	// La ROM empieza en 0x200 (0x600 en el ETI-660). Si no cabe, la memoria crece (MegaChip: hasta 16MB, lo que
 	// alcanza I con 24 bits) conservando lo que ya hay, como las fuentes
 	m_startAddress = DetectStartAddress(data);
+	m_keyMap = KeyMap::Detect(data);
 	int64_t needed = m_startAddress + (int64_t) data.size();
 	if (needed > MaxCapacity) {
 		Console::Error->WriteLine(String("ROM demasiado grande para Chip-8, se trunca: ") + file);

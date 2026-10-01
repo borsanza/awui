@@ -11,6 +11,7 @@ namespace awui {
 
 	namespace Emulation::Chip8 {
 		class Input;
+		struct KeyMap;
 		class Memory;
 		class Registers;
 		class Screen;
@@ -66,6 +67,7 @@ namespace awui {
 
 			Screen *GetScreen();
 			inline Sound *GetSound() const { return m_sound; }
+			const KeyMap &GetKeyMap() const;
 
 			bool GetImageUpdated() const;
 			void SetImageUpdated(bool mode);

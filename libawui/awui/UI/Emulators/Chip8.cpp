@@ -8,6 +8,7 @@
 
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Chip8/CPU.h>
+#include <awui/Emulation/Chip8/KeyMap.h>
 #include <awui/Emulation/Chip8/Sound.h>
 #include <awui/Emulation/Common/AudioOutput.h>
 #include <awui/Emulation/Chip8/Screen.h>
@@ -225,23 +226,25 @@ int Chip8::ConvertKeyAwToChip8(Keys::Enum key) {
 }
 
 int Chip8::ConvertRemoteKeyToChip8(RemoteButtons::Enum button) {
+	// Cada juego usa sus teclas: se detectan al cargar la ROM
+	const KeyMap &keys = m_cpu->GetKeyMap();
 	int keyPressed = -1;
 
 	switch (button) {
 		case RemoteButtons::Up:
-			keyPressed = 2;
+			keyPressed = keys.up;
 			break;
 		case RemoteButtons::Left:
-			keyPressed = 4;
+			keyPressed = keys.left;
 			break;
 		case RemoteButtons::Right:
-			keyPressed = 6;
+			keyPressed = keys.right;
 			break;
 		case RemoteButtons::Down:
-			keyPressed = 8;
+			keyPressed = keys.down;
 			break;
 		case RemoteButtons::Ok:
-			keyPressed = 5;
+			keyPressed = keys.ok;
 			break;
 		default:
 			break;
