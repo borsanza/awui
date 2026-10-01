@@ -9,6 +9,8 @@
     "settings.language.desc": "プログラムの言語。",
     "settings.resumeGames": "ゲームの続きから",
     "settings.resumeGames.desc": "ゲームを開くと、前回やめたところから続きます。メニューに戻ったりプログラムを閉じたりすると自動で保存されます。最初からやり直すには、ゲームをリセットしてください。",
+    "settings.chip8Restart": "終了後にCHIP-8を再開始",
+    "settings.chip8Restart.desc": "CHIP-8のゲームが終わって最後の画面で止まったとき、5秒後に最初から始まります。",
     "settings.clock": "時計",
     "settings.clock.desc": "右上に時計を表示します。",
     "settings.timeFormat": "時刻の形式",
@@ -60,6 +62,8 @@
     "osd.fastOff": "高速ロード オフ",
     "osd.tapeRewound": "テープを巻き戻しました",
     "osd.reset": "リセット",
+    "osd.romFinished": "プログラム終了",
+    "osd.romFinishedRestart": "プログラム終了：%d 秒後に最初から始まります",
     "osd.channelOn": "チャンネル %d オン",
     "osd.channelOff": "チャンネル %d ミュート"
 }

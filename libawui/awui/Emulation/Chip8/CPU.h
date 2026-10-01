@@ -39,7 +39,11 @@ namespace awui {
 			float m_seconds;
 			float m_nextTick;
 
-			int m_finished;
+			// ROM terminada (salto a sí misma o 00FD) y segundos que lleva así
+			bool m_finished;
+			float m_finishedSeconds;
+			uint32_t m_timesFinished; // Veces que ha terminado desde que se cargó (para avisar en pantalla)
+			static inline bool s_restartWhenFinished = true; // Ajuste: volver a empezar al terminar
 			bool m_imageUpdated;
 
 			bool m_firstTime;
@@ -64,6 +68,12 @@ namespace awui {
 
 			void LoadRom(const String file);
 			void OnTick(float deltaSeconds);
+
+			// Segundos que se queda en la pantalla final antes de volver a empezar
+			static constexpr float RestartSeconds = 5.0f;
+			static inline void SetRestartWhenFinished(bool enabled) { s_restartWhenFinished = enabled; }
+			static inline bool GetRestartWhenFinished() { return s_restartWhenFinished; }
+			inline uint32_t GetTimesFinished() const { return m_timesFinished; }
 
 			Screen *GetScreen();
 			inline Sound *GetSound() const { return m_sound; }

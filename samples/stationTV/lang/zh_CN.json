@@ -9,6 +9,8 @@
     "settings.language.desc": "程序的语言。",
     "settings.resumeGames": "继续游戏",
     "settings.resumeGames.desc": "进入游戏时，会从上次离开的地方继续。返回菜单或关闭程序时会自动保存。如需从头开始，请重置游戏。",
+    "settings.chip8Restart": "CHIP-8 结束后重新开始",
+    "settings.chip8Restart.desc": "CHIP-8 游戏结束并停在最后画面时，5 秒后重新开始。",
     "settings.clock": "时钟",
     "settings.clock.desc": "在右上角显示时钟。",
     "settings.timeFormat": "时间格式",
@@ -60,6 +62,8 @@
     "osd.fastOff": "快速加载已关闭",
     "osd.tapeRewound": "磁带已倒带",
     "osd.reset": "重置",
+    "osd.romFinished": "程序已结束",
+    "osd.romFinishedRestart": "程序已结束：%d 秒后重新开始",
     "osd.channelOn": "声道 %d 已开启",
     "osd.channelOff": "声道 %d 已静音"
 }

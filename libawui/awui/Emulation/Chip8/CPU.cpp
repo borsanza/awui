@@ -24,13 +24,15 @@
 using namespace awui::Emulation::Chip8;
 
 CPU::CPU() {
+	m_timesFinished = 0;
 	m_seconds = 0.0f;
 	m_nextTick = 0.0f;
 	m_spriteWidth = 0;
 	m_spriteHeight = 0;
 	m_pc = 0;
 	m_imageUpdated = false;
-	m_finished = 0;
+	m_finished = false;
+	m_finishedSeconds = 0.0f;
 	m_soundTimer = 0;
 	m_delayTimer = 0;
 	m_screen = new Screen(64, 32);
@@ -91,7 +93,8 @@ void CPU::Reset() {
 	m_stack->Clear();
 	m_delayTimer = 0;
 	m_soundTimer = 0;
-	m_finished = 0;
+	m_finished = false;
+	m_finishedSeconds = 0.0f;
 	m_pc = m_memory->GetStartAddress();
 	m_imageUpdated = false;
 	m_sound->Stop();
@@ -144,6 +147,13 @@ void CPU::Reset() {
 }
 
 void CPU::OnTick(float deltaSeconds) {
+	// ROM terminada: se queda en la pantalla final y, si así está en los ajustes, vuelve a empezar a los 5 segundos
+	if (m_finished && s_restartWhenFinished) {
+		m_finishedSeconds += deltaSeconds;
+		if (m_finishedSeconds >= RestartSeconds)
+			Reset();
+	}
+
 	m_seconds += deltaSeconds;
 	if (m_seconds < m_nextTick) {
 		return;
@@ -210,13 +220,6 @@ void CPU::DoTick() {
 	}
 
 	//	Console::WriteLine(Convert::ToString(i));
-
-	if (m_finished)
-		m_finished++;
-
-
-	if (m_finished > 300)
-		Reset();
 }
 
 int CPU::RunOpcode(int iteration) {
@@ -325,7 +328,8 @@ int CPU::RunOpcode(int iteration) {
 
 		// Exit Chip Interpreter
 		case Ox00FD:
-			m_finished = 1;
+			m_finished = true;
+			m_timesFinished++;
 			advance = false;
 			break;
 
@@ -392,8 +396,8 @@ int CPU::RunOpcode(int iteration) {
 			uint16_t offset = m_opcode.GetNNN();
 
 			if (offset == m_pc) {
-				Console::WriteLine(" --- ROM FINISHED --- ");
-				m_finished = 1;
+				m_finished = true;
+				m_timesFinished++;
 			}
 
 			m_pc = offset;

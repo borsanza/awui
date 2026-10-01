@@ -19,6 +19,13 @@
                 "defaultValue": false
             },
             {
+                "key": "chip8Restart",
+                "name": "settings.chip8Restart",
+                "description": "settings.chip8Restart.desc",
+                "type": "boolean",
+                "defaultValue": true
+            },
+            {
                 "key": "clock",
                 "name": "settings.clock",
                 "description": "settings.clock.desc",

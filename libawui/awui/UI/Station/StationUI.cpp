@@ -9,6 +9,7 @@
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Drawing/Graphics.h>
+#include <awui/Emulation/Chip8/CPU.h>
 #include <awui/Emulation/Common/AudioSettings.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Localization.h>
@@ -577,6 +578,7 @@ void StationUI::ApplySettings() {
 	Emulation::Common::AudioSettings::SetVolume(Convert::ToInt32(settings.GetString("volume"), 100));
 
 	Emulation::MasterSystem::Sound::SetFMEnabled(settings.GetBool("fmSound"));
+	Emulation::Chip8::CPU::SetRestartWhenFinished(settings.GetBool("chip8Restart"));
 
 	for (int i = 0; i < 4; i++) {
 		Emulation::MasterSystem::Sound::SetChannelEnabled(i, settings.GetBool(String("channel%d", i + 1).ToCharArray()));

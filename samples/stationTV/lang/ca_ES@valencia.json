@@ -9,6 +9,8 @@
     "settings.language.desc": "Idioma del programa.",
     "settings.resumeGames": "Continuar partides",
     "settings.resumeGames.desc": "En entrar en un joc, continua on el vas deixar. Es guarda a soles en tornar al menú o en tancar el programa. Per a començar de nou, reinicia el joc.",
+    "settings.chip8Restart": "Reiniciar CHIP-8 en acabar",
+    "settings.chip8Restart.desc": "Quan un joc de CHIP-8 acaba i es queda parat en la pantalla final, torna a començar als 5 segons.",
     "settings.clock": "Rellotge",
     "settings.clock.desc": "Mostra el rellotge en el cantó superior dret.",
     "settings.timeFormat": "Format de l'hora",
@@ -60,6 +62,8 @@
     "osd.fastOff": "Càrrega ràpida desactivada",
     "osd.tapeRewound": "Cinta rebobinada",
     "osd.reset": "Reinici",
+    "osd.romFinished": "Programa acabat",
+    "osd.romFinishedRestart": "Programa acabat: torna a començar en %d s",
     "osd.channelOn": "Canal %d activat",
     "osd.channelOff": "Canal %d silenciat"
 }

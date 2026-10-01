@@ -12,6 +12,7 @@
 #include <awui/Emulation/Chip8/Sound.h>
 #include <awui/Emulation/Common/AudioOutput.h>
 #include <awui/Emulation/Chip8/Screen.h>
+#include <awui/Localization.h>
 #include <awui/OpenGL/GL.h>
 
 using namespace awui::Drawing;
@@ -27,6 +28,7 @@ Chip8::Chip8() {
 	m_image = new Drawing::Image(64, 32);
 	m_cpu = new CPU();
 	m_lastInverted = Chip8::s_invertedColors;
+	m_timesFinished = 0;
 }
 
 Chip8::~Chip8() {
@@ -59,6 +61,15 @@ void Chip8::OnTick(float deltaSeconds) {
 	}
 
 	m_cpu->OnTick(deltaSeconds);
+
+	// La ROM ha terminado (se queda parada en la pantalla final): se avisa, y si se va a reiniciar, cuándo
+	if (m_cpu->GetTimesFinished() != m_timesFinished) {
+		m_timesFinished = m_cpu->GetTimesFinished();
+		if (CPU::GetRestartWhenFinished())
+			ShowNotification(String(Localization::Tr("osd.romFinishedRestart").ToCharArray(), (int) CPU::RestartSeconds));
+		else
+			ShowNotification(Localization::Tr("osd.romFinished"));
+	}
 }
 
 void Chip8::UpdateImage() {

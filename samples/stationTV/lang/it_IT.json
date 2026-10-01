@@ -9,6 +9,8 @@
     "settings.language.desc": "Lingua del programma.",
     "settings.resumeGames": "Continua le partite",
     "settings.resumeGames.desc": "Entrando in un gioco, riprende da dove l'hai lasciato. Si salva da solo tornando al menu o chiudendo il programma. Per ricominciare, resetta il gioco.",
+    "settings.chip8Restart": "Riavvia CHIP-8 alla fine",
+    "settings.chip8Restart.desc": "Quando un gioco CHIP-8 finisce e resta sulla schermata finale, ricomincia dopo 5 secondi.",
     "settings.clock": "Orologio",
     "settings.clock.desc": "Mostra l'orologio nell'angolo in alto a destra.",
     "settings.timeFormat": "Formato dell'ora",
@@ -60,6 +62,8 @@
     "osd.fastOff": "Caricamento rapido disattivato",
     "osd.tapeRewound": "Nastro riavvolto",
     "osd.reset": "Reset",
+    "osd.romFinished": "Programma terminato",
+    "osd.romFinishedRestart": "Programma terminato: riparte tra %d s",
     "osd.channelOn": "Canale %d attivato",
     "osd.channelOff": "Canale %d silenziato"
 }

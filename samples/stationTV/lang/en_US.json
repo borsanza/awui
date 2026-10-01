@@ -9,6 +9,8 @@
     "settings.language.desc": "Language of the program.",
     "settings.resumeGames": "Continue games",
     "settings.resumeGames.desc": "When entering a game, it continues where you left it. It is saved automatically when going back to the menu or closing the program. To start over, reset the game.",
+    "settings.chip8Restart": "Restart CHIP-8 when finished",
+    "settings.chip8Restart.desc": "When a CHIP-8 game ends and stays on its final screen, it starts again after 5 seconds.",
     "settings.clock": "Clock",
     "settings.clock.desc": "Show the clock in the top right corner.",
     "settings.timeFormat": "Time format",
@@ -60,6 +62,8 @@
     "osd.fastOff": "Fast loading off",
     "osd.tapeRewound": "Tape rewound",
     "osd.reset": "Reset",
+    "osd.romFinished": "Program finished",
+    "osd.romFinishedRestart": "Program finished: restarting in %d s",
     "osd.channelOn": "Channel %d on",
     "osd.channelOff": "Channel %d muted"
 }

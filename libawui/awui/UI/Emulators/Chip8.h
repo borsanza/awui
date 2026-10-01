@@ -12,6 +12,7 @@ namespace awui {
 		  private:
 			static bool s_invertedColors;
 			bool m_lastInverted;
+			uint32_t m_timesFinished; // Las que ya se han avisado en pantalla
 
 			Emulation::Chip8::CPU *m_cpu;
 			Drawing::Image *m_image;
