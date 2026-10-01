@@ -34,6 +34,7 @@ CPU::CPU() {
 	m_soundTimer = 0;
 	m_delayTimer = 0;
 	m_screen = new Screen(64, 32);
+	m_frontScreen = new Screen(64, 32);
 	m_memory = new Memory(4096);
 	m_registers = new Registers(16);
 	m_input = new Input();
@@ -60,6 +61,7 @@ CPU::~CPU() {
 	delete m_random;
 	delete m_registers;
 	delete m_screen;
+	delete m_frontScreen;
 	delete m_stack;
 	delete m_sound;
 }
@@ -73,6 +75,7 @@ void CPU::Reset() {
 
 	// Es un reset, dudo que cambie el screen o el chipmode...
 	m_screen->Clear();
+	m_frontScreen->Clear();
 	ClearColorIndices();
 	m_collisionColor = -1;
 
@@ -261,6 +264,12 @@ int CPU::RunOpcode(int iteration) {
 				drawed = -1;
 				advance = false;
 				break;
+			}
+
+			// MegaChip usa CLS para pasar de frame (doble buffer): se enseña lo dibujado y se empieza a limpio
+			if (m_chip8mode == MEGACHIP8) {
+				m_frontScreen->CopyFrom(*m_screen);
+				m_imageUpdated = true;
 			}
 
 			m_screen->Clear();
@@ -742,8 +751,9 @@ int CPU::RunOpcode(int iteration) {
 	return drawed;
 }
 
+// En MegaChip se ve el último frame terminado (el que se enseñó con CLS); en los demás modos, la pantalla tal cual
 Screen *CPU::GetScreen() {
-	return m_screen;
+	return (m_chip8mode == MEGACHIP8) ? m_frontScreen : m_screen;
 }
 
 bool CPU::GetImageUpdated() const {
@@ -770,6 +780,8 @@ void CPU::ChangeResolution(uint16_t width, uint16_t height) {
 	if ((m_screen->GetWidth() != width) || (m_screen->GetHeight() != height)) {
 		delete m_screen;
 		m_screen = new Screen(width, height);
+		delete m_frontScreen;
+		m_frontScreen = new Screen(width, height);
 	}
 
 	ClearColorIndices();

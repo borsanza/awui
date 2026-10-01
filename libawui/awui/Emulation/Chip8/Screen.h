@@ -14,6 +14,8 @@ namespace awui::Emulation::Chip8 {
 		virtual ~Screen();
 
 		void Clear();
+		// Copia el contenido de otra pantalla del mismo tamaño
+		void CopyFrom(const Screen &other);
 
 		bool SetPixelXOR(uint16_t x, uint16_t y, bool value);
 		void SetPixel(uint16_t x, uint16_t y, uint32_t value);

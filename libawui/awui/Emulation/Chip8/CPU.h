@@ -20,7 +20,8 @@ namespace awui {
 		class CPU {
 		  private:
 			int16_t m_pc;
-			Screen *m_screen;
+			Screen *m_screen;	   // Donde se dibuja
+			Screen *m_frontScreen; // MegaChip: lo que se ve (CLS copia aquí lo dibujado y empieza otro frame)
 			Registers *m_registers;
 			Memory *m_memory;
 			Random *m_random;

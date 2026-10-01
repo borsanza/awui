@@ -6,6 +6,8 @@
 
 #include "Screen.h"
 
+#include <cstring>
+
 #include <awui/String.h>
 
 #include <stdlib.h>
@@ -27,6 +29,11 @@ void Screen::Clear() {
 	uint16_t length = m_width * m_height;
 	for (uint16_t i = 0; i < length; i++)
 		m_data[i] = 0;
+}
+
+void Screen::CopyFrom(const Screen &other) {
+	if ((other.m_width == m_width) && (other.m_height == m_height))
+		memcpy(m_data, other.m_data, sizeof(uint32_t) * m_width * m_height);
 }
 
 bool Screen::SetPixelXOR(uint16_t x, uint16_t y, bool value) {
