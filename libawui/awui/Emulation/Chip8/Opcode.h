@@ -31,6 +31,7 @@ namespace awui::Emulation::Chip8 {
 		Ox04NN,
 		Ox060N,
 		Ox0700,
+		Ox09NN,
 		Ox1NNN,
 		Ox2NNN,
 		Ox3XKK,

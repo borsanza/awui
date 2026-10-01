@@ -19,6 +19,8 @@
 
 #include <stdlib.h>
 
+#include <algorithm>
+
 using namespace awui::Emulation::Chip8;
 
 CPU::CPU() {
@@ -38,7 +40,10 @@ CPU::CPU() {
 	m_stack = new Stack();
 	m_random = new Random();
 	m_sound = new Sound();
-	m_colors = 0;
+	for (uint32_t &color : m_colors)
+		color = 0;
+	m_colors[0] = 0xFF << 24;
+	m_collisionColor = -1;
 	m_frameCounter = 0;
 	m_chip8mode = CHIP8;
 
@@ -57,9 +62,6 @@ CPU::~CPU() {
 	delete m_screen;
 	delete m_stack;
 	delete m_sound;
-
-	if (m_colors)
-		free(m_colors);
 }
 
 void CPU::LoadRom(const String file) {
@@ -71,6 +73,8 @@ void CPU::Reset() {
 
 	// Es un reset, dudo que cambie el screen o el chipmode...
 	m_screen->Clear();
+	ClearColorIndices();
+	m_collisionColor = -1;
 
 	m_stack->Clear();
 	m_delayTimer = 0;
@@ -153,6 +157,14 @@ void CPU::DoTick() {
 	if (m_soundTimer)
 		m_soundTimer--;
 
+	// El zumbador suena mientras el temporizador de sonido no es 0; su sonido se genera en todos los ticks (también
+	// en los que MegaChip no ejecuta instrucciones, que va a 30 fps)
+	if (m_soundTimer)
+		m_sound->Play();
+	else
+		m_sound->Stop();
+	m_sound->EndTick(1.0 / 60.0);
+
 	float ticks;
 	switch (m_chip8mode) {
 		default:
@@ -190,10 +202,6 @@ void CPU::DoTick() {
 	if (m_finished)
 		m_finished++;
 
-	if (m_soundTimer)
-		m_sound->Play();
-	else
-		m_sound->Stop();
 
 	if (m_finished > 300)
 		Reset();
@@ -227,6 +235,8 @@ int CPU::RunOpcode(int iteration) {
 		case Ox0011:
 			ChangeResolution(256, 192);
 			m_chip8mode = MEGACHIP8;
+			m_collisionColor = -1;
+			ClearColorIndices();
 			break;
 
 		// Scroll screen Nibble lines up
@@ -254,6 +264,7 @@ int CPU::RunOpcode(int iteration) {
 			}
 
 			m_screen->Clear();
+			ClearColorIndices();
 			break;
 
 		// Returns from a subroutine
@@ -308,13 +319,9 @@ int CPU::RunOpcode(int iteration) {
 
 		// Load nn-colors palette at I
 		case Ox02NN: {
-			int total = m_opcode.GetNN();
+			// Los colores van desde el 1 (el 0 es siempre transparente); los que no se cargan se quedan como estaban
+			int total = std::min((int) m_opcode.GetNN(), 255);
 			uint32_t offset = m_registers->GetI();
-			if (m_colors)
-				free(m_colors);
-			m_colors = (uint32_t *) malloc(sizeof(uint32_t *) * (total + 1));
-			m_colors[0] = 0xFF << 24;
-
 			for (int i = 0; i < total; i++) {
 				m_colors[i + 1] = m_memory->ReadByte(offset) << 24 | m_memory->ReadByte(offset + 1) << 16 | m_memory->ReadByte(offset + 2) << 8 | m_memory->ReadByte(offset + 3);
 				offset += 4;
@@ -343,6 +350,13 @@ int CPU::RunOpcode(int iteration) {
 		// Stop digitised sound
 		case Ox0700:
 			Console::WriteLine("Stop");
+			break;
+
+		// Color de colisión (09nn): a partir de aquí, un sprite solo choca con los píxeles de ese índice de la paleta.
+		// No está en la especificación 1.0b, pero lo usa MegaBlinky para distinguir a cada fantasma de las paredes
+		// y los puntos
+		case Ox09NN:
+			m_collisionColor = m_opcode.GetNN();
 			break;
 
 		// Jumps to address NNN
@@ -541,17 +555,58 @@ int CPU::RunOpcode(int iteration) {
 
 					break;
 
-				case MEGACHIP8:
+				case MEGACHIP8: {
+					// El 0 es transparente. Hay colisión si algún píxel cae sobre otro de color: cualquiera distinto de
+					// 0 o, si se ha fijado con 09nn, justo ese
+					uint16_t width = m_screen->GetWidth();
+					uint16_t height = m_screen->GetHeight();
+
+					// Los caracteres de la fuente (LD F, LD HF: por debajo de 0x200) no usan SPRW/SPRH: son sprites de
+					// un bit, 8 de ancho y n de alto, y se pintan en blanco
+					if (i < 0x200) {
+						uint8_t rows = m_opcode.GetN() ? m_opcode.GetN() : 16;
+						for (uint32_t y1 = 0; y1 < rows; y1++) {
+							uint8_t bits = m_memory->ReadByte(i + y1);
+							for (uint32_t x1 = 0; x1 < 8; x1++) {
+								uint32_t px = x + x1;
+								uint32_t py = y + y1;
+								if (!(bits & (0x80 >> x1)) || (px >= width) || (py >= height))
+									continue;
+
+								uint8_t &back = m_colorIndices[(py * width) + px];
+								if ((m_collisionColor < 0) ? (back != 0) : (back == m_collisionColor))
+									pixelCleared = 1;
+
+								back = 0xFF;
+								m_screen->SetPixel(px, py, 0xFFFFFFFF);
+							}
+						}
+						break;
+					}
+
 					for (uint32_t y1 = 0; y1 < m_spriteHeight; y1++) {
+						uint32_t py = y + y1;
+						if (py >= height)
+							break;
+
 						for (uint32_t x1 = 0; x1 < m_spriteWidth; x1++) {
+							uint32_t px = x + x1;
+							if (px >= width)
+								break;
+
 							uint8_t p = m_memory->ReadByte(i + (y1 * m_spriteWidth) + x1);
 							if (p == 0)
 								continue;
-							uint32_t color = m_colors[p];
-							m_screen->SetPixel(x + x1, y + y1, color);
+
+							uint8_t &back = m_colorIndices[(py * width) + px];
+							if ((m_collisionColor < 0) ? (back != 0) : (back == m_collisionColor))
+								pixelCleared = 1;
+
+							back = p;
+							m_screen->SetPixel(px, py, m_colors[p]);
 						}
 					}
-					break;
+				} break;
 			}
 
 			m_registers->SetV(0xF, pixelCleared);
@@ -716,4 +771,10 @@ void CPU::ChangeResolution(uint16_t width, uint16_t height) {
 		delete m_screen;
 		m_screen = new Screen(width, height);
 	}
+
+	ClearColorIndices();
+}
+
+void CPU::ClearColorIndices() {
+	m_colorIndices.assign(m_screen->GetWidth() * m_screen->GetHeight(), 0);
 }

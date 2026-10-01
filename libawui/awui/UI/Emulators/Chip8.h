@@ -34,6 +34,9 @@ namespace awui {
 			int GetChip8Mode() const;
 			void SetInvertedColors(bool mode);
 
+			// El zumbador suena solo si es el emulador que está en juego
+			virtual void SetSoundEnabled(bool mode) override;
+
 			virtual bool OnKeyPress(UI::Input::Keys::Enum key);
 			virtual bool OnKeyUp(UI::Input::Keys::Enum key);
 			bool OnRemoteKeyPress(int which, UI::Input::RemoteButtons::Enum button);

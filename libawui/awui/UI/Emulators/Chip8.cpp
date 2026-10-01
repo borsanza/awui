@@ -8,6 +8,8 @@
 
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Chip8/CPU.h>
+#include <awui/Emulation/Chip8/Sound.h>
+#include <awui/Emulation/Common/AudioOutput.h>
 #include <awui/Emulation/Chip8/Screen.h>
 #include <awui/OpenGL/GL.h>
 
@@ -290,4 +292,8 @@ bool Chip8::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
 	}
 
 	return ArcadeContainer::OnRemoteKeyUp(which, button);
+}
+
+void Chip8::SetSoundEnabled(bool mode) {
+	Emulation::Common::AudioOutput::Instance().SetPlaying(mode ? m_cpu->GetSound() : nullptr);
 }

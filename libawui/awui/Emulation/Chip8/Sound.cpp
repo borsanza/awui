@@ -6,32 +6,49 @@
 
 #include "Sound.h"
 
-using namespace awui::Emulation::Chip8;
+#include <awui/Emulation/Common/AudioOutput.h>
 
-#include <fcntl.h>
-#include <unistd.h>
+using namespace awui::Emulation::Chip8;
+using awui::Emulation::Common::AudioOutput;
 
 Sound::Sound() {
-	m_playing = true;
-	m_consoleFd = open("/dev/console", O_WRONLY);
-	Stop();
+	m_playing = false;
+	m_phase = 0.0;
+	m_pendingSamples = 0.0;
 }
 
 Sound::~Sound() {
 	Stop();
-	close(m_consoleFd);
 }
 
 void Sound::Play() {
-	if (!m_playing) {
-		//		ioctl(m_consoleFd, KIOCSOUND, 1193180/440);
-		m_playing = true;
-	}
+	m_playing = true;
 }
 
 void Sound::Stop() {
-	if (m_playing) {
-		//		ioctl(m_consoleFd, KIOCSOUND, 0);
-		m_playing = false;
+	m_playing = false;
+}
+
+void Sound::EndTick(double seconds) {
+	AudioOutput &output = AudioOutput::Instance();
+	if (!output.IsPlaying(this))
+		return;
+
+	// Muestras de este tick, corrigiendo un poco el ritmo para que la cola no crezca ni se vacíe
+	m_pendingSamples += seconds * AudioOutput::Frequency / output.GetRateAdjust();
+	int count = (int) m_pendingSamples;
+	m_pendingSamples -= count;
+	if (count <= 0)
+		return;
+
+	m_samples.resize(count);
+	double step = Frequency / AudioOutput::Frequency;
+	for (int i = 0; i < count; i++) {
+		m_samples[i] = m_playing ? ((m_phase < 0.5) ? Level : -Level) : 0;
+		m_phase += step;
+		if (m_phase >= 1.0)
+			m_phase -= 1.0;
 	}
+
+	output.Queue(this, m_samples.data(), count, 1);
 }

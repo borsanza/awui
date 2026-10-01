@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstdint>
+#include <vector>
+
 #include <awui/Emulation/Chip8/Opcode.h>
 #include <awui/String.h>
 
@@ -40,7 +43,14 @@ namespace awui {
 			bool m_firstTime;
 			Opcode m_opcode;
 
-			uint32_t *m_colors;
+			// MegaChip: paleta de 256 colores (el 0 es transparente) y, por cada píxel de la pantalla, el índice de la
+			// paleta con el que se pintó (para las colisiones, que van por color y no por píxel encendido)
+			uint32_t m_colors[256];
+			std::vector<uint8_t> m_colorIndices;
+			// Color con el que choca un sprite (09nn); -1: cualquier color distinto de 0, como dice la especificación
+			int m_collisionColor;
+
+			void ClearColorIndices();
 
 			int RunOpcode(int iteration);
 			void ChangeResolution(uint16_t width, uint16_t height);
@@ -54,6 +64,7 @@ namespace awui {
 			void OnTick(float deltaSeconds);
 
 			Screen *GetScreen();
+			inline Sound *GetSound() const { return m_sound; }
 
 			bool GetImageUpdated() const;
 			void SetImageUpdated(bool mode);
