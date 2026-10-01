@@ -443,6 +443,7 @@ int CPU::RunOpcode(int iteration) {
 			m_registers->SetV(x, m_registers->GetV(x) ^ m_registers->GetV(y));
 		} break;
 
+		// En 8XY4-8XYE el resultado se guarda antes que VF: si el destino es el propio VF, se queda la bandera
 		// VX = VX + VY
 		// Set VF to 01 if a carry occurs
 		// Set VF to 00 if a carry does not occur
@@ -450,8 +451,8 @@ int CPU::RunOpcode(int iteration) {
 			uint8_t x = m_opcode.GetX();
 			uint8_t y = m_opcode.GetY();
 			int sum = m_registers->GetV(x) + m_registers->GetV(y);
-			m_registers->SetV(0xF, (sum > 255) ? 1 : 0);
 			m_registers->SetV(x, (uint8_t) sum);
+			m_registers->SetV(0xF, (sum > 255) ? 1 : 0);
 		} break;
 
 		// VX = VX - VY
@@ -461,8 +462,8 @@ int CPU::RunOpcode(int iteration) {
 			uint8_t x = m_opcode.GetX();
 			uint8_t vx = m_registers->GetV(x);
 			uint8_t vy = m_registers->GetV(m_opcode.GetY());
-			m_registers->SetV(0xF, (vy <= vx) ? 1 : 0);
 			m_registers->SetV(x, (uint8_t) (vx - vy));
+			m_registers->SetV(0xF, (vy <= vx) ? 1 : 0);
 		} break;
 
 		// VX = VX >> 1
@@ -470,8 +471,8 @@ int CPU::RunOpcode(int iteration) {
 		case Ox8XY6: {
 			uint8_t x = m_opcode.GetX();
 			int value = m_registers->GetV(x);
-			m_registers->SetV(0xF, (value & 0x1) ? 1 : 0);
 			m_registers->SetV(x, value >> 1);
+			m_registers->SetV(0xF, (value & 0x1) ? 1 : 0);
 		} break;
 
 		// VX = VY - VX
@@ -481,8 +482,8 @@ int CPU::RunOpcode(int iteration) {
 			uint8_t x = m_opcode.GetX();
 			uint8_t vx = m_registers->GetV(x);
 			uint8_t vy = m_registers->GetV(m_opcode.GetY());
-			m_registers->SetV(0xF, (vx <= vy) ? 1 : 0);
 			m_registers->SetV(x, (uint8_t) (vy - vx));
+			m_registers->SetV(0xF, (vx <= vy) ? 1 : 0);
 		} break;
 
 		// VX = VX << 1
@@ -490,8 +491,8 @@ int CPU::RunOpcode(int iteration) {
 		case Ox8XYE: {
 			uint8_t x = m_opcode.GetX();
 			uint8_t value = m_registers->GetV(x);
-			m_registers->SetV(0xF, (value & 128) ? 1 : 0);
 			m_registers->SetV(x, value << 1);
+			m_registers->SetV(0xF, (value & 128) ? 1 : 0);
 		} break;
 
 		// Skips the next instruction if VX doesn't equal VY
