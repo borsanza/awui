@@ -34,6 +34,11 @@ namespace awui {
 			// caracteres que comparten el chino y el japonés. Vacío: el del sistema
 			static void SetTextLanguage(const String &code);
 
+			// Fuentes que lleva el programa (.ttf/.otf de una carpeta): se pueden pedir por su nombre como las del
+			// sistema. Así se ve igual en todas partes (Windows no trae Liberation Sans, por ejemplo). Hay que llamarla
+			// antes de dibujar texto. Devuelve cuántas se han añadido
+			static int AddFontsFromDirectory(const String &directory);
+
 			void Clear(const Drawing::Color color);
 			void DrawRectangle(Drawing::Pen *pen, float x, float y, float width, float height);
 			void FillRectangle(const Drawing::Color color, float x, float y, float width, float height);

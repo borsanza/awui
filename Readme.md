@@ -1,92 +1,161 @@
-# 🕹️ Colección de Emuladores y Experimentos en C++
+# 🕹️ awui y StationTV
 
-Este proyecto reúne varios experimentos personales que he ido desarrollando como hobby. Incluye desde emuladores retro hasta un sistema de widgets en OpenGL y un pequeño motor estilo Minecraft. Todo el código está escrito en C++ y pensado como un espacio para aprender, probar ideas y divertirme programando.
+Experimentos personales en C++, hechos como hobby para aprender y probar ideas: una librería de interfaz en OpenGL (**awui**), un menú para la tele con emuladores retro (**StationTV**) y un pequeño motor de vóxeles al estilo Minecraft.
 
-## 📼 Emuladores incluidos
+## 📦 Qué hay
 
-### **Chip-8**
+### StationTV
 
-* Totalmente funcional.
-* Compatible con la mayoría de ROMs clásicas.
+Un menú a pantalla completa pensado para la tele y el mando (al estilo del Apple TV), desde el que se eligen y se juegan las ROMs. Emuladores:
 
-### **Sega Master System**
+- **CHIP-8**, con SuperChip, MegaChip y los programas del ETI-660. Las flechas y el botón OK del mando se ajustan solos a las teclas que usa cada juego.
+- **Sega Master System**, **Game Gear** y **SG-1000**: jugables, con sonido (también el FM de la Master System japonesa), rebobinado y partida automática.
+- **ZX Spectrum**: carga cintas `.tap` y arranca la ROM de cada modelo. Funciona, pero está poco probado.
 
-* Implementación completa y jugable.
-* Soporta gráficos, sonido (mejorable...) y controles básicos.
+### awui
 
-### **ZX Spectrum**
+La librería en la que está hecho todo: ventanas y controles en OpenGL con animaciones suaves, texto con pango (también japonés y chino), mando de juegos y el mando a distancia de Apple (con un Arduino como receptor, en `arduino/`).
 
-* Implementación parcial.
-* Llega a ser funcional, pero poco testeado...
+### Otros
 
-### Partidas guardadas
+- **gameOfBlocks**: el inicio de un motor de vóxeles, pasado a C++ desde uno que tenía en Three.js para ganar rendimiento y aprender sobre mundos infinitos.
+- **awuiDemo**, **awSlider** y **awTest**: pruebas de la librería.
+- **tools/chip8**: desensamblador y ensamblador de CHIP-8/MegaChip, y la versión mejorada de MegaBlinky (ver su README).
 
-StationTV guarda las partidas (RAM del cartucho `.sav`, estados `.state` y la partida automática `.autostate`) en `~/.local/share/stationtv/` (o `$XDG_DATA_HOME/stationtv`; en Windows, `%LOCALAPPDATA%\stationtv`), con la misma estructura que `roms/`: por ejemplo `roms/mastersystem/Golvellius.sms` → `~/.local/share/stationtv/mastersystem/Golvellius.sav`. Así las ROMs pueden estar en una carpeta de solo lectura (NAS, pendrive...).
-
-Las partidas antiguas que estén junto a la ROM se siguen leyendo; al guardar pasan a la carpeta nueva. Para usar otra carpeta, añade `"saveDirectory": "/ruta"` a `settings.json`.
-
-## 🎛️ Entorno de widgets en OpenGL (Apple TV-style)
-
-Desarrollé un pequeño framework de interfaz inspirado en el diseño del Apple TV.
-Incluye:
-
-* Navegación con animaciones suaves en OpenGL.
-* Sistema de widgets personalizable.
-* Control mediante mando Apple IR, utilizando Arduino como receptor.
-
-Lo utilicé para cargar mis emuladores y jugar desde un entorno más cómodo y visual.
-
-## ⛏️ Proyecto estilo Minecraft
-
-Un experimento inicial para crear mi propio “voxel engine”.
-Se trata de una conversión a C++ de un motor que ya tenía en Three.js, con el objetivo de conseguir más rendimiento y aprender sobre estructuras para mundos infinitos.
-
-## 🔨 Compilar
-
-Requiere CMake ≥ 3.21, Ninja y un compilador con C++20.
+## 🚀 Empezar
 
 Dependencias en Debian/Ubuntu:
 
 ```bash
-sudo apt-get install cmake ninja-build libsdl2-dev libsdl2-image-dev libglew-dev libcairo2-dev libpango1.0-dev nlohmann-json3-dev libgl-dev
+sudo apt-get install cmake ninja-build libsdl2-dev libsdl2-image-dev libglew-dev libcairo2-dev libpango1.0-dev nlohmann-json3-dev libgl-dev whiptail
 ```
 
-En Windows, con MSYS2 (ver paquetes más abajo).
+Para la versión de Windows hace falta además Docker (no se instala nada más: todo va en contenedores).
+
+Lo más cómodo es el menú:
 
 ```bash
-cmake --preset release          # o: cmake --preset debug
+./menu.sh
+```
+
+Desde él se compila (Linux en Release, Debug o con sanitizers, Windows, o todo), se lanza cualquier programa de cualquiera de las compilaciones y se lanza la versión de Windows con Wine. Recuerda lo último que elegiste, y Ctrl+C cierra el programa que esté en marcha y vuelve al menú. Sin `whiptail` sale un menú de texto.
+
+También vale sin menú (`./menu.sh help`):
+
+```bash
+./menu.sh build all                # release, debug, sanitize, windows o all
+./menu.sh run release stationTV    # release, debug o sanitize
+./menu.sh wine stationTV
+./menu.sh clean                    # borra lo compilado; no toca imágenes ni ROMs
+```
+
+## 🔨 Compilar a mano
+
+Requiere CMake ≥ 3.21, Ninja y un compilador con C++20. Cada compilación tiene su preset y su carpeta:
+
+| Preset     | Carpeta           | Para qué                                                         |
+|------------|-------------------|------------------------------------------------------------------|
+| `release`  | `build/`          | Jugar                                                            |
+| `debug`    | `build-debug/`    | Depurar                                                          |
+| `sanitize` | `build-sanitize/` | Desarrollo: AddressSanitizer + UndefinedBehaviorSanitizer        |
+| `windows`  | `build-windows/`  | Windows, desde Linux (con `scripts/build-windows.sh`, ver abajo) |
+
+```bash
+cmake --preset release
 cmake --build --preset release
 ```
 
-Los ejecutables quedan en `build/samples/<sample>/` y se lanzan desde ese directorio (cargan `images/` y `roms/` con rutas relativas):
+Los programas se lanzan desde su carpeta, porque cargan `images/`, `roms/`, `lang/` y `fonts/` con rutas relativas:
 
 ```bash
 cd build/samples/stationTV && ./stationTV
 ```
 
-La compilación Debug va a `build-debug/`; para ejecutarla, lánzala igualmente desde `build/samples/<sample>` (ahí están las imágenes y ROMs).
+Las imágenes y las ROMs están versionadas dentro de `build/samples/`. `./menu.sh run` las enlaza la primera vez en las otras compilaciones, así que se pueden lanzar desde su propia carpeta.
 
-Opción `-DAWUI_WARNINGS=ON` para activar los warnings del compilador.
+La compilación con sanitizers para el programa y enseña la pila en cuanto accede fuera de memoria, usa algo ya liberado, hace un `delete` doble, etc. Va 2-3 veces más lenta. Al cerrar informa también de la memoria sin liberar; para ver solo los errores, `ASAN_OPTIONS=detect_leaks=0` (el menú ya lo pone).
 
-### Con sanitizers (desarrollo)
+`-DAWUI_WARNINGS=ON` activa los avisos del compilador.
 
-`-DAWUI_SANITIZE=ON` compila con AddressSanitizer y UndefinedBehaviorSanitizer: el programa se para y muestra la pila en cuanto accede fuera de memoria, usa algo ya liberado, hace un `delete` doble, etc. Va 2-3 veces más lento, así que es para desarrollo:
+## 🪟 Windows
+
+Se compila desde Linux. Solo hace falta Docker: el script compila dentro de un contenedor de Fedora, que trae MinGW-w64 y las librerías (SDL2, cairo, pango, GLEW) ya compiladas para Windows.
 
 ```bash
-cmake --preset sanitize && cmake --build --preset sanitize
-cd build/samples/stationTV && ../../../build-sanitize/samples/stationTV/stationTV
+scripts/build-windows.sh            # o --clean para empezar de cero
 ```
 
-Al cerrar informa también de la memoria que no se ha liberado; para ver solo los errores: `ASAN_OPTIONS=detect_leaks=0`.
+La primera vez tarda unos minutos en preparar el contenedor. Cada programa queda en `build-windows/samples/<programa>/` con su `.exe`, las DLL que necesita, la configuración de fuentes, las imágenes y las ROMs: se copia esa carpeta entera a Windows y se lanza el `.exe` desde ella.
 
-### Desde Visual Studio Code
+Para probarlo sin Windows, con Wine (en otro contenedor, de Debian):
+
+```bash
+scripts/run-windows.sh [programa]              # en el escritorio, con sonido y la tarjeta gráfica (también NVIDIA)
+scripts/run-windows.sh --headless [programa]   # sin ventana: deja una captura en build-windows/wine-<programa>.png
+```
+
+La configuración de Wine se guarda en `~/.cache/awui/wine`. Para ver los mensajes de Wine: `WINEDEBUG=err+all scripts/run-windows.sh`.
+
+En Windows también se puede compilar directamente con MSYS2 (paquetes `mingw-w64-x86_64-` de `toolchain`, `glew`, `SDL2`, `SDL2_image`, `cairo`, `pango` y `nlohmann-json`) y los presets `release` o `debug`: las DLL se copian solas junto a cada ejecutable.
+
+## 🧑‍💻 Visual Studio Code
 
 Con la extensión C/C++ (`ms-vscode.cpptools`) y `gdb`:
 
-* **F5** → *Depurar (Debug)*: compila en Debug y lo lanza con el depurador (puntos de ruptura, etc.).
-* *Ejecutar (Release)* (en el desplegable de Ejecutar y depurar): compila en Release y lo lanza a velocidad real.
-* Ambas preguntan qué programa lanzar (stationTV por defecto).
-* **Ctrl+Shift+B** solo compila (Debug).
+- **F5** → *Depurar (Debug)*: compila en Debug y lo lanza con el depurador.
+- *Ejecutar (Release)*, en el desplegable de Ejecutar y depurar: compila en Release y lo lanza a velocidad real.
+- Las dos preguntan qué programa lanzar (stationTV por defecto).
+- **Ctrl+Shift+B** solo compila (Debug).
+
+## 🎮 Usar StationTV
+
+### Teclas
+
+En los menús, las flechas, Enter (OK) y Escape (volver; dentro de un juego, vuelve al menú). Re Pág/Av Pág, Inicio y Fin para moverse por las listas largas. La rueda del ratón también sirve.
+
+| Dónde         | Tecla                                   | Qué hace                                     |
+|---------------|-----------------------------------------|----------------------------------------------|
+| Siempre       | F11                                     | Pantalla completa                            |
+|               | 5                                       | Sincronización vertical (vsync)              |
+| CHIP-8        | 1234 / QWER / ASDF / ZXCV               | El teclado hexadecimal del CHIP-8            |
+|               | Flechas y Enter                         | Las teclas de cada juego (se detectan solas) |
+|               | I                                       | Invertir los colores                         |
+| Master System | WASD, G (botón 1) y H (botón 2)         | Mando 1                                      |
+|               | Flechas; 1 o 3 y 2 del teclado numérico | Mando 2                                      |
+|               | Espacio                                 | Pausa                                        |
+|               | Retroceso                               | Reinicio                                     |
+|               | Q / E                                   | Rebobinar / avanzar rápido                   |
+|               | 1 a 4                                   | Silenciar o activar cada canal de sonido     |
+| ZX Spectrum   | El teclado del ordenador                | El del Spectrum                              |
+|               | F2 / F4                                 | Guardar / cargar el estado                   |
+|               | F8                                      | Carga rápida de la cinta                     |
+|               | F9                                      | Rebobinar la cinta                           |
+
+### Ajustes
+
+El engranaje de arriba a la derecha abre los ajustes: idioma, continuar partidas, reloj, pantalla completa, vsync, estadísticas en pantalla, sonido, volumen, el FM y los canales de la Master System, y si los juegos de CHIP-8 vuelven a empezar al terminar. Se guardan en `settings.json`, en la carpeta del programa.
+
+### Partidas guardadas
+
+StationTV guarda las partidas (RAM del cartucho `.sav`, estados `.state` y la partida automática `.autostate`) en `~/.local/share/stationtv/` (o `$XDG_DATA_HOME/stationtv`; en Windows, `%LOCALAPPDATA%\stationtv`), con la misma estructura que `roms/`: por ejemplo, `roms/mastersystem/Golvellius.sms` → `~/.local/share/stationtv/mastersystem/Golvellius.sav`. Así las ROMs pueden estar en una carpeta de solo lectura (NAS, pendrive...).
+
+Las partidas antiguas que estén junto a la ROM se siguen leyendo; al guardar pasan a la carpeta nueva. Para usar otra carpeta, añade `"saveDirectory": "/ruta"` a `settings.json`.
+
+## 🗂️ El repositorio
+
+```text
+libawui/awui/        la librería: interfaz, dibujo, emuladores (Emulation/) y los menús de StationTV (UI/Station)
+samples/             los programas: stationTV, gameOfBlocks, awuiDemo, awSlider, awTest
+third_party/         código de terceros sin modificar (emu2413, el chip FM de la Master System)
+build/samples/       imágenes y ROMs de los programas (versionadas aquí; el resto de build/ no)
+cmake/               compilación para Windows (toolchain de MinGW y copia de las DLL)
+scripts/             compilar para Windows y lanzarlo con Wine, con sus contenedores
+tools/chip8/         herramientas de CHIP-8
+arduino/             receptor del mando a distancia de Apple
+doc/                 documentación de los sistemas emulados
+menu.sh              el menú
+TODO.md              lo que queda por hacer
+```
 
 ## ✍️ Convenciones de código
 
@@ -94,43 +163,3 @@ Con la extensión C/C++ (`ms-vscode.cpptools`) y `gdb`:
 - **Campos de un `struct` de datos** (los `saveData` de los emuladores, por ejemplo): sin prefijo (`m_saveData.line`).
 - **Constantes** (`static constexpr`): en PascalCase (`TicksPerSecond`).
 - **Nada empieza por `_`:** los nombres con `_` y mayúscula, o con `__`, están reservados para el compilador.
-
-## Anotaciones antiguas
-
-Windows:
-  winget install --id=TortoiseHg.TortoiseHg  -e
-  winget install --id=Kitware.CMake  -e
-  winget install --id=Ninja-build.Ninja  -e
-  winget install --id=MSYS2.MSYS2  -e
-
-  Desde terminal de msys64
-    pacman -Syu
-    pacman -S vim
-
-    pacman -S mingw-w64-i686-toolchain
-    pacman -S mingw-w64-i686-glew
-    pacman -S mingw-w64-i686-SDL2
-    pacman -S mingw-w64-i686-SDL2_image
-    pacman -S mingw-w64-i686-cairo
-    pacman -S mingw-w64-i686-pango
-    pacman -S mingw-w64-i686-nlohmann-json
-
-    pacman -S mingw-w64-x86_64-toolchain
-    pacman -S mingw-w64-x86_64-glew
-    pacman -S mingw-w64-x86_64-SDL2
-    pacman -S mingw-w64-x86_64-SDL2_image
-    pacman -S mingw-w64-x86_64-cairo
-    pacman -S mingw-w64-x86_64-pango
-    pacman -S mingw-w64-x86_64-nlohmann-json
-
-    cd /c/awui/ext/
-    ./generate-libs.sh
-
-  Command:
-    bbr.bat
-
-Actualizar Paquetes:
-  pacman -Syu
-
-
-find -type f -exec wc -l {} + | sort -n

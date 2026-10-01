@@ -6,9 +6,10 @@
 #include <awui/Console.h>
 
 #ifdef _WIN32
+// windows.h primero: define lo que usan las otras dos (EXTERN_C...)
+#include <windows.h>
 #include <knownfolders.h>
 #include <shlobj.h>
-#include <windows.h>
 #else
 #include <cstdlib>
 #endif

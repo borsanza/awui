@@ -8,6 +8,7 @@
 !/build/samples/*/roms/
 /build-debug/
 /build-sanitize/
+/build-windows/
 
 # Restos de ejecutar "cmake ." en la raíz (CMake lo rechaza, pero deja estos ficheros)
 CMakeCache.txt

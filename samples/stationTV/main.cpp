@@ -6,6 +6,7 @@
 
 #include "formArcade.h"
 
+#include <awui/Drawing/Graphics.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/UI/Emulators/MasterSystem.h>
 #include <awui/UI/Application.h>
@@ -28,6 +29,10 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 	}
+
+	// La fuente de la interfaz (Liberation Sans) va con el programa: Windows no la trae. Antes de crear nada que
+	// dibuje texto
+	Drawing::Graphics::AddFontsFromDirectory("./fonts");
 
 	FormArcade *form = new FormArcade();
 

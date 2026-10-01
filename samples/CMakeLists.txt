@@ -1,7 +1,15 @@
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	set(DLLS_PATH "${CMAKE_SOURCE_DIR}/ext/lib64")
-else()
-	set(DLLS_PATH "${CMAKE_SOURCE_DIR}/ext/lib32")
+# En Windows no hay rpath: las DLL (la de awui, SDL, cairo...) tienen que estar junto al ejecutable. Se buscan en la
+# carpeta de awui y en la de las librerías de MinGW (el sysroot al compilar desde Linux, o la de MSYS2 en Windows)
+if(WIN32)
+	set(AWUI_DLL_DIRS "$<TARGET_FILE_DIR:awui>")
+	foreach(root IN LISTS CMAKE_FIND_ROOT_PATH)
+		list(APPEND AWUI_DLL_DIRS "${root}/bin")
+	endforeach()
+	if(CMAKE_HOST_WIN32)
+		get_filename_component(compiler_dir "${CMAKE_CXX_COMPILER}" DIRECTORY)
+		list(APPEND AWUI_DLL_DIRS "${compiler_dir}")
+	endif()
+	list(JOIN AWUI_DLL_DIRS "|" AWUI_DLL_DIRS)
 endif()
 
 # awui_add_sample(<nombre> [GUI_RELEASE] [FILES fichero...])
@@ -45,19 +53,11 @@ function(awui_add_sample name)
 		add_dependencies(${name} ${name}_files)
 	endif()
 
-	# En Windows no hay rpath: la DLL de awui y las de ext/ tienen que estar junto al ejecutable
 	if(WIN32)
 		add_custom_command(TARGET ${name} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-				$<TARGET_FILE:awui>
-				$<TARGET_FILE_DIR:${name}>)
-
-		if(EXISTS "${DLLS_PATH}")
-			add_custom_command(TARGET ${name} POST_BUILD
-				COMMAND ${CMAKE_COMMAND} -E copy_directory
-					"${DLLS_PATH}"
-					$<TARGET_FILE_DIR:${name}>)
-		endif()
+			COMMAND ${CMAKE_COMMAND} "-DEXE=$<TARGET_FILE:${name}>" "-DDIRS=${AWUI_DLL_DIRS}" "-DOBJDUMP=${CMAKE_OBJDUMP}"
+				-P "${CMAKE_SOURCE_DIR}/cmake/copy-runtime-dlls.cmake"
+			VERBATIM)
 	endif()
 endfunction()
 

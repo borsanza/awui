@@ -8,6 +8,7 @@ Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra d
 
 ## Fallos con efecto hoy
 
+- **La tecla 5 no llega a los juegos:** `FormArcade::OnKeyPress` la usa para cambiar el vsync y la consume antes que el emulador (el formulario recibe las teclas primero). En el Spectrum no se puede escribir un 5, y en CHIP-8 la tecla hex 5 solo va con W o con el 5 del teclado numérico (Space Invaders dispara con ella). Lo suyo es usar para el vsync una tecla que no use ningún emulador (una F) o atenderla solo en los menús.
 - **Pérdida de foco de la ventana:** no se atiende `SDL_WINDOWEVENT_FOCUS_LOST`, así que no se pausa nada al minimizar ni al cambiar de ventana. Las teclas pulsadas no deberían quedarse enganchadas al hacer Alt+Tab (SDL2 manda un `KEYUP` por cada una al perder el foco, y las sueltas del mando pasan aunque no haya foco), pero falta comprobarlo con la ventana.
 - **Bucle sin límite sin vsync:** con el vsync quitado (ajustes o tecla 5), el bucle de `Application::Run` no espera en ningún sitio y usa el 100 % de un núcleo. Con la ventana minimizada ya no pasa: no se pinta y se espera un frame.
 
@@ -150,8 +151,7 @@ samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los
 ### Raíz del repositorio
 
 - **Assets dentro de `build/`:** las imágenes de los samples y las ROMs de Chip-8 están versionadas en `build/samples/*/images` y `build/samples/stationTV/roms`, con un `.gitignore` enrevesado para excluir lo demás de `build/`. Por eso `build-debug/` y `build-sanitize/` no tienen imágenes (las pruebas con sanitizers tienen que ejecutarse desde `build/`). Irían en `samples/<nombre>/images` y `samples/stationTV/roms`, copiados junto al ejecutable con el `FILES` de `awui_add_sample`, como ya se hace con `lang` y `menu-settings.json`.
-- **Scripts de Windows sueltos:** `bbd.bat`, `bbr.bat`, sus versiones de 32 bits, `buildvars*.bat`, `clean*.bat`, `stationTV.bat` y `gameOfBlocks.bat` irían a `scripts/windows/` (o se sustituyen por los presets de CMake, que ya existen). Habría que ver si la versión de 32 bits sigue haciendo falta.
-- **`ext/`** mezcla cosas distintas: las DLL de Windows (`lib32`/`lib64`), `generate-libs.sh`, los fuentes de GIMP (`button.xcf`, `settings.xcf`) y `Cursors/` (56 ficheros que no usa nadie). Las DLL irían a `third_party/`, los `.xcf` a `art/` (junto a `samples/stationTV/art`), y `Cursors/` se borraría si no hace falta.
+- **`ext/`** solo tiene ya los fuentes de GIMP (`button.xcf`, `settings.xcf`) y `Cursors/` (56 ficheros que no usa nadie). Los `.xcf` irían a `art/` (junto a `samples/stationTV/art`), y `Cursors/` se borraría si no hace falta.
 - **`arduino/`** (el receptor del mando de Apple) es un proyecto aparte: iría a `tools/arduino-remote/`.
 - **`doc/obsolete`:** si ya no sirve, se borra (queda en git).
 - **Sample `awTIS100`:** no está en el CMake (no se compila) e incluye `awui/UI/Emulators/TIS100.h`, que no existe. O se termina o se borra.
@@ -184,8 +184,8 @@ samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los
 
 La librería tiene que compilar y funcionar igual en Windows, aunque todavía no haya build.
 
-- **Montar la build:** probar al menos a compilar con MinGW (`mingw-w64`) para detectar lo que no compila.
+- **Probar en Windows:** ya compila desde Linux (`scripts/build-windows.sh`) sin errores ni avisos, y con Wine (`scripts/run-windows.sh`) arranca, pinta con OpenGL, se ven los textos y responde al teclado. Falta un Windows de verdad para el sonido, el mando y la velocidad.
 - **Rutas UTF-8:** awui pasa las rutas en UTF-8 como `char*` a `fopen`, `std::fstream` y `std::filesystem` (en `IO/File`, `IO/FileStream`, `Localization`, `SettingsStore` y `OpenGL/Shader`). En Windows esas funciones interpretan la ruta en la página de códigos ANSI, y una ruta con "ñ" fallaría. Lo más sencillo es un manifiesto con `activeCodePage = UTF-8` en el ejecutable (Windows 10 1903 o posterior). Si no, habría que convertir a UTF-16 dentro de `File`/`FileStream`.
-- **`opendir`:** `Localization::GetLanguages` y `StationUI::RecursiveSearch` (la lista de juegos) usan `opendir`/`readdir`, que no existen con MSVC. Mejor `std::filesystem::directory_iterator`.
+- **`opendir`:** `Localization::GetLanguages` y `StationUI::RecursiveSearch` (la lista de juegos) usan `opendir`/`readdir`, que no existen con MSVC (MinGW sí los tiene). Mejor `std::filesystem::directory_iterator`.
 - **`Directory.cpp`** solo contempla `__linux__` y `_WIN32`: en macOS no compila.
 - **Contexto de OpenGL:** `Application::Run` pide un contexto 3.3 de compatibilidad. macOS no lo da (solo 2.1, o 3.2+ *core*); va unido a pasar a OpenGL moderno.

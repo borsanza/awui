@@ -1,9 +1,6 @@
 # Finales de línea: en el repositorio siempre LF. Git detecta qué es texto; así ningún editor ni script los cambia
 * text=auto eol=lf
 
-# Los scripts de Windows necesitan CRLF
-*.bat text eol=crlf
-*.cmd text eol=crlf
 
 # ROMs, cintas y partidas: binarios aunque alguno parezca texto (nunca se convierten)
 *.ch8 binary
@@ -24,6 +21,8 @@
 *.png binary
 *.jpg binary
 *.xcf binary
+*.ttf binary
+*.otf binary
 *.blend binary
 *.odt binary
 *.pdf binary

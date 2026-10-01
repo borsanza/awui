@@ -16,6 +16,8 @@
 #include <pango/pangocairo.h>
 
 #include <algorithm>
+#include <cstdlib>
+#include <filesystem>
 #include <string>
 
 using namespace awui::Drawing;
@@ -136,11 +138,49 @@ void Graphics::DrawLine(Drawing::Pen *pen, float x1, float y1, float x2, float y
 // compone bien las escrituras complejas y las de derecha a izquierda
 static std::string s_textLanguage;
 
+// En Windows, pango usa DirectWrite, y cairo no sabe dibujar las fuentes que se le añaden (AddFontsFromDirectory) en
+// una imagen: se usa fontconfig y FreeType, como en Linux. La configuración de fontconfig va junto al ejecutable
+// (etc/fonts, la copia la compilación). Hay que elegirlo antes de que pango cree nada
+static void InitFontBackend() {
+#ifdef _WIN32
+	static bool done = false;
+	if (done)
+		return;
+	done = true;
+
+	if (!getenv("PANGOCAIRO_BACKEND"))
+		_putenv("PANGOCAIRO_BACKEND=fc");
+#endif
+}
+
 void Graphics::SetTextLanguage(const String &code) {
 	s_textLanguage = code.ToStdString();
 }
 
+int Graphics::AddFontsFromDirectory(const String &directory) {
+	InitFontBackend();
+
+	int count = 0;
+#if PANGO_VERSION_CHECK(1, 56, 0)
+	std::error_code error;
+	PangoFontMap *fontMap = pango_cairo_font_map_get_default();
+	for (const auto &entry : std::filesystem::directory_iterator(directory.ToCharArray(), error)) {
+		std::string extension = entry.path().extension().string();
+		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+		if ((extension != ".ttf") && (extension != ".otf"))
+			continue;
+
+		if (pango_font_map_add_font_file(fontMap, entry.path().string().c_str(), nullptr))
+			count++;
+	}
+#else
+	(void) directory; // pango_font_map_add_font_file llegó en pango 1.56: se usan solo las fuentes del sistema
+#endif
+	return count;
+}
+
 static PangoLayout *CreateLayout(cairo_t *cr, const awui::String &text, Font *font) {
+	InitFontBackend();
 	PangoLayout *layout = pango_cairo_create_layout(cr);
 
 	if (!s_textLanguage.empty()) {
