@@ -411,8 +411,20 @@ void Form::ProcessEvents(SDL_Event *event) {
 			if (!mapping)
 				break;
 
-			// Primero el botón del mando a distancia y luego la tecla
+			// Tecla mantenida: el sistema repite la pulsación. Solo se pasa en las flechas y en Re Pág/Av Pág, para
+			// recorrer los menús; el resto (F8 del Spectrum, Escape, las teclas de los emuladores) cuenta una vez
 			bool pressed = (event->type == SDL_KEYDOWN);
+			if (pressed && event->key.repeat) {
+				RemoteButtons::Enum remote = mapping->remote;
+				if ((remote == RemoteButtons::Up) || (remote == RemoteButtons::Down) || (remote == RemoteButtons::Left) ||
+					(remote == RemoteButtons::Right))
+					OnRemoteKeyPressPre(0, remote);
+				else if ((mapping->key == Keys::Key_PAGEUP) || (mapping->key == Keys::Key_PAGEDOWN))
+					OnKeyPressPre((Keys::Enum) mapping->key);
+				break;
+			}
+
+			// Primero el botón del mando a distancia y luego la tecla
 			if (mapping->remote != RemoteButtons::None) {
 				if (pressed)
 					OnRemoteKeyPressPre(0, mapping->remote);
