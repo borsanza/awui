@@ -125,7 +125,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
   - **MegaChip incompleto:** faltan `ALPHA` (`05nn`, transparencia de la pantalla), `BMODE` (`080n`, modos de mezcla de los sprites) y el sonido digitalizado (`060n`/`0700`, que hoy solo escriben en la consola). Los desplazamientos (`00BN`, `00CN`, `00FB`, `00FC`) no mueven los índices de color de las colisiones, y en MegaChip `00FB`/`00FC` desplazan 8 píxeles (ancho / 32) en vez de 4.
   - **Variantes que no se emulan**, aunque hay ROMs en la carpeta:
     - **CHIP-8X** (4 `.c8x` en "Chip-8X and Hybrids"): color (`02A0`, `BXYN`), `5XY1`, segundo teclado (`EXF2`, `EXF5`) y puertos (`FXF8`, `FXFB`). Hoy se ejecutan como CHIP-8 normal y salen mal.
-    - **ETI-660** ("ETI660 Hybrids"): los programas empiezan en 0x600 (no en 0x200) y la pantalla es de 64×48.
+    - **ETI-660** ("ETI660 Hybrids"): ya se reconocen al cargar (empiezan en 0x600, pantalla de 64×48), y Pong y Maze 2 funcionan. Space Invaders, Wipeout y Music Maker llaman a rutinas en código máquina del 1802 (`00FF`, `0775`…: en Space Invaders, `00FF` se toma como el modo 128×64 de SuperChip), y Space Invaders usa además `FX00` (tono del pitido). Sin emular el 1802 no van bien (ver "Híbridos").
     - **Híbridos** ("Hybrids"): mezclan CHIP-8 con código máquina del CDP1802 (`0NNN`); sin emular ese procesador no funcionan. Habría que sacarlos de la lista de juegos.
     - **XO-CHIP** (Octo): no hay ROMs en la carpeta, pero es la variante moderna más usada (64 KB con `F000 NNNN`, 4 colores con planos, sonido por patrones, `00DN`, `5XY2`/`5XY3`, `FN01`, `F002`, `FX3A`).
   - **Sin estados ni rebobinado:** el Chip-8 no tiene ranuras de estado, partida automática ni rebobinado, como los otros emuladores.

@@ -68,6 +68,11 @@ CPU::~CPU() {
 
 void CPU::LoadRom(const String file) {
 	m_memory->LoadRom(file);
+
+	// ETI-660: el programa empieza en 0x600 y la pantalla es de 64x48
+	m_pc = m_memory->GetStartAddress();
+	if (m_pc == 0x600)
+		ChangeResolution(64, 48);
 }
 
 void CPU::Reset() {
@@ -83,7 +88,7 @@ void CPU::Reset() {
 	m_delayTimer = 0;
 	m_soundTimer = 0;
 	m_finished = 0;
-	m_pc = 0x200;
+	m_pc = m_memory->GetStartAddress();
 	m_imageUpdated = false;
 	m_sound->Stop();
 

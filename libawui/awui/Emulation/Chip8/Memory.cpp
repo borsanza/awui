@@ -20,6 +20,7 @@ using namespace awui::Emulation::Chip8;
 using namespace awui::IO;
 
 Memory::Memory(int32_t capacity) {
+	m_startAddress = 0x200;
 	m_memory = new MemoryStream(capacity);
 	m_memory->SetLength(capacity);
 }
@@ -36,9 +37,10 @@ void Memory::LoadRom(const String file) {
 		data.clear();
 	}
 
-	// La ROM empieza en 0x200. Si no cabe, la memoria crece (MegaChip: hasta 16MB, lo que alcanza I con
-	// 24 bits) conservando lo que ya hay, como las fuentes
-	int64_t needed = 0x200 + (int64_t) data.size();
+	// La ROM empieza en 0x200 (0x600 en el ETI-660). Si no cabe, la memoria crece (MegaChip: hasta 16MB, lo que
+	// alcanza I con 24 bits) conservando lo que ya hay, como las fuentes
+	m_startAddress = DetectStartAddress(data);
+	int64_t needed = m_startAddress + (int64_t) data.size();
 	if (needed > MaxCapacity) {
 		Console::Error->WriteLine(String("ROM demasiado grande para Chip-8, se trunca: ") + file);
 		needed = MaxCapacity;
@@ -47,8 +49,28 @@ void Memory::LoadRom(const String file) {
 	if (m_memory->GetCapacity() < needed)
 		m_memory->SetCapacity((uint32_t) needed);
 
-	m_memory->SetPosition(0x200);
-	m_memory->Write(data.data(), (uint32_t) (needed - 0x200));
+	m_memory->SetPosition(m_startAddress);
+	m_memory->Write(data.data(), (uint32_t) (needed - m_startAddress));
+}
+
+uint16_t Memory::DetectStartAddress(const std::vector<uint8_t> &rom) {
+	int64_t size = (int64_t) rom.size();
+	int at200 = 0;
+	int at600 = 0;
+	for (int64_t i = 0; i + 1 < size; i += 2) {
+		uint16_t opcode = (rom[i] << 8) | rom[i + 1];
+		uint8_t kind = opcode >> 12;
+		if ((kind != 0x1) && (kind != 0x2) && (kind != 0xA))
+			continue;
+
+		uint16_t target = opcode & 0xFFF;
+		if ((target >= 0x200) && (target < 0x200 + size))
+			at200++;
+		if ((target >= 0x600) && (target < 0x600 + size))
+			at600++;
+	}
+
+	return ((at200 == 0) && (at600 > 0)) ? 0x600 : 0x200;
 }
 
 void Memory::Reload() {
