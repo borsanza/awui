@@ -6,6 +6,8 @@
 
 #include "Memory.h"
 
+#include <algorithm>
+
 #include <awui/Console.h>
 #include <awui/IO/File.h>
 #include <vector>
@@ -63,9 +65,17 @@ uint8_t Memory::ReadByte(int64_t pos) {
 	return m_memory->ReadByte((uint32_t) pos);
 }
 
+// MegaChip direcciona hasta 16 MB y los juegos usan como RAM lo que hay por encima de la ROM: escribir más allá de
+// la memoria reservada la hace crecer (de 64 KB en 64 KB, sin pasar del máximo), como si siempre hubiera estado ahí.
+// Antes se ignoraban esas escrituras y los juegos que guardan datos ahí fallaban
 void Memory::WriteByte(int64_t pos, uint8_t value) {
-	if ((pos < 0) || (pos >= m_memory->GetCapacity()))
+	if ((pos < 0) || (pos >= MaxCapacity))
 		return;
+
+	if (pos >= m_memory->GetCapacity()) {
+		int64_t capacity = std::min(((pos >> 16) + 1) << 16, MaxCapacity);
+		m_memory->SetCapacity((uint32_t) capacity);
+	}
 
 	m_memory->WriteByte((uint32_t) pos, value);
 }
