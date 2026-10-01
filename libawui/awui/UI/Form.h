@@ -81,6 +81,7 @@ namespace awui {
 
 			bool SetSwapInterval(bool mode);
 			bool GetSwapInterval() const;
+			bool IsMinimized() const;
 		};
 	} // namespace UI
 } // namespace awui

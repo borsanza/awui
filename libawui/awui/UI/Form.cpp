@@ -225,6 +225,11 @@ bool Form::GetSwapInterval() const {
 	return m_swapInterval;
 }
 
+// Minimizada u oculta: no se ve, no hace falta pintarla
+bool Form::IsMinimized() const {
+	return m_window && (SDL_GetWindowFlags(m_window) & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_HIDDEN));
+}
+
 void Form::SetFullscreen(int mode) {
 	if (m_fullscreen == mode)
 		return;

@@ -9,7 +9,7 @@ Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra d
 ## Fallos con efecto hoy
 
 - **Pérdida de foco de la ventana:** no se atiende `SDL_WINDOWEVENT_FOCUS_LOST`, así que no se pausa nada al minimizar ni al cambiar de ventana. Las teclas pulsadas no deberían quedarse enganchadas al hacer Alt+Tab (SDL2 manda un `KEYUP` por cada una al perder el foco, y las sueltas del mando pasan aunque no haya foco), pero falta comprobarlo con la ventana.
-- **Bucle sin límite:** no hay `SDL_Delay` en ningún sitio. Sin vsync, o con la ventana minimizada (donde el vsync no frena), el programa usa el 100 % de un núcleo.
+- **Bucle sin límite sin vsync:** con el vsync quitado (ajustes o tecla 5), el bucle de `Application::Run` no espera en ningún sitio y usa el 100 % de un núcleo. Con la ventana minimizada ya no pasa: no se pinta y se espera un frame.
 
 ## Fallos latentes
 

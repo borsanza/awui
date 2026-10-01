@@ -72,6 +72,13 @@ void Application::Run(Form *form = NULL) {
 
 		form->OnTickPre(lastDeltaSeconds);
 
+		// Con la ventana minimizada el vsync no frena el bucle (usaría un núcleo entero): no se pinta y se espera
+		// un frame. La lógica sigue (los emuladores y el sonido continúan)
+		if (form->IsMinimized()) {
+			SDL_Delay(16);
+			continue;
+		}
+
 		glViewport(0, 0, form->GetWidth(), form->GetHeight());
 		glClearColor(form->GetBackColor().GetR() / 255.0f, form->GetBackColor().GetG() / 255.0f, form->GetBackColor().GetB() / 255.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
