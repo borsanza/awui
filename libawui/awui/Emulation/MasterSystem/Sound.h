@@ -40,6 +40,7 @@ namespace awui::Emulation::MasterSystem {
 
 		bool m_reverse;	   // Rebobinando: el audio de cada frame se envía al revés
 		int m_fadeSamples; // Muestras del fundido de entrada ya hechas (al cambiar de sentido)
+		bool m_fastForward; // Avance rápido: sobran muestras, solo se envían si la cola de audio se queda corta
 
 		int64_t m_lastCycle;
 		double m_ticksPerSample;
@@ -85,6 +86,7 @@ namespace awui::Emulation::MasterSystem {
 		// Rebobinado: cada frame emulado se oye al revés; como se rebobina frame a frame hacia atrás, el resultado
 		// es el sonido invertido y continuo. Al cambiar de sentido hay un fundido corto para que no chasquee
 		void SetReverse(bool reverse);
+		inline void SetFastForward(bool fastForward) { m_fastForward = fastForward; }
 
 		// El estado incluye el del YM2413 entero (su estructura de emu2413). Sus punteros se guardan como índices
 		// y se rehacen al cargar, así que sirve también para estados en fichero

@@ -73,13 +73,12 @@ void MasterSystem::LoadRom(const String file) {
 }
 
 void MasterSystem::OnTick(float deltaSeconds) {
-	// Rebobinando (o avanzando por lo rebobinado): cada tick carga el estado anterior (o siguiente) y emula ese
-	// frame para verlo y oírlo (al revés si se retrocede). Al acabarse el historial se queda en el último
-	if (m_rewinding || m_forwarding) {
-		bool ok = m_rewinding ? m_rewind->Back(m_state.data()) : m_rewind->Forward(m_state.data());
-		if (ok) {
+	// Rebobinando: cada tick carga el estado anterior y emula ese frame para verlo y oírlo (al revés). Al acabarse
+	// el historial se queda en el último
+	if (m_rewinding) {
+		if (m_rewind->Back(m_state.data())) {
 			m_cpu->LoadState(m_state.data());
-			m_cpu->GetSound()->SetReverse(m_rewinding);
+			m_cpu->GetSound()->SetReverse(true);
 			m_cpu->RunFrame();
 		}
 
@@ -87,9 +86,14 @@ void MasterSystem::OnTick(float deltaSeconds) {
 	}
 
 	m_cpu->GetSound()->SetReverse(false);
-	m_cpu->OnTick(deltaSeconds);
 
-	// Guardar tras rebobinar empieza otra línea de tiempo: lo que se podía volver a avanzar se descarta
+	// Avance rápido: el tiempo de varios ticks en uno. El sonido no puede ir más deprisa: se oye a trozos
+	m_cpu->GetSound()->SetFastForward(m_forwarding);
+	int times = m_forwarding ? FastForwardSpeed : 1;
+	for (int i = 0; i < times; i++)
+		m_cpu->OnTick(deltaSeconds);
+
+	// Al seguir jugando tras rebobinar empieza otra línea de tiempo: lo rebobinado se olvida
 	m_cpu->SaveState(m_state.data());
 	m_rewind->Push(m_state.data());
 }

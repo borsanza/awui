@@ -37,5 +37,9 @@ namespace awui::Emulation::Common {
 		// Para que la cola no crezca ni se vacíe: > 1 cuando sobran muestras encoladas (hay que generar menos),
 		// < 1 cuando faltan. Se multiplica por los ciclos por muestra o se divide entre las muestras por segundo
 		double GetRateAdjust() const;
+
+		// Si ya hay en cola todo lo que se quiere tener: quien genera más deprisa de lo normal (el avance rápido)
+		// puede saltarse muestras
+		bool IsQueueFull() const;
 	};
 } // namespace awui::Emulation::Common

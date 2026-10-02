@@ -55,6 +55,7 @@ Sound::Sound() {
 	// El YM2413 va con el mismo reloj que la CPU; emu2413 convierte su salida (reloj / 72) a Common::AudioOutput::Frequency
 	m_opll = OPLL_new((uint32_t) CLOCK_NTSC, Common::AudioOutput::Frequency);
 	m_reverse = false;
+	m_fastForward = false;
 	m_fadeSamples = FADE_IN_SAMPLES;
 
 	Reset();
@@ -319,6 +320,13 @@ void Sound::EndFrame(Motherboard *cpu) {
 	m_ticksPerSample = ((clock / CYCLES_PER_TICK) / Common::AudioOutput::Frequency) * output.GetRateAdjust();
 
 	Render(cpu->GetCycles());
+
+	// En avance rápido se generan más muestras de las que se pueden tocar: las de este frame se tiran si ya hay
+	// bastantes en cola (así no se llena y se vacía de golpe)
+	if (m_fastForward && output.IsQueueFull()) {
+		m_samples.clear();
+		return;
+	}
 
 	if (m_reverse) {
 		// Pares estéreo en orden inverso

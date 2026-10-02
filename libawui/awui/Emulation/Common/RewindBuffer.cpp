@@ -43,7 +43,6 @@ RewindBuffer::RewindBuffer(size_t stateSize, size_t maxBytes) {
 
 void RewindBuffer::Clear() {
 	m_back.clear();
-	m_forward.clear();
 	m_bytes = 0;
 	m_hasCurrent = false;
 }
@@ -107,10 +106,6 @@ void RewindBuffer::Push(const uint8_t *state) {
 		return;
 	}
 
-	for (const auto &delta : m_forward)
-		m_bytes -= delta.size();
-	m_forward.clear();
-
 	std::vector<uint8_t> delta;
 	Compress(state, delta);
 	delta.shrink_to_fit();
@@ -129,19 +124,8 @@ bool RewindBuffer::Back(uint8_t *state) {
 		return false;
 
 	ApplyDelta(m_back.back());
-	m_forward.push_back(std::move(m_back.back()));
+	m_bytes -= m_back.back().size();
 	m_back.pop_back();
-	memcpy(state, m_current.data(), m_stateSize);
-	return true;
-}
-
-bool RewindBuffer::Forward(uint8_t *state) {
-	if (m_forward.empty())
-		return false;
-
-	ApplyDelta(m_forward.back());
-	m_back.push_back(std::move(m_forward.back()));
-	m_forward.pop_back();
 	memcpy(state, m_current.data(), m_stateSize);
 	return true;
 }

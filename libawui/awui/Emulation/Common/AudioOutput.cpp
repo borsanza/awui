@@ -119,3 +119,7 @@ double AudioOutput::GetRateAdjust() const {
 
 	return 1.0 + (error * MAX_RATE_ADJUST);
 }
+
+bool AudioOutput::IsQueueFull() const {
+	return GetQueuedFrames() >= TARGET_QUEUED_FRAMES;
+}

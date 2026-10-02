@@ -31,13 +31,16 @@ namespace awui {
 			uint8_t m_axis2;
 			bool m_invertButtons;
 
-			// Rebobinado: un estado por tick. Mientras se mantiene el botón se retrocede (o avanza) un frame por tick
+			// Rebobinado: un estado por tick. Mientras se mantiene el botón se retrocede un frame por tick
 			Emulation::Common::RewindBuffer *m_rewind;
 			std::vector<uint8_t> m_state;
 			bool m_rewinding;
 
-			void ToggleSoundChannel(int channel);
+			// Avance rápido: mientras se mantiene el botón, el juego va FastForwardSpeed veces más deprisa
+			static constexpr int FastForwardSpeed = 4;
 			bool m_forwarding;
+
+			void ToggleSoundChannel(int channel);
 
 			void RefreshPads();
 
