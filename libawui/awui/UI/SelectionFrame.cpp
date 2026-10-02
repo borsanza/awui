@@ -7,6 +7,7 @@
 #include "SelectionFrame.h"
 
 #include <awui/Math.h>
+#include <awui/OpenGL/Painter.h>
 #include <awui/UI/Bitmap.h>
 #include <awui/UI/Control.h>
 
@@ -67,7 +68,11 @@ void SelectionFrame::Paint(const Control *parent) {
 	int top = Math::Round(m_top);
 	bitmap->SetSize(Math::Round(m_right - m_left + 1.0f), Math::Round(m_bottom - m_top + 1.0f));
 
-	glTranslatef(left, top, 0);
+	// El marco se pinta desplazado dentro del control que lo contiene
+	OpenGL::Painter &painter = OpenGL::Painter::Instance();
+	float offsetX = painter.GetOffsetX();
+	float offsetY = painter.GetOffsetY();
+	painter.SetOffset(offsetX + left, offsetY + top);
 	bitmap->OnPaint(nullptr);
-	glTranslatef(-left, -top, 0);
+	painter.SetOffset(offsetX, offsetY);
 }

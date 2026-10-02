@@ -16,6 +16,7 @@ Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra d
 
 Nadie los usa hoy, pero fallarán en cuanto se usen.
 
+- **El depurador de la Master System no se puede abrir:** `MasterSystem` tiene la tecla F para mostrarlo, pero `m_debugger` nunca se crea (siempre es `NULL`), así que `DebuggerSMS` es código muerto. O se crea (en Debug, por ejemplo) o se borra.
 - **Variables `static inline` en cabeceras con DLL:** en Windows, el ejecutable y `libawui.dll` tienen cada uno su copia (`SavePaths`, `AudioSettings`, `Localization`, `CPU::s_restartWhenFinished`...). Hoy todas se cambian y se leen desde dentro de la DLL, pero si un sample cambia una directamente desde su código, la DLL no lo ve. Pasó con `SettingsStore::SetValuesFile`, que ya está en el `.cpp`.
 - **`GOB::Object3D` sin destructor virtual:** borra sus hijos (`Mesh`, `Camera`…) como `Object3D *`, así que el destructor de la clase hija no se ejecuta (comportamiento indefinido). Además, `Mesh` guarda su `BufferGeometry *` y sus `Material *` sin liberarlos nunca: no está claro quién es el dueño.
 - **Estado del Z80 copiado con `memcpy`:** `CPUInst::saveData` contiene `Registers`, que tiene un destructor declarado a mano, así que no es un tipo trivial y copiarlo con `memcpy` no está garantizado (el compilador lo avisa con `-Wclass-memaccess`). Basta con quitar ese destructor vacío.
@@ -64,11 +65,12 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### Pintado
 
-- **OpenGL antiguo:** el pintado usa el modo inmediato (`glBegin`/`glEnd`, `glColor`, `glOrtho`…), que no existe en perfiles modernos ni en OpenGL ES (Raspberry Pi, Android, WebGL). El sustituto ya está hecho y probado: [Painter](libawui/awui/OpenGL/Painter.h), con shaders que valen para OpenGL 3.3 y ES 3.0, y pinta igual píxel a píxel que el modo antiguo. Falta:
-  1. Pasar a él el pintado: `GL.cpp` (`FillRectangle`, `DrawImageGL`, `DrawLine`, `DrawRectangle`), `Control::OnPaintPre` (`glOrtho` → `Painter::SetOrtho`), `Image` (subir como RGBA, sin `GL_BGRA`), `Bitmap` (sus 9 trozos con `Painter::AddQuad`), `Gradient`, las flechas de `MenuButton`/`ConfigButton` (`Painter::AddLine`), `SelectionFrame` (`glTranslatef` → `SetOffset`), `Spinner`, `Heartbeat` y `DebuggerSMS`. Comprobarlo comparando capturas antes y después.
-  2. Pedir un contexto moderno (3.3 *core*, o ES 3.0) para que nada del modo antiguo quede escondido.
-  3. El motor 3D de gameOfBlocks (`GOB/`), aparte, o dejarlo con el contexto de compatibilidad.
+- **OpenGL antiguo (falta el contexto moderno):** toda la interfaz pinta ya con [Painter](libawui/awui/OpenGL/Painter.h) (shaders que valen para OpenGL 3.3 y ES 3.0), sin `glBegin`/`glColor`/`glOrtho`. Queda:
+  1. Pedir un contexto moderno (3.3 *core*, o ES 3.0 en Raspberry/Android) para que nada del modo antiguo quede escondido, y quitar los restos: `glDisable(GL_TEXTURE_2D)` en `Form::Init` y el guardado y restaurado de estado del `Painter`, que solo hace falta mientras conviva con el modo antiguo.
+  2. El motor 3D de gameOfBlocks (`GOB/`), que sigue en modo inmediato: pasarlo a shaders o dejarlo con el contexto de compatibilidad.
+  3. GLEW ya no hace falta para la interfaz (el `Painter` carga sus funciones con SDL): se puede quitar de las dependencias cuando `GOB/` no lo use.
   4. [Shader.cpp](libawui/awui/OpenGL/Shader.cpp) es un experimento sin usar (llama a `glewInit` y carga un `shader.glfs` fijo): se puede borrar.
+  5. El `Painter` pinta cada control con su propia llamada; juntar los vértices de todo el frame en una sola iría más rápido en una Raspberry.
 - **Estado de OpenGL a mano:** cada `DrawImageGL` y `Bitmap::OnPaint` consulta y restaura `GL_TEXTURE_2D`, `GL_BLEND` y `GL_DEPTH_TEST` con `glIsEnabled`.
 - **Dos formas de mezclar:** `Image` (cairo) sube el alfa premultiplicado y `Bitmap` (SDL_image) sin premultiplicar, cada uno con su `glBlendFunc`.
 - **`OnPaint(OpenGL::GL *gl)`** recibe siempre `NULL`: el parámetro no sirve.

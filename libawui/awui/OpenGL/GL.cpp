@@ -7,8 +7,12 @@
 #include "GL.h"
 
 #include <SDL_opengl.h>
+#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Math.h>
+#include <awui/OpenGL/Painter.h>
+
+#include <vector>
 
 using namespace awui::Drawing;
 using namespace awui::OpenGL;
@@ -42,104 +46,41 @@ void GL::SetClipping() {
 	glScissor(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight());
 }
 
-#define OFFSET 0.5f
+void GL::DrawLine(int x1, int y1, int x2, int y2, const Color &color) {
+	Painter &painter = Painter::Instance();
 
-void GL::DrawLine(int x1, int y1, int x2, int y2) {
-	int xinc = 0;
-	int yinc = 0;
-	int width = Math::Abs(x2 - x1);
-	int height = Math::Abs(y2 - y1);
-
-	if (width >= height) {
-		if (x2 >= x1)
-			xinc = 1;
-		else
-			xinc = -1;
+	// Horizontal o vertical: los mismos píxeles que GL_LINES, del primero al último incluidos
+	if ((x1 == x2) || (y1 == y2)) {
+		painter.FillRectangle(Math::Min(x1, x2), Math::Min(y1, y2), Math::Max(x1, x2), Math::Max(y1, y2), color);
+		return;
 	}
 
-	if (height >= width) {
-		if (y2 >= y1)
-			yinc = 1;
-		else
-			yinc = -1;
-	}
-
-	glBegin(GL_LINES);
-	glVertex2f(x1 + OFFSET, y1 + OFFSET);
-	glVertex2f(x2 + xinc + OFFSET, y2 + yinc + OFFSET);
-	glEnd();
+	std::vector<Painter::Vertex> vertices;
+	Painter::AddLine(vertices, x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, 1.0f, color);
+	painter.DrawLines(vertices);
 }
 
-// GL_CCW
-void GL::DrawRectangle(int x1, int y1, int x2, int y2) {
-	glBegin(GL_LINE_LOOP);
-	glVertex2f(x1 + OFFSET, y2 + OFFSET); // Left Bottom
-	glVertex2f(x2 + OFFSET, y2 + OFFSET); // Right Bottom
-	glVertex2f(x2 + OFFSET, y1 + OFFSET); // Right Top
-	glVertex2f(x1 + OFFSET, y1 + OFFSET); // Left Top
-	glEnd();
+// El borde de un píxel de ancho, con las esquinas incluidas
+void GL::DrawRectangle(int x1, int y1, int x2, int y2, const Color &color) {
+	std::vector<Painter::Vertex> vertices;
+	Painter::AddQuad(vertices, x1, y1, x2 + 1.0f, y1 + 1.0f, 0, 0, 0, 0, color);
+	Painter::AddQuad(vertices, x1, y2, x2 + 1.0f, y2 + 1.0f, 0, 0, 0, 0, color);
+	Painter::AddQuad(vertices, x1, y1 + 1.0f, x1 + 1.0f, y2, 0, 0, 0, 0, color);
+	Painter::AddQuad(vertices, x2, y1 + 1.0f, x2 + 1.0f, y2, 0, 0, 0, 0, color);
+	Painter::Instance().DrawTriangles(vertices);
 }
 
-// GL_CCW
-void GL::FillRectangle(int x1, int y1, int x2, int y2) {
-	glBegin(GL_QUADS);
-	glVertex2f(x1, y2 + 1.0f);		  // Left Bottom
-	glVertex2f(x2 + 1.0f, y2 + 1.0f); // Right Bottom
-	glVertex2f(x2 + 1.0f, y1);		  // Right Top
-	glVertex2f(x1, y1);				  // Left Top
-	glEnd();
+void GL::FillRectangle(int x1, int y1, int x2, int y2, const Color &color) {
+	Painter::Instance().FillRectangle(x1, y1, x2, y2, color);
 }
 
-#ifndef GL_BGRA
-#define GL_BGRA 0x80E1
-#endif
-
-// GL_CCW
 void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y) {
 	DrawImageGL(image, x, y, image->GetWidth(), image->GetHeight());
 }
 
-// GL_CCW. opacity: 0 transparente, 1 opaca (fundidos)
+// opacity: 0 transparente, 1 opaca (fundidos). El buffer de Image es de cairo (BGRA, con el color ya multiplicado
+// por el alfa)
 void GL::DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int height, float opacity) {
 	image->Load();
-
-	// Mas rapido guardandose solo el valor y recuperarlo despues
-	GLboolean oldTexture = glIsEnabled(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
-
-	GLboolean oldDepth = glIsEnabled(GL_DEPTH_TEST);
-	glDisable(GL_DEPTH_TEST);
-
-	GLboolean oldBlend = glIsEnabled(GL_BLEND);
-	glEnable(GL_BLEND);
-	// El buffer de Image es de cairo (ARGB32), con el color ya multiplicado por el alfa: la opacidad se aplica
-	// igual a color y alfa
-	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-	glBindTexture(GL_TEXTURE_2D, image->GetTexture());
-
-	glColor4f(opacity, opacity, opacity, opacity);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2i(x, y + height); // Left Bottom
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2i(x + width, y + height); // Right Bottom
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2i(x + width, y); // Right Top
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2i(x, y); // Left Top
-	glEnd();
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-	// El resto del código (rellenos con alfa, GOB) usa la mezcla normal sin fijarla
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	if (!oldBlend)
-		glDisable(GL_BLEND);
-
-	if (oldDepth)
-		glEnable(GL_DEPTH_TEST);
-
-	if (!oldTexture)
-		glDisable(GL_TEXTURE_2D);
+	Painter::Instance().DrawTexture(image->GetTexture(), Painter::TextureFormat::BGRA, Painter::Blend::Premultiplied, x, y, width, height, opacity);
 }

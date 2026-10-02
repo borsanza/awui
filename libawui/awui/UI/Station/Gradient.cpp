@@ -9,6 +9,7 @@
 
 #include <SDL_opengl.h>
 #include <awui/Math.h>
+#include <awui/OpenGL/Painter.h>
 
 using namespace awui::Drawing;
 using namespace awui;
@@ -26,29 +27,21 @@ void Gradient::SetColorGo(int pos, const ColorF color) {
 	m_colorGo[pos] = color;
 }
 
-// GL_CCW
+// Un color en cada esquina (0: arriba izquierda, 1: arriba derecha, 2: abajo derecha, 3: abajo izquierda), que van de
+// 0 a 255. Los dos triángulos parten el rectángulo igual que lo hacía GL_QUADS
 void Gradient::OnPaint(GL *gl) {
-	ColorF *c;
+	auto vertex = [this](float x, float y, int corner) {
+		const ColorF &c = m_color[corner];
+		auto toByte = [](float value) { return (uint8_t) Math::Clamp(value, 0.0f, 255.0f); };
+		return Painter::Vertex{x, y, 0.0f, 0.0f, toByte(c.GetR()), toByte(c.GetG()), toByte(c.GetB()), toByte(c.GetA())};
+	};
 
-	glBegin(GL_QUADS);
-
-	c = &m_color[3];
-	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(0.0f, GetHeight(), 0.0f); // Left Bottom
-
-	c = &m_color[2];
-	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(GetWidth(), GetHeight(), 0.0f); // Right Bottom
-
-	c = &m_color[1];
-	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(GetWidth(), 0.0f, 0.0f); // Right Top
-
-	c = &m_color[0];
-	glColor4ub(c->GetR(), c->GetG(), c->GetB(), c->GetA());
-	glVertex3f(0.0f, 0.0f, 0.0f); // Left Top
-
-	glEnd();
+	Painter::Vertex leftBottom = vertex(0.0f, GetHeight(), 3);
+	Painter::Vertex rightBottom = vertex(GetWidth(), GetHeight(), 2);
+	Painter::Vertex rightTop = vertex(GetWidth(), 0.0f, 1);
+	Painter::Vertex leftTop = vertex(0.0f, 0.0f, 0);
+	Painter::Vertex vertices[] = {leftBottom, rightBottom, rightTop, leftBottom, rightTop, leftTop};
+	Painter::Instance().DrawTriangles(vertices, 6);
 }
 
 ColorF Gradient::InterpolateColor(ColorF *c1, ColorF *c2, float percent) {

@@ -4,6 +4,7 @@
 
 namespace awui {
 	namespace Drawing {
+		class Color;
 		class Image;
 	}
 
@@ -33,9 +34,10 @@ namespace awui {
 
 			void SetClipping();
 
-			static void DrawLine(int x, int y, int x2, int y2);
-			static void DrawRectangle(int x1, int y1, int x2, int y2);
-			static void FillRectangle(int x1, int y1, int x2, int y2);
+			// Con el Painter (shaders). Los extremos están incluidos, en píxeles del control
+			static void DrawLine(int x, int y, int x2, int y2, const awui::Drawing::Color &color);
+			static void DrawRectangle(int x1, int y1, int x2, int y2, const awui::Drawing::Color &color);
+			static void FillRectangle(int x1, int y1, int x2, int y2, const awui::Drawing::Color &color);
 			static void DrawImageGL(awui::Drawing::Image *image, int x, int y);
 			static void DrawImageGL(awui::Drawing::Image *image, int x, int y, int width, int height, float opacity = 1.0f);
 		};

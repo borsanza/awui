@@ -33,20 +33,19 @@ void Spinner::OnPaint(OpenGL::GL *gl) {
 	int right = left + size - 1;
 	int bottom = top + size - 1;
 	Color color = GetForeColor();
-	glColor4ub(color.GetR(), color.GetG(), color.GetB(), color.GetA());
 
 	switch (m_position) {
 		case 0:
-			GL::DrawLine(left, top, right, top);
+			GL::DrawLine(left, top, right, top, color);
 			break;
 		case 1:
-			GL::DrawLine(left, top, left, bottom);
+			GL::DrawLine(left, top, left, bottom, color);
 			break;
 		case 2:
-			GL::DrawLine(left, bottom, right, bottom);
+			GL::DrawLine(left, bottom, right, bottom, color);
 			break;
 		case 3:
-			GL::DrawLine(right, top, right, bottom);
+			GL::DrawLine(right, top, right, bottom, color);
 			break;
 	}
 }

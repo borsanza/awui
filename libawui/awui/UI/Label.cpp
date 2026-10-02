@@ -112,18 +112,11 @@ void Label::DrawLines(int x, int y) {
 	int posAscent = posBaseline - m_metrics.GetAscent();
 	int posDescent = posBaseline + m_metrics.GetDescent();
 
-	glColor3f(0.0f, 1.0f, 0.0f);
-	GL::DrawLine(0, posBaseline, GetWidth(), posBaseline);
-
-	glColor3f(1.0f, 0.0f, 1.0f);
-	GL::DrawLine(0, posAscent, GetWidth(), posAscent);
-
-	glColor3f(1.0f, 0.0f, 1.0f);
-	GL::DrawLine(0, posDescent, GetWidth(), posDescent);
-
-	glColor3f(1.0f, 0.0f, 0.0f);
-	GL::DrawLine(x, 0, x, GetHeight());
-	GL::DrawLine(0, y, GetWidth(), y);
+	GL::DrawLine(0, posBaseline, GetWidth(), posBaseline, Color::FromArgb(0, 255, 0));
+	GL::DrawLine(0, posAscent, GetWidth(), posAscent, Color::FromArgb(255, 0, 255));
+	GL::DrawLine(0, posDescent, GetWidth(), posDescent, Color::FromArgb(255, 0, 255));
+	GL::DrawLine(x, 0, x, GetHeight(), Color::FromArgb(255, 0, 0));
+	GL::DrawLine(0, y, GetWidth(), y, Color::FromArgb(255, 0, 0));
 }
 
 void Label::SetText(const String str) {

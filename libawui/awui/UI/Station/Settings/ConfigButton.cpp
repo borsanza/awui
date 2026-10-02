@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <SDL_opengl.h>
+#include <awui/OpenGL/Painter.h>
 #include <awui/Drawing/Font.h>
 #include <awui/UI/Form.h>
 #include <awui/UI/Events/IRemoteListener.h>
@@ -51,48 +52,24 @@ void ConfigButton::OnPaint(GL *gl) {
 	}
 
 	if (IsGroup()) {
-		glLineWidth(2.5f);
-
 		float x = GetWidth() - 22.0f;
 		float y = (GetHeight() / 2.0f) - 0.5f;
 
-		Form *form = GetForm();
-		if (form && (form->GetChildFocused() == this)) {
-			glColor3ub(255, 255, 255);
-		} else {
-			glColor3ub(199, 199, 199);
-		}
-
-		glEnable(GL_LINE_SMOOTH);
-		glBegin(GL_LINE_STRIP);
-		glVertex2f(x - 10.0f + OFFSET, y - 10.0f + OFFSET);
-		glVertex2f(x + OFFSET, y + OFFSET);
-		glVertex2f(x - 10.0f + OFFSET, y + 10.0f + OFFSET);
-		glEnd();
-		glDisable(GL_LINE_SMOOTH);
+		// Flecha ">" de 2,5 píxeles de grosor, con los bordes suavizados
+		std::vector<Painter::Vertex> lines;
+		Painter::AddPolyline(lines, {x - 10.0f + OFFSET, y - 10.0f + OFFSET, x + OFFSET, y + OFFSET, x - 10.0f + OFFSET, y + 10.0f + OFFSET}, 2.5f, GetForeColor());
+		Painter::Instance().DrawLines(lines);
 	}
 
 	// Marca de la opción elegida
 	if ((m_typeButton == TypeButton::Option) && m_boolValue) {
-		glLineWidth(3.0f);
-
 		float x = GetWidth() - 22.0f;
 		float y = (GetHeight() / 2.0f) - 0.5f;
 
-		Form *form = GetForm();
-		if (form && (form->GetChildFocused() == this)) {
-			glColor3ub(255, 255, 255);
-		} else {
-			glColor3ub(199, 199, 199);
-		}
-
-		glEnable(GL_LINE_SMOOTH);
-		glBegin(GL_LINE_STRIP);
-		glVertex2f(x - 20.0f + OFFSET, y + OFFSET);
-		glVertex2f(x - 12.0f + OFFSET, y + 8.0f + OFFSET);
-		glVertex2f(x + OFFSET, y - 10.0f + OFFSET);
-		glEnd();
-		glDisable(GL_LINE_SMOOTH);
+		// Marca "✓" de 3 píxeles de grosor
+		std::vector<Painter::Vertex> lines;
+		Painter::AddPolyline(lines, {x - 20.0f + OFFSET, y + OFFSET, x - 12.0f + OFFSET, y + 8.0f + OFFSET, x + OFFSET, y - 10.0f + OFFSET}, 3.0f, GetForeColor());
+		Painter::Instance().DrawLines(lines);
 	}
 }
 

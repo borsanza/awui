@@ -95,7 +95,9 @@ void Image::Load() {
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, GetWidth(), GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, m_image);
+	// Los bytes de cairo están en orden BGRA, pero se suben como RGBA (OpenGL ES no tiene GL_BGRA): el Painter
+	// los reordena al pintar (TextureFormat::BGRA)
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, GetWidth(), GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_image);
 
 	m_loaded = true;
 }
@@ -119,7 +121,7 @@ void Image::Update() {
 	if (m_loaded) {
 		SyncWithCairo();
 		glBindTexture(GL_TEXTURE_2D, m_texture);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, GetWidth(), GetHeight(), GL_BGRA, GL_UNSIGNED_BYTE, m_image);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, GetWidth(), GetHeight(), GL_RGBA, GL_UNSIGNED_BYTE, m_image);
 	}
 }
 

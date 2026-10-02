@@ -40,11 +40,12 @@ args=(--rm --name "$container" -u "$(id -u):$(id -g)"
 	-w "/app/samples/$sample")
 
 # Prepara la configuración de Wine la primera vez, esperando a que termine (si se corta a medias queda rota: sin
-# sonido, por ejemplo). La marca .awui-ready dice que está completa; si no está, se rehace
-init='if [ ! -f /wine/prefix/.awui-ready ]; then
+# sonido, por ejemplo). La marca dice que está completa; si no está, se rehace. Lleva un número que hay que subir
+# cuando cambie el Wine de la imagen (scripts/wine/Dockerfile), porque la configuración de uno no vale para otro
+init='if [ ! -f /wine/prefix/.awui-ready-2 ]; then
 		rm -rf /wine/prefix
 		echo "Preparando Wine (solo la primera vez)..."
-		wine wineboot -i > /dev/null 2>&1 && wineserver -w && touch /wine/prefix/.awui-ready
+		wine wineboot -i > /dev/null 2>&1 && wineserver -w && touch /wine/prefix/.awui-ready-2
 	fi'
 
 if [ $headless = 1 ]; then

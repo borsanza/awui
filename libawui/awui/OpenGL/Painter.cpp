@@ -72,7 +72,8 @@ void main() {
 }
 )";
 
-	// u_mode: 0 solo color, 1 textura RGBA, 2 textura BGRA (se reordena aquí)
+	// u_mode: 0 solo color, 1 textura RGBA, 2 textura BGRA (se reordena aquí), 3 línea suavizada (v_texCoord.x:
+	// medio grosor; v_texCoord.y: distancia al centro de la línea, en píxeles)
 	const char *FragmentShader = R"(
 uniform sampler2D u_texture;
 uniform int u_mode;
@@ -82,7 +83,9 @@ out vec4 fragColor;
 
 void main() {
 	vec4 color = v_color;
-	if (u_mode != 0) {
+	if (u_mode == 3) {
+		color.a *= clamp(v_texCoord.x + 0.5 - abs(v_texCoord.y), 0.0, 1.0);
+	} else if (u_mode != 0) {
 		vec4 texel = texture(u_texture, v_texCoord);
 		if (u_mode == 2)
 			texel = texel.bgra;
@@ -230,6 +233,14 @@ void Painter::SetOffset(float x, float y) {
 }
 
 void Painter::DrawTriangles(const Vertex *vertices, int count, GLuint texture, TextureFormat format, Blend blend) {
+	Draw(vertices, count, texture ? ((format == TextureFormat::BGRA) ? 2 : 1) : 0, texture, blend);
+}
+
+void Painter::DrawLines(const std::vector<Vertex> &vertices) {
+	Draw(vertices.data(), (int) vertices.size(), 3, 0, Blend::Normal);
+}
+
+void Painter::Draw(const Vertex *vertices, int count, int mode, GLuint texture, Blend blend) {
 	if ((count < 3) || !Initialize())
 		return;
 
@@ -248,6 +259,7 @@ void Painter::DrawTriangles(const Vertex *vertices, int count, GLuint texture, T
 	glGetIntegerv(GL_BLEND_DST_RGB, &previousDestination);
 	GLboolean previousBlend = glIsEnabled(GL_BLEND);
 	GLboolean previousDepth = glIsEnabled(GL_DEPTH_TEST);
+	GLboolean previousCull = glIsEnabled(GL_CULL_FACE);
 
 	// La proyección con el desplazamiento ya aplicado
 	float projection[16];
@@ -257,12 +269,14 @@ void Painter::DrawTriangles(const Vertex *vertices, int count, GLuint texture, T
 
 	p_glUseProgram(m_program);
 	p_glUniformMatrix4fv(m_projectionLocation, 1, GL_FALSE, projection);
-	p_glUniform1i(m_modeLocation, texture ? ((format == TextureFormat::BGRA) ? 2 : 1) : 0);
+	p_glUniform1i(m_modeLocation, mode);
 	p_glUniform1i(m_textureLocation, 0);
 	p_glActiveTexture(GL_TEXTURE0);
 	if (texture)
 		glBindTexture(GL_TEXTURE_2D, texture);
 
+	// En 2D no hay caras traseras: los triángulos de una línea salen en un sentido u otro según su dirección
+	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	if (blend == Blend::Premultiplied)
@@ -284,6 +298,8 @@ void Painter::DrawTriangles(const Vertex *vertices, int count, GLuint texture, T
 		glDisable(GL_BLEND);
 	if (previousDepth)
 		glEnable(GL_DEPTH_TEST);
+	if (previousCull)
+		glEnable(GL_CULL_FACE);
 }
 
 void Painter::AddQuad(std::vector<Vertex> &vertices, float x1, float y1, float x2, float y2, float u1, float v1, float u2, float v2, const Color &color) {
@@ -299,19 +315,42 @@ void Painter::AddQuad(std::vector<Vertex> &vertices, float x1, float y1, float x
 }
 
 void Painter::AddLine(std::vector<Vertex> &vertices, float x1, float y1, float x2, float y2, float width, const Color &color) {
+	AddSegment(vertices, x1, y1, x2, y2, width, 0.0f, 0.0f, color);
+}
+
+void Painter::AddPolyline(std::vector<Vertex> &vertices, const std::vector<float> &points, float width, const Color &color) {
+	size_t count = points.size() / 2;
+	for (size_t i = 0; i + 1 < count; i++) {
+		float extendStart = (i > 0) ? width * 0.5f : 0.0f;
+		float extendEnd = (i + 2 < count) ? width * 0.5f : 0.0f;
+		AddSegment(vertices, points[i * 2], points[i * 2 + 1], points[i * 2 + 2], points[i * 2 + 3], width, extendStart, extendEnd, color);
+	}
+}
+
+void Painter::AddSegment(std::vector<Vertex> &vertices, float x1, float y1, float x2, float y2, float width, float extendStart, float extendEnd, const Color &color) {
 	float dx = x2 - x1;
 	float dy = y2 - y1;
 	float length = std::sqrt(dx * dx + dy * dy);
 	if (length <= 0.0f)
 		return;
 
-	// Perpendicular a la línea, de medio grosor
-	float nx = -dy / length * width * 0.5f;
-	float ny = dx / length * width * 0.5f;
-	Vertex a = MakeVertex(x1 + nx, y1 + ny, 0.0f, 0.0f, color);
-	Vertex b = MakeVertex(x1 - nx, y1 - ny, 0.0f, 0.0f, color);
-	Vertex c = MakeVertex(x2 + nx, y2 + ny, 0.0f, 0.0f, color);
-	Vertex d = MakeVertex(x2 - nx, y2 - ny, 0.0f, 0.0f, color);
+	// Dirección y perpendicular. El rectángulo es un píxel más ancho por cada lado, para el suavizado
+	float half = width * 0.5f;
+	float extent = half + 1.0f;
+	float ux = dx / length;
+	float uy = dy / length;
+	float nx = -uy * extent;
+	float ny = ux * extent;
+	float sx1 = x1 - ux * extendStart;
+	float sy1 = y1 - uy * extendStart;
+	float sx2 = x2 + ux * extendEnd;
+	float sy2 = y2 + uy * extendEnd;
+
+	// u: medio grosor; v: distancia al centro (el shader la interpola y saca la opacidad)
+	Vertex a = MakeVertex(sx1 + nx, sy1 + ny, half, extent, color);
+	Vertex b = MakeVertex(sx1 - nx, sy1 - ny, half, -extent, color);
+	Vertex c = MakeVertex(sx2 + nx, sy2 + ny, half, extent, color);
+	Vertex d = MakeVertex(sx2 - nx, sy2 - ny, half, -extent, color);
 	vertices.insert(vertices.end(), {a, b, c, c, b, d});
 }
 

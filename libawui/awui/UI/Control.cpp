@@ -14,6 +14,7 @@
 #include <awui/IO/Directory.h>
 #include <awui/Math.h>
 #include <awui/OpenGL/GL.h>
+#include <awui/OpenGL/Painter.h>
 #include <awui/UI/Bitmap.h>
 #include <awui/UI/Form.h>
 #include <awui/UI/Events/JoystickAxisMotionEventArgs.h>
@@ -355,11 +356,10 @@ void Control::Refresh() {
 }
 
 int Control::OnPaintPre(int x, int y, int width, int height, GL *gl, bool first) {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-x, width - x, height - y, -y, -1.0f, 1.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	// Las coordenadas de lo que pinta el control empiezan en su esquina superior izquierda
+	OpenGL::Painter &painter = OpenGL::Painter::Instance();
+	painter.SetOrtho(-x, width - x, height - y, -y);
+	painter.SetOffset(0.0f, 0.0f);
 
 	Drawing::Rectangle rect2;
 	rect2.SetX(x);
@@ -382,15 +382,13 @@ int Control::OnPaintPre(int x, int y, int width, int height, GL *gl, bool first)
 					glClearColor(m_backColor.GetR() / 255.0f, m_backColor.GetG() / 255.0f, m_backColor.GetB() / 255.0f, 1.0f);
 					glClear(GL_COLOR_BUFFER_BIT);
 				} else {
-					glColor3ub(m_backColor.GetR(), m_backColor.GetG(), m_backColor.GetB());
-					GL::FillRectangle(0, 0, GetWidth(), GetHeight());
+					GL::FillRectangle(0, 0, GetWidth(), GetHeight(), m_backColor);
 				}
 				break;
 			case 0:
 				break;
 			default:
-				glColor4ub(m_backColor.GetR(), m_backColor.GetG(), m_backColor.GetB(), m_backColor.GetA());
-				GL::FillRectangle(0, 0, GetWidth(), GetHeight());
+				GL::FillRectangle(0, 0, GetWidth(), GetHeight(), m_backColor);
 				break;
 		}
 

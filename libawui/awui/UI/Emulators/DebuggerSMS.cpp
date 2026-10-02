@@ -7,6 +7,7 @@
 #include "DebuggerSMS.h"
 
 #include <SDL_opengl.h>
+#include <awui/Drawing/Color.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Common/Ram.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
@@ -106,14 +107,12 @@ void DebuggerSMS::OnPaint(OpenGL::GL *gl) {
 	if (m_width == 1)
 		return;
 
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	GL::DrawRectangle(0, 0, 193, 51);
+	GL::DrawRectangle(0, 0, 193, 51, Drawing::Color::FromArgb(255, 255, 255));
 	GL::DrawImageGL(m_colors, 1, 1, 192, 50);
 
 	int left = (GetWidth() - 128) >> 1;
 	int top = 100;
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	GL::DrawRectangle(left - 1, top - 1, left + 128, top + 256);
+	GL::DrawRectangle(left - 1, top - 1, left + 128, top + 256, Drawing::Color::FromArgb(255, 255, 255));
 	GL::DrawImageGL(m_tiles, left, top);
 }
 

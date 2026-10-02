@@ -26,10 +26,9 @@ void Heartbeat::OnPaint(OpenGL::GL *gl) {
 	int right = left + size - 1;
 	int bottom = top + size - 1;
 	Color color = GetForeColor();
-	glColor4ub(color.GetR(), color.GetG(), color.GetB(), color.GetA());
 
 	if (m_heartbeat) {
-		GL::DrawRectangle(left, top, right, bottom);
+		GL::DrawRectangle(left, top, right, bottom, color);
 		m_heartbeat = false;
 	}
 }

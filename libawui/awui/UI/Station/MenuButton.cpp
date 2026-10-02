@@ -7,6 +7,7 @@
 #include "MenuButton.h"
 
 #include <SDL_opengl.h>
+#include <awui/OpenGL/Painter.h>
 #include <awui/UI/Emulators/Chip8.h>
 #include <awui/UI/Emulators/MasterSystem.h>
 #include <awui/UI/Emulators/Spectrum.h>
@@ -63,25 +64,13 @@ void MenuButton::OnPaint(GL *gl) {
 	}
 
 	if (m_node->m_directory) {
-		glLineWidth(2.5f);
-
 		float x = GetWidth() - 22.0f;
 		float y = (GetHeight() / 2.0f) - 0.5f;
 
-		Form *form = GetForm();
-		if (form && (form->GetChildFocused() == this)) {
-			glColor3ub(255, 255, 255);
-		} else {
-			glColor3ub(199, 199, 199);
-		}
-
-		glEnable(GL_LINE_SMOOTH);
-		glBegin(GL_LINE_STRIP);
-		glVertex2f(x - 10.0f + OFFSET, y - 10.0f + OFFSET);
-		glVertex2f(x + OFFSET, y + OFFSET);
-		glVertex2f(x - 10.0f + OFFSET, y + 10.0f + OFFSET);
-		glEnd();
-		glDisable(GL_LINE_SMOOTH);
+		// Flecha ">" de 2,5 píxeles de grosor, con los bordes suavizados
+		std::vector<Painter::Vertex> lines;
+		Painter::AddPolyline(lines, {x - 10.0f + OFFSET, y - 10.0f + OFFSET, x + OFFSET, y + OFFSET, x - 10.0f + OFFSET, y + 10.0f + OFFSET}, 2.5f, GetForeColor());
+		Painter::Instance().DrawLines(lines);
 	}
 }
 

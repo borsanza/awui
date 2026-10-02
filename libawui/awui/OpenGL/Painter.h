@@ -57,7 +57,9 @@ namespace awui {
 
 			Painter();
 			bool Initialize();
+			void Draw(const Vertex *vertices, int count, int mode, GLuint texture, Blend blend);
 			GLuint CompileShader(unsigned int type, const char *source);
+			static void AddSegment(std::vector<Vertex> &vertices, float x1, float y1, float x2, float y2, float width, float extendStart, float extendEnd, const Drawing::Color &color);
 
 		  public:
 			static Painter &Instance();
@@ -72,6 +74,7 @@ namespace awui {
 
 			// Pinta triángulos sueltos (de tres en tres vértices). texture: 0 para solo color
 			void DrawTriangles(const Vertex *vertices, int count, GLuint texture = 0, TextureFormat format = TextureFormat::RGBA, Blend blend = Blend::Normal);
+
 			inline void DrawTriangles(const std::vector<Vertex> &vertices, GLuint texture = 0, TextureFormat format = TextureFormat::RGBA, Blend blend = Blend::Normal) {
 				DrawTriangles(vertices.data(), (int) vertices.size(), texture, format, blend);
 			}
@@ -85,8 +88,16 @@ namespace awui {
 			static void AddQuad(std::vector<Vertex> &vertices, float x1, float y1, float x2, float y2, float u1, float v1, float u2, float v2, const Drawing::Color &topLeft, const Drawing::Color &topRight, const Drawing::Color &bottomLeft, const Drawing::Color &bottomRight);
 
 			// Añade una línea de cierto grosor como un rectángulo girado (OpenGL ES no tiene líneas de más de un
-			// píxel)
+			// píxel). Acaba justo en sus dos puntos. Se pinta con DrawLines, que suaviza los bordes
 			static void AddLine(std::vector<Vertex> &vertices, float x1, float y1, float x2, float y2, float width, const Drawing::Color &color);
+
+			// Añade una línea quebrada (x0, y0, x1, y1...): en las uniones los tramos se alargan medio grosor para
+			// que no quede una muesca en la esquina
+			static void AddPolyline(std::vector<Vertex> &vertices, const std::vector<float> &points, float width, const Drawing::Color &color);
+
+			// Pinta las líneas de AddLine y AddPolyline con los bordes suavizados (como GL_LINE_SMOOTH): el shader calcula la
+			// opacidad de cada píxel según su distancia al centro de la línea
+			void DrawLines(const std::vector<Vertex> &vertices);
 
 			// Rectángulo de color, de (x1, y1) a (x2, y2) incluidos: como GL::FillRectangle
 			void FillRectangle(int x1, int y1, int x2, int y2, const Drawing::Color &color);

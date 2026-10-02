@@ -1,6 +1,8 @@
 #pragma once
 
+#include <awui/Drawing/Color.h>
 #include <awui/Drawing/ColorF.h>
+#include <awui/OpenGL/Painter.h>
 #include <awui/UI/Control.h>
 #include <vector>
 
@@ -38,6 +40,18 @@ namespace awui {
 			String m_file;
 			bool m_loaded;
 			bool m_failed; // No se ha podido cargar: no se reintenta en cada frame (sí tras UnloadAll)
+
+			// Lo que se pinta, como en GL_QUADS: los Paint* dan cada esquina con TexCoord y Vertex, y cada cuatro
+			// esquinas son un rectángulo (dos triángulos)
+			std::vector<OpenGL::Painter::Vertex> m_vertices;
+			OpenGL::Painter::Vertex m_corners[4];
+			int m_cornerCount;
+			float m_u;
+			float m_v;
+			Drawing::Color m_vertexColor;
+
+			void TexCoord(float u, float v);
+			void Vertex(int x, int y);
 
 			void Load();
 			void Unload();
