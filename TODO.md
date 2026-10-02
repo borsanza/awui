@@ -64,7 +64,11 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### Pintado
 
-- **OpenGL antiguo:** todo usa el modo inmediato (`glBegin`/`glEnd`, sin shaders), que no existe en perfiles modernos ni en OpenGL ES. Importa si algún día stationTV va a una Raspberry Pi o a una tele Android. [Shader.cpp](libawui/awui/OpenGL/Shader.cpp) es un experimento sin usar: llama a `glewInit` en el constructor y carga un `shader.glfs` fijo.
+- **OpenGL antiguo:** el pintado usa el modo inmediato (`glBegin`/`glEnd`, `glColor`, `glOrtho`…), que no existe en perfiles modernos ni en OpenGL ES (Raspberry Pi, Android, WebGL). El sustituto ya está hecho y probado: [Painter](libawui/awui/OpenGL/Painter.h), con shaders que valen para OpenGL 3.3 y ES 3.0, y pinta igual píxel a píxel que el modo antiguo. Falta:
+  1. Pasar a él el pintado: `GL.cpp` (`FillRectangle`, `DrawImageGL`, `DrawLine`, `DrawRectangle`), `Control::OnPaintPre` (`glOrtho` → `Painter::SetOrtho`), `Image` (subir como RGBA, sin `GL_BGRA`), `Bitmap` (sus 9 trozos con `Painter::AddQuad`), `Gradient`, las flechas de `MenuButton`/`ConfigButton` (`Painter::AddLine`), `SelectionFrame` (`glTranslatef` → `SetOffset`), `Spinner`, `Heartbeat` y `DebuggerSMS`. Comprobarlo comparando capturas antes y después.
+  2. Pedir un contexto moderno (3.3 *core*, o ES 3.0) para que nada del modo antiguo quede escondido.
+  3. El motor 3D de gameOfBlocks (`GOB/`), aparte, o dejarlo con el contexto de compatibilidad.
+  4. [Shader.cpp](libawui/awui/OpenGL/Shader.cpp) es un experimento sin usar (llama a `glewInit` y carga un `shader.glfs` fijo): se puede borrar.
 - **Estado de OpenGL a mano:** cada `DrawImageGL` y `Bitmap::OnPaint` consulta y restaura `GL_TEXTURE_2D`, `GL_BLEND` y `GL_DEPTH_TEST` con `glIsEnabled`.
 - **Dos formas de mezclar:** `Image` (cairo) sube el alfa premultiplicado y `Bitmap` (SDL_image) sin premultiplicar, cada uno con su `glBlendFunc`.
 - **`OnPaint(OpenGL::GL *gl)`** recibe siempre `NULL`: el parámetro no sirve.
