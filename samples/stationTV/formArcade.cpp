@@ -11,6 +11,9 @@
 #include <awui/UI/Station/Settings/SettingsStore.h>
 #include <awui/UI/Station/StationUI.h>
 
+#include <filesystem>
+#include <vector>
+
 using namespace awui::Drawing;
 using namespace awui;
 using namespace awui::UI;
@@ -33,11 +36,27 @@ void FormArcade::InitializeComponent() {
 	String saveDirectory = Settings::SettingsStore::Instance().GetString("saveDirectory").c_str();
 	if (saveDirectory.GetLength() == 0)
 		saveDirectory = awui::Emulation::Common::SavePaths::GetDefaultDirectory("stationtv");
-	awui::Emulation::Common::SavePaths::Configure(saveDirectory, "./roms/");
+
+	// ROMs: las del usuario (en su carpeta de datos, o en la que diga "romsDirectory" en settings.json) y las que trae
+	// el programa (las de CHIP-8). Se ven juntas en la lista; la carpeta del usuario se crea para que sepa dónde van
+	String userRoms = Settings::SettingsStore::Instance().GetString("romsDirectory").c_str();
+	String dataDirectory = awui::Emulation::Common::SavePaths::GetDefaultDirectory("stationtv");
+	if ((userRoms.GetLength() == 0) && (dataDirectory.GetLength() != 0))
+		userRoms = (std::filesystem::path(dataDirectory.ToStdString()) / "roms").string().c_str();
+	std::vector<String> roms;
+	if (userRoms.GetLength() != 0) {
+		std::error_code error;
+		std::filesystem::create_directories(userRoms.ToCharArray(), error);
+		roms.push_back(userRoms);
+	}
+	roms.push_back("./roms/");
+
+	awui::Emulation::Common::SavePaths::Configure(saveDirectory, roms);
 	awui::Console::WriteLine(String("Partidas guardadas en: ") + saveDirectory);
+	awui::Console::WriteLine(String("ROMs en: ") + userRoms);
 
 	m_stationUI = new StationUI();
-	m_stationUI->SetPath("./roms/");
+	m_stationUI->SetPaths(roms);
 	m_stationUI->Refresh();
 	m_stationUI->SetDock(DockStyle::Fill);
 

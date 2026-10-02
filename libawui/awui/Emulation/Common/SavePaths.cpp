@@ -16,9 +16,11 @@ using namespace awui::Emulation::Common;
 
 namespace fs = std::filesystem;
 
-void SavePaths::Configure(const String &saveDirectory, const String &romsDirectory) {
+void SavePaths::Configure(const String &saveDirectory, const std::vector<String> &romsDirectories) {
 	s_saveDirectory = saveDirectory.ToCharArray();
-	s_romsDirectory = romsDirectory.ToCharArray();
+	s_romsDirectories.clear();
+	for (const String &directory : romsDirectories)
+		s_romsDirectories.push_back(directory.ToCharArray());
 }
 
 String SavePaths::GetDefaultDirectory(const char *application) {
@@ -35,12 +37,16 @@ std::string SavePaths::Translate(const std::string &path) {
 
 	std::error_code error;
 	fs::path file = fs::weakly_canonical(path, error);
-	fs::path roms = fs::weakly_canonical(s_romsDirectory, error);
 
-	// Dentro de la carpeta de ROMs se conserva la ruta relativa (sistema y subcarpetas); fuera, solo el nombre
-	fs::path relative = file.lexically_relative(roms);
-	if (relative.empty() || (*relative.begin() == ".."))
-		relative = fs::path("otros") / file.filename();
+	// Dentro de una carpeta de ROMs se conserva la ruta relativa (sistema y subcarpetas); fuera, solo el nombre
+	fs::path relative = fs::path("otros") / file.filename();
+	for (const std::string &directory : s_romsDirectories) {
+		fs::path inside = file.lexically_relative(fs::weakly_canonical(directory, error));
+		if (!inside.empty() && (*inside.begin() != "..")) {
+			relative = inside;
+			break;
+		}
+	}
 
 	return (fs::path(s_saveDirectory) / relative).string();
 }

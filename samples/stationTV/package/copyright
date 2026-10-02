@@ -1,0 +1,17 @@
+StationTV y awui
+Copyright (c) 2011-2026 Borja Sánchez Zamorano <borsanza@gmail.com>
+Código fuente: https://github.com/borsanza/awui
+
+Incluye código y datos de terceros:
+
+emu2413 (emulador del chip FM YM2413)
+  Copyright (c) 2001-2019 Mitsutaka Okazaki
+  Licencia MIT: https://opensource.org/licenses/MIT
+
+Liberation Sans (fuente de la interfaz)
+  Digitized data copyright (c) 2010 Google Corporation with Reserved Font Arimo, Tinos and Cousine.
+  Copyright (c) 2012 Red Hat, Inc. with Reserved Font Name Liberation.
+  SIL Open Font License 1.1: /usr/share/stationtv/fonts/LICENSE.txt
+
+ROMs de CHIP-8 (/usr/share/stationtv/roms/chip8)
+  Programas de libre distribución de sus autores, que figuran en el nombre de cada fichero y en sus .txt.

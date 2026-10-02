@@ -3,21 +3,23 @@
 #include <awui/String.h>
 
 #include <string>
+#include <vector>
 
 namespace awui::Emulation::Common {
 	// Dónde se guardan las partidas (.sav, estados). Los emuladores calculan la ruta de siempre, junto a la ROM,
 	// y estas funciones la llevan a la carpeta de guardado repitiendo la estructura de la de ROMs:
 	//   roms/mastersystem/Golvellius.sav  ->  <guardado>/mastersystem/Golvellius.sav
 	// Así se puede jugar con las ROMs en una carpeta de solo lectura. Sin configurar, todo sigue junto a la ROM.
+	// Puede haber varias carpetas de ROMs (la del usuario y la que trae el programa): vale la que contenga la ROM
 	class SavePaths {
 	  private:
 		static inline std::string s_saveDirectory;
-		static inline std::string s_romsDirectory;
+		static inline std::vector<std::string> s_romsDirectories;
 
 		static std::string Translate(const std::string &path);
 
 	  public:
-		static void Configure(const String &saveDirectory, const String &romsDirectory);
+		static void Configure(const String &saveDirectory, const std::vector<String> &romsDirectories);
 
 		// Carpeta de datos del usuario para una aplicación: Environment::GetFolderPath(LocalApplicationData)/<app>,
 		// es decir $XDG_DATA_HOME/<app> o ~/.local/share/<app> (en Windows, %LOCALAPPDATA%\<app>). Vacía si no se sabe

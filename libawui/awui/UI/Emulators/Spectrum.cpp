@@ -20,6 +20,7 @@
 #include <awui/OpenGL/GL.h>
 #include <awui/UI/Form.h>
 
+#include <filesystem>
 #include <set>
 #include <vector>
 
@@ -79,21 +80,21 @@ void Spectrum::LoadRom(const String file) {
 		m_motherboard->LoadRom(file);
 
 	if (ext.EndsWith(".tap")) {
-		String rom = "roms/zxspectrum/48.rom";
-		std::vector<String> list = file.Split("/");
-		int found = -1;
-		String system;
-		for (int i = 0; i < (int) list.size(); i++) {
-			if (list[i].CompareTo("roms") == 0)
-				found = i + 2;
-
-			if (found == i)
-				system = String::Concat(list[i], ".rom");
+		// La ROM del modelo está en la carpeta zxspectrum de la cinta: zxspectrum/128/juego.tap usa
+		// zxspectrum/128.rom, y una cinta suelta en zxspectrum/ (o fuera), la del 48K
+		std::filesystem::path tape(file.ToCharArray());
+		std::filesystem::path model = "48";
+		std::filesystem::path folder = tape.parent_path();
+		for (std::filesystem::path dir = folder; dir.has_parent_path() && (dir != dir.parent_path()); dir = dir.parent_path()) {
+			if (dir.filename() == "zxspectrum") {
+				if (dir != folder)
+					model = *folder.lexically_relative(dir).begin();
+				folder = dir;
+				break;
+			}
 		}
 
-		if (found != -1)
-			rom = String::Concat("roms/zxspectrum/", system);
-
+		String rom = (folder / model).string().append(".rom").c_str();
 		m_motherboard->LoadRom(rom);
 		m_tapecorder->LoadFile(file);
 	}

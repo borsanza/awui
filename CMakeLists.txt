@@ -57,3 +57,23 @@ endif()
 add_subdirectory(third_party)
 add_subdirectory(libawui)
 add_subdirectory(samples)
+
+# Paquete .deb de StationTV (preset "package": cmake --preset package && cmake --build --preset package, y luego
+# cpack en build-package/). Lo que se instala está en samples/stationTV/CMakeLists.txt
+if(UNIX AND NOT APPLE)
+	set(CPACK_PACKAGE_NAME "stationtv")
+	set(CPACK_PACKAGE_VERSION "0.1.0")
+	set(CPACK_PACKAGE_VENDOR "Borja Sánchez Zamorano")
+	set(CPACK_PACKAGE_CONTACT "Borja Sánchez Zamorano <borsanza@gmail.com>")
+	set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Menú para la tele con emuladores retro")
+	set(CPACK_PACKAGE_DESCRIPTION "Menú a pantalla completa, pensado para la tele y el mando, desde el que se juega a CHIP-8, Sega Master System, Game Gear, SG-1000 y ZX Spectrum. Trae las ROMs de CHIP-8; las demás van en ~/.local/share/stationtv/roms.")
+	set(CPACK_GENERATOR "DEB")
+	set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
+	set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+	set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+	set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/borsanza/awui")
+	# Las dependencias (SDL2, cairo, pango...) las calcula dpkg-shlibdeps; libawui va dentro del paquete
+	set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+	set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS_PRIVATE_DIRS "${CMAKE_BINARY_DIR}/libawui")
+	include(CPack)
+endif()

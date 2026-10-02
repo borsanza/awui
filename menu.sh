@@ -4,7 +4,7 @@
 #
 #   ./menu.sh                    menú
 #   ./menu.sh <acción> [...]     sin menú, por ejemplo:
-#       ./menu.sh build release          (release, debug, sanitize, windows o all)
+#       ./menu.sh build release          (release, debug, sanitize, windows, deb o all)
 #       ./menu.sh run release stationTV  (release, debug o sanitize)
 #       ./menu.sh wine stationTV
 #       ./menu.sh clean
@@ -103,8 +103,11 @@ do_build() {
 		windows)
 			run_step "Compilar Windows" scripts/build-windows.sh
 			;;
+		deb)
+			run_step "Generar el paquete .deb de StationTV" scripts/build-deb.sh
+			;;
 		all)
-			do_build release && do_build debug && do_build sanitize && do_build windows
+			do_build release && do_build debug && do_build sanitize && do_build windows && do_build deb
 			;;
 		*)
 			echo "Compilación desconocida: $what" >&2
@@ -148,7 +151,7 @@ do_wine() {
 
 do_clean() {
 	local dir
-	for dir in build-debug build-sanitize build-windows; do
+	for dir in build-debug build-sanitize build-windows build-package build-package-*; do
 		[ -d "$dir" ] && rm -rf "$dir" && echo "Borrado $dir/"
 	done
 	# En build/ están las imágenes y ROMs versionadas: solo se borra lo compilado
@@ -188,7 +191,8 @@ menu_build() {
 		debug "Linux, Debug (build-debug/)" \
 		sanitize "Linux, ASan + UBSan (build-sanitize/)" \
 		windows "Windows, MinGW con Docker (build-windows/)" \
-		all "Todo lo anterior")
+		deb "Paquete .deb de StationTV, con Docker (build-package/)" \
+		all "Linux, Windows y el paquete")
 	[ -z "$what" ] && return
 	remember build "$what"
 	do_build "$what"
@@ -241,7 +245,7 @@ main_menu() {
 			wine) menu_run_wine ;;
 			clean)
 				if [ $UI = whiptail ]; then
-					whiptail --title "Borrar" --yesno "¿Borrar build-debug/, build-sanitize/, build-windows/ y lo compilado en build/?" 9 72 \
+					whiptail --title "Borrar" --yesno "¿Borrar build-debug/, build-sanitize/, build-windows/, build-package/ y lo compilado en build/?" 9 72 \
 						&& { do_clean; pause; }
 				else
 					read -r -p "¿Borrar todo lo compilado? (s/N) " answer

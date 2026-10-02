@@ -38,12 +38,12 @@ Lo más cómodo es el menú:
 ./menu.sh
 ```
 
-Desde él se compila (Linux en Release, Debug o con sanitizers, Windows, o todo), se lanza cualquier programa de cualquiera de las compilaciones y se lanza la versión de Windows con Wine. Recuerda lo último que elegiste, y Ctrl+C cierra el programa que esté en marcha y vuelve al menú. Sin `whiptail` sale un menú de texto.
+Desde él se compila (Linux en Release, Debug o con sanitizers, Windows, el paquete para Ubuntu, o todo), se lanza cualquier programa de cualquiera de las compilaciones y se lanza la versión de Windows con Wine. Recuerda lo último que elegiste, y Ctrl+C cierra el programa que esté en marcha y vuelve al menú. Sin `whiptail` sale un menú de texto.
 
 También vale sin menú (`./menu.sh help`):
 
 ```bash
-./menu.sh build all                # release, debug, sanitize, windows o all
+./menu.sh build all                # release, debug, sanitize, windows, deb o all
 ./menu.sh run release stationTV    # release, debug o sanitize
 ./menu.sh wine stationTV
 ./menu.sh clean                    # borra lo compilado; no toca imágenes ni ROMs
@@ -59,6 +59,7 @@ Requiere CMake ≥ 3.21, Ninja y un compilador con C++20. Cada compilación tien
 | `debug`    | `build-debug/`    | Depurar                                                          |
 | `sanitize` | `build-sanitize/` | Desarrollo: AddressSanitizer + UndefinedBehaviorSanitizer        |
 | `windows`  | `build-windows/`  | Windows, desde Linux (con `scripts/build-windows.sh`, ver abajo) |
+| `package`  | `build-package/`  | El paquete .deb (con `scripts/build-deb.sh`, ver abajo)          |
 
 ```bash
 cmake --preset release
@@ -98,6 +99,16 @@ La configuración de Wine se guarda en `~/.cache/awui/wine`. Para ver los mensaj
 
 En Windows también se puede compilar directamente con MSYS2 (paquetes `mingw-w64-x86_64-` de `toolchain`, `glew`, `SDL2`, `SDL2_image`, `cairo`, `pango` y `nlohmann-json`) y los presets `release` o `debug`: las DLL se copian solas junto a cada ejecutable.
 
+## 📦 Paquete para Ubuntu
+
+```bash
+scripts/build-deb.sh            # para el Ubuntu de esta máquina
+scripts/build-deb.sh 24.04      # para otra versión
+sudo apt install ./build-package/stationtv_*.deb
+```
+
+Se genera en un contenedor de Ubuntu (solo hace falta Docker), así que sus dependencias son las de esa versión: hay que hacerlo para la versión donde se va a instalar. Instala `stationtv` (también en el menú de aplicaciones) con los recursos en `/usr/share/stationtv` y las ROMs de CHIP-8. Las demás ROMs no se pueden distribuir: cada uno pone las suyas en `~/.local/share/stationtv/roms/<sistema>/` (ver "Dónde están las ROMs").
+
 ## 🧑‍💻 Visual Studio Code
 
 Con la extensión C/C++ (`ms-vscode.cpptools`) y `gdb`:
@@ -131,9 +142,18 @@ En los menús, las flechas, Enter (OK) y Escape (volver; dentro de un juego, vue
 |               | F8                                      | Carga rápida de la cinta                     |
 |               | F9                                      | Rebobinar la cinta                           |
 
+### Dónde están las ROMs
+
+En la lista se ven juntas dos carpetas, con una subcarpeta por sistema (`chip8`, `mastersystem`, `gamegear`, `sg1000`, `zxspectrum`):
+
+- **La del usuario:** `~/.local/share/stationtv/roms/` (o `$XDG_DATA_HOME/stationtv/roms`; en Windows, `%LOCALAPPDATA%\stationtv\roms`). Se crea sola. Para usar otra, añade `"romsDirectory": "/ruta"` a `settings.json`.
+- **La del programa:** `roms/` junto a sus recursos. En el paquete trae las de CHIP-8; al compilar, es `build/samples/stationTV/roms`.
+
+Si un juego está en las dos, vale el del usuario. Para el Spectrum, la ROM de cada modelo va en la carpeta `zxspectrum` (`48.rom`, `128.rom`...), y una cinta en `zxspectrum/<modelo>/` arranca con ese modelo.
+
 ### Ajustes
 
-El engranaje de arriba a la derecha abre los ajustes: idioma, continuar partidas, reloj, pantalla completa, vsync, estadísticas en pantalla, sonido, volumen, el FM y los canales de la Master System, y si los juegos de CHIP-8 vuelven a empezar al terminar. Se guardan en `settings.json`, en la carpeta del programa.
+El engranaje de arriba a la derecha abre los ajustes: idioma, continuar partidas, reloj, pantalla completa, vsync, estadísticas en pantalla, sonido, volumen, el FM y los canales de la Master System, y si los juegos de CHIP-8 vuelven a empezar al terminar. Se guardan en `settings.json`, junto al programa si se puede escribir ahí (al compilarlo, o en una copia portable); si no (instalado), en `~/.config/stationtv/` (en Windows, `%APPDATA%\stationtv`).
 
 ### Partidas guardadas
 
@@ -149,7 +169,7 @@ samples/             los programas: stationTV, gameOfBlocks, awuiDemo, awSlider,
 third_party/         código de terceros sin modificar (emu2413, el chip FM de la Master System)
 build/samples/       imágenes y ROMs de los programas (versionadas aquí; el resto de build/ no)
 cmake/               compilación para Windows (toolchain de MinGW y copia de las DLL)
-scripts/             compilar para Windows y lanzarlo con Wine, con sus contenedores
+scripts/             compilar para Windows, lanzarlo con Wine y generar el paquete .deb, con sus contenedores
 tools/chip8/         herramientas de CHIP-8
 arduino/             receptor del mando a distancia de Apple
 doc/                 documentación de los sistemas emulados

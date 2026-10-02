@@ -172,6 +172,16 @@ void Form::RefreshVideo() {
 		int windowWidth = m_fullscreen ? m_lastWidth : finalWidth;
 		int windowHeight = m_fullscreen ? m_lastHeight : finalHeight;
 		m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+
+		// Sin antialiasing si la tarjeta (o una máquina virtual, un escritorio remoto...) no lo tiene: mejor la
+		// ventana con bordes de sierra que ninguna
+		if (m_window == NULL) {
+			SDL_Log("SDL_CreateWindow con antialiasing: %s. Se prueba sin él", SDL_GetError());
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+			m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		}
+
 		if (m_window == NULL) {
 			SDL_Log("[ERROR] SDL_CreateWindow failed: %s", SDL_GetError());
 			return;

@@ -57,7 +57,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### Estructura
 
-- **Recursos relativos al directorio de trabajo:** `images/button.png` (en `Control::GetSelectedBitmap`), `./images/*.jpg`, `roms/zxspectrum/48.rom`, `lang/`… Si se arranca el programa desde otra carpeta, no encuentra nada. Hace falta una carpeta de recursos (con `SDL_GetBasePath` o configurable).
+- **Recursos relativos al directorio de trabajo:** stationTV ya busca su carpeta de recursos al arrancar (la actual, la del ejecutable o `/usr/share/stationtv` si está instalado) y entra en ella, pero la librería sigue cargando con rutas relativas (`images/button.png` en `Control::GetSelectedBitmap`, `./images/*.jpg` en `StationUI`, `lang/`…), y los otros samples no hacen nada de eso. Lo propio es una función de awui que dé la ruta de un recurso.
 - **Escalas de `ColorF`:** `FromArgb` recorta de 0 a 255, pero `Bitmap` e `ImageFader` lo usan de 0 a 1 (`glColor4f`), y `Gradient` de 0 a 255 (`glColor4ub`). Hay que unificar el rango (lo natural es 0 a 1).
 - **Tres formas de avisar de eventos:** interfaces (`IRemoteListener`, `IExitListener`), `std::function` (en el código nuevo) y métodos virtuales, cada una en una parte del código. Conviene elegir una.
 
@@ -172,7 +172,7 @@ samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los
 6. **Sistema de animaciones:** una animación con duración, curva (las de `Effects`) y aviso al terminar, en vez de un `Interpolate` distinto en cada clase.
 7. **Caché de recursos:** texturas por ruta, fuentes y texto ya dibujado (ver "Texturas repetidas").
 8. **Carga en segundo plano:** un hilo o una cola de tareas para decodificar imágenes (carátulas) y leer ficheros sin parar el pintado.
-9. **Carpeta de recursos:** saber dónde están `images/`, `lang/`… sin depender del directorio de trabajo (ver "Recursos relativos").
+9. **Carpeta de recursos:** una función de awui para la ruta de un recurso, en vez de entrar en su carpeta al arrancar como hace stationTV (ver "Recursos relativos").
 10. **Rutas y carpetas:** `Path::GetFileName` / `GetExtension` / `GetDirectoryName` y `Directory::Exists` / `Create` / `GetFiles`. Hoy `Directory` solo tiene `GetWorkingDirectory`, y se usan `opendir`, `std::filesystem` o `LastIndexOf("/")` según el sitio. `Path::Combine` no reconoce `/` como separador en Windows ni una segunda ruta absoluta.
 11. **Controles deshabilitados:** no hay `Enabled`. Un control se puede ocultar, pero no dejarlo visible e inactivo.
 12. **Orden de foco con el tabulador:** `m_tabIndex` se asigna pero no se usa; no hay navegación con Tab.

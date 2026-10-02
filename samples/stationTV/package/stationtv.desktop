@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=StationTV
+GenericName=Emulator frontend
+GenericName[es]=Menú de emuladores
+Comment=Play CHIP-8, Master System, Game Gear, SG-1000 and ZX Spectrum games from a TV-style menu
+Comment[es]=Juega a CHIP-8, Master System, Game Gear, SG-1000 y ZX Spectrum desde un menú para la tele
+Exec=stationtv
+Icon=stationtv
+Terminal=false
+Categories=Game;Emulator;
+Keywords=emulator;chip8;sega;master system;game gear;spectrum;retro;

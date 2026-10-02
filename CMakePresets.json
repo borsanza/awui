@@ -29,6 +29,13 @@
 			"cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo", "AWUI_SANITIZE": "ON" }
 		},
 		{
+			"name": "package",
+			"displayName": "Paquete .deb de StationTV (instalado en /usr; luego cpack en build-package)",
+			"inherits": "base",
+			"binaryDir": "${sourceDir}/build-package",
+			"cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "CMAKE_INSTALL_PREFIX": "/usr" }
+		},
+		{
 			"name": "windows",
 			"displayName": "Windows (MinGW-w64, desde Linux: scripts/build-windows.sh)",
 			"inherits": "base",
@@ -41,6 +48,7 @@
 		{ "name": "release", "configurePreset": "release" },
 		{ "name": "debug", "configurePreset": "debug" },
 		{ "name": "sanitize", "configurePreset": "sanitize" },
+		{ "name": "package", "configurePreset": "package" },
 		{ "name": "windows", "configurePreset": "windows" }
 	]
 }

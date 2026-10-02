@@ -76,7 +76,7 @@ namespace awui {
 			class StationUI : public Control, public Events::IRemoteListener, public Events::IExitListener {
 			  private:
 				FadePanel m_fade;
-				String m_path;
+				std::vector<String> m_paths; // Carpetas de ROMs: se ven juntas, como si fueran una
 				NodeFile *m_root;
 				NodeFile *m_actual;
 				NodeFile *m_noRoms; // Aviso de lista vacía (su texto depende del idioma)
@@ -94,7 +94,7 @@ namespace awui {
 				bool m_clock24;
 				bool m_showClock;
 
-				void RecursiveSearch(NodeFile *parent);
+				void RecursiveSearch(NodeFile *parent, const String &path);
 				bool Minimize(NodeFile *parent);
 
 				void UpdateTitle();
@@ -109,7 +109,9 @@ namespace awui {
 				virtual ~StationUI();
 
 				void Clear();
-				void SetPath(const String path);
+				// Carpetas de ROMs. Si un juego está en dos, vale el de la primera; las carpetas de sistemas y
+				// subcarpetas con el mismo nombre se juntan
+				void SetPaths(const std::vector<String> &paths);
 
 				void Refresh();
 				virtual void OnTick(float deltaSeconds);

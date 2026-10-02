@@ -17,7 +17,6 @@ using namespace awui::UI::Station::Settings;
 using json = nlohmann::json;
 
 #define MENU_FILE "menu-settings.json"
-#define VALUES_FILE "settings.json"
 
 SettingsStore::SettingsStore() {
 	m_defaults = json::object();
@@ -65,7 +64,7 @@ void SettingsStore::CollectDefaults(const json &items) {
 }
 
 bool SettingsStore::GetBool(const std::string &key) {
-	json value = Configuration::getInstance(VALUES_FILE).Get(key);
+	json value = Configuration::getInstance(s_valuesFile).Get(key);
 	if (value.is_boolean())
 		return value.get<bool>();
 
@@ -73,7 +72,7 @@ bool SettingsStore::GetBool(const std::string &key) {
 }
 
 std::string SettingsStore::GetString(const std::string &key) {
-	json value = Configuration::getInstance(VALUES_FILE).Get(key);
+	json value = Configuration::getInstance(s_valuesFile).Get(key);
 	if (value.is_string()) {
 		bool valid = !m_options.contains(key);
 		if (!valid) {
@@ -89,11 +88,11 @@ std::string SettingsStore::GetString(const std::string &key) {
 }
 
 void SettingsStore::SetBool(const std::string &key, bool value) {
-	Configuration::getInstance(VALUES_FILE).Write(key, value);
+	Configuration::getInstance(s_valuesFile).Write(key, value);
 }
 
 void SettingsStore::SetString(const std::string &key, const std::string &value) {
-	Configuration::getInstance(VALUES_FILE).Write(key, value);
+	Configuration::getInstance(s_valuesFile).Write(key, value);
 }
 
 std::vector<std::pair<std::string, std::string>> SettingsStore::GetOptions(const json &item) {

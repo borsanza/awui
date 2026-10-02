@@ -36,25 +36,37 @@ String Environment::GetNewLine() {
 
 String Environment::GetFolderPath(SpecialFolder folder) {
 #ifndef _WIN32
+	const char *variable;
+	const char *underHome;
 	switch (folder) {
-		case SpecialFolder::LocalApplicationData: {
-			// Según la especificación XDG, una ruta relativa no vale y se ignora
-			const char *xdg = std::getenv("XDG_DATA_HOME");
-			if (xdg && (xdg[0] == '/'))
-				return String(xdg);
-			const char *home = std::getenv("HOME");
-			if (home && *home)
-				return String(home) + String("/.local/share");
-			Console::Error->WriteLine("Error al obtener la ruta de la carpeta especial");
-			return "";
-		}
+		case SpecialFolder::ApplicationData:
+			variable = "XDG_CONFIG_HOME";
+			underHome = "/.config";
+			break;
+		case SpecialFolder::LocalApplicationData:
+			variable = "XDG_DATA_HOME";
+			underHome = "/.local/share";
+			break;
 		default:
 			Console::Error->WriteLine("Folder especial no soportado");
 			return "";
 	}
+
+	// Según la especificación XDG, una ruta relativa no vale y se ignora
+	const char *xdg = std::getenv(variable);
+	if (xdg && (xdg[0] == '/'))
+		return String(xdg);
+	const char *home = std::getenv("HOME");
+	if (home && *home)
+		return String(home) + String(underHome);
+	Console::Error->WriteLine("Error al obtener la ruta de la carpeta especial");
+	return "";
 #else
 	KNOWNFOLDERID id;
 	switch (folder) {
+		case SpecialFolder::ApplicationData:
+			id = FOLDERID_RoamingAppData;
+			break;
 		case SpecialFolder::LocalApplicationData:
 			id = FOLDERID_LocalAppData;
 			break;

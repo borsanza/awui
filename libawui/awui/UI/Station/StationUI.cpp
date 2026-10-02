@@ -106,8 +106,8 @@ StationUI::~StationUI() {
 	}
 }
 
-void StationUI::SetPath(const String path) {
-	m_path = path;
+void StationUI::SetPaths(const std::vector<String> &paths) {
+	m_paths = paths;
 }
 
 void StationUI::Clear() {
@@ -125,25 +125,42 @@ void StationUI::SetBackground(Bitmap *background) {
 	m_backgroundFader->SetImage(background);
 }
 
-void StationUI::RecursiveSearch(NodeFile *parent) {
+void StationUI::RecursiveSearch(NodeFile *parent, const String &path) {
 	DIR *d;
 	struct dirent *dir;
-	d = opendir(parent->m_path.ToCharArray());
+	d = opendir(path.ToCharArray());
 	if (d) {
 		while ((dir = readdir(d)) != nullptr) {
 			if ((strcmp(dir->d_name, ".") == 0) || (strcmp(dir->d_name, "..") == 0)) {
 				continue;
 			}
 
-			NodeFile *child = new NodeFile();
+			String newFile = path;
 
-			String newFile = parent->m_path;
-
-			if (!parent->m_path.EndsWith("/")) {
+			if (!path.EndsWith("/")) {
 				newFile += "/";
 			}
 
 			newFile += dir->d_name;
+
+			bool isDir = false;
+			struct stat statbuf;
+			if (stat(newFile.ToCharArray(), &statbuf) != -1) {
+				isDir = S_ISDIR(statbuf.st_mode);
+			}
+
+			// Ya está (de otra carpeta de ROMs): una carpeta se junta con la que hay; un juego se queda el primero
+			NodeFile *existing = nullptr;
+			for (NodeFile *other : parent->m_children)
+				if (other->m_name == dir->d_name)
+					existing = other;
+			if (existing) {
+				if (isDir && existing->m_directory)
+					RecursiveSearch(existing, newFile);
+				continue;
+			}
+
+			NodeFile *child = new NodeFile();
 			child->m_name = dir->d_name;
 			child->m_background = nullptr;
 
@@ -199,20 +216,13 @@ void StationUI::RecursiveSearch(NodeFile *parent) {
 
 			child->m_path = newFile;
 			child->m_parent = parent;
-
-			bool isDir = false;
-			struct stat statbuf;
-			if (stat(newFile.ToCharArray(), &statbuf) != -1) {
-				isDir = S_ISDIR(statbuf.st_mode);
-			}
-
 			child->m_directory = isDir;
 
 			child->m_key = String::Concat((child->m_directory ? "1" : "2"), child->m_name);
 			parent->AddChild(child);
 
 			if (child->m_directory) {
-				RecursiveSearch(child);
+				RecursiveSearch(child, newFile);
 			}
 		}
 
@@ -266,9 +276,10 @@ void StationUI::Refresh() {
 	Clear();
 	m_root = new NodeFile();
 	m_actual = m_root;
-	m_root->m_path = m_path;
+	m_root->m_path = m_paths.empty() ? String("") : m_paths[0];
 	m_root->m_emulator = Types::Undefined;
-	RecursiveSearch(m_root);
+	for (const String &path : m_paths)
+		RecursiveSearch(m_root, path);
 	while (Minimize(m_root))
 		;
 
