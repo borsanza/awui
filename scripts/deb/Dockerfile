@@ -6,5 +6,5 @@ FROM ubuntu:${UBUNTU}
 RUN apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
 		cmake ninja-build g++ pkg-config dpkg-dev file \
-		libsdl2-dev libsdl2-image-dev libglew-dev libcairo2-dev libpango1.0-dev nlohmann-json3-dev libgl-dev \
+		libsdl2-dev libsdl2-image-dev libcairo2-dev libpango1.0-dev nlohmann-json3-dev libgl-dev libopengl-dev \
 	&& rm -rf /var/lib/apt/lists/*

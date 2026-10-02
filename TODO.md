@@ -65,12 +65,10 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### Pintado
 
-- **OpenGL antiguo (falta el contexto moderno):** toda la interfaz pinta ya con [Painter](libawui/awui/OpenGL/Painter.h) (shaders que valen para OpenGL 3.3 y ES 3.0), sin `glBegin`/`glColor`/`glOrtho`. Queda:
-  1. Pedir un contexto moderno (3.3 *core*, o ES 3.0 en Raspberry/Android) para que nada del modo antiguo quede escondido, y quitar los restos: `glDisable(GL_TEXTURE_2D)` en `Form::Init` y el guardado y restaurado de estado del `Painter`, que solo hace falta mientras conviva con el modo antiguo.
-  2. El motor 3D de gameOfBlocks (`GOB/`), que sigue en modo inmediato: pasarlo a shaders o dejarlo con el contexto de compatibilidad.
-  3. GLEW ya no hace falta para la interfaz (el `Painter` carga sus funciones con SDL): se puede quitar de las dependencias cuando `GOB/` no lo use.
-  4. [Shader.cpp](libawui/awui/OpenGL/Shader.cpp) es un experimento sin usar (llama a `glewInit` y carga un `shader.glfs` fijo): se puede borrar.
-  5. El `Painter` pinta cada control con su propia llamada; juntar los vértices de todo el frame en una sola iría más rápido en una Raspberry.
+- **OpenGL: lo que queda tras pasar a shaders.** La interfaz pinta con [Painter](libawui/awui/OpenGL/Painter.h) y pide un contexto moderno (OpenGL 3.3 *core*, o ES 3.0 si no lo hay; `AWUI_GL_PROFILE=core|es|compat` lo fuerza). Probado con Mesa en los tres. Queda:
+  1. El motor 3D de gameOfBlocks (`GOB/`) sigue en modo inmediato, por eso pide el contexto de compatibilidad (`Application::SetOpenGLProfile`). Mientras exista, el `Painter` guarda y restaura el estado de OpenGL en ese contexto. Al pasarlo a shaders se quitan las dos cosas.
+  2. Probarlo en una Raspberry Pi de verdad (su driver da ES 3.1): solo se ha probado ES con Mesa por software.
+  3. El `Painter` pinta cada control con su propia llamada; juntar los vértices de todo el frame en una sola iría más rápido en una Raspberry.
 - **Estado de OpenGL a mano:** cada `DrawImageGL` y `Bitmap::OnPaint` consulta y restaura `GL_TEXTURE_2D`, `GL_BLEND` y `GL_DEPTH_TEST` con `glIsEnabled`.
 - **Dos formas de mezclar:** `Image` (cairo) sube el alfa premultiplicado y `Bitmap` (SDL_image) sin premultiplicar, cada uno con su `glBlendFunc`.
 - **`OnPaint(OpenGL::GL *gl)`** recibe siempre `NULL`: el parámetro no sirve.

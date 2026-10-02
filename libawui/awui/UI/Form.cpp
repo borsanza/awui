@@ -17,6 +17,7 @@
 #include <SDL_image.h>
 #include <SDL_opengl.h>
 #include <algorithm>
+#include <vector>
 #include <cstdlib>
 
 using namespace awui::Drawing;
@@ -94,7 +95,6 @@ void Form::OnPaintForm() {
 	glFrontFace(GL_CCW);
 
 	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 
 	int r = OnPaintPre(0, 0, GetWidth(), GetHeight(), &gl, true);
@@ -172,21 +172,60 @@ void Form::RefreshVideo() {
 		// SDL la devolvería así
 		int windowWidth = m_fullscreen ? m_lastWidth : finalWidth;
 		int windowHeight = m_fullscreen ? m_lastHeight : finalHeight;
-		m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
-		// Sin antialiasing si la tarjeta (o una máquina virtual, un escritorio remoto...) no lo tiene: mejor la
-		// ventana con bordes de sierra que ninguna
-		if (m_window == NULL) {
-			SDL_Log("SDL_CreateWindow con antialiasing: %s. Se prueba sin él", SDL_GetError());
-			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
-			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
-			m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		// El contexto de OpenGL que se pide y, si la máquina no lo tiene, el otro moderno: una Raspberry Pi da
+		// OpenGL ES 3 pero no OpenGL 3.3. La ventana se crea de nuevo en cada intento, porque puede depender del tipo
+		// de contexto
+		std::vector<OpenGLProfile> profiles;
+		switch (Application::GetOpenGLProfile()) {
+			case OpenGLProfile::Core:
+				profiles = {OpenGLProfile::Core, OpenGLProfile::ES};
+				break;
+			case OpenGLProfile::ES:
+				profiles = {OpenGLProfile::ES, OpenGLProfile::Core};
+				break;
+			case OpenGLProfile::Compatibility:
+				profiles = {OpenGLProfile::Compatibility};
+				break;
 		}
 
-		if (m_window == NULL) {
-			SDL_Log("[ERROR] SDL_CreateWindow failed: %s", SDL_GetError());
+		for (OpenGLProfile profile : profiles) {
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, (profile == OpenGLProfile::ES) ? 0 : 3);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, (profile == OpenGLProfile::ES) ? SDL_GL_CONTEXT_PROFILE_ES : (profile == OpenGLProfile::Core) ? SDL_GL_CONTEXT_PROFILE_CORE : SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+
+			m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+
+			// Sin antialiasing si la tarjeta (o una máquina virtual, un escritorio remoto...) no lo tiene: mejor la
+			// ventana con bordes de sierra que ninguna
+			if (m_window == NULL) {
+				SDL_Log("SDL_CreateWindow con antialiasing: %s. Se prueba sin él", SDL_GetError());
+				SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+				SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+				m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+			}
+
+			if (m_window == NULL)
+				continue;
+
+			m_context = SDL_GL_CreateContext(m_window);
+			if (m_context)
+				break;
+
+			SDL_DestroyWindow(m_window);
+			m_window = 0;
+		}
+
+		if ((m_window == NULL) || (m_context == NULL)) {
+			SDL_Log("[ERROR] No se puede crear la ventana con OpenGL: %s", SDL_GetError());
+			if (m_window)
+				SDL_DestroyWindow(m_window);
+			SDL_Quit();
+			m_window = 0;
 			return;
 		}
+
+		SDL_Log("OpenGL: %s", (const char *) glGetString(GL_VERSION));
 
 		if (m_iconFile.GetLength() > 0)
 			SetIcon(m_iconFile);
@@ -195,18 +234,6 @@ void Form::RefreshVideo() {
 	// Actualizar la ventana existente
 	m_lastFullscreenState = m_fullscreen ? 1 : 0;
 	SDL_SetWindowFullscreen(m_window, m_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-
-	if (!m_context) {
-		// Crear un nuevo contexto de renderizado OpenGL si aún no existe
-		m_context = SDL_GL_CreateContext(m_window);
-		if (m_context == NULL) {
-			SDL_Log("[ERROR] SDL_GL_CreateContext failed: %s", SDL_GetError());
-			SDL_DestroyWindow(m_window);
-			SDL_Quit();
-			m_window = 0;
-			return;
-		}
-	}
 
 	if (SDL_GL_MakeCurrent(m_window, m_context) < 0) {
 		SDL_Log("[ERROR] SDL_GL_MakeCurrent failed: %s", SDL_GetError());

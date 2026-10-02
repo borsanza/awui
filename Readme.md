@@ -27,7 +27,7 @@ La librería en la que está hecho todo: ventanas y controles en OpenGL con anim
 Dependencias en Debian/Ubuntu:
 
 ```bash
-sudo apt-get install cmake ninja-build libsdl2-dev libsdl2-image-dev libglew-dev libcairo2-dev libpango1.0-dev nlohmann-json3-dev libgl-dev whiptail
+sudo apt-get install cmake ninja-build libsdl2-dev libsdl2-image-dev libcairo2-dev libpango1.0-dev nlohmann-json3-dev libgl-dev libopengl-dev whiptail
 ```
 
 Para la versión de Windows hace falta además Docker (no se instala nada más: todo va en contenedores).
@@ -78,9 +78,11 @@ La compilación con sanitizers para el programa y enseña la pila en cuanto acce
 
 `-DAWUI_WARNINGS=ON` activa los avisos del compilador.
 
+La interfaz pinta con shaders y pide OpenGL 3.3 *core*; si la máquina no lo tiene (una Raspberry Pi), usa OpenGL ES 3.0. Para probar uno u otro: `AWUI_GL_PROFILE=es ./stationTV` (`core`, `es` o `compat`). Al arrancar dice cuál ha conseguido ("OpenGL: ...").
+
 ## 🪟 Windows
 
-Se compila desde Linux. Solo hace falta Docker: el script compila dentro de un contenedor de Fedora, que trae MinGW-w64 y las librerías (SDL2, cairo, pango, GLEW) ya compiladas para Windows.
+Se compila desde Linux. Solo hace falta Docker: el script compila dentro de un contenedor de Fedora, que trae MinGW-w64 y las librerías (SDL2, cairo, pango) ya compiladas para Windows.
 
 ```bash
 scripts/build-windows.sh            # o --clean para empezar de cero
@@ -105,7 +107,7 @@ scripts/run-windows.sh --headless [programa]   # sin ventana: deja una captura e
 
 La configuración de Wine se guarda en `~/.cache/awui/wine`. Para ver los mensajes de Wine: `WINEDEBUG=err+all scripts/run-windows.sh`.
 
-En Windows también se puede compilar directamente con MSYS2 (paquetes `mingw-w64-x86_64-` de `toolchain`, `glew`, `SDL2`, `SDL2_image`, `cairo`, `pango` y `nlohmann-json`) y los presets `release` o `debug`: las DLL se copian solas junto a cada ejecutable.
+En Windows también se puede compilar directamente con MSYS2 (paquetes `mingw-w64-x86_64-` de `toolchain`, `SDL2`, `SDL2_image`, `cairo`, `pango` y `nlohmann-json`) y los presets `release` o `debug`: las DLL se copian solas junto a cada ejecutable.
 
 ## 📦 Paquete para Ubuntu
 

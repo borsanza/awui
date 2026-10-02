@@ -1,6 +1,5 @@
 #include "Renderer.h"
 
-#include <GL/glu.h>
 #include <SDL_opengl.h>
 #include <awui/Console.h>
 #include <awui/GOB/Engine/Cameras/PerspectiveCamera.h>

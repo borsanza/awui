@@ -1,5 +1,5 @@
 # Compilación para Windows (64 bits) desde Linux con MinGW-w64. Lo usa el preset "windows", dentro del contenedor
-# de scripts/windows (Fedora, que trae SDL2, cairo, pango y GLEW compilados para MinGW)
+# de scripts/windows (Fedora, que trae SDL2, cairo y pango compilados para MinGW)
 
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_PROCESSOR x86_64)

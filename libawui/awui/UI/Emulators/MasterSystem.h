@@ -35,6 +35,7 @@ namespace awui {
 			Emulation::Common::RewindBuffer *m_rewind;
 			std::vector<uint8_t> m_state;
 			bool m_rewinding;
+			float m_rewindSeconds; // Tiempo acumulado mientras se rebobina: se retrocede un frame de la consola por cada uno
 
 			// Avance rápido: mientras se mantiene el botón, el juego va FastForwardSpeed veces más deprisa
 			static constexpr int FastForwardSpeed = 4;

@@ -266,6 +266,9 @@ void Motherboard::DoTick() {
 
 	m_saveData.frameAccumulator -= 1.0;
 	RunFrame();
+
+	if (m_frameCallback)
+		m_frameCallback();
 }
 
 void Motherboard::RunFrame() {

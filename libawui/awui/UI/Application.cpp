@@ -23,6 +23,26 @@ using namespace awui::UI::Diagnostics;
 
 int Application::s_quit = 0;
 
+static OpenGLProfile s_openGLProfile = OpenGLProfile::Core;
+
+void Application::SetOpenGLProfile(OpenGLProfile profile) {
+	s_openGLProfile = profile;
+}
+
+OpenGLProfile Application::GetOpenGLProfile() {
+	const char *forced = SDL_getenv("AWUI_GL_PROFILE");
+	if (forced) {
+		if (SDL_strcasecmp(forced, "core") == 0)
+			return OpenGLProfile::Core;
+		if (SDL_strcasecmp(forced, "es") == 0)
+			return OpenGLProfile::ES;
+		if (SDL_strcasecmp(forced, "compat") == 0)
+			return OpenGLProfile::Compatibility;
+	}
+
+	return s_openGLProfile;
+}
+
 
 void Application::Quit() {
 	Application::s_quit = 1;
@@ -34,10 +54,7 @@ void Application::Run(Form *form = NULL) {
 		return;
 	}
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	// No se ve si no pongo modo de compatiblidad
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+	// La versión y el perfil del contexto los pone Form al crear la ventana (según GetOpenGLProfile)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
@@ -55,8 +72,6 @@ void Application::Run(Form *form = NULL) {
 	Time::ChronoLap chronoLap;
 
 	chronoLap.Start();
-
-	glEnable(GL_MULTISAMPLE);
 
 	// Lo inicializo en una frecuencia de 60Hz
 	float lastDeltaSeconds = 1.0f / 60.0f;

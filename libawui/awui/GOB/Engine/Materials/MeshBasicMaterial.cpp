@@ -1,6 +1,6 @@
 #include "MeshBasicMaterial.h"
 
-#include <GL/glu.h>
+#include <SDL_opengl.h>
 #include <awui/GOB/Engine/Math/Vector3.h>
 #include <awui/GOB/Engine/Textures/Texture.h>
 

@@ -4,6 +4,7 @@
 #include <awui/Emulation/MasterSystem/Ports.h>
 #include <awui/Emulation/Processors/Z80/CPU.h>
 #include <awui/String.h>
+#include <functional>
 #include <stdint.h>
 
 namespace awui::Emulation {
@@ -76,6 +77,8 @@ namespace awui::Emulation {
 			inline void MarkBoardRamDirty() { m_boardRamIdleFrames = 0; }
 			static void FlushAllBoardRam();
 
+			std::function<void()> m_frameCallback;
+
 		  public:
 			Motherboard();
 			virtual ~Motherboard();
@@ -84,6 +87,10 @@ namespace awui::Emulation {
 			void OnTick(float deltaSeconds);
 			// Emula exactamente un frame (sin mirar el tiempo real): lo usa el rebobinado
 			void RunFrame();
+
+			// Se llama al terminar cada frame emulado con OnTick (no con RunFrame): para guardar un estado por frame
+			// en el historial de rebobinado, vaya el juego a velocidad normal, en avance rápido o a tirones
+			inline void SetFrameCallback(std::function<void()> callback) { m_frameCallback = std::move(callback); }
 			bool IsEndlessLoop() const;
 
 			uint16_t GetAddressBus() const;

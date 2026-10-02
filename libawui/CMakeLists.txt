@@ -1,6 +1,5 @@
 find_package(PkgConfig REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(nlohmann_json REQUIRED)
 pkg_search_module(SDL2 REQUIRED sdl2)
 pkg_search_module(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
@@ -35,7 +34,6 @@ target_link_libraries(awui PUBLIC
 	${CAIRO_LINK_LIBRARIES}
 	${SDL2_LINK_LIBRARIES}
 	${SDL2IMAGE_LINK_LIBRARIES}
-	GLEW::GLEW
 	OpenGL::GL
 	nlohmann_json::nlohmann_json
 )

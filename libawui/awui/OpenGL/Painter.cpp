@@ -104,6 +104,7 @@ Painter::Painter() {
 	m_initialized = false;
 	m_failed = false;
 	m_es = false;
+	m_legacy = false;
 	m_program = 0;
 	m_vertexArray = 0;
 	m_vertexBuffer = 0;
@@ -122,7 +123,9 @@ Painter &Painter::Instance() {
 
 GLuint Painter::CompileShader(unsigned int type, const char *source) {
 	// La cabecera según el contexto: GLSL 3.30 de escritorio o GLSL ES 3.00
-	const char *header = m_es ? "#version 300 es\nprecision mediump float;\n" : "#version 330 core\n";
+	// Precisión alta en ES (3.0 la garantiza también en el shader de fragmentos): con la media, las posiciones en una
+	// pantalla de más de mil píxeles se van un píxel
+	const char *header = m_es ? "#version 300 es\nprecision highp float;\n" : "#version 330 core\n";
 	const char *sources[] = {header, source};
 
 	GLuint shader = p_glCreateShader(type);
@@ -165,6 +168,14 @@ bool Painter::Initialize() {
 
 	const char *version = (const char *) glGetString(GL_VERSION);
 	m_es = version && strstr(version, "OpenGL ES");
+
+	// Contexto de compatibilidad: puede haber pintado antiguo alrededor (ver Draw)
+	m_legacy = false;
+	if (!m_es) {
+		GLint profile = 0;
+		glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
+		m_legacy = (profile & GL_CONTEXT_COMPATIBILITY_PROFILE_BIT) != 0;
+	}
 
 	GLuint vertex = CompileShader(GL_VERTEX_SHADER, VertexShader);
 	GLuint fragment = CompileShader(GL_FRAGMENT_SHADER, FragmentShader);
@@ -244,22 +255,29 @@ void Painter::Draw(const Vertex *vertices, int count, int mode, GLuint texture, 
 	if ((count < 3) || !Initialize())
 		return;
 
-	// Lo que se cambia, para dejarlo como estaba (convive con el pintado antiguo)
+	// Con el contexto de compatibilidad convive con el pintado antiguo (el 3D de gameOfBlocks): se guarda lo que se
+	// cambia para dejarlo como estaba. En un contexto moderno solo pinta él, y consultar el estado en cada dibujo
+	// sería tiempo perdido
 	GLint previousProgram = 0;
 	GLint previousArray = 0;
 	GLint previousBuffer = 0;
 	GLint previousTexture = 0;
 	GLint previousSource = 0;
 	GLint previousDestination = 0;
-	glGetIntegerv(GL_CURRENT_PROGRAM, &previousProgram);
-	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previousArray);
-	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &previousBuffer);
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
-	glGetIntegerv(GL_BLEND_SRC_RGB, &previousSource);
-	glGetIntegerv(GL_BLEND_DST_RGB, &previousDestination);
-	GLboolean previousBlend = glIsEnabled(GL_BLEND);
-	GLboolean previousDepth = glIsEnabled(GL_DEPTH_TEST);
-	GLboolean previousCull = glIsEnabled(GL_CULL_FACE);
+	GLboolean previousBlend = GL_FALSE;
+	GLboolean previousDepth = GL_FALSE;
+	GLboolean previousCull = GL_FALSE;
+	if (m_legacy) {
+		glGetIntegerv(GL_CURRENT_PROGRAM, &previousProgram);
+		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previousArray);
+		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &previousBuffer);
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
+		glGetIntegerv(GL_BLEND_SRC_RGB, &previousSource);
+		glGetIntegerv(GL_BLEND_DST_RGB, &previousDestination);
+		previousBlend = glIsEnabled(GL_BLEND);
+		previousDepth = glIsEnabled(GL_DEPTH_TEST);
+		previousCull = glIsEnabled(GL_CULL_FACE);
+	}
 
 	// La proyección con el desplazamiento ya aplicado
 	float projection[16];
@@ -288,6 +306,9 @@ void Painter::Draw(const Vertex *vertices, int count, int mode, GLuint texture, 
 	p_glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 	p_glBufferData(GL_ARRAY_BUFFER, count * sizeof(Vertex), vertices, GL_STREAM_DRAW);
 	glDrawArrays(GL_TRIANGLES, 0, count);
+
+	if (!m_legacy)
+		return;
 
 	p_glBindVertexArray(previousArray);
 	p_glBindBuffer(GL_ARRAY_BUFFER, previousBuffer);
