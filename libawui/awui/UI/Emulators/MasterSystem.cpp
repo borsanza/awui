@@ -458,11 +458,11 @@ void MasterSystem::ToggleSoundChannel(int channel) {
 
 bool MasterSystem::SaveAutoState() {
 	m_cpu->SaveState(m_state.data());
-	return WriteStateFile(SavePaths::GetWritePath(String::Concat(GetName(), ".autostate")), m_state.data(), (int) m_state.size());
+	return WriteStateFile(SavePaths::GetWritePath(String::Concat(GetName(), ".autostate"), SavePaths::Kind::State), m_state.data(), (int) m_state.size());
 }
 
 bool MasterSystem::LoadAutoState() {
-	if (!ReadStateFile(SavePaths::GetReadPath(String::Concat(GetName(), ".autostate")), m_state.data(), (int) m_state.size()))
+	if (!ReadStateFile(SavePaths::GetReadPath(String::Concat(GetName(), ".autostate"), SavePaths::Kind::State), m_state.data(), (int) m_state.size()))
 		return false;
 
 	m_cpu->LoadState(m_state.data());

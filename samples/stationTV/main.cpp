@@ -51,15 +51,19 @@ static void EnterResourceDirectory() {
 }
 
 // settings.json se queda junto a los recursos si se puede escribir ahí (al compilar, o una copia portable). Si no
-// (instalado en /usr/share), va a la configuración del usuario: ~/.config/stationtv (en Windows, %APPDATA%)
+// (instalado en /usr/share), o si lo instaló el instalador de Windows (junto a su desinstalador: así no acaba en
+// Archivos de programa al abrirlo como administrador), va a la configuración del usuario: ~/.config/stationtv (en
+// Windows, %APPDATA%\stationtv)
 static void ChooseSettingsFile() {
 	std::error_code error;
-	bool existed = fs::exists("settings.json", error);
-	bool writable = std::ofstream("settings.json", std::ios::app).is_open();
-	if (!existed)
-		fs::remove("settings.json", error);
-	if (writable)
-		return;
+	if (!fs::exists("Uninstall.exe", error)) {
+		bool existed = fs::exists("settings.json", error);
+		bool writable = std::ofstream("settings.json", std::ios::app).is_open();
+		if (!existed)
+			fs::remove("settings.json", error);
+		if (writable)
+			return;
+	}
 
 	String config = Environment::GetFolderPath(Environment::SpecialFolder::ApplicationData);
 	if (config.GetLength() == 0)

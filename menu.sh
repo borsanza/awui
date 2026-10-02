@@ -4,7 +4,7 @@
 #
 #   ./menu.sh                    menú
 #   ./menu.sh <acción> [...]     sin menú, por ejemplo:
-#       ./menu.sh build release          (release, debug, sanitize, windows, deb o all)
+#       ./menu.sh build release          (release, debug, sanitize, windows, installer, deb o all)
 #       ./menu.sh run release stationTV  (release, debug o sanitize)
 #       ./menu.sh wine stationTV
 #       ./menu.sh clean
@@ -103,11 +103,14 @@ do_build() {
 		windows)
 			run_step "Compilar Windows" scripts/build-windows.sh
 			;;
+		installer)
+			run_step "Generar el instalador de StationTV para Windows" scripts/build-windows.sh --installer
+			;;
 		deb)
 			run_step "Generar el paquete .deb de StationTV" scripts/build-deb.sh
 			;;
 		all)
-			do_build release && do_build debug && do_build sanitize && do_build windows && do_build deb
+			do_build release && do_build debug && do_build sanitize && do_build installer && do_build deb
 			;;
 		*)
 			echo "Compilación desconocida: $what" >&2
@@ -191,8 +194,9 @@ menu_build() {
 		debug "Linux, Debug (build-debug/)" \
 		sanitize "Linux, ASan + UBSan (build-sanitize/)" \
 		windows "Windows, MinGW con Docker (build-windows/)" \
+		installer "Instalador de StationTV para Windows (build-windows/)" \
 		deb "Paquete .deb de StationTV, con Docker (build-package/)" \
-		all "Linux, Windows y el paquete")
+		all "Linux, Windows, el instalador y el paquete")
 	[ -z "$what" ] && return
 	remember build "$what"
 	do_build "$what"

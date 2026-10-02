@@ -38,12 +38,12 @@ Lo más cómodo es el menú:
 ./menu.sh
 ```
 
-Desde él se compila (Linux en Release, Debug o con sanitizers, Windows, el paquete para Ubuntu, o todo), se lanza cualquier programa de cualquiera de las compilaciones y se lanza la versión de Windows con Wine. Recuerda lo último que elegiste, y Ctrl+C cierra el programa que esté en marcha y vuelve al menú. Sin `whiptail` sale un menú de texto.
+Desde él se compila (Linux en Release, Debug o con sanitizers, Windows, el instalador de Windows, el paquete para Ubuntu, o todo), se lanza cualquier programa de cualquiera de las compilaciones y se lanza la versión de Windows con Wine. Recuerda lo último que elegiste, y Ctrl+C cierra el programa que esté en marcha y vuelve al menú. Sin `whiptail` sale un menú de texto.
 
 También vale sin menú (`./menu.sh help`):
 
 ```bash
-./menu.sh build all                # release, debug, sanitize, windows, deb o all
+./menu.sh build all                # release, debug, sanitize, windows, installer, deb o all
 ./menu.sh run release stationTV    # release, debug o sanitize
 ./menu.sh wine stationTV
 ./menu.sh clean                    # borra lo compilado; no toca imágenes ni ROMs
@@ -88,6 +88,14 @@ scripts/build-windows.sh            # o --clean para empezar de cero
 
 La primera vez tarda unos minutos en preparar el contenedor. Cada programa queda en `build-windows/samples/<programa>/` con su `.exe`, las DLL que necesita, la configuración de fuentes, las imágenes y las ROMs: se copia esa carpeta entera a Windows y se lanza el `.exe` desde ella.
 
+Para repartirlo, el instalador:
+
+```bash
+scripts/build-windows.sh --installer    # build-windows/StationTV-<versión>-instalador.exe
+```
+
+Instala StationTV en *Archivos de programa*, con accesos directos en el menú Inicio y en el escritorio, y se desinstala desde *Aplicaciones*. Lleva el programa, sus DLL, los recursos y los juegos de CHIP-8 del Community Archive (CC0). Instalado, guarda los ajustes en `%APPDATA%\stationtv` y busca las ROMs en `%LOCALAPPDATA%\stationtv\roms`.
+
 Para probarlo sin Windows, con Wine (en otro contenedor, de Debian):
 
 ```bash
@@ -107,7 +115,7 @@ scripts/build-deb.sh 24.04      # para otra versión
 sudo apt install ./build-package/stationtv_*.deb
 ```
 
-Se genera en un contenedor de Ubuntu (solo hace falta Docker), así que sus dependencias son las de esa versión: hay que hacerlo para la versión donde se va a instalar. Instala `stationtv` (también en el menú de aplicaciones) con los recursos en `/usr/share/stationtv` y las ROMs de CHIP-8. Las demás ROMs no se pueden distribuir: cada uno pone las suyas en `~/.local/share/stationtv/roms/<sistema>/` (ver "Dónde están las ROMs").
+Se genera en un contenedor de Ubuntu (solo hace falta Docker), así que sus dependencias son las de esa versión: hay que hacerlo para la versión donde se va a instalar. Instala `stationtv` (también en el menú de aplicaciones) con los recursos en `/usr/share/stationtv` y los juegos de CHIP-8 del [Chip-8 Community Archive](https://github.com/JohnEarnest/chip8Archive), que son de dominio público (CC0). Las demás ROMs no se pueden distribuir: cada uno pone las suyas en `~/.local/share/stationtv/roms/<sistema>/` (ver "Dónde están las ROMs").
 
 ## 🧑‍💻 Visual Studio Code
 
@@ -146,10 +154,10 @@ En los menús, las flechas, Enter (OK) y Escape (volver; dentro de un juego, vue
 
 En la lista se ven juntas dos carpetas, con una subcarpeta por sistema (`chip8`, `mastersystem`, `gamegear`, `sg1000`, `zxspectrum`):
 
-- **La del usuario:** `~/.local/share/stationtv/roms/` (o `$XDG_DATA_HOME/stationtv/roms`; en Windows, `%LOCALAPPDATA%\stationtv\roms`). Se crea sola. Para usar otra, añade `"romsDirectory": "/ruta"` a `settings.json`.
-- **La del programa:** `roms/` junto a sus recursos. En el paquete trae las de CHIP-8; al compilar, es `build/samples/stationTV/roms`.
+- **La del usuario:** `~/.local/share/stationtv/roms/` (o `$XDG_DATA_HOME/stationtv/roms`; en Windows, `%LOCALAPPDATA%\stationtv\roms`). Para usar otra, añade `"romsDirectory": "/ruta"` a `settings.json`.
+- **La del programa:** `roms/` junto a sus recursos (al compilar, `build/samples/stationTV/roms`). Solo trae los juegos de CHIP-8 del Community Archive, los únicos que se pueden redistribuir.
 
-Si un juego está en las dos, vale el del usuario. Para el Spectrum, la ROM de cada modelo va en la carpeta `zxspectrum` (`48.rom`, `128.rom`...), y una cinta en `zxspectrum/<modelo>/` arranca con ese modelo.
+Al arrancar se crea en cada una la subcarpeta de cada sistema, para que se sepa dónde va cada juego (en la del programa, solo si se puede escribir en ella: no instalado). Las que estén vacías no salen en el menú. Si un juego está en las dos, vale el del usuario. Para el Spectrum, la ROM de cada modelo va en la carpeta `zxspectrum` (`48.rom`, `128.rom`...), y una cinta en `zxspectrum/<modelo>/` arranca con ese modelo.
 
 ### Ajustes
 
@@ -157,9 +165,14 @@ El engranaje de arriba a la derecha abre los ajustes: idioma, continuar partidas
 
 ### Partidas guardadas
 
-StationTV guarda las partidas (RAM del cartucho `.sav`, estados `.state` y la partida automática `.autostate`) en `~/.local/share/stationtv/` (o `$XDG_DATA_HOME/stationtv`; en Windows, `%LOCALAPPDATA%\stationtv`), con la misma estructura que `roms/`: por ejemplo, `roms/mastersystem/Golvellius.sms` → `~/.local/share/stationtv/mastersystem/Golvellius.sav`. Así las ROMs pueden estar en una carpeta de solo lectura (NAS, pendrive...).
+StationTV guarda las partidas en la carpeta de datos del usuario, `~/.local/share/stationtv/` (o `$XDG_DATA_HOME/stationtv`; en Windows, `%LOCALAPPDATA%\stationtv`), por sistema y juego, en dos carpetas:
 
-Las partidas antiguas que estén junto a la ROM se siguen leyendo; al guardar pasan a la carpeta nueva. Para usar otra carpeta, añade `"saveDirectory": "/ruta"` a `settings.json`.
+- **`saves/`:** lo que guarda el propio juego, la RAM del cartucho (`.sav`). Por ejemplo, `roms/mastersystem/Golvellius.sms` → `saves/mastersystem/Golvellius.sav`.
+- **`states/`:** los estados del emulador, con la CPU, la memoria y todo lo demás: los que se guardan con una tecla (`.state`) y la partida automática al salir (`.autostate`).
+
+Así las ROMs pueden estar en una carpeta de solo lectura (NAS, pendrive...).
+
+Las partidas de antes se siguen encontrando: las que estén junto a la ROM se leen y al guardar pasan a la carpeta nueva, y las de versiones anteriores de StationTV se mueven solas a `saves/` y `states/` al arrancar. Para usar otra carpeta de datos, añade `"saveDirectory": "/ruta"` a `settings.json` (dentro irán `saves/` y `states/`).
 
 ## 🗂️ El repositorio
 
@@ -167,7 +180,7 @@ Las partidas antiguas que estén junto a la ROM se siguen leyendo; al guardar pa
 libawui/awui/        la librería: interfaz, dibujo, emuladores (Emulation/) y los menús de StationTV (UI/Station)
 samples/             los programas: stationTV, gameOfBlocks, awuiDemo, awSlider, awTest
 third_party/         código de terceros sin modificar (emu2413, el chip FM de la Master System)
-build/samples/       imágenes y ROMs de los programas (versionadas aquí; el resto de build/ no)
+build/samples/       imágenes de los programas y los juegos CC0 de CHIP-8 (versionados aquí; el resto de build/ no)
 cmake/               compilación para Windows (toolchain de MinGW y copia de las DLL)
 scripts/             compilar para Windows, lanzarlo con Wine y generar el paquete .deb, con sus contenedores
 tools/chip8/         herramientas de CHIP-8

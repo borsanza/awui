@@ -592,12 +592,12 @@ awui::String Spectrum::GetStateFile() const {
 bool Spectrum::SaveAutoState() {
 	std::vector<uint8_t> data(Motherboard::GetSaveSize());
 	m_motherboard->SaveState(data.data());
-	return WriteStateFile(SavePaths::GetWritePath(String::Concat(m_romFile, ".autostate")), data.data(), (int) data.size());
+	return WriteStateFile(SavePaths::GetWritePath(String::Concat(m_romFile, ".autostate"), SavePaths::Kind::State), data.data(), (int) data.size());
 }
 
 bool Spectrum::LoadAutoState() {
 	std::vector<uint8_t> data(Motherboard::GetSaveSize());
-	if (!ReadStateFile(SavePaths::GetReadPath(String::Concat(m_romFile, ".autostate")), data.data(), (int) data.size()))
+	if (!ReadStateFile(SavePaths::GetReadPath(String::Concat(m_romFile, ".autostate"), SavePaths::Kind::State), data.data(), (int) data.size()))
 		return false;
 
 	m_motherboard->LoadState(data.data());
@@ -606,7 +606,7 @@ bool Spectrum::LoadAutoState() {
 }
 
 void Spectrum::LoadState() {
-	String name = SavePaths::GetReadPath(GetStateFile());
+	String name = SavePaths::GetReadPath(GetStateFile(), SavePaths::Kind::State);
 
 	if (!File::Exists(name)) {
 		ShowNotification(String(Localization::Tr("osd.stateMissing").ToCharArray(), m_fileSlot));
@@ -625,7 +625,7 @@ void Spectrum::LoadState() {
 }
 
 void Spectrum::SaveState() {
-	String name = SavePaths::GetWritePath(GetStateFile());
+	String name = SavePaths::GetWritePath(GetStateFile(), SavePaths::Kind::State);
 
 	Console::WriteLine(String("Guardando: ") + name);
 

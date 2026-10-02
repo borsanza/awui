@@ -8,7 +8,9 @@
 ## MegaBlinky v2
 
 `megablinky2/build.sh` genera *MegaBlinky v2* a partir de la ROM original de MegaBlinky (2007, Revival Studios),
-que es freeware. Los cambios están en `megablinky2/v2.py` y descritos al principio del fuente que genera:
+que es freeware. Ni la original ni la v2 están en el repositorio: la original se busca en la carpeta de ROMs de
+StationTV (`~/.local/share/stationtv/roms/chip8/MegaChip8 Games`, o la que se pase como argumento) y la v2 se deja
+junto a ella. Los cambios están en `megablinky2/v2.py` y descritos al principio del fuente que genera:
 
 - Arreglado el fallo que impedía terminar los niveles: un punto comido con la pastilla activa sumaba 5 en vez de 1
   (seguía de largo hasta el código de la pastilla) y el contador se pasaba de los 247 que pide el nivel

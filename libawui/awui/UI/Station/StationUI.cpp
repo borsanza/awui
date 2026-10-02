@@ -26,6 +26,7 @@
 #include <awui/UI/Diagnostics/Stats.h>
 #include <awui/UI/Station/SettingsWidget.h>
 #include <algorithm>
+#include <filesystem>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -108,6 +109,18 @@ StationUI::~StationUI() {
 
 void StationUI::SetPaths(const std::vector<String> &paths) {
 	m_paths = paths;
+}
+
+// Los mismos nombres que reconoce RecursiveSearch
+const std::vector<awui::String> &StationUI::GetSystemFolders() {
+	static const std::vector<awui::String> folders = {"chip8", "gamegear", "mastersystem", "sg1000", "zxspectrum"};
+	return folders;
+}
+
+void StationUI::CreateSystemFolders(const awui::String &path) {
+	std::error_code error;
+	for (const awui::String &folder : GetSystemFolders())
+		std::filesystem::create_directories(std::filesystem::path(path.ToStdString()) / folder.ToStdString(), error);
 }
 
 void StationUI::Clear() {

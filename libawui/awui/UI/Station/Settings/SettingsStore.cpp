@@ -33,6 +33,16 @@ SettingsStore::SettingsStore() {
 	CollectDefaults(m_menu);
 }
 
+static String s_valuesFile = "settings.json";
+
+void SettingsStore::SetValuesFile(const String &path) {
+	s_valuesFile = path;
+}
+
+const String &SettingsStore::GetValuesFile() {
+	return s_valuesFile;
+}
+
 SettingsStore &SettingsStore::Instance() {
 	static SettingsStore instance;
 	return instance;

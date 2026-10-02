@@ -16,6 +16,7 @@ Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra d
 
 Nadie los usa hoy, pero fallarán en cuanto se usen.
 
+- **Variables `static inline` en cabeceras con DLL:** en Windows, el ejecutable y `libawui.dll` tienen cada uno su copia (`SavePaths`, `AudioSettings`, `Localization`, `CPU::s_restartWhenFinished`...). Hoy todas se cambian y se leen desde dentro de la DLL, pero si un sample cambia una directamente desde su código, la DLL no lo ve. Pasó con `SettingsStore::SetValuesFile`, que ya está en el `.cpp`.
 - **`GOB::Object3D` sin destructor virtual:** borra sus hijos (`Mesh`, `Camera`…) como `Object3D *`, así que el destructor de la clase hija no se ejecuta (comportamiento indefinido). Además, `Mesh` guarda su `BufferGeometry *` y sus `Material *` sin liberarlos nunca: no está claro quién es el dueño.
 - **Estado del Z80 copiado con `memcpy`:** `CPUInst::saveData` contiene `Registers`, que tiene un destructor declarado a mano, así que no es un tipo trivial y copiarlo con `memcpy` no está garantizado (el compilador lo avisa con `-Wclass-memaccess`). Basta con quitar ese destructor vacío.
 - **`Ram` y `Rom`** se pueden copiar y la copia liberaría dos veces su memoria (como `Image` y `MemoryStream`, más abajo).
@@ -150,7 +151,7 @@ samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los
 
 ### Raíz del repositorio
 
-- **Assets dentro de `build/`:** las imágenes de los samples y las ROMs de Chip-8 están versionadas en `build/samples/*/images` y `build/samples/stationTV/roms`, con un `.gitignore` enrevesado para excluir lo demás de `build/`. Por eso `build-debug/` y `build-sanitize/` no tienen imágenes (las pruebas con sanitizers tienen que ejecutarse desde `build/`). Irían en `samples/<nombre>/images` y `samples/stationTV/roms`, copiados junto al ejecutable con el `FILES` de `awui_add_sample`, como ya se hace con `lang` y `menu-settings.json`.
+- **Assets dentro de `build/`:** las imágenes de los samples y los juegos CC0 de Chip-8 están versionados en `build/samples/*/images` y `build/samples/stationTV/roms`, con un `.gitignore` enrevesado para excluir lo demás de `build/`. Por eso `build-debug/` y `build-sanitize/` no tienen imágenes (las pruebas con sanitizers tienen que ejecutarse desde `build/`). Irían en `samples/<nombre>/images` y `samples/stationTV/roms`, copiados junto al ejecutable con el `FILES` de `awui_add_sample`, como ya se hace con `lang` y `menu-settings.json`.
 - **`ext/`** solo tiene ya los fuentes de GIMP (`button.xcf`, `settings.xcf`) y `Cursors/` (56 ficheros que no usa nadie). Los `.xcf` irían a `art/` (junto a `samples/stationTV/art`), y `Cursors/` se borraría si no hace falta.
 - **`arduino/`** (el receptor del mando de Apple) es un proyecto aparte: iría a `tools/arduino-remote/`.
 - **`doc/obsolete`:** si ya no sirve, se borra (queda en git).

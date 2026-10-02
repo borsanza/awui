@@ -5,6 +5,7 @@ RUN dnf -y install \
 		cmake ninja-build \
 		mingw64-gcc-c++ mingw64-pkg-config \
 		mingw64-sdl2-compat mingw64-SDL2_image mingw64-cairo mingw64-pango mingw64-glew \
+		mingw32-nsis \
 		json-devel \
 	&& dnf clean all
 

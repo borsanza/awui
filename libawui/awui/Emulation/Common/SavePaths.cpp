@@ -31,7 +31,7 @@ String SavePaths::GetDefaultDirectory(const char *application) {
 	return (fs::path(base.ToStdString()) / application).string();
 }
 
-std::string SavePaths::Translate(const std::string &path) {
+std::string SavePaths::Translate(const std::string &path, Kind kind) {
 	if (s_saveDirectory.empty())
 		return path;
 
@@ -48,11 +48,11 @@ std::string SavePaths::Translate(const std::string &path) {
 		}
 	}
 
-	return (fs::path(s_saveDirectory) / relative).string();
+	return (fs::path(s_saveDirectory) / ((kind == Kind::Save) ? "saves" : "states") / relative).string();
 }
 
-String SavePaths::GetWritePath(const String &pathNextToRom) {
-	std::string path = Translate(pathNextToRom.ToCharArray());
+String SavePaths::GetWritePath(const String &pathNextToRom, Kind kind) {
+	std::string path = Translate(pathNextToRom.ToCharArray(), kind);
 
 	std::error_code error;
 	fs::path parent = fs::path(path).parent_path();
@@ -62,8 +62,8 @@ String SavePaths::GetWritePath(const String &pathNextToRom) {
 	return path.c_str();
 }
 
-String SavePaths::GetReadPath(const String &pathNextToRom) {
-	std::string path = Translate(pathNextToRom.ToCharArray());
+String SavePaths::GetReadPath(const String &pathNextToRom, Kind kind) {
+	std::string path = Translate(pathNextToRom.ToCharArray(), kind);
 
 	std::error_code error;
 	if (!fs::exists(path, error) && fs::exists(pathNextToRom.ToCharArray(), error))

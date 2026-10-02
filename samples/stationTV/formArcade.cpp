@@ -24,6 +24,62 @@ FormArcade::FormArcade() {
 	InitializeComponent();
 }
 
+// Las partidas de antes pasan a su sitio: estaban directamente en la carpeta de datos (<datos>/mastersystem/...), o
+// todas en states/. Los .sav (lo que guarda el juego) van a saves/ y el resto (estados del emulador) a states/. Si ya
+// hay una en el sitio nuevo, se deja la vieja donde estaba
+static void MoveOldSaves(const std::filesystem::path &data) {
+	namespace fs = std::filesystem;
+	std::error_code error;
+
+	// Carpetas de donde mover, y respecto a qué se mantiene la ruta (sistema/juego)
+	std::vector<std::pair<fs::path, fs::path>> sources;
+	for (const fs::directory_entry &entry : fs::directory_iterator(data, error)) {
+		std::string name = entry.path().filename().string();
+		if (entry.is_directory(error) && (name != "roms") && (name != "saves") && (name != "states"))
+			sources.push_back({entry.path(), data});
+	}
+	sources.push_back({data / "states", data / "states"});
+
+	bool moved = false;
+	for (const auto &[source, base] : sources) {
+		bool oldFolder = (source != data / "states");
+
+		// Primero la lista: mover mientras se recorre la misma carpeta no es fiable
+		std::vector<fs::path> files;
+		for (const fs::directory_entry &entry : fs::recursive_directory_iterator(source, error))
+			if (entry.is_regular_file(error))
+				files.push_back(entry.path());
+
+		for (const fs::path &file : files) {
+			bool save = (file.extension() == ".sav");
+			if (!oldFolder && !save)
+				continue;
+
+			fs::path target = data / (save ? "saves" : "states") / fs::relative(file, base, error);
+			if (fs::exists(target, error))
+				continue;
+
+			fs::create_directories(target.parent_path(), error);
+			fs::rename(file, target, error);
+			moved = true;
+		}
+
+		// Las carpetas que se han quedado vacías, de dentro afuera (states/ se queda)
+		std::vector<fs::path> directories;
+		if (oldFolder)
+			directories.push_back(source);
+		for (const fs::directory_entry &entry : fs::recursive_directory_iterator(source, error))
+			if (entry.is_directory(error))
+				directories.push_back(entry.path());
+		for (auto it = directories.rbegin(); it != directories.rend(); ++it)
+			if (fs::is_empty(*it, error))
+				fs::remove(*it, error);
+	}
+
+	if (moved)
+		awui::Console::WriteLine("Partidas de versiones anteriores repartidas entre saves/ y states/");
+}
+
 // m_stationUI es hijo del formulario (lo borra Control)
 FormArcade::~FormArcade() {
 }
@@ -31,29 +87,37 @@ FormArcade::~FormArcade() {
 void FormArcade::InitializeComponent() {
 	SetBackColor(Color::Black);
 
-	// Partidas (.sav, estados) fuera de roms/, que puede ser de solo lectura: en la carpeta de datos del usuario
-	// o en la que diga "saveDirectory" en settings.json
+	String dataDirectory = awui::Emulation::Common::SavePaths::GetDefaultDirectory("stationtv");
+
+	// Partidas fuera de roms/, que puede ser de solo lectura: en la carpeta de datos del usuario (o en la que diga
+	// "saveDirectory" en settings.json), por sistema y juego. En saves/ lo que guarda el juego (la RAM del cartucho) y
+	// en states/ los estados del emulador (ver SavePaths)
 	String saveDirectory = Settings::SettingsStore::Instance().GetString("saveDirectory").c_str();
-	if (saveDirectory.GetLength() == 0)
-		saveDirectory = awui::Emulation::Common::SavePaths::GetDefaultDirectory("stationtv");
+	if ((saveDirectory.GetLength() == 0) && (dataDirectory.GetLength() != 0)) {
+		saveDirectory = dataDirectory;
+		MoveOldSaves(dataDirectory.ToStdString());
+	}
 
 	// ROMs: las del usuario (en su carpeta de datos, o en la que diga "romsDirectory" en settings.json) y las que trae
-	// el programa (las de CHIP-8). Se ven juntas en la lista; la carpeta del usuario se crea para que sepa dónde van
+	// el programa (las de CHIP-8). Se ven juntas en la lista
 	String userRoms = Settings::SettingsStore::Instance().GetString("romsDirectory").c_str();
-	String dataDirectory = awui::Emulation::Common::SavePaths::GetDefaultDirectory("stationtv");
 	if ((userRoms.GetLength() == 0) && (dataDirectory.GetLength() != 0))
 		userRoms = (std::filesystem::path(dataDirectory.ToStdString()) / "roms").string().c_str();
 	std::vector<String> roms;
-	if (userRoms.GetLength() != 0) {
-		std::error_code error;
-		std::filesystem::create_directories(userRoms.ToCharArray(), error);
+	if (userRoms.GetLength() != 0)
 		roms.push_back(userRoms);
-	}
 	roms.push_back("./roms/");
 
+	// Una subcarpeta por sistema en cada carpeta de ROMs (en la del programa, si se puede escribir en ella: al
+	// compilar o en una copia portable), para que se sepa dónde va cada juego. Las vacías no salen en el menú
+	for (const String &path : roms)
+		StationUI::CreateSystemFolders(path);
+
 	awui::Emulation::Common::SavePaths::Configure(saveDirectory, roms);
-	awui::Console::WriteLine(String("Partidas guardadas en: ") + saveDirectory);
-	awui::Console::WriteLine(String("ROMs en: ") + userRoms);
+	std::filesystem::path base(saveDirectory.ToStdString());
+	awui::Console::WriteLine(String("ROMs: ") + userRoms);
+	awui::Console::WriteLine(String("Partidas del juego (.sav): ") + (base / "saves").string().c_str());
+	awui::Console::WriteLine(String("Estados del emulador (.state, .autostate): ") + (base / "states").string().c_str());
 
 	m_stationUI = new StationUI();
 	m_stationUI->SetPaths(roms);

@@ -13,5 +13,6 @@ Liberation Sans (fuente de la interfaz)
   Copyright (c) 2012 Red Hat, Inc. with Reserved Font Name Liberation.
   SIL Open Font License 1.1: /usr/share/stationtv/fonts/LICENSE.txt
 
-ROMs de CHIP-8 (/usr/share/stationtv/roms/chip8)
-  Programas de libre distribución de sus autores, que figuran en el nombre de cada fichero y en sus .txt.
+Juegos de CHIP-8 (roms/chip8/Chip-8 Community Archive)
+  Del Chip-8 Community Archive (https://github.com/JohnEarnest/chip8Archive): "everything in this repository is
+  placed under the Creative Commons 0 'No Rights Reserved' license" (CC0 1.0, dominio público).

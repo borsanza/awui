@@ -113,6 +113,13 @@ namespace awui {
 				// subcarpetas con el mismo nombre se juntan
 				void SetPaths(const std::vector<String> &paths);
 
+				// Carpeta de cada sistema dentro de una de ROMs (chip8, mastersystem...)
+				static const std::vector<String> &GetSystemFolders();
+
+				// Crea en una carpeta de ROMs la subcarpeta de cada sistema, para que se sepa dónde va cada juego. Si
+				// no se puede escribir en ella (instalado en /usr/share, por ejemplo), no hace nada
+				static void CreateSystemFolders(const String &path);
+
 				void Refresh();
 				virtual void OnTick(float deltaSeconds);
 

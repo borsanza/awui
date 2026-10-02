@@ -16,17 +16,16 @@ namespace awui::UI::Station::Settings {
 		nlohmann::json m_defaults; // clave -> defaultValue del esquema
 		nlohmann::json m_options;  // clave de una lista -> códigos válidos
 
-		static inline String s_valuesFile = "settings.json";
-
 		SettingsStore();
 		void CollectDefaults(const nlohmann::json &items);
 
 	  public:
 		static SettingsStore &Instance();
 
-		// Dónde se guardan los valores (por defecto, settings.json en la carpeta actual). Antes de leer ninguno
-		static inline void SetValuesFile(const String &path) { s_valuesFile = path; }
-		static inline const String &GetValuesFile() { return s_valuesFile; }
+		// Dónde se guardan los valores (por defecto, settings.json en la carpeta actual). Antes de leer ninguno.
+		// No son inline: en Windows, el ejecutable y la DLL tendrían cada uno su copia de la variable
+		static void SetValuesFile(const String &path);
+		static const String &GetValuesFile();
 
 		const nlohmann::json &GetMenu() const { return m_menu; }
 

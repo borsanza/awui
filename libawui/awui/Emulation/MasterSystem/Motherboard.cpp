@@ -307,7 +307,7 @@ void Motherboard::FlushBoardRam() {
 // m_savePath es la ruta junto a la ROM; SavePaths la lleva a la carpeta de partidas (y lee la antigua si solo
 // existe esa)
 void Motherboard::LoadBoardRam() {
-	String path = SavePaths::GetReadPath(m_savePath);
+	String path = SavePaths::GetReadPath(m_savePath, SavePaths::Kind::Save);
 	std::vector<uint8_t> data;
 	if (!File::ReadAllBytes(path, data))
 		return;
@@ -326,11 +326,11 @@ void Motherboard::SaveBoardRam() {
 	for (size_t i = 0; empty && (i < sizeof(m_saveData.boardram)); i++)
 		empty = (m_saveData.boardram[i] == 0);
 
-	if (empty && !File::Exists(SavePaths::GetReadPath(m_savePath)))
+	if (empty && !File::Exists(SavePaths::GetReadPath(m_savePath, SavePaths::Kind::Save)))
 		return;
 
 	// Atómica: no deja el .sav a medias si algo falla
-	String path = SavePaths::GetWritePath(m_savePath);
+	String path = SavePaths::GetWritePath(m_savePath, SavePaths::Kind::Save);
 	if (!File::WriteAllBytes(path, m_saveData.boardram, sizeof(m_saveData.boardram)))
 		printf("No se puede guardar la partida en %s\n", path.ToCharArray());
 }
