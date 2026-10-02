@@ -69,7 +69,6 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
   1. El motor 3D de gameOfBlocks (`GOB/`) sigue en modo inmediato, por eso pide el contexto de compatibilidad (`Application::SetOpenGLProfile`). Mientras exista, el `Painter` guarda y restaura el estado de OpenGL en ese contexto. Al pasarlo a shaders se quitan las dos cosas.
   2. Probarlo en una Raspberry Pi de verdad (su driver da ES 3.1): solo se ha probado ES con Mesa por software.
   3. El `Painter` pinta cada control con su propia llamada; juntar los vértices de todo el frame en una sola iría más rápido en una Raspberry.
-- **Estado de OpenGL a mano:** cada `DrawImageGL` y `Bitmap::OnPaint` consulta y restaura `GL_TEXTURE_2D`, `GL_BLEND` y `GL_DEPTH_TEST` con `glIsEnabled`.
 - **Dos formas de mezclar:** `Image` (cairo) sube el alfa premultiplicado y `Bitmap` (SDL_image) sin premultiplicar, cada uno con su `glBlendFunc`.
 - **`OnPaint(OpenGL::GL *gl)`** recibe siempre `NULL`: el parámetro no sirve.
 - **`Refresh()` y `m_needRefresh`** no se usan para nada: se repinta todo en cada frame. O se quitan, o se usan para no repintar si nada cambia (ahorra consumo en la tele).
