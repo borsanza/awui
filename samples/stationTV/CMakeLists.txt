@@ -1,4 +1,4 @@
-awui_add_sample(stationTV FILES menu-settings.json lang fonts)
+awui_add_sample(stationTV FILES menu-settings.json stationtv.png lang fonts)
 
 include(GNUInstallDirs)
 
@@ -25,7 +25,7 @@ if(UNIX AND NOT APPLE)
 
 	# Las imágenes y las ROMs están versionadas en build/samples/stationTV
 	set(assets "${CMAKE_SOURCE_DIR}/build/samples/stationTV")
-	install(FILES menu-settings.json DESTINATION ${CMAKE_INSTALL_DATADIR}/stationtv)
+	install(FILES menu-settings.json stationtv.png DESTINATION ${CMAKE_INSTALL_DATADIR}/stationtv)
 	install(DIRECTORY lang fonts "${assets}/images" DESTINATION ${CMAKE_INSTALL_DATADIR}/stationtv)
 	install(DIRECTORY "${assets}/roms/chip8" DESTINATION ${CMAKE_INSTALL_DATADIR}/stationtv/roms)
 
@@ -47,7 +47,7 @@ if(WIN32)
 	install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/etc" DESTINATION .)
 
 	set(assets "${CMAKE_SOURCE_DIR}/build/samples/stationTV")
-	install(FILES menu-settings.json DESTINATION .)
+	install(FILES menu-settings.json stationtv.png DESTINATION .)
 	install(DIRECTORY lang fonts "${assets}/images" DESTINATION .)
 	install(DIRECTORY "${assets}/roms/chip8" DESTINATION roms)
 	install(FILES package/copyright DESTINATION . RENAME copyright.txt)

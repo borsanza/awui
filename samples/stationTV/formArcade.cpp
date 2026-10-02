@@ -128,6 +128,7 @@ void FormArcade::InitializeComponent() {
 
 	SetSize(1280, 720);
 	SetText("StationTV");
+	SetIcon("stationtv.png");
 
 	// Pantalla completa, vsync, reloj, FPS y sonido según settings.json
 	m_stationUI->ApplySettings();

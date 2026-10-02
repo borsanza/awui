@@ -27,6 +27,7 @@ namespace awui {
 			Control *m_mouseControlOver;
 			// awui::Diagnostics::Process* remoteProcess;
 			String m_text;
+			String m_iconFile;
 			SDL_Window *m_window;
 			SDL_GLContext m_context;
 
@@ -59,6 +60,8 @@ namespace awui {
 
 			void Init();
 			void SetText(String title);
+			// Icono de la ventana (barra de tareas, Alt+Tab...): una imagen, mejor cuadrada (PNG con transparencia)
+			void SetIcon(const String &file);
 			void RefreshVideo();
 			void SetFullscreen(int mode);
 			inline int GetFullscreen() const { return m_fullscreen; }

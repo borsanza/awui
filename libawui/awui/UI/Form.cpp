@@ -14,6 +14,7 @@
 
 #include <SDL.h>
 #include <SDL_events.h>
+#include <SDL_image.h>
 #include <SDL_opengl.h>
 #include <algorithm>
 #include <cstdlib>
@@ -186,6 +187,9 @@ void Form::RefreshVideo() {
 			SDL_Log("[ERROR] SDL_CreateWindow failed: %s", SDL_GetError());
 			return;
 		}
+
+		if (m_iconFile.GetLength() > 0)
+			SetIcon(m_iconFile);
 	}
 
 	// Actualizar la ventana existente
@@ -256,6 +260,21 @@ void Form::SetText(String title) {
 
 	if (m_initialized)
 		SDL_SetWindowTitle(m_window, m_text.ToCharArray());
+}
+
+void Form::SetIcon(const String &file) {
+	m_iconFile = file;
+	if (!m_window)
+		return; // Se pone al crear la ventana
+
+	SDL_Surface *icon = IMG_Load(file.ToCharArray());
+	if (!icon) {
+		SDL_Log("No se puede cargar el icono %s: %s", file.ToCharArray(), IMG_GetError());
+		return;
+	}
+
+	SDL_SetWindowIcon(m_window, icon);
+	SDL_FreeSurface(icon);
 }
 
 bool Form::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {

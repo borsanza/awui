@@ -7,6 +7,8 @@ Comment=Play CHIP-8, Master System, Game Gear, SG-1000 and ZX Spectrum games fro
 Comment[es]=Juega a CHIP-8, Master System, Game Gear, SG-1000 y ZX Spectrum desde un menú para la tele
 Exec=stationtv
 Icon=stationtv
+# La clase de la ventana (el nombre del ejecutable): así el escritorio la asocia con esta entrada y su icono
+StartupWMClass=stationTV
 Terminal=false
 Categories=Game;Emulator;
 Keywords=emulator;chip8;sega;master system;game gear;spectrum;retro;
