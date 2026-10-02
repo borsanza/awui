@@ -94,7 +94,7 @@ Para repartirlo, el instalador:
 scripts/build-windows.sh --installer    # build-windows/StationTV-<versión>-installer.exe
 ```
 
-Instala StationTV en *Archivos de programa*, con accesos directos en el menú Inicio y en el escritorio, y se desinstala desde *Aplicaciones*. Lleva el programa, sus DLL, los recursos y los juegos de CHIP-8 del Community Archive (CC0). Instalado, guarda los ajustes en `%APPDATA%\stationtv` y busca las ROMs en `%LOCALAPPDATA%\stationtv\roms`.
+Instala StationTV en *Archivos de programa*, con accesos directos en el menú Inicio y en el escritorio, y se desinstala desde *Aplicaciones*. Lleva el programa, sus DLL, los recursos y los juegos de CHIP-8 del Community Archive (CC0). Instalado, guarda los ajustes en `%APPDATA%\StationTV`, y las ROMs y las partidas van en `Documentos\StationTV` (`roms`, `saves` y `states`), donde se ven y entran en las copias de seguridad.
 
 Para probarlo sin Windows, con Wine (en otro contenedor, de Debian):
 
@@ -154,18 +154,18 @@ En los menús, las flechas, Enter (OK) y Escape (volver; dentro de un juego, vue
 
 En la lista se ven juntas dos carpetas, con una subcarpeta por sistema (`chip8`, `mastersystem`, `gamegear`, `sg1000`, `zxspectrum`):
 
-- **La del usuario:** `~/.local/share/stationtv/roms/` (o `$XDG_DATA_HOME/stationtv/roms`; en Windows, `%LOCALAPPDATA%\stationtv\roms`). Para usar otra, añade `"romsDirectory": "/ruta"` a `settings.json`.
+- **La del usuario:** `~/.local/share/stationtv/roms/` (o `$XDG_DATA_HOME/stationtv/roms`; en Windows, `Documentos\StationTV\roms`). Para usar otra, añade `"romsDirectory": "/ruta"` a `settings.json`.
 - **La del programa:** `roms/` junto a sus recursos (al compilar, `build/samples/stationTV/roms`). Solo trae los juegos de CHIP-8 del Community Archive, los únicos que se pueden redistribuir.
 
 Al arrancar se crea en cada una la subcarpeta de cada sistema, para que se sepa dónde va cada juego (en la del programa, solo si se puede escribir en ella: no instalado). Las que estén vacías no salen en el menú. Si un juego está en las dos, vale el del usuario. Para el Spectrum, la ROM de cada modelo va en la carpeta `zxspectrum` (`48.rom`, `128.rom`...), y una cinta en `zxspectrum/<modelo>/` arranca con ese modelo.
 
 ### Ajustes
 
-El engranaje de arriba a la derecha abre los ajustes: idioma, continuar partidas, reloj, pantalla completa, vsync, estadísticas en pantalla, sonido, volumen, el FM y los canales de la Master System, y si los juegos de CHIP-8 vuelven a empezar al terminar. Se guardan en `settings.json`, junto al programa si se puede escribir ahí (al compilarlo, o en una copia portable); si no (instalado), en `~/.config/stationtv/` (en Windows, `%APPDATA%\stationtv`).
+El engranaje de arriba a la derecha abre los ajustes: idioma, continuar partidas, reloj, pantalla completa, vsync, estadísticas en pantalla, sonido, volumen, el FM y los canales de la Master System, y si los juegos de CHIP-8 vuelven a empezar al terminar. Se guardan en `settings.json`, junto al programa si se puede escribir ahí (al compilarlo, o en una copia portable); si no (instalado), en `~/.config/stationtv/` (en Windows, `%APPDATA%\StationTV`).
 
 ### Partidas guardadas
 
-StationTV guarda las partidas en la carpeta de datos del usuario, `~/.local/share/stationtv/` (o `$XDG_DATA_HOME/stationtv`; en Windows, `%LOCALAPPDATA%\stationtv`), por sistema y juego, en dos carpetas:
+StationTV guarda las partidas en la carpeta de datos del usuario, `~/.local/share/stationtv/` (o `$XDG_DATA_HOME/stationtv`; en Windows, `Documentos\StationTV`), por sistema y juego, en dos carpetas:
 
 - **`saves/`:** lo que guarda el propio juego, la RAM del cartucho (`.sav`). Por ejemplo, `roms/mastersystem/Golvellius.sms` → `saves/mastersystem/Golvellius.sav`.
 - **`states/`:** los estados del emulador, con la CPU, la memoria y todo lo demás: los que se guardan con una tecla (`.state`) y la partida automática al salir (`.autostate`).

@@ -47,6 +47,11 @@ String Environment::GetFolderPath(SpecialFolder folder) {
 			variable = "XDG_DATA_HOME";
 			underHome = "/.local/share";
 			break;
+		case SpecialFolder::MyDocuments:
+			// XDG_DOCUMENTS_DIR no suele estar en el entorno (va en ~/.config/user-dirs.dirs)
+			variable = "XDG_DOCUMENTS_DIR";
+			underHome = "/Documents";
+			break;
 		default:
 			Console::Error->WriteLine("Folder especial no soportado");
 			return "";
@@ -69,6 +74,9 @@ String Environment::GetFolderPath(SpecialFolder folder) {
 			break;
 		case SpecialFolder::LocalApplicationData:
 			id = FOLDERID_LocalAppData;
+			break;
+		case SpecialFolder::MyDocuments:
+			id = FOLDERID_Documents;
 			break;
 		default:
 			Console::Error->WriteLine("Folder especial no soportado");

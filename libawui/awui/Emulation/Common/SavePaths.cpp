@@ -9,6 +9,8 @@
 #include <awui/Console.h>
 #include <awui/Environment.h>
 
+#include <algorithm>
+#include <cctype>
 #include <filesystem>
 
 using namespace awui;
@@ -24,11 +26,18 @@ void SavePaths::Configure(const String &saveDirectory, const std::vector<String>
 }
 
 String SavePaths::GetDefaultDirectory(const char *application) {
+#ifdef _WIN32
+	String base = Environment::GetFolderPath(Environment::SpecialFolder::MyDocuments);
+	std::string name = application;
+#else
 	String base = Environment::GetFolderPath(Environment::SpecialFolder::LocalApplicationData);
+	std::string name = application;
+	std::transform(name.begin(), name.end(), name.begin(), [](unsigned char c) { return std::tolower(c); });
+#endif
 	if (base.GetLength() == 0)
 		return "";
 
-	return (fs::path(base.ToStdString()) / application).string();
+	return (fs::path(base.ToStdString()) / name).string();
 }
 
 std::string SavePaths::Translate(const std::string &path, Kind kind) {

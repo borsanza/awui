@@ -53,7 +53,7 @@ static void EnterResourceDirectory() {
 // settings.json se queda junto a los recursos si se puede escribir ahí (al compilar, o una copia portable). Si no
 // (instalado en /usr/share), o si lo instaló el instalador de Windows (junto a su desinstalador: así no acaba en
 // Archivos de programa al abrirlo como administrador), va a la configuración del usuario: ~/.config/stationtv (en
-// Windows, %APPDATA%\stationtv)
+// Windows, %APPDATA%\StationTV)
 static void ChooseSettingsFile() {
 	std::error_code error;
 	if (!fs::exists("Uninstall.exe", error)) {
@@ -69,7 +69,11 @@ static void ChooseSettingsFile() {
 	if (config.GetLength() == 0)
 		return;
 
+#ifdef _WIN32
+	fs::path directory = fs::path(config.ToStdString()) / "StationTV";
+#else
 	fs::path directory = fs::path(config.ToStdString()) / "stationtv";
+#endif
 	fs::create_directories(directory, error);
 	UI::Station::Settings::SettingsStore::SetValuesFile((directory / "settings.json").string().c_str());
 }

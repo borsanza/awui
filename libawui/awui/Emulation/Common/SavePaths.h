@@ -30,8 +30,10 @@ namespace awui::Emulation::Common {
 	  public:
 		static void Configure(const String &saveDirectory, const std::vector<String> &romsDirectories);
 
-		// Carpeta de datos del usuario para una aplicación: Environment::GetFolderPath(LocalApplicationData)/<app>,
-		// es decir $XDG_DATA_HOME/<app> o ~/.local/share/<app> (en Windows, %LOCALAPPDATA%\<app>). Vacía si no se sabe
+		// Carpeta del usuario para los datos que maneja él (ROMs, partidas). En Linux, la de datos de XDG con el nombre
+		// en minúsculas: $XDG_DATA_HOME/<app> o ~/.local/share/<app>. En Windows, Documentos\<App>: AppData está
+		// oculta y fuera de las copias de seguridad, y ahí es donde la buscan los usuarios (y otros emuladores).
+		// Vacía si no se sabe
 		static String GetDefaultDirectory(const char *application);
 
 		// Para escribir: crea las carpetas que falten

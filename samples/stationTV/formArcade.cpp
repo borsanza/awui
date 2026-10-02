@@ -87,7 +87,7 @@ FormArcade::~FormArcade() {
 void FormArcade::InitializeComponent() {
 	SetBackColor(Color::Black);
 
-	String dataDirectory = awui::Emulation::Common::SavePaths::GetDefaultDirectory("stationtv");
+	String dataDirectory = awui::Emulation::Common::SavePaths::GetDefaultDirectory("StationTV");
 
 	// Partidas fuera de roms/, que puede ser de solo lectura: en la carpeta de datos del usuario (o en la que diga
 	// "saveDirectory" en settings.json), por sistema y juego. En saves/ lo que guarda el juego (la RAM del cartucho) y
