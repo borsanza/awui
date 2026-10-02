@@ -91,7 +91,7 @@ La primera vez tarda unos minutos en preparar el contenedor. Cada programa queda
 Para repartirlo, el instalador:
 
 ```bash
-scripts/build-windows.sh --installer    # build-windows/StationTV-<versión>-instalador.exe
+scripts/build-windows.sh --installer    # build-windows/StationTV-<versión>-installer.exe
 ```
 
 Instala StationTV en *Archivos de programa*, con accesos directos en el menú Inicio y en el escritorio, y se desinstala desde *Aplicaciones*. Lleva el programa, sus DLL, los recursos y los juegos de CHIP-8 del Community Archive (CC0). Instalado, guarda los ajustes en `%APPDATA%\stationtv` y busca las ROMs en `%LOCALAPPDATA%\stationtv\roms`.

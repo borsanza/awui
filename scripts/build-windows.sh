@@ -5,7 +5,7 @@
 #   scripts/build-windows.sh                compila en build-windows/ (preset "windows", Release)
 #   scripts/build-windows.sh --clean        borra build-windows/ antes
 #   scripts/build-windows.sh --installer    además, genera el instalador de StationTV (NSIS):
-#                                           build-windows/StationTV-<versión>-instalador.exe
+#                                           build-windows/StationTV-<versión>-installer.exe
 #
 # Cada sample queda en build-windows/samples/<sample>/ con su .exe, las DLL que necesita y sus imágenes y ROMs, listo
 # para copiar a un Windows.
@@ -46,7 +46,10 @@ done
 
 if [ $installer = 1 ]; then
 	docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/src" -w /src/build-windows "$IMAGE" cpack
-	echo "Instalador: $(ls build-windows/StationTV-*-instalador.exe)"
+	echo "Instalador: $(ls build-windows/StationTV-*-installer.exe)"
 else
-	echo "Listo: build-windows/samples/<sample>/<sample>.exe"
+	echo "Compilado. Cada programa, con sus DLL y recursos, en su carpeta (se copia entera a Windows):"
+	for exe in build-windows/samples/*/*.exe; do
+		echo "  $exe"
+	done
 fi
