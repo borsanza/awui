@@ -21,7 +21,7 @@
     "settings.fullScreen": "フルスクリーン",
     "settings.fullScreen.desc": "ウィンドウではなく画面全体を使います。F11キーでも切り替えられます。",
     "settings.vsync": "垂直同期",
-    "settings.vsync.desc": "画面の更新に合わせて、映像の乱れ（ティアリング）を防ぎます。5キーでも切り替えられます。",
+    "settings.vsync.desc": "画面の更新に合わせて、映像の乱れ（ティアリング）を防ぎます。F10キーでも切り替えられます。",
     "settings.fps": "FPSを表示",
     "settings.fps.desc": "右下に1秒あたりのフレーム数を表示します。",
     "settings.stats": "画面上の統計",

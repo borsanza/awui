@@ -21,7 +21,7 @@
     "settings.fullScreen": "Vollbild",
     "settings.fullScreen.desc": "Nutzt den ganzen Bildschirm statt eines Fensters. Lässt sich auch mit der Taste F11 umschalten.",
     "settings.vsync": "Vertikale Synchronisation",
-    "settings.vsync.desc": "Synchronisiert mit der Bildwiederholrate, um Bildrisse zu vermeiden. Lässt sich auch mit der Taste 5 umschalten.",
+    "settings.vsync.desc": "Synchronisiert mit der Bildwiederholrate, um Bildrisse zu vermeiden. Lässt sich auch mit der Taste F10 umschalten.",
     "settings.fps": "FPS anzeigen",
     "settings.fps.desc": "Zeigt die Bilder pro Sekunde in der unteren rechten Ecke an.",
     "settings.stats": "Statistiken auf dem Bildschirm",

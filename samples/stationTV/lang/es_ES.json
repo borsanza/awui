@@ -21,7 +21,7 @@
     "settings.fullScreen": "Pantalla completa",
     "settings.fullScreen.desc": "Usa toda la pantalla en vez de una ventana. También se cambia con la tecla F11.",
     "settings.vsync": "Sincronización vertical",
-    "settings.vsync.desc": "Sincroniza con el refresco de la pantalla para evitar cortes en la imagen. También se cambia con la tecla 5.",
+    "settings.vsync.desc": "Sincroniza con el refresco de la pantalla para evitar cortes en la imagen. También se cambia con la tecla F10.",
     "settings.fps": "Mostrar FPS",
     "settings.fps.desc": "Muestra los fotogramas por segundo en la esquina inferior derecha.",
     "settings.stats": "Estadísticas en pantalla",

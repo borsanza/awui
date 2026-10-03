@@ -8,9 +8,8 @@ Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra d
 
 ## Fallos con efecto hoy
 
-- **La tecla 5 no llega a los juegos:** `FormArcade::OnKeyPress` la usa para cambiar el vsync y la consume antes que el emulador (el formulario recibe las teclas primero). En el Spectrum no se puede escribir un 5, y en CHIP-8 la tecla hex 5 solo va con W o con el 5 del teclado numérico (Space Invaders dispara con ella). Lo suyo es usar para el vsync una tecla que no use ningún emulador (una F) o atenderla solo en los menús.
 - **Pérdida de foco de la ventana:** no se atiende `SDL_WINDOWEVENT_FOCUS_LOST`, así que no se pausa nada al minimizar ni al cambiar de ventana. Las teclas pulsadas no deberían quedarse enganchadas al hacer Alt+Tab (SDL2 manda un `KEYUP` por cada una al perder el foco, y las sueltas del mando pasan aunque no haya foco), pero falta comprobarlo con la ventana.
-- **Bucle sin límite sin vsync:** con el vsync quitado (ajustes o tecla 5), el bucle de `Application::Run` no espera en ningún sitio y usa el 100 % de un núcleo. Con la ventana minimizada ya no pasa: no se pinta y se espera un frame.
+- **Bucle sin límite sin vsync:** con el vsync quitado (ajustes o F10), el bucle de `Application::Run` no espera en ningún sitio y usa el 100 % de un núcleo. Con la ventana minimizada ya no pasa: no se pinta y se espera un frame.
 
 ## Fallos latentes
 
@@ -189,7 +188,7 @@ samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los
 La librería tiene que compilar y funcionar igual en Windows, aunque todavía no haya build.
 
 - **Probar en Windows:** ya compila desde Linux (`scripts/build-windows.sh`) sin errores ni avisos, y con Wine (`scripts/run-windows.sh`) arranca, pinta con OpenGL, se ven los textos y responde al teclado. Falta un Windows de verdad para el sonido, el mando y la velocidad.
-- **Rutas UTF-8:** awui pasa las rutas en UTF-8 como `char*` a `fopen`, `std::fstream` y `std::filesystem` (en `IO/File`, `IO/FileStream`, `Localization`, `SettingsStore` y `OpenGL/Shader`). En Windows esas funciones interpretan la ruta en la página de códigos ANSI, y una ruta con "ñ" fallaría. Lo más sencillo es un manifiesto con `activeCodePage = UTF-8` en el ejecutable (Windows 10 1903 o posterior). Si no, habría que convertir a UTF-16 dentro de `File`/`FileStream`.
+- **Rutas UTF-8:** awui pasa las rutas en UTF-8 como `char*` a `fopen`, `std::fstream` y `std::filesystem` (en `IO/File`, `IO/FileStream`, `Localization` y `SettingsStore`). En Windows esas funciones interpretan la ruta en la página de códigos ANSI, y una ruta con "ñ" fallaría. Lo más sencillo es un manifiesto con `activeCodePage = UTF-8` en el ejecutable (Windows 10 1903 o posterior). Si no, habría que convertir a UTF-16 dentro de `File`/`FileStream`.
 - **`opendir`:** `Localization::GetLanguages` y `StationUI::RecursiveSearch` (la lista de juegos) usan `opendir`/`readdir`, que no existen con MSVC (MinGW sí los tiene). Mejor `std::filesystem::directory_iterator`.
 - **`Directory.cpp`** solo contempla `__linux__` y `_WIN32`: en macOS no compila.
-- **Contexto de OpenGL:** `Application::Run` pide un contexto 3.3 de compatibilidad. macOS no lo da (solo 2.1, o 3.2+ *core*); va unido a pasar a OpenGL moderno.
+- **macOS:** el contexto ya es OpenGL 3.3 *core*, que macOS da, pero ahí hay que pedirlo además como *forward compatible* (`SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG`) y nunca se ha probado.

@@ -147,7 +147,7 @@ bool FormArcade::OnKeyPress(Keys::Enum key) {
 			// deshaga el siguiente cambio en el menú de ajustes
 			Settings::SettingsStore::Instance().SetBool("fullScreen", !GetFullscreen());
 			break;
-		case Keys::Key_5:
+		case Keys::Key_F10:
 			// Se guarda para que el menú de ajustes muestre el valor real
 			SetSwapInterval(!GetSwapInterval());
 			Settings::SettingsStore::Instance().SetBool("vsync", GetSwapInterval());

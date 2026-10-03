@@ -21,7 +21,7 @@
     "settings.fullScreen": "Fullscreen",
     "settings.fullScreen.desc": "Use the whole screen instead of a window. The F11 key also toggles it.",
     "settings.vsync": "Vertical sync",
-    "settings.vsync.desc": "Synchronize with the screen refresh to avoid tearing. The 5 key also toggles it.",
+    "settings.vsync.desc": "Synchronize with the screen refresh to avoid tearing. The F10 key also toggles it.",
     "settings.fps": "Show FPS",
     "settings.fps.desc": "Show the frames per second in the bottom right corner.",
     "settings.stats": "On-screen statistics",

@@ -37,7 +37,7 @@ void FormGOB::InitializeComponent() {
 bool FormGOB::OnKeyPress(Keys::Enum key) {
 	bool ret = false;
 	switch (key) {
-		case Keys::Key_5:
+		case Keys::Key_F10:
 			SetSwapInterval(!GetSwapInterval());
 			ret = true;
 			break;

@@ -21,7 +21,7 @@
     "settings.fullScreen": "全屏",
     "settings.fullScreen.desc": "使用整个屏幕而不是窗口。也可以按 F11 键切换。",
     "settings.vsync": "垂直同步",
-    "settings.vsync.desc": "与屏幕刷新同步，避免画面撕裂。也可以按 5 键切换。",
+    "settings.vsync.desc": "与屏幕刷新同步，避免画面撕裂。也可以按 F10 键切换。",
     "settings.fps": "显示 FPS",
     "settings.fps.desc": "在右下角显示每秒帧数。",
     "settings.stats": "屏幕统计",

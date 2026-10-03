@@ -137,7 +137,7 @@ En los menús, las flechas, Enter (OK) y Escape (volver; dentro de un juego, vue
 | Dónde         | Tecla                                   | Qué hace                                     |
 |---------------|-----------------------------------------|----------------------------------------------|
 | Siempre       | F11                                     | Pantalla completa                            |
-|               | 5                                       | Sincronización vertical (vsync)              |
+|               | F10                                     | Sincronización vertical (vsync)              |
 | CHIP-8        | 1234 / QWER / ASDF / ZXCV               | El teclado hexadecimal del CHIP-8            |
 |               | Flechas y Enter                         | Las teclas de cada juego (se detectan solas) |
 |               | I                                       | Invertir los colores                         |
