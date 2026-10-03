@@ -17,6 +17,10 @@ namespace awui::Emulation::Common {
 		Rom(int32_t capacity);
 		virtual ~Rom();
 
+		// No se puede copiar: la copia liberaría otra vez la memoria
+		Rom(const Rom &) = delete;
+		Rom &operator=(const Rom &) = delete;
+
 		void LoadRom(const String file);
 
 		// Como en el hardware, las líneas de dirección que sobran se ignoran: la ROM se repite cada potencia de 2.

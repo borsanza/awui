@@ -33,6 +33,10 @@ namespace awui {
 			Image(String name);
 			~Image();
 
+			// No se puede copiar: la copia liberaría otra vez la imagen y su textura
+			Image(const Image &) = delete;
+			Image &operator=(const Image &) = delete;
+
 			int GetWidth() const;
 			int GetHeight() const;
 

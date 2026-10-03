@@ -13,6 +13,10 @@ namespace awui::Emulation::Chip8 {
 		Registers(uint8_t n);
 		virtual ~Registers();
 
+		// No se puede copiar: la copia liberaría otra vez los registros
+		Registers(const Registers &) = delete;
+		Registers &operator=(const Registers &) = delete;
+
 		void Clear();
 
 		void SetV(uint8_t pos, uint8_t value);

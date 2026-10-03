@@ -13,6 +13,10 @@ namespace awui::Emulation::Chip8 {
 		Screen(uint16_t width, uint16_t height);
 		virtual ~Screen();
 
+		// No se puede copiar: la copia liberaría otra vez los píxeles
+		Screen(const Screen &) = delete;
+		Screen &operator=(const Screen &) = delete;
+
 		void Clear();
 		// Copia el contenido de otra pantalla del mismo tamaño
 		void CopyFrom(const Screen &other);

@@ -20,6 +20,10 @@ namespace awui {
 			FileStream(const String path, FileMode::Enum mode);
 			virtual ~FileStream();
 
+			// No se puede copiar: la copia liberaría otra vez el fichero abierto
+			FileStream(const FileStream &) = delete;
+			FileStream &operator=(const FileStream &) = delete;
+
 			bool IsOpen() const;
 			virtual void Close();
 

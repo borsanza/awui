@@ -14,6 +14,10 @@ namespace awui::IO {
 		MemoryStream(uint32_t capacity);
 		virtual ~MemoryStream();
 
+		// No se puede copiar: la copia liberaría otra vez el buffer
+		MemoryStream(const MemoryStream &) = delete;
+		MemoryStream &operator=(const MemoryStream &) = delete;
+
 		virtual void Close();
 
 		virtual uint32_t GetPosition() const override;

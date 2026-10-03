@@ -34,6 +34,10 @@ namespace awui::GOB::Engine {
 		Texture(const String file, int minFilter = TEXTURE_LINEAR, int magFilter = TEXTURE_LINEAR);
 		virtual ~Texture();
 
+		// No se puede copiar: la copia liberaría otra vez la textura de OpenGL
+		Texture(const Texture &) = delete;
+		Texture &operator=(const Texture &) = delete;
+
 		void SetMinFilter(int filter);
 		void SetMagFilter(int filter);
 

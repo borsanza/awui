@@ -18,6 +18,10 @@ namespace awui {
 			TapeBlock(int size);
 			~TapeBlock();
 
+			// No se puede copiar: la copia liberaría otra vez los datos del bloque
+			TapeBlock(const TapeBlock &) = delete;
+			TapeBlock &operator=(const TapeBlock &) = delete;
+
 			void SetByte(int pos, uint8_t value);
 			uint8_t GetByte(int pos);
 			int GetLength() const;
@@ -53,6 +57,10 @@ namespace awui {
 		  public:
 			TapeCorder();
 			~TapeCorder();
+
+			// No se puede copiar: la copia liberaría otra vez los bloques de la cinta
+			TapeCorder(const TapeCorder &) = delete;
+			TapeCorder &operator=(const TapeCorder &) = delete;
 
 			void LoadFile(const String file);
 

@@ -28,7 +28,6 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 - **El depurador de la Master System no se puede abrir:** `MasterSystem` tiene la tecla F para mostrarlo, pero `m_debugger` nunca se crea (siempre es `NULL`), así que `DebuggerSMS` es código muerto. O se crea (en Debug, por ejemplo) o se borra.
 - **Variables `static inline` en cabeceras con DLL:** en Windows, el ejecutable y `libawui.dll` tienen cada uno su copia (`SavePaths`, `AudioSettings`, `Localization`, `CPU::s_restartWhenFinished`...). Hoy todas se cambian y se leen desde dentro de la DLL, pero si un sample cambia una directamente desde su código, la DLL no lo ve. Pasó con `SettingsStore::SetValuesFile`, que ya está en el `.cpp`.
 - **Estado del Z80 copiado con `memcpy`:** `CPUInst::saveData` contiene `Registers`, que tiene un destructor declarado a mano, así que no es un tipo trivial y copiarlo con `memcpy` no está garantizado (el compilador lo avisa con `-Wclass-memaccess`). Basta con quitar ese destructor vacío.
-- **`Ram` y `Rom`** se pueden copiar y la copia liberaría dos veces su memoria (como `Image` y `MemoryStream`, más abajo).
 - **`Word` depende del orden de los bytes:** la unión con `L`/`H` da los bytes al revés en una máquina *big-endian*. Hoy todas las plataformas previstas (x86, ARM) son *little-endian*, pero conviene saberlo. Además, usa un `struct` anónimo dentro de una unión, que es una extensión del compilador.
 - **`MasterSystem::OnKeyPress`/`OnKeyUp`** devuelven siempre `true` (la variable `ret` se calcula y no se usa), así que ninguna tecla sigue hacia los controles de encima.
 - **`FileStream`:**
@@ -36,7 +35,6 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
   - **Cambiar entre leer y escribir** sin un `fseek` en medio es comportamiento indefinido en C.
   - **La posición avanza aunque la lectura o escritura falle,** y en modo `Append` no refleja dónde se escribe de verdad.
 - **Herencia privada:** `FileStream` y `MemoryStream` heredan de `Stream` en privado (`class FileStream : Stream`), así que no se pueden usar como `Stream *`.
-- **Clases copiables que poseen recursos:** `Image`, `MemoryStream`, `FileStream` y `Control` se pueden copiar, y la copia liberaría dos veces el buffer, el `FILE *` o los hijos. Hay que borrar el constructor de copia y la asignación (`= delete`).
 - **Bucles infinitos:**
   - **`String::Split("")`:** con un delimitador vacío nunca avanza. Además, trata distinto los vacíos: `"a,b,"` da `[a, b]` pero `",a"` da `["", a]`.
   - **`EffectBounce::Calculate`** con `p < -0.09`. Un porcentaje que se pasa de rango por un frame lento colgaría el programa.

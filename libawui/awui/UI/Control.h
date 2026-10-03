@@ -108,6 +108,10 @@ namespace awui {
 			Control();
 			virtual ~Control();
 
+			// No se puede copiar: la copia liberaría otra vez los hijos
+			Control(const Control &) = delete;
+			Control &operator=(const Control &) = delete;
+
 			const virtual Drawing::Size GetMinimumSize() const;
 			void SetMinimumSize(Drawing::Size size);
 

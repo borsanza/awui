@@ -13,6 +13,10 @@ namespace awui::Emulation::Common {
 		Ram(uint32_t size);
 		virtual ~Ram();
 
+		// No se puede copiar: la copia liberaría otra vez la memoria
+		Ram(const Ram &) = delete;
+		Ram &operator=(const Ram &) = delete;
+
 		void Clear();
 		void Resize(uint32_t size);
 
