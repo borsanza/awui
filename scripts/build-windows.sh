@@ -33,13 +33,15 @@ docker build -q -t "$IMAGE" scripts/windows > /dev/null
 docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/src" -w /src "$IMAGE" \
 	bash -c 'cmake --preset windows > /dev/null && cmake --build --preset windows'
 
-# Imágenes y ROMs: están versionadas en build/samples/ (las mismas que usa la compilación de Linux)
+# Imágenes y ROMs: están versionadas en build/samples/ (las mismas que usa la compilación de Linux). Se copian de
+# nuevo enteras para que no se queden las que ya no están (irían al instalador)
 for dir in build/samples/*/; do
 	sample=$(basename "$dir")
 	[ -d "build-windows/samples/$sample" ] || continue
 	for assets in images roms; do
 		if [ -d "$dir$assets" ]; then
-			cp -ru "$dir$assets" "build-windows/samples/$sample/"
+			rm -rf "build-windows/samples/${sample:?}/${assets:?}"
+			cp -r "$dir$assets" "build-windows/samples/$sample/"
 		fi
 	done
 done

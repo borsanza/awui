@@ -190,21 +190,21 @@ void StationUI::RecursiveSearch(NodeFile *parent, const String &path) {
 				if (child->m_name == "chip8") {
 					child->m_emulator = Types::Chip8;
 					child->m_button->SetText("CHIP-8");
-					child->m_background = new Bitmap("./images/chip8.png");
+					child->m_background = new Bitmap("./images/chip8.jpg");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
 				if (child->m_name == "gamegear") {
 					child->m_emulator = Types::GameGear;
 					child->m_button->SetText("Game Gear");
-					child->m_background = new Bitmap("./images/gamegear.png");
+					child->m_background = new Bitmap("./images/gamegear.jpg");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
 				if (child->m_name == "mastersystem") {
 					child->m_emulator = Types::MasterSystem;
 					child->m_button->SetText("Master System");
-					child->m_background = new Bitmap("./images/mastersystem.png");
+					child->m_background = new Bitmap("./images/mastersystem.jpg");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
@@ -212,14 +212,14 @@ void StationUI::RecursiveSearch(NodeFile *parent, const String &path) {
 				if (child->m_name == "sg1000") {
 					child->m_emulator = Types::MasterSystem;
 					child->m_button->SetText("SG-1000");
-					child->m_background = new Bitmap("./images/sg1000.png");
+					child->m_background = new Bitmap("./images/sg1000.jpg");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
 				if (child->m_name == "zxspectrum") {
 					child->m_emulator = Types::Spectrum;
 					child->m_button->SetText("ZX Spectrum");
-					child->m_background = new Bitmap("./images/zxspectrum.png");
+					child->m_background = new Bitmap("./images/zxspectrum.jpg");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 			} else {

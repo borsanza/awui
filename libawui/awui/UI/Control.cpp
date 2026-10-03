@@ -1200,6 +1200,12 @@ void Control::SetVisible(bool isVisible) {
 		m_visible = isVisible;
 
 		if (m_parent) {
+			// Layout se salta los controles ocultos: si cambió el tamaño mientras lo estaba, se coloca ahora (y si
+			// se oculta, los demás ocupan su sitio)
+			if (m_dock != DockStyle::None) {
+				m_parent->Layout();
+			}
+
 			m_parent->FixFocusImpl();
 		}
 	}
