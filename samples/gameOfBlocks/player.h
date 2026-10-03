@@ -6,14 +6,18 @@ namespace awui::GOB::Engine {
 } // namespace awui::GOB::Engine
 
 // El jugador (elsa.js en la versión web): se mueve con las teclas en la dirección a la que mira, corre, salta y cae
-// con gravedad sobre los bloques. Su muñeco (cabeza, cuerpo, brazos y piernas, de cajas de colores) solo se ve con la
-// cámara en tercera persona
+// con gravedad. Choca con los bloques por los lados, por abajo y por arriba (en la versión web solo con el suelo):
+// ocupa una caja de Width x Height con los pies en su posición. Su muñeco (cabeza, cuerpo, brazos y piernas, de cajas
+// de colores) solo se ve con la cámara en tercera persona
 class Player {
   public:
 	static constexpr float Gravity = 30.0f;
 	static constexpr float EyeHeight = 1.62f;
 	static constexpr float WalkSpeed = 4.317f; // Bloques por segundo
 	static constexpr float RunSpeed = 5.612f;
+	static constexpr float Width = 0.6f;		// De lado a lado y de delante a atrás
+	static constexpr float Height = 1.8f;
+	static constexpr float MaxFallSpeed = 78.4f; // Bloques por segundo
 
   private:
 	awui::GOB::Engine::Object3D *m_model; // Es de la escena
@@ -33,6 +37,11 @@ class Player {
 	bool m_jump;
 
 	void BuildModel(awui::GOB::Engine::Scene *scene);
+
+	// Si la caja del jugador, con los pies en (x, y, z), toca algún bloque
+	static bool Collides(double x, double y, double z);
+	void MoveHorizontal(double dx, double dz);
+	void MoveVertical(float deltaSeconds);
 
   public:
 	Player(awui::GOB::Engine::Scene *scene, double x, double y, double z);

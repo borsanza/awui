@@ -133,12 +133,13 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### gameOfBlocks
 
-Está a la par de la versión web (three.js): mismo terreno, misma luz y colores, misma física y cámaras. Lo que a las dos les falta:
+Está a la par de la versión web (three.js): mismo terreno, misma luz y colores, mismas cámaras y misma física, y además el jugador choca con los bloques por todos los lados (en la web solo con el suelo). Lo que falta:
 
-- **Colisiones a los lados:** el jugador solo choca con el suelo; andando atraviesa las colinas y las paredes. Tampoco choca con el techo al saltar.
+- **Cámara en tercera persona:** atraviesa el terreno (si hay una colina entre la cámara y el jugador, se ve por dentro). Habría que acercarla al jugador cuando algo se interpone.
+- **Subir escalones:** un bloque de alto solo se sube saltando (como en Minecraft). Si se quiere subir andando escalones bajos, haría falta medio bloque o un "paso automático".
 - **Poner y quitar bloques.** Al cambiar un bloque habría que rehacer la malla de su chunk (y la de los vecinos si está en el borde): hoy cada chunk se calcula una sola vez.
 - **Chunks lejanos:** se generan al acercarse, pero nunca se descargan: la memoria y los triángulos crecen al andar.
-- **Texturas de los bloques:** las de `build/samples/gameOfBlocks/images` vienen de la versión web y varias parecen las de Minecraft (hierba, tierra, piedra, diamante, lana): habría que sustituirlas por unas propias antes de publicarlas.
+- **Texturas de los bloques:** son propias y salen de [make-textures.py](samples/gameOfBlocks/art/make-textures.py) (ruido y formas sencillas, con semilla fija), menos las de prueba (`block-empty` y `block-pattern-*`), dibujadas a mano. Son sencillas: se pueden mejorar tocando el script.
 - **El motor (`GOB/Engine`):** junta por textura dentro de cada objeto, pero no entre objetos: salen unas 200 llamadas de pintado para 100 chunks. Con un atlas de texturas sería una. No hay luces: la del mundo va calculada en el color de cada cara.
 - **Mando:** solo teclado y ratón.
 

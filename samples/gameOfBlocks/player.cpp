@@ -14,6 +14,7 @@
 #include <awui/GOB/Engine/Objects/Mesh.h>
 #include <awui/GOB/Engine/Scenes/Scene.h>
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -79,40 +80,105 @@ void Player::SetModelVisible(bool visible) {
 	m_model->SetVisible(visible);
 }
 
-void Player::Update(float deltaSeconds) {
-	float speed = (m_running ? RunSpeed : WalkSpeed) * deltaSeconds;
+bool Player::Collides(double x, double y, double z) {
+	// Tocar justo la cara de un bloque no es chocar: se quita un pelo por cada lado
+	const double skin = 1e-6;
+	double half = Width / 2.0;
 
-	// Adelante y atrás, en la dirección a la que mira
-	float step = -((m_moveForward ? speed : 0.0f) - (m_moveBackward ? speed : 0.0f));
-	bool moving = step != 0.0f;
-	m_x += sinf(m_rotationY) * step;
-	m_z += cosf(m_rotationY) * step;
+	int minX = (int) floor(x - half + skin);
+	int maxX = (int) floor(x + half - skin);
+	int minY = (int) floor(y + skin);
+	int maxY = (int) floor(y + Height - skin);
+	int minZ = (int) floor(z - half + skin);
+	int maxZ = (int) floor(z + half - skin);
 
-	// A los lados
-	step = -((m_moveLeft ? speed : 0.0f) - (m_moveRight ? speed : 0.0f));
-	moving = moving || (step != 0.0f);
-	m_x += sinf(m_rotationY + Pi / 2) * step;
-	m_z += cosf(m_rotationY + Pi / 2) * step;
+	for (int blockY = minY; blockY <= maxY; blockY++) {
+		for (int blockX = minX; blockX <= maxX; blockX++) {
+			for (int blockZ = minZ; blockZ <= maxZ; blockZ++) {
+				if (Chunk::GetGlobalBlock(blockX, blockY, blockZ) != 0)
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+// Un eje cada vez: si en uno choca, se queda pegado a la cara del bloque y en el otro sigue (se desliza por la pared)
+void Player::MoveHorizontal(double dx, double dz) {
+	double half = Width / 2.0;
+
+	if (dx != 0.0) {
+		double newX = m_x + dx;
+		if (Collides(newX, m_y, m_z))
+			newX = (dx > 0.0) ? (floor(newX + half) - half) : (floor(newX - half) + 1.0 + half);
+		if (!Collides(newX, m_y, m_z))
+			m_x = newX;
+	}
+
+	if (dz != 0.0) {
+		double newZ = m_z + dz;
+		if (Collides(m_x, m_y, newZ))
+			newZ = (dz > 0.0) ? (floor(newZ + half) - half) : (floor(newZ - half) + 1.0 + half);
+		if (!Collides(m_x, m_y, newZ))
+			m_z = newZ;
+	}
+}
+
+// Gravedad y salto. Cayendo deprisa se avanza en pasos de menos de un bloque, para no atravesar el suelo
+void Player::MoveVertical(float deltaSeconds) {
+	// Ha dejado de tener suelo debajo (se ha salido de un borde)
+	if (m_onGround && !Collides(m_x, m_y - 0.001, m_z))
+		m_onGround = false;
 
 	if (m_jump && m_onGround) {
 		m_onGround = false;
 		m_verticalSpeed = JumpForce;
 	}
 
-	// Gravedad: si no está quieto sobre un bloque, sube o cae; al pasar a un bloque sólido por abajo, se posa
-	double newY = m_y + m_verticalSpeed * deltaSeconds;
-	uint8_t blockBelow = Chunk::GetGlobalBlock(m_x, (int) floor(m_y - 1), m_z);
-	if (!(m_onGround && (m_verticalSpeed == 0.0f) && (blockBelow != 0))) {
-		uint8_t blockAtNewY = Chunk::GetGlobalBlock(m_x, (int) floor(newY), m_z);
-		m_onGround = (floor(newY) < floor(m_y)) && (blockAtNewY != 0);
-		if (m_onGround) {
-			m_y = floor(m_y);
-			m_verticalSpeed = 0.0f;
-		} else {
-			m_verticalSpeed -= Gravity * deltaSeconds;
+	if (m_onGround)
+		return;
+
+	double remaining = m_verticalSpeed * deltaSeconds;
+	while (remaining != 0.0) {
+		double step = std::clamp(remaining, -0.5, 0.5);
+		remaining -= step;
+
+		double newY = m_y + step;
+		if (!Collides(m_x, newY, m_z)) {
 			m_y = newY;
+			continue;
 		}
+
+		if (step < 0.0) {
+			// Se posa sobre el bloque
+			m_y = floor(newY) + 1.0;
+			m_onGround = true;
+		} else {
+			// Se da con la cabeza
+			m_y = floor(newY + Height) - Height;
+		}
+
+		m_verticalSpeed = 0.0f;
+		return;
 	}
+
+	m_verticalSpeed = std::max(m_verticalSpeed - Gravity * deltaSeconds, -MaxFallSpeed);
+}
+
+void Player::Update(float deltaSeconds) {
+	float speed = (m_running ? RunSpeed : WalkSpeed) * deltaSeconds;
+
+	// Adelante y atrás, en la dirección a la que mira, y a los lados
+	float forward = -((m_moveForward ? speed : 0.0f) - (m_moveBackward ? speed : 0.0f));
+	float sideways = -((m_moveLeft ? speed : 0.0f) - (m_moveRight ? speed : 0.0f));
+	bool moving = (forward != 0.0f) || (sideways != 0.0f);
+	double oldX = m_x;
+	double oldZ = m_z;
+	MoveHorizontal(sinf(m_rotationY) * forward + sinf(m_rotationY + Pi / 2) * sideways, cosf(m_rotationY) * forward + cosf(m_rotationY + Pi / 2) * sideways);
+	moving = moving && ((m_x != oldX) || (m_z != oldZ)); // Contra una pared no se balancea la vista
+
+	MoveVertical(deltaSeconds);
 
 	if (m_onGround && moving) {
 		m_eyeTime += deltaSeconds * 15.0f;

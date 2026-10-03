@@ -18,7 +18,7 @@ La librería en la que está hecho todo: ventanas y controles en OpenGL con anim
 
 ### Otros
 
-- **gameOfBlocks**: un mundo de bloques, pasado a C++ desde uno que tenía en Three.js para ganar rendimiento y aprender sobre mundos infinitos. Genera el mismo terreno que la versión web (mismo ruido y misma semilla), en trozos de 16×256×16 que junta en rectángulos grandes, y se recorre andando: W A S D, Ctrl para correr, Espacio para saltar, el ratón para mirar (un clic lo captura, Escape lo suelta), 5 cambia entre primera y tercera persona, 6 muestra la malla y 7 los ejes.
+- **gameOfBlocks**: un mundo de bloques, pasado a C++ desde uno que tenía en Three.js para ganar rendimiento y aprender sobre mundos infinitos. Genera el mismo terreno que la versión web (mismo ruido y misma semilla), en trozos de 16×256×16 que junta en rectángulos grandes, y se recorre andando, chocando con los bloques: W A S D, Ctrl para correr, Espacio para saltar, el ratón para mirar (un clic lo captura, Escape lo suelta), 5 cambia entre primera y tercera persona, 6 muestra la malla y 7 los ejes.
 - **awuiDemo**, **awSlider** y **awTest**: pruebas de la librería.
 - **tools/chip8**: desensamblador y ensamblador de CHIP-8/MegaChip, y la versión mejorada de MegaBlinky (ver su README).
 
