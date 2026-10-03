@@ -6,12 +6,8 @@
 
 #include "Painter.h"
 
-#include <awui/Console.h>
 #include <awui/Drawing/Color.h>
-#include <awui/String.h>
-
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <awui/OpenGL/Shaders.h>
 
 #include <cmath>
 #include <cstddef>
@@ -21,42 +17,7 @@ using namespace awui::OpenGL;
 using awui::Drawing::Color;
 
 namespace {
-	// Funciones de OpenGL 2.0 en adelante. Se cargan con SDL al inicializar: en Windows opengl32 solo exporta las de
-	// 1.1, y en OpenGL ES (y con EGL) no hay GLEW
-	PFNGLCREATESHADERPROC p_glCreateShader;
-	PFNGLSHADERSOURCEPROC p_glShaderSource;
-	PFNGLCOMPILESHADERPROC p_glCompileShader;
-	PFNGLGETSHADERIVPROC p_glGetShaderiv;
-	PFNGLGETSHADERINFOLOGPROC p_glGetShaderInfoLog;
-	PFNGLDELETESHADERPROC p_glDeleteShader;
-	PFNGLCREATEPROGRAMPROC p_glCreateProgram;
-	PFNGLATTACHSHADERPROC p_glAttachShader;
-	PFNGLBINDATTRIBLOCATIONPROC p_glBindAttribLocation;
-	PFNGLLINKPROGRAMPROC p_glLinkProgram;
-	PFNGLGETPROGRAMIVPROC p_glGetProgramiv;
-	PFNGLGETPROGRAMINFOLOGPROC p_glGetProgramInfoLog;
-	PFNGLUSEPROGRAMPROC p_glUseProgram;
-	PFNGLGETUNIFORMLOCATIONPROC p_glGetUniformLocation;
-	PFNGLUNIFORMMATRIX4FVPROC p_glUniformMatrix4fv;
-	PFNGLUNIFORM1IPROC p_glUniform1i;
-	PFNGLGENBUFFERSPROC p_glGenBuffers;
-	PFNGLBINDBUFFERPROC p_glBindBuffer;
-	PFNGLBUFFERDATAPROC p_glBufferData;
-	PFNGLGENVERTEXARRAYSPROC p_glGenVertexArrays;
-	PFNGLBINDVERTEXARRAYPROC p_glBindVertexArray;
-	PFNGLVERTEXATTRIBPOINTERPROC p_glVertexAttribPointer;
-	PFNGLENABLEVERTEXATTRIBARRAYPROC p_glEnableVertexAttribArray;
-	PFNGLACTIVETEXTUREPROC p_glActiveTexture;
-
-	template <typename T>
-	bool Load(T &function, const char *name) {
-		function = (T) SDL_GL_GetProcAddress(name);
-		if (!function)
-			awui::Console::Error->WriteLine(awui::String("Painter: falta la función de OpenGL ") + name);
-		return function != nullptr;
-	}
-
-	// El mismo código para OpenGL 3.3 y OpenGL ES 3.0: solo cambia la primera línea (y la precisión en ES)
+	// El mismo código para OpenGL 3.3 y OpenGL ES 3.0 (Shaders::BuildProgram pone la línea #version)
 	const char *VertexShader = R"(
 uniform mat4 u_projection;
 layout(location = 0) in vec2 a_position;
@@ -103,8 +64,6 @@ void main() {
 Painter::Painter() {
 	m_initialized = false;
 	m_failed = false;
-	m_es = false;
-	m_legacy = false;
 	m_program = 0;
 	m_vertexArray = 0;
 	m_vertexBuffer = 0;
@@ -121,106 +80,31 @@ Painter &Painter::Instance() {
 	return painter;
 }
 
-GLuint Painter::CompileShader(unsigned int type, const char *source) {
-	// La cabecera según el contexto: GLSL 3.30 de escritorio o GLSL ES 3.00
-	// Precisión alta en ES (3.0 la garantiza también en el shader de fragmentos): con la media, las posiciones en una
-	// pantalla de más de mil píxeles se van un píxel
-	const char *header = m_es ? "#version 300 es\nprecision highp float;\n" : "#version 330 core\n";
-	const char *sources[] = {header, source};
-
-	GLuint shader = p_glCreateShader(type);
-	p_glShaderSource(shader, 2, sources, nullptr);
-	p_glCompileShader(shader);
-
-	GLint compiled = GL_FALSE;
-	p_glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-	if (compiled != GL_TRUE) {
-		char log[1024] = "";
-		p_glGetShaderInfoLog(shader, sizeof(log), nullptr, log);
-		Console::Error->WriteLine(String("Painter: no compila el shader: ") + log);
-		p_glDeleteShader(shader);
-		return 0;
-	}
-
-	return shader;
-}
-
 bool Painter::Initialize() {
 	if (m_initialized || m_failed)
 		return m_initialized;
 
 	m_failed = true; // Hasta que todo vaya bien: si falla, no se vuelve a intentar en cada dibujo
 
-	bool loaded = Load(p_glCreateShader, "glCreateShader") & Load(p_glShaderSource, "glShaderSource") &
-				  Load(p_glCompileShader, "glCompileShader") & Load(p_glGetShaderiv, "glGetShaderiv") &
-				  Load(p_glGetShaderInfoLog, "glGetShaderInfoLog") & Load(p_glDeleteShader, "glDeleteShader") &
-				  Load(p_glCreateProgram, "glCreateProgram") & Load(p_glAttachShader, "glAttachShader") &
-				  Load(p_glBindAttribLocation, "glBindAttribLocation") & Load(p_glLinkProgram, "glLinkProgram") &
-				  Load(p_glGetProgramiv, "glGetProgramiv") & Load(p_glGetProgramInfoLog, "glGetProgramInfoLog") &
-				  Load(p_glUseProgram, "glUseProgram") & Load(p_glGetUniformLocation, "glGetUniformLocation") &
-				  Load(p_glUniformMatrix4fv, "glUniformMatrix4fv") & Load(p_glUniform1i, "glUniform1i") &
-				  Load(p_glGenBuffers, "glGenBuffers") & Load(p_glBindBuffer, "glBindBuffer") &
-				  Load(p_glBufferData, "glBufferData") & Load(p_glGenVertexArrays, "glGenVertexArrays") &
-				  Load(p_glBindVertexArray, "glBindVertexArray") & Load(p_glVertexAttribPointer, "glVertexAttribPointer") &
-				  Load(p_glEnableVertexAttribArray, "glEnableVertexAttribArray") & Load(p_glActiveTexture, "glActiveTexture");
-	if (!loaded)
+	m_program = Shaders::BuildProgram(VertexShader, FragmentShader, "Painter");
+	if (!m_program)
 		return false;
 
-	const char *version = (const char *) glGetString(GL_VERSION);
-	m_es = version && strstr(version, "OpenGL ES");
-
-	// Contexto de compatibilidad: puede haber pintado antiguo alrededor (ver Draw)
-	m_legacy = false;
-	if (!m_es) {
-		GLint profile = 0;
-		glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
-		m_legacy = (profile & GL_CONTEXT_COMPATIBILITY_PROFILE_BIT) != 0;
-	}
-
-	GLuint vertex = CompileShader(GL_VERTEX_SHADER, VertexShader);
-	GLuint fragment = CompileShader(GL_FRAGMENT_SHADER, FragmentShader);
-	if (!vertex || !fragment)
-		return false;
-
-	m_program = p_glCreateProgram();
-	p_glAttachShader(m_program, vertex);
-	p_glAttachShader(m_program, fragment);
-	p_glLinkProgram(m_program);
-	p_glDeleteShader(vertex);
-	p_glDeleteShader(fragment);
-
-	GLint linked = GL_FALSE;
-	p_glGetProgramiv(m_program, GL_LINK_STATUS, &linked);
-	if (linked != GL_TRUE) {
-		char log[1024] = "";
-		p_glGetProgramInfoLog(m_program, sizeof(log), nullptr, log);
-		Console::Error->WriteLine(String("Painter: no enlaza el programa: ") + log);
-		return false;
-	}
-
-	m_projectionLocation = p_glGetUniformLocation(m_program, "u_projection");
-	m_modeLocation = p_glGetUniformLocation(m_program, "u_mode");
-	m_textureLocation = p_glGetUniformLocation(m_program, "u_texture");
+	m_projectionLocation = Shaders::GetUniformLocation(m_program, "u_projection");
+	m_modeLocation = Shaders::GetUniformLocation(m_program, "u_mode");
+	m_textureLocation = Shaders::GetUniformLocation(m_program, "u_texture");
 
 	// Formato de los vértices: posición, coordenada de textura y color (bytes, de 0 a 1 en el shader)
-	GLint previousArray = 0;
-	GLint previousBuffer = 0;
-	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previousArray);
-	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &previousBuffer);
-
-	p_glGenVertexArrays(1, &m_vertexArray);
-	p_glGenBuffers(1, &m_vertexBuffer);
-	p_glBindVertexArray(m_vertexArray);
-	p_glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-	p_glEnableVertexAttribArray(0);
-	p_glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void *) offsetof(Vertex, x));
-	p_glEnableVertexAttribArray(1);
-	p_glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void *) offsetof(Vertex, u));
-	p_glEnableVertexAttribArray(2);
-	p_glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (const void *) offsetof(Vertex, r));
-
-	p_glBindVertexArray(previousArray);
-	p_glBindBuffer(GL_ARRAY_BUFFER, previousBuffer);
+	Shaders::GenVertexArrays(1, &m_vertexArray);
+	Shaders::GenBuffers(1, &m_vertexBuffer);
+	Shaders::BindVertexArray(m_vertexArray);
+	Shaders::BindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+	Shaders::EnableVertexAttribArray(0);
+	Shaders::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void *) offsetof(Vertex, x));
+	Shaders::EnableVertexAttribArray(1);
+	Shaders::VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void *) offsetof(Vertex, u));
+	Shaders::EnableVertexAttribArray(2);
+	Shaders::VertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (const void *) offsetof(Vertex, r));
 
 	m_initialized = true;
 	m_failed = false;
@@ -255,45 +139,22 @@ void Painter::Draw(const Vertex *vertices, int count, int mode, GLuint texture, 
 	if ((count < 3) || !Initialize())
 		return;
 
-	// Con el contexto de compatibilidad convive con el pintado antiguo (el 3D de gameOfBlocks): se guarda lo que se
-	// cambia para dejarlo como estaba. En un contexto moderno solo pinta él, y consultar el estado en cada dibujo
-	// sería tiempo perdido
-	GLint previousProgram = 0;
-	GLint previousArray = 0;
-	GLint previousBuffer = 0;
-	GLint previousTexture = 0;
-	GLint previousSource = 0;
-	GLint previousDestination = 0;
-	GLboolean previousBlend = GL_FALSE;
-	GLboolean previousDepth = GL_FALSE;
-	GLboolean previousCull = GL_FALSE;
-	if (m_legacy) {
-		glGetIntegerv(GL_CURRENT_PROGRAM, &previousProgram);
-		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previousArray);
-		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &previousBuffer);
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
-		glGetIntegerv(GL_BLEND_SRC_RGB, &previousSource);
-		glGetIntegerv(GL_BLEND_DST_RGB, &previousDestination);
-		previousBlend = glIsEnabled(GL_BLEND);
-		previousDepth = glIsEnabled(GL_DEPTH_TEST);
-		previousCull = glIsEnabled(GL_CULL_FACE);
-	}
-
 	// La proyección con el desplazamiento ya aplicado
 	float projection[16];
 	memcpy(projection, m_projection, sizeof(projection));
 	projection[12] += m_projection[0] * m_offsetX;
 	projection[13] += m_projection[5] * m_offsetY;
 
-	p_glUseProgram(m_program);
-	p_glUniformMatrix4fv(m_projectionLocation, 1, GL_FALSE, projection);
-	p_glUniform1i(m_modeLocation, mode);
-	p_glUniform1i(m_textureLocation, 0);
-	p_glActiveTexture(GL_TEXTURE0);
+	Shaders::UseProgram(m_program);
+	Shaders::UniformMatrix4fv(m_projectionLocation, 1, GL_FALSE, projection);
+	Shaders::Uniform1i(m_modeLocation, mode);
+	Shaders::Uniform1i(m_textureLocation, 0);
+	Shaders::ActiveTexture(GL_TEXTURE0);
 	if (texture)
 		glBindTexture(GL_TEXTURE_2D, texture);
 
-	// En 2D no hay caras traseras: los triángulos de una línea salen en un sentido u otro según su dirección
+	// En 2D no hay caras traseras (los triángulos de una línea salen en un sentido u otro según su dirección) ni
+	// profundidad
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -302,25 +163,10 @@ void Painter::Draw(const Vertex *vertices, int count, int mode, GLuint texture, 
 	else
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	p_glBindVertexArray(m_vertexArray);
-	p_glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-	p_glBufferData(GL_ARRAY_BUFFER, count * sizeof(Vertex), vertices, GL_STREAM_DRAW);
+	Shaders::BindVertexArray(m_vertexArray);
+	Shaders::BindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+	Shaders::BufferData(GL_ARRAY_BUFFER, count * sizeof(Vertex), vertices, GL_STREAM_DRAW);
 	glDrawArrays(GL_TRIANGLES, 0, count);
-
-	if (!m_legacy)
-		return;
-
-	p_glBindVertexArray(previousArray);
-	p_glBindBuffer(GL_ARRAY_BUFFER, previousBuffer);
-	p_glUseProgram(previousProgram);
-	glBindTexture(GL_TEXTURE_2D, previousTexture);
-	glBlendFunc(previousSource, previousDestination);
-	if (!previousBlend)
-		glDisable(GL_BLEND);
-	if (previousDepth)
-		glEnable(GL_DEPTH_TEST);
-	if (previousCull)
-		glEnable(GL_CULL_FACE);
 }
 
 void Painter::AddQuad(std::vector<Vertex> &vertices, float x1, float y1, float x2, float y2, float u1, float v1, float u2, float v2, const Color &color) {

@@ -87,13 +87,6 @@ void Form::OnPaintForm() {
 
 	gl.SetClippingBase(rectangle);
 
-	// Habilitar el culling de caras para mejorar el rendimiento, opcional pero recomendado
-	glEnable(GL_CULL_FACE);
-	//  Especificar qué caras deseas ocultar. Por defecto es GL_BACK, pero aquí la configuramos explícitamente.
-	glCullFace(GL_BACK);
-	//  Definir cuál es considerada la cara frontal. Por defecto es GL_CCW (counter-clockwise).
-	glFrontFace(GL_CCW);
-
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 
@@ -184,15 +177,12 @@ void Form::RefreshVideo() {
 			case OpenGLProfile::ES:
 				profiles = {OpenGLProfile::ES, OpenGLProfile::Core};
 				break;
-			case OpenGLProfile::Compatibility:
-				profiles = {OpenGLProfile::Compatibility};
-				break;
 		}
 
 		for (OpenGLProfile profile : profiles) {
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, (profile == OpenGLProfile::ES) ? 0 : 3);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, (profile == OpenGLProfile::ES) ? SDL_GL_CONTEXT_PROFILE_ES : (profile == OpenGLProfile::Core) ? SDL_GL_CONTEXT_PROFILE_CORE : SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, (profile == OpenGLProfile::ES) ? SDL_GL_CONTEXT_PROFILE_ES : SDL_GL_CONTEXT_PROFILE_CORE);
 
 			m_window = SDL_CreateWindow(m_text.ToCharArray(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 

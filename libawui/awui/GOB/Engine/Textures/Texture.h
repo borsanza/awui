@@ -17,9 +17,6 @@ namespace awui::GOB::Engine {
 		int m_magFilter;
 		bool m_needUpdateFilters;
 		bool m_errorOnLoad;
-		bool m_oldBlend;
-		bool m_oldDepth;
-		bool m_oldTexture;
 
 		void Load();
 		void Unload();
@@ -35,7 +32,7 @@ namespace awui::GOB::Engine {
 		void SetMinFilter(int filter);
 		void SetMagFilter(int filter);
 
-		void BindTexture();
-		void UnBindTexture();
+		// La textura de OpenGL, cargándola la primera vez (y dejándola enlazada), o 0 si no se puede cargar
+		GLuint GetTexture();
 	};
 } // namespace awui::GOB::Engine

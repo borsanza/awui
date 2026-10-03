@@ -18,6 +18,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 - **El depurador de la Master System no se puede abrir:** `MasterSystem` tiene la tecla F para mostrarlo, pero `m_debugger` nunca se crea (siempre es `NULL`), así que `DebuggerSMS` es código muerto. O se crea (en Debug, por ejemplo) o se borra.
 - **Variables `static inline` en cabeceras con DLL:** en Windows, el ejecutable y `libawui.dll` tienen cada uno su copia (`SavePaths`, `AudioSettings`, `Localization`, `CPU::s_restartWhenFinished`...). Hoy todas se cambian y se leen desde dentro de la DLL, pero si un sample cambia una directamente desde su código, la DLL no lo ve. Pasó con `SettingsStore::SetValuesFile`, que ya está en el `.cpp`.
+- **GOB: los objetos no se mueven después del primer frame.** Cada vértice se transforma una sola vez (`Vector3::ApplyTransform` quita la marca y nadie la vuelve a poner), así que `SetPosition`, `SetScale` o `SetRotation` después de pintar no tienen efecto. El `Renderer` se apoya en eso: sube la escena a OpenGL una vez y solo la rehace al añadir o quitar objetos. Si algún día se mueven, habría que marcar sus vértices y avisar al `Renderer` (o mejor, pasar la matriz de cada objeto al shader).
 - **`GOB::Object3D` sin destructor virtual:** borra sus hijos (`Mesh`, `Camera`…) como `Object3D *`, así que el destructor de la clase hija no se ejecuta (comportamiento indefinido). Además, `Mesh` guarda su `BufferGeometry *` y sus `Material *` sin liberarlos nunca: no está claro quién es el dueño.
 - **Estado del Z80 copiado con `memcpy`:** `CPUInst::saveData` contiene `Registers`, que tiene un destructor declarado a mano, así que no es un tipo trivial y copiarlo con `memcpy` no está garantizado (el compilador lo avisa con `-Wclass-memaccess`). Basta con quitar ese destructor vacío.
 - **`Ram` y `Rom`** se pueden copiar y la copia liberaría dos veces su memoria (como `Image` y `MemoryStream`, más abajo).
@@ -65,10 +66,9 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### Pintado
 
-- **OpenGL: lo que queda tras pasar a shaders.** La interfaz pinta con [Painter](libawui/awui/OpenGL/Painter.h) y pide un contexto moderno (OpenGL 3.3 *core*, o ES 3.0 si no lo hay; `AWUI_GL_PROFILE=core|es|compat` lo fuerza). Probado con Mesa en los tres. Queda:
-  1. El motor 3D de gameOfBlocks (`GOB/`) sigue en modo inmediato, por eso pide el contexto de compatibilidad (`Application::SetOpenGLProfile`). Mientras exista, el `Painter` guarda y restaura el estado de OpenGL en ese contexto. Al pasarlo a shaders se quitan las dos cosas.
-  2. Probarlo en una Raspberry Pi de verdad (su driver da ES 3.1): solo se ha probado ES con Mesa por software.
-  3. El `Painter` pinta cada control con su propia llamada; juntar los vértices de todo el frame en una sola iría más rápido en una Raspberry.
+- **OpenGL: lo que queda tras pasar a shaders.** Todo pinta con shaders (la interfaz con [Painter](libawui/awui/OpenGL/Painter.h), el 3D de gameOfBlocks con su `Renderer`) y pide OpenGL 3.3 *core*, o ES 3.0 si no lo hay (`AWUI_GL_PROFILE=core|es` lo fuerza). Probado con Mesa en los dos. Queda:
+  1. Probarlo en una Raspberry Pi de verdad (su driver da ES 3.1): solo se ha probado ES con Mesa por software.
+  2. El `Painter` pinta cada control con su propia llamada; juntar los vértices de todo el frame en una sola iría más rápido en una Raspberry.
 - **Dos formas de mezclar:** `Image` (cairo) sube el alfa premultiplicado y `Bitmap` (SDL_image) sin premultiplicar, cada uno con su `glBlendFunc`.
 - **`OnPaint(OpenGL::GL *gl)`** recibe siempre `NULL`: el parámetro no sirve.
 - **`Refresh()` y `m_needRefresh`** no se usan para nada: se repinta todo en cada frame. O se quitan, o se usan para no repintar si nada cambia (ahorra consumo en la tele).

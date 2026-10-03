@@ -15,6 +15,6 @@ namespace awui::GOB::Engine {
 	  public:
 		Mesh(BufferGeometry *geometry, const std::vector<Material *> &materials);
 
-		virtual void Render(const Matrix4 &transform);
+		virtual void Render(const Matrix4 &transform, RenderList &list) override;
 	};
 } // namespace awui::GOB::Engine

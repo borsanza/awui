@@ -17,8 +17,7 @@ namespace awui {
 		// Todo se pinta como triángulos con color y, si se quiere, textura (el color multiplica a la textura). Las
 		// coordenadas son en píxeles, como las del pintado antiguo: (0, 0) arriba a la izquierda del control.
 		//
-		// En un contexto de compatibilidad convive con el pintado antiguo (el 3D de gameOfBlocks) y deja OpenGL como
-		// lo encuentra: sin programa, sin buffers y con la mezcla que hubiera. Necesita el contexto ya creado y activo
+		// Necesita el contexto ya creado y activo
 		class Painter {
 		  public:
 			struct Vertex {
@@ -43,8 +42,6 @@ namespace awui {
 		  private:
 			bool m_initialized;
 			bool m_failed;
-			bool m_es;	   // Contexto OpenGL ES (si no, de escritorio)
-			bool m_legacy; // Contexto de compatibilidad: convive con el pintado antiguo y deja OpenGL como estaba
 			GLuint m_program;
 			GLuint m_vertexArray;
 			GLuint m_vertexBuffer;
@@ -59,7 +56,6 @@ namespace awui {
 			Painter();
 			bool Initialize();
 			void Draw(const Vertex *vertices, int count, int mode, GLuint texture, Blend blend);
-			GLuint CompileShader(unsigned int type, const char *source);
 			static void AddSegment(std::vector<Vertex> &vertices, float x1, float y1, float x2, float y2, float width, float extendStart, float extendEnd, const Drawing::Color &color);
 
 		  public:

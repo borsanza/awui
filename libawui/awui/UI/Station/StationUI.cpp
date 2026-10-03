@@ -6,6 +6,7 @@
 
 #include "StationUI.h"
 
+#include <algorithm>
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Drawing/Graphics.h>
@@ -14,8 +15,9 @@
 #include <awui/Emulation/MasterSystem/Sound.h>
 #include <awui/Localization.h>
 #include <awui/Math.h>
-#include <awui/UI/Emulators/ArcadeContainer.h>
 #include <awui/UI/Bitmap.h>
+#include <awui/UI/Diagnostics/Stats.h>
+#include <awui/UI/Emulators/ArcadeContainer.h>
 #include <awui/UI/Form.h>
 #include <awui/UI/ImageFader.h>
 #include <awui/UI/Station/Browser.h>
@@ -23,11 +25,9 @@
 #include <awui/UI/Station/Page.h>
 #include <awui/UI/Station/Settings/SettingsStore.h>
 #include <awui/UI/Station/Settings/SettingsUI.h>
-#include <awui/UI/Diagnostics/Stats.h>
 #include <awui/UI/Station/SettingsWidget.h>
-#include <algorithm>
-#include <filesystem>
 #include <dirent.h>
+#include <filesystem>
 #include <sys/stat.h>
 #include <time.h>
 
@@ -197,14 +197,14 @@ void StationUI::RecursiveSearch(NodeFile *parent, const String &path) {
 				if (child->m_name == "gamegear") {
 					child->m_emulator = Types::GameGear;
 					child->m_button->SetText("Game Gear");
-					child->m_background = new Bitmap("./images/gamegear.jpg");
+					child->m_background = new Bitmap("./images/gamegear.png");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
 				if (child->m_name == "mastersystem") {
 					child->m_emulator = Types::MasterSystem;
 					child->m_button->SetText("Master System");
-					child->m_background = new Bitmap("./images/mastersystem.jpg");
+					child->m_background = new Bitmap("./images/mastersystem.png");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
@@ -212,20 +212,19 @@ void StationUI::RecursiveSearch(NodeFile *parent, const String &path) {
 				if (child->m_name == "sg1000") {
 					child->m_emulator = Types::MasterSystem;
 					child->m_button->SetText("SG-1000");
-					child->m_background = new Bitmap("./images/mastersystem.jpg");
+					child->m_background = new Bitmap("./images/sg1000.png");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 
 				if (child->m_name == "zxspectrum") {
 					child->m_emulator = Types::Spectrum;
 					child->m_button->SetText("ZX Spectrum");
-					child->m_background = new Bitmap("./images/zxspectrum.jpg");
+					child->m_background = new Bitmap("./images/zxspectrum.png");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 			} else {
 				child->m_emulator = parent->m_emulator;
 			}
-
 
 			child->m_path = newFile;
 			child->m_parent = parent;

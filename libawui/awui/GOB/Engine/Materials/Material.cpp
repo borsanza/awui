@@ -2,11 +2,10 @@
 
 using namespace awui::GOB::Engine;
 
-void Material::ApplyMaterial() {
+awui::Drawing::Color Material::GetColor() const {
+	return Drawing::Color::FromArgb(255, 255, 255, 255);
 }
 
-void Material::UnApplyMaterial() {
-}
-
-void Material::ApplyUVs(const Vector3 *uv) {
+Texture *Material::GetTexture() const {
+	return nullptr;
 }

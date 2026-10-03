@@ -11,13 +11,9 @@ Texture::Texture(const String file, int minFilter, int magFilter) : m_file(file)
 	m_textureHeight = 0;
 
 	m_loaded = false;
-	m_texture = -1;
+	m_texture = 0;
 	m_needUpdateFilters = true;
 	m_errorOnLoad = false;
-
-	m_oldBlend = false;
-	m_oldDepth = true;
-	m_oldTexture = false;
 }
 
 Texture::~Texture() {
@@ -50,7 +46,7 @@ void Texture::Load() {
 		Console::Error->WriteLine("OpenGL error: Failed to generate texture.");
 		m_errorOnLoad = true;
 		SDL_FreeSurface(textureImage);
-		m_texture = -1;
+		m_texture = 0;
 		return;
 	}
 
@@ -60,7 +56,7 @@ void Texture::Load() {
 		m_errorOnLoad = true;
 		glDeleteTextures(1, &m_texture);
 		SDL_FreeSurface(textureImage);
-		m_texture = -1;
+		m_texture = 0;
 		return;
 	}
 
@@ -75,7 +71,7 @@ void Texture::Load() {
 		m_errorOnLoad = true;
 		glDeleteTextures(1, &m_texture);
 		SDL_FreeSurface(textureImage);
-		m_texture = -1;
+		m_texture = 0;
 		return;
 	}
 
@@ -92,10 +88,8 @@ void Texture::Unload() {
 		return;
 	}
 
-	if (m_texture != 0) {
-		glDeleteTextures(1, &m_texture);
-		m_texture = -1;
-	}
+	glDeleteTextures(1, &m_texture);
+	m_texture = 0;
 
 	m_loaded = false;
 }
@@ -118,33 +112,17 @@ void Texture::SetMagFilter(int filter) {
 	m_needUpdateFilters = true;
 }
 
-void Texture::BindTexture() {
+GLuint Texture::GetTexture() {
 	Load();
 
-	if ((m_textureWidth == 0) || (m_textureHeight == 0)) {
-		return;
+	if (!m_loaded || (m_textureWidth == 0) || (m_textureHeight == 0)) {
+		return 0;
 	}
 
-	m_oldTexture = glIsEnabled(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
-	m_oldDepth = glIsEnabled(GL_DEPTH_TEST);
-	glDisable(GL_DEPTH_TEST);
-	m_oldBlend = glIsEnabled(GL_BLEND);
-	glEnable(GL_BLEND);
-	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-
 	UpdateTextureFilters();
-}
 
-void Texture::UnBindTexture() {
-	if (!m_oldBlend)
-		glDisable(GL_BLEND);
-	if (m_oldDepth)
-		glEnable(GL_DEPTH_TEST);
-	if (!m_oldTexture)
-		glDisable(GL_TEXTURE_2D);
+	return m_texture;
 }
 
 void Texture::UpdateTextureFilters() {

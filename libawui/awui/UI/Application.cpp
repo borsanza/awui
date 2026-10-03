@@ -36,8 +36,6 @@ OpenGLProfile Application::GetOpenGLProfile() {
 			return OpenGLProfile::Core;
 		if (SDL_strcasecmp(forced, "es") == 0)
 			return OpenGLProfile::ES;
-		if (SDL_strcasecmp(forced, "compat") == 0)
-			return OpenGLProfile::Compatibility;
 	}
 
 	return s_openGLProfile;

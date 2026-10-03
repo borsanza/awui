@@ -78,7 +78,7 @@ La compilación con sanitizers para el programa y enseña la pila en cuanto acce
 
 `-DAWUI_WARNINGS=ON` activa los avisos del compilador.
 
-La interfaz pinta con shaders y pide OpenGL 3.3 *core*; si la máquina no lo tiene (una Raspberry Pi), usa OpenGL ES 3.0. Para probar uno u otro: `AWUI_GL_PROFILE=es ./stationTV` (`core`, `es` o `compat`). Al arrancar dice cuál ha conseguido ("OpenGL: ...").
+Todo pinta con shaders y pide OpenGL 3.3 *core*; si la máquina no lo tiene (una Raspberry Pi), usa OpenGL ES 3.0. Para probar uno u otro: `AWUI_GL_PROFILE=es ./stationTV` (`core` o `es`). Al arrancar dice cuál ha conseguido ("OpenGL: ...").
 
 ## 🪟 Windows
 

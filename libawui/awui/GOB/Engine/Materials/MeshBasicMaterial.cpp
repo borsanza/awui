@@ -1,9 +1,5 @@
 #include "MeshBasicMaterial.h"
 
-#include <SDL_opengl.h>
-#include <awui/GOB/Engine/Math/Vector3.h>
-#include <awui/GOB/Engine/Textures/Texture.h>
-
 using namespace awui::GOB::Engine;
 
 MeshBasicMaterial::MeshBasicMaterial(uint32_t color, bool wireframe) : m_color(color), m_wireframe(wireframe) {
@@ -14,26 +10,11 @@ MeshBasicMaterial::MeshBasicMaterial(Texture *texture, bool wireframe) : m_textu
 	m_color = 0xffffffff;
 }
 
-void MeshBasicMaterial::ApplyMaterial() {
-	if (m_texture == NULL) {
-		glColor3ub(m_color.GetR(), m_color.GetG(), m_color.GetB());
-	} else {
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		m_texture->BindTexture();
-	}
+awui::Drawing::Color MeshBasicMaterial::GetColor() const {
+	// Opaco: el alfa del color no se usa (como con el glColor3ub de antes)
+	return Drawing::Color::FromArgb(255, m_color.GetR(), m_color.GetG(), m_color.GetB());
 }
 
-void MeshBasicMaterial::UnApplyMaterial() {
-	if (m_texture == NULL) {
-	} else {
-		m_texture->UnBindTexture();
-	}
-}
-
-void MeshBasicMaterial::ApplyUVs(const Vector3 *uv) {
-	if (m_texture == NULL) {
-		return;
-	}
-
-	glTexCoord2f(uv->u, uv->v);
+Texture *MeshBasicMaterial::GetTexture() const {
+	return m_texture;
 }

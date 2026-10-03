@@ -17,9 +17,7 @@ namespace awui::GOB::Engine {
 		MeshBasicMaterial(uint32_t color, bool wireframe = false);
 		MeshBasicMaterial(Texture *texture, bool wireframe = false);
 
-		void ApplyMaterial() override;
-		void UnApplyMaterial() override;
-
-		void ApplyUVs(const Vector3 *uv) override;
+		Drawing::Color GetColor() const override;
+		Texture *GetTexture() const override;
 	};
 } // namespace awui::GOB::Engine

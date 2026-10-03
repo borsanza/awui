@@ -1,14 +1,18 @@
 #pragma once
 
+#include <awui/Drawing/Color.h>
+
 namespace awui::GOB::Engine {
-	class Vector3;
+	class Texture;
 
 	class Material {
 	  public:
 		virtual ~Material() = default;
 
-		virtual void ApplyMaterial();
-		virtual void UnApplyMaterial();
-		virtual void ApplyUVs(const Vector3 *uv);
+		// Color de los vértices (multiplica a la textura, si la hay)
+		virtual Drawing::Color GetColor() const;
+
+		// Textura, o nullptr si solo tiene color
+		virtual Texture *GetTexture() const;
 	};
 } // namespace awui::GOB::Engine
