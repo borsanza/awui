@@ -36,6 +36,11 @@ namespace awui {
 
 			uint8_t ReadByte(int64_t pos);
 			void WriteByte(int64_t pos, uint8_t value);
+			int64_t GetCapacity() const;
+
+			// Para los estados: los primeros size bytes (lo que pase de la memoria reservada, a cero)
+			void Save(uint8_t *data, int64_t size) const;
+			void Load(const uint8_t *data, int64_t size);
 
 			void Reload();
 		};

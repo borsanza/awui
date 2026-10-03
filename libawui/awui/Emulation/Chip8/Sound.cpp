@@ -15,6 +15,7 @@ Sound::Sound() {
 	m_playing = false;
 	m_phase = 0.0;
 	m_pendingSamples = 0.0;
+	m_fastForward = false;
 }
 
 Sound::~Sound() {
@@ -39,6 +40,9 @@ void Sound::EndTick(double seconds) {
 	int count = (int) m_pendingSamples;
 	m_pendingSamples -= count;
 	if (count <= 0)
+		return;
+
+	if (m_fastForward && output.IsQueueFull())
 		return;
 
 	m_samples.resize(count);

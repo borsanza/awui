@@ -23,7 +23,13 @@ namespace awui {
 			void UpdateImage();
 
 		  protected:
+			virtual int GetStateSize() const override;
+			virtual void SaveStateData(uint8_t *data) override;
+			virtual void LoadStateData(uint8_t *data) override;
 			virtual void ResetMachine() override;
+			virtual void EmulateTime(float seconds) override;
+			virtual void RewindFrame(uint8_t *data) override;
+			virtual void SetSoundMode(bool reverse, bool fastForward) override;
 			virtual KeyHelp::Section GetSystemKeys() const override;
 
 		  public:

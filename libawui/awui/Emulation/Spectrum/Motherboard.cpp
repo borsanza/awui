@@ -419,24 +419,71 @@ uint32_t Motherboard::GetCRC32() {
 	return m_rom->GetCRC32();
 }
 
+namespace {
+	// Lo que además va en el estado: por dónde va el frame y la cinta, y el detector del cargador que la arranca y
+	// la para. Sin esto, al cargar un estado (o rebobinar) en mitad de una carga, la cinta seguiría donde estaba y
+	// la carga fallaría
+	struct MachineState {
+		int64_t cycles;
+		int64_t lastEarReadCycle;
+		int32_t cyclesULA;
+		int32_t loaderReads;
+		int32_t framesWithoutLoader;
+		uint8_t tapeWasPlaying;
+		awui::Emulation::Spectrum::TapeCorder::Position tape;
+	};
+} // namespace
+
 int Motherboard::GetSaveSize() {
 	int size = sizeof(Motherboard::saveData);
 	size += awui::Emulation::Processors::Z80::CPU::GetSaveSize();
 	size += awui::Emulation::Spectrum::ULA::GetSaveSize();
+	size += sizeof(MachineState);
 
 	return size;
 }
 
 void Motherboard::LoadState(uint8_t *data) {
+	int offset = 0;
 	memcpy(&m_saveData, data, sizeof(Motherboard::saveData));
-	m_z80->LoadState(&data[sizeof(Motherboard::saveData)]);
-	m_ula->LoadState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
+	offset += sizeof(Motherboard::saveData);
+	m_z80->LoadState(&data[offset]);
+	offset += awui::Emulation::Processors::Z80::CPU::GetSaveSize();
+	m_ula->LoadState(&data[offset]);
+	offset += awui::Emulation::Spectrum::ULA::GetSaveSize();
+
+	MachineState machine;
+	memcpy(&machine, &data[offset], sizeof(machine));
+	m_cycles = machine.cycles;
+	m_lastEarReadCycle = machine.lastEarReadCycle;
+	m_cyclesULA = (int8_t) machine.cyclesULA;
+	m_loaderReads = machine.loaderReads;
+	m_framesWithoutLoader = machine.framesWithoutLoader;
+	m_tapeWasPlaying = machine.tapeWasPlaying != 0;
+	if (m_tape)
+		m_tape->SetPosition(machine.tape);
 }
 
 void Motherboard::SaveState(uint8_t *data) {
+	int offset = 0;
 	memcpy(data, &m_saveData, sizeof(Motherboard::saveData));
-	m_z80->SaveState(&data[sizeof(Motherboard::saveData)]);
-	m_ula->SaveState(&data[sizeof(Motherboard::saveData) + awui::Emulation::Processors::Z80::CPU::GetSaveSize()]);
+	offset += sizeof(Motherboard::saveData);
+	m_z80->SaveState(&data[offset]);
+	offset += awui::Emulation::Processors::Z80::CPU::GetSaveSize();
+	m_ula->SaveState(&data[offset]);
+	offset += awui::Emulation::Spectrum::ULA::GetSaveSize();
+
+	MachineState machine;
+	memset(&machine, 0, sizeof(machine)); // Sin basura en el relleno: el historial guarda lo que cambia byte a byte
+	machine.cycles = m_cycles;
+	machine.lastEarReadCycle = m_lastEarReadCycle;
+	machine.cyclesULA = m_cyclesULA;
+	machine.loaderReads = m_loaderReads;
+	machine.framesWithoutLoader = m_framesWithoutLoader;
+	machine.tapeWasPlaying = m_tapeWasPlaying ? 1 : 0;
+	if (m_tape)
+		machine.tape = m_tape->GetPosition();
+	memcpy(&data[offset], &machine, sizeof(machine));
 }
 
 void Motherboard::OnKeyPress(uint8_t row, uint8_t key) {

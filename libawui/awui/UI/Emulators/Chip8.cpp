@@ -29,6 +29,9 @@ Chip8::Chip8() {
 	m_cpu = new CPU();
 	m_lastInverted = Chip8::s_invertedColors;
 	m_timesFinished = 0;
+
+	// Cada frame que emula jugando va al historial de rebobinado (no los que se emulan al rebobinar)
+	m_cpu->SetFrameCallback([this]() { OnFrameEmulated(); });
 }
 
 Chip8::~Chip8() {
@@ -52,6 +55,9 @@ void Chip8::LoadRom(const String file) {
 
 	m_cpu->OnTick(0.16f);
 	CheckBackcolor();
+
+	SetGame(file, "C8", GetFileCRC32(file));
+	RestartRewind();
 }
 
 void Chip8::OnTick(float deltaSeconds) {
@@ -60,10 +66,7 @@ void Chip8::OnTick(float deltaSeconds) {
 		m_lastInverted = Chip8::s_invertedColors;
 	}
 
-	if (IsPaused())
-		return;
-
-	m_cpu->OnTick(deltaSeconds);
+	RunEmulator(deltaSeconds);
 
 	// La ROM ha terminado (se queda parada en la pantalla final): se avisa, y si se va a reiniciar, cuándo
 	if (m_cpu->GetTimesFinished() != m_timesFinished) {
@@ -290,6 +293,33 @@ bool Chip8::OnKeyUp(Keys::Enum key) {
 		m_cpu->KeyUp(keypressed);
 
 	return true;
+}
+
+int Chip8::GetStateSize() const {
+	return m_cpu->GetSaveSize();
+}
+
+void Chip8::SaveStateData(uint8_t *data) {
+	m_cpu->SaveState(data);
+}
+
+void Chip8::LoadStateData(uint8_t *data) {
+	m_cpu->LoadState(data);
+	CheckBackcolor();
+	UpdateImage();
+}
+
+void Chip8::EmulateTime(float seconds) {
+	m_cpu->OnTick(seconds); // Cada frame va al historial (ver el constructor)
+}
+
+void Chip8::RewindFrame(uint8_t *data) {
+	m_cpu->LoadState(data);
+	m_cpu->RunFrame();
+}
+
+void Chip8::SetSoundMode(bool reverse, bool fastForward) {
+	m_cpu->GetSound()->SetFastForward(fastForward);
 }
 
 KeyHelp::Section Chip8::GetSystemKeys() const {

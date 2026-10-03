@@ -9,10 +9,6 @@ namespace awui {
 		class Motherboard;
 	}
 
-	namespace Emulation::Common {
-		class RewindBuffer;
-	}
-
 	namespace UI::Emulators {
 		class DebuggerSMS;
 
@@ -31,16 +27,6 @@ namespace awui {
 			uint8_t m_axis2;
 			bool m_invertButtons;
 
-			// Rebobinado: un estado por tick. Mientras se mantiene el botón se retrocede un frame por tick
-			Emulation::Common::RewindBuffer *m_rewind;
-			std::vector<uint8_t> m_state;
-			bool m_rewinding;
-			float m_rewindSeconds; // Tiempo acumulado mientras se rebobina: se retrocede un frame de la consola por cada uno
-
-			// Avance rápido: mientras se mantiene el botón, el juego va FastForwardSpeed veces más deprisa
-			static constexpr int FastForwardSpeed = 4;
-			bool m_forwarding;
-
 			void ToggleSoundChannel(int channel);
 
 			void RefreshPads();
@@ -51,7 +37,10 @@ namespace awui {
 			virtual void LoadStateData(uint8_t *data) override;
 			virtual void ResetMachine() override;
 			virtual KeyHelp::Section GetSystemKeys() const override;
-			virtual bool CanRewind() const override { return true; }
+			virtual void EmulateTime(float seconds) override;
+			virtual void RewindFrame(uint8_t *data) override;
+			virtual float GetFrameSeconds() const override;
+			virtual void SetSoundMode(bool reverse, bool fastForward) override;
 
 		  public:
 			MasterSystem();

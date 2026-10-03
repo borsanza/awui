@@ -6,7 +6,6 @@
 
 #include "MasterSystem.h"
 
-#include <awui/Emulation/Common/RewindBuffer.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
@@ -28,10 +27,6 @@ using namespace awui::UI;
 using namespace awui::UI::Input;
 using namespace awui::UI::Events;
 
-// Memoria máxima del historial de rebobinado. Cada frame ocupa unos pocos KB (solo lo que cambia), así que da
-// para varios minutos
-#define REWIND_MAX_BYTES (64 * 1024 * 1024)
-
 const int DEADZONE = 8192;
 
 MasterSystem::MasterSystem() {
@@ -50,25 +45,12 @@ MasterSystem::MasterSystem() {
 
 	m_debugger = NULL;
 
-	m_state.resize(Motherboard::GetSaveSize());
-	m_rewind = new RewindBuffer(m_state.size(), REWIND_MAX_BYTES);
-
-	// Un estado en el historial por cada frame que emula la consola jugando: en avance rápido también uno por frame
-	// (si fuera uno por tick, al rebobinar lo avanzado iría el cuádruple de rápido), y con un monitor de más de 60 Hz
-	// ninguno en los ticks sin frame (serían copias repetidas: tirones al rebobinar). Al seguir jugando tras rebobinar
-	// empieza otra línea de tiempo: lo rebobinado se olvida
-	m_cpu->SetFrameCallback([this]() {
-		m_cpu->SaveState(m_state.data());
-		m_rewind->Push(m_state.data());
-	});
-	m_rewinding = false;
-	m_rewindSeconds = 0.0f;
-	m_forwarding = false;
+	// Cada frame que emula la consola jugando va al historial de rebobinado (no los que se emulan al rebobinar,
+	// que llaman a RunFrame)
+	m_cpu->SetFrameCallback([this]() { OnFrameEmulated(); });
 }
 
 MasterSystem::~MasterSystem() {
-	delete m_rewind;
-
 	delete m_cpu;
 	delete m_image;
 }
@@ -77,45 +59,29 @@ void MasterSystem::LoadRom(const String file) {
 	SetName(file);
 	m_cpu->LoadRom(file);
 	SetGame(file, "SMS", m_cpu->GetCRC32());
-	m_rewind->Clear();
-	m_cpu->SaveState(m_state.data());
-	m_rewind->Push(m_state.data());
+	RestartRewind();
 }
 
 void MasterSystem::OnTick(float deltaSeconds) {
-	// Rebobinando: por cada frame de la consola que pasa (1/60 s en NTSC, 1/50 en PAL, como al jugar) se carga el
-	// estado anterior y se emula ese frame para verlo y oírlo (al revés). Por tiempo y no uno por cada vez que se
-	// pinta: con un monitor de 100 Hz o sin vsync iría más deprisa, y el sonido llenaría la cola y saldría a golpes.
-	// Al acabarse el historial se queda en el último
-	if (IsPaused())
-		return;
+	RunEmulator(deltaSeconds);
+}
 
-	if (m_rewinding) {
-		float frame = m_cpu->GetVDP()->GetNTSC() ? (1.0f / 59.922743404f) : (1.0f / 49.7014591858f);
-		m_rewindSeconds += deltaSeconds;
-		if (m_rewindSeconds > 0.25f) // Tras un parón no se intenta recuperar todo
-			m_rewindSeconds = frame;
+void MasterSystem::EmulateTime(float seconds) {
+	m_cpu->OnTick(seconds); // Guarda cada frame en el historial (ver el constructor)
+}
 
-		while (m_rewindSeconds >= frame) {
-			m_rewindSeconds -= frame;
-			if (!m_rewind->Back(m_state.data()))
-				break;
+void MasterSystem::RewindFrame(uint8_t *data) {
+	m_cpu->LoadState(data);
+	m_cpu->RunFrame();
+}
 
-			m_cpu->LoadState(m_state.data());
-			m_cpu->GetSound()->SetReverse(true);
-			m_cpu->RunFrame();
-		}
+float MasterSystem::GetFrameSeconds() const {
+	return m_cpu->GetVDP()->GetNTSC() ? (1.0f / 59.922743404f) : (1.0f / 49.7014591858f);
+}
 
-		return;
-	}
-
-	m_cpu->GetSound()->SetReverse(false);
-
-	// Avance rápido: el tiempo de varios ticks en uno. El sonido no puede ir más deprisa: se oye a trozos
-	m_cpu->GetSound()->SetFastForward(m_forwarding);
-	int times = m_forwarding ? FastForwardSpeed : 1;
-	for (int i = 0; i < times; i++)
-		m_cpu->OnTick(deltaSeconds); // Guarda cada frame en el historial (ver el constructor)
+void MasterSystem::SetSoundMode(bool reverse, bool fastForward) {
+	m_cpu->GetSound()->SetReverse(reverse);
+	m_cpu->GetSound()->SetFastForward(fastForward);
 }
 
 void MasterSystem::RunOpcode() {
@@ -486,10 +452,6 @@ void MasterSystem::SaveStateData(uint8_t *data) {
 void MasterSystem::LoadStateData(uint8_t *data) {
 	m_cpu->LoadState(data);
 	RefreshPads();
-
-	// El historial de rebobinado era de otra partida: empieza desde aquí
-	m_rewind->Clear();
-	m_rewind->Push(data);
 }
 
 void MasterSystem::ResetMachine() {
@@ -509,15 +471,14 @@ KeyHelp::Section MasterSystem::GetSystemKeys() const {
 }
 
 void MasterSystem::SetRewinding(bool mode) {
-	m_rewinding = mode;
-	m_rewindSeconds = 0.0f;
+	ArcadeContainer::SetRewinding(mode);
 	// Los estados cargados traen los mandos de cuando se guardaron: al soltar vuelven los que se pulsan ahora
 	if (!mode)
 		RefreshPads();
 }
 
 void MasterSystem::SetForwarding(bool mode) {
-	m_forwarding = mode;
+	ArcadeContainer::SetForwarding(mode);
 	if (!mode)
 		RefreshPads();
 }

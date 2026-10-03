@@ -22,6 +22,8 @@ namespace awui::Emulation::Spectrum {
 		double m_pendingSamples; // Fracción de muestra que queda para el siguiente frame
 		float m_dcIn;			 // Filtro que quita la continua (el altavoz en reposo no está a cero)
 		float m_dcOut;
+		bool m_reverse;
+		bool m_fastForward;
 
 	  public:
 		Sound();
@@ -33,5 +35,9 @@ namespace awui::Emulation::Spectrum {
 
 		// Genera las muestras del frame que acaba de emularse (duración en segundos reales)
 		void EndFrame(double seconds, bool silent);
+
+		// Rebobinando: cada frame se oye al revés. En avance rápido se tira lo que no cabe en la cola
+		inline void SetReverse(bool reverse) { m_reverse = reverse; }
+		inline void SetFastForward(bool fastForward) { m_fastForward = fastForward; }
 	};
 } // namespace awui::Emulation::Spectrum

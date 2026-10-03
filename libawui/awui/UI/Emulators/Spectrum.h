@@ -26,6 +26,7 @@ namespace awui {
 			int m_first;
 			int m_last;
 			double m_seconds; // Tiempo real pendiente de emular (menos de un frame salvo tras un parón)
+			bool m_fastDone;  // Modo rápido (F8): ya se ha emulado en este tick
 			void CheckLimits();
 
 			std::set<UI::Input::Keys::Enum> m_heldKeys; // Teclas del PC pulsadas que van al teclado del Spectrum
@@ -44,6 +45,10 @@ namespace awui {
 			virtual void LoadStateData(uint8_t *data) override;
 			virtual void ResetMachine() override;
 			virtual KeyHelp::Section GetSystemKeys() const override;
+			virtual void EmulateTime(float seconds) override;
+			virtual void RewindFrame(uint8_t *data) override;
+			virtual float GetFrameSeconds() const override;
+			virtual void SetSoundMode(bool reverse, bool fastForward) override;
 
 		  public:
 			Spectrum();
@@ -64,6 +69,7 @@ namespace awui {
 			virtual bool OnRemoteKeyPress(int which, UI::Input::RemoteButtons::Enum button);
 			virtual bool OnRemoteKeyUp(int which, UI::Input::RemoteButtons::Enum button);
 			virtual void SetSoundEnabled(bool mode);
+			virtual void SetRewinding(bool mode) override;
 
 			awui::Emulation::Spectrum::TapeCorder *GetTapeCorder() { return m_tapecorder; }
 			awui::Emulation::Spectrum::Motherboard *GetMotherboard() { return m_motherboard; }

@@ -102,3 +102,20 @@ void Memory::WriteByte(int64_t pos, uint8_t value) {
 
 	m_memory->WriteByte((uint32_t) pos, value);
 }
+
+int64_t Memory::GetCapacity() const {
+	return m_memory->GetCapacity();
+}
+
+void Memory::Save(uint8_t *data, int64_t size) const {
+	for (int64_t i = 0; i < size; i++)
+		data[i] = m_memory->ReadByte((uint32_t) i);
+}
+
+void Memory::Load(const uint8_t *data, int64_t size) {
+	if (m_memory->GetCapacity() < size)
+		m_memory->SetCapacity((uint32_t) size);
+
+	for (int64_t i = 0; i < size; i++)
+		m_memory->WriteByte((uint32_t) i, data[i]);
+}

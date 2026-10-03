@@ -139,10 +139,10 @@ En los menús, las flechas, Enter (OK) y Escape (volver; dentro de un juego, vue
 | Siempre       | F11                                     | Pantalla completa                            |
 |               | F10                                     | Sincronización vertical (vsync)              |
 | En un juego   | F1                                      | Ver las teclas del sistema                   |
-|               | F2 / F4                                 | Guardar / cargar el estado (no en CHIP-8)    |
+|               | F2 / F4                                 | Guardar / cargar el estado                   |
 |               | F3                                      | Cambiar de ranura de estado (0 a 9)          |
 |               | F5                                      | Pausar el emulador                           |
-|               | F6 / F7 (mantener)                      | Rebobinar / avanzar rápido (Master System)   |
+|               | F6 / F7 (mantener)                      | Rebobinar / avanzar rápido                   |
 |               | F12                                     | Reiniciar                                    |
 | CHIP-8        | 1234 / QWER / ASDF / ZXCV               | El teclado hexadecimal del CHIP-8            |
 |               | Flechas y Enter                         | Las teclas de cada juego (se detectan solas) |

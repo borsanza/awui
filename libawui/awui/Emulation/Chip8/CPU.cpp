@@ -6,6 +6,8 @@
 
 #include "CPU.h"
 
+#include <cstring>
+
 #include <awui/Console.h>
 #include <awui/Convert.h>
 #include <awui/Emulation/Chip8/Input.h>
@@ -49,6 +51,7 @@ CPU::CPU() {
 	m_collisionColor = -1;
 	m_frameCounter = 0;
 	m_chip8mode = CHIP8;
+	m_stateMemorySize = 0;
 
 	Reset();
 
@@ -74,6 +77,9 @@ const KeyMap &CPU::GetKeyMap() const {
 
 void CPU::LoadRom(const String file) {
 	m_memory->LoadRom(file);
+
+	int64_t rounded = ((m_memory->GetCapacity() + 0xFFFF) >> 16) << 16;
+	m_stateMemorySize = std::min<int64_t>(rounded + 0x10000, Memory::MaxCapacity);
 
 	// ETI-660: el programa empieza en 0x600 y la pantalla es de 64x48
 	m_pc = m_memory->GetStartAddress();
@@ -162,7 +168,158 @@ void CPU::OnTick(float deltaSeconds) {
 	while (m_seconds >= m_nextTick) {
 		m_nextTick += 1.0f / 60.0f;
 		DoTick();
+		if (m_frameCallback)
+			m_frameCallback();
 	}
+}
+
+void CPU::RunFrame() {
+	DoTick();
+}
+
+namespace {
+	// La pantalla más grande (MegaChip): los estados reservan siempre su tamaño
+	constexpr int MaxScreenPixels = 256 * 192;
+	constexpr int MaxStack = 64;
+
+	// Campos uno detrás de otro
+	struct StateWriter {
+		uint8_t *data;
+		template <typename T>
+		void Put(const T &value) {
+			memcpy(data, &value, sizeof(T));
+			data += sizeof(T);
+		}
+		void PutBytes(const void *source, size_t size) {
+			memcpy(data, source, size);
+			data += size;
+		}
+	};
+
+	struct StateReader {
+		const uint8_t *data;
+		template <typename T>
+		T Get() {
+			T value;
+			memcpy(&value, data, sizeof(T));
+			data += sizeof(T);
+			return value;
+		}
+		void GetBytes(void *target, size_t size) {
+			memcpy(target, data, size);
+			data += size;
+		}
+	};
+} // namespace
+
+int CPU::GetSaveSize() const {
+	int size = 0;
+	size += 1 + 2 + 1 + 1 + 2 + 2 + 2;		  // Modo, PC, temporizadores, tamaño de sprite y contador de frames
+	size += 4 + 4 + 1 + 4 + 1 + 4;			  // Tiempo, ROM terminada, primer frame y color de choque
+	size += 256 * 4;						  // Paleta
+	size += 16 + 4;							  // V0-VF e I
+	size += 4 + (MaxStack * 4);				  // Pila
+	size += 2 + 2 + (MaxScreenPixels * 4 * 2); // Tamaño de la pantalla, la que se dibuja y la que se ve
+	size += MaxScreenPixels;				  // Índices de color de cada píxel
+	size += (int) m_stateMemorySize;
+	return size;
+}
+
+void CPU::SaveState(uint8_t *data) {
+	memset(data, 0, GetSaveSize()); // Lo que no se usa (pantalla más pequeña, pila más corta), a cero
+	StateWriter out{data};
+	out.Put<uint8_t>(m_chip8mode);
+	out.Put<int16_t>(m_pc);
+	out.Put<uint8_t>(m_delayTimer);
+	out.Put<uint8_t>(m_soundTimer);
+	out.Put<uint16_t>(m_spriteWidth);
+	out.Put<uint16_t>(m_spriteHeight);
+	out.Put<uint16_t>(m_frameCounter);
+	out.Put<float>(m_seconds);
+	out.Put<float>(m_nextTick);
+	out.Put<uint8_t>(m_finished ? 1 : 0);
+	out.Put<float>(m_finishedSeconds);
+	out.Put<uint8_t>(m_firstTime ? 1 : 0);
+	out.Put<int32_t>(m_collisionColor);
+	out.PutBytes(m_colors, sizeof(m_colors));
+
+	for (int i = 0; i < 16; i++)
+		out.Put<uint8_t>(m_registers->GetV(i));
+	out.Put<uint32_t>(m_registers->GetI());
+
+	const std::vector<int> &stack = m_stack->GetValues();
+	int depth = std::min((int) stack.size(), MaxStack);
+	out.Put<int32_t>(depth);
+	for (int i = 0; i < MaxStack; i++)
+		out.Put<int32_t>((i < depth) ? stack[i] : 0);
+
+	int pixels = m_screen->GetWidth() * m_screen->GetHeight();
+	out.Put<uint16_t>(m_screen->GetWidth());
+	out.Put<uint16_t>(m_screen->GetHeight());
+	out.PutBytes(m_screen->GetData(), pixels * 4);
+	out.data += (MaxScreenPixels - pixels) * 4;
+	out.PutBytes(m_frontScreen->GetData(), pixels * 4);
+	out.data += (MaxScreenPixels - pixels) * 4;
+	out.PutBytes(m_colorIndices.data(), std::min((int) m_colorIndices.size(), MaxScreenPixels));
+	out.data += MaxScreenPixels - std::min((int) m_colorIndices.size(), MaxScreenPixels);
+
+	m_memory->Save(out.data, m_stateMemorySize);
+}
+
+void CPU::LoadState(const uint8_t *data) {
+	StateReader in{data};
+	m_chip8mode = in.Get<uint8_t>();
+	m_pc = in.Get<int16_t>();
+	m_delayTimer = in.Get<uint8_t>();
+	m_soundTimer = in.Get<uint8_t>();
+	m_spriteWidth = in.Get<uint16_t>();
+	m_spriteHeight = in.Get<uint16_t>();
+	m_frameCounter = in.Get<uint16_t>();
+	m_seconds = in.Get<float>();
+	m_nextTick = in.Get<float>();
+	m_finished = in.Get<uint8_t>() != 0;
+	m_finishedSeconds = in.Get<float>();
+	m_firstTime = in.Get<uint8_t>() != 0;
+	m_collisionColor = in.Get<int32_t>();
+	in.GetBytes(m_colors, sizeof(m_colors));
+
+	for (int i = 0; i < 16; i++)
+		m_registers->SetV(i, in.Get<uint8_t>());
+	m_registers->SetI(in.Get<uint32_t>());
+
+	int depth = std::clamp(in.Get<int32_t>(), 0, MaxStack);
+	std::vector<int> stack(depth);
+	for (int i = 0; i < MaxStack; i++) {
+		int value = in.Get<int32_t>();
+		if (i < depth)
+			stack[i] = value;
+	}
+	m_stack->SetValues(stack);
+
+	// La resolución puede ser otra (SuperChip, MegaChip): se cambia antes de copiar las pantallas
+	uint16_t width = in.Get<uint16_t>();
+	uint16_t height = in.Get<uint16_t>();
+	if ((width * height > MaxScreenPixels) || (width == 0) || (height == 0)) {
+		width = m_screen->GetWidth();
+		height = m_screen->GetHeight();
+	}
+	ChangeResolution(width, height);
+	int pixels = width * height;
+	in.GetBytes(m_screen->GetData(), pixels * 4);
+	in.data += (MaxScreenPixels - pixels) * 4;
+	in.GetBytes(m_frontScreen->GetData(), pixels * 4);
+	in.data += (MaxScreenPixels - pixels) * 4;
+	in.GetBytes(m_colorIndices.data(), std::min((int) m_colorIndices.size(), MaxScreenPixels));
+	in.data += MaxScreenPixels - std::min((int) m_colorIndices.size(), MaxScreenPixels);
+
+	m_memory->Load(in.data, m_stateMemorySize);
+
+	// El zumbador, según el temporizador cargado; y la imagen, de nuevo
+	if (m_soundTimer)
+		m_sound->Play();
+	else
+		m_sound->Stop();
+	m_imageUpdated = true;
 }
 
 void CPU::DoTick() {

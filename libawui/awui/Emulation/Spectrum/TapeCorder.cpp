@@ -6,6 +6,8 @@
 
 #include "TapeCorder.h"
 
+#include <cstring>
+
 #include <awui/Emulation/Common/Word.h>
 #include <awui/IO/File.h>
 #include <vector>
@@ -242,4 +244,25 @@ uint8_t TapeBlock::GetByte(int pos) {
 
 int TapeBlock::GetLength() const {
 	return m_size;
+}
+
+TapeCorder::Position TapeCorder::GetPosition() const {
+	Position position;
+	memset(&position, 0, sizeof(position)); // Sin basura en el relleno: el estado se compara byte a byte
+	position.block = m_block;
+	position.posByte = m_posByte;
+	position.posBit = m_posBit;
+	position.state = m_state;
+	position.cycle = m_cycle;
+	position.playing = m_playing ? 1 : 0;
+	return position;
+}
+
+void TapeCorder::SetPosition(const Position &position) {
+	m_block = position.block;
+	m_posByte = position.posByte;
+	m_posBit = position.posBit;
+	m_state = position.state;
+	m_cycle = position.cycle;
+	m_playing = position.playing != 0;
 }

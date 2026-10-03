@@ -8,6 +8,7 @@
 
 #include <awui/Console.h>
 #include <awui/Convert.h>
+#include <awui/Emulation/Common/RewindBuffer.h>
 #include <awui/Emulation/Common/SavePaths.h>
 #include <awui/IO/MemoryStream.h>
 #include <awui/Localization.h>
@@ -59,12 +60,95 @@ ArcadeContainer::ArcadeContainer() {
 	m_stateSlot = 0;
 	m_paused = false;
 	m_pausedByHelp = false;
+	m_rewind = nullptr;
+	m_rewinding = false;
+	m_forwarding = false;
+	m_rewindSeconds = 0.0f;
 	AddWidget(&m_keyHelp, WidgetOwnership::Borrowed);
 	SetBackColor(Color::Black);
 	SetDrawShadow(false);
 	SetPreventChangeControl(true);
 	m_station = NULL;
 	SetFocusable(false);
+}
+
+// Memoria máxima del historial de rebobinado. Cada frame ocupa unos pocos KB (solo lo que cambia), así que da
+// para varios minutos
+#define REWIND_MAX_BYTES (64 * 1024 * 1024)
+
+ArcadeContainer::~ArcadeContainer() {
+	delete m_rewind;
+}
+
+void ArcadeContainer::RestartRewind() {
+	int size = GetStateSize();
+	if (size == 0)
+		return;
+
+	// El tamaño puede depender del juego (CHIP-8)
+	if (!m_rewind || (m_rewindState.size() != (size_t) size)) {
+		delete m_rewind;
+		m_rewindState.resize(size);
+		m_rewind = new RewindBuffer(size, REWIND_MAX_BYTES);
+	}
+
+	m_rewind->Clear();
+	SaveStateData(m_rewindState.data());
+	m_rewind->Push(m_rewindState.data());
+}
+
+// Un estado en el historial por cada frame que emula la consola jugando: en avance rápido también uno por frame (si
+// fuera uno por tick, al rebobinar lo avanzado iría el cuádruple de rápido), y con un monitor de más de 60 Hz ninguno
+// en los ticks sin frame (serían copias repetidas: tirones al rebobinar). Al seguir jugando tras rebobinar empieza
+// otra línea de tiempo: lo rebobinado se olvida
+void ArcadeContainer::OnFrameEmulated() {
+	if (!m_rewind)
+		return;
+
+	SaveStateData(m_rewindState.data());
+	m_rewind->Push(m_rewindState.data());
+}
+
+void ArcadeContainer::RunEmulator(float deltaSeconds) {
+	if (m_paused)
+		return;
+
+	SetSoundMode(m_rewinding, m_forwarding);
+
+	// Rebobinando: por cada frame de la consola que pasa (como al jugar) se carga el estado anterior y se emula ese
+	// frame para verlo y oírlo (al revés). Por tiempo y no uno por cada vez que se pinta: con un monitor de 100 Hz o
+	// sin vsync iría más deprisa, y el sonido llenaría la cola y saldría a golpes. Al acabarse el historial se queda
+	// en el último
+	if (m_rewinding && m_rewind) {
+		float frame = GetFrameSeconds();
+		m_rewindSeconds += deltaSeconds;
+		if (m_rewindSeconds > 0.25f) // Tras un parón no se intenta recuperar todo
+			m_rewindSeconds = frame;
+
+		while (m_rewindSeconds >= frame) {
+			m_rewindSeconds -= frame;
+			if (!m_rewind->Back(m_rewindState.data()))
+				break;
+
+			RewindFrame(m_rewindState.data());
+		}
+
+		return;
+	}
+
+	// Avance rápido: el tiempo de varios ticks en uno. El sonido no puede ir más deprisa: se oye a trozos
+	int times = m_forwarding ? FastForwardSpeed : 1;
+	for (int i = 0; i < times; i++)
+		EmulateTime(deltaSeconds);
+}
+
+void ArcadeContainer::SetRewinding(bool mode) {
+	m_rewinding = mode && CanRewind();
+	m_rewindSeconds = 0.0f;
+}
+
+void ArcadeContainer::SetForwarding(bool mode) {
+	m_forwarding = mode && CanRewind();
 }
 
 void ArcadeContainer::SetGame(const String &file, const char *system, uint32_t crc) {
@@ -113,6 +197,7 @@ void ArcadeContainer::LoadState() {
 	std::vector<uint8_t> data(GetStateSize());
 	if (ReadStateFile(name, data.data(), (int) data.size())) {
 		LoadStateData(data.data());
+		RestartRewind(); // El historial era de otra partida: empieza desde aquí
 		ShowNotification(String(Localization::Tr("osd.stateLoaded").ToCharArray(), m_stateSlot));
 	}
 }
@@ -153,6 +238,7 @@ bool ArcadeContainer::LoadAutoState() {
 		return false;
 
 	LoadStateData(data.data());
+	RestartRewind();
 	return true;
 }
 

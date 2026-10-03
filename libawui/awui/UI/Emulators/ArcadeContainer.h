@@ -4,6 +4,11 @@
 #include <awui/UI/Emulators/KeyHelp.h>
 
 #include <cstdint>
+#include <vector>
+
+namespace awui::Emulation::Common {
+	class RewindBuffer;
+}
 
 namespace awui::UI {
 	namespace Station {
@@ -30,11 +35,12 @@ namespace awui::UI {
 		//   F6 rebobinar y F7 avance rápido (mientras se mantienen), F12 reiniciar
 		//
 		// (F10 y F11 son del formulario, y las demás F, de cada emulador). Cada emulador dice cómo se guarda, se
-		// carga y se reinicia su máquina (GetStateSize, SaveStateData, LoadStateData, ResetMachine) y llama a
-		// OnEmulatorKey al principio de OnKeyPress y OnKeyUp
+		// carga y se reinicia su máquina (GetStateSize, SaveStateData, LoadStateData, ResetMachine), cómo emula
+		// (EmulateTime, RewindFrame), y llama a OnEmulatorKey al principio de OnKeyPress y OnKeyUp
 		class ArcadeContainer : public UI::Button {
 		  public:
-			static constexpr int StateSlots = 10; // Ranuras 0 a 9
+			static constexpr int StateSlots = 10;	   // Ranuras 0 a 9
+			static constexpr int FastForwardSpeed = 4; // Avance rápido: el tiempo de cada tick, cuatro veces
 
 		  private:
 			String m_gameFile; // ROM o cinta: los estados se llaman como ella (<juego>.state, <juego>.autostate)
@@ -44,6 +50,14 @@ namespace awui::UI {
 			bool m_paused;
 			KeyHelp m_keyHelp;
 			bool m_pausedByHelp; // La ayuda ha pausado el juego (al cerrarla se quita la pausa)
+
+			// Rebobinado: un estado por cada frame emulado jugando (OnFrameEmulated). Mientras se rebobina se
+			// retrocede un frame de la consola por cada uno que pasa (m_rewindSeconds acumula el tiempo)
+			Emulation::Common::RewindBuffer *m_rewind;
+			std::vector<uint8_t> m_rewindState;
+			bool m_rewinding;
+			bool m_forwarding;
+			float m_rewindSeconds;
 
 			String GetStateFile() const;
 
@@ -71,8 +85,24 @@ namespace awui::UI {
 			virtual void LoadStateData(uint8_t *data) {} // Con lo que haga falta después (soltar teclas...)
 			virtual void ResetMachine() {}
 
-			// Rebobinado y avance rápido (F6 y F7). Sin ellos (CanRewind false), las teclas no hacen nada
-			virtual bool CanRewind() const { return false; }
+			// Cómo emula cada uno, para la pausa, el rebobinado y el avance rápido (que resuelve RunEmulator):
+			//  - EmulateTime: emula los frames que quepan en ese tiempo real, llamando a OnFrameEmulated tras cada uno
+			//  - RewindFrame: carga ese estado del historial y emula un frame, para verlo y oírlo (sin OnFrameEmulated)
+			//  - GetFrameSeconds: lo que dura un frame de la consola (al rebobinar se retrocede uno por cada uno)
+			//  - SetSoundMode: el sonido al revés al rebobinar, y sin llenar la cola en avance rápido
+			virtual void EmulateTime(float seconds) {}
+			virtual void RewindFrame(uint8_t *data) {}
+			virtual float GetFrameSeconds() const { return 1.0f / 60.0f; }
+			virtual void SetSoundMode(bool reverse, bool fastForward) {}
+
+			// Lo llama el OnTick de cada emulador
+			void RunEmulator(float deltaSeconds);
+
+			// Tras cada frame emulado jugando: lo guarda en el historial de rebobinado
+			void OnFrameEmulated();
+
+			// Empieza el historial desde el estado actual: al cargar un juego o un estado
+			void RestartRewind();
 
 			// Las teclas propias del sistema, para la ayuda (F1): el nombre del sistema y sus filas
 			virtual KeyHelp::Section GetSystemKeys() const = 0;
@@ -85,7 +115,7 @@ namespace awui::UI {
 
 		  public:
 			ArcadeContainer();
-			virtual ~ArcadeContainer() = default;
+			virtual ~ArcadeContainer();
 
 			virtual void SetSoundEnabled(bool mode) {}
 
@@ -98,9 +128,12 @@ namespace awui::UI {
 			void SetPaused(bool paused);
 			void Reset();
 
-			// Mientras se mantiene la tecla o el botón
-			virtual void SetRewinding(bool mode) {}
-			virtual void SetForwarding(bool mode) {}
+			// Rebobinado y avance rápido (F6 y F7, mientras se mantienen). Los tienen los emuladores con estados
+			inline bool CanRewind() const { return GetStateSize() > 0; }
+			virtual void SetRewinding(bool mode);
+			virtual void SetForwarding(bool mode);
+			inline bool IsRewinding() const { return m_rewinding; }
+			inline bool IsForwarding() const { return m_forwarding; }
 
 			// Ayuda de las teclas (F1). Mientras se ve, el juego está en pausa; cualquier tecla la cierra
 			void ShowKeyHelp();

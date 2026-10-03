@@ -12,6 +12,7 @@
 #include <awui/Time/ChronoLap.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
+#include <awui/Emulation/Spectrum/Sound.h>
 #include <awui/Emulation/Common/AudioOutput.h>
 #include <awui/Emulation/Spectrum/TapeCorder.h>
 #include <awui/Emulation/Spectrum/ULA.h>
@@ -60,6 +61,7 @@ Spectrum::Spectrum() {
 	m_first = -1;
 	m_last = -1;
 	m_seconds = 0.0;
+	m_fastDone = false;
 	m_heldRemote = 0;
 	m_resetHeld = false;
 	m_tapecorder = new TapeCorder();
@@ -99,6 +101,7 @@ void Spectrum::LoadRom(const String file) {
 
 	// Los estados son de la cinta (o de la ROM, si se carga una suelta)
 	SetGame(file, "ZX", GetFileCRC32(file));
+	RestartRewind();
 
 	m_first = 0;
 	m_last = 0;
@@ -117,24 +120,32 @@ void Spectrum::OnTick(float deltaSeconds) {
 	}
 	m_resetHeld = reset;
 
-	if (IsPaused())
-		return;
+	m_fastDone = false;
+	RunEmulator(deltaSeconds);
+}
 
-	// Modo rápido (F8): se emula todo lo que dé tiempo en este tick. Con el cargador de la ROM la carga es
-	// instantánea (Motherboard::FlashLoad); con un cargador propio la cinta pasa a toda velocidad
+void Spectrum::EmulateTime(float seconds) {
+	// Modo rápido (F8): se emula todo lo que dé tiempo en este tick (una vez, aunque se avance rápido). Con el
+	// cargador de la ROM la carga es instantánea (Motherboard::FlashLoad); con un cargador propio la cinta pasa a
+	// toda velocidad. Al historial va solo el último frame
 	if (m_motherboard->GetFast()) {
+		if (m_fastDone)
+			return;
+
 		Time::ChronoLap chrono;
 		chrono.Start();
 		do {
 			m_motherboard->OnTick();
 		} while (m_motherboard->GetFast() && (chrono.GetTotalDuration() < 0.030f));
 
+		m_fastDone = true;
 		m_seconds = 0.0;
+		OnFrameEmulated();
 		return;
 	}
 
 	// Se emulan los frames que correspondan al tiempo real (no uno por tick: a 144Hz o sin vsync iría más rápido)
-	m_seconds += deltaSeconds;
+	m_seconds += seconds;
 	if (m_seconds > 0.25) {
 		m_seconds = Motherboard::FrameSeconds; // Tras un parón no se intenta recuperar
 	}
@@ -142,6 +153,31 @@ void Spectrum::OnTick(float deltaSeconds) {
 	while (m_seconds >= Motherboard::FrameSeconds) {
 		m_seconds -= Motherboard::FrameSeconds;
 		m_motherboard->OnTick();
+		OnFrameEmulated();
+	}
+}
+
+void Spectrum::RewindFrame(uint8_t *data) {
+	m_motherboard->LoadState(data);
+	m_motherboard->OnTick();
+}
+
+float Spectrum::GetFrameSeconds() const {
+	return Motherboard::FrameSeconds;
+}
+
+void Spectrum::SetSoundMode(bool reverse, bool fastForward) {
+	m_motherboard->GetSound()->SetReverse(reverse);
+	m_motherboard->GetSound()->SetFastForward(fastForward);
+}
+
+// Los estados del historial traen el teclado y el joystick de cuando se guardaron: al soltar vuelven los que se
+// pulsan ahora
+void Spectrum::SetRewinding(bool mode) {
+	ArcadeContainer::SetRewinding(mode);
+	if (!mode) {
+		UpdateMatrix();
+		m_motherboard->OnPadEvent(GetPad());
 	}
 }
 

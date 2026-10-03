@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <vector>
 
 #include <awui/Emulation/Chip8/Opcode.h>
@@ -56,6 +57,14 @@ namespace awui {
 			// Color con el que choca un sprite (09nn); -1: cualquier color distinto de 0, como dice la especificación
 			int m_collisionColor;
 
+			// Memoria que va en los estados: la del juego al cargarlo, redondeada a 64 KB, y 64 KB más por si
+			// MegaChip la hace crecer al usarla como RAM (lo que crezca más allá no se guarda)
+			int64_t m_stateMemorySize;
+
+			// Se llama tras cada frame (tick de 60 Hz) que se emula en OnTick, no en RunFrame (ver
+			// ArcadeContainer::OnFrameEmulated)
+			std::function<void()> m_frameCallback;
+
 			void ClearColorIndices();
 
 			int RunOpcode(int iteration);
@@ -68,6 +77,16 @@ namespace awui {
 
 			void LoadRom(const String file);
 			void OnTick(float deltaSeconds);
+
+			// Emula un frame (un tick de 60 Hz), sin avisar a m_frameCallback: para rebobinar
+			void RunFrame();
+			inline void SetFrameCallback(std::function<void()> callback) { m_frameCallback = std::move(callback); }
+
+			// Estado de la máquina (registros, pila, temporizadores, pantallas y memoria). El tamaño depende del
+			// juego cargado (de su memoria), pero no cambia mientras se juega
+			int GetSaveSize() const;
+			void SaveState(uint8_t *data);
+			void LoadState(const uint8_t *data);
 
 			// Segundos que se queda en la pantalla final antes de volver a empezar
 			static constexpr float RestartSeconds = 5.0f;

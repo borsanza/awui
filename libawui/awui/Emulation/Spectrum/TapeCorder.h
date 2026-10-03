@@ -24,6 +24,18 @@ namespace awui {
 		};
 
 		class TapeCorder {
+		  public:
+			// Por dónde va la cinta: va en los estados de la máquina, para que al cargar uno (o rebobinar) la cinta
+			// vuelva a donde estaba
+			struct Position {
+				int32_t block;
+				int32_t posByte;
+				int32_t posBit;
+				int32_t state;
+				int32_t cycle;
+				uint8_t playing;
+			};
+
 		  private:
 			std::vector<TapeBlock *> *m_list; // Bloques de la cinta (nullptr: no hay cinta cargada)
 			int m_posByte;
@@ -57,6 +69,9 @@ namespace awui {
 			TapeBlock *TakeNextBlock();
 
 			void SetFinishCassetteCB(void (*fun)(void *), void *data);
+
+			Position GetPosition() const;
+			void SetPosition(const Position &position);
 		};
 	} // namespace Emulation::Spectrum
 } // namespace awui

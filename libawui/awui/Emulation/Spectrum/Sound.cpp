@@ -23,6 +23,8 @@ Sound::Sound() {
 	m_pendingSamples = 0.0;
 	m_dcIn = 0.0f;
 	m_dcOut = 0.0f;
+	m_reverse = false;
+	m_fastForward = false;
 
 	// Abre el dispositivo de audio
 	Common::AudioOutput::Instance();
@@ -85,6 +87,14 @@ void Sound::EndFrame(double seconds, bool silent) {
 
 	m_level = current;
 	m_changes.clear();
+
+	// En avance rápido se generan más muestras de las que se pueden tocar: las de este frame se tiran si ya hay
+	// bastantes en cola (así no se llena y se vacía de golpe)
+	if (m_fastForward && output.IsQueueFull())
+		return;
+
+	if (m_reverse)
+		std::reverse(m_samples.begin(), m_samples.end());
 
 	output.Queue(this, m_samples.data(), count, 1);
 }

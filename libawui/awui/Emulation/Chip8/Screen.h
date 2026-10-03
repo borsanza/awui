@@ -22,6 +22,7 @@ namespace awui::Emulation::Chip8 {
 		uint32_t GetPixel(uint16_t x, uint16_t y);
 
 		uint16_t GetWidth() const;
+		inline uint32_t *GetData() { return m_data; } // m_width * m_height píxeles, por filas
 		uint16_t GetHeight() const;
 
 		void ScrollLeft(uint8_t columns);
