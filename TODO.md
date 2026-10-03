@@ -6,6 +6,17 @@ Revisa bien Core, Drawing, Effects, IO, OpenGL y Windows, ademas de las clases q
 
 Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra de aquí (el historial queda en git).
 
+Lo de gameOfBlocks y su motor 3D (`GOB/Engine`) va aparte, en [samples/gameOfBlocks/TODO.md](samples/gameOfBlocks/TODO.md).
+
+## Prioridad alta
+
+- **Pruebas automáticas en el repositorio.** Casi todo lo delicado se ha comprobado con arneses sin ventana que no están guardados en ningún sitio: hay que volver a escribirlos cada vez, y un cambio puede romper algo sin que nadie se entere. Irían en `tests/`, lanzadas con `ctest`, compiladas con los sanitizers, sin ventana ni sonido, y con una entrada en `menu.sh`. Qué cubrir, de menos a más dependiente de ROMs:
+  1. **CHIP-8,** con los juegos libres que van en el repositorio: estados (guardar, cargar y volver a guardar da lo mismo), rebobinado y avance rápido (un estado por frame, la pantalla rebobinada es la que se vio) y las teclas comunes (F2 a F7, F12).
+  2. **La base:** la cabecera de los ficheros de estado (otro juego, otra versión, cortado, antiguo sin cabecera), `RewindBuffer`, ajustes y paginación.
+  3. **Master System y Spectrum:** lo mismo que en el CHIP-8, más la cinta del Spectrum en el estado. Se saltan si no están las ROMs.
+
+  Después, una integración continua (por ejemplo GitHub Actions) que compile en Linux y con MinGW y pase las pruebas en cada push.
+
 ## Fallos con efecto hoy
 
 - **Pérdida de foco de la ventana:** a propósito, el juego sigue al cambiar de ventana (no se pausa; decidido así de momento). Lo que falta es comprobar con la ventana que las teclas no se quedan enganchadas al hacer Alt+Tab: SDL2 manda un `KEYUP` por cada una al perder el foco, y las sueltas del mando pasan aunque no haya foco, pero F6/F7 o una tecla del Spectrum mantenidas podrían quedarse activas.
@@ -16,7 +27,6 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 - **El depurador de la Master System no se puede abrir:** `MasterSystem` tiene la tecla F para mostrarlo, pero `m_debugger` nunca se crea (siempre es `NULL`), así que `DebuggerSMS` es código muerto. O se crea (en Debug, por ejemplo) o se borra.
 - **Variables `static inline` en cabeceras con DLL:** en Windows, el ejecutable y `libawui.dll` tienen cada uno su copia (`SavePaths`, `AudioSettings`, `Localization`, `CPU::s_restartWhenFinished`...). Hoy todas se cambian y se leen desde dentro de la DLL, pero si un sample cambia una directamente desde su código, la DLL no lo ve. Pasó con `SettingsStore::SetValuesFile`, que ya está en el `.cpp`.
-- **GOB: de quién son las geometrías y los materiales.** `Mesh` guarda su `BufferGeometry *` y sus `Material *` sin liberarlos nunca, y las texturas de los bloques (`Blocks::GetTexture`) y los chunks tampoco se liberan: no está claro quién es el dueño. Hoy da igual porque viven hasta que se cierra el programa.
 - **Estado del Z80 copiado con `memcpy`:** `CPUInst::saveData` contiene `Registers`, que tiene un destructor declarado a mano, así que no es un tipo trivial y copiarlo con `memcpy` no está garantizado (el compilador lo avisa con `-Wclass-memaccess`). Basta con quitar ese destructor vacío.
 - **`Ram` y `Rom`** se pueden copiar y la copia liberaría dos veces su memoria (como `Image` y `MemoryStream`, más abajo).
 - **`Word` depende del orden de los bytes:** la unión con `L`/`H` da los bytes al revés en una máquina *big-endian*. Hoy todas las plataformas previstas (x86, ARM) son *little-endian*, pero conviene saberlo. Además, usa un `struct` anónimo dentro de una unión, que es una extensión del compilador.
@@ -63,7 +73,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### Pintado
 
-- **OpenGL: lo que queda tras pasar a shaders.** Todo pinta con shaders (la interfaz con [Painter](libawui/awui/OpenGL/Painter.h), el 3D de gameOfBlocks con su `Renderer`) y pide OpenGL 3.3 *core*, o ES 3.0 si no lo hay (`AWUI_GL_PROFILE=core|es` lo fuerza). Probado con Mesa en los dos. Queda:
+- **OpenGL: lo que queda tras pasar a shaders.** La interfaz pinta con shaders ([Painter](libawui/awui/OpenGL/Painter.h)) y pide OpenGL 3.3 *core*, o ES 3.0 si no lo hay (`AWUI_GL_PROFILE=core|es` lo fuerza). Probado con Mesa en los dos. Queda:
   1. Probarlo en una Raspberry Pi de verdad (su driver da ES 3.1): solo se ha probado ES con Mesa por software.
   2. El `Painter` pinta cada control con su propia llamada; juntar los vértices de todo el frame en una sola iría más rápido en una Raspberry.
 - **Dos formas de mezclar:** `Image` (cairo) sube el alfa premultiplicado y `Bitmap` (SDL_image) sin premultiplicar, cada uno con su `glBlendFunc`.
@@ -131,30 +141,17 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 - **Proporción de los píxeles:** la imagen se escala con píxeles cuadrados, pero en la tele de la época no lo eran (en Master System y Spectrum, un poco más anchos que altos).
 - **Modo rápido del Spectrum (F8):** falta decidir si se queda así. Desde el cambio a `steady_clock` se emula durante 30 ms en cada tick, como dice el comentario; antes, por un error de unidades, era un frame por tick. Con un cargador propio la cinta va unas 3 veces más deprisa, pero la interfaz baja a unos 30 fps mientras dura.
 
-### gameOfBlocks
-
-Está a la par de la versión web (three.js): mismo terreno, misma luz y colores, mismas cámaras y misma física, y además el jugador choca con los bloques por todos los lados (en la web solo con el suelo). Lo que falta:
-
-- **Cámara en tercera persona:** atraviesa el terreno (si hay una colina entre la cámara y el jugador, se ve por dentro). Habría que acercarla al jugador cuando algo se interpone.
-- **Subir escalones:** un bloque de alto solo se sube saltando (como en Minecraft). Si se quiere subir andando escalones bajos, haría falta medio bloque o un "paso automático".
-- **Poner y quitar bloques.** Al cambiar un bloque habría que rehacer la malla de su chunk (y la de los vecinos si está en el borde): hoy cada chunk se calcula una sola vez.
-- **Chunks lejanos:** los que quedan fuera de la distancia de visión dejan de pintarse, pero sus datos y su geometría nunca se descargan: la memoria crece al andar (64 KB de bloques por chunk, más su malla). Además, a distancia 16 se generan de golpe los datos de más de mil chunks al arrancar, y cada chunk nuevo rehace la geometría fija entera: habría que generar en un hilo y subir la geometría por chunk.
-- **Texturas de los bloques:** son propias y salen de [make-textures.py](samples/gameOfBlocks/art/make-textures.py) (ruido y formas sencillas, con semilla fija), menos las de prueba (`block-empty` y `block-pattern-*`), dibujadas a mano. Son sencillas: se pueden mejorar tocando el script.
-- **El motor (`GOB/Engine`)** sigue la forma de three.js (`Object3D`, `Mesh`, `BoxGeometry`, `MeshBasicMaterial`, `PerspectiveCamera`…) y está comprobado contra él con la escena de referencia de la versión web (`index2.html`: un cubo con una letra en cada cara): coincide salvo los bordes. Esa comparación, y la tabla de triángulos por distancia, deberían ser pruebas automáticas del repositorio. No hay luces (la del mundo va calculada en el color de cada cara) ni `InstancedMesh`; el pintado ya se junta por textura en toda la escena (17 llamadas con mil chunks).
-- **Mando:** solo teclado y ratón.
-
 ## Ficheros y directorios
 
 Cómo lo organizaría. Son cambios de sitio y de nombre, sin tocar el comportamiento, y conviene hacerlos cada uno en su propio commit (con `git mv`) para no perder el historial.
 
 ### Separar librería, emuladores y aplicación
 
-Hoy todo está en una única `libawui.so`: la interfaz, los emuladores, el motor 3D de gameOfBlocks y los menús de stationTV. Cualquier sample enlaza con todo.
+Hoy todo está en una única `libawui.so`: la interfaz, los emuladores y los menús de stationTV. Cualquier sample enlaza con todo.
 
 ```text
 libawui/awui/          librería de interfaz: String, IO, Drawing, OpenGL, UI...
 libemulation/          núcleos de los emuladores (hoy Emulation/): Z80, Master System, Spectrum, Chip-8, Common
-libgob/                motor 3D (hoy awui/GOB/), solo lo usa gameOfBlocks
 samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los emuladores
                        (hoy UI/Emulators), formArcade, main, lang, menu-settings.json
 ```
@@ -171,7 +168,7 @@ samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los
 
 ### Estilo y normas del repositorio
 
-- **Avisos del compilador:** con `-Wall -Wextra` (`AWUI_WARNINGS=ON`, desactivado por defecto) salen 687 avisos: 359 de parámetros sin usar y 311 de `switch` sin todos los casos, casi todos inofensivos. Entre ellos se esconden los tres fallos reales de arriba (`Object3D`, `memcpy` del Z80 y `ret` sin usar). Habría que limpiarlos y activar los avisos por defecto en los presets `debug` y `sanitize`.
+- **Avisos del compilador:** con `-Wall -Wextra` (`AWUI_WARNINGS=ON`, desactivado por defecto) salen 687 avisos: 359 de parámetros sin usar y 311 de `switch` sin todos los casos, casi todos inofensivos. Entre ellos se esconden dos fallos reales de arriba (`memcpy` del Z80 y `ret` sin usar). Habría que limpiarlos y activar los avisos por defecto en los presets `debug` y `sanitize`.
 - **Código comentado:** unas 80 líneas de código comentado repartidas por la librería (sobre todo en el Z80 y en `Label`, `Control`…). Si no se usa, se borra (queda en git).
 - **Cabeceras de copyright:** conviven tres formatos (`/** awui/... Copyright */`, `// (c) Copyright ... (BSD License)` y ninguno). Uno solo, igual en todos.
 
@@ -191,7 +188,7 @@ samples/stationTV/     la aplicación: menús (hoy UI/Station), controles de los
 12. **Orden de foco con el tabulador:** `m_tabIndex` se asigna pero no se usa; no hay navegación con Tab.
 13. **Registro de mensajes con niveles:** hoy se mezclan `Console`, `printf` y `fprintf(stderr)`. Con niveles (depuración, aviso, error) se podrían silenciar mensajes como "Partida guardada cargada".
 14. **`Label` de varias líneas:** el texto ya pasa por Pango y las descripciones de los ajustes ya se cortan con `TextRenderer::SplitLines` (también en japonés y chino). Falta un `Label` que haga eso solo (ancho máximo, alto según las líneas), para usarlo en otros sitios sin repetir la cuenta de `SettingsUI`.
-15. **Pruebas automáticas en el repositorio**, con las pruebas sin ventana que ya existen como base (ajustes, paginación, estados, cintas, Chip-8…) y un `ctest` que las lance con los sanitizers. Con eso, una integración continua (por ejemplo GitHub Actions) que compile en Linux y con MinGW y pase las pruebas en cada push.
+15. **Pruebas automáticas en el repositorio:** ver "Prioridad alta", arriba.
 
 ## Windows y otras plataformas
 
