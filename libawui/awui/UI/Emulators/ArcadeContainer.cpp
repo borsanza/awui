@@ -7,17 +7,20 @@
 #include "ArcadeContainer.h"
 
 #include <awui/Console.h>
+#include <awui/Convert.h>
+#include <awui/Emulation/Common/SavePaths.h>
 #include <awui/IO/MemoryStream.h>
 #include <awui/Localization.h>
 #include <awui/UI/Station/StationUI.h>
 
-#include <stdio.h>
-#include <awui/IO/File.h>
 #include <algorithm>
+#include <awui/IO/File.h>
 #include <cstring>
+#include <stdio.h>
 #include <vector>
 
 using namespace awui::Drawing;
+using namespace awui::Emulation::Common;
 using namespace awui::UI::Emulators;
 using namespace awui::IO;
 using namespace awui::UI;
@@ -53,6 +56,10 @@ namespace {
 ArcadeContainer::ArcadeContainer() {
 	memcpy(m_stateSystem, "    ", 4);
 	m_stateCRC = 0;
+	m_stateSlot = 0;
+	m_paused = false;
+	m_pausedByHelp = false;
+	AddWidget(&m_keyHelp, WidgetOwnership::Borrowed);
 	SetBackColor(Color::Black);
 	SetDrawShadow(false);
 	SetPreventChangeControl(true);
@@ -60,10 +67,169 @@ ArcadeContainer::ArcadeContainer() {
 	SetFocusable(false);
 }
 
-void ArcadeContainer::SetStateIdentity(const char *system, uint32_t crc) {
+void ArcadeContainer::SetGame(const String &file, const char *system, uint32_t crc) {
+	m_gameFile = file;
 	memset(m_stateSystem, ' ', 4);
 	memcpy(m_stateSystem, system, std::min<size_t>(strlen(system), 4));
 	m_stateCRC = crc;
+}
+
+// Junto al juego (SavePaths lo lleva a la carpeta de estados): <juego>.state en la ranura 0, <juego>.stateN en las
+// demás
+awui::String ArcadeContainer::GetStateFile() const {
+	String name = String::Concat(m_gameFile, ".state");
+	if (m_stateSlot > 0)
+		name = String::Concat(name, Convert::ToString(m_stateSlot));
+
+	return name;
+}
+
+void ArcadeContainer::SaveState() {
+	if (GetStateSize() == 0)
+		return;
+
+	String name = SavePaths::GetWritePath(GetStateFile(), SavePaths::Kind::State);
+	Console::WriteLine(String("Guardando: ") + name);
+
+	std::vector<uint8_t> data(GetStateSize());
+	SaveStateData(data.data());
+	if (WriteStateFile(name, data.data(), (int) data.size()))
+		ShowNotification(String(Localization::Tr("osd.stateSaved").ToCharArray(), m_stateSlot));
+}
+
+void ArcadeContainer::LoadState() {
+	if (GetStateSize() == 0)
+		return;
+
+	String name = SavePaths::GetReadPath(GetStateFile(), SavePaths::Kind::State);
+	if (!File::Exists(name)) {
+		ShowNotification(String(Localization::Tr("osd.stateMissing").ToCharArray(), m_stateSlot));
+		return;
+	}
+
+	Console::WriteLine(String("Cargando: ") + name);
+
+	// Uno que no es de este juego o de esta versión no se carga (ReadStateFile lo avisa)
+	std::vector<uint8_t> data(GetStateSize());
+	if (ReadStateFile(name, data.data(), (int) data.size())) {
+		LoadStateData(data.data());
+		ShowNotification(String(Localization::Tr("osd.stateLoaded").ToCharArray(), m_stateSlot));
+	}
+}
+
+void ArcadeContainer::SetStateSlot(int slot) {
+	if (GetStateSize() == 0)
+		return;
+
+	m_stateSlot = ((slot % StateSlots) + StateSlots) % StateSlots;
+	ShowNotification(String(Localization::Tr("osd.slot").ToCharArray(), m_stateSlot));
+}
+
+void ArcadeContainer::SetPaused(bool paused) {
+	m_paused = paused;
+	ShowNotification(Localization::Tr(paused ? "osd.paused" : "osd.resumed"));
+}
+
+void ArcadeContainer::Reset() {
+	ResetMachine();
+	ShowNotification(Localization::Tr("osd.reset"));
+}
+
+bool ArcadeContainer::SaveAutoState() {
+	if (GetStateSize() == 0)
+		return false;
+
+	std::vector<uint8_t> data(GetStateSize());
+	SaveStateData(data.data());
+	return WriteStateFile(SavePaths::GetWritePath(String::Concat(m_gameFile, ".autostate"), SavePaths::Kind::State), data.data(), (int) data.size());
+}
+
+bool ArcadeContainer::LoadAutoState() {
+	if (GetStateSize() == 0)
+		return false;
+
+	std::vector<uint8_t> data(GetStateSize());
+	if (!ReadStateFile(SavePaths::GetReadPath(String::Concat(m_gameFile, ".autostate"), SavePaths::Kind::State), data.data(), (int) data.size()))
+		return false;
+
+	LoadStateData(data.data());
+	return true;
+}
+
+void ArcadeContainer::ShowKeyHelp() {
+	if (m_keyHelp.IsShowing())
+		return;
+
+	std::vector<KeyHelp::Section> sections;
+	sections.push_back(GetSystemKeys());
+
+	KeyHelp::Section general{Localization::Tr("help.general"), {}};
+	general.rows.push_back({"F1", Localization::Tr("help.help")});
+	if (GetStateSize() > 0) {
+		general.rows.push_back({"F2 / F4", Localization::Tr("help.saveLoad")});
+		general.rows.push_back({"F3", Localization::Tr("help.slot")});
+	}
+	general.rows.push_back({"F5", Localization::Tr("help.pause")});
+	general.rows.push_back({"F10", Localization::Tr("help.vsync")});
+	general.rows.push_back({"F11", Localization::Tr("help.fullscreen")});
+	general.rows.push_back({"F12", Localization::Tr("help.reset")});
+	general.rows.push_back({Localization::Tr("help.key.esc"), Localization::Tr("help.back")});
+	sections.push_back(general);
+
+	m_keyHelp.Show(Localization::Tr("help.title"), sections);
+	MoveToEnd(&m_keyHelp);
+
+	// Pausa sin aviso: se ve la ayuda
+	m_pausedByHelp = !m_paused;
+	m_paused = true;
+}
+
+void ArcadeContainer::HideKeyHelp() {
+	if (!m_keyHelp.IsShowing())
+		return;
+
+	m_keyHelp.Hide();
+	if (m_pausedByHelp)
+		m_paused = false;
+	m_pausedByHelp = false;
+}
+
+bool ArcadeContainer::OnEmulatorKey(Keys::Enum key, bool pressed) {
+	// Con la ayuda abierta, cualquier tecla la cierra (y no llega al juego)
+	if (m_keyHelp.IsShowing()) {
+		if (pressed)
+			HideKeyHelp();
+		return true;
+	}
+
+	switch (key) {
+		case Keys::Key_F1:
+			if (pressed)
+				ShowKeyHelp();
+			return true;
+		case Keys::Key_F2:
+			if (pressed)
+				SaveState();
+			return true;
+		case Keys::Key_F3:
+			if (pressed)
+				SetStateSlot(m_stateSlot + 1);
+			return true;
+		case Keys::Key_F4:
+			if (pressed)
+				LoadState();
+			return true;
+		case Keys::Key_F5:
+			if (pressed)
+				SetPaused(!m_paused);
+			return true;
+		case Keys::Key_F12:
+			if (pressed)
+				Reset();
+			return true;
+		default:
+			return false;
+	}
 }
 
 uint32_t ArcadeContainer::GetFileCRC32(const String &file) {
@@ -145,6 +311,12 @@ void ArcadeContainer::SetStationUI(StationUI *station) {
 }
 
 bool ArcadeContainer::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
+	// Escape (el botón de menú) con la ayuda abierta solo la cierra
+	if ((button & RemoteButtons::Menu) && m_keyHelp.IsShowing()) {
+		HideKeyHelp();
+		return true;
+	}
+
 	if (button & RemoteButtons::Menu)
 		m_station->ExitingArcade();
 

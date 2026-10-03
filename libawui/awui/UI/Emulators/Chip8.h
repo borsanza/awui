@@ -22,6 +22,10 @@ namespace awui {
 			void CheckBackcolor();
 			void UpdateImage();
 
+		  protected:
+			virtual void ResetMachine() override;
+			virtual KeyHelp::Section GetSystemKeys() const override;
+
 		  public:
 			Chip8();
 			virtual ~Chip8();

@@ -17,7 +17,6 @@ namespace awui {
 		  private:
 			awui::Emulation::Spectrum::Motherboard *m_motherboard;
 			bool m_pause;
-			int m_fileSlot;
 			bool m_resetHeld; // La combinación de reinicio sigue pulsada (el aviso sale una sola vez)
 
 			awui::Emulation::Spectrum::TapeCorder *m_tapecorder;
@@ -32,22 +31,19 @@ namespace awui {
 			std::set<UI::Input::Keys::Enum> m_heldKeys; // Teclas del PC pulsadas que van al teclado del Spectrum
 			uint32_t m_heldRemote;			   // Flechas pulsadas (teclas de cursor)
 
-			String m_romFile; // Cinta o ROM cargada: los estados se guardan a su lado
+			String m_romFile; // Cinta o ROM cargada
 
-			String GetStateFile() const;
-
-		  public:
-			virtual bool SaveAutoState() override;
-			virtual bool LoadAutoState() override;
-
-		  private:
 			void DoKey(UI::Input::Keys::Enum key, bool pressed);
 			void DoRemoteKey(UI::Input::RemoteButtons::Enum button, bool pressed);
 			void UpdateMatrix();
 			void ReleaseAllKeys();
 
-			void SaveState();
-			void LoadState();
+		  protected:
+			virtual int GetStateSize() const override;
+			virtual void SaveStateData(uint8_t *data) override;
+			virtual void LoadStateData(uint8_t *data) override;
+			virtual void ResetMachine() override;
+			virtual KeyHelp::Section GetSystemKeys() const override;
 
 		  public:
 			Spectrum();

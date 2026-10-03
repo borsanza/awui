@@ -493,6 +493,7 @@ void StationUI::EnteringArcade() {
 // Se sale del juego (al menú o cerrando el programa): se guarda la partida para continuarla
 void StationUI::SaveGame() {
 	if (m_inGame && m_arcade) {
+		m_arcade->HideKeyHelp(); // Si no, al volver seguiría en pausa
 		m_arcade->SaveAutoState();
 	}
 

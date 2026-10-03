@@ -7,7 +7,6 @@
 #include "MasterSystem.h"
 
 #include <awui/Emulation/Common/RewindBuffer.h>
-#include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/MasterSystem/Motherboard.h>
 #include <awui/Emulation/MasterSystem/Sound.h>
@@ -77,7 +76,7 @@ MasterSystem::~MasterSystem() {
 void MasterSystem::LoadRom(const String file) {
 	SetName(file);
 	m_cpu->LoadRom(file);
-	SetStateIdentity("SMS", m_cpu->GetCRC32());
+	SetGame(file, "SMS", m_cpu->GetCRC32());
 	m_rewind->Clear();
 	m_cpu->SaveState(m_state.data());
 	m_rewind->Push(m_state.data());
@@ -88,6 +87,9 @@ void MasterSystem::OnTick(float deltaSeconds) {
 	// estado anterior y se emula ese frame para verlo y oírlo (al revés). Por tiempo y no uno por cada vez que se
 	// pinta: con un monitor de 100 Hz o sin vsync iría más deprisa, y el sonido llenaría la cola y saldría a golpes.
 	// Al acabarse el historial se queda en el último
+	if (IsPaused())
+		return;
+
 	if (m_rewinding) {
 		float frame = m_cpu->GetVDP()->GetNTSC() ? (1.0f / 59.922743404f) : (1.0f / 49.7014591858f);
 		m_rewindSeconds += deltaSeconds;
@@ -178,6 +180,9 @@ void MasterSystem::OnPaint(GL *gl) {
 }
 
 bool MasterSystem::OnKeyPress(Keys::Enum key) {
+	if (OnEmulatorKey(key, true))
+		return true;
+
 	bool ret = false;
 	uint8_t button1 = 0;
 	uint8_t button2 = 0;
@@ -223,10 +228,6 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 			break;
 		case Keys::Key_SPACE:
 			Pause(true);
-			ret = true;
-			break;
-		case Keys::Key_BACKSPACE:
-			m_cpu->Reset();
 			ret = true;
 			break;
 		case Keys::Key_F:
@@ -283,6 +284,9 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 }
 
 bool MasterSystem::OnKeyUp(Keys::Enum key) {
+	if (OnEmulatorKey(key, false))
+		return true;
+
 	bool ret = false;
 	uint8_t button1 = 0;
 	uint8_t button2 = 0;
@@ -328,10 +332,6 @@ bool MasterSystem::OnKeyUp(Keys::Enum key) {
 			break;
 		case Keys::Key_SPACE:
 			Pause(false);
-			ret = true;
-			break;
-		case Keys::Key_BACKSPACE:
-			m_cpu->Reset();
 			ret = true;
 			break;
 		case Keys::Key_Q:
@@ -474,22 +474,37 @@ void MasterSystem::ToggleSoundChannel(int channel) {
 	ShowNotification(String(Localization::Tr(enabled ? "osd.channelOn" : "osd.channelOff").ToCharArray(), channel + 1));
 }
 
-bool MasterSystem::SaveAutoState() {
-	m_cpu->SaveState(m_state.data());
-	return WriteStateFile(SavePaths::GetWritePath(String::Concat(GetName(), ".autostate"), SavePaths::Kind::State), m_state.data(), (int) m_state.size());
+int MasterSystem::GetStateSize() const {
+	return Motherboard::GetSaveSize();
 }
 
-bool MasterSystem::LoadAutoState() {
-	if (!ReadStateFile(SavePaths::GetReadPath(String::Concat(GetName(), ".autostate"), SavePaths::Kind::State), m_state.data(), (int) m_state.size()))
-		return false;
+void MasterSystem::SaveStateData(uint8_t *data) {
+	m_cpu->SaveState(data);
+}
 
-	m_cpu->LoadState(m_state.data());
+void MasterSystem::LoadStateData(uint8_t *data) {
+	m_cpu->LoadState(data);
 	RefreshPads();
 
 	// El historial de rebobinado era de otra partida: empieza desde aquí
 	m_rewind->Clear();
-	m_rewind->Push(m_state.data());
-	return true;
+	m_rewind->Push(data);
+}
+
+void MasterSystem::ResetMachine() {
+	m_cpu->Reset();
+}
+
+KeyHelp::Section MasterSystem::GetSystemKeys() const {
+	return {m_cpu->IsGameGear() ? "Game Gear" : "Master System",
+			{
+				{"W A S D + G / H", Localization::Tr("help.sms.pad1")},
+				{Localization::Tr("help.key.pad2"), Localization::Tr("help.sms.pad2")},
+				{Localization::Tr("help.key.space"), Localization::Tr("help.sms.pause")},
+				{"Q / E", Localization::Tr("help.sms.rewind")},
+				{"1 - 4", Localization::Tr("help.sms.channels")},
+				{"B", Localization::Tr("help.sms.border")},
+			}};
 }
 
 void MasterSystem::SetRewinding(bool mode) {

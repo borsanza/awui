@@ -11,7 +11,6 @@
 #include <awui/Convert.h>
 #include <awui/Time/ChronoLap.h>
 #include <awui/Drawing/Image.h>
-#include <awui/Emulation/Common/SavePaths.h>
 #include <awui/Emulation/Spectrum/Motherboard.h>
 #include <awui/Emulation/Common/AudioOutput.h>
 #include <awui/Emulation/Spectrum/TapeCorder.h>
@@ -62,7 +61,6 @@ Spectrum::Spectrum() {
 	m_last = -1;
 	m_seconds = 0.0;
 	m_heldRemote = 0;
-	m_fileSlot = 0;
 	m_resetHeld = false;
 	m_tapecorder = new TapeCorder();
 	m_tapecorder->SetFinishCassetteCB(FinishCassetteCB, this);
@@ -100,7 +98,7 @@ void Spectrum::LoadRom(const String file) {
 	}
 
 	// Los estados son de la cinta (o de la ROM, si se carga una suelta)
-	SetStateIdentity("ZX", GetFileCRC32(file));
+	SetGame(file, "ZX", GetFileCRC32(file));
 
 	m_first = 0;
 	m_last = 0;
@@ -118,6 +116,9 @@ void Spectrum::OnTick(float deltaSeconds) {
 			ShowNotification(Localization::Tr("osd.reset"));
 	}
 	m_resetHeld = reset;
+
+	if (IsPaused())
+		return;
 
 	// Modo rápido (F8): se emula todo lo que dé tiempo en este tick. Con el cargador de la ROM la carga es
 	// instantánea (Motherboard::FlashLoad); con un cargador propio la cinta pasa a toda velocidad
@@ -371,11 +372,6 @@ static void GetMatrixKeys(Keys::Enum key, std::vector<int> &keys) {
 			keys.push_back(40);
 			break;
 
-		case Keys::Key_F5:
-			keys.push_back(0);
-			keys.push_back(30);
-			break;
-
 		default:
 			break;
 	}
@@ -383,14 +379,6 @@ static void GetMatrixKeys(Keys::Enum key, std::vector<int> &keys) {
 
 void Spectrum::DoKey(Keys::Enum key, bool pressed) {
 	switch (key) {
-		case Keys::Key_F2:
-			if (pressed)
-				SaveState();
-			break;
-		case Keys::Key_F4:
-			if (pressed)
-				LoadState();
-			break;
 		// La cinta la pone en marcha y la para el propio cargador (Motherboard::UpdateTapeMotor), como el motor de
 		// un casete con control remoto: estas teclas no la hacen sonar
 		case Keys::Key_F8:
@@ -495,11 +483,17 @@ void Spectrum::ReleaseAllKeys() {
 }
 
 bool Spectrum::OnKeyPress(Keys::Enum key) {
+	if (OnEmulatorKey(key, true))
+		return true;
+
 	DoKey(key, true);
 	return true;
 }
 
 bool Spectrum::OnKeyUp(Keys::Enum key) {
+	if (OnEmulatorKey(key, false))
+		return true;
+
 	DoKey(key, false);
 	return true;
 }
@@ -533,15 +527,11 @@ uint8_t Spectrum::GetPad() const {
 bool Spectrum::OnRemoteKeyPress(int which, RemoteButtons::Enum button) {
 	bool ret = false;
 
-	if (m_fileSlot > 0 && (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_DECREASE)) {
-		m_fileSlot--;
-		ShowNotification(String(Localization::Tr("osd.slot").ToCharArray(), m_fileSlot));
-	}
+	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_DECREASE)
+		SetStateSlot(GetStateSlot() - 1);
 
-	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_INCREASE) {
-		m_fileSlot++;
-		ShowNotification(String(Localization::Tr("osd.slot").ToCharArray(), m_fileSlot));
-	}
+	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_SLOT_INCREASE)
+		SetStateSlot(GetStateSlot() + 1);
 
 	if (Form::GetButtonsPad1() == RemoteButtons::SPECIAL_LOAD)
 		LoadState();
@@ -583,57 +573,30 @@ void Spectrum::SetSoundEnabled(bool mode) {
 	AudioOutput::Instance().SetPlaying(mode ? m_motherboard->GetSound() : 0);
 }
 
-// Estado junto a la cinta o la ROM del juego: DynamiteDan.tap.state, y con ranura DynamiteDan.tap.state1...
-awui::String Spectrum::GetStateFile() const {
-	String name = String::Concat(m_romFile, ".state");
-	if (m_fileSlot > 0)
-		name = String::Concat(name, Convert::ToString(m_fileSlot));
-
-	return name;
+int Spectrum::GetStateSize() const {
+	return Motherboard::GetSaveSize();
 }
 
-bool Spectrum::SaveAutoState() {
-	std::vector<uint8_t> data(Motherboard::GetSaveSize());
-	m_motherboard->SaveState(data.data());
-	return WriteStateFile(SavePaths::GetWritePath(String::Concat(m_romFile, ".autostate"), SavePaths::Kind::State), data.data(), (int) data.size());
+void Spectrum::SaveStateData(uint8_t *data) {
+	m_motherboard->SaveState(data);
 }
 
-bool Spectrum::LoadAutoState() {
-	std::vector<uint8_t> data(Motherboard::GetSaveSize());
-	if (!ReadStateFile(SavePaths::GetReadPath(String::Concat(m_romFile, ".autostate"), SavePaths::Kind::State), data.data(), (int) data.size()))
-		return false;
-
-	m_motherboard->LoadState(data.data());
+void Spectrum::LoadStateData(uint8_t *data) {
+	m_motherboard->LoadState(data);
 	ReleaseAllKeys();
-	return true;
 }
 
-void Spectrum::LoadState() {
-	String name = SavePaths::GetReadPath(GetStateFile(), SavePaths::Kind::State);
-
-	if (!File::Exists(name)) {
-		ShowNotification(String(Localization::Tr("osd.stateMissing").ToCharArray(), m_fileSlot));
-		return;
-	}
-
-	Console::WriteLine(String("Cargando: ") + name);
-
-	// Un estado de otro tamaño es de otra versión del emulador: ReadStateFile no lo carga (desbordaría el buffer o
-	// dejaría la máquina a medias) y lo avisa
-	std::vector<uint8_t> savedData(Motherboard::GetSaveSize());
-	if (ReadStateFile(name, savedData.data(), (int) savedData.size())) {
-		m_motherboard->LoadState(savedData.data());
-		ShowNotification(String(Localization::Tr("osd.stateLoaded").ToCharArray(), m_fileSlot));
-	}
+void Spectrum::ResetMachine() {
+	m_motherboard->Reset();
 }
 
-void Spectrum::SaveState() {
-	String name = SavePaths::GetWritePath(GetStateFile(), SavePaths::Kind::State);
-
-	Console::WriteLine(String("Guardando: ") + name);
-
-	std::vector<uint8_t> savedData(Motherboard::GetSaveSize());
-	m_motherboard->SaveState(savedData.data());
-	if (WriteStateFile(name, savedData.data(), (int) savedData.size()))
-		ShowNotification(String(Localization::Tr("osd.stateSaved").ToCharArray(), m_fileSlot));
+KeyHelp::Section Spectrum::GetSystemKeys() const {
+	return {"ZX Spectrum",
+			{
+				{Localization::Tr("help.key.keyboard"), Localization::Tr("help.zx.keyboard")},
+				{Localization::Tr("help.key.shift"), "Caps Shift"},
+				{Localization::Tr("help.key.ctrlAlt"), "Symbol Shift"},
+				{"F8", Localization::Tr("help.zx.fastTape")},
+				{"F9", Localization::Tr("help.zx.rewindTape")},
+			}};
 }

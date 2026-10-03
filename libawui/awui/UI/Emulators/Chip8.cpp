@@ -9,9 +9,9 @@
 #include <awui/Drawing/Image.h>
 #include <awui/Emulation/Chip8/CPU.h>
 #include <awui/Emulation/Chip8/KeyMap.h>
+#include <awui/Emulation/Chip8/Screen.h>
 #include <awui/Emulation/Chip8/Sound.h>
 #include <awui/Emulation/Common/AudioOutput.h>
-#include <awui/Emulation/Chip8/Screen.h>
 #include <awui/Localization.h>
 #include <awui/OpenGL/GL.h>
 
@@ -22,7 +22,7 @@ using namespace awui::Emulation::Chip8;
 using namespace awui::UI;
 using namespace awui::UI::Input;
 
-bool Chip8::s_invertedColors = false;
+bool Chip8::s_invertedColors = true;
 
 Chip8::Chip8() {
 	m_image = new Drawing::Image(64, 32);
@@ -59,6 +59,9 @@ void Chip8::OnTick(float deltaSeconds) {
 		UpdateImage();
 		m_lastInverted = Chip8::s_invertedColors;
 	}
+
+	if (IsPaused())
+		return;
 
 	m_cpu->OnTick(deltaSeconds);
 
@@ -265,6 +268,9 @@ int Chip8::ConvertRemoteKeyToChip8(RemoteButtons::Enum button) {
 }
 
 bool Chip8::OnKeyPress(Keys::Enum key) {
+	if (OnEmulatorKey(key, true))
+		return true;
+
 	int keypressed = ConvertKeyAwToChip8(key);
 	if (keypressed >= 0)
 		m_cpu->KeyDown(keypressed);
@@ -276,11 +282,28 @@ bool Chip8::OnKeyPress(Keys::Enum key) {
 }
 
 bool Chip8::OnKeyUp(Keys::Enum key) {
+	if (OnEmulatorKey(key, false))
+		return true;
+
 	int keypressed = ConvertKeyAwToChip8(key);
 	if (keypressed >= 0)
 		m_cpu->KeyUp(keypressed);
 
 	return true;
+}
+
+KeyHelp::Section Chip8::GetSystemKeys() const {
+	return {"CHIP-8",
+			{
+				{"1234 QWER ASDF ZXCV", Localization::Tr("help.c8.keypad")},
+				{Localization::Tr("help.key.arrowsEnter"), Localization::Tr("help.c8.gameKeys")},
+				{"I", Localization::Tr("help.c8.invert")},
+			}};
+}
+
+void Chip8::ResetMachine() {
+	m_cpu->Reset();
+	UpdateImage();
 }
 
 void Chip8::SetInvertedColors(bool mode) {

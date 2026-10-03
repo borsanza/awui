@@ -138,17 +138,20 @@ En los menús, las flechas, Enter (OK) y Escape (volver; dentro de un juego, vue
 |---------------|-----------------------------------------|----------------------------------------------|
 | Siempre       | F11                                     | Pantalla completa                            |
 |               | F10                                     | Sincronización vertical (vsync)              |
+| En un juego   | F1                                      | Ver las teclas del sistema                   |
+|               | F2 / F4                                 | Guardar / cargar el estado (no en CHIP-8)    |
+|               | F3                                      | Cambiar de ranura de estado (0 a 9)          |
+|               | F5                                      | Pausar el emulador                           |
+|               | F12                                     | Reiniciar                                    |
 | CHIP-8        | 1234 / QWER / ASDF / ZXCV               | El teclado hexadecimal del CHIP-8            |
 |               | Flechas y Enter                         | Las teclas de cada juego (se detectan solas) |
 |               | I                                       | Invertir los colores                         |
 | Master System | WASD, G (botón 1) y H (botón 2)         | Mando 1                                      |
 |               | Flechas; 1 o 3 y 2 del teclado numérico | Mando 2                                      |
-|               | Espacio                                 | Pausa                                        |
-|               | Retroceso                               | Reinicio                                     |
+|               | Espacio                                 | Botón de pausa de la consola                 |
 |               | Q / E                                   | Rebobinar / avanzar rápido                   |
 |               | 1 a 4                                   | Silenciar o activar cada canal de sonido     |
 | ZX Spectrum   | El teclado del ordenador                | El del Spectrum                              |
-|               | F2 / F4                                 | Guardar / cargar el estado                   |
 |               | F8                                      | Carga rápida de la cinta                     |
 |               | F9                                      | Rebobinar la cinta                           |
 

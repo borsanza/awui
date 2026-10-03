@@ -45,6 +45,13 @@ namespace awui {
 
 			void RefreshPads();
 
+		  protected:
+			virtual int GetStateSize() const override;
+			virtual void SaveStateData(uint8_t *data) override;
+			virtual void LoadStateData(uint8_t *data) override;
+			virtual void ResetMachine() override;
+			virtual KeyHelp::Section GetSystemKeys() const override;
+
 		  public:
 			MasterSystem();
 			virtual ~MasterSystem();
@@ -66,8 +73,6 @@ namespace awui {
 			virtual bool OnJoystickButtonUp(UI::Events::JoystickButtonEventArgs *e);
 			virtual bool OnJoystickAxisMotion(UI::Events::JoystickAxisMotionEventArgs *e);
 
-			virtual bool SaveAutoState() override;
-			virtual bool LoadAutoState() override;
 
 			void SetRewinding(bool mode);
 			void SetForwarding(bool mode);

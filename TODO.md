@@ -111,7 +111,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
   - el cálculo del escalado entero y el centrado;
   - el ritmo de frames (`m_seconds`, recuperar tras un parón).
 
-  Iría en `ArcadeContainer`, junto con las ranuras de estado (hoy solo el Spectrum tiene F2/F4) y el rebobinado (hoy solo la Master System).
+  Iría en `ArcadeContainer`, que ya tiene los estados, las ranuras, la pausa, el reinicio y sus teclas (F2-F5 y F12). Falta llevar ahí también el rebobinado y el avance rápido (hoy solo la Master System, con Q/E); la idea es F6/F7 en todos los sistemas, con Q/E como atajo en la Master System.
 - **Conexión de la CPU con la máquina:** el Z80 llama a la memoria y a los puertos con cuatro punteros a función más un `void *` cada uno (y la cinta del Spectrum igual), al estilo C. Una interfaz (`IBus` con `ReadMemory`, `WriteMemory`, `ReadPort`, `WritePort`) sería más clara y comprobada por el compilador.
 - **Restos de depuración en el Z80:** el registro de instrucciones (`#ifdef SLOW`, `m_showLog`, `m_showNotImplemented`) está mezclado con el bucle principal, y hay unos 15 `TODO: Revisar` en `CPUInst.cpp` sobre ciclos y banderas. Lo suyo es comprobarlos con ZEXALL (además de ZEXDOC) y quitar los que estén bien.
 - **Sistemas escritos a mano en `StationUI`:** el nombre de cada carpeta (`chip8`, `gamegear`…), su título, su fondo y su emulador están en una cadena de `if`. Una tabla de sistemas lo dejaría en un sitio, junto con las extensiones que hoy filtra `StationUI::Minimize` con otra cadena de `if`.
@@ -128,7 +128,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
     - **ETI-660** ("ETI660 Hybrids"): ya se reconocen al cargar (empiezan en 0x600, pantalla de 64×48) y los cinco se pueden jugar. Las llamadas a código máquina del 1802 (`0NNN`) y el tono (`FX00`) se ignoran, y eso hace que falten tres cosas: Wipeout sale en blanco y negro (sus rutinas `07C8`/`07F7`/`07B8` escriben en la RAM de color del ETI-660), Music Maker siempre enseña 0 en la cifra alta (`07F0` la calcula) y todos los pitidos suenan con el mismo tono
     - **Híbridos** ("Hybrids"): mezclan CHIP-8 con código máquina del CDP1802 (`0NNN`); sin emular ese procesador no funcionan. Habría que sacarlos de la lista de juegos.
     - **XO-CHIP** (Octo): no hay ROMs en la carpeta, pero es la variante moderna más usada (64 KB con `F000 NNNN`, 4 colores con planos, sonido por patrones, `00DN`, `5XY2`/`5XY3`, `FN01`, `F002`, `FX3A`).
-  - **Sin estados ni rebobinado:** el Chip-8 no tiene ranuras de estado, partida automática ni rebobinado, como los otros emuladores.
+  - **Sin estados ni rebobinado:** el Chip-8 no tiene ranuras de estado, partida automática ni rebobinado, como los otros emuladores. Para los estados basta con que `Chip8` dé `GetStateSize`, `SaveStateData` y `LoadStateData` (F2-F4 y la partida automática ya los atiende `ArcadeContainer`), pero falta que la CPU sepa guardar su estado.
 - **Proporción de los píxeles:** la imagen se escala con píxeles cuadrados, pero en la tele de la época no lo eran (en Master System y Spectrum, un poco más anchos que altos).
 - **Modo rápido del Spectrum (F8):** falta decidir si se queda así. Desde el cambio a `steady_clock` se emula durante 30 ms en cada tick, como dice el comentario; antes, por un error de unidades, era un frame por tick. Con un cargador propio la cinta va unas 3 veces más deprisa, pero la interfaz baja a unos 30 fps mientras dura.
 
