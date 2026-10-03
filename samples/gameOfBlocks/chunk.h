@@ -23,7 +23,7 @@ class Chunk {
 	static constexpr int Size = Width * Depth * Height;
 
 	// Hasta cuántos chunks alrededor del jugador se generan y se pintan
-	static constexpr int RenderDistance = 4;
+	static constexpr int RenderDistance = 16;
 
   private:
 	static std::map<std::pair<int, int>, Chunk *> s_chunks;
