@@ -6,7 +6,7 @@
 
 #include "formGOB.h"
 
-#include "gameView.h"
+#include "world.h"
 
 #include <awui/Drawing/Font.h>
 #include <awui/UI/Label.h>
@@ -17,15 +17,15 @@ using namespace awui::UI;
 using namespace awui::UI::Input;
 
 namespace {
-	const int InfoLines = 7;
+	const int InfoLines = 8;
 	const int InfoLineHeight = 22;
-	const int InfoWidth = 640;
+	const int InfoWidth = 760;
 	const int InfoMargin = 10;
 	const float InfoInterval = 0.1f; // El texto se rehace cada vez: no hace falta en todos los frames
 } // namespace
 
 FormGOB::FormGOB() {
-	m_view = NULL;
+	m_world = NULL;
 	m_infoSeconds = 0.0f;
 	InitializeComponent();
 }
@@ -36,9 +36,9 @@ FormGOB::~FormGOB() {
 void FormGOB::InitializeComponent() {
 	SetBackColor(Color::Black);
 
-	m_view = new GameView();
-	m_view->SetDock(DockStyle::Fill);
-	AddWidget(m_view);
+	m_world = new World();
+	m_world->SetDock(DockStyle::Fill);
+	AddWidget(m_world);
 
 	// Fondo negro medio transparente, como el panel de la versión web
 	Font font("Liberation Mono", 14);
@@ -60,9 +60,9 @@ void FormGOB::InitializeComponent() {
 }
 
 void FormGOB::UpdateInfo() {
-	std::vector<String> lines = m_view->GetInfo();
-	lines.push_back(m_view->IsFirstPerson() ? (m_view->IsMouseCaptured() ? "WASD Space Ctrl | 5 camera  6 wireframe  7 axes | Esc: release mouse" : "Click to look around | 5 camera  6 wireframe  7 axes")
-											: "WASD Space Ctrl | drag to orbit | 5 camera  6 wireframe  7 axes");
+	std::vector<String> lines = m_world->GetInfo();
+	lines.push_back(m_world->IsFirstPerson() ? (m_world->IsMouseCaptured() ? "WASD Space Ctrl | 5 camera  6 wireframe  7 axes  8/9 distance | Esc: release mouse" : "Click to look around | 5 camera  6 wireframe  7 axes  8/9 distance")
+											: "WASD Space Ctrl | drag to orbit | 5 camera  6 wireframe  7 axes  8/9 distance");
 
 	// Encima de la barra de estadísticas (los FPS), que está al pie
 	int bottom = GetHeight() - InfoMargin - 24;
@@ -91,16 +91,16 @@ bool FormGOB::OnKeyPress(Keys::Enum key) {
 		return true;
 	}
 
-	return m_view->KeyDown(key);
+	return m_world->KeyDown(key);
 }
 
 bool FormGOB::OnKeyUp(Keys::Enum key) {
-	return m_view->KeyUp(key);
+	return m_world->KeyUp(key);
 }
 
 // Escape (el botón de menú) suelta el ratón
 bool FormGOB::OnRemoteKeyUp(int which, RemoteButtons::Enum button) {
-	if ((button & RemoteButtons::Menu) && m_view->ReleaseMouse())
+	if ((button & RemoteButtons::Menu) && m_world->ReleaseMouse())
 		return true;
 
 	return Form::OnRemoteKeyUp(which, button);

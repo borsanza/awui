@@ -10,11 +10,11 @@ namespace awui::UI {
 	class Label;
 }
 
-class GameView;
+class World;
 
 class FormGOB : public awui::UI::Form {
   private:
-	GameView *m_view;
+	World *m_world;
 	std::vector<awui::UI::Label *> m_info; // Panel de información, abajo a la izquierda
 	float m_infoSeconds;
 

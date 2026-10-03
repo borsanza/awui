@@ -1,10 +1,10 @@
 /**
- * samples/gameOfBlocks/gameView.cpp
+ * samples/gameOfBlocks/world.cpp
  *
  * Copyright (C) 2026 Borja Sánchez Zamorano
  */
 
-#include "gameView.h"
+#include "world.h"
 
 #include "chunk.h"
 #include "player.h"
@@ -43,7 +43,7 @@ namespace {
 	}
 } // namespace
 
-GameView::GameView() {
+World::World() {
 	m_firstPerson = true;
 	m_mouseCaptured = false;
 	m_yaw = 0.0f;
@@ -80,7 +80,7 @@ GameView::GameView() {
 	UpdateCameras(0.0f, 0, 0, false);
 }
 
-GameView::~GameView() {
+World::~World() {
 	SetMouseCaptured(false);
 	delete m_player;
 	delete m_scene;
@@ -89,7 +89,7 @@ GameView::~GameView() {
 }
 
 // Capturado, el ratón no sale de la ventana ni se ve, y solo cuenta cuánto se mueve
-void GameView::SetMouseCaptured(bool captured) {
+void World::SetMouseCaptured(bool captured) {
 	if (m_mouseCaptured == captured)
 		return;
 
@@ -98,7 +98,7 @@ void GameView::SetMouseCaptured(bool captured) {
 	SDL_GetRelativeMouseState(nullptr, nullptr); // Lo movido hasta ahora no cuenta
 }
 
-bool GameView::ReleaseMouse() {
+bool World::ReleaseMouse() {
 	if (!m_mouseCaptured)
 		return false;
 
@@ -106,7 +106,7 @@ bool GameView::ReleaseMouse() {
 	return true;
 }
 
-void GameView::SetFirstPerson(bool firstPerson) {
+void World::SetFirstPerson(bool firstPerson) {
 	m_firstPerson = firstPerson;
 	m_player->SetModelVisible(!firstPerson);
 	SetCamera(firstPerson ? m_cameraPointer : m_cameraOrbit);
@@ -120,12 +120,12 @@ void GameView::SetFirstPerson(bool firstPerson) {
 	}
 }
 
-void GameView::OnMouseDown(UI::Events::MouseEventArgs *e) {
+void World::OnMouseDown(UI::Events::MouseEventArgs *e) {
 	if (m_firstPerson)
 		SetMouseCaptured(true);
 }
 
-bool GameView::KeyDown(Keys::Enum key) {
+bool World::KeyDown(Keys::Enum key) {
 	switch (key) {
 		case Keys::Key_W:
 			m_player->SetMoveForward(true);
@@ -159,12 +159,18 @@ bool GameView::KeyDown(Keys::Enum key) {
 		case Keys::Key_7:
 			m_axes->SetVisible(!m_axes->IsVisible());
 			return true;
+		case Keys::Key_8:
+			Chunk::SetRenderDistance(Chunk::GetRenderDistance() - 1);
+			return true;
+		case Keys::Key_9:
+			Chunk::SetRenderDistance(Chunk::GetRenderDistance() + 1);
+			return true;
 		default:
 			return false;
 	}
 }
 
-bool GameView::KeyUp(Keys::Enum key) {
+bool World::KeyUp(Keys::Enum key) {
 	switch (key) {
 		case Keys::Key_W:
 			m_player->SetMoveForward(false);
@@ -194,7 +200,7 @@ bool GameView::KeyUp(Keys::Enum key) {
 	}
 }
 
-void GameView::OnTick(float deltaSeconds) {
+void World::OnTick(float deltaSeconds) {
 	// Tras un parón (arrastrar la ventana, un tirón) no se da un salto: el jugador podría atravesar el suelo
 	deltaSeconds = std::min(deltaSeconds, 0.05f);
 
@@ -218,7 +224,7 @@ void GameView::OnTick(float deltaSeconds) {
 	UpdateCameras(deltaSeconds, mouseX, mouseY, dragging);
 }
 
-void GameView::UpdateCameras(float deltaSeconds, int mouseX, int mouseY, bool dragging) {
+void World::UpdateCameras(float deltaSeconds, int mouseX, int mouseY, bool dragging) {
 	float x = (float) m_player->GetX();
 	float y = (float) m_player->GetY() + Player::EyeHeight;
 	float z = (float) m_player->GetZ();
@@ -245,7 +251,7 @@ void GameView::UpdateCameras(float deltaSeconds, int mouseX, int mouseY, bool dr
 	m_cameraOrbit->LookAt(x, y, z);
 }
 
-std::vector<String> GameView::GetInfo() const {
+std::vector<String> World::GetInfo() const {
 	double x = m_player->GetX();
 	double y = m_player->GetY();
 	double z = m_player->GetZ();
@@ -259,6 +265,9 @@ std::vector<String> GameView::GetInfo() const {
 	lines.push_back(String("XYZ: %.5f / %.5f / %.5f", x, y, z));
 	lines.push_back(String("Block: %d / %d / %d [%d %d]", blockX, (int) floor(y), blockZ, blockX - chunk->GetChunkX() * Chunk::Width, blockZ - chunk->GetChunkZ() * Chunk::Depth));
 	lines.push_back(String("Chunk: %d / %d", chunk->GetChunkX(), chunk->GetChunkZ()));
-	lines.push_back(String("Triangles: %d  Draw calls: %d  Chunks: %d (+%d)", GetTriangleCount(), GetDrawCalls(), Chunk::GetChunkCount(), Chunk::GetQueueLength()));
+	// Los del mundo (dos por rectángulo): los que se pintan y, como en la versión web, todos los calculados (los de
+	// su tabla: ver chunk.h)
+	lines.push_back(String("Triangles: %d (meshed: %d)", Chunk::GetVisibleTriangles(), Chunk::GetMeshedTriangles()));
+	lines.push_back(String("Distance: %d  Draw calls: %d  Chunks: %d (+%d)", Chunk::GetRenderDistance(), GetDrawCalls(), Chunk::GetChunkCount(), Chunk::GetQueueLength()));
 	return lines;
 }

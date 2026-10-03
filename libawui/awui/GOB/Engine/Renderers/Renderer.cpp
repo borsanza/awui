@@ -134,6 +134,7 @@ void Renderer::Build(Layer &layer, bool dynamic) {
 
 	layer.list.Clear();
 	m_scene->Collect(Matrix4::Identity(), layer.list, dynamic);
+	layer.list.Finish();
 
 	const std::vector<RenderList::Vertex> &vertices = layer.list.GetVertices();
 	Shaders::BindBuffer(GL_ARRAY_BUFFER, layer.triangles.vertexBuffer);

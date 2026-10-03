@@ -138,9 +138,9 @@ Está a la par de la versión web (three.js): mismo terreno, misma luz y colores
 - **Cámara en tercera persona:** atraviesa el terreno (si hay una colina entre la cámara y el jugador, se ve por dentro). Habría que acercarla al jugador cuando algo se interpone.
 - **Subir escalones:** un bloque de alto solo se sube saltando (como en Minecraft). Si se quiere subir andando escalones bajos, haría falta medio bloque o un "paso automático".
 - **Poner y quitar bloques.** Al cambiar un bloque habría que rehacer la malla de su chunk (y la de los vecinos si está en el borde): hoy cada chunk se calcula una sola vez.
-- **Chunks lejanos:** se generan al acercarse, pero nunca se descargan: la memoria y los triángulos crecen al andar.
+- **Chunks lejanos:** los que quedan fuera de la distancia de visión dejan de pintarse, pero sus datos y su geometría nunca se descargan: la memoria crece al andar (64 KB de bloques por chunk, más su malla). Además, a distancia 16 se generan de golpe los datos de más de mil chunks al arrancar, y cada chunk nuevo rehace la geometría fija entera: habría que generar en un hilo y subir la geometría por chunk.
 - **Texturas de los bloques:** son propias y salen de [make-textures.py](samples/gameOfBlocks/art/make-textures.py) (ruido y formas sencillas, con semilla fija), menos las de prueba (`block-empty` y `block-pattern-*`), dibujadas a mano. Son sencillas: se pueden mejorar tocando el script.
-- **El motor (`GOB/Engine`):** junta por textura dentro de cada objeto, pero no entre objetos: salen unas 200 llamadas de pintado para 100 chunks. Con un atlas de texturas sería una. No hay luces: la del mundo va calculada en el color de cada cara.
+- **El motor (`GOB/Engine`)** sigue la forma de three.js (`Object3D`, `Mesh`, `BoxGeometry`, `MeshBasicMaterial`, `PerspectiveCamera`…) y está comprobado contra él con la escena de referencia de la versión web (`index2.html`: un cubo con una letra en cada cara): coincide salvo los bordes. Esa comparación, y la tabla de triángulos por distancia, deberían ser pruebas automáticas del repositorio. No hay luces (la del mundo va calculada en el color de cada cara) ni `InstancedMesh`; el pintado ya se junta por textura en toda la escena (17 llamadas con mil chunks).
 - **Mando:** solo teclado y ratón.
 
 ## Ficheros y directorios

@@ -25,6 +25,9 @@ double Chunk::s_playerX = 0;
 double Chunk::s_playerZ = 0;
 Scene *Chunk::s_scene = nullptr;
 SimplexNoise2D *Chunk::s_noise = nullptr;
+int Chunk::s_renderDistance = Chunk::DefaultRenderDistance;
+int Chunk::s_meshedTriangles = 0;
+int Chunk::s_visibleTriangles = 0;
 
 namespace {
 	const int Unassigned = -1;
@@ -75,17 +78,30 @@ bool Chunk::IsInCircle(double px, double py, double cx, double cy, double radius
 	return sqrt((px - cx) * (px - cx) + (py - cy) * (py - cy)) < radius;
 }
 
-// Entra en la cola si alguna de sus cuatro esquinas está dentro del radio del jugador
+// Dentro de la distancia de visión: alguna de sus cuatro esquinas está dentro del radio del jugador
+bool Chunk::IsNear() const {
+	double radius = s_renderDistance * Width;
+	double x = m_chunkX * Width;
+	double z = m_chunkZ * Depth;
+	return IsInCircle(x, z, s_playerX, s_playerZ, radius) || IsInCircle(x, z + 15, s_playerX, s_playerZ, radius) || IsInCircle(x + 15, z, s_playerX, s_playerZ, radius) ||
+		   IsInCircle(x + 15, z + 15, s_playerX, s_playerZ, radius);
+}
+
+// Entra en la cola de los que esperan su geometría si está cerca
 void Chunk::QueueIfNear() {
 	if (m_optimized || (std::find(s_queue.begin(), s_queue.end(), this) != s_queue.end()))
 		return;
 
-	double radius = RenderDistance * Width;
-	double x = m_chunkX * Width;
-	double z = m_chunkZ * Depth;
-	if (IsInCircle(x, z, s_playerX, s_playerZ, radius) || IsInCircle(x, z + 15, s_playerX, s_playerZ, radius) || IsInCircle(x + 15, z, s_playerX, s_playerZ, radius) ||
-		IsInCircle(x + 15, z + 15, s_playerX, s_playerZ, radius))
+	if (IsNear())
 		s_queue.push_back(this);
+}
+
+void Chunk::SetRenderDistance(int distance) {
+	s_renderDistance = std::clamp(distance, 1, MaxRenderDistance);
+
+	// Los que esperaban y ya no entran, fuera de la cola
+	s_queue.erase(std::remove_if(s_queue.begin(), s_queue.end(), [](Chunk *chunk) { return !chunk->IsNear(); }), s_queue.end());
+	SetPlayerPosition(s_playerX, s_playerZ);
 }
 
 double Chunk::GetDistanceToPlayer() const {
@@ -117,9 +133,22 @@ void Chunk::SetPlayerPosition(double x, double z) {
 	s_playerX = x;
 	s_playerZ = z;
 
-	for (double xp = -RenderDistance * Width + x; xp <= x + RenderDistance * Width; xp += Width) {
-		for (double zp = -RenderDistance * Depth + z; zp <= z + RenderDistance * Depth; zp += Depth)
+	for (double xp = -s_renderDistance * Width + x; xp <= x + s_renderDistance * Width; xp += Width) {
+		for (double zp = -s_renderDistance * Depth + z; zp <= z + s_renderDistance * Depth; zp += Depth)
 			GetChunk((int) floor(xp / Width), (int) floor(zp / Depth))->QueueIfNear();
+	}
+
+	// Solo se pintan los que están dentro de la distancia de visión: al alejarse (o al bajarla) dejan de verse, y así
+	// lo que se pinta no crece sin fin al andar. No se descargan: su geometría sigue calculada
+	s_visibleTriangles = 0;
+	for (auto &[position, chunk] : s_chunks) {
+		if (!chunk->m_mesh)
+			continue;
+
+		bool visible = chunk->IsNear();
+		chunk->m_mesh->SetVisible(visible);
+		if (visible)
+			s_visibleTriangles += chunk->m_mesh->GetQuadCount() * 2;
 	}
 }
 
@@ -291,6 +320,8 @@ void Chunk::OptimizeAllGeometries() {
 	m_optimized = true;
 	m_visibleSides.clear();
 	m_visibleSides.shrink_to_fit();
+
+	s_meshedTriangles += m_mesh->GetQuadCount() * 2;
 
 	if (s_scene && !m_mesh->IsEmpty()) {
 		s_scene->Add(m_mesh);

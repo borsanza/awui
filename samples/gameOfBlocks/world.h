@@ -17,9 +17,9 @@ class Player;
 //  - En primera persona se mira con el ratón (un clic lo captura, Escape lo suelta).
 //  - En tercera persona la cámara gira alrededor del jugador arrastrando con el botón izquierdo.
 //
-// Teclas: W A S D para moverse, Ctrl para correr, Espacio para saltar, 5 para cambiar de cámara, 6 para ver la malla
-// y 7 para ver los ejes
-class GameView : public awui::GOB::Engine::Renderer {
+// Teclas: W A S D para moverse, Ctrl para correr, Espacio para saltar, 5 para cambiar de cámara, 6 para ver la malla,
+// 7 para ver los ejes, y 8 y 9 para bajar y subir la distancia de visión
+class World : public awui::GOB::Engine::Renderer {
   private:
 	awui::GOB::Engine::Scene *m_scene;
 	awui::GOB::Engine::Cameras::PerspectiveCamera *m_cameraPointer; // Primera persona
@@ -49,8 +49,8 @@ class GameView : public awui::GOB::Engine::Renderer {
   public:
 	static constexpr float OrbitDistance = 4.0f;
 
-	GameView();
-	virtual ~GameView();
+	World();
+	virtual ~World();
 
 	// Las teclas llegan al formulario, que las pasa. Devuelven true si son del juego
 	bool KeyDown(awui::UI::Input::Keys::Enum key);
