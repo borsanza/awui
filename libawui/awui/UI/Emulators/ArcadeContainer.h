@@ -27,7 +27,7 @@ namespace awui::UI {
 		// teclas, iguales en todos los sistemas:
 		//
 		//   F1 ayuda de las teclas, F2 guardar el estado, F3 cambiar de ranura, F4 cargar el estado, F5 pausa,
-		//   F12 reiniciar
+		//   F6 rebobinar y F7 avance rápido (mientras se mantienen), F12 reiniciar
 		//
 		// (F10 y F11 son del formulario, y las demás F, de cada emulador). Cada emulador dice cómo se guarda, se
 		// carga y se reinicia su máquina (GetStateSize, SaveStateData, LoadStateData, ResetMachine) y llama a
@@ -71,6 +71,9 @@ namespace awui::UI {
 			virtual void LoadStateData(uint8_t *data) {} // Con lo que haga falta después (soltar teclas...)
 			virtual void ResetMachine() {}
 
+			// Rebobinado y avance rápido (F6 y F7). Sin ellos (CanRewind false), las teclas no hacen nada
+			virtual bool CanRewind() const { return false; }
+
 			// Las teclas propias del sistema, para la ayuda (F1): el nombre del sistema y sus filas
 			virtual KeyHelp::Section GetSystemKeys() const = 0;
 
@@ -94,6 +97,10 @@ namespace awui::UI {
 
 			void SetPaused(bool paused);
 			void Reset();
+
+			// Mientras se mantiene la tecla o el botón
+			virtual void SetRewinding(bool mode) {}
+			virtual void SetForwarding(bool mode) {}
 
 			// Ayuda de las teclas (F1). Mientras se ve, el juego está en pausa; cualquier tecla la cierra
 			void ShowKeyHelp();

@@ -142,14 +142,15 @@ En los menús, las flechas, Enter (OK) y Escape (volver; dentro de un juego, vue
 |               | F2 / F4                                 | Guardar / cargar el estado (no en CHIP-8)    |
 |               | F3                                      | Cambiar de ranura de estado (0 a 9)          |
 |               | F5                                      | Pausar el emulador                           |
+|               | F6 / F7 (mantener)                      | Rebobinar / avanzar rápido (Master System)   |
 |               | F12                                     | Reiniciar                                    |
 | CHIP-8        | 1234 / QWER / ASDF / ZXCV               | El teclado hexadecimal del CHIP-8            |
 |               | Flechas y Enter                         | Las teclas de cada juego (se detectan solas) |
 |               | I                                       | Invertir los colores                         |
-| Master System | WASD, G (botón 1) y H (botón 2)         | Mando 1                                      |
+| Master System | WASD, G o J (botón 1) y H (botón 2)     | Mando 1: G+H o H+J, lo más cómodo en cada juego |
 |               | Flechas; 1 o 3 y 2 del teclado numérico | Mando 2                                      |
 |               | Espacio                                 | Botón de pausa de la consola                 |
-|               | Q / E                                   | Rebobinar / avanzar rápido                   |
+|               | Q / E (mantener)                        | Rebobinar / avanzar rápido, como F6 / F7     |
 |               | 1 a 4                                   | Silenciar o activar cada canal de sonido     |
 | ZX Spectrum   | El teclado del ordenador                | El del Spectrum                              |
 |               | F8                                      | Carga rápida de la cinta                     |

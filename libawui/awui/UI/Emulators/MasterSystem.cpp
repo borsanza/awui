@@ -200,6 +200,7 @@ bool MasterSystem::OnKeyPress(Keys::Enum key) {
 		case Keys::Key_D:
 			button1 = 0x08;
 			break;
+		// Botón 1 en G y en J, a cada lado del botón 2 (H): según el juego es más cómodo G+H o H+J
 		case Keys::Key_G:
 		case Keys::Key_J:
 			button1 = 0x10;
@@ -498,10 +499,10 @@ void MasterSystem::ResetMachine() {
 KeyHelp::Section MasterSystem::GetSystemKeys() const {
 	return {m_cpu->IsGameGear() ? "Game Gear" : "Master System",
 			{
-				{"W A S D + G / H", Localization::Tr("help.sms.pad1")},
+				{"W A S D + G / H / J", Localization::Tr("help.sms.pad1")},
 				{Localization::Tr("help.key.pad2"), Localization::Tr("help.sms.pad2")},
 				{Localization::Tr("help.key.space"), Localization::Tr("help.sms.pause")},
-				{"Q / E", Localization::Tr("help.sms.rewind")},
+				{"Q / E", Localization::Tr("help.rewind")},
 				{"1 - 4", Localization::Tr("help.sms.channels")},
 				{"B", Localization::Tr("help.sms.border")},
 			}};

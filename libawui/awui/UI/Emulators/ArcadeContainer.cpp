@@ -170,6 +170,8 @@ void ArcadeContainer::ShowKeyHelp() {
 		general.rows.push_back({"F3", Localization::Tr("help.slot")});
 	}
 	general.rows.push_back({"F5", Localization::Tr("help.pause")});
+	if (CanRewind())
+		general.rows.push_back({"F6 / F7", Localization::Tr("help.rewind")});
 	general.rows.push_back({"F10", Localization::Tr("help.vsync")});
 	general.rows.push_back({"F11", Localization::Tr("help.fullscreen")});
 	general.rows.push_back({"F12", Localization::Tr("help.reset")});
@@ -222,6 +224,14 @@ bool ArcadeContainer::OnEmulatorKey(Keys::Enum key, bool pressed) {
 		case Keys::Key_F5:
 			if (pressed)
 				SetPaused(!m_paused);
+			return true;
+		case Keys::Key_F6:
+			if (CanRewind())
+				SetRewinding(pressed);
+			return true;
+		case Keys::Key_F7:
+			if (CanRewind())
+				SetForwarding(pressed);
 			return true;
 		case Keys::Key_F12:
 			if (pressed)

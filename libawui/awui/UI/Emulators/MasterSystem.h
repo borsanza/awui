@@ -51,6 +51,7 @@ namespace awui {
 			virtual void LoadStateData(uint8_t *data) override;
 			virtual void ResetMachine() override;
 			virtual KeyHelp::Section GetSystemKeys() const override;
+			virtual bool CanRewind() const override { return true; }
 
 		  public:
 			MasterSystem();
@@ -74,8 +75,8 @@ namespace awui {
 			virtual bool OnJoystickAxisMotion(UI::Events::JoystickAxisMotionEventArgs *e);
 
 
-			void SetRewinding(bool mode);
-			void SetForwarding(bool mode);
+			virtual void SetRewinding(bool mode) override;
+			virtual void SetForwarding(bool mode) override;
 			void Pause(bool mode);
 
 			uint32_t GetCRC32();
