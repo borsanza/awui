@@ -74,7 +74,7 @@ Renderer::Renderer() {
 		new MeshBasicMaterial(0x000080ff, false)  // -Z
 	};
 
-	int initMax = 320000;
+	int initMax = 5120000;
 	int max = initMax;
 	// int max = 12;
 
@@ -109,23 +109,11 @@ Renderer::Renderer() {
 	float dif = 0.05f;
 	float size = 4.0f;
 	m_axes = {
-		AxisVertex(0, 0, 0, 128, 0, 0), AxisVertex(size, 0, 0, 255, 0, 0),
-		AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, dif, 0, 255, 0, 0),
-		AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, 0, dif, 255, 0, 0),
-		AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, 0, -dif, 255, 0, 0),
-		AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, -dif, 0, 255, 0, 0),
+		AxisVertex(0, 0, 0, 128, 0, 0), AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, dif, 0, 255, 0, 0), AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, 0, dif, 255, 0, 0),	AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, 0, -dif, 255, 0, 0), AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, -dif, 0, 255, 0, 0),
 
-		AxisVertex(0, 0, 0, 0, 128, 0), AxisVertex(0, size, 0, 0, 255, 0),
-		AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(dif, size - dif, 0, 0, 255, 0),
-		AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(-dif, size - dif, 0, 0, 255, 0),
-		AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(0, size - dif, dif, 0, 255, 0),
-		AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(0, size - dif, -dif, 0, 255, 0),
+		AxisVertex(0, 0, 0, 0, 128, 0), AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(dif, size - dif, 0, 0, 255, 0), AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(-dif, size - dif, 0, 0, 255, 0), AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(0, size - dif, dif, 0, 255, 0),  AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(0, size - dif, -dif, 0, 255, 0),
 
-		AxisVertex(0, 0, 0, 0, 0, 128), AxisVertex(0, 0, size, 0, 0, 255),
-		AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(dif, 0, size - dif, 0, 0, 255),
-		AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(-dif, 0, size - dif, 0, 0, 255),
-		AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(0, dif, size - dif, 0, 0, 255),
-		AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(0, -dif, size - dif, 0, 0, 255),
+		AxisVertex(0, 0, 0, 0, 0, 128), AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(dif, 0, size - dif, 0, 0, 255), AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(-dif, 0, size - dif, 0, 0, 255), AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(0, dif, size - dif, 0, 0, 255),  AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(0, -dif, size - dif, 0, 0, 255),
 	};
 
 	// PlaneGeometry *geometry = new PlaneGeometry(10, 10);

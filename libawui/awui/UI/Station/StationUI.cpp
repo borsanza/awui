@@ -190,7 +190,7 @@ void StationUI::RecursiveSearch(NodeFile *parent, const String &path) {
 				if (child->m_name == "chip8") {
 					child->m_emulator = Types::Chip8;
 					child->m_button->SetText("CHIP-8");
-					child->m_background = new Bitmap("./images/chip8.jpg");
+					child->m_background = new Bitmap("./images/chip8.png");
 					child->m_background->SetStretchMode(StretchMode::AspectFill);
 				}
 

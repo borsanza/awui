@@ -58,7 +58,7 @@ SettingsUI::~SettingsUI() {
 
 void SettingsUI::InitializeComponent() {
 	// Fondo como el de las secciones del menú: a pantalla completa, atenuado y con fundido de entrada
-	m_background = new Bitmap("./images/settings-bg.jpg");
+	m_background = new Bitmap("./images/settings-bg.png");
 	m_background->SetStretchMode(StretchMode::AspectFill);
 	m_backgroundFader = new ImageFader();
 	m_backgroundFader->SetDock(DockStyle::Fill);
