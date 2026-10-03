@@ -1,5 +1,7 @@
 #include "Texture.h"
 
+#include <cmath>
+
 #include <SDL_image.h>
 #include <SDL_opengl.h>
 #include <awui/Console.h>
@@ -14,6 +16,16 @@ Texture::Texture(const String file, int minFilter, int magFilter) : m_file(file)
 	m_texture = 0;
 	m_needUpdateFilters = true;
 	m_errorOnLoad = false;
+	m_wrap = WRAP_CLAMP;
+	m_encodeSRGB = false;
+}
+
+void Texture::SetWrap(int wrap) {
+	m_wrap = wrap;
+}
+
+void Texture::SetEncodeSRGB(bool encode) {
+	m_encodeSRGB = encode;
 }
 
 Texture::~Texture() {
@@ -60,8 +72,27 @@ void Texture::Load() {
 		return;
 	}
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap);
+
+	if (m_encodeSRGB) {
+		// Lineal a sRGB, con una tabla (el alfa no se toca)
+		uint8_t table[256];
+		for (int i = 0; i < 256; i++) {
+			float linear = i / 255.0f;
+			float encoded = (linear <= 0.0031308f) ? (linear * 12.92f) : (1.055f * powf(linear, 1.0f / 2.4f) - 0.055f);
+			table[i] = (uint8_t) lroundf(encoded * 255.0f);
+		}
+
+		for (int y = 0; y < textureImage->h; y++) {
+			uint8_t *row = (uint8_t *) textureImage->pixels + (y * textureImage->pitch);
+			for (int x = 0; x < textureImage->w; x++) {
+				row[x * 4] = table[row[x * 4]];
+				row[x * 4 + 1] = table[row[x * 4 + 1]];
+				row[x * 4 + 2] = table[row[x * 4 + 2]];
+			}
+		}
+	}
 
 	GLenum internalFormat = textureImage->format->BytesPerPixel == 4 ? GL_RGBA8 : GL_RGB8;
 	GLenum textureFormat = textureImage->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB;

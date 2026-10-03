@@ -51,77 +51,40 @@ void main() {
 	fragColor = color;
 }
 )";
-
-	RenderList::Vertex AxisVertex(float x, float y, float z, uint8_t r, uint8_t g, uint8_t b) {
-		return {x, y, z, 0.0f, 0.0f, r, g, b, 255};
-	}
 } // namespace
 
 Renderer::Renderer() {
-	m_angle = 0.0f;
+	m_scene = nullptr;
+	m_camera = nullptr;
+	m_wireframe = false;
+}
 
-	m_scene = new Scene();
-	m_camera = new PerspectiveCamera(60, ((float) GetWidth()) / ((float) GetHeight()), 0.1, 1000);
-	m_camera->SetPosition(5, 5, 10);
-	m_camera->LookAt(0.5f, 0.5f, 0.5f);
+void Renderer::SetScene(Scene *scene) {
+	m_scene = scene;
+	m_staticBuilt = false;
+}
 
-	std::vector<Material *> materials = {
-		new MeshBasicMaterial(0xff0000ff, false), // +X
-		new MeshBasicMaterial(0x800000ff, false), // -X
-		new MeshBasicMaterial(0x00ff00ff, false), // +Y
-		new MeshBasicMaterial(0x008000ff, false), // -Y
-		new MeshBasicMaterial(0x0000ffff, false), // +Z
-		new MeshBasicMaterial(0x000080ff, false)  // -Z
-	};
+void Renderer::SetCamera(PerspectiveCamera *camera) {
+	m_camera = camera;
+}
 
-	int initMax = 5120000;
-	int max = initMax;
-	// int max = 12;
+void Renderer::SetClearColor(uint32_t color) {
+	m_clearColor = Color(color);
+}
 
-	int line;
-	for (line = 0; true; line++) {
-		if (max <= 0)
-			break;
-		for (int lado = 0; lado <= 1; lado++) {
-			if (max <= 0)
-				break;
-			for (int iy = 0; iy < line + lado; iy++) {
-				if (max <= 0)
-					break;
-				BoxGeometry *geometry = new BoxGeometry(1, 1, 1);
-				Mesh *cube = new Mesh(geometry, materials);
-				cube->SetPosition(lado ? iy : line, 0.0f, lado ? line : iy);
-				cube->SetScale(0.5f, 0.5f, 0.5f);
-				//  cube->SetRotation(iy + line, iy + line, iy + line);
-				m_scene->Add(cube);
-				max -= 12;
-			}
-		}
+void Renderer::SetWireframe(bool wireframe) {
+	if (m_wireframe != wireframe) {
+		m_wireframe = wireframe;
+		m_staticBuilt = false; // Las líneas de la malla solo se calculan si hacen falta
 	}
+}
 
-	Console::WriteLine("Center XY: %.0f", line / 2.0f);
-	Console::WriteLine("Triangles: %d", initMax);
-	m_camera->SetPosition(line / 2.0f, line * 0.666, 0.001f + 0);
-	m_camera->LookAt(line / 2.0f, 0.0f, line * 0.333);
+int Renderer::GetTriangleCount() const {
+	return (int) ((m_static.list.GetVertices().size() + m_dynamic.list.GetVertices().size()) / 3);
+}
 
-	// Los ejes, del origen hacia el lado positivo (de oscuro a claro) y con una punta de flecha: X rojo, Y verde, Z
-	// azul
-	float dif = 0.05f;
-	float size = 4.0f;
-	m_axes = {
-		AxisVertex(0, 0, 0, 128, 0, 0), AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, dif, 0, 255, 0, 0), AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, 0, dif, 255, 0, 0),	AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, 0, -dif, 255, 0, 0), AxisVertex(size, 0, 0, 255, 0, 0), AxisVertex(size - dif, -dif, 0, 255, 0, 0),
-
-		AxisVertex(0, 0, 0, 0, 128, 0), AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(dif, size - dif, 0, 0, 255, 0), AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(-dif, size - dif, 0, 0, 255, 0), AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(0, size - dif, dif, 0, 255, 0),  AxisVertex(0, size, 0, 0, 255, 0), AxisVertex(0, size - dif, -dif, 0, 255, 0),
-
-		AxisVertex(0, 0, 0, 0, 0, 128), AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(dif, 0, size - dif, 0, 0, 255), AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(-dif, 0, size - dif, 0, 0, 255), AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(0, dif, size - dif, 0, 0, 255),  AxisVertex(0, 0, size, 0, 0, 255), AxisVertex(0, -dif, size - dif, 0, 0, 255),
-	};
-
-	// PlaneGeometry *geometry = new PlaneGeometry(10, 10);
-	// Mesh *cube = new Mesh(geometry, materials);
-	// cube->SetPosition(10, 0.0f, 10);
-	// cube->SetScale(2.0f, 1.4f, 1);
-	// cube->SetRotation(15, 0, 10);
-	// m_scene->Add(cube);
+int Renderer::GetDrawCalls() const {
+	return (int) (m_static.list.GetBatches().size() + m_dynamic.list.GetBatches().size());
 }
 
 bool Renderer::Initialize() {
@@ -139,9 +102,11 @@ bool Renderer::Initialize() {
 	m_texturedLocation = Shaders::GetUniformLocation(m_program, "u_textured");
 	m_textureLocation = Shaders::GetUniformLocation(m_program, "u_texture");
 
-	CreateBuffer(m_scene3D);
-	CreateBuffer(m_axes3D);
-	Shaders::BufferData(GL_ARRAY_BUFFER, m_axes.size() * sizeof(RenderList::Vertex), m_axes.data(), GL_STATIC_DRAW);
+	for (Layer *layer : {&m_static, &m_dynamic}) {
+		CreateBuffer(layer->triangles);
+		CreateBuffer(layer->lines);
+		CreateBuffer(layer->wireBuffer);
+	}
 
 	m_initialized = true;
 	m_failed = false;
@@ -163,9 +128,68 @@ void Renderer::CreateBuffer(Buffer &buffer) {
 	Shaders::VertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RenderList::Vertex), (const void *) offsetof(RenderList::Vertex, r));
 }
 
-void Renderer::DoRender(Scene &scene, Camera &camera) {
-	Matrix4 projection = camera.GetProjectionMatrix();
-	Matrix4 view = camera.GetViewMatrix();
+// Calcula la geometría de una capa (lo fijo o lo dinámico) y la sube a OpenGL
+void Renderer::Build(Layer &layer, bool dynamic) {
+	GLenum usage = dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW;
+
+	layer.list.Clear();
+	m_scene->Collect(Matrix4::Identity(), layer.list, dynamic);
+
+	const std::vector<RenderList::Vertex> &vertices = layer.list.GetVertices();
+	Shaders::BindBuffer(GL_ARRAY_BUFFER, layer.triangles.vertexBuffer);
+	Shaders::BufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(RenderList::Vertex), vertices.data(), usage);
+
+	const std::vector<RenderList::Vertex> &lines = layer.list.GetLines();
+	Shaders::BindBuffer(GL_ARRAY_BUFFER, layer.lines.vertexBuffer);
+	Shaders::BufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(RenderList::Vertex), lines.data(), usage);
+
+	// Modo malla: OpenGL ES no tiene glPolygonMode, así que las aristas se pintan como líneas. Cada triángulo da
+	// tres, en el mismo orden: el tramo de cada textura empieza en el doble de su primer vértice
+	layer.wire.clear();
+	if (m_wireframe) {
+		layer.wire.reserve(vertices.size() * 2);
+		for (size_t i = 0; i + 2 < vertices.size(); i += 3) {
+			layer.wire.insert(layer.wire.end(), {vertices[i], vertices[i + 1], vertices[i + 1], vertices[i + 2], vertices[i + 2], vertices[i]});
+		}
+
+		Shaders::BindBuffer(GL_ARRAY_BUFFER, layer.wireBuffer.vertexBuffer);
+		Shaders::BufferData(GL_ARRAY_BUFFER, layer.wire.size() * sizeof(RenderList::Vertex), layer.wire.data(), usage);
+	}
+}
+
+void Renderer::Draw(Layer &layer) {
+	Shaders::BindVertexArray(m_wireframe ? layer.wireBuffer.vertexArray : layer.triangles.vertexArray);
+	for (const RenderList::Batch &batch : layer.list.GetBatches()) {
+		// Si la textura no se ha podido cargar, solo con el color
+		GLuint texture = batch.texture ? batch.texture->GetTexture() : 0;
+		Shaders::Uniform1i(m_texturedLocation, texture ? 1 : 0);
+		if (m_wireframe)
+			glDrawArrays(GL_LINES, batch.first * 2, batch.count * 2);
+		else
+			glDrawArrays(GL_TRIANGLES, batch.first, batch.count);
+	}
+
+	if (!layer.list.GetLines().empty()) {
+		Shaders::BindVertexArray(layer.lines.vertexArray);
+		Shaders::Uniform1i(m_texturedLocation, 0);
+		glDrawArrays(GL_LINES, 0, (GLsizei) layer.list.GetLines().size());
+	}
+}
+
+void Renderer::OnPaint(OpenGL::GL *gl) {
+	if (!m_scene || !m_camera || !Initialize())
+		return;
+
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	glViewport(GetLeft(), GetTop(), GetWidth(), GetHeight());
+
+	glClearColor(m_clearColor.GetR() / 255.0f, m_clearColor.GetG() / 255.0f, m_clearColor.GetB() / 255.0f, m_clearColor.GetA() / 255.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	m_camera->SetAspectRatio(((float) GetWidth()) / ((float) GetHeight()));
+	Matrix4 projection = m_camera->GetProjectionMatrix();
+	Matrix4 view = m_camera->GetViewMatrix();
 
 	Shaders::UseProgram(m_program);
 	Shaders::UniformMatrix4fv(m_projectionLocation, 1, GL_FALSE, projection.data());
@@ -180,73 +204,21 @@ void Renderer::DoRender(Scene &scene, Camera &camera) {
 	glFrontFace(GL_CCW);
 	glDisable(GL_BLEND);
 
-	// Los triángulos de la escena se calculan y se suben a OpenGL solo si ha cambiado (se han añadido o quitado
-	// objetos): cada vértice se transforma una sola vez (Vector3::ApplyTransform), así que no se mueven
-	Shaders::BindVertexArray(m_scene3D.vertexArray);
-	if (!m_sceneBuilt || (m_sceneChanges != Object3D::GetChanges())) {
-		m_list.Clear();
-		scene.PreRender(Matrix4::Identity(), m_list);
-		m_sceneChanges = Object3D::GetChanges();
-		m_sceneBuilt = true;
-
-		const std::vector<RenderList::Vertex> &vertices = m_list.GetVertices();
-		Shaders::BindBuffer(GL_ARRAY_BUFFER, m_scene3D.vertexBuffer);
-		Shaders::BufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(RenderList::Vertex), vertices.data(), GL_STATIC_DRAW);
+	// Lo fijo, solo si la escena ha cambiado; lo dinámico, siempre
+	if (!m_staticBuilt || (m_staticChanges != Object3D::GetChanges())) {
+		m_staticChanges = Object3D::GetChanges();
+		m_staticBuilt = true;
+		Build(m_static, false);
 	}
+	Build(m_dynamic, true);
 
-	for (const RenderList::Batch &batch : m_list.GetBatches()) {
-		GLuint texture = batch.texture ? batch.texture->GetTexture() : 0;
-
-		// Lo que lleva textura se pinta encima, sin profundidad y mezclando con su transparencia (como antes de los
-		// shaders). Si la textura no se ha podido cargar, solo con el color
-		if (texture) {
-			glDisable(GL_DEPTH_TEST);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		}
-
-		Shaders::Uniform1i(m_texturedLocation, texture ? 1 : 0);
-		glDrawArrays(GL_TRIANGLES, batch.first, batch.count);
-
-		if (texture) {
-			glEnable(GL_DEPTH_TEST);
-			glDisable(GL_BLEND);
-		}
-	}
-
-	Shaders::BindVertexArray(m_axes3D.vertexArray);
-	Shaders::Uniform1i(m_texturedLocation, 0);
-	glDrawArrays(GL_LINES, 0, (GLsizei) m_axes.size());
+	Draw(m_static);
+	Draw(m_dynamic);
 
 	// Como lo espera el pintado 2D de la interfaz
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
-}
-
-void awui::GOB::Engine::Renderer::OnTick(float deltaSeconds) {
-	m_angle += 0.1f * deltaSeconds;
-}
-
-void Renderer::SetClearColor(uint32_t color) {
-	m_clearColor = Color(color);
-}
-
-void Renderer::OnPaint(OpenGL::GL *gl) {
-	if (!Initialize())
-		return;
-
-	GLint viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	glViewport(GetLeft(), GetTop(), GetWidth(), GetHeight());
-
-	glClearColor(m_clearColor.GetR() / 255.0f, m_clearColor.GetG() / 255.0f, m_clearColor.GetB() / 255.0f, m_clearColor.GetA() / 255.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	m_camera->SetAspectRatio(((float) GetWidth()) / ((float) GetHeight()));
-	m_camera->SetPosition(50.5f + -6.0f + 6.0f * Math::Cos(m_angle), 0.5f + Math::Cos(m_angle) * 5.0f, 50.5f + -4.0f + 8.0f * Math::Sin(m_angle));
-
-	DoRender(*m_scene, *m_camera);
 
 	glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 }

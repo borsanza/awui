@@ -36,10 +36,9 @@ void Mesh::Render(const Matrix4 &transform, RenderList &list) {
 				lastMaterial = material;
 			}
 
+			// Siempre: el objeto (o un padre) puede haberse movido desde la última vez
 			Vector3 *vector = &vertices[triangleIndex];
-			if (vector->IsDirtyTransform()) {
-				vector->ApplyTransform(transform);
-			}
+			vector->ApplyTransform(transform);
 
 			list.Add(texture, {vector->t_x, vector->t_y, vector->t_z, uv->u, uv->v, color.GetR(), color.GetG(), color.GetB(), color.GetA()});
 		}

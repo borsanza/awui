@@ -6,6 +6,9 @@ using namespace awui::GOB::Engine::Cameras;
 Camera::Camera() {
 	m_upVector = Vector3(0, 1, 0);
 	m_target = Vector3(0, 0, 0);
+
+	// Se mueve en cada frame, y moverla no cambia la geometría de la escena
+	SetDynamic(true);
 }
 
 void Camera::LookAt(float x, float y, float z) {

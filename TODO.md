@@ -8,7 +8,7 @@ Cosas vistas en las revisiones que quedan por arreglar. Al hacer una, se borra d
 
 ## Fallos con efecto hoy
 
-- **Pérdida de foco de la ventana:** no se atiende `SDL_WINDOWEVENT_FOCUS_LOST`, así que no se pausa nada al minimizar ni al cambiar de ventana. Las teclas pulsadas no deberían quedarse enganchadas al hacer Alt+Tab (SDL2 manda un `KEYUP` por cada una al perder el foco, y las sueltas del mando pasan aunque no haya foco), pero falta comprobarlo con la ventana.
+- **Pérdida de foco de la ventana:** a propósito, el juego sigue al cambiar de ventana (no se pausa; decidido así de momento). Lo que falta es comprobar con la ventana que las teclas no se quedan enganchadas al hacer Alt+Tab: SDL2 manda un `KEYUP` por cada una al perder el foco, y las sueltas del mando pasan aunque no haya foco, pero F6/F7 o una tecla del Spectrum mantenidas podrían quedarse activas.
 
 ## Fallos latentes
 
@@ -16,8 +16,7 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 - **El depurador de la Master System no se puede abrir:** `MasterSystem` tiene la tecla F para mostrarlo, pero `m_debugger` nunca se crea (siempre es `NULL`), así que `DebuggerSMS` es código muerto. O se crea (en Debug, por ejemplo) o se borra.
 - **Variables `static inline` en cabeceras con DLL:** en Windows, el ejecutable y `libawui.dll` tienen cada uno su copia (`SavePaths`, `AudioSettings`, `Localization`, `CPU::s_restartWhenFinished`...). Hoy todas se cambian y se leen desde dentro de la DLL, pero si un sample cambia una directamente desde su código, la DLL no lo ve. Pasó con `SettingsStore::SetValuesFile`, que ya está en el `.cpp`.
-- **GOB: los objetos no se mueven después del primer frame.** Cada vértice se transforma una sola vez (`Vector3::ApplyTransform` quita la marca y nadie la vuelve a poner), así que `SetPosition`, `SetScale` o `SetRotation` después de pintar no tienen efecto. El `Renderer` se apoya en eso: sube la escena a OpenGL una vez y solo la rehace al añadir o quitar objetos. Si algún día se mueven, habría que marcar sus vértices y avisar al `Renderer` (o mejor, pasar la matriz de cada objeto al shader).
-- **`GOB::Object3D` sin destructor virtual:** borra sus hijos (`Mesh`, `Camera`…) como `Object3D *`, así que el destructor de la clase hija no se ejecuta (comportamiento indefinido). Además, `Mesh` guarda su `BufferGeometry *` y sus `Material *` sin liberarlos nunca: no está claro quién es el dueño.
+- **GOB: de quién son las geometrías y los materiales.** `Mesh` guarda su `BufferGeometry *` y sus `Material *` sin liberarlos nunca, y las texturas de los bloques (`Blocks::GetTexture`) y los chunks tampoco se liberan: no está claro quién es el dueño. Hoy da igual porque viven hasta que se cierra el programa.
 - **Estado del Z80 copiado con `memcpy`:** `CPUInst::saveData` contiene `Registers`, que tiene un destructor declarado a mano, así que no es un tipo trivial y copiarlo con `memcpy` no está garantizado (el compilador lo avisa con `-Wclass-memaccess`). Basta con quitar ese destructor vacío.
 - **`Ram` y `Rom`** se pueden copiar y la copia liberaría dos veces su memoria (como `Image` y `MemoryStream`, más abajo).
 - **`Word` depende del orden de los bytes:** la unión con `L`/`H` da los bytes al revés en una máquina *big-endian*. Hoy todas las plataformas previstas (x86, ARM) son *little-endian*, pero conviene saberlo. Además, usa un `struct` anónimo dentro de una unión, que es una extensión del compilador.
@@ -131,6 +130,17 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
   - **Estado de la CPU:** ocupa unos 560 KB por frame (las dos pantallas y los índices de color reservan el tamaño de MegaChip, 256×192, y la memoria va redondeada a 64 KB más 64 KB de margen). El historial de rebobinado solo guarda lo que cambia, pero copiarlo y compararlo 60 veces por segundo puede notarse en una Raspberry. Si MegaChip hace crecer la memoria más allá del margen, lo que pase no va en el estado. El generador de números aleatorios (`CXNN`) tampoco: al rebobinar y seguir, el juego puede tomar otro camino.
 - **Proporción de los píxeles:** la imagen se escala con píxeles cuadrados, pero en la tele de la época no lo eran (en Master System y Spectrum, un poco más anchos que altos).
 - **Modo rápido del Spectrum (F8):** falta decidir si se queda así. Desde el cambio a `steady_clock` se emula durante 30 ms en cada tick, como dice el comentario; antes, por un error de unidades, era un frame por tick. Con un cargador propio la cinta va unas 3 veces más deprisa, pero la interfaz baja a unos 30 fps mientras dura.
+
+### gameOfBlocks
+
+Está a la par de la versión web (three.js): mismo terreno, misma luz y colores, misma física y cámaras. Lo que a las dos les falta:
+
+- **Colisiones a los lados:** el jugador solo choca con el suelo; andando atraviesa las colinas y las paredes. Tampoco choca con el techo al saltar.
+- **Poner y quitar bloques.** Al cambiar un bloque habría que rehacer la malla de su chunk (y la de los vecinos si está en el borde): hoy cada chunk se calcula una sola vez.
+- **Chunks lejanos:** se generan al acercarse, pero nunca se descargan: la memoria y los triángulos crecen al andar.
+- **Texturas de los bloques:** las de `build/samples/gameOfBlocks/images` vienen de la versión web y varias parecen las de Minecraft (hierba, tierra, piedra, diamante, lana): habría que sustituirlas por unas propias antes de publicarlas.
+- **El motor (`GOB/Engine`):** junta por textura dentro de cada objeto, pero no entre objetos: salen unas 200 llamadas de pintado para 100 chunks. Con un atlas de texturas sería una. No hay luces: la del mundo va calculada en el color de cada cara.
+- **Mando:** solo teclado y ratón.
 
 ## Ficheros y directorios
 

@@ -13,7 +13,7 @@ using namespace awui;
 int main(int argc, char **argv) {
 	FormGOB *form = new FormGOB();
 
-	Application::Run(form);
+	UI::Application::Run(form);
 
 	return 0;
 }
