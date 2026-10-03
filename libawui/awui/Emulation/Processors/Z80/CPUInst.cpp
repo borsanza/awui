@@ -6,6 +6,8 @@
 
 #include "CPUInst.h"
 
+#include <type_traits>
+
 #include <stdio.h>
 #include <string.h>
 
@@ -2077,6 +2079,8 @@ void CPUInst::OUTD() {
 }
 
 int CPUInst::GetSaveSize() {
+	// Los estados y el rebobinado copian saveData byte a byte (memcpy): solo vale si es un tipo sencillo
+	static_assert(std::is_trivially_copyable<CPUInst::saveData>::value, "CPUInst::saveData se copia con memcpy: no puede tener destructores, métodos virtuales ni miembros que los tengan");
 	return sizeof(CPUInst::saveData);
 }
 

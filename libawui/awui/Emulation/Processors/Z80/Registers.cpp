@@ -17,9 +17,6 @@ Registers::Registers() {
 	Clear();
 }
 
-Registers::~Registers() {
-}
-
 void Registers::Clear() {
 	m_af.W = 0;
 	m_bc.W = 0;

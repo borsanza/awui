@@ -61,6 +61,9 @@ namespace awui::Emulation::Processors::Z80 {
 		Reg_PC = 47,
 	};
 
+	// Va dentro de los estados, copiado byte a byte (CPUInst::SaveState): por eso no tiene destructor ni métodos
+	// virtuales. Un destructor escrito a mano, aunque esté vacío, ya no garantiza esa copia; y un puntero a la tabla
+	// virtual guardado en un fichero no vale en otra ejecución
 	class Registers {
 	  private:
 		Word m_af;
@@ -82,9 +85,6 @@ namespace awui::Emulation::Processors::Z80 {
 
 	  public:
 		Registers();
-		// Sin métodos virtuales: se guarda byte a byte dentro de los estados, y un puntero a la tabla virtual
-		// guardado en un fichero no vale en otra ejecución
-		~Registers();
 
 		void Clear();
 		void Alternate();
