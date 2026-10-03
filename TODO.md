@@ -35,7 +35,6 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
   - **La posición avanza aunque la lectura o escritura falle,** y en modo `Append` no refleja dónde se escribe de verdad.
 - **Herencia privada:** `FileStream` y `MemoryStream` heredan de `Stream` en privado (`class FileStream : Stream`), así que no se pueden usar como `Stream *`.
 - **Bucles infinitos:**
-  - **`String::Split("")`:** con un delimitador vacío nunca avanza. Además, trata distinto los vacíos: `"a,b,"` da `[a, b]` pero `",a"` da `["", a]`.
   - **`EffectBounce::Calculate`** con `p < -0.09`. Un porcentaje que se pasa de rango por un frame lento colgaría el programa.
   - **`Bitmap` en modo `Tile`** si los márgenes fijos suman el ancho o el alto de la textura o más: el paso es 0. Además, la última baldosa de cada fila se estira en vez de recortarse (no se recalculan las coordenadas de textura).
 - **`Graphics::DrawImage` con tamaño escala al revés** ([Graphics.cpp](libawui/awui/Drawing/Graphics.cpp)): usa `imagen/destino` en vez de `destino/imagen`, así que pedir el doble dibuja a la mitad.

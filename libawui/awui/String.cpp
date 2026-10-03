@@ -233,20 +233,21 @@ int String::LastIndexOf(const String &value) const {
 
 std::vector<awui::String> String::Split(const String &delimiter) const {
 	std::vector<String> list;
+
+	// Sin delimitador no hay por dónde cortar: la cadena entera (buscar "" encuentra siempre, sin avanzar: no acabaría)
+	if (delimiter.m_string.empty()) {
+		list.push_back(*this);
+		return list;
+	}
+
 	size_t startPos = 0;
 	size_t endPos;
-
 	while ((endPos = m_string.find(delimiter.m_string, startPos)) != std::string::npos) {
-		String token(m_string.substr(startPos, endPos - startPos).c_str());
-		list.push_back(token);
-		startPos = endPos + delimiter.GetLength();
+		list.push_back(String(m_string.substr(startPos, endPos - startPos).c_str()));
+		startPos = endPos + delimiter.m_string.length();
 	}
 
-	// Agrega el último token
-	if (startPos < m_string.length()) { // Asegurarse de que hay algo que agregar
-		String token(m_string.substr(startPos).c_str());
-		list.push_back(token);
-	}
-
+	// El último trozo, aunque esté vacío: siempre hay uno más que delimitadores
+	list.push_back(String(m_string.substr(startPos).c_str()));
 	return list;
 }

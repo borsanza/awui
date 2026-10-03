@@ -78,7 +78,9 @@ namespace awui {
 		String Substring(int startIndex) const;
 		String Substring(int startIndex, int length) const;
 
-		std::vector<String> Split(const String &value) const;
+		// Los trozos entre delimitadores, también los vacíos (como en .NET): "a,b," da [a, b, ""], ",a" da ["", a] y
+		// "" da [""]. Con un delimitador vacío, la cadena entera
+		std::vector<String> Split(const String &delimiter) const;
 
 		String ToString() const;
 	};
