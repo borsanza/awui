@@ -56,6 +56,7 @@
     "osd.stateLoaded": "Estado carregado (slot %d)",
     "osd.stateMissing": "Nenhum estado no slot %d",
     "osd.stateIncompatible": "Estado de outra versão: não é possível carregar",
+    "osd.stateOtherGame": "Estado de outro jogo: não foi carregado",
     "osd.stateSaveError": "Não foi possível salvar o estado",
     "osd.slot": "Slot %d",
     "osd.fastOn": "Carregamento rápido ativado",

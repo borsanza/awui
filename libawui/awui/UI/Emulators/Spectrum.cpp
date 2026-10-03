@@ -99,6 +99,9 @@ void Spectrum::LoadRom(const String file) {
 		m_tapecorder->LoadFile(file);
 	}
 
+	// Los estados son de la cinta (o de la ROM, si se carga una suelta)
+	SetStateIdentity("ZX", GetFileCRC32(file));
+
 	m_first = 0;
 	m_last = 0;
 }

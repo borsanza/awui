@@ -56,6 +56,7 @@
     "osd.stateLoaded": "Estat carregat (ranura %d)",
     "osd.stateMissing": "No hi ha estat en la ranura %d",
     "osd.stateIncompatible": "Estat d'una altra versió: no es pot carregar",
+    "osd.stateOtherGame": "Estat d'un altre joc: no es carrega",
     "osd.stateSaveError": "No s'ha pogut guardar l'estat",
     "osd.slot": "Ranura %d",
     "osd.fastOn": "Càrrega ràpida activada",

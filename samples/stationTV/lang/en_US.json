@@ -56,6 +56,7 @@
     "osd.stateLoaded": "State loaded (slot %d)",
     "osd.stateMissing": "No state in slot %d",
     "osd.stateIncompatible": "State from another version: cannot load",
+    "osd.stateOtherGame": "State from another game: not loaded",
     "osd.stateSaveError": "Could not save the state",
     "osd.slot": "Slot %d",
     "osd.fastOn": "Fast loading on",

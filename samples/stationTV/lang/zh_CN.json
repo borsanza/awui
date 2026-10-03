@@ -56,6 +56,7 @@
     "osd.stateLoaded": "已读取状态（槽位 %d）",
     "osd.stateMissing": "槽位 %d 中没有状态",
     "osd.stateIncompatible": "状态来自其他版本，无法读取",
+    "osd.stateOtherGame": "状态来自其他游戏，不予读取",
     "osd.stateSaveError": "无法保存状态",
     "osd.slot": "槽位 %d",
     "osd.fastOn": "快速加载已开启",

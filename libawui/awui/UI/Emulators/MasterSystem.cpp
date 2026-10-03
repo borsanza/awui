@@ -77,6 +77,7 @@ MasterSystem::~MasterSystem() {
 void MasterSystem::LoadRom(const String file) {
 	SetName(file);
 	m_cpu->LoadRom(file);
+	SetStateIdentity("SMS", m_cpu->GetCRC32());
 	m_rewind->Clear();
 	m_cpu->SaveState(m_state.data());
 	m_rewind->Push(m_state.data());

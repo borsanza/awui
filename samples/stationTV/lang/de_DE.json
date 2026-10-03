@@ -56,6 +56,7 @@
     "osd.stateLoaded": "Spielstand geladen (Slot %d)",
     "osd.stateMissing": "Kein Spielstand in Slot %d",
     "osd.stateIncompatible": "Spielstand einer anderen Version: kann nicht geladen werden",
+    "osd.stateOtherGame": "Spielstand eines anderen Spiels: wird nicht geladen",
     "osd.stateSaveError": "Spielstand konnte nicht gespeichert werden",
     "osd.slot": "Slot %d",
     "osd.fastOn": "Schnellladen an",

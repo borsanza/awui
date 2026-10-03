@@ -102,10 +102,10 @@ Nadie los usa hoy, pero fallarán en cuanto se usen.
 
 ### Emuladores
 
-- **Formato de los estados:** se guardan copiando las estructuras tal cual (`memcpy` de los `saveData`, con campos de bits, relleno y la estructura interna de emu2413). Consecuencias:
-  - Un estado de Linux no vale en Windows (cada compilador ordena distinto los campos de bits y el relleno), y el de una versión del emulador puede no valer en otra aunque ocupe lo mismo: solo se comprueba el tamaño.
-  - Todos los juegos de Master System tienen un estado del mismo tamaño, así que nada impide cargar el estado de un juego en otro.
-  - Lo propio es una cabecera (identificador, versión del formato, sistema y CRC de la ROM) y escribir los campos uno a uno con un pequeño serializador, en vez de sumar desplazamientos a mano como hace `Motherboard::SaveState`.
+- **Formato de los estados:** los ficheros ya llevan una cabecera (`AWST`, versión del formato, sistema, CRC32 de la ROM o la cinta y tamaño, en [ArcadeContainer.cpp](libawui/awui/UI/Emulators/ArcadeContainer.cpp)), así que no se carga el estado de otro juego ni el de otra versión del formato. Pero los datos siguen siendo una copia tal cual de las estructuras (`memcpy` de los `saveData`, con campos de bits, relleno y la estructura interna de emu2413):
+  - Un estado de Linux no vale en Windows (cada compilador ordena distinto los campos de bits y el relleno), y el de una versión del emulador puede no valer en otra aunque ocupe lo mismo. Al cambiar una estructura hay que subir `StateVersion`.
+  - Lo propio es escribir los campos uno a uno con un pequeño serializador, en vez de sumar desplazamientos a mano como hace `Motherboard::SaveState`.
+  - Los estados de antes de la cabecera se siguen cargando si tienen el tamaño exacto (sin poder comprobar de qué juego son). Se puede quitar cuando ya no queden.
 - **Código repetido en `UI/Emulators`:** los tres emuladores hacen lo mismo a su manera:
   - convertir su pantalla a `Image` píxel a píxel con `SetPixel` en cada frame (se podría escribir directamente en el buffer o subir la textura desde el formato del emulador);
   - el cálculo del escalado entero y el centrado;
